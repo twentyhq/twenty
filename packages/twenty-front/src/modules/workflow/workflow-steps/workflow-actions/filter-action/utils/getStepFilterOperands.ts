@@ -1,69 +1,69 @@
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 const emptyOperands = [
-  ViewFilterOperand.IsEmpty,
-  ViewFilterOperand.IsNotEmpty,
+  ViewFilterOperand.IS_EMPTY,
+  ViewFilterOperand.IS_NOT_EMPTY,
 ] as const;
 
 const relationOperands = [
-  ViewFilterOperand.Is,
-  ViewFilterOperand.IsNot,
+  ViewFilterOperand.IS,
+  ViewFilterOperand.IS_NOT,
 ] as const;
 
 const defaultOperands = [
-  ViewFilterOperand.Is,
-  ViewFilterOperand.IsNot,
-  ViewFilterOperand.Contains,
-  ViewFilterOperand.DoesNotContain,
-  ViewFilterOperand.GreaterThanOrEqual,
-  ViewFilterOperand.LessThanOrEqual,
+  ViewFilterOperand.IS,
+  ViewFilterOperand.IS_NOT,
+  ViewFilterOperand.CONTAINS,
+  ViewFilterOperand.DOES_NOT_CONTAIN,
+  ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+  ViewFilterOperand.LESS_THAN_OR_EQUAL,
   ...emptyOperands,
 ] as const;
 
 export const FILTER_OPERANDS_MAP = {
   TEXT: [
-    ViewFilterOperand.Contains,
-    ViewFilterOperand.DoesNotContain,
+    ViewFilterOperand.CONTAINS,
+    ViewFilterOperand.DOES_NOT_CONTAIN,
     ...emptyOperands,
   ],
   NUMBER: [
-    ViewFilterOperand.GreaterThanOrEqual,
-    ViewFilterOperand.LessThanOrEqual,
+    ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+    ViewFilterOperand.LESS_THAN_OR_EQUAL,
     ...emptyOperands,
   ],
   RAW_JSON: [
-    ViewFilterOperand.Contains,
-    ViewFilterOperand.DoesNotContain,
+    ViewFilterOperand.CONTAINS,
+    ViewFilterOperand.DOES_NOT_CONTAIN,
     ...emptyOperands,
   ],
   DATE_TIME: [
-    ViewFilterOperand.Is,
-    ViewFilterOperand.IsInPast,
-    ViewFilterOperand.IsInFuture,
-    ViewFilterOperand.IsToday,
-    ViewFilterOperand.IsBefore,
-    ViewFilterOperand.IsAfter,
-    ViewFilterOperand.IsRelative,
+    ViewFilterOperand.IS,
+    ViewFilterOperand.IS_IN_PAST,
+    ViewFilterOperand.IS_IN_FUTURE,
+    ViewFilterOperand.IS_TODAY,
+    ViewFilterOperand.IS_BEFORE,
+    ViewFilterOperand.IS_AFTER,
+    ViewFilterOperand.IS_RELATIVE,
     ...emptyOperands,
   ],
-  RATING: [ViewFilterOperand.Is, ViewFilterOperand.IsNot, ...emptyOperands],
+  RATING: [ViewFilterOperand.IS, ViewFilterOperand.IS_NOT, ...emptyOperands],
   RELATION: [...relationOperands, ...emptyOperands],
   MULTI_SELECT: [
-    ViewFilterOperand.Contains,
-    ViewFilterOperand.DoesNotContain,
+    ViewFilterOperand.CONTAINS,
+    ViewFilterOperand.DOES_NOT_CONTAIN,
     ...emptyOperands,
   ],
-  SELECT: [ViewFilterOperand.Is, ViewFilterOperand.IsNot, ...emptyOperands],
+  SELECT: [ViewFilterOperand.IS, ViewFilterOperand.IS_NOT, ...emptyOperands],
   ARRAY: [
-    ViewFilterOperand.Contains,
-    ViewFilterOperand.DoesNotContain,
+    ViewFilterOperand.CONTAINS,
+    ViewFilterOperand.DOES_NOT_CONTAIN,
     ...emptyOperands,
   ],
-  BOOLEAN: [ViewFilterOperand.Is],
-  UUID: [ViewFilterOperand.Is],
+  BOOLEAN: [ViewFilterOperand.IS],
+  UUID: [ViewFilterOperand.IS],
   NUMERIC: [
-    ViewFilterOperand.GreaterThanOrEqual,
-    ViewFilterOperand.LessThanOrEqual,
+    ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+    ViewFilterOperand.LESS_THAN_OR_EQUAL,
     ...emptyOperands,
   ],
 };
@@ -71,15 +71,15 @@ export const FILTER_OPERANDS_MAP = {
 export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
   CURRENCY: {
     currencyCode: [
-      ViewFilterOperand.Is,
-      ViewFilterOperand.IsNot,
+      ViewFilterOperand.IS,
+      ViewFilterOperand.IS_NOT,
       ...emptyOperands,
     ],
     amountMicros: [
-      ViewFilterOperand.GreaterThanOrEqual,
-      ViewFilterOperand.LessThanOrEqual,
-      ViewFilterOperand.Is,
-      ViewFilterOperand.IsNot,
+      ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+      ViewFilterOperand.LESS_THAN_OR_EQUAL,
+      ViewFilterOperand.IS,
+      ViewFilterOperand.IS_NOT,
       ...emptyOperands,
     ],
   },

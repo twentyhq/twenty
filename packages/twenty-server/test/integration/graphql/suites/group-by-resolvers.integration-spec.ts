@@ -5,13 +5,14 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { createViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/create-view-filter-group-operation-factory.util';
 import { createViewFilterOperationFactory } from 'test/integration/graphql/utils/create-view-filter-operation-factory.util';
 import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
-import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
-import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
 describe('group-by resolvers (integration)', () => {
@@ -23,21 +24,21 @@ describe('group-by resolvers (integration)', () => {
     afterEach(async () => {
       // cleanup created people
       await makeGraphqlAPIRequest(
-        deleteOneOperationFactory({
+        destroyOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: 'id',
           recordId: testPersonId,
         }),
       );
       await makeGraphqlAPIRequest(
-        deleteOneOperationFactory({
+        destroyOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: 'id',
           recordId: testPerson2Id,
         }),
       );
       await makeGraphqlAPIRequest(
-        deleteOneOperationFactory({
+        destroyOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: 'id',
           recordId: testPerson3Id,
@@ -108,32 +109,12 @@ describe('group-by resolvers (integration)', () => {
     const testPersonId = randomUUID();
     const testPerson2Id = randomUUID();
     const testPerson3Id = randomUUID();
+    let personObjectMetadataId: string;
+    let personObject: ObjectMetadataDTO & {
+      fieldsList?: FieldMetadataDTO[];
+    };
 
-    afterEach(async () => {
-      // cleanup created people
-      await makeGraphqlAPIRequest(
-        deleteOneOperationFactory({
-          objectMetadataSingularName: 'person',
-          gqlFields: 'id',
-          recordId: testPersonId,
-        }),
-      );
-      await makeGraphqlAPIRequest(
-        deleteOneOperationFactory({
-          objectMetadataSingularName: 'person',
-          gqlFields: 'id',
-          recordId: testPerson2Id,
-        }),
-      );
-      await makeGraphqlAPIRequest(
-        deleteOneOperationFactory({
-          objectMetadataSingularName: 'person',
-          gqlFields: 'id',
-          recordId: testPerson3Id,
-        }),
-      );
-    });
-    it('groups by city', async () => {
+    beforeAll(async () => {
       const { objects } = await findManyObjectMetadata({
         input: {
           filter: {},
@@ -145,9 +126,42 @@ describe('group-by resolvers (integration)', () => {
         expectToFail: false,
       });
 
-      const personObject = objects.find((o) => o.nameSingular === 'person');
-      const personObjectMetadataId = personObject?.id;
+      const person = objects.find((o) => o.nameSingular === 'person');
 
+      if (!person || !person.id) {
+        throw new Error('Person object not found');
+      }
+
+      personObject = person;
+
+      personObjectMetadataId = personObject.id;
+    });
+
+    afterEach(async () => {
+      // cleanup created people
+      await makeGraphqlAPIRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          recordId: testPersonId,
+        }),
+      );
+      await makeGraphqlAPIRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          recordId: testPerson2Id,
+        }),
+      );
+      await makeGraphqlAPIRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          recordId: testPerson3Id,
+        }),
+      );
+    });
+    it('groups by city', async () => {
       const cityFieldMetadata = personObject?.fieldsList?.find(
         (f: FieldMetadataDTO) => f.name === 'city',
       );
@@ -232,6 +246,71 @@ describe('group-by resolvers (integration)', () => {
       expect(groups).toEqual(
         expect.not.arrayContaining([
           expect.objectContaining({ groupByDimensionValues: [cityToExclude] }),
+        ]),
+      );
+    });
+
+    it('groups by city with any field filter', async () => {
+      const cityA = 'City A';
+      const cityB = 'City B';
+
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPersonId, city: cityA },
+        }),
+      );
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPerson2Id, city: cityB },
+        }),
+      );
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPerson3Id, city: cityB },
+        }),
+      );
+
+      // create a view with any field filter
+      const createViewResponse = await makeGraphqlAPIRequest(
+        createViewOperationFactory({
+          data: {
+            name: 'People View City Keep',
+            objectMetadataId: personObjectMetadataId,
+            icon: 'Icon123',
+            anyFieldFilterValue: cityA,
+          },
+        }),
+      );
+
+      const viewId = createViewResponse.body.data.createCoreView.id as string;
+
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ city: true }],
+          viewId,
+        }),
+      );
+
+      const groups = response.body.data.peopleGroupBy;
+
+      expect(groups).toBeDefined();
+      expect(groups).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ groupByDimensionValues: [cityA] }),
+        ]),
+      );
+      // Ensure excluded city is not present
+      expect(groups).toEqual(
+        expect.not.arrayContaining([
+          expect.objectContaining({ groupByDimensionValues: [cityB] }),
         ]),
       );
     });

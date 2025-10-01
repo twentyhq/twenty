@@ -566,15 +566,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
-    description: 'Amount of money in cents to trigger a billing threshold',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT = 10000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
     description: 'Amount of credits for the free trial without credit card',
     type: ConfigVariableType.NUMBER,
   })

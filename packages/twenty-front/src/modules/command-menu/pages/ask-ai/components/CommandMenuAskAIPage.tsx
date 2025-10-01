@@ -1,4 +1,5 @@
-import { AIChatTab } from '@/ai/components/AIChatTab';
+import { LazyAIChatTab } from '@/ai/components/LazyAIChatTab';
+import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -46,25 +47,27 @@ export const CommandMenuAskAIPage = () => {
   });
 
   const { loading, data } = useGetAgentChatMessagesQuery({
-    variables: { threadId: currentThreadId as string },
+    variables: { threadId: currentThreadId ?? '' },
     skip: !isDefined(currentThreadId),
   });
 
   const isLoading = loading || !currentThreadId || threadsLoading;
 
-  if (!agentId || isLoading) {
+  if (isLoading) {
+    return <AIChatSkeletonLoader />;
+  }
+
+  if (!agentId) {
     return (
       <StyledContainer>
-        <StyledEmptyState>
-          {isLoading ? t`Loading...` : t`No AI Agent found.`}
-        </StyledEmptyState>
+        <StyledEmptyState>{t`No AI Agent found.`}</StyledEmptyState>
       </StyledContainer>
     );
   }
 
   return (
     <StyledContainer>
-      <AIChatTab
+      <LazyAIChatTab
         agentId={agentId}
         key={currentThreadId}
         uiMessages={mapDBMessagesToUIMessages(data?.agentChatMessages || [])}
