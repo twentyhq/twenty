@@ -85,7 +85,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     // TODO prastoin improve doing batchs
     for (const flatFieldMetadata of flatFieldMetadatas) {
-      const flatObjectMetadataWithFlatFieldMaps =
+      const flatObjectMetadata =
         findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityMaps: flatObjectMetadataMaps,
           flatEntityId: flatFieldMetadata.objectMetadataId,
@@ -93,18 +93,18 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
       const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
         workspaceId,
-        flatObjectMetadata: flatObjectMetadataWithFlatFieldMaps,
+        flatObjectMetadata,
       });
 
       const enumOperations = collectEnumOperationsForField({
-        flatFieldMetadata: flatFieldMetadata,
+        flatFieldMetadata,
         tableName,
         operation: EnumOperation.CREATE,
       });
 
       const columnDefinitions = generateColumnDefinitions({
-        flatFieldMetadata: flatFieldMetadata,
-        flatObjectMetadata: flatObjectMetadataWithFlatFieldMaps,
+        flatFieldMetadata,
+        flatObjectMetadata,
       });
 
       await executeBatchEnumOperations({
