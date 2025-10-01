@@ -2,26 +2,31 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  AgentManifest,
-  ObjectManifest,
-  ServerlessFunctionManifest,
-} from 'src/engine/core-modules/application/types/application.types';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
-import type { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
+import {
+  AgentManifest,
+  ObjectManifest,
+  ServerlessFunctionManifest,
+  ServerlessFunctionTriggerManifest,
+} from 'src/engine/core-modules/application/types/application.types';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
+import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
+import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
+import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
+import type { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
-import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -35,6 +40,8 @@ export class ApplicationSyncService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
     private readonly agentService: AgentService,
+    private readonly databaseEventTriggerV2Service: DatabaseEventTriggerV2Service,
+    private readonly cronTriggerV2Service: CronTriggerV2Service,
   ) {}
 
   public async synchronizeFromManifest({
@@ -370,6 +377,18 @@ export class ApplicationSyncService {
         updateServerlessFunctionInput,
         workspaceId,
       );
+
+      await this.syncDatabaseEventTriggersForServerlessFunction({
+        serverlessFunctionId: serverlessFunctionToUpdate.id,
+        triggersToSync: serverlessFunctionToSync.triggers || [],
+        workspaceId,
+      });
+
+      await this.syncCronTriggersForServerlessFunction({
+        serverlessFunctionId: serverlessFunctionToUpdate.id,
+        triggersToSync: serverlessFunctionToSync.triggers || [],
+        workspaceId,
+      });
     }
 
     for (const serverlessFunctionToCreate of serverlessFunctionsToCreate) {
@@ -382,8 +401,242 @@ export class ApplicationSyncService {
         serverlessFunctionLayerId,
       };
 
-      await this.serverlessFunctionV2Service.createOne(
-        createServerlessFunctionInput,
+      const createdServerlessFunction =
+        await this.serverlessFunctionV2Service.createOne(
+          createServerlessFunctionInput,
+          workspaceId,
+        );
+
+      await this.syncDatabaseEventTriggersForServerlessFunction({
+        serverlessFunctionId: createdServerlessFunction.id,
+        triggersToSync: serverlessFunctionToCreate.triggers || [],
+        workspaceId,
+      });
+
+      await this.syncCronTriggersForServerlessFunction({
+        serverlessFunctionId: createdServerlessFunction.id,
+        triggersToSync: serverlessFunctionToCreate.triggers || [],
+        workspaceId,
+      });
+    }
+  }
+
+  private async syncDatabaseEventTriggersForServerlessFunction({
+    serverlessFunctionId,
+    triggersToSync,
+    workspaceId,
+  }: {
+    serverlessFunctionId: string;
+    triggersToSync: ServerlessFunctionTriggerManifest[];
+    workspaceId: string;
+  }) {
+    const databaseEventTriggersToSync = triggersToSync.filter(
+      (trigger) => trigger.type === 'databaseEvent',
+    );
+
+    const { flatDatabaseEventTriggerMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatDatabaseEventTriggerMaps'],
+        },
+      );
+
+    const existingDatabaseEventTriggers = Object.values(
+      flatDatabaseEventTriggerMaps.byId,
+    ).filter(
+      (trigger) =>
+        isDefined(trigger) &&
+        trigger.serverlessFunctionId === serverlessFunctionId,
+    ) as FlatDatabaseEventTrigger[];
+
+    const triggersToSyncUniversalIdentifiers = databaseEventTriggersToSync.map(
+      (trigger) => trigger.universalIdentifier,
+    );
+
+    const existingTriggersUniversalIdentifiers =
+      existingDatabaseEventTriggers.map(
+        (trigger) => trigger.universalIdentifier,
+      );
+
+    const triggersToDelete = existingDatabaseEventTriggers.filter(
+      (trigger) =>
+        isDefined(trigger.universalIdentifier) &&
+        !triggersToSyncUniversalIdentifiers.includes(
+          trigger.universalIdentifier,
+        ),
+    );
+
+    const triggersToUpdate = existingDatabaseEventTriggers.filter(
+      (trigger) =>
+        isDefined(trigger.universalIdentifier) &&
+        triggersToSyncUniversalIdentifiers.includes(
+          trigger.universalIdentifier,
+        ),
+    );
+
+    const triggersToCreate = databaseEventTriggersToSync.filter(
+      (triggerToSync) =>
+        !existingTriggersUniversalIdentifiers.includes(
+          triggerToSync.universalIdentifier,
+        ),
+    );
+
+    for (const triggerToDelete of triggersToDelete) {
+      await this.databaseEventTriggerV2Service.destroyOne({
+        destroyDatabaseEventTriggerInput: { id: triggerToDelete.id },
+        workspaceId,
+      });
+    }
+
+    for (const triggerToUpdate of triggersToUpdate) {
+      const triggerToSync = databaseEventTriggersToSync.find(
+        (trigger) =>
+          trigger.universalIdentifier === triggerToUpdate.universalIdentifier,
+      );
+
+      if (!triggerToSync || triggerToSync.type !== 'databaseEvent') {
+        throw new ApplicationException(
+          `Failed to find database event trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
+          ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      const updateDatabaseEventTriggerInput = {
+        id: triggerToUpdate.id,
+        settings: {
+          eventName: triggerToSync.eventName,
+        },
+      };
+
+      await this.databaseEventTriggerV2Service.updateOne(
+        updateDatabaseEventTriggerInput,
+        workspaceId,
+      );
+    }
+
+    for (const triggerToCreate of triggersToCreate) {
+      if (triggerToCreate.type !== 'databaseEvent') {
+        continue;
+      }
+
+      const createDatabaseEventTriggerInput = {
+        settings: {
+          eventName: triggerToCreate.eventName,
+        },
+        serverlessFunctionId,
+      };
+
+      await this.databaseEventTriggerV2Service.createOne(
+        createDatabaseEventTriggerInput,
+        workspaceId,
+      );
+    }
+  }
+
+  private async syncCronTriggersForServerlessFunction({
+    serverlessFunctionId,
+    triggersToSync,
+    workspaceId,
+  }: {
+    serverlessFunctionId: string;
+    triggersToSync: ServerlessFunctionTriggerManifest[];
+    workspaceId: string;
+  }) {
+    const cronTriggersToSync = triggersToSync.filter(
+      (trigger) => trigger.type === 'cron',
+    );
+
+    const { flatCronTriggerMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatCronTriggerMaps'],
+        },
+      );
+
+    const existingCronTriggers = Object.values(flatCronTriggerMaps.byId).filter(
+      (trigger) =>
+        isDefined(trigger) &&
+        trigger.serverlessFunctionId === serverlessFunctionId,
+    ) as FlatCronTrigger[];
+
+    const triggersToSyncUniversalIdentifiers = cronTriggersToSync.map(
+      (trigger) => trigger.universalIdentifier,
+    );
+
+    const existingTriggersUniversalIdentifiers = existingCronTriggers.map(
+      (trigger) => trigger.universalIdentifier,
+    );
+
+    const triggersToDelete = existingCronTriggers.filter(
+      (trigger) =>
+        isDefined(trigger.universalIdentifier) &&
+        !triggersToSyncUniversalIdentifiers.includes(
+          trigger.universalIdentifier,
+        ),
+    );
+
+    const triggersToUpdate = existingCronTriggers.filter(
+      (trigger) =>
+        isDefined(trigger.universalIdentifier) &&
+        triggersToSyncUniversalIdentifiers.includes(trigger.universalIdentifier),
+    );
+
+    const triggersToCreate = cronTriggersToSync.filter(
+      (triggerToSync) =>
+        !existingTriggersUniversalIdentifiers.includes(
+          triggerToSync.universalIdentifier,
+        ),
+    );
+
+    for (const triggerToDelete of triggersToDelete) {
+      await this.cronTriggerV2Service.destroyOne({
+        destroyCronTriggerInput: { id: triggerToDelete.id },
+        workspaceId,
+      });
+    }
+
+    for (const triggerToUpdate of triggersToUpdate) {
+      const triggerToSync = cronTriggersToSync.find(
+        (trigger) =>
+          trigger.universalIdentifier === triggerToUpdate.universalIdentifier,
+      );
+
+      if (!triggerToSync || triggerToSync.type !== 'cron') {
+        throw new ApplicationException(
+          `Failed to find cron trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
+          ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      const updateCronTriggerInput = {
+        id: triggerToUpdate.id,
+        settings: {
+          pattern: triggerToSync.schedule,
+        },
+      };
+
+      await this.cronTriggerV2Service.updateOne(
+        updateCronTriggerInput,
+        workspaceId,
+      );
+    }
+
+    for (const triggerToCreate of triggersToCreate) {
+      if (triggerToCreate.type !== 'cron') {
+        continue;
+      }
+
+      const createCronTriggerInput = {
+        settings: {
+          pattern: triggerToCreate.schedule,
+        },
+        serverlessFunctionId,
+      };
+
+      await this.cronTriggerV2Service.createOne(
+        createCronTriggerInput,
         workspaceId,
       );
     }

@@ -32,7 +32,7 @@ export type ServerlessFunctionManifest = {
   code: ServerlessFunctionCode;
 };
 
-export type ServerlessFunctionTriggerManifest =
+export type ServerlessFunctionTriggerManifest = (
   | {
       type: 'cron';
       schedule: string;
@@ -46,7 +46,10 @@ export type ServerlessFunctionTriggerManifest =
       path: string;
       method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
       isAuthRequired: boolean;
-    };
+    }
+) & {
+  universalIdentifier: string;
+};
 
 export type ObjectManifest = {
   $schema?: string;
