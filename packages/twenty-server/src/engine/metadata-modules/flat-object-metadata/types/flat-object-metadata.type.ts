@@ -22,4 +22,5 @@ export type FlatObjectMetadata = Omit<
   ObjectMetadataRelationProperties | 'dataSourceId'
 > & {
   universalIdentifier: string;
+  fieldMetadataIds: string[];
 };

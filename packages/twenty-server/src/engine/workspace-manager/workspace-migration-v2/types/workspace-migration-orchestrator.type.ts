@@ -24,6 +24,7 @@ export type OrchestratorFailureReport = {
 };
 
 export type OrchestratorActionsReport = {
+  // TODO could improve this typing but making generic actions and using extract
   [P in keyof AllFlatEntitiesByMetadataEngineName]: CreatedDeletedUpdatedActions<WorkspaceMigrationActionV2>;
 } & {
   fieldMetadata: CreatedDeletedUpdatedActions<WorkspaceMigrationActionV2>;

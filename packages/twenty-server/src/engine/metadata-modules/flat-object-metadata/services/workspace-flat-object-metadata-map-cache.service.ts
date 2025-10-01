@@ -28,7 +28,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
 
     @InjectRepository(ObjectMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {
     super(cacheStorageService);
   }
@@ -60,12 +60,12 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
   }: {
     workspaceId: string;
   }): Promise<FlatEntityMaps<FlatObjectMetadata>> {
-    const objectMetadatas = await this.fieldMetadataRepository.find({
+    const objectMetadatas = await this.objectMetadataRepository.find({
       where: {
         workspaceId,
       },
       withDeleted: true,
-      relations: [],
+      relations: ['fields'],
     });
 
     const flatObjectMetadataMaps = objectMetadatas.reduce<

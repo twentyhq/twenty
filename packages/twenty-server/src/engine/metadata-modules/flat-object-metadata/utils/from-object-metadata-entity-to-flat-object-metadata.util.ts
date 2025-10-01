@@ -16,6 +16,9 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
 
   return {
     ...objectMetadataEntityWithoutRelations,
+    fieldMetadataIds: objectMetadataEntity.fields.map(
+      (fieldEntity) => fieldEntity.id,
+    ),
     universalIdentifier:
       objectMetadataEntityWithoutRelations.standardId ??
       objectMetadataEntityWithoutRelations.id,
