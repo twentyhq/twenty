@@ -110,7 +110,7 @@ export const StyledMenuItemLeftContent = styled.div`
   min-width: 0;
   max-width: 100%;
 
-  flex-shrink: 0;
+  flex-shrink: 1;
 `;
 
 export const StyledMenuItemRightContent = styled.div`
