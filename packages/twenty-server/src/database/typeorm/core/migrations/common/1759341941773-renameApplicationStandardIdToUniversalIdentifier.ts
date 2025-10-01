@@ -1,9 +1,9 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RenameApplicationStandardIdToUniversalIdentifier1759341429047
+export class RenameApplicationStandardIdToUniversalIdentifier1759341941773
   implements MigrationInterface
 {
-  name = 'RenameApplicationStandardIdToUniversalIdentifier1759341429047';
+  name = 'RenameApplicationStandardIdToUniversalIdentifier1759341941773';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -13,9 +13,6 @@ export class RenameApplicationStandardIdToUniversalIdentifier1759341429047
       `ALTER TABLE "core"."application" RENAME COLUMN "standardId" TO "universalIdentifier"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agent" ADD "modelConfiguration" jsonb`,
-    );
-    await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_APPLICATION_UNIVERSAL_IDENTIFIER_WORKSPACE_ID_UNIQUE" ON "core"."application" ("universalIdentifier", "workspaceId") WHERE "deletedAt" IS NULL AND "universalIdentifier" IS NOT NULL`,
     );
   }
@@ -23,9 +20,6 @@ export class RenameApplicationStandardIdToUniversalIdentifier1759341429047
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `DROP INDEX "core"."IDX_APPLICATION_UNIVERSAL_IDENTIFIER_WORKSPACE_ID_UNIQUE"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."agent" DROP COLUMN "modelConfiguration"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."application" RENAME COLUMN "universalIdentifier" TO "standardId"`,
