@@ -22,7 +22,6 @@ import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/w
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 import { CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
-
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
   constructor(
@@ -337,9 +336,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
       };
     }
 
-    const relatedFlatEntityMapsKeys = Object.keys(
-      fromToAllFlatEntityMaps,
-    ) as (keyof AllFlatEntityMaps)[];
+    const relatedFlatEntityMapsKeys = [
+      ...new Set([
+        ...Object.keys(fromToAllFlatEntityMaps),
+        ...Object.keys(dependencyAllFlatEntityMaps ?? {}),
+      ]),
+    ] as (keyof AllFlatEntityMaps)[];
 
     // Create util
     const { createFieldActions, createObjectActions } = (
