@@ -7,8 +7,23 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 @Injectable()
 export class RedisClientService implements OnModuleDestroy {
   private redisClient: IORedis | null = null;
+  private redisQueueClient: IORedis | null = null;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
+
+  getQueueClient() {
+    if (!this.redisQueueClient) {
+      const redisQueueUrl = this.twentyConfigService.get('REDIS_QUEUE_URL');
+
+      this.redisQueueClient = redisQueueUrl
+        ? new IORedis(redisQueueUrl, {
+            maxRetriesPerRequest: null,
+          })
+        : this.getClient();
+    }
+
+    return this.redisQueueClient;
+  }
 
   getClient() {
     if (!this.redisClient) {
