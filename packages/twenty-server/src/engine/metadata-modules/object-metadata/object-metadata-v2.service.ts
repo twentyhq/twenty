@@ -242,7 +242,7 @@ export class ObjectMetadataServiceV2 {
           entityToDeleteId: flatIndex.id,
           flatEntityMaps: flatIndexMaps,
         }),
-      existingFlatIndexMaps,
+      fromFlatIndexMaps,
     );
 
     const validateAndBuildResult =
