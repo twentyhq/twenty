@@ -1,8 +1,24 @@
 {
   "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/trigger.schema.json",
   "type": "object",
-  "required": ["type"],
+  "required": ["standardId","universalIdentifier", "type"],
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for validation and IDE support"
+    },
+
+    "universalIdentifier": {
+      "type": "string",
+      "description": "Unique identifier (UUID format recommended)",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+
+    "standardId": {
+      "const": { "$data": "1/universalIdentifier" },
+      "description": "Should be the same as universalIdentifier"
+    },
+
     "type": { "enum": ["cron", "databaseEvent", "route"] },
 
     "schedule": { "type": "string" },

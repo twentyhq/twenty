@@ -168,9 +168,11 @@ export class ServerlessFunctionV2Service {
   async deleteOne({
     deleteServerlessFunctionInput,
     workspaceId,
+    isSystemBuild = false,
   }: {
     deleteServerlessFunctionInput: ServerlessFunctionIdInput;
     workspaceId: string;
+    isSystemBuild?: boolean;
   }): Promise<FlatServerlessFunction> {
     const { flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -211,8 +213,8 @@ export class ServerlessFunctionV2Service {
             },
           },
           buildOptions: {
-            isSystemBuild: false,
             inferDeletionFromMissingEntities: false,
+            isSystemBuild,
           },
           workspaceId,
         },

@@ -6,6 +6,7 @@
   "type": "object",
   "required": [
     "standardId",
+    "universalIdentifier",
     "name"
   ],
   "properties": {
@@ -13,10 +14,14 @@
       "type": "string",
       "description": "JSON Schema reference for validation and IDE support"
     },
-    "standardId": {
+    "universalIdentifier": {
       "type": "string",
-      "description": "Unique identifier for the object (UUID format recommended)",
+      "description": "Unique identifier (UUID format recommended)",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "standardId": {
+      "const": { "$data": "1/universalIdentifier" },
+      "description": "Should be the same as universalIdentifier"
     },
     "name": {
       "type": "string",
@@ -76,17 +81,24 @@
   "examples": [
     {
       "standardId": "550e8400-e29b-41d4-a716-446655440001",
+      "universalIdentifier": "550e8400-e29b-41d4-a716-446655440001",
       "name": "My serverless function",
       "triggers": [
         {
+          "standardId": "550e8400-e29b-41d4-a716-446655440002",
+          "universalIdentifier": "550e8400-e29b-41d4-a716-446655440002",
           "type": "cron",
           "schedule": "0 9 * * *"
         },
         {
+          "standardId": "550e8400-e29b-41d4-a716-446655440003",
+          "universalIdentifier": "550e8400-e29b-41d4-a716-446655440003",
           "type": "databaseEvent",
           "eventName": "company.created"
         },
         {
+          "standardId": "550e8400-e29b-41d4-a716-446655440004",
+          "universalIdentifier": "550e8400-e29b-41d4-a716-446655440004",
           "type": "route",
           "path": "test-route",
           "httpMethod": "GET",

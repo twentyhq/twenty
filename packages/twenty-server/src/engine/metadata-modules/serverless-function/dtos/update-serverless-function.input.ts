@@ -13,6 +13,7 @@ import {
 import graphqlTypeJson from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ServerlessFunctionCodeManifest } from 'src/engine/core-modules/application/types/application.types';
 
 @InputType()
 export class UpdateServerlessFunctionInput {

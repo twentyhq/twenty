@@ -41,6 +41,7 @@ export const validateSchema = async (
     allErrors: true,
     verbose: true,
     strict: false,
+    $data: true,
   });
 
   const schemaUrls = getSchemaUrls();

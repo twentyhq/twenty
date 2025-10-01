@@ -134,9 +134,12 @@ export class AppAddCommand {
   ) {
     const schemas = getSchemaUrls();
 
+    const uuid = v4();
+
     const entityToCreateData: Record<string, string> = {
       $schema: schemas[entity],
-      standardId: v4(),
+      standardId: uuid,
+      universalIdentifier: uuid,
     };
 
     const schemasDir = path.join(__dirname, '../../schemas');
