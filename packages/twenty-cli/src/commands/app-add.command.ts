@@ -22,10 +22,10 @@ const getFolderName = (entity: SyncableEntity) => {
 
 export class AppAddCommand {
   async execute(options: { path?: string }): Promise<void> {
-    const entity = await this.getEntity();
-
     try {
       const appPath = await resolveAppPath(options.path);
+
+      const entity = await this.getEntity();
 
       const appExists = await fs.pathExists(appPath);
 
@@ -49,7 +49,7 @@ export class AppAddCommand {
       await writeJsoncFile(entityPath, entityData);
     } catch (error) {
       console.error(
-        chalk.red(`Add new ${entity} failed:`),
+        chalk.red(`Add new entity failed:`),
         error instanceof Error ? error.message : error,
       );
       process.exit(1);
@@ -59,7 +59,7 @@ export class AppAddCommand {
   private async getEntity() {
     const { entity } = await inquirer.prompt([
       {
-        type: 'list',
+        type: 'select',
         name: 'entity',
         message: `What entity do you want to create?`,
         choices: ['agent', 'object'],
