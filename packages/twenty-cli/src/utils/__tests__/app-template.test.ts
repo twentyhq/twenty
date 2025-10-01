@@ -22,7 +22,7 @@ describe('app-template', () => {
 
       expect(basePackageJson).toEqual({
         $schema: APP_MANIFEST_SCHEMA_URL,
-        standardId: 'mocked-uuid-12345',
+        universalIdentifier: 'mocked-uuid-12345',
         label: 'My Test App',
         description: 'A Twenty application for my-test-app',
         version: '0.0.1',
@@ -40,7 +40,7 @@ describe('app-template', () => {
       const basePackageJson = createBasePackageJson(appName, '');
 
       expect(basePackageJson.label).toBe('Calculator');
-      expect(basePackageJson.standardId).toBe('mocked-uuid-12345');
+      expect(basePackageJson.universalIdentifier).toBe('mocked-uuid-12345');
     });
 
     it('should handle kebab-case app names correctly', () => {
@@ -48,14 +48,14 @@ describe('app-template', () => {
       const basePackageJson = createBasePackageJson(appName, '');
 
       expect(basePackageJson.label).toBe('User Management System');
-      expect(basePackageJson.standardId).toBe('mocked-uuid-12345');
+      expect(basePackageJson.universalIdentifier).toBe('mocked-uuid-12345');
     });
 
-    it('should generate unique standardIds', () => {
+    it('should generate unique universalIdentifiers', () => {
       const basePackageJson = createBasePackageJson('test-app', '');
 
-      expect(basePackageJson.standardId).toBeDefined();
-      expect(typeof basePackageJson.standardId).toBe('string');
+      expect(basePackageJson.universalIdentifier).toBeDefined();
+      expect(typeof basePackageJson.universalIdentifier).toBe('string');
     });
   });
 
