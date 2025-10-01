@@ -138,9 +138,7 @@ export class DnsManagerService {
 
     const publicDomainWithRecords = await this.getHostnameWithRecords(
       workspace.customDomain,
-      {
-        isPublicDomain: true,
-      },
+      options,
     );
 
     assertIsDefinedOrThrow(publicDomainWithRecords);
