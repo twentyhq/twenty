@@ -12,6 +12,7 @@ import {
   WorkspaceMigrationOrchestratorFailedResult,
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
+import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/utils/aggregate-orchestrator-actions-report.util';
 import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/services/workspace-migration-v2-field-actions-builder.service';
@@ -20,8 +21,6 @@ import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/work
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
-import { CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
-import { CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
   constructor(
@@ -343,82 +342,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       ]),
     ] as (keyof AllFlatEntityMaps)[];
 
-    // Create util
-    const { createFieldActions, createObjectActions } = (
-      orchestratorActionsReport.fieldMetadata.created as CreateFieldAction[]
-    ).reduce<{
-      createFieldActions: Record<string, CreateFieldAction>;
-      createObjectActions: Record<string, CreateObjectAction>;
-    }>(
-      (acc, createFieldAction) => {
-        const createObjectOccurence =
-          acc.createObjectActions[createFieldAction.objectMetadataId];
-
-        if (isDefined(createObjectOccurence)) {
-          return {
-            ...acc,
-            createObjectActions: {
-              ...acc.createObjectActions,
-              [createFieldAction.objectMetadataId]: {
-                ...createObjectOccurence,
-                flatFieldMetadatas: [
-                  ...createObjectOccurence.flatFieldMetadatas,
-                  ...createFieldAction.flatFieldMetadatas,
-                ],
-              },
-            },
-          };
-        }
-
-        const createFieldOccurence =
-          acc.createFieldActions[createFieldAction.objectMetadataId];
-
-        if (isDefined(createFieldOccurence)) {
-          return {
-            ...acc,
-            createFieldActions: {
-              ...acc.createFieldActions,
-              [createFieldAction.objectMetadataId]: {
-                ...createFieldOccurence,
-                flatFieldMetadatas: [
-                  ...createFieldOccurence.flatFieldMetadatas,
-                  ...createFieldAction.flatFieldMetadatas,
-                ],
-              },
-            },
-          };
-        }
-
-        return {
-          ...acc,
-          createFieldActions: {
-            ...acc.createFieldActions,
-            [createFieldAction.objectMetadataId]: {
-              ...createFieldAction,
-            },
-          },
-        };
-      },
-      {
-        createFieldActions: {},
-        createObjectActions: (
-          orchestratorActionsReport.objectMetadata
-            .created as CreateObjectAction[]
-        ).reduce(
-          (acc, createObjectAction) => ({
-            ...acc,
-            [createObjectAction.flatObjectMetadata.id]: createObjectAction,
-          }),
-          {},
-        ),
-      },
-    );
-
-    orchestratorActionsReport.fieldMetadata.created =
-      Object.values(createFieldActions);
-    orchestratorActionsReport.objectMetadata.created =
-      Object.values(createObjectActions);
-    ///
+    const { aggregatedOrchestratorActionsReport } =
+      aggregateOrchestratorActionsReport({
+        orchestratorActionsReport,
+      });
 
     return {
       status: 'success',
@@ -426,42 +353,42 @@ export class WorkspaceMigrationBuildOrchestratorService {
         relatedFlatEntityMapsKeys,
         actions: [
           // Object and fields and indexes
-          ...orchestratorActionsReport.index.deleted,
-          ...orchestratorActionsReport.fieldMetadata.deleted,
-          ...orchestratorActionsReport.objectMetadata.deleted,
-          ...orchestratorActionsReport.objectMetadata.created,
-          ...orchestratorActionsReport.objectMetadata.updated,
-          ...orchestratorActionsReport.fieldMetadata.created,
-          ...orchestratorActionsReport.fieldMetadata.updated,
-          ...orchestratorActionsReport.index.created,
-          ...orchestratorActionsReport.index.updated,
+          ...aggregatedOrchestratorActionsReport.index.deleted,
+          ...aggregatedOrchestratorActionsReport.fieldMetadata.deleted,
+          ...aggregatedOrchestratorActionsReport.objectMetadata.deleted,
+          ...aggregatedOrchestratorActionsReport.objectMetadata.created,
+          ...aggregatedOrchestratorActionsReport.objectMetadata.updated,
+          ...aggregatedOrchestratorActionsReport.fieldMetadata.created,
+          ...aggregatedOrchestratorActionsReport.fieldMetadata.updated,
+          ...aggregatedOrchestratorActionsReport.index.created,
+          ...aggregatedOrchestratorActionsReport.index.updated,
           ///
 
           // Views
-          ...orchestratorActionsReport.view.deleted,
-          ...orchestratorActionsReport.view.created,
-          ...orchestratorActionsReport.view.updated,
-          ...orchestratorActionsReport.viewField.deleted,
-          ...orchestratorActionsReport.viewField.created,
-          ...orchestratorActionsReport.viewField.updated,
+          ...aggregatedOrchestratorActionsReport.view.deleted,
+          ...aggregatedOrchestratorActionsReport.view.created,
+          ...aggregatedOrchestratorActionsReport.view.updated,
+          ...aggregatedOrchestratorActionsReport.viewField.deleted,
+          ...aggregatedOrchestratorActionsReport.viewField.created,
+          ...aggregatedOrchestratorActionsReport.viewField.updated,
           ///
 
           // Serverless functions
-          ...orchestratorActionsReport.serverlessFunction.deleted,
-          ...orchestratorActionsReport.serverlessFunction.created,
-          ...orchestratorActionsReport.serverlessFunction.updated,
+          ...aggregatedOrchestratorActionsReport.serverlessFunction.deleted,
+          ...aggregatedOrchestratorActionsReport.serverlessFunction.created,
+          ...aggregatedOrchestratorActionsReport.serverlessFunction.updated,
           ///
 
           // Database event triggers
-          ...orchestratorActionsReport.databaseEventTrigger.deleted,
-          ...orchestratorActionsReport.databaseEventTrigger.created,
-          ...orchestratorActionsReport.databaseEventTrigger.updated,
+          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.deleted,
+          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.created,
+          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.updated,
           ///
 
           // Cron triggers
-          ...orchestratorActionsReport.cronTrigger.deleted,
-          ...orchestratorActionsReport.cronTrigger.created,
-          ...orchestratorActionsReport.cronTrigger.updated,
+          ...aggregatedOrchestratorActionsReport.cronTrigger.deleted,
+          ...aggregatedOrchestratorActionsReport.cronTrigger.created,
+          ...aggregatedOrchestratorActionsReport.cronTrigger.updated,
           ///
         ],
         workspaceId,
