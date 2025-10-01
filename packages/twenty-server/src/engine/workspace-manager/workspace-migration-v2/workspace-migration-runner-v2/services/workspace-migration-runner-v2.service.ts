@@ -60,10 +60,8 @@ export class WorkspaceMigrationRunnerV2Service {
         ) as (keyof AllFlatEntityMaps)[];
 
         flatEntityMapsToInvalidate = [
-          ...new Set([
-            ...optimisticallyUpdatedFlatEntityMapsKeys,
-            ...flatEntityMapsToInvalidate,
-          ]),
+          ...optimisticallyUpdatedFlatEntityMapsKeys,
+          ...flatEntityMapsToInvalidate,
         ];
 
         allFlatEntityMaps = {
@@ -76,7 +74,12 @@ export class WorkspaceMigrationRunnerV2Service {
 
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
-        flatEntities: flatEntityMapsToInvalidate,
+        flatEntities: [
+          ...new Set([
+            ...flatEntityMapsToInvalidate,
+            ...(relatedFlatEntityMapsKeys ?? []),
+          ]),
+        ],
       });
 
       return allFlatEntityMaps;
