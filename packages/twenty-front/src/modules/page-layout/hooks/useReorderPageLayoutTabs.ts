@@ -5,6 +5,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -19,7 +20,7 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
     (result) => {
       const { source, destination, draggableId } = result;
 
-      if (!destination || !currentPageLayout) return;
+      if (!isDefined(destination) || !isDefined(currentPageLayout)) return;
 
       if (
         source.droppableId === destination.droppableId &&
@@ -33,7 +34,7 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
       );
 
       const draggedTab = sortedTabs.find((t) => t.id === draggableId);
-      if (!draggedTab) return;
+      if (!isDefined(draggedTab)) return;
 
       const tabsWithoutDragged = sortedTabs.filter((t) => t.id !== draggableId);
 
