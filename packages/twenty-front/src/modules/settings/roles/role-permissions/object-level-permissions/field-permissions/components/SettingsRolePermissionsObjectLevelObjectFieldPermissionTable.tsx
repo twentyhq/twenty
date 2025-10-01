@@ -17,10 +17,10 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { sortByProperty } from '~/utils/array/sortByProperty';
-import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { turnOrderByIntoSort } from '~/utils/turnOrderByIntoSort';
 
 export const SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID =

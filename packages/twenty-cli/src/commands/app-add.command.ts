@@ -1,11 +1,11 @@
 import chalk from 'chalk';
-import { resolveAppPath } from '../utils/app-path-resolver';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
-import { v4 } from 'uuid';
 import path from 'path';
-import { getSchemaUrls } from '../utils/schema-validator';
+import { v4 } from 'uuid';
+import { resolveAppPath } from '../utils/app-path-resolver';
 import { writeJsoncFile } from '../utils/jsonc-parser';
+import { getSchemaUrls } from '../utils/schema-validator';
 
 type SyncableEntity = 'agent' | 'object';
 
@@ -22,10 +22,10 @@ const getFolderName = (entity: SyncableEntity) => {
 
 export class AppAddCommand {
   async execute(options: { path?: string }): Promise<void> {
-    const entity = await this.getEntity();
-
     try {
       const appPath = await resolveAppPath(options.path);
+
+      const entity = await this.getEntity();
 
       const appExists = await fs.pathExists(appPath);
 
@@ -49,7 +49,7 @@ export class AppAddCommand {
       await writeJsoncFile(entityPath, entityData);
     } catch (error) {
       console.error(
-        chalk.red(`Add new ${entity} failed:`),
+        chalk.red(`Add new entity failed:`),
         error instanceof Error ? error.message : error,
       );
       process.exit(1);
@@ -62,7 +62,6 @@ export class AppAddCommand {
         type: 'select',
         name: 'entity',
         message: `What entity do you want to create?`,
-        default: '',
         choices: ['agent', 'object'],
       },
     ]);

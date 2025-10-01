@@ -15,7 +15,13 @@ export const createBasePackageJson = (
       .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' '),
+    engines: {
+      node: '^24.5.0',
+      npm: 'please-use-yarn',
+      yarn: '>=4.0.2',
+    },
     description,
+    license: 'MIT',
     version: '0.0.1',
   };
 };

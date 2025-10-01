@@ -24,6 +24,7 @@ type Story = StoryObj<typeof MenuItemMultiSelectAvatar>;
 export const Default: Story = {
   args: {
     text: 'First option',
+    contextualText: 'Contextual text',
     avatar: <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" />,
   },
   decorators: [ComponentDecorator, RecoilRootDecorator],

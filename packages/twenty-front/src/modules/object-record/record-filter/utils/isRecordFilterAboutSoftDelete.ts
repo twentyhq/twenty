@@ -18,9 +18,9 @@ export const isRecordFilterAboutSoftDelete = ({
   });
 
   const valueIsNotEmptyFilter =
-    (recordFilter.operand === RecordFilterOperand.Is &&
+    (recordFilter.operand === RecordFilterOperand.IS &&
       !isEmpty(recordFilter.value)) ||
-    recordFilter.operand === RecordFilterOperand.IsNotEmpty;
+    recordFilter.operand === RecordFilterOperand.IS_NOT_EMPTY;
 
   return (
     foundFieldMetadataItem.name === SOFT_DELETE_FILTER_FIELD_NAME &&
