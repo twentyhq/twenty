@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
+import { findObjectFieldsInFlatFieldMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
@@ -31,10 +31,11 @@ export const recomputeIndexAfterFlatObjectMetadataSingularNameUpdate = ({
     nameSingular: updatedSingularName,
   };
 
-  const { objectFlatFieldMetadatas } = findObjectFieldsInFlatFieldMetadataMaps({
-    flatFieldMetadataMaps,
-    objectMetadataId: optimisticFlatObjectMetadata.id,
-  });
+  const { objectFlatFieldMetadatas } =
+    findObjectFieldsInFlatFieldMetadataMapsOrThrow({
+      flatFieldMetadataMaps,
+      flatObjectMetadata: optimisticFlatObjectMetadata,
+    });
 
   return allRelatedFlatIndexMetadata.map<FlatIndexMetadata>((flatIndex) => {
     const newIndex = generateFlatIndexMetadataWithNameOrThrow({

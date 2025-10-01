@@ -85,11 +85,10 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     // TODO prastoin improve doing batchs
     for (const flatFieldMetadata of flatFieldMetadatas) {
-      const flatObjectMetadata =
-        findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityMaps: flatObjectMetadataMaps,
-          flatEntityId: flatFieldMetadata.objectMetadataId,
-        });
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityId: flatFieldMetadata.objectMetadataId,
+      });
 
       const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
         workspaceId,

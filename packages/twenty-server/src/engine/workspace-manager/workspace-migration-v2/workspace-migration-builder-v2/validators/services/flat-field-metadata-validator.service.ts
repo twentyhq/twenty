@@ -55,10 +55,10 @@ export class FlatFieldMetadataValidatorService {
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
       },
     };
-    const relatedFlatObjectMetadata =
+    const flatObjectMetadata =
       flatObjectMetadataMaps.byId[flatFieldMetadataToValidate.objectMetadataId];
 
-    if (!isDefined(relatedFlatObjectMetadata)) {
+    if (!isDefined(flatObjectMetadata)) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: 'field metadata to update object metadata not found',
@@ -68,7 +68,7 @@ export class FlatFieldMetadataValidatorService {
       return validationResult;
     }
 
-    if (!isDefined(relatedFlatObjectMetadata.labelIdentifierFieldMetadataId)) {
+    if (!isDefined(flatObjectMetadata.labelIdentifierFieldMetadataId)) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
         message: 'Label identifier field metadata id does not exist',
@@ -119,6 +119,7 @@ export class FlatFieldMetadataValidatorService {
         ...validateFlatFieldMetadataNameAvailability({
           flatFieldMetadata: flatFieldMetadataToValidate,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+          flatObjectMetadata,
         }),
       );
     }
@@ -292,6 +293,7 @@ export class FlatFieldMetadataValidatorService {
           flatFieldMetadata: flatFieldMetadataToValidate,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           remainingFlatEntityMapsToValidate,
+          flatObjectMetadata: parentFlatObjectMetadata,
         }),
       );
     }

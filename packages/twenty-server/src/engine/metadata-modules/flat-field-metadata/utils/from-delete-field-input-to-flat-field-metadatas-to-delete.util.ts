@@ -13,7 +13,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
-import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
+import { findObjectFieldsInFlatFieldMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 
@@ -52,10 +52,23 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
+  const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: flatFieldMetadataToDelete.objectMetadataId,
+    flatEntityMaps: existingFlatObjectMetadataMaps,
+  });
+
+  if (!isDefined(flatObjectMetadata)) {
+    throw new FieldMetadataException(
+      'Field to delete object metadata not found',
+      FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+    );
+  }
+
   const relatedFlatFieldMetadataToDelete =
     computeFlatFieldMetadataRelatedFlatFieldMetadata({
       flatFieldMetadata: flatFieldMetadataToDelete,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatObjectMetadata,
     });
 
   const flatFieldMetadatasToDelete = [
@@ -128,9 +141,9 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
         flatEntityId: flatIndex.objectMetadataId,
       });
       const { objectFlatFieldMetadatas } =
-        findObjectFieldsInFlatFieldMetadataMaps({
+        findObjectFieldsInFlatFieldMetadataMapsOrThrow({
           flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-          objectMetadataId: flatIndex.objectMetadataId,
+          flatObjectMetadata,
         });
 
       const newIndex = generateFlatIndexMetadataWithNameOrThrow({

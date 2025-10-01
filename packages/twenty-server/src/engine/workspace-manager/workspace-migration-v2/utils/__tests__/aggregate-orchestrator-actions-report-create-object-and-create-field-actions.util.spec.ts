@@ -2,15 +2,15 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { EMPTY_ORCHESTRATOR_ACTIONS_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
+import { aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/utils/aggregate-orchestrator-actions-report-create-object-and-create-field-actions.util';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions } from '../aggregate-orchestrator-actions-report-create-object-and-create-field-actions.util';
 
 type CreateAggregationTestCase = EachTestingContext<{
   input: OrchestratorActionsReport;
@@ -378,6 +378,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         (acc, action) => {
           acc[action.objectMetadataId] =
             (acc[action.objectMetadataId] || 0) + 1;
+
           return acc;
         },
         {} as Record<string, number>,
@@ -389,6 +390,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         (acc, action) => {
           acc[action.flatObjectMetadata.id] =
             (acc[action.flatObjectMetadata.id] || 0) + 1;
+
           return acc;
         },
         {} as Record<string, number>,

@@ -90,7 +90,8 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
       },
     },
     {
-      title: 'should handle mixed scenario with some fields removed and some kept',
+      title:
+        'should handle mixed scenario with some fields removed and some kept',
       context: {
         input: {
           ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
@@ -208,6 +209,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
         (acc, action) => {
           acc[action.objectMetadataId] =
             (acc[action.objectMetadataId] || 0) + 1;
+
           return acc;
         },
         {} as Record<string, number>,
@@ -219,6 +221,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
         (acc, action) => {
           acc[action.objectMetadataId] =
             (acc[action.objectMetadataId] || 0) + 1;
+
           return acc;
         },
         {} as Record<string, number>,

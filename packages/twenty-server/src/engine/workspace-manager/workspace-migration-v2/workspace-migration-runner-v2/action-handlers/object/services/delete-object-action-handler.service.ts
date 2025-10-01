@@ -8,7 +8,7 @@ import {
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
+import { findObjectFieldsInFlatFieldMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -75,15 +75,14 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     } = context;
     const { objectMetadataId } = action;
 
-    const flatObjectMetadataWithFlatFieldMaps =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId: objectMetadataId,
-      });
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: objectMetadataId,
+    });
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
-      flatObjectMetadata: flatObjectMetadataWithFlatFieldMaps,
+      flatObjectMetadata,
     });
 
     await this.workspaceSchemaManagerService.tableManager.dropTable({
@@ -92,9 +91,9 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       tableName,
     });
     const { objectFlatFieldMetadatas } =
-      findObjectFieldsInFlatFieldMetadataMaps({
+      findObjectFieldsInFlatFieldMetadataMapsOrThrow({
         flatFieldMetadataMaps,
-        objectMetadataId,
+        flatObjectMetadata,
       });
     const enumOrCompositeFlatFieldMetadatas = objectFlatFieldMetadatas.filter(
       (field) =>
