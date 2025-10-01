@@ -1,4 +1,7 @@
 import {
+  type BulkRecordsAvailability,
+  type GlobalAvailability,
+  type SingleRecordAvailability,
   type workflowAiAgentActionSchema,
   type workflowCodeActionSchema,
   type workflowCreateRecordActionSchema,
@@ -20,7 +23,7 @@ import {
   type workflowTriggerSchema,
   type workflowUpdateRecordActionSchema,
   type workflowWebhookTriggerSchema,
-} from '@/workflow/validation-schemas/workflowSchema';
+} from 'twenty-shared/workflow';
 import { type z } from 'zod';
 
 export type WorkflowCodeAction = z.infer<typeof workflowCodeActionSchema>;
@@ -81,6 +84,11 @@ export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 export type WorkflowManualTriggerAvailability =
   | 'EVERYWHERE'
   | 'WHEN_RECORD_SELECTED';
+
+export type WorkflowManualTriggerAvailabilityV2 =
+  | GlobalAvailability
+  | SingleRecordAvailability
+  | BulkRecordsAvailability;
 
 export type WorkflowTrigger = z.infer<typeof workflowTriggerSchema>;
 export type WorkflowTriggerType = WorkflowTrigger['type'];

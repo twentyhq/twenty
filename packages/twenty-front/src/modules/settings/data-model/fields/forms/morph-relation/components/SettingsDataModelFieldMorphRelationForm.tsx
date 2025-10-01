@@ -25,7 +25,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldMorphRelationFormSchema = z.object({
-  morphRelationObjectMetadataIds: z.array(z.string().uuid()).min(2),
+  morphRelationObjectMetadataIds: z.array(z.uuid()).min(2),
   relationType: z.enum(
     Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
   ),

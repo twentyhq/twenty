@@ -24,6 +24,5 @@ export const OPPORTUNITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   isLabelSyncedWithName: false,
   workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
   universalIdentifier: '20202020-9549-49dd-b2b2-883999db8938',
-  flatIndexMetadatas: [],
   flatFieldMetadatas: Object.values(OPPORTUNITY_FLAT_FIELDS_MOCK),
 });

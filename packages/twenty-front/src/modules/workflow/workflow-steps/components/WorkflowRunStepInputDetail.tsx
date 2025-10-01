@@ -1,8 +1,11 @@
+import { workflowRunIteratorSubStepIterationIndexComponentState } from '@/command-menu/pages/workflow/step/view-run/states/workflowRunIteratorSubStepIterationIndexComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/components/WorkflowRunStepJsonContainer';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
 import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
@@ -31,6 +34,10 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const workflowRun = useWorkflowRun({ workflowRunId });
   const step = workflowRun?.state?.flow.steps.find(
     (step) => step.id === stepId,
+  );
+
+  const workflowRunIteratorSubStepIterationIndex = useRecoilComponentValue(
+    workflowRunIteratorSubStepIterationIndexComponentState,
   );
 
   if (
@@ -71,6 +78,12 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     stepInfos: workflowRun.state.stepInfos,
     flow: workflowRun.state.flow,
     stepId,
+    currentLoopIterationIndex: getIsDescendantOfIterator({
+      stepId,
+      steps: workflowRun.state.flow.steps,
+    })
+      ? workflowRunIteratorSubStepIterationIndex
+      : undefined,
   });
 
   if (stepContext.length === 0) {

@@ -1,9 +1,8 @@
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
-import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
 import { lazy, Suspense } from 'react';
+import { GraphType, type PageLayoutWidget } from '~/generated-metadata/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
   import(
@@ -38,23 +37,31 @@ const GraphWidgetGaugeChart = lazy(() =>
 );
 
 type GraphWidgetRendererProps = {
-  widget: GraphWidget;
+  widget: PageLayoutWidget;
 };
 
 export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
-  const graphType = widget.configuration?.graphType;
-
-  if (!Object.values(GraphType).includes(graphType)) {
-    return null;
+  if (!widget.configuration || !('graphType' in widget.configuration)) {
+    throw new Error(
+      `Invalid configuration for widget ${widget.id}: missing graphType`,
+    );
   }
 
-  const data = widget.data ?? getDefaultWidgetData(graphType);
+  const graphType = widget.configuration.graphType;
+
+  if (!Object.values(GraphType).includes(graphType)) {
+    throw new Error(
+      `Unsupported graph type ${graphType} for widget ${widget.id}`,
+    );
+  }
+
+  const data: any = getDefaultWidgetData(graphType);
 
   if (!data) {
     return null;
   }
 
-  switch (graphType as GraphType) {
+  switch (graphType) {
     case GraphType.NUMBER:
       return (
         <GraphWidgetNumberChart

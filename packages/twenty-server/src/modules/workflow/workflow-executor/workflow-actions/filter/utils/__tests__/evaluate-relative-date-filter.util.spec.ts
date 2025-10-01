@@ -458,7 +458,7 @@ describe('Relative Date Filter Utils', () => {
         // Different days should not match
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: new Date('2024-01-14T20:00:00Z'),
+            dateToCheck: subDays(now, 1),
             relativeDateFilterValue,
           }),
         ).toBe(false);

@@ -1,15 +1,17 @@
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWidget';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { WidgetContainer } from '@/page-layout/widgets/components/WidgetContainer';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { WidgetHeader } from '@/page-layout/widgets/components/WidgetHeader';
-import { type Widget as WidgetType } from '@/page-layout/widgets/types/Widget';
+import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { type PageLayoutWidget } from '~/generated/graphql';
 
 type WidgetRendererProps = {
-  widget: WidgetType;
+  widget: PageLayoutWidget;
 };
 
 const StyledContent = styled.div`
@@ -23,13 +25,14 @@ const StyledContent = styled.div`
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
+  const { hasAccess, restriction } = useWidgetPermissions(widget);
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
 
   return (
-    <WidgetContainer>
+    <WidgetContainer isRestricted={!hasAccess}>
       <WidgetHeader
         isInEditMode={isPageLayoutInEditMode}
         title={widget.title}
@@ -39,7 +42,14 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         onRemove={() => deletePageLayoutWidget(widget.id)}
       />
       <StyledContent>
-        <WidgetContentRenderer widget={widget} />
+        {!hasAccess ? (
+          <PageLayoutWidgetForbiddenDisplay
+            widgetId={widget.id}
+            restriction={restriction}
+          />
+        ) : (
+          <WidgetContentRenderer widget={widget} />
+        )}
       </StyledContent>
     </WidgetContainer>
   );

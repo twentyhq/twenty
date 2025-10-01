@@ -15,16 +15,19 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  relationFilterValueSchemaObject,
+} from 'twenty-shared/utils';
 
 const filterQueryParamsSchema = z.object({
   viewId: z.string().optional(),
   filter: z
     .record(
-      z.record(
-        z.nativeEnum(ViewFilterOperand),
+      z.string(),
+      z.partialRecord(
+        z.enum(ViewFilterOperand),
         z.string().or(z.array(z.string())).or(relationFilterValueSchemaObject),
       ),
     )

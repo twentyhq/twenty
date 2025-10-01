@@ -239,7 +239,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             },
             flatRelationTargetObjectMetadata:
               fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
-                sourceFlatObjectMetadata,
+                targetFlatObjectMetadata,
               ),
           },
         ],
@@ -254,7 +254,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             },
             flatRelationTargetObjectMetadata:
               fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
-                targetFlatObjectMetadata,
+                sourceFlatObjectMetadata,
               ),
           },
         ],

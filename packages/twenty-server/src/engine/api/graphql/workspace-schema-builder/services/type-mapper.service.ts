@@ -22,6 +22,7 @@ import {
   NumberDataType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
   ArrayFilterType,
@@ -166,6 +167,27 @@ export class TypeMapperService {
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);
+  }
+
+  mapToOrderByWithGroupByType(
+    aggregationType: AggregateOperations,
+  ): GraphQLInputType | undefined {
+    const typeOrderByMapping = new Map<AggregateOperations, GraphQLInputType>([
+      [AggregateOperations.SUM, OrderByDirectionType],
+      [AggregateOperations.COUNT, OrderByDirectionType],
+      [AggregateOperations.COUNT_UNIQUE_VALUES, OrderByDirectionType],
+      [AggregateOperations.COUNT_EMPTY, OrderByDirectionType],
+      [AggregateOperations.COUNT_NOT_EMPTY, OrderByDirectionType],
+      [AggregateOperations.COUNT_TRUE, OrderByDirectionType],
+      [AggregateOperations.COUNT_FALSE, OrderByDirectionType],
+      [AggregateOperations.PERCENTAGE_EMPTY, OrderByDirectionType],
+      [AggregateOperations.PERCENTAGE_NOT_EMPTY, OrderByDirectionType],
+      [AggregateOperations.MIN, OrderByDirectionType],
+      [AggregateOperations.MAX, OrderByDirectionType],
+      [AggregateOperations.AVG, OrderByDirectionType],
+    ]);
+
+    return typeOrderByMapping.get(aggregationType);
   }
 
   applyTypeOptions<T extends GraphQLType = GraphQLType>(

@@ -21,7 +21,7 @@ export const ViewBarFilterDropdownFilterInputMenuHeader = () => {
   );
 
   const isVectorSearchFilter =
-    selectedOperandInDropdown === ViewFilterOperand.VectorSearch;
+    selectedOperandInDropdown === ViewFilterOperand.VECTOR_SEARCH;
 
   const { clearVectorSearchInput } = useClearVectorSearchInput();
 

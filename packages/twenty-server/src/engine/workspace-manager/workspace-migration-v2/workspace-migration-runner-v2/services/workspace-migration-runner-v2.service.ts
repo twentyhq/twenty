@@ -45,12 +45,14 @@ export class WorkspaceMigrationRunnerV2Service {
       for (const action of actions) {
         const partialOptimisticCache =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
-            action.type,
             {
-              action,
-              allFlatEntityMaps,
-              queryRunner,
-              workspaceId,
+              actionType: action.type,
+              context: {
+                action,
+                allFlatEntityMaps,
+                queryRunner,
+                workspaceId,
+              },
             },
           );
         const optimisticallyUpdatedFlatEntityMapsKeys = Object.keys(
@@ -87,6 +89,24 @@ export class WorkspaceMigrationRunnerV2Service {
           console.trace(`Failed to rollback transaction: ${error.message}`);
         }
       }
+
+      const invertedActions = actions.reverse();
+
+      for (const invertedAction of invertedActions) {
+        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
+          {
+            actionType: invertedAction.type,
+            context: {
+              action: invertedAction,
+              allFlatEntityMaps: allFlatEntityMaps,
+              queryRunner,
+              workspaceId,
+            },
+            rollback: true,
+          },
+        );
+      }
+
       throw new WorkspaceQueryRunnerException(
         error.message,
         WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,

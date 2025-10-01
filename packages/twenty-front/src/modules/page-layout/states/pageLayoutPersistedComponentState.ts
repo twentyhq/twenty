@@ -1,10 +1,10 @@
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const pageLayoutPersistedComponentState = createComponentState<
-  PageLayoutWithData | undefined
+  PageLayout | undefined
 >({
   key: 'pageLayoutPersistedComponentState',
   defaultValue: undefined,

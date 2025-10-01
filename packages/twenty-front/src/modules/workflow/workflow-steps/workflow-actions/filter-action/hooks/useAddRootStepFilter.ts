@@ -50,7 +50,7 @@ export const useAddRootStepFilter = () => {
           id: v4(),
           type: 'unknown',
           value: '',
-          operand: ViewFilterOperand.Is,
+          operand: ViewFilterOperand.IS,
           stepFilterGroupId: newStepFilterGroup.id,
           stepOutputKey: '',
           positionInStepFilterGroup: 0,

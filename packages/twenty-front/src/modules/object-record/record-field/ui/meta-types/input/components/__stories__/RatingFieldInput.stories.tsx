@@ -10,8 +10,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { type FieldRatingValue } from '../../../../types/FieldMetadata';
+import { FieldMetadataType, type FieldRatingValue } from 'twenty-shared/types';
 import { useRatingField } from '../../../hooks/useRatingField';
 import { RatingFieldInput } from '../RatingFieldInput';
 

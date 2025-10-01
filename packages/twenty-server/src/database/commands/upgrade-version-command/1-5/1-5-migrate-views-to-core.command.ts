@@ -3,6 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
 import { DataSource, In, Repository, type QueryRunner } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -477,7 +478,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       viewName = 'All {objectLabelPlural}';
     }
 
-    const coreView: Partial<ViewEntity> = {
+    const coreView: QueryDeepPartialEntity<ViewEntity> = {
       id: workspaceView.id,
       name: viewName,
       objectMetadataId: workspaceView.objectMetadataId,
@@ -517,7 +518,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     queryRunner: QueryRunner,
   ): Promise<void> {
     for (const field of workspaceViewFields) {
-      const coreViewField: Partial<ViewFieldEntity> = {
+      const coreViewField: QueryDeepPartialEntity<ViewFieldEntity> = {
         id: field.id,
         fieldMetadataId: field.fieldMetadataId,
         viewId: field.viewId,
@@ -549,7 +550,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      const coreViewFilter: Partial<ViewFilterEntity> = {
+      const coreViewFilter: QueryDeepPartialEntity<ViewFilterEntity> = {
         id: filter.id,
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
@@ -586,7 +587,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
 
       const direction = sort.direction.toUpperCase() as ViewSortDirection;
 
-      const coreViewSort: Partial<ViewSortEntity> = {
+      const coreViewSort: QueryDeepPartialEntity<ViewSortEntity> = {
         id: sort.id,
         fieldMetadataId: sort.fieldMetadataId,
         viewId: sort.viewId,
@@ -616,7 +617,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      const coreViewGroup: Partial<ViewGroupEntity> = {
+      const coreViewGroup: QueryDeepPartialEntity<ViewGroupEntity> = {
         id: group.id,
         fieldMetadataId: group.fieldMetadataId,
         viewId: group.viewId,
@@ -644,20 +645,21 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     )) {
-      const coreViewFilterGroup: Partial<ViewFilterGroupEntity> = {
-        id: filterGroup.id,
-        viewId: filterGroup.viewId,
-        logicalOperator:
-          filterGroup.logicalOperator as ViewFilterGroupLogicalOperator,
-        parentViewFilterGroupId: filterGroup.parentViewFilterGroupId,
-        positionInViewFilterGroup: filterGroup.positionInViewFilterGroup,
-        workspaceId,
-        createdAt: new Date(filterGroup.createdAt),
-        updatedAt: new Date(filterGroup.updatedAt),
-        deletedAt: filterGroup.deletedAt
-          ? new Date(filterGroup.deletedAt)
-          : null,
-      };
+      const coreViewFilterGroup: QueryDeepPartialEntity<ViewFilterGroupEntity> =
+        {
+          id: filterGroup.id,
+          viewId: filterGroup.viewId,
+          logicalOperator:
+            filterGroup.logicalOperator as ViewFilterGroupLogicalOperator,
+          parentViewFilterGroupId: filterGroup.parentViewFilterGroupId,
+          positionInViewFilterGroup: filterGroup.positionInViewFilterGroup,
+          workspaceId,
+          createdAt: new Date(filterGroup.createdAt),
+          updatedAt: new Date(filterGroup.updatedAt),
+          deletedAt: filterGroup.deletedAt
+            ? new Date(filterGroup.deletedAt)
+            : null,
+        };
 
       const repository = queryRunner.manager.getRepository(
         ViewFilterGroupEntity,

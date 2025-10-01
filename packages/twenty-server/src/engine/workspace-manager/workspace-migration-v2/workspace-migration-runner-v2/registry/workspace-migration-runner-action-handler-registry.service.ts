@@ -1,6 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WorkspaceMigrationRunnerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
@@ -52,10 +54,15 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
     });
   }
 
-  async executeActionHandler<T extends WorkspaceMigrationActionV2>(
-    actionType: WorkspaceMigrationActionTypeV2,
-    context: WorkspaceMigrationActionRunnerArgs<T>,
-  ): Promise<Partial<AllFlatEntityMaps>> {
+  async executeActionHandler<T extends WorkspaceMigrationActionV2>({
+    actionType,
+    context,
+    rollback,
+  }: {
+    actionType: WorkspaceMigrationActionTypeV2;
+    context: WorkspaceMigrationActionRunnerArgs<T>;
+    rollback?: boolean;
+  }): Promise<Partial<AllFlatEntityMaps>> {
     const handler = this.actionHandlers.get(actionType);
 
     if (!handler) {
@@ -63,6 +70,12 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
         `No migration runner action handler found for action: ${actionType}`,
         WorkspaceMigrationRunnerExceptionCode.INVALID_ACTION_TYPE,
       );
+    }
+
+    if (isDefined(rollback) && rollback) {
+      await handler.rollback(context);
+
+      return {};
     }
 
     return await handler.execute(context);

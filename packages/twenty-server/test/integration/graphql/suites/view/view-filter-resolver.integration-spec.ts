@@ -14,14 +14,14 @@ import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-g
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
   assertViewFilterStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import {
   ViewFilterExceptionMessageKey,
   generateViewFilterExceptionMessage,
@@ -69,6 +69,15 @@ describe('View Filter Resolver', () => {
   });
 
   afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },

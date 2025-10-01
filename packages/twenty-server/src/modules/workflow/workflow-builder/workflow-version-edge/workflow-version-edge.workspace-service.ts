@@ -176,8 +176,8 @@ export class WorkflowVersionEdgeWorkspaceService {
 
     if (trigger.nextStepIds?.includes(target)) {
       return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
+        existingTrigger: trigger,
+        existingSteps: steps,
       });
     }
 
@@ -191,8 +191,9 @@ export class WorkflowVersionEdgeWorkspaceService {
     });
 
     return computeWorkflowVersionStepChanges({
-      trigger: updatedTrigger,
-      steps,
+      existingTrigger: trigger,
+      existingSteps: steps,
+      updatedTrigger,
     });
   }
 
@@ -227,8 +228,8 @@ export class WorkflowVersionEdgeWorkspaceService {
       !isDefined(sourceConnectionOptions)
     ) {
       return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
+        existingTrigger: trigger,
+        existingSteps: steps,
       });
     }
 
@@ -257,8 +258,9 @@ export class WorkflowVersionEdgeWorkspaceService {
     }
 
     return computeWorkflowVersionStepChanges({
-      trigger,
-      steps: updatedSteps,
+      existingTrigger: trigger,
+      existingSteps: steps,
+      updatedSteps,
     });
   }
 
@@ -375,8 +377,8 @@ export class WorkflowVersionEdgeWorkspaceService {
 
     if (!trigger.nextStepIds?.includes(target)) {
       return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
+        existingTrigger: trigger,
+        existingSteps: steps,
       });
     }
 
@@ -392,8 +394,9 @@ export class WorkflowVersionEdgeWorkspaceService {
     });
 
     return computeWorkflowVersionStepChanges({
-      trigger: updatedTrigger,
-      steps,
+      existingTrigger: trigger,
+      existingSteps: steps,
+      updatedTrigger,
     });
   }
 
@@ -428,8 +431,8 @@ export class WorkflowVersionEdgeWorkspaceService {
       !isDefined(sourceConnectionOptions)
     ) {
       return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
+        existingTrigger: trigger,
+        existingSteps: steps,
       });
     }
 
@@ -453,8 +456,8 @@ export class WorkflowVersionEdgeWorkspaceService {
 
     if (!shouldPersist) {
       return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
+        existingTrigger: trigger,
+        existingSteps: steps,
       });
     }
 
@@ -471,8 +474,9 @@ export class WorkflowVersionEdgeWorkspaceService {
     });
 
     return computeWorkflowVersionStepChanges({
-      trigger,
-      steps: updatedSteps,
+      existingTrigger: trigger,
+      existingSteps: steps,
+      updatedSteps,
     });
   }
 

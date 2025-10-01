@@ -1,6 +1,6 @@
-import { type PageLayoutWithData } from './pageLayoutTypes';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 
 export type DraftPageLayout = Omit<
-  PageLayoutWithData,
+  PageLayout,
   'createdAt' | 'updatedAt' | 'deletedAt'
 >;

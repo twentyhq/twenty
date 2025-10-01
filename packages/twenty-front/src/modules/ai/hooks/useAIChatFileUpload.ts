@@ -4,15 +4,15 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import {
-  type File as FileDocument,
-  useCreateFileMutation,
-} from '~/generated-metadata/graphql';
+import { type FileUIPart } from 'ai';
+import { buildSignedPath, isDefined } from 'twenty-shared/utils';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useUploadFileMutation } from '~/generated-metadata/graphql';
+import { FileFolder } from '~/generated/graphql';
 
 export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
   const coreClient = useApolloCoreClient();
-  const [createFile] = useCreateFileMutation({ client: coreClient });
+  const [uploadFile] = useUploadFileMutation({ client: coreClient });
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] =
@@ -20,23 +20,35 @@ export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
     useRecoilComponentState(agentChatUploadedFilesComponentState, agentId);
 
-  const sendFile = async (file: File) => {
+  const sendFile = async (file: File): Promise<FileUIPart | null> => {
     try {
-      const result = await createFile({
+      const result = await uploadFile({
         variables: {
           file,
+          fileFolder: FileFolder.AgentChat,
         },
       });
 
-      const uploadedFile = result?.data?.createFile;
+      const response = result?.data?.uploadFile;
 
-      if (!isDefined(uploadedFile)) {
+      if (!isDefined(response)) {
         throw new Error(t`Couldn't upload the file.`);
       }
+
+      const signedPath = buildSignedPath({
+        path: response.path,
+        token: response.token,
+      });
+
       setAgentChatSelectedFiles(
         agentChatSelectedFiles.filter((f) => f.name !== file.name),
       );
-      return uploadedFile;
+      return {
+        filename: file.name,
+        mediaType: file.type,
+        url: `${REACT_APP_SERVER_BASE_URL}/files/${signedPath}`,
+        type: 'file',
+      };
     } catch {
       const fileName = file.name;
       enqueueErrorSnackBar({
@@ -51,7 +63,7 @@ export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
       files.map((file) => sendFile(file)),
     );
 
-    const successfulUploads = uploadResults.reduce<FileDocument[]>(
+    const successfulUploads = uploadResults.reduce<FileUIPart[]>(
       (acc, result) => {
         if (result.status === 'fulfilled' && isDefined(result.value)) {
           acc.push(result.value);

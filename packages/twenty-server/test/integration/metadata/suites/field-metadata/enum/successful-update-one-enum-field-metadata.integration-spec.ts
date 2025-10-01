@@ -2,16 +2,14 @@ import { UPDATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata
 import { type CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
@@ -30,6 +28,23 @@ describe.each(fieldMetadataEnumTypes)(
       return;
     }
     const { successful: successfulTestCases } = testCases;
+
+    beforeAll(async () => {
+      await updateFeatureFlag({
+        expectToFail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: false,
+      });
+    });
+
+    afterAll(async () => {
+      await updateFeatureFlag({
+        expectToFail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: true,
+      });
+    });
+
     const initialOptions: CreateOneFieldFactoryInput['options'] = [
       {
         label: 'Option 1',
@@ -49,10 +64,10 @@ describe.each(fieldMetadataEnumTypes)(
       const { data } = await createOneObjectMetadata({
         expectToFail: false,
         input: {
-          labelSingular: LISTING_NAME_SINGULAR,
-          labelPlural: LISTING_NAME_PLURAL,
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
+          labelSingular: 'successUpdateEnumField',
+          labelPlural: 'successUpdateEnumFields',
+          nameSingular: 'successUpdateEnumField',
+          namePlural: 'successUpdateEnumFields',
           icon: 'IconBuildingSkyscraper',
           isLabelSyncedWithName: false,
         },

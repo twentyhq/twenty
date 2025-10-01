@@ -1,12 +1,9 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
   createTestViewWithRestApi,
   findViewByIdWithRestApi,
@@ -14,11 +11,28 @@ import {
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
 describe('deleteOne', () => {
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+    });
+  });
   describe('Kanban aggregate operation', () => {
     let listingObjectId = '';
     let testFieldId = '';
@@ -28,8 +42,8 @@ describe('deleteOne', () => {
       const { data } = await createOneObjectMetadata({
         expectToFail: false,
         input: {
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
+          nameSingular: 'listingv2',
+          namePlural: 'listingsv2',
           labelSingular: 'Listing',
           labelPlural: 'Listings',
           icon: 'IconBuildingSkyscraper',
@@ -61,11 +75,21 @@ describe('deleteOne', () => {
       viewId = createdView.id;
     });
     afterEach(async () => {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: listingObjectId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
       await deleteOneObjectMetadata({
         expectToFail: false,
         input: { idToDelete: listingObjectId },
       });
     });
+
     it('should reset kanban aggregate operation when deleting a field used as kanbanAggregateOperationFieldMetadataId', async () => {
       const viewThatShouldBeUpdated = await findViewByIdWithRestApi(viewId);
 
@@ -79,6 +103,7 @@ describe('deleteOne', () => {
       expect(viewThatShouldBeUpdated.kanbanAggregateOperation).toBe('MAX');
 
       await updateOneFieldMetadata({
+        expectToFail: false,
         input: {
           idToUpdate: testFieldId,
           updatePayload: { isActive: false },
@@ -90,6 +115,7 @@ describe('deleteOne', () => {
       });
 
       const { data } = await deleteOneFieldMetadata({
+        expectToFail: false,
         input: { idToDelete: testFieldId },
       });
 
