@@ -22,7 +22,7 @@ const getFolderName = (entity: SyncableEntity) => {
 
 export class AppAddCommand {
   async execute(options: { path?: string }): Promise<void> {
-    const entity = 'object';
+    const entity = await this.getEntity();
 
     try {
       const appPath = await resolveAppPath(options.path);
@@ -59,10 +59,9 @@ export class AppAddCommand {
   private async getEntity() {
     const { entity } = await inquirer.prompt([
       {
-        type: 'select',
+        type: 'list',
         name: 'entity',
         message: `What entity do you want to create?`,
-        default: '',
         choices: ['agent', 'object'],
       },
     ]);
