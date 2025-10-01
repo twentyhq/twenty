@@ -5,6 +5,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
+import { GRAPH_TYPE_TO_CONFIG_TYPENAME } from '@/command-menu/pages/page-layout/constants/GraphTypeToConfigTypename';
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -46,6 +47,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const handleGraphTypeChange = (graphType: GraphType) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
+        __typename: GRAPH_TYPE_TO_CONFIG_TYPENAME[graphType],
         graphType,
       },
     });
