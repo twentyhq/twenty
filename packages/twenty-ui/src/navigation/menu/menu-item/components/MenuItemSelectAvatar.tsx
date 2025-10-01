@@ -64,10 +64,10 @@ export const MenuItemSelectAvatar = ({
           {contextualText && (
             <>
               <StyledMenuItemLabelLight>
-                <OverflowingTextWithTooltip text={`·`} />
+                <OverflowingTextWithTooltip text="·" />
               </StyledMenuItemLabelLight>
               <StyledMenuItemLabelLight>
-                <OverflowingTextWithTooltip text={`${contextualText}`} />
+                <OverflowingTextWithTooltip text={contextualText} />
               </StyledMenuItemLabelLight>
             </>
           )}
