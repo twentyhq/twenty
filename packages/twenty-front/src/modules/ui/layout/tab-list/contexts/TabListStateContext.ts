@@ -2,9 +2,9 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
-type TabOverflow = {
-  hiddenTabsCount: number;
-  isActiveTabHidden: boolean;
+type TabOverflowState = {
+  overflowCount: number;
+  isActiveTabInOverflow: boolean;
 };
 
 type TablistDimensions = {
@@ -15,10 +15,10 @@ type TablistDimensions = {
 export type TabListStateContextValue = {
   visibleTabs: SingleTabProps[];
   visibleTabCount: number;
-  hiddenTabs: SingleTabProps[];
-  hiddenTabsCount: number;
-  hasHiddenTabs: boolean;
-  overflow: TabOverflow;
+  overflowTabs: SingleTabProps[];
+  overflowCount: number;
+  hasOverflowTabs: boolean;
+  overflow: TabOverflowState;
   activeTabId: string | null;
   loading?: boolean;
   behaveAsLinks: boolean;

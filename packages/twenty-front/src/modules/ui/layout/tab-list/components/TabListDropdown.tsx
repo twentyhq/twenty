@@ -2,8 +2,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
 import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
-import { TabListDropdownDraggableContent } from './TabListDropdownDraggableContent';
-import { TabListDropdownStaticContent } from './TabListDropdownStaticContent';
+import { TabListOverflowDropdownDraggableContent } from './TabListOverflowDropdownDraggableContent';
+import { TabListOverflowDropdownStaticContent } from './TabListOverflowDropdownStaticContent';
 
 export const TabListDropdown = () => {
   const {
@@ -13,7 +13,7 @@ export const TabListDropdown = () => {
     isDragAndDropEnabled,
   } = useTabListStateContextOrThrow();
 
-  const { hiddenTabsCount, isActiveTabHidden } = overflow;
+  const { overflowCount, isActiveTabInOverflow } = overflow;
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -34,15 +34,15 @@ export const TabListDropdown = () => {
       dropdownOffset={{ x: 0, y: 8 }}
       clickableComponent={
         <TabMoreButton
-          hiddenTabsCount={hiddenTabsCount}
-          active={isActiveTabHidden}
+          overflowCount={overflowCount}
+          active={isActiveTabInOverflow}
         />
       }
       dropdownComponents={
         isDragAndDropEnabled ? (
-          <TabListDropdownDraggableContent onSelect={handleSelect} />
+          <TabListOverflowDropdownDraggableContent onSelect={handleSelect} />
         ) : (
-          <TabListDropdownStaticContent onSelect={handleSelect} />
+          <TabListOverflowDropdownStaticContent onSelect={handleSelect} />
         )
       }
     />

@@ -64,11 +64,11 @@ export const useTabListState = ({
     onAddTab,
   ]);
 
-  const hiddenTabs = visibleTabs.slice(visibleTabCount);
-  const hiddenTabsCount = hiddenTabs.length;
-  const hasHiddenTabs = hiddenTabsCount > 0;
-  const isActiveTabHidden =
-    activeTabId !== null && hiddenTabs.some((tab) => tab.id === activeTabId);
+  const overflowTabs = visibleTabs.slice(visibleTabCount);
+  const overflowCount = overflowTabs.length;
+  const hasOverflowTabs = overflowCount > 0;
+  const isActiveTabInOverflow =
+    activeTabId !== null && overflowTabs.some((tab) => tab.id === activeTabId);
 
   const handleTabSelect = useCallback(
     (tabId: string) => {
@@ -148,12 +148,12 @@ export const useTabListState = ({
   const contextValue: TabListStateContextValue = {
     visibleTabs,
     visibleTabCount,
-    hiddenTabs,
-    hiddenTabsCount,
-    hasHiddenTabs,
+    overflowTabs,
+    overflowCount,
+    hasOverflowTabs,
     overflow: {
-      hiddenTabsCount,
-      isActiveTabHidden,
+      overflowCount,
+      isActiveTabInOverflow,
     },
     activeTabId,
     loading,

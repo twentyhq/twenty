@@ -35,7 +35,7 @@ const StyledAddButton = styled.div`
 `;
 
 export const TabListContentBody = () => {
-  const { className, onContainerWidthChange, hasHiddenTabs, onAddTab } =
+  const { className, onContainerWidthChange, hasOverflowTabs, onAddTab } =
     useTabListStateContextOrThrow();
 
   return (
@@ -43,7 +43,7 @@ export const TabListContentBody = () => {
       <StyledContainer className={className}>
         <TabListVisibleTabsArea />
 
-        {hasHiddenTabs && <TabListDropdown />}
+        {hasOverflowTabs && <TabListDropdown />}
 
         {isDefined(onAddTab) && (
           <StyledAddButton>

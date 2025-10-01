@@ -3,19 +3,20 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
 import { TabListDropdownMenuItem } from './TabListDropdownMenuItem';
 
-type TabListDropdownStaticContentProps = {
+type TabListOverflowDropdownStaticContentProps = {
   onSelect: (tabId: string) => void;
 };
 
-export const TabListDropdownStaticContent = ({
+export const TabListOverflowDropdownStaticContent = ({
   onSelect,
-}: TabListDropdownStaticContentProps) => {
-  const { hiddenTabs, activeTabId, loading } = useTabListStateContextOrThrow();
+}: TabListOverflowDropdownStaticContentProps) => {
+  const { overflowTabs, activeTabId, loading } =
+    useTabListStateContextOrThrow();
 
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        {hiddenTabs.map((tab) => (
+        {overflowTabs.map((tab) => (
           <TabListDropdownMenuItem
             key={tab.id}
             tab={tab}

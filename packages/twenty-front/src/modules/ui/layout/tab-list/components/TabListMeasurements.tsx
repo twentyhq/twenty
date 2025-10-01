@@ -58,7 +58,7 @@ export const TabListMeasurements = () => {
       ))}
 
       <NodeDimension onDimensionChange={onMoreButtonWidthChange}>
-        <TabMoreButton hiddenTabsCount={1} active={false} />
+        <TabMoreButton overflowCount={1} active={false} />
       </NodeDimension>
 
       {onAddTab && (

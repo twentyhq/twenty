@@ -1,5 +1,4 @@
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
-import { TAB_LIST_DROPPABLE_IDS } from '@/ui/layout/tab-list/constants/TabListDroppableIds';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';

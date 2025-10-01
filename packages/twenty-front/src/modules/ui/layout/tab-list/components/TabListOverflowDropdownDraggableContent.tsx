@@ -13,7 +13,7 @@ import {
 import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
 import { TabListDropdownMenuItem } from './TabListDropdownMenuItem';
 
-type TabListDropdownDraggableContentProps = {
+type TabListOverflowDropdownDraggableContentProps = {
   onSelect: (tabId: string) => void;
 };
 
@@ -25,11 +25,11 @@ const StyledDraggableWrapper = styled.div`
   }
 `;
 
-export const TabListDropdownDraggableContent = ({
+export const TabListOverflowDropdownDraggableContent = ({
   onSelect,
-}: TabListDropdownDraggableContentProps) => {
+}: TabListOverflowDropdownDraggableContentProps) => {
   const theme = useTheme();
-  const { hiddenTabs, activeTabId, loading, visibleTabCount } =
+  const { overflowTabs, activeTabId, loading, visibleTabCount } =
     useTabListStateContextOrThrow();
 
   const renderClone = (
@@ -37,8 +37,8 @@ export const TabListDropdownDraggableContent = ({
     _snapshot: DraggableStateSnapshot,
     rubric: DraggableRubric,
   ) => {
-    const hiddenIndex = rubric.source.index - visibleTabCount;
-    const tab = hiddenTabs[hiddenIndex];
+    const overflowIndex = rubric.source.index - visibleTabCount;
+    const tab = overflowTabs[overflowIndex];
     if (!tab) return null;
 
     return (
@@ -67,7 +67,7 @@ export const TabListDropdownDraggableContent = ({
   return (
     <DropdownContent>
       <Droppable
-        droppableId={TAB_LIST_DROPPABLE_IDS.HIDDEN_TABS}
+        droppableId={TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
         renderClone={renderClone}
       >
         {(provided) => (
@@ -77,7 +77,7 @@ export const TabListDropdownDraggableContent = ({
             {...provided.droppableProps}
           >
             <DropdownMenuItemsContainer>
-              {hiddenTabs.map((tab, index) => {
+              {overflowTabs.map((tab, index) => {
                 const globalIndex = visibleTabCount + index;
 
                 return (
