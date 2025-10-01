@@ -76,7 +76,11 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
             const handleToggleChange = () => {
               updateCurrentWidgetConfig({
-                [item.id]: !getChartSettingsValues(item.id),
+                configToUpdate: {
+                  [item.id === CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS
+                    ? 'displayDataLabel'
+                    : item.id]: !getChartSettingsValues(item.id),
+                },
               });
             };
 
