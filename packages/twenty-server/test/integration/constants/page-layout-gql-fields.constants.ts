@@ -81,8 +81,6 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     graphType
     aggregateFieldMetadataId
     aggregateOperation
-    aggregateOperationTotal
-    aggregateFieldMetadataIdTotal
     description
     filter
   }

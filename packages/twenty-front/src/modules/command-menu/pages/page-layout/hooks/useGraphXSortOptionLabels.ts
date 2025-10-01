@@ -1,18 +1,12 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
-import { type IconArrowUp } from 'twenty-ui/display';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import {
   type ExtendedAggregateOperations,
   GraphOrderBy,
 } from '~/generated/graphql';
-
-export type SortOptionItem = {
-  value: GraphOrderBy;
-  label: string;
-  icon: typeof IconArrowUp;
-};
 
 export const useGraphXSortOptionLabels = ({
   objectMetadataId,
@@ -40,7 +34,7 @@ export const useGraphXSortOptionLabels = ({
       (fieldMetadataItem) => fieldMetadataItem.id === groupByFieldMetadataIdX,
     );
 
-    const fieldLabel = groupByField?.label || 'Field';
+    const fieldLabel = groupByField?.label || t`Field`;
 
     const aggregateField = objectMetadataItem?.fields.find(
       (fieldMetadataItem) =>
@@ -51,17 +45,19 @@ export const useGraphXSortOptionLabels = ({
     const valueLabel =
       aggregateField?.label && isDefined(aggregateOperation)
         ? getAggregateOperationLabel(aggregateOperation)
-        : 'Value';
+        : t`Value`;
 
     switch (graphOrderBy) {
       case GraphOrderBy.FIELD_ASC:
-        return `${fieldLabel} Ascending`;
+        return `${fieldLabel} ${t`Ascending`}`;
       case GraphOrderBy.FIELD_DESC:
-        return `${fieldLabel} Descending`;
+        return `${fieldLabel} ${t`Descending`}`;
       case GraphOrderBy.VALUE_ASC:
-        return `${valueLabel} Ascending`;
+        return `${valueLabel} ${t`Ascending`}`;
       case GraphOrderBy.VALUE_DESC:
-        return `${valueLabel} Descending`;
+        return `${valueLabel} ${t`Descending`}`;
+      default:
+        assertUnreachable(graphOrderBy);
     }
   };
 

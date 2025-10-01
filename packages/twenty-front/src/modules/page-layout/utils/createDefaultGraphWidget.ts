@@ -71,7 +71,6 @@ const createDefaultGraphConfiguration = (
         graphType: GraphType.GAUGE,
         aggregateOperation: ExtendedAggregateOperations.COUNT,
         aggregateFieldMetadataId: placeholderFieldId1,
-        aggregateOperationTotal: ExtendedAggregateOperations.COUNT,
         displayDataLabel: false,
         color: 'blue' satisfies ThemeColor,
       };

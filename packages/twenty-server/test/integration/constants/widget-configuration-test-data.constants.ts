@@ -1,4 +1,5 @@
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
 import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
@@ -38,7 +39,7 @@ export const TEST_BAR_CHART_CONFIG = {
   groupByFieldMetadataIdX: TEST_FIELD_METADATA_ID_2,
   orderByX: GraphOrderBy.FIELD_ASC,
   displayDataLabel: true,
-  axisNameDisplay: 'BOTH',
+  axisNameDisplay: AxisNameDisplay.BOTH,
   color: 'red',
   description: 'Monthly revenue breakdown',
   omitNullValues: true,
@@ -64,7 +65,7 @@ export const TEST_LINE_CHART_CONFIG = {
   groupByFieldMetadataIdY: TEST_FIELD_METADATA_ID_3,
   orderByY: GraphOrderBy.FIELD_DESC,
   displayDataLabel: true,
-  axisNameDisplay: 'BOTH',
+  axisNameDisplay: AxisNameDisplay.BOTH,
   color: 'cyan',
   description: 'Trend over time',
   omitNullValues: false,
@@ -114,8 +115,6 @@ export const TEST_GAUGE_CHART_CONFIG = {
   graphType: GraphType.GAUGE,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
-  aggregateOperationTotal: AggregateOperations.COUNT,
-  aggregateFieldMetadataIdTotal: TEST_FIELD_METADATA_ID_2,
   description: 'Completion percentage',
   filter: {
     or: [
@@ -132,8 +131,6 @@ export const TEST_GAUGE_CHART_CONFIG_MINIMAL = {
   graphType: GraphType.GAUGE,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT_TRUE,
-  aggregateOperationTotal: AggregateOperations.COUNT,
-  aggregateFieldMetadataIdTotal: TEST_FIELD_METADATA_ID_2,
 };
 
 export const INVALID_IFRAME_CONFIG_BAD_URL = {

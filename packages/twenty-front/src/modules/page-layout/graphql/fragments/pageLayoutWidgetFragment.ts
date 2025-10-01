@@ -73,7 +73,6 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         graphType
         aggregateFieldMetadataId
         aggregateOperation
-        aggregateOperationTotal
         displayDataLabel
         color
         description

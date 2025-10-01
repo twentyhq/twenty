@@ -34,14 +34,8 @@ export class GaugeChartConfigurationDTO {
   @IsNotEmpty()
   aggregateOperation: ExtendedAggregateOperations;
 
-  @Field(() => ExtendedAggregateOperations)
-  @IsEnum(ExtendedAggregateOperations)
-  @IsNotEmpty()
-  aggregateOperationTotal: ExtendedAggregateOperations;
-
   @Field(() => Boolean)
   @IsBoolean()
-  @IsNotEmpty()
   displayDataLabel: boolean;
 
   @Field(() => String, { nullable: true })

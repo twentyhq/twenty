@@ -72,7 +72,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   const { getIcon } = useIcons();
 
   if (!isDefined(sourceObjectMetadataItem)) {
-    return;
+    return null;
   }
 
   if (isSubMenuOpen) {

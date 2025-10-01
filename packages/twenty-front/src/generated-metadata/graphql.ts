@@ -1354,7 +1354,6 @@ export type GaugeChartConfiguration = {
   __typename?: 'GaugeChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: ExtendedAggregateOperations;
-  aggregateOperationTotal: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel: Scalars['Boolean'];

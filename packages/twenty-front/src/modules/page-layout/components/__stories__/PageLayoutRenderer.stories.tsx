@@ -89,7 +89,6 @@ const mixedGraphsPageLayoutMocks = {
             graphType: GraphType.GAUGE,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
-            aggregateOperationTotal: ExtendedAggregateOperations.COUNT,
             displayDataLabel: false,
           },
           createdAt: '2024-01-01T00:00:00Z',

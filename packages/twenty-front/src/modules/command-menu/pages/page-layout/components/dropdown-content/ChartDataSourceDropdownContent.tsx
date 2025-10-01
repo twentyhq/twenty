@@ -94,7 +94,7 @@ export const ChartDataSourceDropdownContent = () => {
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
           selectableItemIdArray={availableObjectMetadataItems.map(
-            (item) => item.id,
+            (objectMetadataItem) => objectMetadataItem.id,
           )}
         >
           {availableObjectMetadataItems.map((objectMetadataItem) => (

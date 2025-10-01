@@ -72,7 +72,7 @@ export const ChartGroupByFieldSelectionDropdownContent = () => {
   const { getIcon } = useIcons();
 
   if (!isDefined(sourceObjectMetadataItem)) {
-    return;
+    return null;
   }
 
   const handleSelectField = (fieldMetadataId: string) => {

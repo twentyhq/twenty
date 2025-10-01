@@ -18,6 +18,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
@@ -87,7 +88,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   const { closeDropdown } = useCloseDropdown();
 
   if (!isDefined(sourceObjectMetadataItem) || !isDefined(selectedField)) {
-    return;
+    return null;
   }
 
   const handleSelectAggregateOperation = (
@@ -118,7 +119,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
       <DropdownMenuSearchInput
         autoFocus
         type="text"
-        placeholder="Search operations"
+        placeholder={t`Search operations`}
         onChange={(event) => setSearchQuery(event.target.value)}
         value={searchQuery}
       />
@@ -127,9 +128,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
-          selectableItemIdArray={filteredAggregateOperations.map(
-            (operation) => operation,
-          )}
+          selectableItemIdArray={filteredAggregateOperations}
         >
           {filteredAggregateOperations.map((aggregateOperation) => (
             <SelectableListItem

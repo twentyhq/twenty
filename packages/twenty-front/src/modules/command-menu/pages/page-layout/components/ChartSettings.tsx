@@ -10,7 +10,10 @@ import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/u
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
+import {
+  CHART_CONFIGURATION_SETTING_IDS,
+  CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP,
+} from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartSettingsDropdownContent } from '@/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -78,11 +81,16 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
               item?.dependsOn?.includes(CHART_CONFIGURATION_SETTING_IDS.SOURCE);
 
             const handleToggleChange = () => {
+              const configKey =
+                item.id === CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS
+                  ? CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP[
+                      CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS
+                    ]
+                  : item.id;
+
               updateCurrentWidgetConfig({
                 configToUpdate: {
-                  [item.id === CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS
-                    ? 'displayDataLabel'
-                    : item.id]: !getChartSettingsValues(item.id),
+                  [configKey]: !getChartSettingsValues(item.id),
                 },
               });
             };

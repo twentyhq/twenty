@@ -368,7 +368,6 @@ export const getPageLayoutWidgetDataSeeds = (
             graphType: 'GAUGE',
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.AVG,
-            aggregateOperationTotal: AggregateOperations.MAX,
             displayDataLabel: true,
           }
         : null,

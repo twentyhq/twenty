@@ -33,7 +33,7 @@ export const ChartTypeSelectionSection = ({
       {graphTypeOptions.map((graphType) => (
         <MenuPicker
           selected={currentGraphType === graphType}
-          key={t(GRAPH_TYPE_INFORMATION[graphType].label)}
+          key={graphType}
           icon={GRAPH_TYPE_INFORMATION[graphType].icon}
           onClick={() => {
             setCurrentGraphType(graphType);
