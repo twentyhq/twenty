@@ -1,3 +1,5 @@
+import { type ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
+
 export type PackageJson = {
   $schema?: string;
   standardId: string;
@@ -27,7 +29,7 @@ export type ServerlessFunctionManifest = {
   description?: string;
   timeoutSeconds?: number;
   triggers: ServerlessFunctionTriggerManifest[];
-  code: ServerlessFunctionCodeManifest;
+  code: ServerlessFunctionCode;
 };
 
 export type ServerlessFunctionTriggerManifest =
@@ -45,14 +47,6 @@ export type ServerlessFunctionTriggerManifest =
       method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
       isAuthRequired: boolean;
     };
-
-type Sources = { [key: string]: string | Sources };
-
-export type ServerlessFunctionCodeManifest = {
-  src: {
-    'index.ts': string;
-  } & Sources;
-};
 
 export type ObjectManifest = {
   $schema?: string;

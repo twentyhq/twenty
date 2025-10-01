@@ -86,7 +86,7 @@ const loadCoreEntity = async (
 const loadFolderContentIntoJson = async (
   sourcePath: string,
 ): Promise<Sources> => {
-  let sources: Sources = {};
+  const sources: Sources = {};
 
   const resources = await fs.readdir(sourcePath);
 

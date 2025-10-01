@@ -1,13 +1,17 @@
 import { createReadStream, existsSync } from 'fs';
 import * as fs from 'fs/promises';
-import { dirname, join } from 'path';
+import path, { dirname, join } from 'path';
 import { type Readable } from 'stream';
+
+import { isObject } from '@sniptt/guards';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+
+import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 
 export interface LocalDriverOptions {
   storagePath: string;
@@ -40,6 +44,21 @@ export class LocalDriver implements StorageDriver {
     await this.createFolder(folderPath);
 
     await fs.writeFile(filePath, params.file);
+  }
+
+  async writeFolder(sources: Sources, folderPath: string) {
+    for (const key of Object.keys(sources)) {
+      if (isObject(sources[key])) {
+        await this.writeFolder(sources[key], join(folderPath, key));
+        continue;
+      }
+      await this.write({
+        file: sources[key],
+        name: key,
+        mimeType: undefined,
+        folder: folderPath,
+      });
+    }
   }
 
   async delete(params: {
@@ -84,6 +103,30 @@ export class LocalDriver implements StorageDriver {
 
       throw error;
     }
+  }
+
+  async readFolder(folderPath: string): Promise<Sources> {
+    const sources: Sources = {};
+
+    const rootFolderPath = join(`${this.options.storagePath}/`, folderPath);
+
+    const resources = await fs.readdir(rootFolderPath);
+
+    for (const resource of resources) {
+      const resourcePath = path.join(rootFolderPath, resource);
+
+      const stats = await fs.stat(resourcePath);
+
+      if (stats.isFile()) {
+        sources[resource] = await fs.readFile(resourcePath, 'utf8');
+      } else {
+        sources[resource] = await this.readFolder(
+          path.join(folderPath, resource),
+        );
+      }
+    }
+
+    return sources;
   }
 
   async move(params: {

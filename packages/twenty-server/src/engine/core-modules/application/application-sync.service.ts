@@ -346,8 +346,8 @@ export class ApplicationSyncService {
     );
 
     for (const serverlessFunctionToDelete of serverlessFunctionsToDelete) {
-      await this.serverlessFunctionV2Service.deleteOne({
-        deleteServerlessFunctionInput: { id: serverlessFunctionToDelete.id },
+      await this.serverlessFunctionV2Service.destroyOne({
+        destroyServerlessFunctionInput: { id: serverlessFunctionToDelete.id },
         workspaceId,
         isSystemBuild: true,
       });
@@ -370,6 +370,7 @@ export class ApplicationSyncService {
       const updateServerlessFunctionInput = {
         id: serverlessFunctionToUpdate.id,
         name: serverlessFunctionToSync.name,
+        timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
         code: serverlessFunctionToSync.code,
       };
 
@@ -380,7 +381,19 @@ export class ApplicationSyncService {
     }
 
     for (const serverlessFunctionToCreate of serverlessFunctionsToCreate) {
-      //await
+      const createServerlessFunctionInput = {
+        name: serverlessFunctionToCreate.name,
+        code: serverlessFunctionToCreate.code,
+        universalIdentifier: serverlessFunctionToCreate.universalIdentifier,
+        timeoutSeconds: serverlessFunctionToCreate.timeoutSeconds,
+        applicationId,
+        serverlessFunctionLayerId,
+      };
+
+      await this.serverlessFunctionV2Service.createOne(
+        createServerlessFunctionInput,
+        workspaceId,
+      );
     }
   }
 }
