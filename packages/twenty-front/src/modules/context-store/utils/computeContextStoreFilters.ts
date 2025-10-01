@@ -2,13 +2,15 @@ import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/con
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import {
   type RecordFilterValueDependencies,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
-import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
+import {
+  computeRecordGqlOperationFilter,
+  turnAnyFieldFilterIntoRecordGqlFilter,
+} from 'twenty-shared/utils';
 
 type ComputeContextStoreFiltersProps = {
   contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule;
@@ -32,7 +34,7 @@ export const computeContextStoreFilters = ({
   const { recordGqlOperationFilter: recordGqlFilterForAnyFieldFilter } =
     turnAnyFieldFilterIntoRecordGqlFilter({
       filterValue: contextStoreAnyFieldFilterValue,
-      objectMetadataItem,
+      fields: objectMetadataItem.fields,
     });
 
   if (contextStoreTargetedRecordsRule.mode === 'exclusion') {
