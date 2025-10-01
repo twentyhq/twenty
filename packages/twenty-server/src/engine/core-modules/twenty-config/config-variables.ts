@@ -855,6 +855,21 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
+    isSensitive: true,
+    description: 'URL for queues (e.g., Redis connection URL)',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsUrl({
+    protocols: ['redis', 'rediss'],
+    require_tld: false,
+    allow_underscores: true,
+  })
+  REDIS_QUEUE_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,
     options: Object.values(NodeEnvironment),
