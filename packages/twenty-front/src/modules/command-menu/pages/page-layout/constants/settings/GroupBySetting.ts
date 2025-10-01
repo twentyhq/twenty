@@ -1,9 +1,11 @@
+import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
+import { CHART_CONFIGURATION_SETTING_LABELS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingLabels';
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { IconFilters } from 'twenty-ui/display';
 
 export const GROUP_BY_SETTING: ChartSettingsItem = {
   isBoolean: false,
   Icon: IconFilters,
-  label: 'Group by',
-  id: 'group-by-y',
+  label: CHART_CONFIGURATION_SETTING_LABELS.GROUP_BY,
+  id: CHART_CONFIGURATION_SETTING_IDS.GROUP_BY_Y,
 };

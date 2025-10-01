@@ -1,5 +1,6 @@
 import { useGraphSortOptions } from '@/command-menu/pages/page-layout/hooks/useGraphSortOptions';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
@@ -61,28 +62,28 @@ export const useChartSettingsValues = ({
   )?.label;
 
   const getChartSettingsValues = (
-    itemId: string,
+    itemId: CHART_CONFIGURATION_SETTING_IDS,
   ): boolean | string | undefined => {
     switch (itemId) {
-      case 'source':
+      case CHART_CONFIGURATION_SETTING_IDS.SOURCE:
         return objectMetadataItem?.labelPlural;
-      case 'data-on-display-x':
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X:
         return groupByFieldX?.label;
-      case 'colors':
+      case CHART_CONFIGURATION_SETTING_IDS.COLORS:
         return 'color' in configuration
           ? capitalize(configuration.color ?? '')
           : undefined;
-      case 'data-on-display-y':
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
         return `${aggregateField?.label ?? ''}${aggregateField?.label ? ` (${getAggregateOperationLabel(yAxisAggregateOperation)})` : ''}`;
-      case 'group-by-y':
+      case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY_Y:
         return groupByFieldY?.label;
-      case 'axis-name':
+      case CHART_CONFIGURATION_SETTING_IDS.AXIS_NAME:
         return 'axisNameDisplay' in configuration
           ? getChartAxisNameDisplayOptions(configuration.axisNameDisplay)
           : undefined;
-      case 'sort-by-x':
+      case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X:
         return xAxisOrderByLabel;
-      case 'data-labels':
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS:
         return configuration.displayDataLabel;
       default:
         return '';

@@ -73,8 +73,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                 toggled={getChartSettingsValues(item.id) as boolean}
                 onToggleChange={() => {
                   updateCurrentWidgetConfig({
-                    [item.id === 'data-labels' ? 'dataLabels' : item.id]:
-                      !getChartSettingsValues(item.id),
+                    [item.id]: !getChartSettingsValues(item.id),
                   });
                 }}
               />

@@ -1,9 +1,11 @@
+import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
+import { CHART_CONFIGURATION_SETTING_LABELS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingLabels';
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { IconArrowsSort } from 'twenty-ui/display';
 
 export const SORT_BY_X_SETTING: ChartSettingsItem = {
   isBoolean: false,
   Icon: IconArrowsSort,
-  label: 'Sort by',
-  id: 'sort-by-x',
+  label: CHART_CONFIGURATION_SETTING_LABELS.SORT_BY_X,
+  id: CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X,
 };
