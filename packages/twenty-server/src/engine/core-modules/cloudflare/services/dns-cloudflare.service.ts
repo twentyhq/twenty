@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
 
 @Injectable()
 export class DnsCloudflareService {
   constructor(
-    @InjectRepository(PublicDomain)
-    private readonly publicDomainRepository: Repository<PublicDomain>,
     private readonly workspaceService: WorkspaceService,
     private readonly publicDomainService: PublicDomainService,
   ) {}
@@ -24,9 +19,7 @@ export class DnsCloudflareService {
       await this.workspaceService.checkCustomDomainValidRecords(workspace);
     }
 
-    const publicDomain = await this.publicDomainRepository.findOneBy({
-      domain: hostname,
-    });
+    const publicDomain = await this.publicDomainService.findByDomain(hostname);
 
     if (isDefined(publicDomain)) {
       await this.publicDomainService.checkPublicDomainValidRecords(

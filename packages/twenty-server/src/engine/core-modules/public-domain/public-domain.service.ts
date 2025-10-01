@@ -134,4 +134,8 @@ export class PublicDomainService {
 
     return publicDomainWithRecords;
   }
+
+  async findByDomain(domain: string) {
+    return this.publicDomainRepository.findOne({ where: { domain } });
+  }
 }
