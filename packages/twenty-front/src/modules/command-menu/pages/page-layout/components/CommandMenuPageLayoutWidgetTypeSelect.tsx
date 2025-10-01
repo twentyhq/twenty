@@ -6,6 +6,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,38 +28,54 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
       pageLayoutId,
     );
 
+  const handleNavigateToGraphTypeSelect = () => {
+    if (!isDefined(pageLayoutEditingWidgetId)) {
+      const newWidget = createPageLayoutGraphWidget(
+        WidgetType.GRAPH,
+        GraphType.BAR,
+      );
+
+      setPageLayoutEditingWidgetId(newWidget.id);
+    }
+
+    navigatePageLayoutCommandMenu({
+      commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
+    });
+  };
+
+  const handleNavigateToIframeConfig = () => {
+    navigatePageLayoutCommandMenu({
+      commandMenuPage: CommandMenuPages.PageLayoutIframeConfig,
+    });
+  };
+
   return (
     <CommandMenuList commandGroups={[]} selectableItemIds={['chart', 'iframe']}>
       <CommandGroup heading={t`Widget type`}>
-        <CommandMenuItem
-          Icon={IconChartPie}
-          label={t`Chart`}
-          id="chart"
-          onClick={() => {
-            if (!isDefined(pageLayoutEditingWidgetId)) {
-              const newWidget = createPageLayoutGraphWidget(
-                WidgetType.GRAPH,
-                GraphType.BAR,
-              );
-
-              setPageLayoutEditingWidgetId(newWidget.id);
-            }
-
-            navigatePageLayoutCommandMenu({
-              commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
-            });
+        <SelectableListItem
+          itemId="chart"
+          onEnter={handleNavigateToGraphTypeSelect}
+        >
+          <CommandMenuItem
+            Icon={IconChartPie}
+            label={t`Chart`}
+            id="chart"
+            onClick={handleNavigateToGraphTypeSelect}
+          />
+        </SelectableListItem>
+        <SelectableListItem
+          itemId="iframe"
+          onEnter={() => {
+            handleNavigateToIframeConfig();
           }}
-        />
-        <CommandMenuItem
-          Icon={IconFrame}
-          label="iFrame"
-          id="iframe"
-          onClick={() => {
-            navigatePageLayoutCommandMenu({
-              commandMenuPage: CommandMenuPages.PageLayoutIframeConfig,
-            });
-          }}
-        />
+        >
+          <CommandMenuItem
+            Icon={IconFrame}
+            label="iFrame"
+            id="iframe"
+            onClick={handleNavigateToIframeConfig}
+          />
+        </SelectableListItem>
       </CommandGroup>
     </CommandMenuList>
   );
