@@ -64,9 +64,7 @@ export const MenuItemMultiSelectAvatar = ({
             </StyledMenuItemLabel>
             {contextualText && (
               <>
-                <StyledMenuItemLabelLight>
-                  <OverflowingTextWithTooltip text="·" />
-                </StyledMenuItemLabelLight>
+                <StyledMenuItemLabelLight>·</StyledMenuItemLabelLight>
                 <StyledMenuItemLabelLight>
                   <OverflowingTextWithTooltip text={contextualText} />
                 </StyledMenuItemLabelLight>
