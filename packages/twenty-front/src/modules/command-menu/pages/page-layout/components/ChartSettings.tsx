@@ -13,6 +13,8 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layou
 import { getChartSettingsDropdownContent } from '@/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type GraphType, type PageLayoutWidget } from '~/generated/graphql';
@@ -24,6 +26,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
+
+  const { openDropdown } = useOpenDropdown();
 
   if (widget.configuration?.__typename === 'IframeConfiguration') {
     throw new Error('IframeConfiguration is not supported');
@@ -70,39 +74,57 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
               !isNonEmptyString(widget.objectMetadataId) &&
               item?.dependsOn?.includes(CHART_CONFIGURATION_SETTING_IDS.SOURCE);
 
+            const handleToggleChange = () => {
+              updateCurrentWidgetConfig({
+                [item.id]: !getChartSettingsValues(item.id),
+              });
+            };
+
+            const handleDropdownOpen = () => {
+              openDropdown({
+                dropdownComponentInstanceIdFromProps: item.id,
+              });
+            };
+
             return item.isBoolean ? (
-              <CommandMenuItemToggle
+              <SelectableListItem
                 key={item.id}
-                LeftIcon={item.Icon}
-                text={item.label}
-                id={item.id}
-                toggled={getChartSettingsValues(item.id) as boolean}
-                onToggleChange={() => {
-                  updateCurrentWidgetConfig({
-                    [item.id]: !getChartSettingsValues(item.id),
-                  });
-                }}
-              />
+                itemId={item.id}
+                onEnter={isDisabled ? undefined : handleToggleChange}
+              >
+                <CommandMenuItemToggle
+                  LeftIcon={item.Icon}
+                  text={item.label}
+                  id={item.id}
+                  toggled={getChartSettingsValues(item.id) as boolean}
+                  onToggleChange={handleToggleChange}
+                />
+              </SelectableListItem>
             ) : (
-              <CommandMenuItemDropdown
+              <SelectableListItem
                 key={item.id}
-                Icon={item.Icon}
-                label={item.label}
-                id={item.id}
-                dropdownId={item.id}
-                dropdownComponents={
-                  <DropdownContent>
-                    <DropdownMenuItemsContainer>
-                      {getChartSettingsDropdownContent(item.id)}
-                    </DropdownMenuItemsContainer>
-                  </DropdownContent>
-                }
-                dropdownPlacement="bottom-end"
-                description={getChartSettingsValues(item.id) as string}
-                contextualTextPosition={'right'}
-                hasSubMenu
-                disabled={isDisabled}
-              />
+                itemId={item.id}
+                onEnter={isDisabled ? undefined : handleDropdownOpen}
+              >
+                <CommandMenuItemDropdown
+                  Icon={item.Icon}
+                  label={item.label}
+                  id={item.id}
+                  dropdownId={item.id}
+                  dropdownComponents={
+                    <DropdownContent>
+                      <DropdownMenuItemsContainer>
+                        {getChartSettingsDropdownContent(item.id)}
+                      </DropdownMenuItemsContainer>
+                    </DropdownContent>
+                  }
+                  dropdownPlacement="bottom-end"
+                  description={getChartSettingsValues(item.id) as string}
+                  contextualTextPosition={'right'}
+                  hasSubMenu
+                  disabled={isDisabled}
+                />
+              </SelectableListItem>
             );
           })}
         </CommandGroup>
