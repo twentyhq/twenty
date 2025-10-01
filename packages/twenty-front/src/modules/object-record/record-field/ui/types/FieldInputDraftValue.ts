@@ -1,4 +1,3 @@
-import { type CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import {
   type FieldActorValue,
   type FieldAddressValue,
@@ -19,6 +18,7 @@ import {
   type FieldUUidValue,
   type PhoneRecord,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type CurrencyCode } from 'twenty-shared/constants';
 import { type FieldRatingValue } from 'twenty-shared/types';
 
 export type FieldTextDraftValue = string;

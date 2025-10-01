@@ -6,6 +6,7 @@ export * from './computeEmptyGqlOperationFilterForEmails';
 export * from './computeEmptyGqlOperationFilterForLinks';
 export * from './computeRecordGqlOperationFilter';
 export * from './isEmptinessOperand';
+export * from './turnAnyFieldFilterIntoRecordGqlFilter';
 export * from './turnRecordFilterGroupIntoGqlOperationFilter';
 export * from './turnRecordFilterIntoGqlOperationFilter';
 export * from './utils/combineFilters';

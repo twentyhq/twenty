@@ -57,7 +57,7 @@ export const useHandleToggleTrashColumnFilter = ({
     const newFilter: RecordFilter = {
       id: v4(),
       fieldMetadataId: trashFieldMetadata.id,
-      operand: ViewFilterOperand.IsNotEmpty,
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
       displayValue: '',
       type: filterType,
       label: `Deleted`,

@@ -4,7 +4,6 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -12,6 +11,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
+  turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 export const useFindManyRecordIndexTableParams = (
   objectNameSingular: string,
@@ -53,7 +53,7 @@ export const useFindManyRecordIndexTableParams = (
 
   const { recordGqlOperationFilter: anyFieldFilter } =
     turnAnyFieldFilterIntoRecordGqlFilter({
-      objectMetadataItem,
+      fields: objectMetadataItem?.fields ?? [],
       filterValue: anyFieldFilterValue,
     });
 

@@ -720,6 +720,16 @@ export type CreateApprovedAccessDomainInput = {
   email: Scalars['String'];
 };
 
+export type CreateCronTriggerInput = {
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+};
+
+export type CreateDatabaseEventTriggerInput = {
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
@@ -926,6 +936,19 @@ export type CreateWorkflowVersionStepInput = {
   workflowVersionId: Scalars['UUID'];
 };
 
+export type CronTrigger = {
+  __typename?: 'CronTrigger';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type CronTriggerIdInput = {
+  id: Scalars['String'];
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -945,6 +968,19 @@ export enum DatabaseEventAction {
   RESTORED = 'RESTORED',
   UPDATED = 'UPDATED'
 }
+
+export type DatabaseEventTrigger = {
+  __typename?: 'DatabaseEventTrigger';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type DatabaseEventTriggerIdInput = {
+  id: Scalars['String'];
+};
 
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']>;
@@ -1597,11 +1633,14 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
+  createOneCronTrigger: CronTrigger;
+  createOneDatabaseEventTrigger: DatabaseEventTrigger;
   createOneField: Field;
   createOneObject: Object;
   createOneRemoteServer: RemoteServer;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createOneServerlessFunctionLayer: ServerlessFunctionLayer;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
@@ -1623,6 +1662,8 @@ export type Mutation = {
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
   deleteOneAgent: Agent;
+  deleteOneCronTrigger: CronTrigger;
+  deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
@@ -1704,6 +1745,8 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
+  updateOneCronTrigger: CronTrigger;
+  updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
@@ -1877,6 +1920,16 @@ export type MutationCreateOneAppTokenArgs = {
 };
 
 
+export type MutationCreateOneCronTriggerArgs = {
+  input: CreateCronTriggerInput;
+};
+
+
+export type MutationCreateOneDatabaseEventTriggerArgs = {
+  input: CreateDatabaseEventTriggerInput;
+};
+
+
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
@@ -1899,6 +1952,12 @@ export type MutationCreateOneRoleArgs = {
 
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
+};
+
+
+export type MutationCreateOneServerlessFunctionLayerArgs = {
+  packageJson: Scalars['JSON'];
+  yarnLock: Scalars['String'];
 };
 
 
@@ -1999,6 +2058,16 @@ export type MutationDeleteFileArgs = {
 
 export type MutationDeleteOneAgentArgs = {
   input: AgentIdInput;
+};
+
+
+export type MutationDeleteOneCronTriggerArgs = {
+  input: CronTriggerIdInput;
+};
+
+
+export type MutationDeleteOneDatabaseEventTriggerArgs = {
+  input: DatabaseEventTriggerIdInput;
 };
 
 
@@ -2316,6 +2385,8 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationSyncApplicationArgs = {
   manifest: Scalars['JSON'];
+  packageJson: Scalars['JSON'];
+  yarnLock: Scalars['String'];
 };
 
 
@@ -2395,6 +2466,16 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 
 export type MutationUpdateOneAgentArgs = {
   input: UpdateAgentInput;
+};
+
+
+export type MutationUpdateOneCronTriggerArgs = {
+  input: UpdateCronTriggerInput;
+};
+
+
+export type MutationUpdateOneDatabaseEventTriggerArgs = {
+  input: UpdateDatabaseEventTriggerInput;
 };
 
 
@@ -2873,10 +2954,14 @@ export type Query = {
   findAgentHandoffs: Array<AgentHandoffDto>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
+  findManyCronTriggers: Array<CronTrigger>;
+  findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
   findManyPublicDomains: Array<PublicDomain>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
+  findOneCronTrigger: CronTrigger;
+  findOneDatabaseEventTrigger: DatabaseEventTrigger;
   findOneRemoteServerById: RemoteServer;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
@@ -3004,6 +3089,16 @@ export type QueryFindManyRemoteServersByTypeArgs = {
 
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
+};
+
+
+export type QueryFindOneCronTriggerArgs = {
+  input: CronTriggerIdInput;
+};
+
+
+export type QueryFindOneDatabaseEventTriggerArgs = {
+  input: DatabaseEventTriggerIdInput;
 };
 
 
@@ -3486,6 +3581,14 @@ export type ServerlessFunctionIdInput = {
   id: Scalars['ID'];
 };
 
+export type ServerlessFunctionLayer = {
+  __typename?: 'ServerlessFunctionLayer';
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type SetupOidcSsoInput = {
   clientID: Scalars['String'];
   clientSecret: Scalars['String'];
@@ -3710,6 +3813,16 @@ export type UpdateApiKeyDto = {
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
   revokedAt?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateCronTriggerInput = {
+  id: Scalars['String'];
+  settings: Scalars['JSON'];
+};
+
+export type UpdateDatabaseEventTriggerInput = {
+  id: Scalars['String'];
+  settings: Scalars['JSON'];
 };
 
 export type UpdateFieldInput = {

@@ -7,6 +7,8 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { format, isSameDay, isSameMonth, isWeekend } from 'date-fns';
+import { useState } from 'react';
+import { RecordCalendarAddNew } from '../../components/RecordCalendarAddNew';
 
 const StyledContainer = styled.div<{
   isOtherMonth: boolean;
@@ -42,13 +44,13 @@ const StyledContainer = styled.div<{
 const StyledDayHeader = styled.div`
   align-items: center;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 24px;
-  justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing(0.5)};
-
-  margin-left: auto;
-  width: 24px;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(1.5)};
+  margin-left: none;
+  width: 100%;
 `;
 
 const StyledDayHeaderDayContainer = styled.div`
@@ -110,18 +112,27 @@ export const RecordCalendarMonthBodyDay = ({
     dayKey,
   );
 
+  const [hovered, setHovered] = useState(false);
+
   const isToday = isSameDay(day, new Date());
 
   const isOtherMonth = !isSameMonth(day, recordCalendarSelectedDate);
 
   const isDayOfWeekend = isWeekend(day);
 
+  const utcDate = new Date(
+    Date.UTC(day.getFullYear(), day.getMonth(), day.getDate()),
+  );
+
   return (
     <StyledContainer
       isOtherMonth={isOtherMonth}
       isDayOfWeekend={isDayOfWeekend}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <StyledDayHeader>
+        {hovered && <RecordCalendarAddNew cardDate={utcDate.toISOString()} />}
         <StyledDayHeaderDayContainer>
           <StyledDayHeaderDay isToday={isToday}>
             {day.getDate()}
