@@ -37,14 +37,14 @@ export class ViewFieldV2Service {
     const {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps,
-      flatFieldMetadataMaps
+      flatFieldMetadataMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
         flatEntities: [
           'flatViewFieldMaps',
           'flatViewMaps',
-          'flatFieldMetadataMaps'
+          'flatFieldMetadataMaps',
         ],
       },
     );
