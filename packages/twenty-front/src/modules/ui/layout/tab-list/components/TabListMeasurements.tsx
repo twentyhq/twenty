@@ -1,9 +1,9 @@
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
-import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButton, TabButton } from 'twenty-ui/input';
+import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
 import { TabMoreButton } from './TabMoreButton';
 
 const StyledHiddenMeasurement = styled.div`
@@ -22,33 +22,17 @@ const StyledAddButton = styled.div`
   margin-left: ${TAB_LIST_GAP}px;
 `;
 
-type TabListMeasurementsProps = {
-  visibleTabs: SingleTabProps[];
-  activeTabId: string | null;
-  loading?: boolean;
-  onAddTab?: () => void;
-  onTabWidthChange: (
-    tabId: string,
-  ) => (dimensions: { width: number; height: number }) => void;
-  onMoreButtonWidthChange: (dimensions: {
-    width: number;
-    height: number;
-  }) => void;
-  onAddButtonWidthChange: (dimensions: {
-    width: number;
-    height: number;
-  }) => void;
-};
+export const TabListMeasurements = () => {
+  const {
+    visibleTabs,
+    activeTabId,
+    loading,
+    onAddTab,
+    onTabWidthChange,
+    onMoreButtonWidthChange,
+    onAddButtonWidthChange,
+  } = useTabListStateContextOrThrow();
 
-export const TabListMeasurements = ({
-  visibleTabs,
-  activeTabId,
-  loading,
-  onAddTab,
-  onTabWidthChange,
-  onMoreButtonWidthChange,
-  onAddButtonWidthChange,
-}: TabListMeasurementsProps) => {
   if (visibleTabs.length <= 1) {
     return null;
   }

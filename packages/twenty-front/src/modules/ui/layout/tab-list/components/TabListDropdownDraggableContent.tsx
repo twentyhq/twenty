@@ -1,7 +1,6 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { TAB_LIST_DROPPABLE_IDS } from '@/ui/layout/tab-list/constants/TabListDroppableIds';
-import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -11,14 +10,11 @@ import {
   type DraggableStateSnapshot,
   Droppable,
 } from '@hello-pangea/dnd';
+import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
 import { TabListDropdownMenuItem } from './TabListDropdownMenuItem';
 
 type TabListDropdownDraggableContentProps = {
-  hiddenTabs: SingleTabProps[];
-  activeTabId: string | null;
-  loading?: boolean;
   onSelect: (tabId: string) => void;
-  visibleTabCount: number;
 };
 
 const StyledDraggableWrapper = styled.div`
@@ -30,20 +26,19 @@ const StyledDraggableWrapper = styled.div`
 `;
 
 export const TabListDropdownDraggableContent = ({
-  hiddenTabs,
-  activeTabId,
-  loading,
   onSelect,
-  visibleTabCount,
 }: TabListDropdownDraggableContentProps) => {
   const theme = useTheme();
+  const { hiddenTabs, activeTabId, loading, visibleTabCount } =
+    useTabListStateContextOrThrow();
 
   const renderClone = (
     provided: DraggableProvided,
     _snapshot: DraggableStateSnapshot,
     rubric: DraggableRubric,
   ) => {
-    const tab = hiddenTabs[rubric.source.index - visibleTabCount];
+    const hiddenIndex = rubric.source.index - visibleTabCount;
+    const tab = hiddenTabs[hiddenIndex];
     if (!tab) return null;
 
     return (

@@ -1,4 +1,5 @@
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
+import { TAB_LIST_DROPPABLE_IDS } from '@/ui/layout/tab-list/constants/TabListDroppableIds';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -37,8 +38,16 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
 
       const tabsWithoutDragged = sortedTabs.filter((t) => t.id !== draggableId);
 
+      const movingBetweenDroppables =
+        source.droppableId !== destination.droppableId;
+
+      const destinationIndexAdjusted =
+        movingBetweenDroppables && destination.index > source.index
+          ? destination.index - 1
+          : destination.index;
+
       const newPosition = calculateNewPosition({
-        destinationIndex: destination.index,
+        destinationIndex: destinationIndexAdjusted,
         sourceIndex: source.index,
         items: tabsWithoutDragged,
       });

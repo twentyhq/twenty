@@ -1,29 +1,12 @@
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
-import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListVisibleTabsArea } from './TabListVisibleTabsArea';
-
-type TabListContentBodyPropsBase = {
-  visibleTabs: SingleTabProps[];
-  visibleTabCount: number;
-  activeTabId: string | null;
-  loading?: boolean;
-  behaveAsLinks: boolean;
-  className?: string;
-  componentInstanceId: string;
-  onAddTab?: () => void;
-  onTabSelect: (tabId: string) => void;
-  onTabSelectFromDropdown: (tabId: string) => void;
-  onContainerWidthChange: (dimensions: { width: number; height: number }) => void;
-};
-
-export type TabListContentBodyProps = TabListContentBodyPropsBase & {
-  isDraggable: boolean;
-};
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -51,59 +34,18 @@ const StyledAddButton = styled.div`
   margin-left: ${TAB_LIST_GAP}px;
 `;
 
-export const TabListContentBody = ({
-  visibleTabs,
-  visibleTabCount,
-  activeTabId,
-  loading,
-  isDraggable,
-  behaveAsLinks,
-  className,
-  componentInstanceId,
-  onAddTab,
-  onTabSelect,
-  onTabSelectFromDropdown,
-  onContainerWidthChange,
-}: TabListContentBodyProps) => {
-  const hiddenTabsCount = visibleTabs.length - visibleTabCount;
-  const hasHiddenTabs = hiddenTabsCount > 0;
-
-  const isActiveTabHidden =
-    hasHiddenTabs &&
-    visibleTabs.slice(visibleTabCount).some((tab) => tab.id === activeTabId);
-
-  const dropdownId = `tab-overflow-${componentInstanceId}`;
+export const TabListContentBody = () => {
+  const { className, onContainerWidthChange, hasHiddenTabs, onAddTab } =
+    useTabListStateContextOrThrow();
 
   return (
     <NodeDimension onDimensionChange={onContainerWidthChange}>
       <StyledContainer className={className}>
-        <TabListVisibleTabsArea
-          visibleTabs={visibleTabs}
-          visibleTabCount={visibleTabCount}
-          activeTabId={activeTabId}
-          loading={loading}
-          isDraggable={isDraggable}
-          behaveAsLinks={behaveAsLinks}
-          onTabSelect={onTabSelect}
-        />
+        <TabListVisibleTabsArea />
 
-        {hasHiddenTabs && (
-          <TabListDropdown
-            dropdownId={dropdownId}
-            overflow={{
-              hiddenTabsCount,
-              isActiveTabHidden,
-            }}
-            hiddenTabs={visibleTabs.slice(visibleTabCount)}
-            activeTabId={activeTabId || ''}
-            onTabSelect={onTabSelectFromDropdown}
-            loading={loading}
-            isDraggable={isDraggable}
-            visibleTabCount={visibleTabCount}
-          />
-        )}
+        {hasHiddenTabs && <TabListDropdown />}
 
-        {onAddTab && (
+        {isDefined(onAddTab) && (
           <StyledAddButton>
             <IconButton
               Icon={IconPlus}

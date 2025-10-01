@@ -1,9 +1,9 @@
-import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TAB_LIST_DROPPABLE_IDS } from '@/ui/layout/tab-list/constants/TabListDroppableIds';
-import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { TabButton } from 'twenty-ui/input';
+import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
 import { TabListDraggableTab } from './TabListDraggableTab';
 
 const StyledTabContainer = styled.div`
@@ -14,26 +14,18 @@ const StyledTabContainer = styled.div`
   max-width: 100%;
 `;
 
-type TabListVisibleTabsAreaProps = {
-  visibleTabs: SingleTabProps[];
-  visibleTabCount: number;
-  activeTabId: string | null;
-  loading?: boolean;
-  isDraggable?: boolean;
-  behaveAsLinks: boolean;
-  onTabSelect: (tabId: string) => void;
-};
+export const TabListVisibleTabsArea = () => {
+  const {
+    visibleTabs,
+    visibleTabCount,
+    activeTabId,
+    loading,
+    behaveAsLinks,
+    onTabSelect,
+    isDragAndDropEnabled,
+  } = useTabListStateContextOrThrow();
 
-export const TabListVisibleTabsArea = ({
-  visibleTabs,
-  visibleTabCount,
-  activeTabId,
-  loading,
-  isDraggable,
-  behaveAsLinks,
-  onTabSelect,
-}: TabListVisibleTabsAreaProps) => {
-  if (isDraggable === true) {
+  if (isDragAndDropEnabled) {
     return (
       <Droppable
         droppableId={TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}
