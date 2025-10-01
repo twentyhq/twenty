@@ -27,6 +27,7 @@ import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
+import { WorkspaceDataPage } from '~/pages/WorkspaceDataPage';
 
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
@@ -63,6 +64,7 @@ export const useCreateAppRouter = (
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
+          <Route path={AppPath.WorkspaceData} element={<WorkspaceDataPage />} />
           <Route
             path={AppPath.SettingsCatchAll}
             element={

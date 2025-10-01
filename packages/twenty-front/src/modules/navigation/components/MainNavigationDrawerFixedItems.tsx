@@ -8,9 +8,9 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { IconSearch, IconSettings, IconSparkles } from 'twenty-ui/display';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
+import { IconDatabase, IconSearch, IconSettings, IconSparkles } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -54,6 +54,17 @@ export const MainNavigationDrawerFixedItems = () => {
             mouseUpNavigation={true}
           />
         )}
+        <NavigationDrawerItem
+          label={t`Dados do Workspace`}
+          to={getAppPath(AppPath.WorkspaceData)}
+          onClick={() => {
+            setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
+            setIsNavigationDrawerExpanded(true);
+            setNavigationMemorizedUrl(location.pathname + location.search);
+            navigate(getAppPath(AppPath.WorkspaceData));
+          }}
+          Icon={IconDatabase}
+        />
         <NavigationDrawerItem
           label={t`Settings`}
           to={getSettingsPath(SettingsPath.ProfilePage)}

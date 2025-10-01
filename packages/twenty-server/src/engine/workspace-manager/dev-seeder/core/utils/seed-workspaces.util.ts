@@ -54,10 +54,10 @@ export const seedWorkspaces = async ({
     },
     [SEED_YCOMBINATOR_WORKSPACE_ID]: {
       id: SEED_YCOMBINATOR_WORKSPACE_ID,
-      displayName: 'YCombinator',
+      displayName: 'KVOIP',
       subdomain: 'yc',
       inviteHash: 'yc.dev-invite-hash',
-      logo: 'https://twentyhq.github.io/placeholder-images/workspaces/ycombinator-logo.png',
+      logo: 'https://pps.whatsapp.net/v/t61.24694-24/386461787_330988482947248_4965148015673603950_n.jpg?ccb=11-4&oh=01_Q5Aa2gFezZWaVVHcAEOK7AYV9pr_EbMs5rtPshZW8VEjWl9NsA&oe=68E14146&_nc_sid=5e03e0&_nc_cat=100',
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION, // will be set to active after default role creation
       version: version,
       isTwoFactorAuthenticationEnforced: false,
