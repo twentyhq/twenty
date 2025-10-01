@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { APP_MANIFEST_SCHEMA_URL } from '../constants/schemas';
 
 export const findProjectRoot = async (): Promise<string | null> => {
   let currentDir = process.cwd();
@@ -79,10 +80,7 @@ export const isValidAppPath = async (appPath: string): Promise<boolean> => {
     const packageJson = await fs.readJson(packageJsonPath);
 
     // Check if this is a Twenty app by looking for the exact $schema URL
-    return (
-      packageJson.$schema ===
-      'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json'
-    );
+    return packageJson.$schema === APP_MANIFEST_SCHEMA_URL;
   } catch {
     return false;
   }

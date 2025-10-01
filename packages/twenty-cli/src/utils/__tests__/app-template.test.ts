@@ -3,6 +3,10 @@ import {
   createBasePackageJson,
   createReadmeContent,
 } from '../app-template';
+import {
+  AGENT_SCHEMA_URL,
+  APP_MANIFEST_SCHEMA_URL,
+} from '../../constants/schemas';
 
 // Mock crypto.randomUUID to make tests deterministic
 jest.mock('crypto', () => ({
@@ -17,8 +21,7 @@ describe('app-template', () => {
       const basePackageJson = createBasePackageJson(appName, description);
 
       expect(basePackageJson).toEqual({
-        $schema:
-          'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json',
+        $schema: APP_MANIFEST_SCHEMA_URL,
         standardId: 'mocked-uuid-12345',
         label: 'My Test App',
         description: 'A Twenty application for my-test-app',
@@ -62,8 +65,7 @@ describe('app-template', () => {
       const agent = createAgentManifest(appName);
 
       expect(agent).toEqual({
-        $schema:
-          'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json',
+        $schema: AGENT_SCHEMA_URL,
         standardId: 'mocked-uuid-12345',
         name: 'myTestAppAgent',
         label: 'My Test App Agent',
