@@ -3,11 +3,14 @@ import { IconDotsVertical } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
-import { type ToolInput } from '@/ai/types/ToolInput';
-import { type ToolOutput } from '@/ai/types/ToolOutput';
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import type { ToolUIPart, UIDataTypes, UIMessagePart, UITools } from 'ai';
+import {
+  isToolUIPart,
+  type UIDataTypes,
+  type UIMessagePart,
+  type UITools,
+} from 'ai';
 
 const StyledStepsContainer = styled.div`
   display: flex;
@@ -64,29 +67,29 @@ export const AIChatAssistantMessageRenderer = ({
   isLastMessageStreaming: boolean;
 }) => {
   const renderStep = (
-    step: UIMessagePart<UIDataTypes, UITools>,
+    part: UIMessagePart<UIDataTypes, UITools>,
     index: number,
   ) => {
-    switch (step.type) {
+    switch (part.type) {
       case 'reasoning':
         return (
           <ReasoningSummaryDisplay
             key={index}
-            content={step.text}
-            isThinking={step.state === 'streaming'}
+            content={part.text}
+            isThinking={part.state === 'streaming'}
           />
         );
       case 'text':
-        return <LazyMarkdownRenderer key={index} text={step.text} />;
+        return <LazyMarkdownRenderer key={index} text={part.text} />;
       default:
         {
-          if (step.type.includes('tool-')) {
-            const { output, input, type } = step as ToolUIPart;
+          if (isToolUIPart(part)) {
+            const { output, input, type } = part;
             return (
               <ToolStepRenderer
                 key={index}
-                input={input as ToolInput}
-                output={output as ToolOutput}
+                input={input}
+                output={output}
                 toolName={type.split('-')[1]}
               />
             );

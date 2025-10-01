@@ -2918,6 +2918,11 @@ msgstr ""
 msgid "Empty Object"
 msgstr "빈 객체"
 
+#. js-lingui-id: gZo0V9
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Enable model-specific features"
+msgstr ""
+
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
@@ -5260,6 +5265,7 @@ msgid "No workflow versions yet"
 msgstr "아직 워크플로 버전 없음"
 
 #. js-lingui-id: EdQY6l
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
@@ -6518,11 +6524,6 @@ msgstr "워크플로우들 보기"
 msgid "Select a field from a previous step"
 msgstr "이전 단계에서 필드를 선택하십시오"
 
-#. js-lingui-id: h4pFju
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
-msgid "Select a role"
-msgstr "역할 선택"
-
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Select a target agent"
@@ -7547,6 +7548,11 @@ msgstr ""
 msgid "Turkish"
 msgstr "터키어"
 
+#. js-lingui-id: YIjS4q
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Twitter/X Search"
+msgstr ""
+
 #. js-lingui-id: tuvLv1
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
@@ -7916,6 +7922,11 @@ msgstr "모든 새로운 이벤트에 대해 이 엔드포인트로 application/
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "We will send your a link to verify domain ownership"
 msgstr "도메인 소유권을 확인하기 위해 링크를 보내드립니다"
+
+#. js-lingui-id: LnnVIT
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Web Search"
+msgstr ""
 
 #. js-lingui-id: Tvdycs
 #: src/modules/settings/developers/hooks/useWebhookForm.ts

@@ -2913,6 +2913,11 @@ msgstr "Empty Node"
 msgid "Empty Object"
 msgstr "Empty Object"
 
+#. js-lingui-id: gZo0V9
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Enable model-specific features"
+msgstr "Enable model-specific features"
+
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
@@ -5255,6 +5260,7 @@ msgid "No workflow versions yet"
 msgstr "No workflow versions yet"
 
 #. js-lingui-id: EdQY6l
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
@@ -6513,11 +6519,6 @@ msgstr "See workflows"
 msgid "Select a field from a previous step"
 msgstr "Select a field from a previous step"
 
-#. js-lingui-id: h4pFju
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
-msgid "Select a role"
-msgstr "Select a role"
-
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Select a target agent"
@@ -7542,6 +7543,11 @@ msgstr "TTL"
 msgid "Turkish"
 msgstr "Turkish"
 
+#. js-lingui-id: YIjS4q
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Twitter/X Search"
+msgstr "Twitter/X Search"
+
 #. js-lingui-id: tuvLv1
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
@@ -7911,6 +7917,11 @@ msgstr "We will send a POST request to this endpoint for each new event in appli
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "We will send your a link to verify domain ownership"
 msgstr "We will send your a link to verify domain ownership"
+
+#. js-lingui-id: LnnVIT
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Web Search"
+msgstr "Web Search"
 
 #. js-lingui-id: Tvdycs
 #: src/modules/settings/developers/hooks/useWebhookForm.ts

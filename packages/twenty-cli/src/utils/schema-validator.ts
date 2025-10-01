@@ -1,6 +1,11 @@
 import Ajv from 'ajv';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import {
+  AGENT_SCHEMA_URL,
+  APP_MANIFEST_SCHEMA_URL,
+  OBJECT_SCHEMA_URL,
+} from '../constants/schemas';
 
 export class SchemaValidationError extends Error {
   constructor(
@@ -66,11 +71,8 @@ export const validateSchema = async (
 
 export const getSchemaUrls = () => {
   return {
-    agent:
-      'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json',
-    object:
-      'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/object.schema.json',
-    appManifest:
-      'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json',
+    agent: AGENT_SCHEMA_URL,
+    object: OBJECT_SCHEMA_URL,
+    appManifest: APP_MANIFEST_SCHEMA_URL,
   };
 };

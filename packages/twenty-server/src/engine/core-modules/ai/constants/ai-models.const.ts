@@ -26,6 +26,10 @@ export interface AIModelConfig {
   inputCostPer1kTokensInCents: number;
   outputCostPer1kTokensInCents: number;
   doesSupportThinking?: boolean;
+  nativeCapabilities?: {
+    webSearch?: boolean;
+    twitterSearch?: boolean;
+  };
 }
 
 export const AI_MODELS: AIModelConfig[] = [
@@ -35,6 +39,9 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.OPENAI,
     inputCostPer1kTokensInCents: 0.25,
     outputCostPer1kTokensInCents: 1.0,
+    nativeCapabilities: {
+      webSearch: true,
+    },
   },
   {
     modelId: 'gpt-4o-mini',
@@ -42,6 +49,9 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.OPENAI,
     inputCostPer1kTokensInCents: 0.015,
     outputCostPer1kTokensInCents: 0.06,
+    nativeCapabilities: {
+      webSearch: true,
+    },
   },
   {
     modelId: 'gpt-4-turbo',
@@ -49,6 +59,9 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.OPENAI,
     inputCostPer1kTokensInCents: 1.0,
     outputCostPer1kTokensInCents: 3.0,
+    nativeCapabilities: {
+      webSearch: false,
+    },
   },
   {
     modelId: 'claude-opus-4-20250514',
@@ -57,6 +70,9 @@ export const AI_MODELS: AIModelConfig[] = [
     inputCostPer1kTokensInCents: 1.5,
     outputCostPer1kTokensInCents: 7.5,
     doesSupportThinking: true,
+    nativeCapabilities: {
+      webSearch: true,
+    },
   },
   {
     modelId: 'claude-sonnet-4-20250514',
@@ -65,6 +81,9 @@ export const AI_MODELS: AIModelConfig[] = [
     inputCostPer1kTokensInCents: 0.3,
     outputCostPer1kTokensInCents: 1.5,
     doesSupportThinking: true,
+    nativeCapabilities: {
+      webSearch: true,
+    },
   },
   {
     modelId: 'claude-3-5-haiku-20241022',
@@ -72,7 +91,10 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 0.08,
     outputCostPer1kTokensInCents: 0.4,
-    doesSupportThinking: true,
+    doesSupportThinking: false,
+    nativeCapabilities: {
+      webSearch: true,
+    },
   },
   {
     modelId: 'grok-3',
@@ -80,6 +102,10 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.XAI,
     inputCostPer1kTokensInCents: 0.3,
     outputCostPer1kTokensInCents: 1.5,
+    nativeCapabilities: {
+      webSearch: true,
+      twitterSearch: true,
+    },
   },
   {
     modelId: 'grok-3-mini',
@@ -87,6 +113,10 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.XAI,
     inputCostPer1kTokensInCents: 0.03,
     outputCostPer1kTokensInCents: 0.05,
+    nativeCapabilities: {
+      webSearch: true,
+      twitterSearch: true,
+    },
   },
   {
     modelId: 'grok-4',
@@ -94,5 +124,9 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.XAI,
     inputCostPer1kTokensInCents: 0.5,
     outputCostPer1kTokensInCents: 2.5,
+    nativeCapabilities: {
+      webSearch: true,
+      twitterSearch: true,
+    },
   },
 ];

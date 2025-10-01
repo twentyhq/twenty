@@ -2913,6 +2913,11 @@ msgstr ""
 msgid "Empty Object"
 msgstr ""
 
+#. js-lingui-id: gZo0V9
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Enable model-specific features"
+msgstr ""
+
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
@@ -5255,6 +5260,7 @@ msgid "No workflow versions yet"
 msgstr ""
 
 #. js-lingui-id: EdQY6l
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
@@ -6513,11 +6519,6 @@ msgstr ""
 msgid "Select a field from a previous step"
 msgstr ""
 
-#. js-lingui-id: h4pFju
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
-msgid "Select a role"
-msgstr ""
-
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Select a target agent"
@@ -7542,6 +7543,11 @@ msgstr ""
 msgid "Turkish"
 msgstr ""
 
+#. js-lingui-id: YIjS4q
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Twitter/X Search"
+msgstr ""
+
 #. js-lingui-id: tuvLv1
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
@@ -7910,6 +7916,11 @@ msgstr ""
 #. js-lingui-id: PI4LiB
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "We will send your a link to verify domain ownership"
+msgstr ""
+
+#. js-lingui-id: LnnVIT
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Web Search"
 msgstr ""
 
 #. js-lingui-id: Tvdycs

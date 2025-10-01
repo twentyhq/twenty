@@ -47,4 +47,5 @@ Be helpful, thorough, and always prioritize user understanding and workflow effe
   responseFormat: {},
   isCustom: false,
   standardRoleId: WORKFLOW_MANAGER_ROLE.standardId,
+  modelConfiguration: {},
 };
