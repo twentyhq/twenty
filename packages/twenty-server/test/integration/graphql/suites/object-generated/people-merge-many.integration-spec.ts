@@ -1,11 +1,10 @@
-import { randomBytes } from 'crypto';
-
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { generateUniqString } from 'test/integration/utils/generate-uniq-string.util';
 
 describe('people merge resolvers (integration)', () => {
   let createdPersonIds: string[] = [];
@@ -215,7 +214,7 @@ describe('people merge resolvers (integration)', () => {
     });
 
     it('should handle dry run mode', async () => {
-      const uniqString = randomBytes(16).toString('hex');
+      const uniqString = generateUniqString();
       const primaryEmail1 = `test${uniqString}@example.com`;
       const additionalEmails1 = [`test1${uniqString}.extra@example.com`];
       const primaryEmail2 = `test${uniqString}@example.com`;
