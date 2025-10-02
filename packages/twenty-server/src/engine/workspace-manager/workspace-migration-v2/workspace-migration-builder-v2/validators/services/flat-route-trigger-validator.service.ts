@@ -3,16 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { RouteTriggerExceptionCode } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
+import { RouteTriggerRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/types/route-trigger-related-flat-entity-maps.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-
-export type RouteTriggerRelatedFlatEntityMaps = Pick<
-  AllFlatEntityMaps,
-  'flatServerlessFunctionMaps'
->;
 
 type RouteTriggerValidationArgs = {
   flatRouteTriggerToValidate: FlatRouteTrigger;
@@ -128,7 +123,6 @@ export class FlatRouteTriggerValidatorService {
       });
     }
 
-    // Validate serverlessFunctionId exists
     const serverlessFunction =
       dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
         flatRouteTriggerToValidate.serverlessFunctionId

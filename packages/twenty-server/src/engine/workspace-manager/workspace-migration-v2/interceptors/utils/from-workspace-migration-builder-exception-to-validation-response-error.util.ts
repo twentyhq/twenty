@@ -14,9 +14,11 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       invalidDatabaseEventTrigger: 0,
       invalidCronTrigger: 0,
       invalidRouteTrigger: 0,
+      invalidFieldMetadata: 0,
       totalErrors: 0,
     },
     errors: {
+      fieldMetadata: [],
       index: [],
       objectMetadata: [],
       view: [],

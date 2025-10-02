@@ -99,7 +99,6 @@ export abstract class WorkspaceFlatMapCacheService<
   }: {
     workspaceId: string;
   }): Promise<void> {
-    await this.beforeInvalidateCache({ workspaceId });
     const { flatMapKey, hashKey } = this.buildRemoteCacheKeys({ workspaceId });
 
     await this.cacheStorageService.del(flatMapKey);
@@ -109,19 +108,6 @@ export abstract class WorkspaceFlatMapCacheService<
     this.localCacheHashes.delete(workspaceId);
 
     await this.recomputeAndStoreInCache({ workspaceId });
-    await this.afterInvalidateCache({ workspaceId });
-  }
-
-  protected async beforeInvalidateCache(_args: {
-    workspaceId: string;
-  }): Promise<void> {
-    return;
-  }
-
-  protected async afterInvalidateCache(_args: {
-    workspaceId: string;
-  }): Promise<void> {
-    return;
   }
 
   private getFlatMapCacheKey(): string {

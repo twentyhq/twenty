@@ -8,7 +8,6 @@ import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { IndexExceptionCode } from 'src/engine/metadata-modules/flat-index-metadata/exceptions/index-exception-code';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import { IndexRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
@@ -49,7 +48,10 @@ export class FlatIndexValidatorService {
   public validateFlatIndexCreation({
     flatIndexToValidate,
     optimisticFlatIndexMaps,
-    dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
+    dependencyOptimisticFlatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
   }: {
     flatIndexToValidate: FlatIndexMetadata;
     optimisticFlatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
@@ -116,11 +118,10 @@ export class FlatIndexValidatorService {
       });
     } else {
       flatIndexToValidate.flatIndexFieldMetadatas.forEach((flatIndexField) => {
-        const relatedFlatField =
-          findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId({
-            fieldMetadataId: flatIndexField.fieldMetadataId,
-            flatObjectMetadataMaps,
-          });
+        const relatedFlatField = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatIndexField.fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
 
         if (!isDefined(relatedFlatField)) {
           validationResult.errors.push({

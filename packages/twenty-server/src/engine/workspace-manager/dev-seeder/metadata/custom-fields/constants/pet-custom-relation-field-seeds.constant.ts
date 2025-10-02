@@ -1,5 +1,6 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
+import { ROCKET_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/rocket-custom-object-seed.constant';
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';
 
 export const PET_CUSTOM_RELATION_FIELD_SEEDS: (FieldMetadataSeed & {
@@ -18,7 +19,10 @@ export const PET_CUSTOM_RELATION_FIELD_SEEDS: (FieldMetadataSeed & {
         targetFieldIcon: 'IconRelationOneToMany',
       },
     ],
-    targetObjectMetadataNames: ['surveyResult', 'rocket'],
+    targetObjectMetadataNames: [
+      'surveyResult',
+      ROCKET_CUSTOM_OBJECT_SEED.nameSingular,
+    ],
   },
   {
     type: FieldMetadataType.MORPH_RELATION,
@@ -33,6 +37,9 @@ export const PET_CUSTOM_RELATION_FIELD_SEEDS: (FieldMetadataSeed & {
         targetFieldIcon: 'IconRelationOneToMany',
       },
     ],
-    targetObjectMetadataNames: ['surveyResult', 'rocket'],
+    targetObjectMetadataNames: [
+      'surveyResult',
+      ROCKET_CUSTOM_OBJECT_SEED.nameSingular,
+    ],
   },
 ];

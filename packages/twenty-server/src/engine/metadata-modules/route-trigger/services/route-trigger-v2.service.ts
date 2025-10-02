@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -33,7 +33,7 @@ export class RouteTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatRouteTriggerMaps'],
+          flatEntities: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -59,6 +59,10 @@ export class RouteTriggerV2Service {
               from: existingFlatRouteMaps,
               to: toFlatRouteMaps,
             },
+          },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps:
+              flatEntityMaps.flatServerlessFunctionMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -93,7 +97,7 @@ export class RouteTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatRouteTriggerMaps'],
+          flatEntities: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -123,6 +127,10 @@ export class RouteTriggerV2Service {
               from: existingFlatRouteMaps,
               to: toFlatRouteMaps,
             },
+          },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps:
+              flatEntityMaps.flatServerlessFunctionMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -159,11 +167,14 @@ export class RouteTriggerV2Service {
     destroyRouteInput: RouteTriggerIdInput;
     workspaceId: string;
   }): Promise<FlatRouteTrigger> {
-    const { flatRouteTriggerMaps: existingFlatRouteMaps } =
+    const {
+      flatRouteTriggerMaps: existingFlatRouteMaps,
+      flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatRouteTriggerMaps'],
+          flatEntities: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -193,6 +204,9 @@ export class RouteTriggerV2Service {
               from: fromFlatRouteMaps,
               to: toFlatRouteMaps,
             },
+          },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
           },
           buildOptions: {
             isSystemBuild: false,

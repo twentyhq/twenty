@@ -15,6 +15,7 @@ import {
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -101,6 +102,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRelationService: FieldMetadataRelationService,
     private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
     private readonly indexMetadataService: IndexMetadataService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -141,6 +143,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
         { workspaceId: fieldMetadataInput.workspaceId },
       );
+    const { workspaceId } = fieldMetadataInput;
 
     let existingFieldMetadata: FieldMetadataEntity | undefined;
 
@@ -397,6 +400,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput.workspaceId,
       );
 
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatEntities: ['flatFieldMetadataMaps'],
+      });
+
       return updatedFieldMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
@@ -579,6 +587,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
+
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatEntities: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      });
 
       return fieldMetadata;
     } catch (error) {
@@ -770,6 +783,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
+
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatEntities: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      });
 
       return createdFieldMetadatas;
     } catch (error) {

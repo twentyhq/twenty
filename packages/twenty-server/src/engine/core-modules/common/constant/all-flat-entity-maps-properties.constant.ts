@@ -9,4 +9,5 @@ export const ALL_FLAT_ENTITY_MAPS_PROPERTIES = [
   'flatDatabaseEventTriggerMaps',
   'flatCronTriggerMaps',
   'flatRouteTriggerMaps',
+  'flatFieldMetadataMaps',
 ] as const satisfies (keyof AllFlatEntityMaps)[];
