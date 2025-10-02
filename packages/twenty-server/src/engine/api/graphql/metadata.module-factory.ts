@@ -44,7 +44,7 @@ export const metadataModuleFactory = async (
       useCachedMetadata({
         cacheGetter: cacheStorageService.get.bind(cacheStorageService),
         cacheSetter: cacheStorageService.set.bind(cacheStorageService),
-        operationsToCache: ['ObjectMetadataItems'],
+        operationsToCache: ['ObjectMetadataItems', 'FindAllCoreViews'],
       }),
     ],
     path: '/metadata',

@@ -95,6 +95,9 @@ export class ViewFieldService {
         );
 
         const savedViewField = await this.viewFieldRepository.save(viewField);
+
+        await this.viewService.flushGraphQLCache(viewFieldData.workspaceId);
+
         const createdViewField = await this.findById(
           savedViewField.id,
           viewFieldData.workspaceId,
@@ -223,6 +226,8 @@ export class ViewFieldService {
       ...updateData,
     });
 
+    await this.viewService.flushGraphQLCache(workspaceId);
+
     return { ...existingViewField, ...updatedViewField };
   }
 
@@ -241,6 +246,8 @@ export class ViewFieldService {
 
     await this.viewFieldRepository.softDelete(id);
 
+    await this.viewService.flushGraphQLCache(workspaceId);
+
     return viewField;
   }
 
@@ -258,6 +265,8 @@ export class ViewFieldService {
     }
 
     await this.viewFieldRepository.delete(id);
+
+    await this.viewService.flushGraphQLCache(workspaceId);
 
     return viewField;
   }

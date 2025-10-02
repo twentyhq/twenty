@@ -107,7 +107,7 @@ export class CacheStorageService {
 
     do {
       const result = await redisClient.scan(cursor, {
-        MATCH: scanPattern,
+        MATCH: `${this.namespace}:${scanPattern}`,
         COUNT: 100,
       });
 
