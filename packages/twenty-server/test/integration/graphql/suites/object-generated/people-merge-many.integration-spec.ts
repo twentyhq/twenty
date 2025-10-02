@@ -6,6 +6,8 @@ import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 import { faker } from '@faker-js/faker';
 
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+
 describe('people merge resolvers (integration)', () => {
   let createdPersonIds: string[] = [];
 
@@ -250,8 +252,14 @@ describe('people merge resolvers (integration)', () => {
         createPersonsOperation,
       );
 
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
+      const person1Id = createResponse.body.data.createPeople.find(
+        (people: PersonWorkspaceEntity) =>
+          people.emails.primaryEmail === primaryEmail1,
+      ).id;
+      const person2Id = createResponse.body.data.createPeople.find(
+        (people: PersonWorkspaceEntity) =>
+          people.emails.primaryEmail === primaryEmail2,
+      ).id;
 
       createdPersonIds.push(person1Id, person2Id);
 
