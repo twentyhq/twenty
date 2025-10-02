@@ -4,7 +4,7 @@ export const RECORD_ACTIONS: Array<{
   label: string;
   type: Extract<
     WorkflowActionType,
-    'CREATE_RECORD' | 'UPDATE_RECORD' | 'DELETE_RECORD' | 'CREATE_OR_UPDATE_RECORD' | 'FIND_RECORDS'
+    'CREATE_RECORD' | 'UPDATE_RECORD' | 'DELETE_RECORD' | 'UPSERT_RECORD' | 'FIND_RECORDS'
   >;
   icon: string;
 }> = [
@@ -24,8 +24,8 @@ export const RECORD_ACTIONS: Array<{
     icon: 'IconTrash',
   },
   {
-    label: 'Create or Update Record',
-    type: 'CREATE_OR_UPDATE_RECORD',
+    label: 'Upsert Record',
+    type: 'UPSERT_RECORD',
     icon: 'IconPencilPlus',
   },
   {

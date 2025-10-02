@@ -56,6 +56,15 @@ export const shouldDisplayFormField = ({
         !fieldMetadataItem.isSystem &&
         fieldMetadataItem.isActive
       );
+    case 'UPSERT_RECORD':
+      isTypeAllowedForAction =
+        fieldMetadataItem.type !== FieldMetadataType.RELATION ||
+        fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE';
+      return (
+        isTypeAllowedForAction &&
+        !fieldMetadataItem.isSystem &&
+        fieldMetadataItem.isActive
+      );
     case 'FIND_RECORDS':
       isTypeAllowedForAction = FIND_RECORDS_DISPLAYABLE_FIELD_TYPES.includes(
         fieldMetadataItem.type,

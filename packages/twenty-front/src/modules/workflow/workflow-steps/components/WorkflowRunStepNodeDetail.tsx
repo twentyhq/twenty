@@ -6,12 +6,12 @@ import {
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';
 import { WorkflowActionServerlessFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionServerlessFunction';
-import { WorkflowEditActionCreateOrUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateOrUpdateRecord';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
+import { WorkflowEditActionUpsertRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord';
 import { WorkflowEditActionFilter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionFormFiller } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFiller';
@@ -167,18 +167,6 @@ export const WorkflowRunStepNodeDetail = ({
           );
         }
 
-        case 'CREATE_OR_UPDATE_RECORD': {
-          return (
-            <WorkflowEditActionCreateOrUpdateRecord
-              key={stepId}
-              action={stepDefinition.definition}
-              actionOptions={{
-                readonly: true,
-              }}
-            />
-          );
-        }
-
         case 'DELETE_RECORD': {
           return (
             <WorkflowEditActionDeleteRecord
@@ -194,6 +182,18 @@ export const WorkflowRunStepNodeDetail = ({
         case 'FIND_RECORDS': {
           return (
             <WorkflowEditActionFindRecords
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+
+        case 'UPSERT_RECORD': {
+          return (
+            <WorkflowEditActionUpsertRecord
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{

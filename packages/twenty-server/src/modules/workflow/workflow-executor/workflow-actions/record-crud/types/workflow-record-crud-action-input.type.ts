@@ -37,7 +37,7 @@ export type WorkflowFindRecordsActionInput = {
   limit?: number;
 };
 
-export type WorkflowCreateOrUpdateRecordActionInput = {
+export type WorkflowUpsertRecordActionInput = {
   objectName: string;
   objectRecord: ObjectRecord;
   upsertCriteria: {

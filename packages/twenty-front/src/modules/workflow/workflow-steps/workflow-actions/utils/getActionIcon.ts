@@ -9,6 +9,7 @@ export const getActionIcon = (actionType: WorkflowActionType) => {
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':
     case 'DELETE_RECORD':
+    case 'UPSERT_RECORD':
     case 'FIND_RECORDS':
       return RECORD_ACTIONS.find((item) => item.type === actionType)?.icon;
     case 'FILTER':

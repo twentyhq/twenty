@@ -4,7 +4,6 @@ import {
   type SingleRecordAvailability,
   type workflowAiAgentActionSchema,
   type workflowCodeActionSchema,
-  type workflowCreateOrUpdateRecordActionSchema,
   type workflowCreateRecordActionSchema,
   type workflowCronTriggerSchema,
   type workflowDatabaseEventTriggerSchema,
@@ -23,6 +22,7 @@ import {
   type workflowSendEmailActionSchema,
   type workflowTriggerSchema,
   type workflowUpdateRecordActionSchema,
+  type workflowUpsertRecordActionSchema,
   type workflowWebhookTriggerSchema,
 } from 'twenty-shared/workflow';
 import { type z } from 'zod';
@@ -40,8 +40,8 @@ export type WorkflowUpdateRecordAction = z.infer<
 export type WorkflowDeleteRecordAction = z.infer<
   typeof workflowDeleteRecordActionSchema
 >;
-export type WorkflowCreateOrUpdateRecordAction = z.infer<
-  typeof workflowCreateOrUpdateRecordActionSchema
+export type WorkflowUpsertRecordAction = z.infer<
+  typeof workflowUpsertRecordActionSchema
 >;
 export type WorkflowFindRecordsAction = z.infer<
   typeof workflowFindRecordsActionSchema
@@ -63,7 +63,7 @@ export type WorkflowAction =
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction
-  | WorkflowCreateOrUpdateRecordAction
+  | WorkflowUpsertRecordAction
   | WorkflowFindRecordsAction
   | WorkflowFilterAction
   | WorkflowFormAction
