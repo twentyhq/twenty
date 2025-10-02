@@ -1,6 +1,7 @@
 import { Injectable, type OnModuleDestroy } from '@nestjs/common';
 
 import IORedis from 'ioredis';
+import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -42,13 +43,16 @@ export class RedisClientService implements OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    if (this.redisClient) {
+    if (isDefined(this.redisClient) && this.redisClient.status !== 'end') {
       await this.redisClient.quit();
-      this.redisClient = null;
     }
-    if (this.redisQueueClient) {
+    if (
+      isDefined(this.redisQueueClient) &&
+      this.redisQueueClient.status !== 'end'
+    ) {
       await this.redisQueueClient.quit();
-      this.redisQueueClient = null;
     }
+    this.redisClient = null;
+    this.redisQueueClient = null;
   }
 }
