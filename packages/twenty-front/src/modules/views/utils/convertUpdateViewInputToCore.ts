@@ -18,7 +18,7 @@ export const convertUpdateViewInputToCore = (
     ? convertViewTypeToCore(view.type)
     : undefined;
 
-  const output = {
+  return {
     id: view.id,
     ...(isDefined(view.name) && { name: view.name }),
     ...(isDefined(view.icon) && { icon: view.icon }),
@@ -46,6 +46,4 @@ export const convertUpdateViewInputToCore = (
       calendarFieldMetadataId: view.calendarFieldMetadataId,
     }),
   };
-
-  return output;
 };
