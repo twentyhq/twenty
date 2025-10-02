@@ -266,8 +266,8 @@ export class AppAddCommand {
           if (input.length === 0) {
             return 'Event name is required';
           }
-          if (!/^[a-zA-Z]+\.(created|updated|deleted)$/.test(input)) {
-            return 'Event name must be in format: objectName.(created|updated|deleted)';
+          if (!/^(?:[a-zA-Z]+|\*)\.(created|updated|deleted|\*)$/.test(input)) {
+            return 'Event name must be in format: (objectName|*).(created|updated|deleted|*)';
           }
           return true;
         },
