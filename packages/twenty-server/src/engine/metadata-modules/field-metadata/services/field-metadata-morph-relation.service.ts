@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -16,7 +16,6 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -75,7 +74,8 @@ export class FieldMetadataMorphRelationService {
       const currentMorphRelationFieldName = computeMorphRelationFieldName({
         fieldName: fieldMetadataForCreate.name,
         relationType: relationCreationPayload.type,
-        targetObjectMetadata,
+        nameSingular: targetObjectMetadata.nameSingular,
+        namePlural: targetObjectMetadata.namePlural,
       });
       const relationFieldMetadataForCreate =
         this.fieldMetadataRelationService.computeCustomRelationFieldMetadataForCreation(
