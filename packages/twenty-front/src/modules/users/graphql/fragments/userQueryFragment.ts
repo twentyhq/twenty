@@ -80,6 +80,7 @@ export const USER_QUERY_FRAGMENT = gql`
         id
       }
       isTwoFactorAuthenticationEnforced
+      trashRetentionDays
       views {
         ...ViewFragment
       }

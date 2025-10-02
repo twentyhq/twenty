@@ -84,6 +84,8 @@ export const mockCurrentWorkspace: Workspace = {
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   metadataVersion: 1,
+  trashRetentionDays: 14,
+  nextTrashCleanupAt: new Date().toISOString(),
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
@@ -151,6 +153,7 @@ export const mockCurrentWorkspace: Workspace = {
   databaseSchema: '',
   databaseUrl: '',
   isTwoFactorAuthenticationEnforced: false,
+  __typename: 'Workspace',
 };
 
 export const mockedWorkspaceMemberData: WorkspaceMember = {
