@@ -22,6 +22,7 @@ import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/work
 
 @Injectable()
 export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'viewField',
   FlatViewField,
   WorkspaceMigrationViewFieldActionV2,
   ViewFieldRelatedFlatEntityMaps
@@ -29,7 +30,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
   constructor(
     private readonly flatViewFieldValidatorService: FlatViewFieldValidatorService,
   ) {
-    super();
+    super('viewField');
   }
 
   protected async validateFlatEntityCreation({

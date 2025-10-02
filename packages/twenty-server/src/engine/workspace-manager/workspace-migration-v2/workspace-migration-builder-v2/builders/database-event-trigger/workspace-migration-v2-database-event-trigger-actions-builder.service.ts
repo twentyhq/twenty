@@ -16,13 +16,15 @@ import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-m
 
 @Injectable()
 export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'databaseEventTrigger',
   FlatDatabaseEventTrigger,
-  WorkspaceMigrationDatabaseEventTriggerActionV2
+  WorkspaceMigrationDatabaseEventTriggerActionV2,
+  undefined
 > {
   constructor(
     private readonly flatDatabaseEventTriggerValidatorService: FlatDatabaseEventTriggerValidatorService,
   ) {
-    super();
+    super('databaseEventTrigger');
   }
 
   protected async validateFlatEntityCreation({

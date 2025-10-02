@@ -16,13 +16,15 @@ import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-man
 
 @Injectable()
 export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'serverlessFunction',
   FlatServerlessFunction,
-  WorkspaceMigrationServerlessFunctionActionV2
+  WorkspaceMigrationServerlessFunctionActionV2,
+  undefined
 > {
   constructor(
     private readonly flatServerlessFunctionValidatorService: FlatServerlessFunctionValidatorService,
   ) {
-    super();
+    super('serverlessFunction');
   }
 
   protected async validateFlatEntityCreation({

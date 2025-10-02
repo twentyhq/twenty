@@ -23,6 +23,7 @@ export type ObjectMetadataRelatedFlatEntityMaps = undefined;
 
 @Injectable()
 export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'objectMetadata',
   FlatObjectMetadata,
   WorkspaceMigrationObjectActionV2,
   ObjectMetadataRelatedFlatEntityMaps
@@ -30,7 +31,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
   constructor(
     private readonly flatObjectValidatorService: FlatObjectMetadataValidatorService,
   ) {
-    super();
+    super('objectMetadata');
   }
 
   protected async validateFlatEntityCreation({

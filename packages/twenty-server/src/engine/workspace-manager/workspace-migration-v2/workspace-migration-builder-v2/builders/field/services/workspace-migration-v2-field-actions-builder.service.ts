@@ -26,6 +26,7 @@ export type FieldMetadataRelatedFlatEntityMaps = Pick<
 >;
 @Injectable()
 export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'fieldMetadata',
   FlatFieldMetadata,
   WorkspaceMigrationFieldActionV2,
   FieldMetadataRelatedFlatEntityMaps
@@ -33,7 +34,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
   constructor(
     private readonly flatFieldValidatorService: FlatFieldMetadataValidatorService,
   ) {
-    super();
+    super('fieldMetadata');
   }
 
   protected async validateFlatEntityCreation({

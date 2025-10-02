@@ -3,17 +3,18 @@ import { Inject } from '@nestjs/common';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
+import { AllFlatEntitiesByMetadataEngineName } from 'src/engine/core-modules/common/types/all-flat-entities-by-metadata-engine-name.type';
 import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import {
   type DeletedCreatedUpdatedMatrix,
   flatEntityDeletedCreatedUpdatedMatrixDispatcher,
@@ -137,6 +138,7 @@ export type FlatEntityValidationReturnType<
 
 // TODO prastoin refactor the builder to building a selection of flatEntityMaps => simplify
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
+  T extends keyof AllFlatEntitiesByMetadataEngineName, // TODO refactor the whole generic to be inferred from this one only
   TFlatEntity extends AllFlatEntities,
   TActions extends WorkspaceMigrationActionV2,
   TRelatedFlatEntityMaps extends
@@ -145,6 +147,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 > {
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
+  private metadataName: T;
+
+  constructor(metadataName: T) {
+    this.metadataName = metadataName;
+  }
 
   public async validateAndBuild({
     buildOptions,
@@ -155,8 +162,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   }: ValidateAndBuildArgs<TFlatEntity, TRelatedFlatEntityMaps>): Promise<
     ValidateAndBuildReturnType<TActions, TFlatEntity, TRelatedFlatEntityMaps>
   > {
-    this.logger.time('EntityMigrationBuilder', 'validateAndBuild');
-    this.logger.time('EntityMigrationBuilder', 'matrix computation');
+    this.logger.time(`EntityBuilder ${this.metadataName}`, 'validateAndBuild');
+    this.logger.time(
+      `EntityBuilder ${this.metadataName}`,
+      'matrix computation',
+    );
 
     const fromFlatEntities = Object.values(fromFlatEntityMaps.byId).filter(
       isDefined,
@@ -175,8 +185,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       buildOptions,
     });
 
-    this.logger.timeEnd('EntityMigrationBuilder', 'matrix computation');
-    this.logger.time('EntityMigrationBuilder', 'entity processing');
+    this.logger.timeEnd(
+      `EntityBuilder ${this.metadataName}`,
+      'matrix computation',
+    );
+    this.logger.time(`EntityBuilder ${this.metadataName}`, 'entity processing');
 
     let optimisticFlatEntityMaps = structuredClone(fromFlatEntityMaps);
     const validateAndBuildResult: ValidateAndBuilActionsReturnType<
@@ -193,7 +206,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       createdFlatEntityMaps,
     );
 
-    this.logger.time('EntityMigrationBuilder', 'creation validation');
+    this.logger.time(
+      `EntityBuilder ${this.metadataName}`,
+      'creation validation',
+    );
     for (const flatEntityToCreateId in createdFlatEntityMaps.byId) {
       const flatEntityToCreate =
         createdFlatEntityMaps.byId[flatEntityToCreateId];
@@ -239,8 +255,14 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       );
     }
 
-    this.logger.timeEnd('EntityMigrationBuilder', 'creation validation');
-    this.logger.time('EntityMigrationBuilder', 'deletion validation');
+    this.logger.timeEnd(
+      `EntityBuilder ${this.metadataName}`,
+      'creation validation',
+    );
+    this.logger.time(
+      `EntityBuilder ${this.metadataName}`,
+      'deletion validation',
+    );
 
     let remainingFlatEntityMapsToDelete = structuredClone(
       deletedFlatEntityMaps,
@@ -293,8 +315,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       );
     }
 
-    this.logger.timeEnd('EntityMigrationBuilder', 'deletion validation');
-    this.logger.time('EntityMigrationBuilder', 'update validation');
+    this.logger.timeEnd(
+      `EntityBuilder ${this.metadataName}`,
+      'deletion validation',
+    );
+    this.logger.time(`EntityBuilder ${this.metadataName}`, 'update validation');
 
     let remainingFlatEntityMapsToUpdate = structuredClone(
       updatedFlatEntityMaps,
@@ -362,8 +387,14 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       );
     }
 
-    this.logger.timeEnd('EntityMigrationBuilder', 'update validation');
-    this.logger.timeEnd('EntityMigrationBuilder', 'entity processing');
+    this.logger.timeEnd(
+      `EntityBuilder ${this.metadataName}`,
+      'update validation',
+    );
+    this.logger.timeEnd(
+      `EntityBuilder ${this.metadataName}`,
+      'entity processing',
+    );
 
     if (validateAndBuildResult.failed.length > 0) {
       return {
@@ -374,7 +405,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       };
     }
 
-    this.logger.timeEnd('EntityMigrationBuilder', 'validateAndBuild');
+    this.logger.timeEnd(
+      `EntityBuilder ${this.metadataName}`,
+      'validateAndBuild',
+    );
 
     return {
       status: 'success',

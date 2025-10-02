@@ -16,13 +16,15 @@ import { FlatCronTriggerValidatorService } from 'src/engine/workspace-manager/wo
 
 @Injectable()
 export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'cronTrigger',
   FlatCronTrigger,
-  WorkspaceMigrationCronTriggerActionV2
+  WorkspaceMigrationCronTriggerActionV2,
+  undefined
 > {
   constructor(
     private readonly flatCronTriggerValidatorService: FlatCronTriggerValidatorService,
   ) {
-    super();
+    super('cronTrigger');
   }
 
   protected async validateFlatEntityCreation({

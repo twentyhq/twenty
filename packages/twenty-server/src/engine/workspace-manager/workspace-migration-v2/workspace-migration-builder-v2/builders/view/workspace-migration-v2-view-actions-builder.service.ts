@@ -21,6 +21,7 @@ export type ViewRelatedFlatEntityMaps = Pick<
 >;
 @Injectable()
 export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'view',
   FlatView,
   WorkspaceMigrationViewActionV2,
   ViewRelatedFlatEntityMaps
@@ -28,7 +29,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
   constructor(
     private readonly flatViewValidatorService: FlatViewValidatorService,
   ) {
-    super();
+    super('view');
   }
 
   protected async validateFlatEntityCreation({

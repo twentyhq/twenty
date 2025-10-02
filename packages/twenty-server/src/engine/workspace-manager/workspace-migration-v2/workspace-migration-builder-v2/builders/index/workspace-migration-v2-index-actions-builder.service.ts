@@ -24,6 +24,7 @@ export type IndexRelatedFlatEntityMaps = Pick<
 >;
 @Injectable()
 export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'index',
   FlatIndexMetadata,
   WorkspaceMigrationIndexActionV2,
   IndexRelatedFlatEntityMaps
@@ -31,7 +32,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
   constructor(
     private readonly flatIndexValidatorService: FlatIndexValidatorService,
   ) {
-    super();
+    super('index');
   }
 
   protected async validateFlatEntityCreation({
