@@ -12,12 +12,14 @@ import {
   generateViewGroupExceptionMessage,
   generateViewGroupUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-group.exception';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 @Injectable()
 export class ViewGroupService {
   constructor(
     @InjectRepository(ViewGroupEntity)
     private readonly viewGroupRepository: Repository<ViewGroupEntity>,
+    private readonly viewService: ViewService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewGroupEntity[]> {
@@ -109,6 +111,8 @@ export class ViewGroupService {
 
     const viewGroup = this.viewGroupRepository.create(viewGroupData);
 
+    await this.viewService.flushGraphQLCache(viewGroupData.workspaceId);
+
     return this.viewGroupRepository.save(viewGroup);
   }
 
@@ -134,6 +138,8 @@ export class ViewGroupService {
       ...updateData,
     });
 
+    await this.viewService.flushGraphQLCache(workspaceId);
+
     return { ...existingViewGroup, ...updatedViewGroup };
   }
 
@@ -152,6 +158,8 @@ export class ViewGroupService {
 
     await this.viewGroupRepository.softDelete(id);
 
+    await this.viewService.flushGraphQLCache(workspaceId);
+
     return viewGroup;
   }
 
@@ -169,6 +177,8 @@ export class ViewGroupService {
     }
 
     await this.viewGroupRepository.delete(id);
+
+    await this.viewService.flushGraphQLCache(workspaceId);
 
     return true;
   }
