@@ -1,12 +1,12 @@
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { GraphType, WidgetType } from '~/generated-metadata/graphql';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
+import { GraphType, WidgetType } from '~/generated-metadata/graphql';
 import { PageLayoutType } from '~/generated/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -82,10 +82,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
     });
 
     act(() => {
-      result.current.createWidget.createPageLayoutGraphWidget(
-        WidgetType.GRAPH,
-        GraphType.BAR,
-      );
+      result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
     });
 
     expect(result.current.allWidgets).toHaveLength(1);
@@ -167,10 +164,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     graphTypes.forEach((graphType) => {
       act(() => {
-        result.current.createWidget.createPageLayoutGraphWidget(
-          WidgetType.GRAPH,
-          graphType,
-        );
+        result.current.createWidget.createPageLayoutGraphWidget(graphType);
       });
     });
 
@@ -222,10 +216,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
     );
 
     act(() => {
-      result.current.createWidget.createPageLayoutGraphWidget(
-        WidgetType.GRAPH,
-        GraphType.BAR,
-      );
+      result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
     });
 
     expect(result.current.allWidgets).toHaveLength(0);

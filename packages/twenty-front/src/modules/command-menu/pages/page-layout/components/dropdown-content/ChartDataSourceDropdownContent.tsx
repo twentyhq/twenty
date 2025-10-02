@@ -16,11 +16,11 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartDataSourceDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,26 +41,22 @@ export const ChartDataSourceDropdownContent = () => {
     dropdownId,
   );
 
-  const availableObjectMetadataItems = objectMetadataItems.filter(
+  const objectsWithReadAccess = objectMetadataItems.filter(
     (objectMetadataItem) => {
       const objectPermissions =
         objectPermissionsByObjectMetadataId[objectMetadataItem.id];
 
-      const hasReadAccess =
-        isDefined(objectPermissions) && objectPermissions.canReadObjectRecords;
-
-      const matchesSearch =
-        !isNonEmptyString(searchQuery) ||
-        objectMetadataItem.labelPlural
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        objectMetadataItem.namePlural
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
-
-      return hasReadAccess && matchesSearch;
+      return (
+        isDefined(objectPermissions) && objectPermissions.canReadObjectRecords
+      );
     },
   );
+
+  const availableObjectMetadataItems = filterBySearchQuery({
+    items: objectsWithReadAccess,
+    searchQuery,
+    getSearchableValues: (item) => [item.labelPlural, item.namePlural],
+  });
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);

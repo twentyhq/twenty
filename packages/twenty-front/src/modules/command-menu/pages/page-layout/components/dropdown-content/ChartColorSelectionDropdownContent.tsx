@@ -14,12 +14,12 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartColorSelectionDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,15 +55,13 @@ export const ChartColorSelectionDropdownContent = () => {
   const colorOptions = MAIN_COLOR_NAMES.map((colorName) => ({
     id: colorName,
     name: capitalize(colorName),
-    colorName: colorName as ThemeColor,
+    colorName: colorName,
   }));
 
-  const filteredColorOptions = colorOptions.filter((colorOption) => {
-    const matchesSearch =
-      !isNonEmptyString(searchQuery) ||
-      colorOption.name.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchesSearch;
+  const filteredColorOptions = filterBySearchQuery({
+    items: colorOptions,
+    searchQuery,
+    getSearchableValues: (item) => [item.name],
   });
 
   const handleSelectColor = (colorName: ThemeColor) => {

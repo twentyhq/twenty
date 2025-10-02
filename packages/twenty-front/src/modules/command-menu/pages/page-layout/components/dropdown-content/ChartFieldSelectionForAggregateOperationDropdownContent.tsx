@@ -14,11 +14,11 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
@@ -55,19 +55,11 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     dropdownId,
   );
 
-  const availableFieldMetadataItems =
-    sourceObjectMetadataItem?.fields.filter((fieldMetadataItem) => {
-      const matchesSearch =
-        !isNonEmptyString(searchQuery) ||
-        fieldMetadataItem.label
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        fieldMetadataItem.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
-
-      return matchesSearch;
-    }) || [];
+  const availableFieldMetadataItems = filterBySearchQuery({
+    items: sourceObjectMetadataItem?.fields || [],
+    searchQuery,
+    getSearchableValues: (item) => [item.label, item.name],
+  });
 
   const { getIcon } = useIcons();
 

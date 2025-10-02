@@ -20,11 +20,11 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartAggregateOperationSelectionDropdownContent = ({
   currentFieldMetadataId,
@@ -71,16 +71,18 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
       })
     : [];
 
-  const filteredAggregateOperations = availableAggregateOperations.filter(
-    (operation) => {
-      const operationLabel = getAggregateOperationLabel(operation);
-      const matchesSearch =
-        !isNonEmptyString(searchQuery) ||
-        operationLabel.toLowerCase().includes(searchQuery.toLowerCase());
-
-      return matchesSearch;
-    },
+  const aggregateOperationsWithLabels = availableAggregateOperations.map(
+    (operation) => ({
+      operation,
+      label: getAggregateOperationLabel(operation),
+    }),
   );
+
+  const filteredAggregateOperationsWithLabels = filterBySearchQuery({
+    items: aggregateOperationsWithLabels,
+    searchQuery,
+    getSearchableValues: (item) => [item.label],
+  });
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
@@ -128,25 +130,27 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
-          selectableItemIdArray={filteredAggregateOperations}
+          selectableItemIdArray={filteredAggregateOperationsWithLabels.map(
+            (item) => item.operation,
+          )}
         >
-          {filteredAggregateOperations.map((aggregateOperation) => (
+          {filteredAggregateOperationsWithLabels.map((item) => (
             <SelectableListItem
-              key={aggregateOperation}
-              itemId={aggregateOperation}
+              key={item.operation}
+              itemId={item.operation}
               onEnter={() => {
-                handleSelectAggregateOperation(aggregateOperation);
+                handleSelectAggregateOperation(item.operation);
               }}
             >
               <MenuItemSelect
-                text={getAggregateOperationLabel(aggregateOperation)}
+                text={item.label}
                 selected={
                   currentAggregateOperation ===
-                  mapToGraphQLExtendedAggregateOperation(aggregateOperation)
+                  mapToGraphQLExtendedAggregateOperation(item.operation)
                 }
-                focused={selectedItemId === aggregateOperation}
+                focused={selectedItemId === item.operation}
                 onClick={() => {
-                  handleSelectAggregateOperation(aggregateOperation);
+                  handleSelectAggregateOperation(item.operation);
                 }}
               />
             </SelectableListItem>
