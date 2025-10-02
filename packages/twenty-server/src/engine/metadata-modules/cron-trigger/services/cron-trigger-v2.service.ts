@@ -36,7 +36,7 @@ export class CronTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps'],
+          flatEntities: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -64,6 +64,10 @@ export class CronTriggerV2Service {
               to: toFlatCronTriggerMaps,
             },
           },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps:
+              flatEntityMaps.flatServerlessFunctionMaps,
+          },
           buildOptions: {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: false,
@@ -82,7 +86,7 @@ export class CronTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps'],
+          flatEntities: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -100,7 +104,7 @@ export class CronTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps'],
+          flatEntities: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -130,6 +134,10 @@ export class CronTriggerV2Service {
               from: existingFlatCronTriggerMaps,
               to: toFlatCronTriggerMaps,
             },
+          },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps:
+              flatEntityMaps.flatServerlessFunctionMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -166,11 +174,14 @@ export class CronTriggerV2Service {
     destroyCronTriggerInput: CronTriggerIdInput;
     workspaceId: string;
   }): Promise<FlatCronTrigger> {
-    const { flatCronTriggerMaps: existingFlatCronTriggerMaps } =
+    const {
+      flatCronTriggerMaps: existingFlatCronTriggerMaps,
+      flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps'],
+          flatEntities: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -201,6 +212,9 @@ export class CronTriggerV2Service {
               from: fromFlatCronTriggerMaps,
               to: toFlatCronTriggerMaps,
             },
+          },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
           },
           buildOptions: {
             isSystemBuild: false,

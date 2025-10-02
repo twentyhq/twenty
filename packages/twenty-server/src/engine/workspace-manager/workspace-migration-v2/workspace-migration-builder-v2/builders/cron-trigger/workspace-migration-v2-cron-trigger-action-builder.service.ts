@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { compareTwoFlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/utils/compare-two-flat-cron-trigger.util';
+import { CronTriggerRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/cron-trigger-related-flat-entity-maps.type';
 import {
   FlatEntityUpdateValidationArgs,
   FlatEntityValidationArgs,
@@ -19,7 +20,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
   'cronTrigger',
   FlatCronTrigger,
   WorkspaceMigrationCronTriggerActionV2,
-  undefined
+  CronTriggerRelatedFlatEntityMaps
 > {
   constructor(
     private readonly flatCronTriggerValidatorService: FlatCronTriggerValidatorService,
@@ -31,10 +32,14 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     flatEntityToValidate: flatCronTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<FlatCronTrigger>): Promise<
+  }: FlatEntityValidationArgs<
+    FlatCronTrigger,
+    CronTriggerRelatedFlatEntityMaps
+  >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationCronTriggerActionV2,
-      FlatCronTrigger
+      FlatCronTrigger,
+      CronTriggerRelatedFlatEntityMaps
     >
   > {
     const validationResult =
@@ -42,6 +47,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         {
           flatCronTriggerToValidate,
           optimisticFlatCronTriggerMaps,
+          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -66,16 +72,21 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     flatEntityToValidate: flatCronTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<FlatCronTrigger>): Promise<
+  }: FlatEntityValidationArgs<
+    FlatCronTrigger,
+    CronTriggerRelatedFlatEntityMaps
+  >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationCronTriggerActionV2,
-      FlatCronTrigger
+      FlatCronTrigger,
+      CronTriggerRelatedFlatEntityMaps
     >
   > {
     const validationResult =
       this.flatCronTriggerValidatorService.validateFlatCronTriggerDeletion({
         flatCronTriggerToValidate,
         optimisticFlatCronTriggerMaps,
+        dependencyOptimisticFlatEntityMaps,
       });
 
     if (validationResult.errors.length > 0) {
@@ -99,10 +110,14 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     flatEntityUpdate: { from: fromFlatCronTrigger, to: toFlatCronTrigger },
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityUpdateValidationArgs<FlatCronTrigger>): Promise<
+  }: FlatEntityUpdateValidationArgs<
+    FlatCronTrigger,
+    CronTriggerRelatedFlatEntityMaps
+  >): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationCronTriggerActionV2,
-        FlatCronTrigger
+        FlatCronTrigger,
+        CronTriggerRelatedFlatEntityMaps
       >
     | undefined
   > {
@@ -119,6 +134,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
       this.flatCronTriggerValidatorService.validateFlatCronTriggerUpdate({
         flatCronTriggerToValidate: toFlatCronTrigger,
         optimisticFlatCronTriggerMaps,
+        dependencyOptimisticFlatEntityMaps,
       });
 
     if (validationResult.errors.length > 0) {

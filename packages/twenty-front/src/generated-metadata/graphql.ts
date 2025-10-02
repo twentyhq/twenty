@@ -836,6 +836,13 @@ export type CreateRoleInput = {
   label: Scalars['String'];
 };
 
+export type CreateRouteTriggerInput = {
+  httpMethod?: HttpMethod;
+  isAuthRequired?: Scalars['Boolean'];
+  path: Scalars['String'];
+  serverlessFunctionId: Scalars['String'];
+};
+
 export type CreateServerlessFunctionInput = {
   code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -1406,6 +1413,14 @@ export type GridPositionInput = {
   rowSpan: Scalars['Float'];
 };
 
+export enum HttpMethod {
+  DELETE = 'DELETE',
+  GET = 'GET',
+  PATCH = 'PATCH',
+  POST = 'POST',
+  PUT = 'PUT'
+}
+
 export enum HealthIndicatorId {
   app = 'app',
   connectedAccount = 'connectedAccount',
@@ -1644,6 +1659,7 @@ export type Mutation = {
   createOneObject: Object;
   createOneRemoteServer: RemoteServer;
   createOneRole: Role;
+  createOneRouteTrigger: RouteTrigger;
   createOneServerlessFunction: ServerlessFunction;
   createOneServerlessFunctionLayer: ServerlessFunctionLayer;
   createPageLayout: PageLayout;
@@ -1673,6 +1689,7 @@ export type Mutation = {
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
   deleteOneRole: Scalars['String'];
+  deleteOneRouteTrigger: RouteTrigger;
   deleteOneServerlessFunction: ServerlessFunction;
   deletePageLayout: PageLayout;
   deletePageLayoutTab: Scalars['Boolean'];
@@ -1756,6 +1773,7 @@ export type Mutation = {
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
   updateOneRole: Role;
+  updateOneRouteTrigger: RouteTrigger;
   updateOneServerlessFunction: ServerlessFunction;
   updatePageLayout: PageLayout;
   updatePageLayoutTab: PageLayoutTab;
@@ -1955,6 +1973,11 @@ export type MutationCreateOneRoleArgs = {
 };
 
 
+export type MutationCreateOneRouteTriggerArgs = {
+  input: CreateRouteTriggerInput;
+};
+
+
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
 };
@@ -2093,6 +2116,11 @@ export type MutationDeleteOneRemoteServerArgs = {
 
 export type MutationDeleteOneRoleArgs = {
   roleId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteOneRouteTriggerArgs = {
+  input: RouteTriggerIdInput;
 };
 
 
@@ -2501,6 +2529,11 @@ export type MutationUpdateOneRemoteServerArgs = {
 
 export type MutationUpdateOneRoleArgs = {
   updateRoleInput: UpdateRoleInput;
+};
+
+
+export type MutationUpdateOneRouteTriggerArgs = {
+  input: UpdateRouteTriggerInput;
 };
 
 
@@ -2969,11 +3002,13 @@ export type Query = {
   findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
   findManyPublicDomains: Array<PublicDomain>;
   findManyRemoteServersByType: Array<RemoteServer>;
+  findManyRouteTriggers: Array<RouteTrigger>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneCronTrigger: CronTrigger;
   findOneDatabaseEventTrigger: DatabaseEventTrigger;
   findOneRemoteServerById: RemoteServer;
+  findOneRouteTrigger: RouteTrigger;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
@@ -3115,6 +3150,11 @@ export type QueryFindOneDatabaseEventTriggerArgs = {
 
 export type QueryFindOneRemoteServerByIdArgs = {
   input: RemoteServerIdInput;
+};
+
+
+export type QueryFindOneRouteTriggerArgs = {
+  input: RouteTriggerIdInput;
 };
 
 
@@ -3476,6 +3516,22 @@ export type Role = {
   workspaceMembers: Array<WorkspaceMember>;
 };
 
+export type RouteTrigger = {
+  __typename?: 'RouteTrigger';
+  createdAt: Scalars['DateTime'];
+  httpMethod: HttpMethod;
+  id: Scalars['ID'];
+  isAuthRequired: Scalars['Boolean'];
+  path: Scalars['String'];
+  serverlessFunctionId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['String'];
+};
+
+export type RouteTriggerIdInput = {
+  id: Scalars['String'];
+};
+
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']>;
@@ -3828,12 +3884,24 @@ export type UpdateApiKeyDto = {
 };
 
 export type UpdateCronTriggerInput = {
+  /** The id of the cron trigger to update */
   id: Scalars['String'];
+  /** The cron trigger updates */
+  update: UpdateCronTriggerInputUpdates;
+};
+
+export type UpdateCronTriggerInputUpdates = {
   settings: Scalars['JSON'];
 };
 
 export type UpdateDatabaseEventTriggerInput = {
+  /** The id of the database event trigger to update */
   id: Scalars['String'];
+  /** The database event trigger updates */
+  update: UpdateDatabaseEventTriggerInputUpdates;
+};
+
+export type UpdateDatabaseEventTriggerInputUpdates = {
   settings: Scalars['JSON'];
 };
 
@@ -3957,11 +4025,29 @@ export type UpdateRolePayload = {
   label?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateRouteTriggerInput = {
+  /** The id of the route to update */
+  id: Scalars['String'];
+  /** The route updates */
+  update: UpdateRouteTriggerInputUpdates;
+};
+
+export type UpdateRouteTriggerInputUpdates = {
+  httpMethod: HttpMethod;
+  isAuthRequired: Scalars['Boolean'];
+  path: Scalars['String'];
+};
+
 export type UpdateServerlessFunctionInput = {
+  /** Id of the serverless function to update */
+  id: Scalars['UUID'];
+  /** The serverless function updates */
+  update: UpdateServerlessFunctionInputUpdates;
+};
+
+export type UpdateServerlessFunctionInputUpdates = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
-  /** Id of the serverless function to execute */
-  id: Scalars['UUID'];
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };

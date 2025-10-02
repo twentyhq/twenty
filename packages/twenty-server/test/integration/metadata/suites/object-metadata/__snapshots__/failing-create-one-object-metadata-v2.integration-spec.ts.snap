@@ -337,6 +337,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -363,6 +364,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -712,6 +714,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -738,6 +741,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -1087,6 +1091,7 @@ exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] =
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -1113,6 +1118,7 @@ exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] =
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -1462,6 +1468,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -1488,6 +1495,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -1837,6 +1845,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -1863,6 +1872,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -2212,6 +2222,7 @@ exports[`Object metadata creation should fail v2 when labelSingular is empty 1`]
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -2238,6 +2249,7 @@ exports[`Object metadata creation should fail v2 when labelSingular is empty 1`]
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -2588,6 +2600,7 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -2614,6 +2627,7 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -2964,6 +2978,7 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -2990,6 +3005,7 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -3369,6 +3385,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -3395,6 +3412,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -3744,6 +3762,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -3770,6 +3789,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -4119,6 +4139,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -4145,6 +4166,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -4499,6 +4521,7 @@ exports[`Object metadata creation should fail v2 when namePlural is an empty str
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -4525,6 +4548,7 @@ exports[`Object metadata creation should fail v2 when namePlural is an empty str
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -4879,6 +4903,7 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -4905,6 +4930,7 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -5319,6 +5345,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -5345,6 +5372,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -5759,6 +5787,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -5785,6 +5814,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -6164,6 +6194,7 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -6190,6 +6221,7 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -6569,6 +6601,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -6595,6 +6628,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -7009,6 +7043,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is an empty s
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -7035,6 +7070,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is an empty s
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -7449,6 +7485,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -7475,6 +7512,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -7825,6 +7863,7 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -7851,6 +7890,7 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -8201,6 +8241,7 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           "type": "create_object",
         },
       ],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -8227,6 +8268,7 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,

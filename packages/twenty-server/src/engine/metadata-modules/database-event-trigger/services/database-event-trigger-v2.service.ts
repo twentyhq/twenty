@@ -36,7 +36,10 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatEntities: [
+            'flatDatabaseEventTriggerMaps',
+            'flatServerlessFunctionMaps',
+          ],
         },
       );
 
@@ -65,6 +68,10 @@ export class DatabaseEventTriggerV2Service {
               from: existingFlatDatabaseEventTriggerMaps,
               to: toFlatDatabaseEventTriggerMaps,
             },
+          },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps:
+              flatEntityMaps.flatServerlessFunctionMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -105,7 +112,10 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatEntities: [
+            'flatDatabaseEventTriggerMaps',
+            'flatServerlessFunctionMaps',
+          ],
         },
       );
 
@@ -139,6 +149,10 @@ export class DatabaseEventTriggerV2Service {
               from: existingFlatDatabaseEventTriggerMaps,
               to: toFlatDatabaseEventTriggerMaps,
             },
+          },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps:
+              flatEntityMaps.flatServerlessFunctionMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -180,11 +194,15 @@ export class DatabaseEventTriggerV2Service {
   }): Promise<FlatDatabaseEventTrigger> {
     const {
       flatDatabaseEventTriggerMaps: existingFlatDatabaseEventTriggerMaps,
+      flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatEntities: [
+            'flatDatabaseEventTriggerMaps',
+            'flatServerlessFunctionMaps',
+          ],
         },
       );
 
@@ -218,6 +236,9 @@ export class DatabaseEventTriggerV2Service {
               from: fromFlatDatabaseEventTriggerMaps,
               to: toFlatDatabaseEventTriggerMaps,
             },
+          },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
           },
           buildOptions: {
             isSystemBuild: false,
