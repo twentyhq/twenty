@@ -66,6 +66,7 @@ export const TabList = ({
   isInRightDrawer,
   className,
   componentInstanceId,
+  onChangeTab,
   onAddTab,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
@@ -115,24 +116,27 @@ export const TabList = ({
 
   useEffect(() => {
     setActiveTabId(initialActiveTabId);
-  }, [initialActiveTabId, setActiveTabId]);
+    onChangeTab?.(initialActiveTabId || '');
+  }, [initialActiveTabId, setActiveTabId, onChangeTab]);
 
   const handleTabSelect = useCallback(
     (tabId: string) => {
       setActiveTabId(tabId);
+      onChangeTab?.(tabId);
     },
-    [setActiveTabId],
+    [setActiveTabId, onChangeTab],
   );
 
   const handleTabSelectFromDropdown = useCallback(
     (tabId: string) => {
       if (behaveAsLinks) {
         navigate(`#${tabId}`);
+        onChangeTab?.(tabId);
       } else {
         handleTabSelect(tabId);
       }
     },
-    [behaveAsLinks, handleTabSelect, navigate],
+    [behaveAsLinks, handleTabSelect, navigate, onChangeTab],
   );
 
   const handleTabWidthChange = useCallback(
@@ -240,7 +244,9 @@ export const TabList = ({
                   pill={tab.pill}
                   to={behaveAsLinks ? `#${tab.id}` : undefined}
                   onClick={
-                    behaveAsLinks ? undefined : () => handleTabSelect(tab.id)
+                    behaveAsLinks
+                      ? () => onChangeTab?.(tab.id)
+                      : () => handleTabSelect(tab.id)
                   }
                 />
               ))}

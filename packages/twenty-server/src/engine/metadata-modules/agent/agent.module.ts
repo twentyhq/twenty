@@ -31,6 +31,7 @@ import { AgentHandoffExecutorService } from './agent-handoff-executor.service';
 import { AgentHandoffToolService } from './agent-handoff-tool.service';
 import { AgentHandoffEntity } from './agent-handoff.entity';
 import { AgentHandoffService } from './agent-handoff.service';
+import { AgentModelConfigService } from './agent-model-config.service';
 import { AgentStreamingService } from './agent-streaming.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
@@ -72,6 +73,7 @@ import { AgentService } from './agent.service';
     AgentChatResolver,
     AgentService,
     AgentExecutionService,
+    AgentModelConfigService,
     AgentToolGeneratorService,
     AgentHandoffToolService,
     AgentChatService,

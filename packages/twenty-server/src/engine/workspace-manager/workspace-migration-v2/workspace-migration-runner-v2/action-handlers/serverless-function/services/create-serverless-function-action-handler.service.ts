@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { join } from 'path';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -40,13 +42,20 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
       version: 'draft',
     });
 
-    for (const file of await getBaseTypescriptProjectFiles) {
-      await this.fileStorageService.write({
-        file: file.content,
-        name: file.name,
-        mimeType: undefined,
-        folder: join(draftFileFolder, file.path),
-      });
+    if (isDefined(serverlessFunction?.code)) {
+      await this.fileStorageService.writeFolder(
+        serverlessFunction.code,
+        draftFileFolder,
+      );
+    } else {
+      for (const file of await getBaseTypescriptProjectFiles) {
+        await this.fileStorageService.write({
+          file: file.content,
+          name: file.name,
+          mimeType: undefined,
+          folder: join(draftFileFolder, file.path),
+        });
+      }
     }
   }
 

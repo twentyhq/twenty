@@ -21,12 +21,17 @@ import {
   type S3ClientConfig,
 } from '@aws-sdk/client-s3';
 import { isDefined } from 'twenty-shared/utils';
+import { isObject } from '@sniptt/guards';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+
+import type { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
+import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
+import { readS3FolderContent } from 'src/engine/core-modules/file-storage/utils/read-s3-folder-content';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
@@ -68,6 +73,21 @@ export class S3Driver implements StorageDriver {
     });
 
     await this.s3Client.send(command);
+  }
+
+  async writeFolder(sources: Sources, folderPath: string) {
+    for (const key of Object.keys(sources)) {
+      if (isObject(sources[key])) {
+        await this.writeFolder(sources[key], join(folderPath, key));
+        continue;
+      }
+      await this.write({
+        file: sources[key],
+        name: key,
+        mimeType: undefined,
+        folder: folderPath,
+      });
+    }
   }
 
   private async fetchS3FolderContents(folderPath: string) {
@@ -175,6 +195,46 @@ export class S3Driver implements StorageDriver {
 
       throw error;
     }
+  }
+
+  async readFolder(folderPath: string): Promise<Sources> {
+    const sources: Sources = {};
+    const listedObjects = await this.fetchS3FolderContents(folderPath);
+
+    if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
+      return sources;
+    }
+
+    const files = (
+      await Promise.all(
+        listedObjects.Contents.map(async (object) => {
+          if (!object.Key) {
+            return;
+          }
+
+          const folderAndFilePaths = this.extractFolderAndFilePaths(object.Key);
+
+          if (!isDefined(folderAndFilePaths)) {
+            return;
+          }
+
+          const { fromFolderPath, filename } = folderAndFilePaths;
+
+          const fileContent = await readFileContent(
+            await this.read({ folderPath: fromFolderPath, filename }),
+          );
+
+          const formattedObjectKey = object.Key.replace(
+            folderPath + '/',
+            '',
+          ).replace(folderPath, '');
+
+          return { path: formattedObjectKey, fileContent };
+        }),
+      )
+    ).filter(isDefined);
+
+    return readS3FolderContent(files);
   }
 
   async move(params: {
