@@ -14,12 +14,15 @@ import { AIChatMessage } from '@/ai/components/AIChatMessage';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
+import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
+import { AI_CHAT_INPUT_ID } from '@/ai/constants/AIChatInputID';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
-import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
+import { useAgentChatContext } from '@/ai/hooks/useAgentChatContext';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { Button } from 'twenty-ui/input';
-import { useAgentChat } from '../hooks/useAgentChat';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -56,13 +59,7 @@ const StyledButtonsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const AIChatTab = ({
-  agentId,
-  uiMessages,
-}: {
-  agentId: string;
-  uiMessages: UIMessageWithMetadata[];
-}) => {
+export const AIChatTab = ({ agentId }: { agentId: string }) => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
   const {
@@ -71,11 +68,14 @@ export const AIChatTab = ({
     handleInputChange,
     scrollWrapperId,
     messages,
-    handleSendMessage,
     isStreaming,
-  } = useAgentChat(agentId, uiMessages);
-  const { uploadFiles } = useAIChatFileUpload({ agentId });
+  } = useAgentChatContext();
 
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
+  const { uploadFiles } = useAIChatFileUpload({ agentId });
   const { createAgentChatThread } = useCreateNewAIChatThread({ agentId });
   const { navigateCommandMenu } = useCommandMenu();
 
@@ -112,7 +112,7 @@ export const AIChatTab = ({
           <StyledInputArea>
             <AgentChatContextPreview agentId={agentId} />
             <TextArea
-              textAreaId={`${agentId}-chat-input`}
+              textAreaId={AI_CHAT_INPUT_ID}
               placeholder={t`Enter a question...`}
               value={input}
               onChange={handleInputChange}
@@ -139,12 +139,11 @@ export const AIChatTab = ({
                 onClick={() => createAgentChatThread()}
               />
               <AgentChatFileUploadButton agentId={agentId} />
-              <SendMessageButton
-                agentId={agentId}
-                handleSendMessage={handleSendMessage}
-                input={input}
-                isLoading={isLoading}
-              />
+              {contextStoreCurrentObjectMetadataItemId ? (
+                <SendMessageWithRecordsContextButton />
+              ) : (
+                <SendMessageButton />
+              )}
             </StyledButtonsContainer>
           </StyledInputArea>
         </>

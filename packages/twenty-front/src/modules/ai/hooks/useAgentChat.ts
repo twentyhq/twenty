@@ -1,6 +1,5 @@
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
 
 import {
   type AIChatObjectMetadataAndRecordContext,
@@ -12,11 +11,10 @@ import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThre
 import { isAgentChatCurrentContextActiveState } from '@/ai/states/isAgentChatCurrentContextActiveState';
 import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
-import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useChat } from '@ai-sdk/react';
@@ -34,10 +32,6 @@ export const useAgentChat = (
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
-
-  const { records } = useFindManyRecordsSelectedInContextStore({
-    limit: 10,
-  });
 
   const isAgentChatCurrentContextActive = useRecoilComponentValue(
     isAgentChatCurrentContextActiveState,
@@ -98,7 +92,14 @@ export const useAgentChat = (
   const isLoading =
     !currentThreadId || isStreaming || agentChatSelectedFiles.length > 0;
 
-  const sendChatMessage = async (content: string) => {
+  const handleSendMessage = async (records?: ObjectRecord[]) => {
+    if (agentChatInput.trim() === '' || isLoading === true) {
+      return;
+    }
+
+    const content = agentChatInput.trim();
+    setAgentChatInput('');
+
     const recordIdsByObjectMetadataNameSingular = [];
 
     if (
@@ -131,35 +132,11 @@ export const useAgentChat = (
     setTimeout(scrollToBottom, 100);
   };
 
-  const handleSendMessage = async () => {
-    if (agentChatInput.trim() === '' || isLoading === true) {
-      return;
-    }
-    const content = agentChatInput.trim();
-    setAgentChatInput('');
-    await sendChatMessage(content);
-  };
-
   const handleSetContext = async (
     items: Array<AIChatObjectMetadataAndRecordContext>,
   ) => {
     setAgentChatContext(items);
   };
-
-  useHotkeysOnFocusedElement({
-    keys: [Key.Enter],
-    callback: (event: KeyboardEvent) => {
-      if (!event.ctrlKey && !event.metaKey) {
-        event.preventDefault();
-        handleSendMessage();
-      }
-    },
-    focusId: `${agentId}-chat-input`,
-    dependencies: [agentChatInput, isLoading],
-    options: {
-      enableOnFormTags: true,
-    },
-  });
 
   return {
     handleInputChange: (value: string) => setAgentChatInput(value),

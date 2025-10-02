@@ -1,5 +1,4 @@
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
-import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { lazy, Suspense } from 'react';
 
 const AIChatTab = lazy(() =>
@@ -8,16 +7,10 @@ const AIChatTab = lazy(() =>
   })),
 );
 
-export const LazyAIChatTab = ({
-  agentId,
-  uiMessages,
-}: {
-  agentId: string;
-  uiMessages: UIMessageWithMetadata[];
-}) => {
+export const LazyAIChatTab = ({ agentId }: { agentId: string }) => {
   return (
     <Suspense fallback={<AIChatSkeletonLoader />}>
-      <AIChatTab agentId={agentId} uiMessages={uiMessages} />
+      <AIChatTab agentId={agentId} />
     </Suspense>
   );
 };
