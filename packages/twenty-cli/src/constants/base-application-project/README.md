@@ -8,7 +8,7 @@
 twenty app dev --path {appDir}
 ```
 
-### Deployment
+## Deployment
 
 ```bash
 twenty app sync --path {appDir}
