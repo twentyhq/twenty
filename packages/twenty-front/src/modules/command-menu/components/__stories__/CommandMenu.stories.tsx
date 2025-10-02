@@ -30,6 +30,7 @@ import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
+import { AgentChatProvider } from '../../../ai/contexts/AgentChatProvider';
 import { type CommandMenu } from '../CommandMenu';
 
 const openTimeout = 50;
@@ -45,13 +46,15 @@ const ContextStoreDecorator: Decorator = (Story) => {
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
-          <JestContextStoreSetter
-            contextStoreCurrentObjectMetadataNameSingular="company"
-            contextStoreCurrentViewId="1"
-            contextStoreCurrentViewType={ContextStoreViewType.Table}
-          >
-            <Story />
-          </JestContextStoreSetter>
+          <AgentChatProvider>
+            <JestContextStoreSetter
+              contextStoreCurrentObjectMetadataNameSingular="company"
+              contextStoreCurrentViewId="1"
+              contextStoreCurrentViewType={ContextStoreViewType.Table}
+            >
+              <Story />
+            </JestContextStoreSetter>
+          </AgentChatProvider>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
