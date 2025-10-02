@@ -4,7 +4,7 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
-import { generateUniqString } from 'test/integration/utils/generate-uniq-string.util';
+import { faker } from '@faker-js/faker';
 
 describe('people merge resolvers (integration)', () => {
   let createdPersonIds: string[] = [];
@@ -214,11 +214,10 @@ describe('people merge resolvers (integration)', () => {
     });
 
     it('should handle dry run mode', async () => {
-      const uniqString = generateUniqString();
-      const primaryEmail1 = `test${uniqString}@example.com`;
-      const additionalEmails1 = [`test1${uniqString}.extra@example.com`];
-      const primaryEmail2 = `test${uniqString}@example.com`;
-      const additionalEmails2 = [`test2${uniqString}.extra@example.com`];
+      const primaryEmail1 = faker.internet.email();
+      const additionalEmails1 = [faker.internet.email()];
+      const primaryEmail2 = faker.internet.email();
+      const additionalEmails2 = [faker.internet.email()];
       const createPersonsOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -250,6 +249,7 @@ describe('people merge resolvers (integration)', () => {
       const createResponse = await makeGraphqlAPIRequest(
         createPersonsOperation,
       );
+
       const person1Id = createResponse.body.data.createPeople[0].id;
       const person2Id = createResponse.body.data.createPeople[1].id;
 
