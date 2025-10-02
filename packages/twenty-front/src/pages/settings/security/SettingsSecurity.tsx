@@ -3,13 +3,13 @@ import { Trans, useLingui } from '@lingui/react/macro';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { SettingsOptionCardContentInput } from '@/settings/components/SettingsOptions/SettingsOptionCardContentInput';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
-import { SettingsOptionCardContentInput } from '@/settings/components/SettingsOptions/SettingsOptionCardContentInput';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { ApolloError } from '@apollo/client';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
@@ -74,7 +74,7 @@ export const SettingsSecurity = () => {
         ...currentWorkspace,
         trashRetentionDays: numValue,
       });
-    } catch (err: any) {
+    } catch (err) {
       enqueueErrorSnackBar({
         apolloError: err instanceof ApolloError ? err : undefined,
       });
