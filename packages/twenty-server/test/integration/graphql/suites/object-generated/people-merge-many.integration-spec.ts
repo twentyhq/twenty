@@ -270,12 +270,9 @@ describe('people merge resolvers (integration)', () => {
 
       const dryRunResult = dryRunResponse.body.data.mergePeople;
 
-      expect(dryRunResult.emails.primaryEmail).toBe('test1@example.com');
+      expect(dryRunResult.emails.primaryEmail).toBe(primaryEmail1);
       expect(dryRunResult.emails.additionalEmails).toEqual(
-        expect.arrayContaining([
-          'test1.extra@example.com',
-          'test2.extra@example.com',
-        ]),
+        expect.arrayContaining([...additionalEmails1, ...additionalEmails2]),
       );
 
       const findOriginalPersons = findOneOperationFactory({
@@ -292,7 +289,7 @@ describe('people merge resolvers (integration)', () => {
 
       expect(findResponse.body.data.person).toBeTruthy();
       expect(findResponse.body.data.person.emails.primaryEmail).toBe(
-        'test2@example.com',
+        primaryEmail2,
       );
     });
 
