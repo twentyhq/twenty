@@ -41,7 +41,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     TypeOrmModule.forFeature([Workspace, FeatureFlag]),
     WorkspaceMetadataVersionModule,
     AgentRoleModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
     ...workspaceSyncMetadataFactories,
