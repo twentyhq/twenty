@@ -21,6 +21,7 @@ import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 
 const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 
@@ -124,15 +125,20 @@ export const SettingsServerlessFunctionDetail = () => {
   ];
 
   const files = formValues.code
-    ? Object.keys(formValues.code)
-        .map((key) => {
+    ? [
+        {
+          path: '.env',
+          language: 'ini',
+          content: formValues.code?.['.env'] || '',
+        },
+        ...Object.keys(formValues.code?.[SOURCE_FOLDER_NAME]).map((key) => {
           return {
             path: key,
-            language: key === '.env' ? 'ini' : 'typescript',
-            content: formValues.code?.[key] || '',
+            language: 'typescript',
+            content: formValues.code?.[SOURCE_FOLDER_NAME]?.[key] || '',
           };
-        })
-        .reverse()
+        }),
+      ].reverse()
     : [];
 
   const renderActiveTabContent = () => {

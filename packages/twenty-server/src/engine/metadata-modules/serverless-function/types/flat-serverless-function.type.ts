@@ -6,6 +6,7 @@ import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serve
 import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
+import { type ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
 
 export type ServerlessFunctionEntityRelationProperties =
   ExtractRecordTypeOrmRelationProperties<
@@ -23,5 +24,5 @@ export type FlatServerlessFunction = Omit<
   ServerlessFunctionEntityRelationProperties
 > & {
   universalIdentifier: string;
-  code?: JSON;
+  code?: ServerlessFunctionCode;
 };

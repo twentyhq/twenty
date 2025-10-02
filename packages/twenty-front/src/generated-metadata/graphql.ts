@@ -845,6 +845,7 @@ export type CreateRoleInput = {
 };
 
 export type CreateServerlessFunctionInput = {
+  code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;

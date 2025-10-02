@@ -12,7 +12,7 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
-import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
+import { INDEX_FILE_NAME } from '@/serverless-functions/constants/IndexFileName';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
@@ -50,6 +50,7 @@ import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
+import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 
@@ -159,7 +160,12 @@ export const WorkflowEditActionServerlessFunction = ({
     }
     setFormValues((prevState) => ({
       ...prevState,
-      code: { ...prevState.code, [INDEX_FILE_PATH]: newCode },
+      code: {
+        ...prevState.code,
+        [SOURCE_FOLDER_NAME]: {
+          [INDEX_FILE_NAME]: newCode,
+        },
+      },
     }));
     await handleSave();
     await handleUpdateFunctionInputSchema(newCode);
@@ -381,7 +387,7 @@ export const WorkflowEditActionServerlessFunction = ({
       <StyledFullScreenCodeEditorContainer>
         <CodeEditor
           height="100%"
-          value={formValues.code?.[INDEX_FILE_PATH]}
+          value={formValues.code?.[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME]}
           language="typescript"
           onChange={handleCodeChange}
           onMount={handleEditorDidMount}
@@ -428,7 +434,7 @@ export const WorkflowEditActionServerlessFunction = ({
                 readonly={actionOptions.readonly}
               />
               <WorkflowServerlessFunctionCodeEditor
-                value={formValues.code?.[INDEX_FILE_PATH]}
+                value={formValues.code?.[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME]}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
                 options={{
