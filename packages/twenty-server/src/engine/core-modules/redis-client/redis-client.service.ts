@@ -46,5 +46,9 @@ export class RedisClientService implements OnModuleDestroy {
       await this.redisClient.quit();
       this.redisClient = null;
     }
+    if (this.redisQueueClient) {
+      await this.redisQueueClient.quit();
+      this.redisQueueClient = null;
+    }
   }
 }
