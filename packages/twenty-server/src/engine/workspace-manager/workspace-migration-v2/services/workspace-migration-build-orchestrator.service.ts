@@ -14,6 +14,7 @@ import {
 import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
+import { WorkspaceMigrationV2RouteActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route/workspace-migration-v2-route-actions-builder.service';
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
@@ -33,6 +34,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2ServerlessFunctionActionsBuilderService: WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
     private readonly workspaceMigrationV2DatabaseEventTriggerActionsBuilderService: WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService,
     private readonly workspaceMigrationV2CronTriggerActionsBuilderService: WorkspaceMigrationV2CronTriggerActionsBuilderService,
+    private readonly workspaceMigrationV2RouteActionsBuilderService: WorkspaceMigrationV2RouteActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -86,6 +88,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       serverlessFunction: [],
       databaseEventTrigger: [],
       cronTrigger: [],
+      route: [],
     };
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
@@ -100,6 +103,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatServerlessFunctionMaps,
       flatDatabaseEventTriggerMaps,
       flatCronTriggerMaps,
+      flatRouteMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -283,6 +287,29 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatRouteMaps)) {
+      const { from: fromFlatRouteMaps, to: toFlatRouteMaps } = flatRouteMaps;
+
+      const routeResult =
+        await this.workspaceMigrationV2RouteActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatRouteMaps,
+            to: toFlatRouteMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps,
+          },
+        );
+
+      optimisticAllFlatEntityMaps.flatRouteMaps =
+        routeResult.optimisticFlatEntityMaps;
+
+      if (routeResult.status === 'fail') {
+        orchestratorFailureReport.route.push(...routeResult.errors);
+      } else {
+        orchestratorActionsReport.route = routeResult.actions;
+      }
+    }
+
     const allErrors = Object.values(orchestratorFailureReport);
 
     if (allErrors.some((report) => report.length > 0)) {
@@ -338,6 +365,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...orchestratorActionsReport.cronTrigger.deleted,
           ...orchestratorActionsReport.cronTrigger.created,
           ...orchestratorActionsReport.cronTrigger.updated,
+          ///
+
+          // Routes
+          ...orchestratorActionsReport.route.deleted,
+          ...orchestratorActionsReport.route.created,
+          ...orchestratorActionsReport.route.updated,
           ///
         ],
         workspaceId,

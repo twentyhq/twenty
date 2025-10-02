@@ -9,12 +9,14 @@ import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 's
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/services/workspace-migration-v2-field-actions-builder.service';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
 import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/services/workspace-migration-v2-object-actions-builder.service';
+import { WorkspaceMigrationV2RouteActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route/workspace-migration-v2-route-actions-builder.service';
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { FlatCronTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service';
 import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service';
+import { FlatRouteValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-validator.service';
 import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
 import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service';
@@ -35,11 +37,13 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
     WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService,
     WorkspaceMigrationV2CronTriggerActionsBuilderService,
+    WorkspaceMigrationV2RouteActionsBuilderService,
     FlatViewValidatorService,
     FlatViewFieldValidatorService,
     FlatServerlessFunctionValidatorService,
     FlatDatabaseEventTriggerValidatorService,
     FlatCronTriggerValidatorService,
+    FlatRouteValidatorService,
   ],
   exports: [
     WorkspaceMigrationBuilderV2Service,
@@ -49,6 +53,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
     WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService,
     WorkspaceMigrationV2CronTriggerActionsBuilderService,
+    WorkspaceMigrationV2RouteActionsBuilderService,
   ],
 })
 export class WorkspaceMigrationBuilderV2Module {}

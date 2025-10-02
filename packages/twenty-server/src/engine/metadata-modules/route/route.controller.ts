@@ -12,10 +12,10 @@ import {
 
 import { Request } from 'express';
 
-import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { RouteService } from 'src/engine/metadata-modules/route/route.service';
-import { HTTPMethod } from 'src/engine/metadata-modules/route/route.entity';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { HTTPMethod } from 'src/engine/metadata-modules/route/route.entity';
+import { RouteService } from 'src/engine/metadata-modules/route/route.service';
 
 @Controller('s')
 @UseGuards(PublicEndpointGuard)
