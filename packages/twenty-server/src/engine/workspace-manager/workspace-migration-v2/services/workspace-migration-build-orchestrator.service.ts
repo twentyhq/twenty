@@ -14,7 +14,7 @@ import {
 import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
-import { WorkspaceMigrationV2RouteActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route/workspace-migration-v2-route-actions-builder.service';
+import { WorkspaceMigrationV2RouteTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/workspace-migration-v2-route-trigger-actions-builder.service';
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
@@ -34,7 +34,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2ServerlessFunctionActionsBuilderService: WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
     private readonly workspaceMigrationV2DatabaseEventTriggerActionsBuilderService: WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService,
     private readonly workspaceMigrationV2CronTriggerActionsBuilderService: WorkspaceMigrationV2CronTriggerActionsBuilderService,
-    private readonly workspaceMigrationV2RouteActionsBuilderService: WorkspaceMigrationV2RouteActionsBuilderService,
+    private readonly workspaceMigrationV2RouteTriggerActionsBuilderService: WorkspaceMigrationV2RouteTriggerActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -88,7 +88,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       serverlessFunction: [],
       databaseEventTrigger: [],
       cronTrigger: [],
-      route: [],
+      routeTrigger: [],
     };
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
@@ -103,7 +103,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatServerlessFunctionMaps,
       flatDatabaseEventTriggerMaps,
       flatCronTriggerMaps,
-      flatRouteMaps,
+      flatRouteTriggerMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -287,26 +287,29 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    if (isDefined(flatRouteMaps)) {
-      const { from: fromFlatRouteMaps, to: toFlatRouteMaps } = flatRouteMaps;
+    if (isDefined(flatRouteTriggerMaps)) {
+      const { from: fromFlatRouteTriggerMaps, to: toFlatRouteTriggerMaps } =
+        flatRouteTriggerMaps;
 
-      const routeResult =
-        await this.workspaceMigrationV2RouteActionsBuilderService.validateAndBuild(
+      const routeTriggerResult =
+        await this.workspaceMigrationV2RouteTriggerActionsBuilderService.validateAndBuild(
           {
-            from: fromFlatRouteMaps,
-            to: toFlatRouteMaps,
+            from: fromFlatRouteTriggerMaps,
+            to: toFlatRouteTriggerMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps,
           },
         );
 
-      optimisticAllFlatEntityMaps.flatRouteMaps =
-        routeResult.optimisticFlatEntityMaps;
+      optimisticAllFlatEntityMaps.flatRouteTriggerMaps =
+        routeTriggerResult.optimisticFlatEntityMaps;
 
-      if (routeResult.status === 'fail') {
-        orchestratorFailureReport.route.push(...routeResult.errors);
+      if (routeTriggerResult.status === 'fail') {
+        orchestratorFailureReport.routeTrigger.push(
+          ...routeTriggerResult.errors,
+        );
       } else {
-        orchestratorActionsReport.route = routeResult.actions;
+        orchestratorActionsReport.routeTrigger = routeTriggerResult.actions;
       }
     }
 
@@ -367,10 +370,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...orchestratorActionsReport.cronTrigger.updated,
           ///
 
-          // Routes
-          ...orchestratorActionsReport.route.deleted,
-          ...orchestratorActionsReport.route.created,
-          ...orchestratorActionsReport.route.updated,
+          // Route triggers
+          ...orchestratorActionsReport.routeTrigger.deleted,
+          ...orchestratorActionsReport.routeTrigger.created,
+          ...orchestratorActionsReport.routeTrigger.updated,
           ///
         ],
         workspaceId,

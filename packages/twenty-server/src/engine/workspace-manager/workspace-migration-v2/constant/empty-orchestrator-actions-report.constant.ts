@@ -18,5 +18,5 @@ export const EMPTY_ORCHESTRATOR_ACTIONS_REPORT = {
   serverlessFunction: emptyCreatedDeletedUpdated,
   databaseEventTrigger: emptyCreatedDeletedUpdated,
   cronTrigger: emptyCreatedDeletedUpdated,
-  route: emptyCreatedDeletedUpdated,
+  routeTrigger: emptyCreatedDeletedUpdated,
 } as const satisfies OrchestratorActionsReport;

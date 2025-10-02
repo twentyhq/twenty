@@ -27,6 +27,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
             "type": "update_object",
           },
         ],
+        "route": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -37,6 +38,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
         "invalidDatabaseEventTrigger": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRoute": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -51,6 +53,22 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
 `;
 
 exports[`Object metadata update should fail when labelIdentifier is not a known field metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "GRAPHQL_VALIDATION_FAILED",
+      "http": {
+        "status": 400,
+      },
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Invalid UUID",
+    "name": "ValidationError",
+  },
+]
+`;
+
+exports[`Object metadata update should fail when labelIdentifier is not a known field metadata id 2`] = `
 [
   {
     "extensions": {
@@ -77,6 +95,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
             "type": "update_object",
           },
         ],
+        "route": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -87,6 +106,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
         "invalidDatabaseEventTrigger": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRoute": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -142,6 +162,7 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
             "type": "update_object",
           },
         ],
+        "route": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -152,6 +173,7 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
         "invalidDatabaseEventTrigger": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRoute": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
