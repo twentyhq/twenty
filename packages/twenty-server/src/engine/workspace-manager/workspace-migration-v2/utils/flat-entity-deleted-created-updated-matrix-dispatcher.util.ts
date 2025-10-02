@@ -4,6 +4,7 @@ import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/
 import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
 
 export type DeletedCreatedUpdatedMatrix<T extends AllFlatEntities> = {
   createdFlatEntityMaps: FlatEntityMaps<T>;
@@ -20,7 +21,10 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
 >({
   from,
   to,
-}: FromTo<T[]>): DeletedCreatedUpdatedMatrix<T> => {
+  buildOptions,
+}: FromTo<T[]> & {
+  buildOptions: WorkspaceMigrationBuilderOptions;
+}): DeletedCreatedUpdatedMatrix<T> => {
   const initialDispatcher: DeletedCreatedUpdatedMatrix<T> = {
     createdFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
     deletedFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
@@ -33,13 +37,15 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
   const fromMap = new Map(from.map((obj) => [obj.universalIdentifier, obj]));
   const toMap = new Map(to.map((obj) => [obj.universalIdentifier, obj]));
 
-  for (const [universalIdentifier, fromEntity] of fromMap) {
-    if (!toMap.has(universalIdentifier)) {
-      initialDispatcher.deletedFlatEntityMaps =
-        addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: fromEntity,
-          flatEntityMaps: initialDispatcher.deletedFlatEntityMaps,
-        });
+  if (buildOptions.inferDeletionFromMissingEntities) {
+    for (const [universalIdentifier, fromEntity] of fromMap) {
+      if (!toMap.has(universalIdentifier)) {
+        initialDispatcher.deletedFlatEntityMaps =
+          addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: fromEntity,
+            flatEntityMaps: initialDispatcher.deletedFlatEntityMaps,
+          });
+      }
     }
   }
 

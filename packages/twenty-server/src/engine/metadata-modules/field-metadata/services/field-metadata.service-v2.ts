@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
@@ -106,13 +107,19 @@ export class FieldMetadataServiceV2 {
       fromFlatFieldMetadataMaps,
     );
 
+    const fromFlatIndexMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: [...flatIndexesToUpdate, ...flatIndexesToDelete].map(
+        ({ id }) => id,
+      ),
+      flatEntityMaps: existingFlatIndexMaps,
+    });
     const toFlatIndexMapsWithUpdatedFlatIndex = flatIndexesToUpdate.reduce(
       (flatIndexMaps, flatIndex) =>
         replaceFlatEntityInFlatEntityMapsOrThrow({
           flatEntity: flatIndex,
           flatEntityMaps: flatIndexMaps,
         }),
-      existingFlatIndexMaps,
+      fromFlatIndexMaps,
     );
     const toFlatIndexMaps = flatIndexesToDelete.reduce(
       (flatIndexMaps, flatIndex) =>
@@ -139,7 +146,7 @@ export class FieldMetadataServiceV2 {
               to: toFlatFieldMetadataMaps,
             },
             flatIndexMaps: {
-              from: existingFlatIndexMaps,
+              from: fromFlatIndexMaps,
               to: toFlatIndexMaps,
             },
           },
@@ -204,7 +211,12 @@ export class FieldMetadataServiceV2 {
             flatEntityMaps: flatFieldMaps,
             flatEntity: flatFieldMetadata,
           }),
-        existingFlatFieldMetadataMaps,
+        getSubFlatEntityMapsOrThrow({
+          flatEntityIds: optimisticallyUpdatedFlatFieldMetadatas.map(
+            ({ id }) => id,
+          ),
+          flatEntityMaps: existingFlatFieldMetadataMaps,
+        }),
       );
 
     const toFlatIndexMaps = flatIndexMetadatasToUpdate.reduce(
@@ -213,7 +225,10 @@ export class FieldMetadataServiceV2 {
           flatEntity: flatIndexMetadata,
           flatEntityMaps: flatIndexMaps,
         }),
-      existingFlatIndexMaps,
+      getSubFlatEntityMapsOrThrow({
+        flatEntityIds: flatIndexMetadatasToUpdate.map(({ id }) => id),
+        flatEntityMaps: existingFlatIndexMaps,
+      }),
     );
 
     const validateAndBuildResult =
@@ -320,7 +335,7 @@ export class FieldMetadataServiceV2 {
           flatEntity: flatFieldMetadataToCreate,
           flatEntityMaps: flatFieldMaps,
         }),
-      existingFlatFieldMetadataMaps,
+      EMPTY_FLAT_ENTITY_MAPS,
     );
 
     const toFlatIndexMaps = flatIndexMetadatasToCreate.reduce(
@@ -329,7 +344,7 @@ export class FieldMetadataServiceV2 {
           flatEntity: flatIndex,
           flatEntityMaps: flatIndexMaps,
         }),
-      existingFlatIndexMaps,
+      EMPTY_FLAT_ENTITY_MAPS,
     );
 
     const validateAndBuildResult =
