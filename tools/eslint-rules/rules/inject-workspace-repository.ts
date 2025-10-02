@@ -9,7 +9,6 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     docs: {
       description:
         'Ensure class names and file names follow the required pattern when using @InjectWorkspaceRepository.',
-      recommended: 'recommended',
     },
     schema: [],
     messages: {
