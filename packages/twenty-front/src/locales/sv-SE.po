@@ -3975,6 +3975,11 @@ msgstr "Imitera"
 msgid "Impersonate workspace users"
 msgstr ""
 
+#. js-lingui-id: yImXof
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Impersonation is disabled for this workspace"
+msgstr ""
+
 #. js-lingui-id: l3s5ri
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -7709,6 +7714,11 @@ msgstr "Ladda upp fil"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "Ladda upp XML-filen med dina anslutningsuppgifter"
+
+#. js-lingui-id: IagCbF
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "URL"
+msgstr ""
 
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
