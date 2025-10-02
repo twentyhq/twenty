@@ -28989,7 +28989,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cron-parser@npm:^4.0.0, cron-parser@npm:^4.2.0, cron-parser@npm:^4.9.0":
+"cron-parser@npm:^4.2.0, cron-parser@npm:^4.9.0":
   version: 4.9.0
   resolution: "cron-parser@npm:4.9.0"
   dependencies:
@@ -45469,21 +45469,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg-boss@npm:9.0.3":
-  version: 9.0.3
-  resolution: "pg-boss@npm:9.0.3"
-  dependencies:
-    cron-parser: "npm:^4.0.0"
-    delay: "npm:^5.0.0"
-    lodash.debounce: "npm:^4.0.8"
-    p-map: "npm:^4.0.0"
-    pg: "npm:^8.5.1"
-    serialize-error: "npm:^8.1.0"
-    uuid: "npm:^9.0.0"
-  checksum: 10c0/7021733e75c59ddcccc0effeceb745e689b3b975dea817910696c0b1b0e986cb32ddd886418b9db8b4cfa0fceaf826754bd9c1a3438095893a39cccf1149d793
-  languageName: node
-  linkType: hard
-
 "pg-cloudflare@npm:^1.1.1":
   version: 1.1.1
   resolution: "pg-cloudflare@npm:1.1.1"
@@ -45556,7 +45541,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg@npm:8.12.0, pg@npm:^8.5.1":
+"pg@npm:8.12.0":
   version: 8.12.0
   resolution: "pg@npm:8.12.0"
   dependencies:
@@ -49321,15 +49306,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serialize-error@npm:^8.1.0":
-  version: 8.1.0
-  resolution: "serialize-error@npm:8.1.0"
-  dependencies:
-    type-fest: "npm:^0.20.2"
-  checksum: 10c0/8cfd89f43ca93e283c5f1d16178a536bdfac9bc6029f4a9df988610cc399bc4f2478d1f10ce40b9dff66b863a5158a19b438fbec929045c96d92174f6bca1e88
-  languageName: node
-  linkType: hard
-
 "serialize-javascript@npm:^6.0.2":
   version: 6.0.2
   resolution: "serialize-javascript@npm:6.0.2"
@@ -52685,7 +52661,6 @@ __metadata:
     passport-microsoft: "npm:2.1.0"
     path-to-regexp: "npm:^8.2.0"
     pg: "npm:8.12.0"
-    pg-boss: "npm:9.0.3"
     planer: "npm:1.2.0"
     pluralize: "npm:8.0.0"
     psl: "npm:^1.9.0"
