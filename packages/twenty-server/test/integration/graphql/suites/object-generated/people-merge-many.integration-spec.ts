@@ -215,12 +215,11 @@ describe('people merge resolvers (integration)', () => {
     });
 
     it('should handle dry run mode', async () => {
-      const uniqString1 = randomBytes(16).toString('hex');
-      const primaryEmail1 = `test${uniqString1}@example.com`;
-      const additionalEmails1 = [`test1${uniqString1}.extra@example.com`];
-      const uniqString2 = randomBytes(16).toString('hex');
-      const primaryEmail2 = `test${uniqString2}@example.com`;
-      const additionalEmails2 = [`test2${uniqString2}.extra@example.com`];
+      const uniqString = randomBytes(16).toString('hex');
+      const primaryEmail1 = `test${uniqString}@example.com`;
+      const additionalEmails1 = [`test1${uniqString}.extra@example.com`];
+      const primaryEmail2 = `test${uniqString}@example.com`;
+      const additionalEmails2 = [`test2${uniqString}.extra@example.com`];
       const createPersonsOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
