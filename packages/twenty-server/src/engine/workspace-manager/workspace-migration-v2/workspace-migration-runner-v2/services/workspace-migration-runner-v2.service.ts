@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
@@ -23,6 +24,7 @@ export class WorkspaceMigrationRunnerV2Service {
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly logger: LoggerService,
   ) {}
 
   run = async ({
@@ -30,6 +32,9 @@ export class WorkspaceMigrationRunnerV2Service {
     workspaceId,
     relatedFlatEntityMapsKeys,
   }: WorkspaceMigrationV2): Promise<AllFlatEntityMaps> => {
+    this.logger.time('Runner', 'Total execution');
+    this.logger.time('Runner', 'Initial cache retrieval');
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     let allFlatEntityMaps =
@@ -39,6 +44,9 @@ export class WorkspaceMigrationRunnerV2Service {
           flatEntities: relatedFlatEntityMapsKeys,
         },
       );
+
+    this.logger.timeEnd('Runner', 'Initial cache retrieval');
+    this.logger.time('Runner', 'Transaction execution');
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -76,6 +84,9 @@ export class WorkspaceMigrationRunnerV2Service {
 
       await queryRunner.commitTransaction();
 
+      this.logger.timeEnd('Runner', 'Transaction execution');
+      this.logger.time('Runner', 'Cache invalidation');
+
       const flatEntitiesCacheToInvalidate = [
         ...new Set([
           ...flatEntityMapsToInvalidate,
@@ -107,6 +118,9 @@ export class WorkspaceMigrationRunnerV2Service {
           ]),
         ],
       });
+
+      this.logger.timeEnd('Runner', 'Cache invalidation');
+      this.logger.timeEnd('Runner', 'Total execution');
 
       return allFlatEntityMaps;
     } catch (error) {

@@ -51,4 +51,16 @@ export class LoggerService implements LoggerServiceInterface {
   setLogLevels(levels: LogLevel[]) {
     this.driver.setLogLevels?.apply(this.driver, [levels]);
   }
+
+  time(category: string, label: string) {
+    if (this.driver.debug) {
+      console.time(`[${category}] ${label}`);
+    }
+  }
+
+  timeEnd(category: string, label: string) {
+    if (this.driver.debug) {
+      console.timeEnd(`[${category}] ${label}`);
+    }
+  }
 }

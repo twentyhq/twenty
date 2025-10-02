@@ -4,7 +4,7 @@ import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/
 import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
+import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
 
 export type DeletedCreatedUpdatedMatrix<T extends AllFlatEntities> = {
   createdFlatEntityMaps: FlatEntityMaps<T>;

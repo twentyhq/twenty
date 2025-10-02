@@ -1,6 +1,9 @@
+import { Inject } from '@nestjs/common';
+
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -140,6 +143,9 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     | Partial<AllFlatEntityMaps>
     | undefined = undefined,
 > {
+  @Inject(LoggerService)
+  protected readonly logger: LoggerService;
+
   public async validateAndBuild({
     buildOptions,
     dependencyOptimisticFlatEntityMaps,
@@ -149,6 +155,9 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   }: ValidateAndBuildArgs<TFlatEntity, TRelatedFlatEntityMaps>): Promise<
     ValidateAndBuildReturnType<TActions, TFlatEntity, TRelatedFlatEntityMaps>
   > {
+    this.logger.time('EntityMigrationBuilder', 'validateAndBuild');
+    this.logger.time('EntityMigrationBuilder', 'matrix computation');
+
     const fromFlatEntities = Object.values(fromFlatEntityMaps.byId).filter(
       isDefined,
     );
@@ -163,7 +172,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     } = flatEntityDeletedCreatedUpdatedMatrixDispatcher({
       from: fromFlatEntities,
       to: toFlatEntities,
+      buildOptions,
     });
+
+    this.logger.timeEnd('EntityMigrationBuilder', 'matrix computation');
+    this.logger.time('EntityMigrationBuilder', 'entity processing');
 
     let optimisticFlatEntityMaps = structuredClone(fromFlatEntityMaps);
     const validateAndBuildResult: ValidateAndBuilActionsReturnType<
@@ -180,6 +193,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       createdFlatEntityMaps,
     );
 
+    this.logger.time('EntityMigrationBuilder', 'creation validation');
     for (const flatEntityToCreateId in createdFlatEntityMaps.byId) {
       const flatEntityToCreate =
         createdFlatEntityMaps.byId[flatEntityToCreateId];
@@ -224,6 +238,9 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
           : [validationResult.action]),
       );
     }
+
+    this.logger.timeEnd('EntityMigrationBuilder', 'creation validation');
+    this.logger.time('EntityMigrationBuilder', 'deletion validation');
 
     let remainingFlatEntityMapsToDelete = structuredClone(
       deletedFlatEntityMaps,
@@ -275,6 +292,9 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
           : [validationResult.action]),
       );
     }
+
+    this.logger.timeEnd('EntityMigrationBuilder', 'deletion validation');
+    this.logger.time('EntityMigrationBuilder', 'update validation');
 
     let remainingFlatEntityMapsToUpdate = structuredClone(
       updatedFlatEntityMaps,
@@ -342,6 +362,9 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       );
     }
 
+    this.logger.timeEnd('EntityMigrationBuilder', 'update validation');
+    this.logger.timeEnd('EntityMigrationBuilder', 'entity processing');
+
     if (validateAndBuildResult.failed.length > 0) {
       return {
         status: 'fail',
@@ -350,6 +373,8 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         dependencyOptimisticFlatEntityMaps,
       };
     }
+
+    this.logger.timeEnd('EntityMigrationBuilder', 'validateAndBuild');
 
     return {
       status: 'success',

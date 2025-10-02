@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -338,14 +337,6 @@ export class ObjectMetadataServiceV2 {
         }),
       EMPTY_FLAT_ENTITY_MAPS,
     );
-
-    const impactedObjectMetadataIds = [
-      ...new Set(
-        relationTargetFlatFieldMetadataToCreate.map(
-          ({ objectMetadataId }) => objectMetadataId,
-        ),
-      ),
-    ];
 
     const toFlatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
       flatEntity: flatObjectMetadataToCreate,
