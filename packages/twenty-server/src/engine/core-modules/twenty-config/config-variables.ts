@@ -1108,21 +1108,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description:
-      'Number of workspaces to process per batch during trash cleanup',
+      'Maximum number of records to delete per workspace during trash cleanup',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
-  TRASH_CLEANUP_WORKSPACE_BATCH_SIZE = 5;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
-    description: 'Delay in milliseconds between workspace cleanup batches',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  @IsOptional()
-  TRASH_CLEANUP_DELAY_BETWEEN_BATCHES_MS = 500;
+  TRASH_CLEANUP_MAX_RECORDS_PER_WORKSPACE = 100000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,

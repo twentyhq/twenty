@@ -29,27 +29,6 @@ describe('sanitizeDefaultValue', () => {
 
       expect(sanitizeDefaultValue('NOW()')).toBe('NOW()');
     });
-
-    it('should allow now() + interval expressions for trash cleanup', () => {
-      // Prepare
-      const input = "now() + interval '14 days'";
-
-      // Act
-      const result = sanitizeDefaultValue(input);
-
-      // Assert
-      expect(result).toBe("now() + interval '14 days'");
-    });
-
-    it('should be case insensitive for interval expressions', () => {
-      // Act & Assert
-      expect(sanitizeDefaultValue("NOW() + INTERVAL '14 days'")).toBe(
-        "NOW() + INTERVAL '14 days'",
-      );
-      expect(sanitizeDefaultValue("Now() + Interval '14 days'")).toBe(
-        "Now() + Interval '14 days'",
-      );
-    });
   });
 
   describe('SQL injection prevention', () => {

@@ -12,6 +12,7 @@ const SettingsOptionCardContentInputWrapper = (
   args: React.ComponentProps<typeof SettingsOptionCardContentInput>,
 ) => {
   const handleBlur = (value: string) => {
+    // eslint-disable-next-line no-console
     console.log('Value on blur:', value);
   };
 

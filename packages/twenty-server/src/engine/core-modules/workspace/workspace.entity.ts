@@ -97,14 +97,6 @@ export class Workspace {
   @Column({ type: 'integer', default: 14 })
   trashRetentionDays: number;
 
-  @Field()
-  @Column({
-    type: 'timestamptz',
-    default: () => "NOW() + INTERVAL '14 days'",
-  })
-  @Index('IDX_WORKSPACE_NEXT_TRASH_CLEANUP_AT')
-  nextTrashCleanupAt: Date;
-
   // Relations
   @OneToMany(() => AppToken, (appToken) => appToken.workspace, {
     cascade: true,

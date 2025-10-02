@@ -7,11 +7,7 @@ export const sanitizeDefaultValue = (
     return 'NULL';
   }
 
-  const allowedFunctions = [
-    'public.uuid_generate_v4()',
-    'now()',
-    "now() + interval '14 days'",
-  ];
+  const allowedFunctions = ['public.uuid_generate_v4()', 'now()'];
 
   if (typeof defaultValue === 'string') {
     if (allowedFunctions.includes(defaultValue.toLowerCase())) {
