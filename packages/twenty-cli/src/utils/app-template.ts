@@ -8,35 +8,38 @@ import path from 'path';
 
 export const copyBaseApplicationProject = async ({
   appName,
-  description,
-  appDir,
+  appDescription,
+  appDirectory,
 }: {
   appName: string;
-  description: string;
-  appDir: string;
+  appDescription: string;
+  appDirectory: string;
 }) => {
-  await fs.copy(BASE_APPLICATION_PROJECT_PATH, appDir);
+  await fs.copy(BASE_APPLICATION_PROJECT_PATH, appDirectory);
 
-  await createBasePackageJson({ appName, description, appDir });
+  await createBasePackageJson({
+    appName,
+    appDescription,
+    appDirectory,
+  });
 
-  await createReadmeContent({ appName, description, appDir });
+  await createReadmeContent({
+    appName,
+    appDescription,
+    appDirectory,
+  });
 };
 
 const createBasePackageJson = async ({
   appName,
-  description,
-  appDir,
+  appDescription,
+  appDirectory,
 }: {
   appName: string;
-  description: string;
-  appDir: string;
+  appDescription: string;
+  appDirectory: string;
 }) => {
-  const base = JSON.parse(
-    await fs.readFile(
-      join(BASE_APPLICATION_PROJECT_PATH, 'package.json'),
-      'utf-8',
-    ),
-  );
+  const base = JSON.parse(await readBaseApplicationProjectFile('package.json'));
 
   const schemas = getSchemaUrls();
 
@@ -46,33 +49,34 @@ const createBasePackageJson = async ({
     .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
-  base['description'] = description;
+  base['description'] = appDescription;
 
-  await writeJsoncFile(join(appDir, 'package.json'), base);
+  await writeJsoncFile(join(appDirectory, 'package.json'), base);
 };
 
 const createReadmeContent = async ({
   appName,
-  description,
-  appDir,
+  appDescription,
+  appDirectory,
 }: {
   appName: string;
-  description: string;
-  appDir: string;
+  appDescription: string;
+  appDirectory: string;
 }) => {
-  let readmeContent = await fs.readFile(
-    join(BASE_APPLICATION_PROJECT_PATH, 'README.md'),
-    'utf-8',
-  );
-  console.log('readmeContent', readmeContent);
+  let readmeContent = await readBaseApplicationProjectFile('README.md');
 
   readmeContent = readmeContent.replace(/\{title}/g, appName);
 
-  readmeContent = readmeContent.replace(/\{description}/g, description);
+  readmeContent = readmeContent.replace(/\{description}/g, appDescription);
 
-  readmeContent = readmeContent.replace(/\{appDir}/g, appDir);
+  readmeContent = readmeContent.replace(/\{appDir}/g, appDirectory);
 
-  console.log('readmeContent after', readmeContent);
+  await fs.writeFile(path.join(appDirectory, 'README.md'), readmeContent);
+};
 
-  await fs.writeFile(path.join(appDir, 'README.md'), readmeContent);
+const readBaseApplicationProjectFile = async (fileName: string) => {
+  return await fs.readFile(
+    join(BASE_APPLICATION_PROJECT_PATH, fileName),
+    'utf-8',
+  );
 };
