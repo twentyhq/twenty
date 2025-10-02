@@ -23,7 +23,7 @@ export const getChartSettingsDropdownContent = (itemId: string) => {
       return (
         <ChartSortByGroupByFieldDropdownContent title={t`Y-Axis Sort By`} />
       );
-    case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY_Y:
+    case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
       return <ChartGroupByFieldSelectionDropdownContent />;
     case CHART_CONFIGURATION_SETTING_IDS.COLORS:
       return <ChartColorSelectionDropdownContent />;
