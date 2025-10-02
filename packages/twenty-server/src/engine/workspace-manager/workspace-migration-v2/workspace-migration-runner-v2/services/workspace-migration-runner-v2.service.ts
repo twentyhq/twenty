@@ -9,6 +9,8 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/registry/workspace-migration-runner-action-handler-registry.service';
 
@@ -19,6 +21,8 @@ export class WorkspaceMigrationRunnerV2Service {
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   run = async ({
@@ -71,6 +75,28 @@ export class WorkspaceMigrationRunnerV2Service {
       }
 
       await queryRunner.commitTransaction();
+
+      const flatEntitiesCacheToInvalidate = [
+        ...new Set([
+          ...flatEntityMapsToInvalidate,
+          ...(relatedFlatEntityMapsKeys ?? []),
+        ]),
+      ];
+
+      if (
+        flatEntitiesCacheToInvalidate.includes('flatObjectMetadataMaps') ||
+        flatEntitiesCacheToInvalidate.includes('flatFieldMetadataMaps')
+      ) {
+        // Temporarily invalidation old cache too until it's deprecated
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
+        await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
+          {
+            workspaceId,
+          },
+        );
+      }
 
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
