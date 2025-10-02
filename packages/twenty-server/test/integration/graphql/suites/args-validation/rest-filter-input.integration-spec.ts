@@ -65,15 +65,20 @@ describe('Rest core (workspace) api - args validation', () => {
       failingFilterInputByFieldMetadataType,
     )) {
       //TODO - Remove when all test cases are fixed
-      const testCasesToRun = testCases.filter((testCase) =>
-        isDefined(testCase.restFilterInput),
-      );
+      if (
+        testCases.filter((testCase) => isDefined(testCase.restFilterInput))
+          .length === 0
+      ) {
+        continue;
+      }
 
       it.each(
-        testCasesToRun.map((testCase) => ({
-          ...testCase,
-          stringifiedFilter: JSON.stringify(testCase.restFilterInput),
-        })),
+        testCases
+          .filter((testCase) => isDefined(testCase.restFilterInput))
+          .map((testCase) => ({
+            ...testCase,
+            stringifiedFilter: JSON.stringify(testCase.restFilterInput),
+          })),
       )(
         `${fieldType} - should fail with filter : $stringifiedFilter`,
         async ({ restFilterInput: filter, restErrorMessage: errorMessage }) => {
