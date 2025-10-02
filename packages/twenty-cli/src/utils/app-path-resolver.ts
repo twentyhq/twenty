@@ -34,10 +34,10 @@ const resolveRelativePath = async (providedPath: string): Promise<string> => {
     }
   }
 
-  throw new Error(`Cannot find package.json at any of these locations:
+  throw new Error(`Cannot find Twenty app package.json at any of these locations:
   - ${fromCwd}
   - ${projectRoot ? path.resolve(projectRoot, providedPath) : 'N/A (no project root found)'}
-  
+
 Please check the path or run from the correct directory.`);
 };
 
@@ -60,11 +60,11 @@ const autoDetectAppPath = async (): Promise<string> => {
 
   const suggestions = await findNearbyApps(process.cwd());
   let errorMessage =
-    'No package.json found in current directory or parent directories.';
+    'No Twenty app found in current directory or parent directories.';
 
   if (suggestions.length > 0) {
     errorMessage += '\n\nFound Twenty applications nearby:';
-    suggestions.forEach((suggestion, i) => {
+    suggestions.forEach((suggestion: string, i: number) => {
       errorMessage += `\n  ${i + 1}. ${suggestion}`;
     });
     errorMessage +=
@@ -77,23 +77,22 @@ const autoDetectAppPath = async (): Promise<string> => {
 };
 
 const validateAppPath = async (appPath: string): Promise<string> => {
-  const hasPackageJson = await fs.pathExists(
-    path.join(appPath, 'package.json'),
-  );
+  if (!(await fs.pathExists(appPath))) {
+    throw new Error(`Directory does not exist: ${appPath}`);
+  }
 
-  if (!hasPackageJson) {
-    let errorMessage = `package.json not found in: ${appPath}`;
+  if (!(await isValidAppPath(appPath))) {
+    let errorMessage = `Not a valid Twenty app: ${appPath}`;
 
-    if (await fs.pathExists(appPath)) {
-      try {
-        const files = await fs.readdir(appPath);
-        errorMessage += `\n\nFiles in directory: ${files.join(', ')}`;
-      } catch {
-        errorMessage += '\n\nCould not read directory contents.';
-      }
+    const packageJsonPath = path.join(appPath, 'package.json');
+    if (await fs.pathExists(packageJsonPath)) {
+      errorMessage +=
+        '\n\npackage.json found but missing required $schema field for Twenty apps.';
     } else {
-      errorMessage += '\n\nDirectory does not exist.';
+      errorMessage += '\n\npackage.json not found.';
     }
+
+    errorMessage += '\n\nRun `twenty app init` to create a new application.';
 
     throw new Error(errorMessage);
   }

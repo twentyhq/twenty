@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
@@ -133,7 +132,7 @@ export class AgentService {
       name: updatedName,
     });
 
-    if (!isDefined(input.roleId)) {
+    if (!('roleId' in input)) {
       return updatedAgent;
     }
 

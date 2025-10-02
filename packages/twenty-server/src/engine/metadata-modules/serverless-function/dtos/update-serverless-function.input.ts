@@ -13,6 +13,7 @@ import {
 import graphqlTypeJson from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
 
 @InputType()
 export class UpdateServerlessFunctionInput {
@@ -41,5 +42,5 @@ export class UpdateServerlessFunctionInput {
 
   @Field(() => graphqlTypeJson)
   @IsObject()
-  code: JSON;
+  code: ServerlessFunctionCode;
 }

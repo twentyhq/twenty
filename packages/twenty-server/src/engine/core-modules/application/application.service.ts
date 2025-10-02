@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
 
 @Injectable()
 export class ApplicationService {
@@ -18,20 +19,24 @@ export class ApplicationService {
     });
   }
 
-  async findByStandardId(standardId: string, workspaceId: string) {
+  async findByUniversalIdentifier(
+    universalIdentifier: string,
+    workspaceId: string,
+  ) {
     return this.applicationRepository.findOne({
       where: {
-        standardId,
+        universalIdentifier,
         workspaceId,
       },
     });
   }
 
   async create(data: {
-    standardId?: string;
+    universalIdentifier?: string;
     label: string;
     description?: string;
     version?: string;
+    serverlessFunctionLayerId: string;
     sourcePath: string;
     workspaceId: string;
   }): Promise<ApplicationEntity> {
@@ -50,6 +55,9 @@ export class ApplicationService {
       description?: string;
       version?: string;
       sourcePath?: string;
+      packageJson?: PackageJson;
+      yarnLock?: string;
+      packageChecksum?: string;
     },
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
