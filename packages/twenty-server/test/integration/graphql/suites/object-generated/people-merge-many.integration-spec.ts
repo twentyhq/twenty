@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto';
+
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
@@ -213,6 +215,11 @@ describe('people merge resolvers (integration)', () => {
     });
 
     it('should handle dry run mode', async () => {
+      const uniqString = randomBytes(16).toString('hex');
+      const primaryEmail1 = `test${uniqString}@example.com`;
+      const additionalEmails1 = [`test1${uniqString}.extra@example.com`];
+      const primaryEmail2 = `test${uniqString}@example.com`;
+      const additionalEmails2 = [`test2${uniqString}.extra@example.com`];
       const createPersonsOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -224,8 +231,8 @@ describe('people merge resolvers (integration)', () => {
               lastName: 'User',
             },
             emails: {
-              primaryEmail: 'test1@example.com',
-              additionalEmails: ['test1.extra@example.com'],
+              primaryEmail: primaryEmail1,
+              additionalEmails: additionalEmails1,
             },
           },
           {
@@ -234,8 +241,8 @@ describe('people merge resolvers (integration)', () => {
               lastName: 'User',
             },
             emails: {
-              primaryEmail: 'test2@example.com',
-              additionalEmails: ['test2.extra@example.com'],
+              primaryEmail: primaryEmail2,
+              additionalEmails: additionalEmails2,
             },
           },
         ],
