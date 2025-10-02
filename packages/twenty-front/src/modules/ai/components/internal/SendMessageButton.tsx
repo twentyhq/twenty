@@ -1,4 +1,4 @@
-import { AI_CHAT_INPUT_ID } from '@/ai/constants/AIChatInputID';
+import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAgentChatContext } from '@/ai/hooks/useAgentChatContext';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
