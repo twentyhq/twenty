@@ -24,6 +24,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowServerlessFunctionTabListComponentId';
 import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuCloseAnimationCompleteCleanup = () => {
   const { resetSelectedItem } = useSelectableList('command-menu-list');
@@ -67,7 +68,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
               .getLoadable(recordStoreFamilyState(recordId))
               .getValue();
 
-            if (record?.pageLayoutId !== undefined) {
+            if (isDefined(record) && isDefined(record.pageLayoutId)) {
               set(
                 pageLayoutEditingWidgetIdComponentState.atomFamily({
                   instanceId: record.pageLayoutId,

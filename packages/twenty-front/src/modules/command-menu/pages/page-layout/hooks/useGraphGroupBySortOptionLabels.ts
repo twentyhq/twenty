@@ -1,13 +1,6 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilValue } from 'recoil';
-import { type IconArrowUp } from 'twenty-ui/display';
 import { GraphOrderBy } from '~/generated/graphql';
-
-export type SortOptionItem = {
-  value: GraphOrderBy;
-  label: string;
-  icon: typeof IconArrowUp;
-};
 
 export const useGraphGroupBySortOptionLabels = ({
   objectMetadataId,

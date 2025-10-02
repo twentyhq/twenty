@@ -78,7 +78,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
           {group.items.map((item) => {
             const isDisabled =
               !isNonEmptyString(widget.objectMetadataId) &&
-              item?.dependsOn?.includes(CHART_CONFIGURATION_SETTING_IDS.SOURCE);
+              (item?.dependsOn?.includes(
+                CHART_CONFIGURATION_SETTING_IDS.SOURCE,
+              ) ??
+                false);
 
             const handleToggleChange = () => {
               const configKey =
