@@ -34,14 +34,6 @@ export const GET_AGENT_CHAT_MESSAGES = gql`
         providerMetadata
         createdAt
       }
-      files {
-        id
-        name
-        fullPath
-        size
-        type
-        createdAt
-      }
     }
   }
 `;
