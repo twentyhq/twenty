@@ -20,6 +20,8 @@ type TabActionsDropdownProps = {
   onDuplicateRight: () => void;
   onDelete: () => void;
   isDeleteDisabled: boolean;
+  duplicateLeftLabel?: string;
+  duplicateRightLabel?: string;
 };
 
 export const TabActionsDropdown = ({
@@ -30,6 +32,8 @@ export const TabActionsDropdown = ({
   onDuplicateRight,
   onDelete,
   isDeleteDisabled,
+  duplicateLeftLabel = 'Duplicate Left',
+  duplicateRightLabel = 'Duplicate Right',
 }: TabActionsDropdownProps) => {
   const { closeDropdown } = useCloseDropdown();
 
@@ -68,12 +72,12 @@ export const TabActionsDropdown = ({
                 onClick={handleRename}
               />
               <MenuItem
-                text="Duplicate Left"
+                text={duplicateLeftLabel}
                 LeftIcon={IconCopy}
                 onClick={handleDuplicateLeft}
               />
               <MenuItem
-                text="Duplicate Right"
+                text={duplicateRightLabel}
                 LeftIcon={IconCopy}
                 onClick={handleDuplicateRight}
               />

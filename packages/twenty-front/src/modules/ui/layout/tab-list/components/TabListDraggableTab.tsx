@@ -74,20 +74,14 @@ export const TabListDraggableTab = ({
   };
 
   const handleDuplicateLeft = () => {
-    // Placeholder for Phase 3
-    console.log('Duplicate left:', tab.id);
     tabActions?.onDuplicate?.(tab.id, 'before');
   };
 
   const handleDuplicateRight = () => {
-    // Placeholder for Phase 3
-    console.log('Duplicate right:', tab.id);
     tabActions?.onDuplicate?.(tab.id, 'after');
   };
 
   const handleDelete = () => {
-    // Placeholder for Phase 4
-    console.log('Delete tab:', tab.id);
     tabActions?.onDelete?.(tab.id);
   };
 
@@ -107,7 +101,7 @@ export const TabListDraggableTab = ({
               draggableSnapshot.isDragging
                 ? undefined
                 : hasTabActions && isActive
-                  ? undefined // Let dropdown handle click
+                  ? undefined
                   : handleClick
             }
             style={{
@@ -137,7 +131,6 @@ export const TabListDraggableTab = ({
           </StyledDraggableWrapper>
         );
 
-        // If tab is active and has actions, wrap in dropdown (but not if in rename mode)
         if (
           hasTabActions &&
           isActive &&

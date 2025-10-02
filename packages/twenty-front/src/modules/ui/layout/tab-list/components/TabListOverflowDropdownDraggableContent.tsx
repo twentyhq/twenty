@@ -1,6 +1,6 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { TabListDropdownMenuItem } from '@/ui/layout/tab-list/components/TabListDropdownMenuItem';
+import { TabListDropdownMenuItemWithActions } from '@/ui/layout/tab-list/components/TabListDropdownMenuItemWithActions';
 import { TAB_LIST_DROPPABLE_IDS } from '@/ui/layout/tab-list/constants/TabListDroppableIds';
 import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListContext';
 import { useTheme } from '@emotion/react';
@@ -53,7 +53,7 @@ export const TabListOverflowDropdownDraggableContent = ({
           cursor: 'grabbing',
         }}
       >
-        <TabListDropdownMenuItem
+        <TabListDropdownMenuItemWithActions
           tab={tab}
           activeTabId={activeTabId}
           loading={loading}
@@ -111,7 +111,7 @@ export const TabListOverflowDropdownDraggableContent = ({
                               : 'none',
                           }}
                         >
-                          <TabListDropdownMenuItem
+                          <TabListDropdownMenuItemWithActions
                             tab={tab}
                             activeTabId={activeTabId}
                             loading={loading}
