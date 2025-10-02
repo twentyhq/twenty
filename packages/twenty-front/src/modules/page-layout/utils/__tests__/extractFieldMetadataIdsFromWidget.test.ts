@@ -167,9 +167,8 @@ describe('extractFieldMetadataIdsFromWidget', () => {
 
     const result = extractFieldMetadataIdsFromWidget(widget);
 
-    expect(result).toHaveLength(2);
+    expect(result).toHaveLength(1);
     expect(result).toContain('field-1');
-    expect(result).toContain('field-2');
   });
 
   it('should not include undefined optional fields', () => {

@@ -24,12 +24,14 @@ export const TEST_NUMBER_CHART_CONFIG = {
   description: 'Count of all records',
   color: 'blue',
   format: '0,0',
+  displayDataLabel: true,
 };
 
 export const TEST_NUMBER_CHART_CONFIG_MINIMAL = {
   graphType: GraphType.NUMBER,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
+  displayDataLabel: false,
 };
 
 export const TEST_BAR_CHART_CONFIG = {
@@ -54,6 +56,7 @@ export const TEST_BAR_CHART_CONFIG_MINIMAL = {
   groupByFieldMetadataIdX: TEST_FIELD_METADATA_ID_2,
   orderByX: GraphOrderBy.VALUE_DESC,
   displayDataLabel: false,
+  axisNameDisplay: AxisNameDisplay.NONE,
 };
 
 export const TEST_LINE_CHART_CONFIG = {
@@ -80,6 +83,7 @@ export const TEST_LINE_CHART_CONFIG_MINIMAL = {
   groupByFieldMetadataIdX: TEST_FIELD_METADATA_ID_2,
   orderByX: GraphOrderBy.VALUE_ASC,
   displayDataLabel: false,
+  axisNameDisplay: AxisNameDisplay.NONE,
 };
 
 export const TEST_PIE_CHART_CONFIG = {
@@ -116,6 +120,7 @@ export const TEST_GAUGE_CHART_CONFIG = {
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   description: 'Completion percentage',
+  displayDataLabel: true,
   filter: {
     or: [
       {
@@ -131,6 +136,7 @@ export const TEST_GAUGE_CHART_CONFIG_MINIMAL = {
   graphType: GraphType.GAUGE,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT_TRUE,
+  displayDataLabel: false,
 };
 
 export const INVALID_IFRAME_CONFIG_BAD_URL = {
