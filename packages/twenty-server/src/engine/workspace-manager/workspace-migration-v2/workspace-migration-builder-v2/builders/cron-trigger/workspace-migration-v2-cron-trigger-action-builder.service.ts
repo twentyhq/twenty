@@ -12,31 +12,26 @@ import {
   UpdateCronTriggerAction,
   WorkspaceMigrationCronTriggerActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-cron-trigger-action-v2.type';
-import {
-  CronTriggerRelatedFlatEntityMaps,
-  FlatCronTriggerValidatorService,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service';
+import { FlatCronTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service';
 
 @Injectable()
 export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'cronTrigger',
   FlatCronTrigger,
   WorkspaceMigrationCronTriggerActionV2,
-  CronTriggerRelatedFlatEntityMaps
+  undefined
 > {
   constructor(
     private readonly flatCronTriggerValidatorService: FlatCronTriggerValidatorService,
   ) {
-    super();
+    super('cronTrigger');
   }
 
   protected async validateFlatEntityCreation({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatCronTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
-  }: FlatEntityValidationArgs<
-    FlatCronTrigger,
-    CronTriggerRelatedFlatEntityMaps
-  >): Promise<
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityValidationArgs<FlatCronTrigger>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationCronTriggerActionV2,
       FlatCronTrigger
@@ -47,7 +42,6 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         {
           flatCronTriggerToValidate,
           optimisticFlatCronTriggerMaps,
-          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -64,17 +58,15 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         type: 'create_cron_trigger',
         cronTrigger: flatCronTriggerToValidate,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
   protected async validateFlatEntityDeletion({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatCronTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
-  }: FlatEntityValidationArgs<
-    FlatCronTrigger,
-    CronTriggerRelatedFlatEntityMaps
-  >): Promise<
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityValidationArgs<FlatCronTrigger>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationCronTriggerActionV2,
       FlatCronTrigger
@@ -84,7 +76,6 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
       this.flatCronTriggerValidatorService.validateFlatCronTriggerDeletion({
         flatCronTriggerToValidate,
         optimisticFlatCronTriggerMaps,
-        dependencyOptimisticFlatEntityMaps,
       });
 
     if (validationResult.errors.length > 0) {
@@ -100,17 +91,15 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         type: 'delete_cron_trigger',
         cronTriggerId: flatCronTriggerToValidate.id,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
   protected async validateFlatEntityUpdate({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityUpdate: { from: fromFlatCronTrigger, to: toFlatCronTrigger },
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
-  }: FlatEntityUpdateValidationArgs<
-    FlatCronTrigger,
-    CronTriggerRelatedFlatEntityMaps
-  >): Promise<
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityUpdateValidationArgs<FlatCronTrigger>): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationCronTriggerActionV2,
         FlatCronTrigger
@@ -130,7 +119,6 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
       this.flatCronTriggerValidatorService.validateFlatCronTriggerUpdate({
         flatCronTriggerToValidate: toFlatCronTrigger,
         optimisticFlatCronTriggerMaps,
-        dependencyOptimisticFlatEntityMaps,
       });
 
     if (validationResult.errors.length > 0) {
@@ -149,6 +137,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     return {
       status: 'success',
       action: updateCronTriggerAction,
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

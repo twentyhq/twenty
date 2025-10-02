@@ -7,6 +7,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
+      "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
       "serverlessFunction": [],
@@ -34,6 +35,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     "summary": {
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -55,6 +57,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
+      "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
       "serverlessFunction": [],
@@ -82,6 +85,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     "summary": {
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,

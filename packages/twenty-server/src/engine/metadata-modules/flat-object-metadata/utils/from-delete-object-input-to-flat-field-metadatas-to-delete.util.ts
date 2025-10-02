@@ -3,13 +3,13 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findObjectFieldsInFlatFieldMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import {
@@ -19,13 +19,15 @@ import {
 
 type FromDeleteObjectInputToFlatFieldMetadatasToDeleteArgs = {
   deleteObjectInput: DeleteOneObjectInput;
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  existingFlatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
-};
+} & Pick<
+  AllFlatEntityMaps,
+  'flatFieldMetadataMaps' | 'flatObjectMetadataMaps' | 'flatIndexMaps'
+>;
 export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
   deleteObjectInput: rawDeleteObjectInput,
-  existingFlatObjectMetadataMaps,
-  existingFlatIndexMaps,
+  flatFieldMetadataMaps,
+  flatObjectMetadataMaps,
+  flatIndexMaps,
   // This should return an AllFlatEntityMaps
 }: FromDeleteObjectInputToFlatFieldMetadatasToDeleteArgs): {
   flatFieldMetadatasToDelete: FlatFieldMetadata[];
@@ -38,11 +40,10 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
       ['id'],
     );
 
-  const flatObjectMetadataToDelete =
-    findFlatObjectMetadataInFlatObjectMetadataMaps({
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataId: objectMetadataToDeleteId,
-    });
+  const flatObjectMetadataToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    flatEntityMaps: flatObjectMetadataMaps,
+    flatEntityId: objectMetadataToDeleteId,
+  });
 
   if (!isDefined(flatObjectMetadataToDelete)) {
     throw new ObjectMetadataException(
@@ -51,27 +52,29 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
-  const flatFieldMetadatasToDelete =
-    flatObjectMetadataToDelete.flatFieldMetadatas.flatMap(
-      (flatFieldMetadata) => {
-        if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
-          const relationTargetFlatFieldMetadata =
-            findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
-              flatFieldMetadata,
-              flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-            });
+  const { objectFlatFieldMetadatas } =
+    findObjectFieldsInFlatFieldMetadataMapsOrThrow({
+      flatFieldMetadataMaps,
+      flatObjectMetadata: flatObjectMetadataToDelete,
+    });
+  const flatFieldMetadatasToDelete = objectFlatFieldMetadatas.flatMap(
+    (flatFieldMetadata) => {
+      if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+        const relationTargetFlatFieldMetadata =
+          findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
+            flatFieldMetadata,
+            flatFieldMetadataMaps,
+          });
 
-          return [flatFieldMetadata, relationTargetFlatFieldMetadata];
-        }
+        return [flatFieldMetadata, relationTargetFlatFieldMetadata];
+      }
 
-        return [flatFieldMetadata];
-      },
-    );
+      return [flatFieldMetadata];
+    },
+  );
 
   // TODO We should maintain a idsByObjectMetadataId in the flatIndexMaps
-  const flatIndexMetadataToDelete = Object.values(
-    existingFlatIndexMaps.byId,
-  ).filter(
+  const flatIndexMetadataToDelete = Object.values(flatIndexMaps.byId).filter(
     (flatIndex): flatIndex is FlatIndexMetadata =>
       isDefined(flatIndex) &&
       flatIndex.objectMetadataId === flatObjectMetadataToDelete.id,
