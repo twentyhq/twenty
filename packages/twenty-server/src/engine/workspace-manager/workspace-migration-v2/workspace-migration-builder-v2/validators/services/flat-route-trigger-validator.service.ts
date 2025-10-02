@@ -11,7 +11,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 
 export type RouteTriggerRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  'flatRouteTriggerMaps'
+  'flatServerlessFunctionMaps'
 >;
 
 type RouteTriggerValidationArgs = {
@@ -27,6 +27,7 @@ export class FlatRouteTriggerValidatorService {
   public validateFlatRouteTriggerUpdate({
     flatRouteTriggerToValidate: updatedFlatRouteTrigger,
     optimisticFlatRouteTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: RouteTriggerValidationArgs): FailedFlatEntityValidation<FlatRouteTrigger> {
     const errors = [];
 
@@ -38,6 +39,19 @@ export class FlatRouteTriggerValidatorService {
         code: RouteTriggerExceptionCode.ROUTE_NOT_FOUND,
         message: t`Route not found`,
         userFriendlyMessage: t`Route not found`,
+      });
+    }
+
+    const serverlessFunction =
+      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
+        updatedFlatRouteTrigger.serverlessFunctionId
+      ];
+
+    if (!isDefined(serverlessFunction)) {
+      errors.push({
+        code: RouteTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        message: t`Serverless function not found`,
+        userFriendlyMessage: t`Serverless function not found`,
       });
     }
 
@@ -79,6 +93,7 @@ export class FlatRouteTriggerValidatorService {
   public async validateFlatRouteTriggerCreation({
     flatRouteTriggerToValidate,
     optimisticFlatRouteTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: RouteTriggerValidationArgs): Promise<
     FailedFlatEntityValidation<FlatRouteTrigger>
   > {
@@ -110,6 +125,20 @@ export class FlatRouteTriggerValidatorService {
         code: RouteTriggerExceptionCode.ROUTE_PATH_ALREADY_EXIST,
         message: t`Route with same path already exists`,
         userFriendlyMessage: t`Route path already exists`,
+      });
+    }
+
+    // Validate serverlessFunctionId exists
+    const serverlessFunction =
+      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
+        flatRouteTriggerToValidate.serverlessFunctionId
+      ];
+
+    if (!isDefined(serverlessFunction)) {
+      errors.push({
+        code: RouteTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        message: t`Serverless function not found`,
+        userFriendlyMessage: t`Serverless function not found`,
       });
     }
 

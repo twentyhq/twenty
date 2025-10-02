@@ -11,7 +11,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 
 export type DatabaseEventTriggerRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  'flatDatabaseEventTriggerMaps'
+  'flatServerlessFunctionMaps'
 >;
 
 type DatabaseEventTriggerValidationArgs = {
@@ -27,6 +27,7 @@ export class FlatDatabaseEventTriggerValidatorService {
   public validateFlatDatabaseEventTriggerUpdate({
     flatDatabaseEventTriggerToValidate: updatedFlatDatabaseEventTrigger,
     optimisticFlatDatabaseEventTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: DatabaseEventTriggerValidationArgs): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
     const errors = [];
 
@@ -40,6 +41,19 @@ export class FlatDatabaseEventTriggerValidatorService {
         code: DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_NOT_FOUND,
         message: t`Database event trigger not found`,
         userFriendlyMessage: t`Database event trigger not found`,
+      });
+    }
+
+    const serverlessFunction =
+      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps?.byId?.[
+        updatedFlatDatabaseEventTrigger.serverlessFunctionId
+      ];
+
+    if (!isDefined(serverlessFunction)) {
+      errors.push({
+        code: DatabaseEventTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        message: t`Serverless function not found`,
+        userFriendlyMessage: t`Serverless function not found`,
       });
     }
 
@@ -83,6 +97,7 @@ export class FlatDatabaseEventTriggerValidatorService {
   public async validateFlatDatabaseEventTriggerCreation({
     flatDatabaseEventTriggerToValidate,
     optimisticFlatDatabaseEventTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: DatabaseEventTriggerValidationArgs): Promise<
     FailedFlatEntityValidation<FlatDatabaseEventTrigger>
   > {
@@ -99,6 +114,19 @@ export class FlatDatabaseEventTriggerValidatorService {
         code: DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_ALREADY_EXIST,
         message: t`Database event trigger with same id already exists`,
         userFriendlyMessage: t`Database event trigger already exists`,
+      });
+    }
+
+    const serverlessFunction =
+      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps?.byId?.[
+        flatDatabaseEventTriggerToValidate.serverlessFunctionId
+      ];
+
+    if (!isDefined(serverlessFunction)) {
+      errors.push({
+        code: DatabaseEventTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        message: t`Serverless function not found`,
+        userFriendlyMessage: t`Serverless function not found`,
       });
     }
 

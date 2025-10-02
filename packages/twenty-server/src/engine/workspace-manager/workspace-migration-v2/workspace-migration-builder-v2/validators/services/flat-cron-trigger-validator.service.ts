@@ -11,7 +11,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 
 export type CronTriggerRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  'flatCronTriggerMaps'
+  'flatServerlessFunctionMaps'
 >;
 
 type CronTriggerValidationArgs = {
@@ -27,6 +27,7 @@ export class FlatCronTriggerValidatorService {
   public validateFlatCronTriggerUpdate({
     flatCronTriggerToValidate: updatedFlatCronTrigger,
     optimisticFlatCronTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: CronTriggerValidationArgs): FailedFlatEntityValidation<FlatCronTrigger> {
     const errors = [];
 
@@ -38,6 +39,19 @@ export class FlatCronTriggerValidatorService {
         code: CronTriggerExceptionCode.CRON_TRIGGER_NOT_FOUND,
         message: t`Cron trigger not found`,
         userFriendlyMessage: t`Cron trigger not found`,
+      });
+    }
+
+    const serverlessFunction =
+      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps?.byId?.[
+        updatedFlatCronTrigger.serverlessFunctionId
+      ];
+
+    if (!isDefined(serverlessFunction)) {
+      errors.push({
+        code: CronTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        message: t`Serverless function not found`,
+        userFriendlyMessage: t`Serverless function not found`,
       });
     }
 
@@ -79,6 +93,7 @@ export class FlatCronTriggerValidatorService {
   public async validateFlatCronTriggerCreation({
     flatCronTriggerToValidate,
     optimisticFlatCronTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: CronTriggerValidationArgs): Promise<
     FailedFlatEntityValidation<FlatCronTrigger>
   > {
@@ -93,6 +108,19 @@ export class FlatCronTriggerValidatorService {
         code: CronTriggerExceptionCode.CRON_TRIGGER_ALREADY_EXIST,
         message: t`Cron trigger with same id already exists`,
         userFriendlyMessage: t`Cron trigger already exists`,
+      });
+    }
+
+    const serverlessFunction =
+      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps?.byId?.[
+        flatCronTriggerToValidate.serverlessFunctionId
+      ];
+
+    if (!isDefined(serverlessFunction)) {
+      errors.push({
+        code: CronTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        message: t`Serverless function not found`,
+        userFriendlyMessage: t`Serverless function not found`,
       });
     }
 

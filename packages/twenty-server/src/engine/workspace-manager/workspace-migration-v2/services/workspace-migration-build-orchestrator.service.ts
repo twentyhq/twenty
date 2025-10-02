@@ -246,7 +246,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatDatabaseEventTriggerMaps,
             to: toFlatDatabaseEventTriggerMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps,
+            dependencyOptimisticFlatEntityMaps: {
+              flatServerlessFunctionMaps:
+                optimisticAllFlatEntityMaps.flatServerlessFunctionMaps,
+            },
           },
         );
 
@@ -273,7 +276,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatCronTriggerMaps,
             to: toFlatCronTriggerMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps,
+            dependencyOptimisticFlatEntityMaps: {
+              flatServerlessFunctionMaps:
+                optimisticAllFlatEntityMaps.flatServerlessFunctionMaps,
+            },
           },
         );
 
@@ -297,7 +303,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatRouteTriggerMaps,
             to: toFlatRouteTriggerMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps,
+            dependencyOptimisticFlatEntityMaps: {
+              flatServerlessFunctionMaps:
+                optimisticAllFlatEntityMaps.flatServerlessFunctionMaps,
+            },
           },
         );
 
