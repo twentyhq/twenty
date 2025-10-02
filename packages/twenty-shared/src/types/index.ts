@@ -35,6 +35,7 @@ export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { ObjectsPermissionsByRoleIdDeprecated } from './ObjectsPermissionsByRoleIdDeprecated';
 export type { ObjectsPermissionsDeprecated } from './ObjectsPermissionsDeprecated';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
+export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
 export type {
@@ -81,7 +82,12 @@ export { DEFAULT_RELATIVE_DATE_VALUE } from './RelativeDateValue';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 export { SettingsPath } from './SettingsPath';
-export type { StepFilterGroup, StepFilter } from './StepFilters';
+export type {
+  StepFilterGroup,
+  StepFilter,
+  StepFilterWithPotentiallyDeprecatedOperand,
+} from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { ViewFilterOperand } from './ViewFilterOperand';
+export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';

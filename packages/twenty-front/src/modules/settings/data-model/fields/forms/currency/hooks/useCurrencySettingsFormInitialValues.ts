@@ -1,9 +1,9 @@
 import { useFormContext } from 'react-hook-form';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { type SettingsDataModelFieldCurrencyFormValues } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { isNonEmptyString } from '@sniptt/guards';
+import { CurrencyCode } from 'twenty-shared/constants';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 

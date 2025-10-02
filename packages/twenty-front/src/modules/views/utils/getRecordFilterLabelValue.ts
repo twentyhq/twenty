@@ -21,9 +21,9 @@ export const getRecordFilterLabelValue = ({
 
   if (isDateOrDateTimeFilter) {
     switch (recordFilter.operand) {
-      case RecordFilterOperand.IsToday:
-      case RecordFilterOperand.IsInFuture:
-      case RecordFilterOperand.IsInPast:
+      case RecordFilterOperand.IS_TODAY:
+      case RecordFilterOperand.IS_IN_FUTURE:
+      case RecordFilterOperand.IS_IN_PAST:
         return operandLabelShort;
       default:
         return `${operandLabelShort} ${recordFilter.displayValue}`;

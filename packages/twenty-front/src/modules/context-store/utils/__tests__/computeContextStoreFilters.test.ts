@@ -60,7 +60,7 @@ describe('computeContextStoreFilters', () => {
         value: 'John',
         displayValue: 'John',
         displayAvatarUrl: undefined,
-        operand: ViewFilterOperand.Contains,
+        operand: ViewFilterOperand.CONTAINS,
         type: 'TEXT',
         label: 'Name',
       },

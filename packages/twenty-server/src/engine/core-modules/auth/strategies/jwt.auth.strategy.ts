@@ -241,11 +241,17 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       impersonatorUserWorkspace.user.canImpersonate === true &&
       workspace.allowImpersonation === true;
 
-    if (isServerLevelImpersonation && !hasServerLevelImpersonatePermission) {
-      throw new AuthException(
-        'Server level impersonation not allowed',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+    if (isServerLevelImpersonation) {
+      if (!hasServerLevelImpersonatePermission)
+        throw new AuthException(
+          'Server level impersonation not allowed',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+
+      return {
+        impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
+      };
     }
 
     const hasWorkspaceLevelImpersonatePermission =
@@ -255,10 +261,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         workspaceId: impersonatedUserWorkspace.workspace.id,
       });
 
-    if (
-      !hasWorkspaceLevelImpersonatePermission &&
-      !hasServerLevelImpersonatePermission
-    ) {
+    if (!hasWorkspaceLevelImpersonatePermission) {
       throw new AuthException(
         'Impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,

@@ -28,7 +28,7 @@ describe('mapViewFiltersToFilters', () => {
         fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         value: 'testValue',
         displayValue: 'Test Display Value',
-        operand: ViewFilterOperand.Is,
+        operand: ViewFilterOperand.IS,
       },
     ];
 
@@ -38,7 +38,7 @@ describe('mapViewFiltersToFilters', () => {
         fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         value: 'testValue',
         displayValue: 'Test Display Value',
-        operand: ViewFilterOperand.Is,
+        operand: ViewFilterOperand.IS,
         label: baseFieldMetadataItem.label,
         type: FieldMetadataType.FULL_NAME,
         positionInRecordFilterGroup: undefined,

@@ -392,9 +392,9 @@ export const getEmptyRecordGqlOperationFilter = ({
   }
 
   switch (operand) {
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return emptyRecordFilter;
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return {
         not: emptyRecordFilter,
       };
