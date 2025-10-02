@@ -5,10 +5,9 @@ import {
 } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-properties-to-compare.constant';
 import { type FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-properties-to-compare.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -24,9 +23,11 @@ import { type ObjectMetadataStandardOverridesProperties } from 'src/engine/metad
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 type FromUpdateObjectInputToFlatObjectMetadataArgs = {
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   updateObjectInput: UpdateOneObjectInput;
-} & Pick<AllFlatEntityMaps, 'flatIndexMaps'>;
+} & Pick<
+  AllFlatEntityMaps,
+  'flatIndexMaps' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+>;
 
 const objectMetadataEditableProperties =
   FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE.filter(
@@ -45,9 +46,10 @@ type UpdatedFlatObjectAndOtherObjectFieldMetadatas = {
 };
 
 export const fromUpdateObjectInputToFlatObjectMetadata = ({
-  existingFlatObjectMetadataMaps,
+  flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   updateObjectInput: rawUpdateObjectInput,
   flatIndexMaps,
+  flatFieldMetadataMaps,
 }: FromUpdateObjectInputToFlatObjectMetadataArgs): UpdatedFlatObjectAndOtherObjectFieldMetadatas => {
   const { id: objectMetadataIdToUpdate } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -59,11 +61,10 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
     objectMetadataEditableProperties,
   );
 
-  const flatObjectMetadataToUpdate =
-    findFlatObjectMetadataInFlatObjectMetadataMaps({
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataId: objectMetadataIdToUpdate,
-    });
+  const flatObjectMetadataToUpdate = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityMaps: existingFlatObjectMetadataMaps,
+    flatEntityId: objectMetadataIdToUpdate,
+  });
 
   if (!isDefined(flatObjectMetadataToUpdate)) {
     throw new ObjectMetadataException(
@@ -148,7 +149,7 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
       const newUpdatedOtherObjectFlatFieldMetadatas =
         property === 'nameSingular' || property === 'namePlural'
           ? renameRelatedMorphFieldOnObjectNamesUpdate({
-              existingFlatObjectMetadataMaps,
+              flatFieldMetadataMaps,
               fromFlatObjectMetadata: updatedFlatObjectMetadata,
               toFlatObjectMetadata: updatedFlatObjectMetadata,
             })
@@ -157,6 +158,7 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
       const newUpdatedFlatIndexMetadatas =
         property === 'nameSingular'
           ? recomputeIndexAfterFlatObjectMetadataSingularNameUpdate({
+              flatFieldMetadataMaps,
               existingFlatObjectMetadata: flatObjectMetadataToUpdate,
               flatIndexMaps,
               updatedSingularName: updatedFlatObjectMetadata.nameSingular,

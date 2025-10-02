@@ -5,6 +5,7 @@ import { DataSource, QueryFailedError } from 'typeorm';
 
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import {
   WorkspaceMigrationEntity,
@@ -40,6 +41,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspaceSyncRoleService: WorkspaceSyncRoleService,
     private readonly workspaceSyncAgentService: WorkspaceSyncAgentService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   /**
@@ -260,6 +262,10 @@ export class WorkspaceSyncMetadataService {
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         context.workspaceId,
       );
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId: context.workspaceId,
+        flatEntities: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      });
     }
 
     return {

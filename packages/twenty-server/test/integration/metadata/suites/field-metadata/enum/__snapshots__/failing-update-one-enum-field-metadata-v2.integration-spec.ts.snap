@@ -8,8 +8,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -24,9 +23,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -35,6 +37,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -58,8 +61,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -74,9 +76,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -85,6 +90,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -108,8 +114,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -123,9 +128,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -134,6 +142,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -157,8 +166,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -187,9 +195,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -198,6 +209,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -221,8 +233,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -251,9 +262,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -262,6 +276,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -285,8 +300,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -315,9 +329,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -326,6 +343,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -349,8 +367,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -379,9 +396,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -390,6 +410,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -413,8 +434,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -428,9 +448,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -439,6 +462,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -462,8 +486,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -478,9 +501,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -489,6 +515,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -512,8 +539,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -532,9 +558,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -543,6 +572,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -566,8 +596,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -581,9 +610,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -592,6 +624,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -615,8 +648,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -631,9 +663,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -642,6 +677,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -665,8 +701,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -680,9 +715,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -691,6 +729,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -714,8 +753,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -744,9 +782,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -755,6 +796,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -778,8 +820,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -793,9 +834,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -804,6 +848,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -827,8 +872,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -842,9 +886,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -853,6 +900,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -876,8 +924,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -892,9 +939,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -903,6 +953,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -926,8 +977,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -942,9 +992,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -953,6 +1006,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -976,8 +1030,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -991,9 +1044,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1002,6 +1058,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1025,8 +1082,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1041,9 +1097,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1052,6 +1111,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1075,8 +1135,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1090,9 +1149,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1101,6 +1163,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1124,8 +1187,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1144,9 +1206,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1155,6 +1220,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1178,8 +1244,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1193,9 +1258,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1204,6 +1272,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1227,8 +1296,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1242,9 +1310,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1253,6 +1324,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1276,8 +1348,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1296,9 +1367,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1307,6 +1381,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1330,8 +1405,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1345,9 +1419,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1356,6 +1433,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1379,8 +1457,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1395,9 +1472,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1406,6 +1486,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1429,8 +1510,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1444,9 +1524,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1455,6 +1538,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1478,8 +1562,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1498,9 +1581,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1509,6 +1595,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1532,8 +1619,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1547,9 +1633,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1558,6 +1647,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1581,8 +1671,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1596,9 +1685,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1607,6 +1699,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1630,8 +1723,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1650,9 +1742,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1661,6 +1756,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1684,8 +1780,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1699,9 +1794,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1710,6 +1808,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1733,8 +1832,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1748,9 +1846,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1759,6 +1860,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1782,8 +1884,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1797,9 +1898,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1808,6 +1912,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1831,8 +1936,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1846,9 +1950,12 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1857,6 +1964,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1880,8 +1988,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1900,9 +2007,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1911,6 +2021,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1934,8 +2045,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1949,9 +2059,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1960,6 +2073,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -1983,8 +2097,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1998,9 +2111,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2009,6 +2125,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2032,8 +2149,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2062,9 +2178,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2073,6 +2192,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2096,8 +2216,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2126,9 +2245,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2137,6 +2259,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2160,8 +2283,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2190,9 +2312,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2201,6 +2326,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2224,8 +2350,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2254,9 +2379,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2265,6 +2393,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2288,8 +2417,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2304,9 +2432,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2315,6 +2446,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2338,8 +2470,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2358,9 +2489,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2369,6 +2503,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2392,8 +2527,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2407,9 +2541,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2418,6 +2555,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2441,8 +2579,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2457,9 +2594,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2468,6 +2608,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2491,8 +2632,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2506,9 +2646,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2517,6 +2660,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2540,8 +2684,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2555,9 +2698,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2566,6 +2712,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2589,8 +2736,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2604,9 +2750,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2615,6 +2764,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2638,8 +2788,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2654,9 +2803,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2665,6 +2817,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2688,8 +2841,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2703,9 +2855,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2714,6 +2869,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2737,8 +2893,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2753,9 +2908,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2764,6 +2922,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2787,8 +2946,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2802,9 +2960,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2813,6 +2974,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2836,8 +2998,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2856,9 +3017,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2867,6 +3031,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2890,8 +3055,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2905,9 +3069,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2916,6 +3083,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2939,8 +3107,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2954,9 +3121,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2965,6 +3135,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -2988,8 +3159,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3008,9 +3178,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3019,6 +3192,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -3042,8 +3216,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3057,9 +3230,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3068,6 +3244,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -3091,8 +3268,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3107,9 +3283,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3118,6 +3297,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -3141,8 +3321,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3156,9 +3335,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3167,6 +3349,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -3190,8 +3373,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3210,9 +3392,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3221,6 +3406,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -3244,8 +3430,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3259,9 +3444,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3270,6 +3458,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -3293,8 +3482,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3308,9 +3496,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3319,6 +3510,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -3342,8 +3534,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3362,9 +3553,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3373,6 +3567,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -3396,8 +3591,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3411,9 +3605,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3422,6 +3619,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -3445,8 +3643,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3460,9 +3657,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3471,6 +3671,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,
@@ -3494,8 +3695,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3509,9 +3709,12 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3520,6 +3723,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
         "invalidServerlessFunction": 0,

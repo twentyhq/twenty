@@ -6,6 +6,7 @@ import { Checkbox } from '@ui/input/components/Checkbox';
 import {
   StyledMenuItemBase,
   StyledMenuItemLabel,
+  StyledMenuItemLabelLight,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
@@ -17,11 +18,19 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   width: 100%;
 `;
 
+const StyledTextContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1 0 0;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
 type MenuItemMultiSelectAvatarProps = {
   avatar?: ReactNode;
   selected: boolean;
   isKeySelected?: boolean;
   text?: string;
+  contextualText?: string;
   className?: string;
   onSelectChange?: (selected: boolean) => void;
 };
@@ -30,6 +39,7 @@ export const MenuItemMultiSelectAvatar = ({
   avatar,
   text,
   selected,
+  contextualText,
   className,
   isKeySelected,
   onSelectChange,
@@ -48,9 +58,19 @@ export const MenuItemMultiSelectAvatar = ({
         <Checkbox checked={selected} />
         <StyledMenuItemLeftContent>
           {avatar}
-          <StyledMenuItemLabel>
-            <OverflowingTextWithTooltip text={text} />
-          </StyledMenuItemLabel>
+          <StyledTextContainer>
+            <StyledMenuItemLabel>
+              <OverflowingTextWithTooltip text={text} />
+            </StyledMenuItemLabel>
+            {contextualText && (
+              <>
+                <StyledMenuItemLabelLight>·</StyledMenuItemLabelLight>
+                <StyledMenuItemLabelLight>
+                  <OverflowingTextWithTooltip text={contextualText} />
+                </StyledMenuItemLabelLight>
+              </>
+            )}
+          </StyledTextContainer>
         </StyledMenuItemLeftContent>
       </StyledLeftContentWithCheckboxContainer>
     </StyledMenuItemBase>

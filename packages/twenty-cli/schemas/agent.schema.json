@@ -4,16 +4,20 @@
   "title": "Twenty Agent Manifest",
   "description": "Schema for Twenty AI agent configuration files",
   "type": "object",
-  "required": ["standardId", "name", "label", "prompt", "modelId"],
+  "required": ["standardId", "universalIdentifier", "name", "label", "prompt", "modelId"],
   "properties": {
     "$schema": {
       "type": "string",
       "description": "JSON Schema reference for validation and IDE support"
     },
-    "standardId": {
+    "universalIdentifier": {
       "type": "string",
-      "description": "Unique identifier for the agent (UUID format recommended)",
+      "description": "Unique identifier (UUID format recommended)",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "standardId": {
+      "const": { "$data": "1/universalIdentifier" },
+      "description": "Should be the same as universalIdentifier"
     },
     "name": {
       "type": "string",

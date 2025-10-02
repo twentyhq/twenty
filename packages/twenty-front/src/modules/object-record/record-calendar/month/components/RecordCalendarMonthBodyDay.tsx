@@ -47,8 +47,6 @@ const StyledDayHeader = styled.div`
   flex-direction: row;
   height: 24px;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(1.5)};
   margin-left: none;
   width: 100%;
 `;
