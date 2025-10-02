@@ -18,8 +18,8 @@ export class RouteTriggerDTO {
   @Field(() => HTTPMethod)
   httpMethod: HTTPMethod;
 
-  @Field({ nullable: true })
-  serverlessFunctionId?: string;
+  @Field()
+  serverlessFunctionId: string;
 
   @Field()
   workspaceId: string;
