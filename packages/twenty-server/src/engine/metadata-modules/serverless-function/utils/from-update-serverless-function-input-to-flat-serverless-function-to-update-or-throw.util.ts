@@ -13,7 +13,7 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { serverlessFunctionCreateCodeChecksum } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-code-checksum.utils';
+import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export const fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOrThrow =
@@ -39,15 +39,18 @@ export const fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOr
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
       );
     }
-    const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
-      {
-        ...rawUpdateServerlessFunctionInput,
-        checksum: serverlessFunctionCreateCodeChecksum(
-          rawUpdateServerlessFunctionInput.code,
-        ),
-      },
-      FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES,
-    );
+    const updatedEditableFieldProperties = {
+      ...extractAndSanitizeObjectStringFields(
+        {
+          ...rawUpdateServerlessFunctionInput,
+          checksum: serverlessFunctionCreateHash(
+            JSON.stringify(rawUpdateServerlessFunctionInput.code),
+          ),
+        },
+        FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES,
+      ),
+      code: rawUpdateServerlessFunctionInput.code,
+    };
 
     return mergeUpdateInExistingRecord({
       existing: existingFlatServerlessFunctionToUpdate,

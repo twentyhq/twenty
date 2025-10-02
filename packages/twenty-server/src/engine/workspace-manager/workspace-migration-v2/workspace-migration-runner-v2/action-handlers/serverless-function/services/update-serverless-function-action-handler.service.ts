@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { basename, dirname, join } from 'path';
-
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -15,6 +13,7 @@ import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-f
 import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-serverless-function-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
+import { ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
 
 @Injectable()
 export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -78,21 +77,13 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
     code,
   }: {
     serverlessFunction: FlatServerlessFunction;
-    code: JSON;
+    code: ServerlessFunctionCode;
   }) {
     const fileFolder = getServerlessFolder({
       serverlessFunction,
       version: 'draft',
     });
 
-    for (const key of Object.keys(code)) {
-      await this.fileStorageService.write({
-        // @ts-expect-error legacy noImplicitAny
-        file: code[key],
-        name: basename(key),
-        mimeType: undefined,
-        folder: join(fileFolder, dirname(key)),
-      });
-    }
+    await this.fileStorageService.writeFolder(code, fileFolder);
   }
 }

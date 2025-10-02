@@ -65,6 +65,7 @@ import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { loginTokenState } from '../states/loginTokenState';
+import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -72,6 +73,7 @@ export const useAuth = () => {
 
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
+  const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const isEmailVerificationRequired = useRecoilValue(
     isEmailVerificationRequiredState,
@@ -164,6 +166,7 @@ export const useAuth = () => {
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
+          set(isCaptchaScriptLoadedState, isCaptchaScriptLoaded);
           return undefined;
         });
 
@@ -183,6 +186,7 @@ export const useAuth = () => {
       setLastAuthenticateWorkspaceDomain,
       loadMockedObjectMetadataItems,
       navigate,
+      isCaptchaScriptLoaded,
     ],
   );
 
@@ -493,8 +497,8 @@ export const useAuth = () => {
 
   const handleSignOut = useCallback(async () => {
     await clearSession();
-    await requestFreshCaptchaToken();
-  }, [clearSession, requestFreshCaptchaToken]);
+    if (isCaptchaScriptLoaded) await requestFreshCaptchaToken();
+  }, [clearSession, isCaptchaScriptLoaded, requestFreshCaptchaToken]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(
     async ({

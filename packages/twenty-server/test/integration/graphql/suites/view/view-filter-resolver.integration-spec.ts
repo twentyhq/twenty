@@ -19,10 +19,9 @@ import {
   assertViewFilterStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import {
   ViewFilterExceptionMessageKey,
   generateViewFilterExceptionMessage,

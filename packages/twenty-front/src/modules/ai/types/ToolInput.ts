@@ -1,4 +1,3 @@
-export type ToolInput = {
-  loadingMessage: string;
-  input: Record<string, unknown>;
-};
+import { type ToolUIPart } from 'ai';
+
+export type ToolInput = ToolUIPart['input'];

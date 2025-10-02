@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -11,7 +11,6 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
 import isEmpty from 'lodash.isempty';
 import { capitalize } from 'twenty-shared/utils';
-import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const useGenerateCombinedFindManyRecordsQuery = ({
   operationSignatures,

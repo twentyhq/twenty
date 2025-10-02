@@ -1,10 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import {
   ViewFilterException,
   ViewFilterExceptionCode,

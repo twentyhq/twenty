@@ -96,6 +96,10 @@ export const StyledMenuItemLabel = styled.div`
   white-space: nowrap;
 `;
 
+export const StyledMenuItemLabelLight = styled(StyledMenuItemLabel)`
+  color: ${({ theme }) => theme.font.color.light};
+`;
+
 export const StyledNoIconFiller = styled.div`
   width: ${({ theme }) => theme.spacing(1)};
 `;

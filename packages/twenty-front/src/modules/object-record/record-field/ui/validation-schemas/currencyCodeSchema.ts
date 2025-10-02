@@ -1,5 +1,5 @@
 import { z } from 'zod';
 
-import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
+import { CurrencyCode } from 'twenty-shared/constants';
 
 export const currencyCodeSchema = z.enum(CurrencyCode);
