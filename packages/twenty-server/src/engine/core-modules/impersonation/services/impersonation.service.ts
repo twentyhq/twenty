@@ -66,10 +66,17 @@ export class ImpersonationService {
       impersonatorUserWorkspace.user.canImpersonate === true &&
       impersonatorUserWorkspace.workspace.allowImpersonation === true;
 
-    if (isServerLevelImpersonation && !hasServerLevelImpersonatePermission) {
-      throw new AuthException(
-        'Impersonation not enabled for the impersonator user or the target workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+    if (isServerLevelImpersonation) {
+      if (!hasServerLevelImpersonatePermission)
+        throw new AuthException(
+          'Impersonation not enabled for the impersonator user or the target workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+
+      return this.generateImpersonationLoginToken(
+        impersonatorUserWorkspace,
+        toImpersonateUserWorkspace,
+        'server',
       );
     }
 
@@ -80,29 +87,38 @@ export class ImpersonationService {
         workspaceId: workspaceId,
       });
 
-    if (
-      !hasWorkspaceLevelImpersonatePermission &&
-      !hasServerLevelImpersonatePermission
-    ) {
+    if (!hasWorkspaceLevelImpersonatePermission) {
       throw new AuthException(
         'Impersonation not enabled for this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
+    return this.generateImpersonationLoginToken(
+      impersonatorUserWorkspace,
+      toImpersonateUserWorkspace,
+      'workspace',
+    );
+  }
+
+  async generateImpersonationLoginToken(
+    impersonatorUserWorkspace: UserWorkspace,
+    toImpersonateUserWorkspace: UserWorkspace,
+    impersonationLevel: 'server' | 'workspace',
+  ) {
     const auditService = this.auditService.createContext({
       workspaceId: impersonatorUserWorkspace.workspace.id,
       userId: impersonatorUserWorkspace.user.id,
     });
 
     await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.attempt`,
-      message: `Impersonation attempt: targetUserId=${toImpersonateUserWorkspace.user.id}, workspaceId=${workspaceId}, impersonatorUserId=${impersonatorUserWorkspace.user.id}`,
+      eventName: `${impersonationLevel}.impersonation.attempt`,
+      message: `Impersonation attempt: targetUserId=${toImpersonateUserWorkspace.user.id}, workspaceId=${toImpersonateUserWorkspace.workspace.id}, impersonatorUserId=${impersonatorUserWorkspace.user.id}`,
     });
 
     try {
       await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.login_token_attempt`,
+        eventName: `${impersonationLevel}.impersonation.login_token_attempt`,
         message: `Impersonation token generation attempt for user ${toImpersonateUserWorkspace.user.id}`,
       });
 
@@ -116,7 +132,7 @@ export class ImpersonationService {
       );
 
       await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.login_token_generated`,
+        eventName: `${impersonationLevel}.impersonation.login_token_generated`,
         message: `Impersonation token generated successfully for user ${toImpersonateUserWorkspace.user.id}`,
       });
 
@@ -131,7 +147,7 @@ export class ImpersonationService {
       };
     } catch {
       await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.login_token_failed`,
+        eventName: `${impersonationLevel}.impersonation.login_token_failed`,
         message: `Impersonation token generation failed for targetUserId=${toImpersonateUserWorkspace.user.id}`,
       });
       throw new AuthException(
