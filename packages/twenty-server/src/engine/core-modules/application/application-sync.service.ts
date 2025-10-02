@@ -524,6 +524,7 @@ export class ApplicationSyncService {
         settings: {
           eventName: triggerToCreate.eventName,
         },
+        universalIdentifier: triggerToCreate.universalIdentifier,
         serverlessFunctionId,
       };
 
@@ -634,6 +635,7 @@ export class ApplicationSyncService {
         settings: {
           pattern: triggerToCreate.schedule,
         },
+        universalIdentifier: triggerToCreate.universalIdentifier,
         serverlessFunctionId,
       };
 

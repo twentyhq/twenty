@@ -41,7 +41,6 @@ export class AppCommand {
       .command('init')
       .description('Initialize a new Twenty application')
       .option('-p, --path <path>', 'Directory to create the application in')
-      .option('-n, --name <name>', 'Application name')
       .action(async (options) => {
         await this.initCommand.execute(options);
       });

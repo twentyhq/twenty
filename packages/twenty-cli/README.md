@@ -47,6 +47,10 @@ twenty auth logout
 # Initialize a new application
 twenty app init [name]
 
+# Add a new core entity to your application
+twenty app add [options]
+  -p, --path <path>        Application directory path (default: current directory)
+
 # Start development mode with file watching
 twenty app dev [options]
   -p, --path <path>        Application directory path (default: current directory)
