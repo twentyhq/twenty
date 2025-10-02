@@ -41,6 +41,7 @@ type MultiItemFieldInputProps<T> = {
   renderInput?: MultiItemBaseInputProps['renderInput'];
   onClickOutside?: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
   onError?: (hasError: boolean, values: any[]) => void;
+  maxItemCount?: number;
 };
 
 // Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
@@ -58,6 +59,7 @@ export const MultiItemFieldInput = <T,>({
   renderInput,
   onClickOutside,
   onError,
+  maxItemCount,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -99,6 +101,8 @@ export const MultiItemFieldInput = <T,>({
     errorMessage: '',
   });
   const isAddingNewItem = itemToEditIndex === -1;
+  const isLimitReached =
+    typeof maxItemCount === 'number' && items.length >= maxItemCount;
 
   const handleInputChange = (value: string) => {
     setInputValue(value);
@@ -113,6 +117,10 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleAddButtonClick = () => {
+    if (isLimitReached) {
+      return;
+    }
+
     setItemToEditIndex(-1);
     setIsInputDisplayed(true);
   };
@@ -211,7 +219,9 @@ export const MultiItemFieldInput = <T,>({
               }),
             )}
           </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
+          {(isInputDisplayed || !isLimitReached) && (
+            <DropdownMenuSeparator />
+          )}
         </>
       )}
       {isInputDisplayed || !items.length ? (
@@ -239,7 +249,7 @@ export const MultiItemFieldInput = <T,>({
             ) : null
           }
         />
-      ) : (
+      ) : !isLimitReached ? (
         <DropdownMenuItemsContainer>
           <MenuItem
             onClick={handleAddButtonClick}
@@ -247,7 +257,7 @@ export const MultiItemFieldInput = <T,>({
             text={newItemLabel || `Add ${placeholder}`}
           />
         </DropdownMenuItemsContainer>
-      )}
+      ) : null}
     </DropdownContent>
   );
 };

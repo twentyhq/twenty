@@ -4,6 +4,7 @@ import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/i
 import { MultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput';
 import { arraySchema } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
 import { useContext, useMemo } from 'react';
+import { DEFAULT_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -38,6 +39,10 @@ export const ArrayFieldInput = () => {
     onEscape?.({ newValue: draftValue });
   };
 
+  const maxNumberOfValues =
+    fieldDefinition.metadata.settings?.maxNumberOfValues ??
+    DEFAULT_MAX_NUMBER_OF_VALUES;
+
   return (
     <MultiItemFieldInput
       newItemLabel="Add Item"
@@ -56,6 +61,7 @@ export const ArrayFieldInput = () => {
           onDelete={handleDelete}
         />
       )}
+      maxItemCount={maxNumberOfValues}
     ></MultiItemFieldInput>
   );
 };
