@@ -20,9 +20,7 @@ import {
   assertViewFilterStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
+import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
 describe('View Filter REST API', () => {
   let testObjectMetadataId: string;

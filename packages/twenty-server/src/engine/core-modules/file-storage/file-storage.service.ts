@@ -5,6 +5,7 @@ import { type Readable } from 'stream';
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
+import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 
 @Injectable()
 export class FileStorageService implements StorageDriver {
@@ -23,10 +24,22 @@ export class FileStorageService implements StorageDriver {
     return driver.write(params);
   }
 
+  writeFolder(sources: Sources, folderPath: string): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.writeFolder(sources, folderPath);
+  }
+
   read(params: { folderPath: string; filename: string }): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     return driver.read(params);
+  }
+
+  readFolder(folderPath: string): Promise<Sources> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.readFolder(folderPath);
   }
 
   delete(params: { folderPath: string; filename?: string }): Promise<void> {

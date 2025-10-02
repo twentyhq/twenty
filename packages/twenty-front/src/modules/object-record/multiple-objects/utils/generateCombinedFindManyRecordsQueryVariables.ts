@@ -1,7 +1,6 @@
 import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const generateCombinedFindManyRecordsQueryVariables = ({
   operationSignatures,

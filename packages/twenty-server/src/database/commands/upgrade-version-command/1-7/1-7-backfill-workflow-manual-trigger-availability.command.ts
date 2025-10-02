@@ -41,7 +41,7 @@ export class BackfillWorkflowManualTriggerAvailabilityCommand extends ActiveOrSu
     for (const workflowVersion of workflowVersions) {
       const { trigger } = workflowVersion;
 
-      if (trigger.type !== WorkflowTriggerType.MANUAL) {
+      if (!isDefined(trigger) || trigger?.type !== WorkflowTriggerType.MANUAL) {
         continue;
       }
 

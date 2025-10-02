@@ -3,6 +3,10 @@ import {
   createBasePackageJson,
   createReadmeContent,
 } from '../app-template';
+import {
+  AGENT_SCHEMA_URL,
+  APP_MANIFEST_SCHEMA_URL,
+} from '../../constants/schemas';
 
 // Mock crypto.randomUUID to make tests deterministic
 jest.mock('crypto', () => ({
@@ -17,12 +21,18 @@ describe('app-template', () => {
       const basePackageJson = createBasePackageJson(appName, description);
 
       expect(basePackageJson).toEqual({
-        $schema:
-          'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json',
-        standardId: 'mocked-uuid-12345',
+        $schema: APP_MANIFEST_SCHEMA_URL,
+        universalIdentifier: 'mocked-uuid-12345',
         label: 'My Test App',
         description: 'A Twenty application for my-test-app',
         version: '0.0.1',
+        engines: {
+          node: '^24.5.0',
+          npm: 'please-use-yarn',
+          yarn: '>=4.0.2',
+        },
+        packageManager: 'yarn@4.9.2',
+        license: 'MIT',
       });
     });
 
@@ -31,7 +41,7 @@ describe('app-template', () => {
       const basePackageJson = createBasePackageJson(appName, '');
 
       expect(basePackageJson.label).toBe('Calculator');
-      expect(basePackageJson.standardId).toBe('mocked-uuid-12345');
+      expect(basePackageJson.universalIdentifier).toBe('mocked-uuid-12345');
     });
 
     it('should handle kebab-case app names correctly', () => {
@@ -39,14 +49,14 @@ describe('app-template', () => {
       const basePackageJson = createBasePackageJson(appName, '');
 
       expect(basePackageJson.label).toBe('User Management System');
-      expect(basePackageJson.standardId).toBe('mocked-uuid-12345');
+      expect(basePackageJson.universalIdentifier).toBe('mocked-uuid-12345');
     });
 
-    it('should generate unique standardIds', () => {
+    it('should generate unique universalIdentifiers', () => {
       const basePackageJson = createBasePackageJson('test-app', '');
 
-      expect(basePackageJson.standardId).toBeDefined();
-      expect(typeof basePackageJson.standardId).toBe('string');
+      expect(basePackageJson.universalIdentifier).toBeDefined();
+      expect(typeof basePackageJson.universalIdentifier).toBe('string');
     });
   });
 
@@ -56,8 +66,7 @@ describe('app-template', () => {
       const agent = createAgentManifest(appName);
 
       expect(agent).toEqual({
-        $schema:
-          'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json',
+        $schema: AGENT_SCHEMA_URL,
         standardId: 'mocked-uuid-12345',
         name: 'myTestAppAgent',
         label: 'My Test App Agent',

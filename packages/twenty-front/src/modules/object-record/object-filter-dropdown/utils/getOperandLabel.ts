@@ -5,35 +5,35 @@ export const getOperandLabel = (
   operand: ViewFilterOperand | null | undefined,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Contains:
+    case ViewFilterOperand.CONTAINS:
       return t`Contains`;
-    case ViewFilterOperand.DoesNotContain:
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
       return t`Doesn't contain`;
-    case ViewFilterOperand.GreaterThanOrEqual:
+    case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
       return t`Greater than or equal`;
-    case ViewFilterOperand.LessThanOrEqual:
+    case ViewFilterOperand.LESS_THAN_OR_EQUAL:
       return t`Less than or equal`;
-    case ViewFilterOperand.IsBefore:
+    case ViewFilterOperand.IS_BEFORE:
       return t`Is before`;
-    case ViewFilterOperand.IsAfter:
+    case ViewFilterOperand.IS_AFTER:
       return t`Is after`;
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return t`Is`;
-    case ViewFilterOperand.IsNot:
+    case ViewFilterOperand.IS_NOT:
       return t`Is not`;
-    case ViewFilterOperand.IsNotNull:
+    case ViewFilterOperand.IS_NOT_NULL:
       return t`Is not null`;
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return t`Is empty`;
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return t`Is not empty`;
-    case ViewFilterOperand.IsRelative:
+    case ViewFilterOperand.IS_RELATIVE:
       return t`Is relative`;
-    case ViewFilterOperand.IsInPast:
+    case ViewFilterOperand.IS_IN_PAST:
       return t`Is in past`;
-    case ViewFilterOperand.IsInFuture:
+    case ViewFilterOperand.IS_IN_FUTURE:
       return t`Is in future`;
-    case ViewFilterOperand.IsToday:
+    case ViewFilterOperand.IS_TODAY:
       return t`Is today`;
     default:
       return '';
@@ -44,31 +44,31 @@ export const getOperandLabelShort = (
   operand: ViewFilterOperand | null | undefined,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Is:
-    case ViewFilterOperand.Contains:
+    case ViewFilterOperand.IS:
+    case ViewFilterOperand.CONTAINS:
       return ': ';
-    case ViewFilterOperand.IsNot:
-    case ViewFilterOperand.DoesNotContain:
+    case ViewFilterOperand.IS_NOT:
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
       return t`: Not`;
-    case ViewFilterOperand.IsNotNull:
+    case ViewFilterOperand.IS_NOT_NULL:
       return t`: NotNull`;
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return t`: NotEmpty`;
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return t`: Empty`;
-    case ViewFilterOperand.GreaterThanOrEqual:
+    case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
       return '\u00A0≥ ';
-    case ViewFilterOperand.LessThanOrEqual:
+    case ViewFilterOperand.LESS_THAN_OR_EQUAL:
       return '\u00A0≤ ';
-    case ViewFilterOperand.IsBefore:
+    case ViewFilterOperand.IS_BEFORE:
       return '\u00A0< ';
-    case ViewFilterOperand.IsAfter:
+    case ViewFilterOperand.IS_AFTER:
       return '\u00A0> ';
-    case ViewFilterOperand.IsInPast:
+    case ViewFilterOperand.IS_IN_PAST:
       return t`: Past`;
-    case ViewFilterOperand.IsInFuture:
+    case ViewFilterOperand.IS_IN_FUTURE:
       return t`: Future`;
-    case ViewFilterOperand.IsToday:
+    case ViewFilterOperand.IS_TODAY:
       return t`: Today`;
     default:
       return ': ';

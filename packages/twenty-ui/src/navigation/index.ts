@@ -54,6 +54,7 @@ export type { MenuItemBaseProps } from './menu/menu-item/internals/components/St
 export {
   StyledMenuItemBase,
   StyledMenuItemLabel,
+  StyledMenuItemLabelLight,
   StyledNoIconFiller,
   StyledMenuItemLeftContent,
   StyledMenuItemRightContent,

@@ -20,7 +20,7 @@ export const EditableFilterChipDropdownMenuHeader = () => {
   );
 
   const isVectorSearchFilter =
-    selectedOperandInDropdown === ViewFilterOperand.VectorSearch;
+    selectedOperandInDropdown === ViewFilterOperand.VECTOR_SEARCH;
 
   const { closeDropdown } = useCloseDropdown();
 

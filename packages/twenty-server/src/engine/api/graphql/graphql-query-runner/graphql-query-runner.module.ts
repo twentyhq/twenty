@@ -22,6 +22,7 @@ import { GraphqlQueryUpdateOneResolverService } from 'src/engine/api/graphql/gra
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -52,6 +53,7 @@ const graphqlQueryResolvers = [
     TypeOrmModule.forFeature([RoleTargetsEntity]),
     UserRoleModule,
     ApiKeyModule,
+    CoreViewModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,
