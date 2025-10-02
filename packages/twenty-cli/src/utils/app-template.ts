@@ -1,71 +1,78 @@
 import { randomUUID } from 'crypto';
-import { PackageJson } from '../types/config.types';
 import { getSchemaUrls } from './schema-validator';
-import { join } from 'path';
 import * as fs from 'fs-extra';
+import { BASE_APPLICATION_PROJECT_PATH } from '../constants/base-application-project-path';
+import { writeJsoncFile } from '../utils/jsonc-parser';
+import { join } from 'path';
+import path from 'path';
 
-export const createBasePackageJson = (
-  appName: string,
-  description: string,
-): PackageJson => {
+export const copyBaseApplicationProject = async ({
+  appName,
+  description,
+  appDir,
+}: {
+  appName: string;
+  description: string;
+  appDir: string;
+}) => {
+  await fs.copy(BASE_APPLICATION_PROJECT_PATH, appDir);
+
+  await createBasePackageJson({ appName, description, appDir });
+
+  await createReadmeContent({ appName, description, appDir });
+};
+
+const createBasePackageJson = async ({
+  appName,
+  description,
+  appDir,
+}: {
+  appName: string;
+  description: string;
+  appDir: string;
+}) => {
+  const base = JSON.parse(
+    await fs.readFile(
+      join(BASE_APPLICATION_PROJECT_PATH, 'package.json'),
+      'utf-8',
+    ),
+  );
+
   const schemas = getSchemaUrls();
 
-  return {
-    $schema: schemas.appManifest,
-    universalIdentifier: randomUUID(),
-    label: appName
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' '),
-    engines: {
-      node: '^24.5.0',
-      npm: 'please-use-yarn',
-      yarn: '>=4.9.2',
-    },
-    packageManager: 'yarn@4.9.2',
-    description,
-    license: 'MIT',
-    version: '0.0.1',
-  };
+  base['$schema'] = schemas.appManifest;
+  base['universalIdentifier'] = randomUUID();
+  base['name'] = appName
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+  base['description'] = description;
+
+  await writeJsoncFile(join(appDir, 'package.json'), base);
 };
 
-export const copyBaseApplicationProject = async (destinationDir: string) => {
-  const baseApplicationProjectPath = join(
-    __dirname,
-    '../constants/base-application-project',
+const createReadmeContent = async ({
+  appName,
+  description,
+  appDir,
+}: {
+  appName: string;
+  description: string;
+  appDir: string;
+}) => {
+  let readmeContent = await fs.readFile(
+    join(BASE_APPLICATION_PROJECT_PATH, 'README.md'),
+    'utf-8',
   );
-  await fs.copy(baseApplicationProjectPath, destinationDir);
-};
+  console.log('readmeContent', readmeContent);
 
-export const createReadmeContent = (
-  appName: string,
-  appDir: string,
-): string => {
-  return `# ${appName}
+  readmeContent = readmeContent.replace(/\{title}/g, appName);
 
-A Twenty application.
+  readmeContent = readmeContent.replace(/\{description}/g, description);
 
-## Development
+  readmeContent = readmeContent.replace(/\{appDir}/g, appDir);
 
-To start development mode:
+  console.log('readmeContent after', readmeContent);
 
-\`\`\`bash
-twenty app dev --path ${appDir}
-\`\`\`
-
-Or from the app directory:
-
-\`\`\`bash
-cd ${appDir}
-twenty app dev
-\`\`\`
-
-## Deployment
-
-To deploy the application:
-
-\`\`\`bash
-twenty app deploy --path ${appDir}
-\`\`\`
-`;
+  await fs.writeFile(path.join(appDir, 'README.md'), readmeContent);
 };

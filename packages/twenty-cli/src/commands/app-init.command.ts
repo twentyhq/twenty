@@ -2,12 +2,7 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
-import {
-  copyBaseApplicationProject,
-  createBasePackageJson,
-  createReadmeContent,
-} from '../utils/app-template';
-import { writeJsoncFile } from '../utils/jsonc-parser';
+import { copyBaseApplicationProject } from '../utils/app-template';
 
 export class AppInitCommand {
   async execute(options: { path?: string; name?: string }): Promise<void> {
@@ -96,16 +91,7 @@ export class AppInitCommand {
   ): Promise<void> {
     await fs.ensureDir(appDir);
 
-    // Create main basePackageJson with agent references
-    const basePackageJson = createBasePackageJson(appName, description);
-    const basePackageJsonPath = path.join(appDir, 'package.json');
-    await writeJsoncFile(basePackageJsonPath, basePackageJson);
-
-    // Create README
-    const readmeContent = createReadmeContent(appName, appDir);
-    await fs.writeFile(path.join(appDir, 'README.md'), readmeContent);
-
-    await copyBaseApplicationProject(appDir);
+    await copyBaseApplicationProject({ appName, description, appDir });
   }
 
   private logSuccess(appDir: string): void {
