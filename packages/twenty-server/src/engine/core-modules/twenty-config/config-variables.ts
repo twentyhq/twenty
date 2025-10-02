@@ -845,7 +845,6 @@ export class ConfigVariables {
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
-  @IsOptional()
   @IsUrl({
     protocols: ['redis', 'rediss'],
     require_tld: false,

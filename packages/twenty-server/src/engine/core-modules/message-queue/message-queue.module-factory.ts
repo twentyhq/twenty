@@ -18,23 +18,6 @@ export const messageQueueModuleFactory = async (
   const driverType = MessageQueueDriverType.BullMQ;
 
   switch (driverType) {
-    /* 
-    case MessageQueueDriverType.Sync: {
-      return {
-        type: MessageQueueDriverType.Sync,
-        options: {},
-      } satisfies SyncDriverFactoryOptions;
-    }
-    case MessageQueueDriverType.PgBoss: {
-      const connectionString = twentyConfigService.get('PG_DATABASE_URL');
-
-      return {
-        type: MessageQueueDriverType.PgBoss,
-        options: {
-          connectionString,
-        },
-      } satisfies PgBossDriverFactoryOptions;
-    }*/
     case MessageQueueDriverType.BullMQ: {
       return {
         type: MessageQueueDriverType.BullMQ,
