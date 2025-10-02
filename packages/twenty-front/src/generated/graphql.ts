@@ -719,6 +719,16 @@ export type CreateApprovedAccessDomainInput = {
   email: Scalars['String'];
 };
 
+export type CreateCronTriggerInput = {
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+};
+
+export type CreateDatabaseEventTriggerInput = {
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
@@ -791,6 +801,7 @@ export type CreateRoleInput = {
 };
 
 export type CreateServerlessFunctionInput = {
+  code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
@@ -902,6 +913,10 @@ export type CronTrigger = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type CronTriggerIdInput = {
+  id: Scalars['String'];
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -930,6 +945,10 @@ export type DatabaseEventTrigger = {
   serverlessFunctionId: Scalars['String'];
   settings: Scalars['JSON'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type DatabaseEventTriggerIdInput = {
+  id: Scalars['String'];
 };
 
 export type DateFilter = {
@@ -1576,6 +1595,8 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
+  createOneCronTrigger: CronTrigger;
+  createOneDatabaseEventTrigger: DatabaseEventTrigger;
   createOneField: Field;
   createOneObject: Object;
   createOneRole: Role;
@@ -1602,6 +1623,8 @@ export type Mutation = {
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
   deleteOneAgent: Agent;
+  deleteOneCronTrigger: CronTrigger;
+  deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -1679,6 +1702,8 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
+  updateOneCronTrigger: CronTrigger;
+  updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRole: Role;
@@ -1846,6 +1871,16 @@ export type MutationCreateOneAgentArgs = {
 };
 
 
+export type MutationCreateOneCronTriggerArgs = {
+  input: CreateCronTriggerInput;
+};
+
+
+export type MutationCreateOneDatabaseEventTriggerArgs = {
+  input: CreateDatabaseEventTriggerInput;
+};
+
+
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
@@ -1964,6 +1999,16 @@ export type MutationDeleteFileArgs = {
 
 export type MutationDeleteOneAgentArgs = {
   input: AgentIdInput;
+};
+
+
+export type MutationDeleteOneCronTriggerArgs = {
+  input: CronTriggerIdInput;
+};
+
+
+export type MutationDeleteOneDatabaseEventTriggerArgs = {
+  input: DatabaseEventTriggerIdInput;
 };
 
 
@@ -2342,6 +2387,16 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 
 export type MutationUpdateOneAgentArgs = {
   input: UpdateAgentInput;
+};
+
+
+export type MutationUpdateOneCronTriggerArgs = {
+  input: UpdateCronTriggerInput;
+};
+
+
+export type MutationUpdateOneDatabaseEventTriggerArgs = {
+  input: UpdateDatabaseEventTriggerInput;
 };
 
 
@@ -2820,9 +2875,13 @@ export type Query = {
   findAgentHandoffTargets: Array<Agent>;
   findAgentHandoffs: Array<AgentHandoffDto>;
   findManyAgents: Array<Agent>;
+  findManyCronTriggers: Array<CronTrigger>;
+  findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
   findManyPublicDomains: Array<PublicDomain>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
+  findOneCronTrigger: CronTrigger;
+  findOneDatabaseEventTrigger: DatabaseEventTrigger;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
@@ -2928,6 +2987,16 @@ export type QueryFindAgentHandoffsArgs = {
 
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
+};
+
+
+export type QueryFindOneCronTriggerArgs = {
+  input: CronTriggerIdInput;
+};
+
+
+export type QueryFindOneDatabaseEventTriggerArgs = {
+  input: DatabaseEventTriggerIdInput;
 };
 
 
@@ -3602,6 +3671,16 @@ export type UpdateApiKeyDto = {
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
   revokedAt?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateCronTriggerInput = {
+  id: Scalars['String'];
+  settings: Scalars['JSON'];
+};
+
+export type UpdateDatabaseEventTriggerInput = {
+  id: Scalars['String'];
+  settings: Scalars['JSON'];
 };
 
 export type UpdateFieldInput = {
