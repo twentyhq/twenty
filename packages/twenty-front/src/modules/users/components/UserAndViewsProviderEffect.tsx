@@ -22,6 +22,7 @@ import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type WorkspaceMember,
+  useFindAllCoreViewsQuery,
   useGetCurrentUserQuery,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -29,7 +30,7 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-export const UserProviderEffect = () => {
+export const UserAndViewsProviderEffect = () => {
   const location = useLocation();
 
   const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
@@ -82,45 +83,52 @@ export const UserProviderEffect = () => {
     currentWorkspaceDeletedMembersState,
   );
 
-  const { data: queryData, loading: queryLoading } = useGetCurrentUserQuery({
-    skip:
-      !isLoggedIn ||
-      isCurrentUserLoaded ||
-      isMatchingLocation(location, AppPath.Verify) ||
-      isMatchingLocation(location, AppPath.VerifyEmail),
-  });
+  const { data: userQueryData, loading: userQueryLoading } =
+    useGetCurrentUserQuery({
+      skip:
+        !isLoggedIn ||
+        isCurrentUserLoaded ||
+        isMatchingLocation(location, AppPath.Verify) ||
+        isMatchingLocation(location, AppPath.VerifyEmail),
+    });
+
+  const { data: queryDataCoreViews, loading: queryLoadingCoreViews } =
+    useFindAllCoreViewsQuery({
+      skip:
+        !isLoggedIn ||
+        isCurrentUserLoaded ||
+        isMatchingLocation(location, AppPath.Verify) ||
+        isMatchingLocation(location, AppPath.VerifyEmail),
+    });
 
   useEffect(() => {
-    if (!queryLoading) {
+    if (!userQueryLoading) {
       setIsCurrentUserLoaded(true);
     }
 
-    if (!isDefined(queryData?.currentUser)) return;
+    if (!isDefined(userQueryData?.currentUser)) return;
 
-    setCurrentUser(queryData.currentUser);
+    setCurrentUser(userQueryData.currentUser);
 
-    if (isDefined(queryData.currentUser.currentWorkspace)) {
+    if (isDefined(userQueryData.currentUser.currentWorkspace)) {
       setCurrentWorkspace({
-        ...queryData.currentUser.currentWorkspace,
-        defaultRole: queryData.currentUser.currentWorkspace.defaultRole ?? null,
+        ...userQueryData.currentUser.currentWorkspace,
+        defaultRole:
+          userQueryData.currentUser.currentWorkspace.defaultRole ?? null,
         defaultAgent:
-          queryData.currentUser.currentWorkspace.defaultAgent ?? null,
+          userQueryData.currentUser.currentWorkspace.defaultAgent ?? null,
       });
     }
 
-    if (isDefined(queryData.currentUser.currentUserWorkspace)) {
+    if (isDefined(userQueryData.currentUser.currentUserWorkspace)) {
       setCurrentUserWorkspace({
-        ...queryData.currentUser.currentUserWorkspace,
+        ...userQueryData.currentUser.currentUserWorkspace,
         objectsPermissions:
-          (queryData.currentUser.currentUserWorkspace
+          (userQueryData.currentUser.currentUserWorkspace
             .objectsPermissions as Array<
             ObjectPermissions & { objectMetadataId: string }
           >) ?? [],
       });
-    }
-
-    if (isDefined(queryData.currentUser?.currentWorkspace?.views)) {
-      setCoreViews(queryData.currentUser.currentWorkspace.views);
     }
 
     const {
@@ -128,7 +136,7 @@ export const UserProviderEffect = () => {
       workspaceMembers,
       deletedWorkspaceMembers,
       availableWorkspaces,
-    } = queryData.currentUser;
+    } = userQueryData.currentUser;
 
     const affectDefaultValuesOnEmptyWorkspaceMemberFields = (
       workspaceMember: WorkspaceMember,
@@ -168,8 +176,8 @@ export const UserProviderEffect = () => {
       setAvailableWorkspaces(availableWorkspaces);
     }
   }, [
-    queryLoading,
-    queryData?.currentUser,
+    userQueryLoading,
+    userQueryData?.currentUser,
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
@@ -181,6 +189,17 @@ export const UserProviderEffect = () => {
     setCurrentWorkspaceMembersWithDeleted,
     updateLocaleCatalog,
     setCoreViews,
+  ]);
+
+  useEffect(() => {
+    if (!isDefined(queryDataCoreViews?.getCoreViews)) return;
+
+    setCoreViews(queryDataCoreViews.getCoreViews);
+  }, [
+    queryLoadingCoreViews,
+    queryDataCoreViews?.getCoreViews,
+    setCoreViews,
+    setIsCurrentUserLoaded,
   ]);
 
   return null;
