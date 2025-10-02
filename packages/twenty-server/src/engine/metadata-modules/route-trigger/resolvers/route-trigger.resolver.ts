@@ -29,7 +29,7 @@ export class RouteTriggerResolver {
   ) {}
 
   @Query(() => RouteTriggerDTO)
-  async findOneRoute(
+  async findOneRouteTrigger(
     @Args('input') { id }: RouteTriggerIdInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
@@ -46,7 +46,7 @@ export class RouteTriggerResolver {
   }
 
   @Query(() => [RouteTriggerDTO])
-  async findManyRoutes(@AuthWorkspace() { id: workspaceId }: Workspace) {
+  async findManyRouteTriggers(@AuthWorkspace() { id: workspaceId }: Workspace) {
     try {
       return await this.routeTriggerRepository.find({
         where: { workspaceId },
@@ -57,7 +57,7 @@ export class RouteTriggerResolver {
   }
 
   @Mutation(() => RouteTriggerDTO)
-  async deleteOneRoute(
+  async deleteOneRouteTrigger(
     @Args('input') input: RouteTriggerIdInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
@@ -72,7 +72,7 @@ export class RouteTriggerResolver {
   }
 
   @Mutation(() => RouteTriggerDTO)
-  async updateOneRoute(
+  async updateOneRouteTrigger(
     @Args('input')
     input: UpdateRouteTriggerInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -85,7 +85,7 @@ export class RouteTriggerResolver {
   }
 
   @Mutation(() => RouteTriggerDTO)
-  async createOneRoute(
+  async createOneRouteTrigger(
     @Args('input')
     input: CreateRouteTriggerInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,

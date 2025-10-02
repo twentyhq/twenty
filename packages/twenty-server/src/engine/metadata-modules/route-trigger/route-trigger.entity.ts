@@ -27,8 +27,8 @@ export const ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES = [
   'serverlessFunction',
 ] as const satisfies readonly RouteTriggerEntityRelationProperties[];
 
-@Entity({ name: 'route', schema: 'core' })
-@Unique('IDX_ROUTE_PATH_HTTP_METHOD_WORKSPACE_ID_UNIQUE', [
+@Entity({ name: 'routeTrigger', schema: 'core' })
+@Unique('IDX_ROUTE_TRIGGER_PATH_HTTP_METHOD_WORKSPACE_ID_UNIQUE', [
   'path',
   'httpMethod',
   'workspaceId',

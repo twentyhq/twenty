@@ -19,12 +19,12 @@ export class CreateRouteTriggerInput {
 
   @IsBoolean()
   @IsNotEmpty()
-  @Field()
+  @Field({ defaultValue: true })
   isAuthRequired: boolean;
 
   @IsEnum(HTTPMethod)
   @IsNotEmpty()
-  @Field(() => HTTPMethod)
+  @Field(() => HTTPMethod, { defaultValue: HTTPMethod.GET })
   httpMethod: HTTPMethod;
 
   @IsUUID()
