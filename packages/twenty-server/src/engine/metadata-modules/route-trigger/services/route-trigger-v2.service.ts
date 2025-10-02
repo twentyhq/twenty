@@ -28,7 +28,10 @@ export class RouteTriggerV2Service {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
-  async createOne(routeInput: CreateRouteTriggerInput, workspaceId: string) {
+  async createOne(
+    routeTriggerInput: CreateRouteTriggerInput,
+    workspaceId: string,
+  ) {
     const flatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -41,7 +44,7 @@ export class RouteTriggerV2Service {
 
     const flatRouteTriggerToCreate =
       fromCreateRouteTriggerInputToFlatRouteTrigger({
-        createRouteTriggerInput: routeInput,
+        createRouteTriggerInput: routeTriggerInput,
         workspaceId,
       });
 
@@ -92,7 +95,10 @@ export class RouteTriggerV2Service {
     });
   }
 
-  async updateOne(routeInput: UpdateRouteTriggerInput, workspaceId: string) {
+  async updateOne(
+    routeTriggerInput: UpdateRouteTriggerInput,
+    workspaceId: string,
+  ) {
     const flatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -106,7 +112,7 @@ export class RouteTriggerV2Service {
     const optimisticallyUpdatedFlatRouteTrigger =
       fromUpdateRouteTriggerInputToFlatRouteTriggerToUpdateOrThrow({
         flatRouteTriggerMaps: existingFlatRouteMaps,
-        updateRouteTriggerInput: routeInput,
+        updateRouteTriggerInput: routeTriggerInput,
       });
 
     const fromFlatRouteMaps = getSubFlatEntityMapsOrThrow({
@@ -161,10 +167,10 @@ export class RouteTriggerV2Service {
   }
 
   async destroyOne({
-    destroyRouteInput,
+    destroyRouteTriggerInput,
     workspaceId,
   }: {
-    destroyRouteInput: RouteTriggerIdInput;
+    destroyRouteTriggerInput: RouteTriggerIdInput;
     workspaceId: string;
   }): Promise<FlatRouteTrigger> {
     const {
@@ -178,7 +184,8 @@ export class RouteTriggerV2Service {
         },
       );
 
-    const existingFlatRoute = existingFlatRouteMaps.byId[destroyRouteInput.id];
+    const existingFlatRoute =
+      existingFlatRouteMaps.byId[destroyRouteTriggerInput.id];
 
     if (!isDefined(existingFlatRoute)) {
       throw new RouteTriggerException(

@@ -1,11 +1,12 @@
 import chalk from 'chalk';
+import { randomUUID } from 'crypto';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import path from 'path';
-import { randomUUID } from 'crypto';
+import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
+import { HTTPMethod } from '../types/config.types';
 import { parseJsoncFile, writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
-import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 
 export enum SyncableEntity {
   AGENT = 'agent',
@@ -97,7 +98,7 @@ export class AppAddCommand {
   }
 
   private async getEntity() {
-    const { entity } = await inquirer.prompt([
+    const { entity } = await inquirer.prompt<{ entity: SyncableEntity }>([
       {
         type: 'select',
         name: 'entity',
@@ -107,11 +108,11 @@ export class AppAddCommand {
       },
     ]);
 
-    return entity as SyncableEntity;
+    return entity;
   }
 
   private async getEntityName(entity: SyncableEntity) {
-    const { name } = await inquirer.prompt([
+    const { name } = await inquirer.prompt<{ name: string }>([
       {
         type: 'input',
         name: 'name',
@@ -131,7 +132,7 @@ export class AppAddCommand {
       },
     ]);
 
-    return name as string;
+    return name;
   }
 
   private async getEntityToCreateData(
@@ -169,7 +170,7 @@ export class AppAddCommand {
         continue;
       }
 
-      const answer = await inquirer.prompt([
+      const answer = await inquirer.prompt<{ [key: string]: string }>([
         {
           type: 'input',
           name: requiredField,
@@ -206,7 +207,9 @@ export class AppAddCommand {
       process.exit(1);
     }
 
-    const { serverlessFunctionName } = await inquirer.prompt([
+    const { serverlessFunctionName } = await inquirer.prompt<{
+      serverlessFunctionName: string;
+    }>([
       {
         type: 'list',
         name: 'serverlessFunctionName',
@@ -215,12 +218,12 @@ export class AppAddCommand {
       },
     ]);
 
-    const { triggerType } = await inquirer.prompt([
+    const { triggerType } = await inquirer.prompt<{ triggerType: string }>([
       {
         type: 'list',
         name: 'triggerType',
         message: 'Select the type of trigger:',
-        choices: ['databaseEvent', 'cron'],
+        choices: ['databaseEvent', 'cron', 'route'],
       },
     ]);
 
@@ -230,6 +233,8 @@ export class AppAddCommand {
       triggerData = await this.createDatabaseEventTrigger();
     } else if (triggerType === 'cron') {
       triggerData = await this.createCronTrigger();
+    } else if (triggerType === 'route') {
+      triggerData = await this.createRouteTrigger();
     }
 
     const manifestPath = path.join(
@@ -256,7 +261,7 @@ export class AppAddCommand {
   private async createDatabaseEventTrigger() {
     const uuid = randomUUID();
 
-    const { eventName } = await inquirer.prompt([
+    const { eventName } = await inquirer.prompt<{ eventName: string }>([
       {
         type: 'input',
         name: 'eventName',
@@ -284,7 +289,7 @@ export class AppAddCommand {
   private async createCronTrigger() {
     const uuid = randomUUID();
 
-    const { schedule } = await inquirer.prompt([
+    const { schedule } = await inquirer.prompt<{ schedule: string }>([
       {
         type: 'input',
         name: 'schedule',
@@ -308,6 +313,56 @@ export class AppAddCommand {
       universalIdentifier: uuid,
       type: 'cron',
       schedule,
+    };
+  }
+
+  private async createRouteTrigger() {
+    const uuid = randomUUID();
+
+    const { path } = await inquirer.prompt<{ path: string }>([
+      {
+        type: 'input',
+        name: 'path',
+        message: 'Enter the route path (e.g., /webhook/company):',
+        validate: (input) => {
+          if (input.length === 0) {
+            return 'Path is required';
+          }
+          if (!input.startsWith('/')) {
+            return 'Path must start with /';
+          }
+          return true;
+        },
+      },
+    ]);
+
+    const { httpMethod } = await inquirer.prompt<{ httpMethod: HTTPMethod }>([
+      {
+        type: 'list',
+        name: 'httpMethod',
+        message: 'Select the HTTP method:',
+        choices: Object.values(HTTPMethod),
+        default: HTTPMethod.GET,
+      },
+    ]);
+
+    const { isAuthRequired } = await inquirer.prompt<{
+      isAuthRequired: boolean;
+    }>([
+      {
+        type: 'confirm',
+        name: 'isAuthRequired',
+        message: 'Is authentication required?',
+        default: true,
+      },
+    ]);
+
+    return {
+      universalIdentifier: uuid,
+      type: 'route',
+      path,
+      httpMethod: httpMethod,
+      isAuthRequired,
     };
   }
 }
