@@ -118,6 +118,7 @@ export const StyledMenuItemRightContent = styled.div`
   display: flex;
   flex-direction: row;
   overflow: hidden;
+  flex-shrink: 0;
 `;
 
 export const StyledDraggableItem = styled.div`

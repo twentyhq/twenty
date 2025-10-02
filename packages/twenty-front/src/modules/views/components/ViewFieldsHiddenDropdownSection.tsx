@@ -8,7 +8,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
 import { IconEye, useIcons } from 'twenty-ui/display';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const ViewFieldsHiddenDropdownSection = () => {
   const { viewType, objectMetadataItem, recordIndexId } = useContext(
@@ -56,7 +56,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
         {availableFieldMetadataItemsToShow.length > 0 &&
           availableFieldMetadataItemsToShow.map((fieldMetadataItem) => {
             return (
-              <MenuItemDraggable
+              <MenuItem
                 key={fieldMetadataItem.id}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}
                 iconButtons={[
