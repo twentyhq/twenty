@@ -113,7 +113,11 @@ export class ViewFilterService {
 
     await this.viewService.flushGraphQLCache(viewFilterData.workspaceId);
 
-    return this.viewFilterRepository.save(viewFilter);
+    const savedViewFilter = await this.viewFilterRepository.save(viewFilter);
+
+    await this.viewService.flushGraphQLCache(viewFilterData.workspaceId);
+
+    return savedViewFilter;
   }
 
   async update(

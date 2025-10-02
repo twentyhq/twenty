@@ -113,7 +113,11 @@ export class ViewGroupService {
 
     await this.viewService.flushGraphQLCache(viewGroupData.workspaceId);
 
-    return this.viewGroupRepository.save(viewGroup);
+    const savedViewGroup = await this.viewGroupRepository.save(viewGroup);
+
+    await this.viewService.flushGraphQLCache(viewGroupData.workspaceId);
+
+    return savedViewGroup;
   }
 
   async update(

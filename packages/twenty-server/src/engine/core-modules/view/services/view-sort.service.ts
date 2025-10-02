@@ -107,9 +107,11 @@ export class ViewSortService {
 
     const viewSort = this.viewSortRepository.create(viewSortData);
 
+    const savedViewSort = await this.viewSortRepository.save(viewSort);
+
     await this.viewService.flushGraphQLCache(viewSortData.workspaceId);
 
-    return this.viewSortRepository.save(viewSort);
+    return savedViewSort;
   }
 
   async update(

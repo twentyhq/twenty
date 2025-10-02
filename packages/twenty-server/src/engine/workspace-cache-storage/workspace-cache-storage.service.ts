@@ -221,7 +221,7 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  async flushGrapQLOperation({
+  async flushGraphQLOperation({
     operationName,
     workspaceId,
   }: {

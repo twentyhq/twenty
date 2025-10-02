@@ -122,7 +122,12 @@ export class ViewFilterGroupService {
 
     await this.viewService.flushGraphQLCache(viewFilterGroupData.workspaceId);
 
-    return this.viewFilterGroupRepository.save(viewFilterGroup);
+    const savedViewFilterGroup =
+      await this.viewFilterGroupRepository.save(viewFilterGroup);
+
+    await this.viewService.flushGraphQLCache(viewFilterGroupData.workspaceId);
+
+    return savedViewFilterGroup;
   }
 
   async update(

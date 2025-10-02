@@ -83,22 +83,20 @@ export const UserAndViewsProviderEffect = () => {
     currentWorkspaceDeletedMembersState,
   );
 
+  const shouldSkip =
+    !isLoggedIn ||
+    isCurrentUserLoaded ||
+    isMatchingLocation(location, AppPath.Verify) ||
+    isMatchingLocation(location, AppPath.VerifyEmail);
+
   const { data: userQueryData, loading: userQueryLoading } =
     useGetCurrentUserQuery({
-      skip:
-        !isLoggedIn ||
-        isCurrentUserLoaded ||
-        isMatchingLocation(location, AppPath.Verify) ||
-        isMatchingLocation(location, AppPath.VerifyEmail),
+      skip: shouldSkip,
     });
 
   const { data: queryDataCoreViews, loading: queryLoadingCoreViews } =
     useFindAllCoreViewsQuery({
-      skip:
-        !isLoggedIn ||
-        isCurrentUserLoaded ||
-        isMatchingLocation(location, AppPath.Verify) ||
-        isMatchingLocation(location, AppPath.VerifyEmail),
+      skip: shouldSkip,
     });
 
   useEffect(() => {
@@ -195,12 +193,7 @@ export const UserAndViewsProviderEffect = () => {
     if (!isDefined(queryDataCoreViews?.getCoreViews)) return;
 
     setCoreViews(queryDataCoreViews.getCoreViews);
-  }, [
-    queryLoadingCoreViews,
-    queryDataCoreViews?.getCoreViews,
-    setCoreViews,
-    setIsCurrentUserLoaded,
-  ]);
+  }, [queryDataCoreViews?.getCoreViews, setCoreViews]);
 
   return null;
 };

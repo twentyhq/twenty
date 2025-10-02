@@ -248,7 +248,7 @@ export class ViewService {
   }
 
   async flushGraphQLCache(workspaceId: string): Promise<void> {
-    await this.workspaceCacheStorageService.flushGrapQLOperation({
+    await this.workspaceCacheStorageService.flushGraphQLOperation({
       operationName: 'FindAllCoreViews',
       workspaceId,
     });
