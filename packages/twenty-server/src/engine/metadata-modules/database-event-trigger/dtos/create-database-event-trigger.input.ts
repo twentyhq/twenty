@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import { IsNotEmpty, IsObject, IsUUID } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
@@ -16,4 +16,7 @@ export class CreateDatabaseEventTriggerInput {
   @IsNotEmpty()
   @Field()
   serverlessFunctionId: string;
+
+  @HideField()
+  universalIdentifier?: string;
 }
