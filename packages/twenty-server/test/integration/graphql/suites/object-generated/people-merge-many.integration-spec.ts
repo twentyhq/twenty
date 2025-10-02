@@ -60,15 +60,14 @@ describe('people merge resolvers (integration)', () => {
 
       expect(createResponse.body.data.createPeople).toHaveLength(2);
 
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
-
-      createdPersonIds.push(person1Id, person2Id);
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 0,
       });
 
@@ -125,15 +124,15 @@ describe('people merge resolvers (integration)', () => {
       const createResponse = await makeGraphqlAPIRequest(
         createPersonsOperation,
       );
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
 
-      createdPersonIds.push(person1Id, person2Id);
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 0,
       });
 
@@ -191,15 +190,15 @@ describe('people merge resolvers (integration)', () => {
       const createResponse = await makeGraphqlAPIRequest(
         createPersonsOperation,
       );
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
 
-      createdPersonIds.push(person1Id, person2Id);
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
 
       const mergeWithPriority1 = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 1,
       });
 
@@ -375,15 +374,14 @@ describe('people merge resolvers (integration)', () => {
 
       expect(createResponse.body.data.createPeople).toHaveLength(2);
 
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
-
-      createdPersonIds.push(person1Id, person2Id);
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 0,
       });
 
