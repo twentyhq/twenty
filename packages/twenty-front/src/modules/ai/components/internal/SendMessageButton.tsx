@@ -18,7 +18,7 @@ export const SendMessageButton = ({
     callback: (event: KeyboardEvent) => {
       if (!event.ctrlKey && !event.metaKey) {
         event.preventDefault();
-        handleSendMessage();
+        handleSendMessage(records);
       }
     },
     focusId: AI_CHAT_INPUT_ID,
