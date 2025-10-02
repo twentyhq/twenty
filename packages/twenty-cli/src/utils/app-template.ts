@@ -1,87 +1,80 @@
 import { randomUUID } from 'crypto';
-import { AgentManifest, PackageJson } from '../types/config.types';
 import { getSchemaUrls } from './schema-validator';
+import * as fs from 'fs-extra';
+import { BASE_APPLICATION_PROJECT_PATH } from '../constants/base-application-project-path';
+import { writeJsoncFile } from '../utils/jsonc-parser';
+import { join } from 'path';
+import path from 'path';
 
-export const createBasePackageJson = (
-  appName: string,
-  description: string,
-): PackageJson => {
+export const copyBaseApplicationProject = async ({
+  appName,
+  appDescription,
+  appDirectory,
+}: {
+  appName: string;
+  appDescription: string;
+  appDirectory: string;
+}) => {
+  await fs.copy(BASE_APPLICATION_PROJECT_PATH, appDirectory);
+
+  await createBasePackageJson({
+    appName,
+    appDescription,
+    appDirectory,
+  });
+
+  await createReadmeContent({
+    appName,
+    appDescription,
+    appDirectory,
+  });
+};
+
+const createBasePackageJson = async ({
+  appName,
+  appDescription,
+  appDirectory,
+}: {
+  appName: string;
+  appDescription: string;
+  appDirectory: string;
+}) => {
+  const base = JSON.parse(await readBaseApplicationProjectFile('package.json'));
+
   const schemas = getSchemaUrls();
 
-  return {
-    $schema: schemas.appManifest,
-    universalIdentifier: randomUUID(),
-    label: appName
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' '),
-    engines: {
-      node: '^24.5.0',
-      npm: 'please-use-yarn',
-      yarn: '>=4.0.2',
-    },
-    packageManager: 'yarn@4.9.2',
-    description,
-    license: 'MIT',
-    version: '0.0.1',
-  };
+  base['$schema'] = schemas.appManifest;
+  base['universalIdentifier'] = randomUUID();
+  base['name'] = appName
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+  base['description'] = appDescription;
+
+  await writeJsoncFile(join(appDirectory, 'package.json'), base);
 };
 
-export const createAgentManifest = (appName: string): AgentManifest => {
-  const schemas = getSchemaUrls();
+const createReadmeContent = async ({
+  appName,
+  appDescription,
+  appDirectory,
+}: {
+  appName: string;
+  appDescription: string;
+  appDirectory: string;
+}) => {
+  let readmeContent = await readBaseApplicationProjectFile('README.md');
 
-  return {
-    $schema: schemas.agent,
-    standardId: randomUUID(),
-    name: `${appName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())}Agent`,
-    label: `${appName
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')} Agent`,
-    description: `AI agent for ${appName}`,
-    prompt: `You are an AI agent for ${appName}. Help users with their tasks and provide assistance with Twenty CRM features.`,
-    modelId: 'auto',
-    responseFormat: {
-      type: 'text',
-    },
-  };
+  readmeContent = readmeContent.replace(/\{title}/g, appName);
+
+  readmeContent = readmeContent.replace(/\{description}/g, appDescription);
+
+  await fs.writeFile(path.join(appDirectory, 'README.md'), readmeContent);
 };
 
-export const createGitignoreContent = () => {
-  return `node_modules
-.yarn/install-state.gz
-`;
-};
-
-export const createReadmeContent = (
-  appName: string,
-  appDir: string,
-): string => {
-  return `# ${appName}
-
-A Twenty application.
-
-## Development
-
-To start development mode:
-
-\`\`\`bash
-twenty app dev --path ${appDir}
-\`\`\`
-
-Or from the app directory:
-
-\`\`\`bash
-cd ${appDir}
-twenty app dev
-\`\`\`
-
-## Deployment
-
-To deploy the application:
-
-\`\`\`bash
-twenty app deploy --path ${appDir}
-\`\`\`
-`;
+const readBaseApplicationProjectFile = async (fileName: string) => {
+  return await fs.readFile(
+    join(BASE_APPLICATION_PROJECT_PATH, fileName),
+    'utf-8',
+  );
 };

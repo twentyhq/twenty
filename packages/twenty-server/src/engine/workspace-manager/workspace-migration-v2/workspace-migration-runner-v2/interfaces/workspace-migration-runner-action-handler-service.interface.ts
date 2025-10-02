@@ -1,5 +1,6 @@
-import { SetMetadata } from '@nestjs/common';
+import { Inject, SetMetadata } from '@nestjs/common';
 
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import {
   type ExtractAction,
@@ -32,16 +33,19 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionTypeV2,
 > implements WorkspaceMigrationRunnerActionHandlerService<TActionType>
 {
+  public actionType: TActionType;
+
+  @Inject(LoggerService)
+  protected readonly logger: LoggerService;
+
   executeForMetadata(
-    // eslint-disable-next-line unused-imports/no-unused-vars
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+    _context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<void> {
     return Promise.resolve();
   }
 
   executeForWorkspaceSchema(
-    // eslint-disable-next-line unused-imports/no-unused-vars
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+    _context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<void> {
     return Promise.resolve();
   }
@@ -55,8 +59,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }
 
   rollbackForMetadata(
-    // eslint-disable-next-line unused-imports/no-unused-vars
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+    _context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<void> {
     return Promise.resolve();
   }
@@ -65,8 +68,14 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<Partial<AllFlatEntityMaps>> {
     await Promise.all([
-      this.executeForMetadata(context),
-      this.executeForWorkspaceSchema(context),
+      this.asyncMethodPerformanceMetricWrapper({
+        label: 'executeForMetadata',
+        method: async () => this.executeForMetadata(context),
+      }),
+      this.asyncMethodPerformanceMetricWrapper({
+        label: 'executeForWorkspaceSchema',
+        method: async () => this.executeForWorkspaceSchema(context),
+      }),
     ]);
 
     return this.optimisticallyApplyActionOnAllFlatEntityMaps({
@@ -80,6 +89,24 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   ): Promise<void> {
     await this.rollbackForMetadata(context);
   }
+
+  private async asyncMethodPerformanceMetricWrapper({
+    label,
+    method,
+  }: {
+    label: string;
+    method: () => Promise<void>;
+  }): Promise<void> {
+    this.logger.time(
+      'BaseWorkspaceMigrationRunnerActionHandlerService',
+      `${this.actionType} ${label}`,
+    );
+    await method();
+    this.logger.timeEnd(
+      'BaseWorkspaceMigrationRunnerActionHandlerService',
+      `${this.actionType} ${label}`,
+    );
+  }
 }
 
 export function WorkspaceMigrationRunnerActionHandler<
@@ -87,7 +114,9 @@ export function WorkspaceMigrationRunnerActionHandler<
 >(
   actionType: TActionType,
 ): typeof BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {
-  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {}
+  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {
+    actionType = actionType;
+  }
 
   SetMetadata(
     WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY,

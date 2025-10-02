@@ -186,13 +186,13 @@ msgid "Action Needed to Reset Password"
 msgstr "Je třeba akce k resetování hesla"
 
 #. js-lingui-id: 52fA3U
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
 msgstr "Aktivní pole nelze smazat"
 
 #. js-lingui-id: 0N5kF6
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Active objects cannot be deleted"
 msgstr "Aktivní objekty nelze smazat"
 
@@ -602,7 +602,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "Nelze vytvořit verzi pracovního postupu se stavem jiným než koncept"
 
 #. js-lingui-id: AQyr9X
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Nelze smazat, nejprve aktualizujte pole s identifikátorem štítku"
@@ -1309,7 +1309,7 @@ msgid "Favorites tied to the {label}"
 msgstr "Oblíbené spojené s {label}"
 
 #. js-lingui-id: vngnhF
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
 msgstr "Pole již existuje"
 
@@ -1357,15 +1357,15 @@ msgstr "ID metadat pole"
 msgid "Field metadata not found"
 msgstr ""
 
+#. js-lingui-id: uTPwH1
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Field metadata to delete not found"
+msgstr ""
+
 #. js-lingui-id: Ljqo/T
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update not found"
 msgstr "Metadata pole pro aktualizaci nenalezena"
-
-#. js-lingui-id: p3kNMz
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Field metadata to update object metadata not found"
-msgstr "Metadata objektu k aktualizaci pole nenalezena"
 
 #. js-lingui-id: g+t8w9
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1374,7 +1374,7 @@ msgid "Field metadata used for aggregate operation"
 msgstr "Metadata pole použitá pro agregátní operace"
 
 #. js-lingui-id: prTOhK
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field name is not synced with field label"
 msgstr "Název pole není synchronizován se štítkem pole"
 
@@ -1384,12 +1384,12 @@ msgid "Field referenced in index does not exist"
 msgstr ""
 
 #. js-lingui-id: cK8ILP
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field to create related object not found"
 msgstr "Pole pro vytvoření souvisejícího objektu nenalezeno"
 
 #. js-lingui-id: K6qzz4
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field to update not found"
 msgstr "Pole pro aktualizaci nenalezeno"
 
@@ -1444,7 +1444,7 @@ msgid "Folder name"
 msgstr "Název složky"
 
 #. js-lingui-id: eWmJYU
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Forbidden updated properties for relation field metadata"
 msgstr "Zakázané vlastnosti ke změně pro metadata vztahového pole"
 
@@ -1759,24 +1759,6 @@ msgstr "kanbanfieldMetadataId"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Key"
 msgstr "Klíč"
-
-#. js-lingui-id: dcVKg5
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-msgid "Label identifier field metadata is required"
-msgstr ""
-
-#. js-lingui-id: Q/u31y
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-msgid "Label identifier field metadata must be a TEXT or FULL_NAME field type"
-msgstr ""
-
-#. js-lingui-id: fzIM4E
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-msgid "Label identifier field metadata not found in field metadata list"
-msgstr ""
 
 #. js-lingui-id: w8Rv8T
 #: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
@@ -2151,8 +2133,8 @@ msgid "Name should be in camelCase"
 msgstr "Jméno by mělo být v camelCase"
 
 #. js-lingui-id: Dr0xtb
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Names are not synced with labels"
 msgstr "Názvy nejsou synchronizovány se štítky"
 
@@ -2295,8 +2277,8 @@ msgid "Number of employees in the company"
 msgstr "Počet zaměstnanců ve společnosti"
 
 #. js-lingui-id: ECRKYR
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object already exists"
 msgstr "Objekt již existuje"
 
@@ -2321,18 +2303,13 @@ msgstr "ID metadat objektu"
 msgid "Object metadata not found"
 msgstr ""
 
-#. js-lingui-id: lG0Qqm
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
-msgid "Object related to field to delete not found"
-msgstr "Objekt související s polem ke smazání nenalezen"
-
 #. js-lingui-id: E8vJ0A
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Object related to field to update not found"
 msgstr "Objekt související s polem k aktualizaci nenalezen"
 
 #. js-lingui-id: MnOwTp
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Object related to updated field does not have a label identifier"
 msgstr "Objekt související s aktualizovaným polem nemá identifikátor štítku"
 
@@ -2347,20 +2324,20 @@ msgid "Object targeted by the relation not found"
 msgstr "Objekt, na který směřuje vztah, nenalezen"
 
 #. js-lingui-id: bMeJkW
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to delete not found"
 msgstr "Objekt ke smazání nebyl nalezen"
 
 #. js-lingui-id: pQ5dZU
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
 msgstr "Objekt k aktualizaci nebyl nalezen"
 
 #. js-lingui-id: cdjRFZ
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object with same id already exists"
 msgstr "Objekt se stejným ID již existuje"
 
@@ -2701,15 +2678,15 @@ msgid "Relations"
 msgstr "Vztahy"
 
 #. js-lingui-id: PWdFkY
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Remote objects are not production ready yet"
 msgstr "Vzdálené objekty nejsou připraveny na produkční prostředí"
 
 #. js-lingui-id: yVxtzR
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Remote objects are not supported yet"
 msgstr "Vzdálené objekty nejsou zatím podporovány"
 
@@ -2729,6 +2706,34 @@ msgstr "Stav odpovědi"
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Role"
 msgstr "Role"
+
+#. js-lingui-id: MFW30/
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route already exists"
+msgstr ""
+
+#. js-lingui-id: ldQZkA
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route not found"
+msgstr ""
+
+#. js-lingui-id: NCQS+K
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route path already exists"
+msgstr ""
+
+#. js-lingui-id: v5H7VS
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route with same id already exists"
+msgstr ""
+
+#. js-lingui-id: c10Yre
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route with same path already exists"
+msgstr ""
 
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2757,6 +2762,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Serverless function not found"
 msgstr ""
 
@@ -2786,13 +2803,13 @@ msgid "Stage"
 msgstr "Fáze"
 
 #. js-lingui-id: dc5N0o
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Standard fields cannot be deleted"
 msgstr "Standardní pole nelze smazat"
 
 #. js-lingui-id: Ptv+nG
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
 msgstr "Standardní objekty nelze smazat"
 
@@ -3273,7 +3290,7 @@ msgid "Update DateTime"
 msgstr "Datum a čas aktualizace"
 
 #. js-lingui-id: r5C2wB
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Updated field name is not synced with label"
 msgstr "Název aktualizovaného pole není synchronizován se štítkem"
 

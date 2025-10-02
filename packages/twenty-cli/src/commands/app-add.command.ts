@@ -2,12 +2,12 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import path from 'path';
-import { v4 } from 'uuid';
-import { resolveAppPath } from '../utils/app-path-resolver';
+import { randomUUID } from 'crypto';
 import { parseJsoncFile, writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
+import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 
-enum SyncableEntity {
+export enum SyncableEntity {
   AGENT = 'agent',
   OBJECT = 'object',
   SERVERLESS_FUNCTION = 'serverlessFunction',
@@ -27,12 +27,16 @@ const getFolderName = (entity: SyncableEntity) => {
   }
 };
 
-export class AppAddCommand {
-  async execute(options: { path?: string }): Promise<void> {
-    try {
-      const appPath = await resolveAppPath(options.path);
+export const isSyncableEntity = (value: string): value is SyncableEntity => {
+  return Object.values(SyncableEntity).includes(value as SyncableEntity);
+};
 
-      const entity = await this.getEntity();
+export class AppAddCommand {
+  async execute(entityType?: SyncableEntity): Promise<void> {
+    try {
+      const appPath = CURRENT_EXECUTION_DIRECTORY;
+
+      const entity = entityType ?? (await this.getEntity());
 
       const appExists = await fs.pathExists(appPath);
 
@@ -99,12 +103,7 @@ export class AppAddCommand {
         name: 'entity',
         message: `What entity do you want to create?`,
         default: '',
-        choices: [
-          SyncableEntity.AGENT,
-          SyncableEntity.OBJECT,
-          SyncableEntity.SERVERLESS_FUNCTION,
-          SyncableEntity.TRIGGER,
-        ],
+        choices: [SyncableEntity.SERVERLESS_FUNCTION, SyncableEntity.TRIGGER],
       },
     ]);
 
@@ -141,7 +140,7 @@ export class AppAddCommand {
   ) {
     const schemas = getSchemaUrls();
 
-    const uuid = v4();
+    const uuid = randomUUID();
 
     const entityToCreateData: Record<string, string> = {
       $schema: schemas[entity],
@@ -255,19 +254,20 @@ export class AppAddCommand {
   }
 
   private async createDatabaseEventTrigger() {
-    const uuid = v4();
+    const uuid = randomUUID();
 
     const { eventName } = await inquirer.prompt([
       {
         type: 'input',
         name: 'eventName',
-        message: 'Enter the database event name (e.g., company.created):',
+        message:
+          'Enter the database event name (e.g. company.created, *.updated, person.*):',
         validate: (input) => {
           if (input.length === 0) {
             return 'Event name is required';
           }
-          if (!/^[a-zA-Z]+\.(created|updated|deleted)$/.test(input)) {
-            return 'Event name must be in format: objectName.(created|updated|deleted)';
+          if (!/^(?:[a-zA-Z]+|\*)\.(created|updated|deleted|\*)$/.test(input)) {
+            return 'Event name must be in format: (objectName|*).(created|updated|deleted|*)';
           }
           return true;
         },
@@ -282,7 +282,7 @@ export class AppAddCommand {
   }
 
   private async createCronTrigger() {
-    const uuid = v4();
+    const uuid = randomUUID();
 
     const { schedule } = await inquirer.prompt([
       {

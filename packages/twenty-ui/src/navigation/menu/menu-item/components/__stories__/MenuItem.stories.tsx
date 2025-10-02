@@ -198,6 +198,7 @@ export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
   },
   decorators: [CatalogDecorator],
   parameters: {
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
         {
@@ -224,6 +225,55 @@ export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
                 return 'Long contextual text';
               default:
                 return contextualText;
+            }
+          },
+        },
+        {
+          name: 'iconButtons',
+          values: ['no icon button', 'one icon button'],
+          props: (choice: string) => {
+            switch (choice) {
+              case 'no icon button': {
+                return {
+                  iconButtons: [],
+                };
+              }
+              case 'one icon button': {
+                return {
+                  iconButtons: [
+                    {
+                      Icon: IconBell,
+                      onClick: action('Clicked on icon button'),
+                    },
+                  ],
+                };
+              }
+              default:
+                return {};
+            }
+          },
+          labels: (choice: string) => {
+            switch (choice) {
+              case 'no icon button':
+                return 'No icon button';
+              case 'one icon button':
+                return 'One icon button';
+              default:
+                return choice;
+            }
+          },
+        },
+        {
+          name: 'states',
+          values: ['default', 'hover'],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+                return { className: 'hover' };
+              default:
+                return {};
             }
           },
         },
