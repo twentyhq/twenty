@@ -1,4 +1,3 @@
-import { failingFilterInputByFieldMetadataType } from 'test/integration/graphql/suites/args-validation/constants/failing-filter-input-by-field-metadata-type.constant';
 import { successfulFilterInputByFieldMetadataType } from 'test/integration/graphql/suites/args-validation/constants/successful-filter-input-by-field-metadata-type.constant';
 import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/args-validation/constants/test-object-gql-fields.constant';
 import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/args-validation/utils/destroy-many-objects-metadata';
@@ -60,35 +59,6 @@ describe('Gql core (workspace) api - args validation', () => {
               validateFilter?.(record),
             ),
           ).toBe(true);
-        },
-      );
-    }
-  });
-
-  describe('Gql filterInput args - failure', () => {
-    for (const [fieldType, testCases] of Object.entries(
-      failingFilterInputByFieldMetadataType,
-    )) {
-      it.each(
-        testCases.map((testCase) => ({
-          ...testCase,
-          stringifiedFilter: JSON.stringify(testCase.gqlFilterInput),
-        })),
-      )(
-        `${fieldType} - should fail with filter : $stringifiedFilter`,
-        async ({ gqlFilterInput: filter, gqlErrorMessage: errorMessage }) => {
-          const graphqlOperation = findManyOperationFactory({
-            objectMetadataSingularName: objectMetadataSingularName,
-            objectMetadataPluralName: objectMetadataPluralName,
-            gqlFields: 'id',
-            filter,
-          });
-
-          const response =
-            await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
-
-          expect(response.body.errors).toBeDefined();
-          expect(response.body.errors[0].message).toContain(errorMessage);
         },
       );
     }
