@@ -7,7 +7,7 @@
     "twenty": "dist/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "echo 'use npx nx build'",
     "dev": "tsx src/cli.ts",
     "start": "node dist/cli.js"
   },

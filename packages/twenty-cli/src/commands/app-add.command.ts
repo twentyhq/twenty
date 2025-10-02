@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import path from 'path';
-import { v4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { resolveAppPath } from '../utils/app-path-resolver';
 import { parseJsoncFile, writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
@@ -141,7 +141,7 @@ export class AppAddCommand {
   ) {
     const schemas = getSchemaUrls();
 
-    const uuid = v4();
+    const uuid = randomUUID();
 
     const entityToCreateData: Record<string, string> = {
       $schema: schemas[entity],
@@ -255,7 +255,7 @@ export class AppAddCommand {
   }
 
   private async createDatabaseEventTrigger() {
-    const uuid = v4();
+    const uuid = randomUUID();
 
     const { eventName } = await inquirer.prompt([
       {
@@ -282,7 +282,7 @@ export class AppAddCommand {
   }
 
   private async createCronTrigger() {
-    const uuid = v4();
+    const uuid = randomUUID();
 
     const { schedule } = await inquirer.prompt([
       {

@@ -3,8 +3,8 @@ import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
 import {
+  copyBaseApplicationProject,
   createBasePackageJson,
-  createGitignoreContent,
   createReadmeContent,
 } from '../utils/app-template';
 import { writeJsoncFile } from '../utils/jsonc-parser';
@@ -105,12 +105,7 @@ export class AppInitCommand {
     const readmeContent = createReadmeContent(appName, appDir);
     await fs.writeFile(path.join(appDir, 'README.md'), readmeContent);
 
-    // Create empty yarn.lock
-    await fs.writeFile(path.join(appDir, 'yarn.lock'), '');
-
-    // Create .gitignore
-    const gitignoreContent = createGitignoreContent();
-    await fs.writeFile(path.join(appDir, '.gitignore'), gitignoreContent);
+    await copyBaseApplicationProject(appDir);
   }
 
   private logSuccess(appDir: string): void {

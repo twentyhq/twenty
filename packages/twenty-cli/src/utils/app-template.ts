@@ -1,6 +1,8 @@
 import { randomUUID } from 'crypto';
-import { AgentManifest, PackageJson } from '../types/config.types';
+import { PackageJson } from '../types/config.types';
 import { getSchemaUrls } from './schema-validator';
+import { join } from 'path';
+import * as fs from 'fs-extra';
 
 export const createBasePackageJson = (
   appName: string,
@@ -18,7 +20,7 @@ export const createBasePackageJson = (
     engines: {
       node: '^24.5.0',
       npm: 'please-use-yarn',
-      yarn: '>=4.0.2',
+      yarn: '>=4.9.2',
     },
     packageManager: 'yarn@4.9.2',
     description,
@@ -27,30 +29,12 @@ export const createBasePackageJson = (
   };
 };
 
-export const createAgentManifest = (appName: string): AgentManifest => {
-  const schemas = getSchemaUrls();
-
-  return {
-    $schema: schemas.agent,
-    standardId: randomUUID(),
-    name: `${appName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())}Agent`,
-    label: `${appName
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')} Agent`,
-    description: `AI agent for ${appName}`,
-    prompt: `You are an AI agent for ${appName}. Help users with their tasks and provide assistance with Twenty CRM features.`,
-    modelId: 'auto',
-    responseFormat: {
-      type: 'text',
-    },
-  };
-};
-
-export const createGitignoreContent = () => {
-  return `node_modules
-.yarn/install-state.gz
-`;
+export const copyBaseApplicationProject = async (destinationDir: string) => {
+  const baseApplicationProjectPath = join(
+    __dirname,
+    '../constants/base-application-project',
+  );
+  await fs.copy(baseApplicationProjectPath, destinationDir);
 };
 
 export const createReadmeContent = (

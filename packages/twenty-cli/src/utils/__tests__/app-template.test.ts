@@ -1,8 +1,4 @@
-import {
-  createAgentManifest,
-  createBasePackageJson,
-  createReadmeContent,
-} from '../app-template';
+import { createBasePackageJson, createReadmeContent } from '../app-template';
 import {
   AGENT_SCHEMA_URL,
   APP_MANIFEST_SCHEMA_URL,
@@ -29,7 +25,7 @@ describe('app-template', () => {
         engines: {
           node: '^24.5.0',
           npm: 'please-use-yarn',
-          yarn: '>=4.0.2',
+          yarn: '>=4.9.2',
         },
         packageManager: 'yarn@4.9.2',
         license: 'MIT',
@@ -57,43 +53,6 @@ describe('app-template', () => {
 
       expect(basePackageJson.universalIdentifier).toBeDefined();
       expect(typeof basePackageJson.universalIdentifier).toBe('string');
-    });
-  });
-
-  describe('createAgentManifest', () => {
-    it('should create a valid agent manifest with correct structure', () => {
-      const appName = 'my-test-app';
-      const agent = createAgentManifest(appName);
-
-      expect(agent).toEqual({
-        $schema: AGENT_SCHEMA_URL,
-        standardId: 'mocked-uuid-12345',
-        name: 'myTestAppAgent',
-        label: 'My Test App Agent',
-        description: 'AI agent for my-test-app',
-        prompt:
-          'You are an AI agent for my-test-app. Help users with their tasks and provide assistance with Twenty CRM features.',
-        modelId: 'auto',
-        responseFormat: {
-          type: 'text',
-        },
-      });
-    });
-
-    it('should handle single word app names', () => {
-      const appName = 'calculator';
-      const agent = createAgentManifest(appName);
-
-      expect(agent.name).toBe('calculatorAgent');
-      expect(agent.label).toBe('Calculator Agent');
-    });
-
-    it('should handle kebab-case app names correctly', () => {
-      const appName = 'user-management-system';
-      const agent = createAgentManifest(appName);
-
-      expect(agent.name).toBe('userManagementSystemAgent');
-      expect(agent.label).toBe('User Management System Agent');
     });
   });
 
