@@ -3,7 +3,7 @@ import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-func
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 
-import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
+import { INDEX_FILE_NAME } from '@/serverless-functions/constants/IndexFileName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunctionFields';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
@@ -17,6 +17,7 @@ import { AutoTypings } from 'monaco-editor-auto-typings';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
+import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
@@ -85,7 +86,7 @@ export const WorkflowReadonlyActionServerlessFunction = ({
         <StyledCodeEditorContainer>
           <CodeEditor
             height={343}
-            value={formValues.code?.[INDEX_FILE_PATH]}
+            value={formValues.code?.[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME]}
             language="typescript"
             onMount={handleEditorDidMount}
             setMarkers={getWrongExportedFunctionMarkers}

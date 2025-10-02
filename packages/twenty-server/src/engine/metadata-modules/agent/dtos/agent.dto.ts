@@ -11,6 +11,7 @@ import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { ModelConfiguration } from 'src/engine/metadata-modules/agent/types/modelConfiguration';
 
 @ObjectType('Agent')
 export class AgentDTO {
@@ -66,4 +67,7 @@ export class AgentDTO {
   @IsDateString()
   @Field()
   updatedAt: Date;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  modelConfiguration: ModelConfiguration;
 }

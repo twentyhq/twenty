@@ -14,7 +14,7 @@ export const useGetViewGroupsFilters = (): RecordFilter[] => {
           id: recordGroup.id,
           fieldMetadataId: recordGroup.fieldMetadataId,
           value: JSON.stringify([recordGroup.fieldValue]),
-          operand: ViewFilterOperand.IsNot,
+          operand: ViewFilterOperand.IS_NOT,
           displayValue: '',
           type: getFilterTypeFromFieldType(FieldMetadataType.SELECT),
           label: '',

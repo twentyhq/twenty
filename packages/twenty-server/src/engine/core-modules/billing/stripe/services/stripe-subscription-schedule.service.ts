@@ -134,7 +134,7 @@ export class StripeSubscriptionScheduleService {
   async replaceEditablePhases(
     scheduleId: string,
     desired: {
-      currentSnapshot?: Stripe.SubscriptionScheduleUpdateParams.Phase;
+      currentPhaseSnapshot?: Stripe.SubscriptionScheduleUpdateParams.Phase;
       nextPhase?: Stripe.SubscriptionScheduleUpdateParams.Phase;
     },
   ): Promise<Stripe.SubscriptionSchedule> {
@@ -146,10 +146,11 @@ export class StripeSubscriptionScheduleService {
 
     const phases: Stripe.SubscriptionScheduleUpdateParams.Phase[] = [];
 
-    const currentSnapshot =
-      desired.currentSnapshot ?? this.snapshotFromLivePhase(currentEditable);
+    const currentPhaseSnapshot =
+      desired.currentPhaseSnapshot ??
+      this.snapshotFromLivePhase(currentEditable);
 
-    phases.push(currentSnapshot);
+    phases.push(currentPhaseSnapshot);
 
     const hasNextKey = 'nextPhase' in desired;
     const wantsNext = hasNextKey && !!desired.nextPhase;

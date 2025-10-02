@@ -26,7 +26,7 @@ const TEXT_STEP_FILTER: StepFilter = {
   stepOutputKey: 'company.name',
   type: 'text',
   value: 'Acme',
-  operand: ViewFilterOperand.Contains,
+  operand: ViewFilterOperand.CONTAINS,
 };
 
 const meta: Meta<typeof WorkflowStepFilterColumn> = {

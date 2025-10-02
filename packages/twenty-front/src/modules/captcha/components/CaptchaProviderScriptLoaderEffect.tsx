@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useLocation } from 'react-router-dom';
 
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
@@ -7,6 +8,7 @@ import { getCaptchaUrlByProvider } from '@/captcha/utils/getCaptchaUrlByProvider
 import { captchaState } from '@/client-config/states/captchaState';
 import { CaptchaDriverType } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 
 export const CaptchaProviderScriptLoaderEffect = () => {
   const captcha = useRecoilValue(captchaState);
@@ -14,9 +16,14 @@ export const CaptchaProviderScriptLoaderEffect = () => {
     isCaptchaScriptLoadedState,
   );
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!captcha?.provider || !captcha.siteKey) {
+    if (
+      !captcha?.provider ||
+      !captcha.siteKey ||
+      !isCaptchaRequiredForPath(location.pathname)
+    ) {
       return;
     }
 
@@ -45,7 +52,12 @@ export const CaptchaProviderScriptLoaderEffect = () => {
       };
       document.body.appendChild(scriptElement);
     }
-  }, [captcha?.provider, captcha?.siteKey, setIsCaptchaScriptLoaded]);
+  }, [
+    captcha?.provider,
+    captcha?.siteKey,
+    setIsCaptchaScriptLoaded,
+    location.pathname,
+  ]);
 
   useEffect(() => {
     if (isUndefinedOrNull(captcha?.provider) || !isCaptchaScriptLoaded) {
