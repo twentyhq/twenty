@@ -86,3 +86,4 @@ export type { StepFilterGroup, StepFilter } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { ViewFilterOperand } from './ViewFilterOperand';
+export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';

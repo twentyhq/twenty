@@ -5,8 +5,11 @@ import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFiltersComponentState';
 import { hasInitializedCurrentStepFilterGroupsComponentFamilyState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/hasInitializedCurrentStepFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentStepFiltersComponentFamilyState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/hasInitializedCurrentStepFiltersComponentFamilyState';
-import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useEffect, useMemo } from 'react';
+import {
+  convertViewFilterOperandToCoreOperand,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const WorkflowEditActionFilterBodyEffect = ({
   stepId,
@@ -39,19 +42,23 @@ export const WorkflowEditActionFilterBodyEffect = ({
     currentStepFilterGroupsComponentState,
   );
 
+  const stepFiltersConverted = useMemo(() => {
+    return defaultValue?.stepFilters?.map((filter) => ({
+      ...filter,
+      operand: convertViewFilterOperandToCoreOperand(filter.operand),
+    }));
+  }, [defaultValue?.stepFilters]);
+
   useEffect(() => {
-    if (
-      !hasInitializedCurrentStepFilters &&
-      isDefined(defaultValue?.stepFilters)
-    ) {
-      setCurrentStepFilters(defaultValue.stepFilters ?? []);
+    if (!hasInitializedCurrentStepFilters && isDefined(stepFiltersConverted)) {
+      setCurrentStepFilters(stepFiltersConverted ?? []);
       setHasInitializedCurrentStepFilters(true);
     }
   }, [
     setCurrentStepFilters,
     hasInitializedCurrentStepFilters,
     setHasInitializedCurrentStepFilters,
-    defaultValue?.stepFilters,
+    stepFiltersConverted,
   ]);
 
   useEffect(() => {
