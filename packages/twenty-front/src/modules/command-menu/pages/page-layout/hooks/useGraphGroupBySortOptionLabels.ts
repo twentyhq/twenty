@@ -1,4 +1,5 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { GraphOrderBy } from '~/generated/graphql';
 
@@ -24,13 +25,13 @@ export const useGraphGroupBySortOptionLabels = ({
       (fieldMetadataItem) => fieldMetadataItem.id === groupByFieldMetadataId,
     );
 
-    const fieldLabel = field?.label || 'Field';
+    const fieldLabel = field?.label || t`Field`;
 
     switch (graphOrderBy) {
       case GraphOrderBy.FIELD_ASC:
-        return `${fieldLabel} Ascending`;
+        return `${fieldLabel} ${t`Ascending`}`;
       case GraphOrderBy.FIELD_DESC:
-        return `${fieldLabel} Descending`;
+        return `${fieldLabel} ${t`Descending`}`;
       default:
         return '';
     }
