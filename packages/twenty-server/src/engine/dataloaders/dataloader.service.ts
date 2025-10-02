@@ -134,12 +134,14 @@ export class DataloaderService {
               FieldMetadataType.MORPH_RELATION,
             )
           ) {
-            const allMorphFlatFieldMetadatas =
-              findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
+            const allMorphFlatFieldMetadatas = [
+              sourceFlatFieldMetadata.flatRelationTargetFieldMetadata,
+              ...findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
                 flatFieldMetadata:
                   sourceFlatFieldMetadata.flatRelationTargetFieldMetadata,
                 flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-              }).sort((a, b) => (a.id > b.id ? 1 : -1));
+              }),
+            ].sort((a, b) => (a.id > b.id ? 1 : -1));
 
             const morphNameFromMorphFieldMetadataName =
               getMorphNameFromMorphFieldMetadataName({
