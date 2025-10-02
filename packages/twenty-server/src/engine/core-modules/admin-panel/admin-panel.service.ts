@@ -40,9 +40,14 @@ export class AdminPanelService {
 
   async userLookup(userIdentifier: string): Promise<UserLookup> {
     const isEmail = userIdentifier.includes('@');
+    const normalizedIdentifier = isEmail
+      ? userIdentifier.toLowerCase()
+      : userIdentifier;
 
     const targetUser = await this.userRepository.findOne({
-      where: isEmail ? { email: userIdentifier } : { id: userIdentifier },
+      where: isEmail
+        ? { email: normalizedIdentifier }
+        : { id: normalizedIdentifier },
       relations: {
         userWorkspaces: {
           workspace: {
@@ -57,7 +62,9 @@ export class AdminPanelService {
 
     userValidator.assertIsDefinedOrThrow(
       targetUser,
-      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT, {
+        userFriendlyMessage: 'User not found. Please check the email or ID.',
+      }),
     );
 
     const allFeatureFlagKeys = Object.values(FeatureFlagKey);
@@ -75,6 +82,11 @@ export class AdminPanelService {
         totalUsers: userWorkspace.workspace.workspaceUsers.length,
         logo: userWorkspace.workspace.logo,
         allowImpersonation: userWorkspace.workspace.allowImpersonation,
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls({
+          subdomain: userWorkspace.workspace.subdomain,
+          customDomain: userWorkspace.workspace.customDomain,
+          isCustomDomainEnabled: userWorkspace.workspace.isCustomDomainEnabled,
+        }),
         users: userWorkspace.workspace.workspaceUsers.map((workspaceUser) => ({
           id: workspaceUser.user.id,
           email: workspaceUser.user.email,

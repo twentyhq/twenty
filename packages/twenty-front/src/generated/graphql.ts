@@ -4225,6 +4225,7 @@ export type WorkspaceInfo = {
   name: Scalars['String'];
   totalUsers: Scalars['Float'];
   users: Array<UserInfo>;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type WorkspaceInvitation = {

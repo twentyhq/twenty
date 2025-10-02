@@ -4397,6 +4397,7 @@ export type WorkspaceInfo = {
   name: Scalars['String'];
   totalUsers: Scalars['Float'];
   users: Array<UserInfo>;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type WorkspaceInvitation = {
@@ -5079,7 +5080,7 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 }>;
 
 
-export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
+export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', customUrl?: string | null, subdomainUrl: string }, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
 
 export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -9640,6 +9641,10 @@ export const UserLookupAdminPanelDocument = gql`
       logo
       totalUsers
       allowImpersonation
+      workspaceUrls {
+        customUrl
+        subdomainUrl
+      }
       users {
         id
         email
