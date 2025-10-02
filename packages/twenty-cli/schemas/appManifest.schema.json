@@ -82,7 +82,7 @@
   "examples": [
     {
       "standardId": "550e8400-e29b-41d4-a716-446655440000",
-      "label": "Customer Support App",
+      "name": "Customer Support App",
       "description": "Comprehensive customer support application with AI agents",
       "icon": "🎧",
       "version": "1.0.0",

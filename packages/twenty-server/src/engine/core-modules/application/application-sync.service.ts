@@ -105,7 +105,7 @@ export class ApplicationSyncService {
 
       return await this.applicationService.create({
         universalIdentifier: manifest.universalIdentifier,
-        label: manifest.label,
+        name: manifest.name,
         description: manifest.description,
         version: manifest.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
@@ -123,7 +123,7 @@ export class ApplicationSyncService {
     );
 
     await this.applicationService.update(application.id, {
-      label: manifest.label,
+      name: manifest.name,
       description: manifest.description,
       version: manifest.version,
     });

@@ -3,11 +3,11 @@ import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import path from 'path';
 import { randomUUID } from 'crypto';
-import { resolveAppPath } from '../utils/app-path-resolver';
 import { parseJsoncFile, writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
+import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 
-enum SyncableEntity {
+export enum SyncableEntity {
   AGENT = 'agent',
   OBJECT = 'object',
   SERVERLESS_FUNCTION = 'serverlessFunction',
@@ -27,12 +27,16 @@ const getFolderName = (entity: SyncableEntity) => {
   }
 };
 
-export class AppAddCommand {
-  async execute(options: { path?: string }): Promise<void> {
-    try {
-      const appPath = await resolveAppPath(options.path);
+export const isSyncableEntity = (value: string): value is SyncableEntity => {
+  return Object.values(SyncableEntity).includes(value as SyncableEntity);
+};
 
-      const entity = await this.getEntity();
+export class AppAddCommand {
+  async execute(entityType?: SyncableEntity): Promise<void> {
+    try {
+      const appPath = CURRENT_EXECUTION_DIRECTORY;
+
+      const entity = entityType ?? (await this.getEntity());
 
       const appExists = await fs.pathExists(appPath);
 
@@ -99,12 +103,7 @@ export class AppAddCommand {
         name: 'entity',
         message: `What entity do you want to create?`,
         default: '',
-        choices: [
-          SyncableEntity.AGENT,
-          SyncableEntity.OBJECT,
-          SyncableEntity.SERVERLESS_FUNCTION,
-          SyncableEntity.TRIGGER,
-        ],
+        choices: [SyncableEntity.SERVERLESS_FUNCTION, SyncableEntity.TRIGGER],
       },
     ]);
 
@@ -261,7 +260,8 @@ export class AppAddCommand {
       {
         type: 'input',
         name: 'eventName',
-        message: 'Enter the database event name (e.g., company.created):',
+        message:
+          'Enter the database event name (e.g. company.created, *.updated, person.*):',
         validate: (input) => {
           if (input.length === 0) {
             return 'Event name is required';
