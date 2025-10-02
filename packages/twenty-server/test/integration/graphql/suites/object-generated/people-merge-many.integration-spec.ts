@@ -214,10 +214,10 @@ describe('people merge resolvers (integration)', () => {
     });
 
     it('should handle dry run mode', async () => {
-      const primaryEmail1 = faker.internet.email();
-      const additionalEmails1 = [faker.internet.email()];
-      const primaryEmail2 = faker.internet.email();
-      const additionalEmails2 = [faker.internet.email()];
+      const primaryEmail1 = faker.internet.email().toLowerCase();
+      const additionalEmails1 = [faker.internet.email().toLowerCase()];
+      const primaryEmail2 = faker.internet.email().toLowerCase();
+      const additionalEmails2 = [faker.internet.email().toLowerCase()];
       const createPersonsOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
