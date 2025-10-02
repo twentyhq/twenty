@@ -1,6 +1,7 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { isDefined } from 'twenty-shared/utils';
 import { compareNonEmptyStrings } from '~/utils/compareNonEmptyStrings';
 
 export const useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter = () => {
@@ -12,7 +13,9 @@ export const useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter = () => {
   const viewAnyFieldFilterValue = currentView?.anyFieldFilterValue;
 
   const viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter =
-    !compareNonEmptyStrings(viewAnyFieldFilterValue, anyFieldFilterValue);
+    anyFieldFilterValue === ''
+      ? isDefined(viewAnyFieldFilterValue)
+      : !compareNonEmptyStrings(viewAnyFieldFilterValue, anyFieldFilterValue);
 
   return { viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter };
 };
