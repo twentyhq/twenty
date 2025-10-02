@@ -101,15 +101,7 @@ export const useLoadCurrentUser = () => {
 
     const workspace = user.currentWorkspace ?? null;
 
-    setCurrentWorkspace(
-      workspace
-        ? {
-            ...workspace,
-            defaultRole: workspace.defaultRole ?? null,
-            defaultAgent: workspace.defaultAgent ?? null,
-          }
-        : null,
-    );
+    setCurrentWorkspace(workspace);
 
     if (isDefined(workspace) && isOnAWorkspace) {
       setLastAuthenticateWorkspaceDomain({
