@@ -14,13 +14,17 @@ export class RedisClientService implements OnModuleDestroy {
 
   getQueueClient() {
     if (!this.redisQueueClient) {
-      const redisQueueUrl = this.twentyConfigService.get('REDIS_QUEUE_URL');
+      const redisQueueUrl =
+        this.twentyConfigService.get('REDIS_QUEUE_URL') ??
+        this.twentyConfigService.get('REDIS_URL');
 
-      this.redisQueueClient = redisQueueUrl
-        ? new IORedis(redisQueueUrl, {
-            maxRetriesPerRequest: null,
-          })
-        : this.getClient();
+      if (!redisQueueUrl) {
+        throw new Error('REDIS_QUEUE_URL or REDIS_URL must be defined');
+      }
+
+      this.redisQueueClient = new IORedis(redisQueueUrl, {
+        maxRetriesPerRequest: null,
+      });
     }
 
     return this.redisQueueClient;
@@ -43,16 +47,13 @@ export class RedisClientService implements OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    if (isDefined(this.redisClient) && this.redisClient.status !== 'end') {
-      await this.redisClient.quit();
-    }
-    if (
-      isDefined(this.redisQueueClient) &&
-      this.redisQueueClient.status !== 'end'
-    ) {
+    if (isDefined(this.redisQueueClient)) {
       await this.redisQueueClient.quit();
+      this.redisQueueClient = null;
     }
-    this.redisClient = null;
-    this.redisQueueClient = null;
+    if (isDefined(this.redisClient)) {
+      await this.redisClient.quit();
+      this.redisClient = null;
+    }
   }
 }
