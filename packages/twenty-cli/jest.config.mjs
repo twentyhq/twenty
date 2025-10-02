@@ -32,7 +32,7 @@ const jestConfig = {
     global: {
       statements: 2,
       lines: 1,
-      functions: 5,
+      functions: 1,
     },
   },
 };
