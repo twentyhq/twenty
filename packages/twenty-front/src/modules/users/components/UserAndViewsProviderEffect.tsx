@@ -94,10 +94,9 @@ export const UserAndViewsProviderEffect = () => {
       skip: shouldSkip,
     });
 
-  const { data: queryDataCoreViews, loading: queryLoadingCoreViews } =
-    useFindAllCoreViewsQuery({
-      skip: shouldSkip,
-    });
+  const { data: queryDataCoreViews } = useFindAllCoreViewsQuery({
+    skip: shouldSkip,
+  });
 
   useEffect(() => {
     if (!userQueryLoading) {
