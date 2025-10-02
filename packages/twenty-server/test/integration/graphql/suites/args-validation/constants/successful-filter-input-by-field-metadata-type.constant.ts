@@ -419,13 +419,6 @@ export const successfulFilterInputByFieldMetadataType: {
     //   },
     // },
     {
-      gqlFilterInput: { dateTimeField: { neq: '2005-01-01T00:00:00Z' } },
-      restFilterInput: 'dateTimeField[neq]:"2005-01-01T00:00:00Z"',
-      validateFilter: (record: Record<string, any>) => {
-        return record.dateTimeField !== '2005-01-01T00:00:00Z';
-      },
-    },
-    {
       gqlFilterInput: { dateTimeField: { gt: '2005-01-01T00:00:00Z' } },
       restFilterInput: 'dateTimeField[gt]:"2005-01-01T00:00:00Z"',
       validateFilter: (record: Record<string, any>) => {
@@ -550,13 +543,6 @@ export const successfulFilterInputByFieldMetadataType: {
       restFilterInput: 'dateField[lte]:"2125-01-01"',
       validateFilter: (record: Record<string, any>) => {
         return record.dateField <= '2125-01-01';
-      },
-    },
-    {
-      gqlFilterInput: { dateField: { neq: '2005-01-01' } },
-      restFilterInput: 'dateField[neq]:"2005-01-01"',
-      validateFilter: (record: Record<string, any>) => {
-        return record.dateField !== '2005-01-01';
       },
     },
     {

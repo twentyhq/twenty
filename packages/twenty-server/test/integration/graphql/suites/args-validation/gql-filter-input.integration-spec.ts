@@ -37,7 +37,7 @@ describe('Gql core (workspace) api - args validation', () => {
           stringifiedFilter: JSON.stringify(testCase.gqlFilterInput),
         })),
       )(
-        `${fieldType} - should work with filter : $stringifiedFilter`,
+        `${fieldType} - should succeed with filter : $stringifiedFilter`,
         async ({ gqlFilterInput: filter, validateFilter }) => {
           const graphqlOperation = findManyOperationFactory({
             objectMetadataSingularName: objectMetadataSingularName,
@@ -75,7 +75,7 @@ describe('Gql core (workspace) api - args validation', () => {
           stringifiedFilter: JSON.stringify(testCase.gqlFilterInput),
         })),
       )(
-        `${fieldType} - should not work with filter : $stringifiedFilter`,
+        `${fieldType} - should fail with filter : $stringifiedFilter`,
         async ({ gqlFilterInput: filter, gqlErrorMessage: errorMessage }) => {
           const graphqlOperation = findManyOperationFactory({
             objectMetadataSingularName: objectMetadataSingularName,

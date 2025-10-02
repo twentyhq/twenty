@@ -1,3 +1,4 @@
+import { failingFilterInputByFieldMetadataType } from 'test/integration/graphql/suites/args-validation/constants/failing-filter-input-by-field-metadata-type.constant';
 import { successfulFilterInputByFieldMetadataType } from 'test/integration/graphql/suites/args-validation/constants/successful-filter-input-by-field-metadata-type.constant';
 import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/args-validation/utils/destroy-many-objects-metadata';
 import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suites/args-validation/utils/setup-test-objects-with-all-field-types.util';
@@ -35,7 +36,7 @@ describe('Rest core (workspace) api - args validation', () => {
             stringifiedFilter: JSON.stringify(testCase.restFilterInput),
           })),
       )(
-        `${fieldType} - should work with filter : $stringifiedFilter`,
+        `${fieldType} - should succeed with filter : $stringifiedFilter`,
         async ({ restFilterInput, validateFilter }) => {
           const response = await makeRestAPIRequest({
             method: 'get',
@@ -59,31 +60,35 @@ describe('Rest core (workspace) api - args validation', () => {
     }
   });
 
-  //TODO - Add filter validation to rest api
+  describe('Rest filterInput - failure', () => {
+    for (const [fieldType, testCases] of Object.entries(
+      failingFilterInputByFieldMetadataType,
+    )) {
+      //TODO - Remove when all test cases are fixed
+      const testCasesToRun = testCases.filter((testCase) =>
+        isDefined(testCase.restFilterInput),
+      );
 
-  //   describe('Rest filterInput - failure', () => {
-  //     for (const [fieldType, testCases] of Object.entries(
-  //       failingFilterInputByFieldMetadataType,
-  //     )) {
-  //       it.each(
-  //         testCases
-  //           .filter((testCase) => isDefined(testCase.restFilterInput))
-  //           .map((testCase) => ({
-  //             ...testCase,
-  //             stringifiedFilter: JSON.stringify(testCase.restFilterInput),
-  //           })),
-  //       )(
-  //         `${fieldType} - should work with filter : $stringifiedFilter`,
-  //         async ({ restFilterInput: filter, restErrorMessage: errorMessage }) => {
-  //           const path = `/${objectMetadataPluralName}?filter=${filter}`;
-  //           const response = await makeRestAPIRequest({
-  //             method: 'get',
-  //             path,
-  //           });
+      it.each(
+        testCasesToRun.map((testCase) => ({
+          ...testCase,
+          stringifiedFilter: JSON.stringify(testCase.restFilterInput),
+        })),
+      )(
+        `${fieldType} - should fail with filter : $stringifiedFilter`,
+        async ({ restFilterInput: filter, restErrorMessage: errorMessage }) => {
+          const response = await makeRestAPIRequest({
+            method: 'get',
+            path: `/${objectMetadataPluralName}`,
+            queryParams: `filter=${filter}`,
+          });
 
-  //           expect(response.body.errors).toBeUndefined();
-  //         },
-  //       );
-  //     }
-  //   });
+          expect(response.body.error).toBeDefined();
+          expect(JSON.stringify(response.body.messages)).toContain(
+            errorMessage,
+          );
+        },
+      );
+    }
+  });
 });

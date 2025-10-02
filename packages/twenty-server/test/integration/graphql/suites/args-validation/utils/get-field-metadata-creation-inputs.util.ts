@@ -7,7 +7,7 @@ import {
 
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
-type fieldMetadataCreationInput = {
+type FieldMetadataCreationInput = {
   name: string;
   label: string;
   type: FieldMetadataType;
@@ -22,8 +22,8 @@ export const getFieldMetadataCreationInputs = (
 ) => {
   const fieldInputsMap: {
     [K in FieldMetadataTypeToTest]:
-      | fieldMetadataCreationInput
-      | fieldMetadataCreationInput[];
+      | FieldMetadataCreationInput
+      | FieldMetadataCreationInput[];
   } = {
     [FieldMetadataType.TEXT]: {
       name: 'textField',
