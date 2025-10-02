@@ -1,26 +1,14 @@
 import { AgentChatSessionProvider } from '@/ai/components/AgentChatSessionProvider';
-import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   useGetAgentChatMessagesQuery,
   useGetAgentChatThreadsQuery,
 } from '~/generated-metadata/graphql';
-
-const StyledEmptyState = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.md};
-  height: 100%;
-  justify-content: center;
-`;
 
 export const AgentChatProvider = ({
   children,
@@ -54,18 +42,9 @@ export const AgentChatProvider = ({
 
   const isLoading = messagesLoading || threadsLoading;
 
-  if (!agentId) {
-    return <StyledEmptyState>{t`No AI Agent found.`}</StyledEmptyState>;
-  }
-
-  if (isLoading && uiMessages.length === 0) {
-    return <AIChatSkeletonLoader />;
-  }
-
   return (
     <AgentChatSessionProvider
-      key={currentThreadId}
-      agentId={agentId}
+      agentId={agentId!}
       uiMessages={uiMessages}
       isLoading={isLoading}
     >

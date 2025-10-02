@@ -74,7 +74,7 @@ export const useAgentChat = (
       }),
     }),
     messages: uiMessages,
-    id: currentThreadId as string,
+    id: `${currentThreadId}-${uiMessages.length}`,
     onError: (error) => {
       enqueueErrorSnackBar({ message: error.message });
     },

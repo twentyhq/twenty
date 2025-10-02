@@ -1,5 +1,4 @@
 import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
-import { AgentChatProvider } from '@/ai/contexts/AgentChatProvider';
 import { CommandMenuContainer } from '@/command-menu/components/CommandMenuContainer';
 import { CommandMenuContextChipRecordSetterEffect } from '@/command-menu/components/CommandMenuContextChipRecordSetterEffect';
 import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
@@ -53,7 +52,7 @@ export const CommandMenuRouter = () => {
             displayType="listItem"
             actionMenuType="command-menu"
           >
-            <AgentChatProvider>{commandMenuPageComponent}</AgentChatProvider>
+            {commandMenuPageComponent}
           </ActionMenuContextProvider>
         </StyledCommandMenuContent>
       </CommandMenuPageComponentInstanceContext.Provider>

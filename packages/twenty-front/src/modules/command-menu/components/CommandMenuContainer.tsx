@@ -1,4 +1,5 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { AgentChatProvider } from '@/ai/contexts/AgentChatProvider';
 import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
@@ -59,9 +60,11 @@ export const CommandMenuContainer = ({
             mode="wait"
             onExitComplete={commandMenuCloseAnimationCompleteCleanup}
           >
-            {isCommandMenuOpened && (
-              <CommandMenuOpenContainer>{children}</CommandMenuOpenContainer>
-            )}
+            <AgentChatProvider>
+              {isCommandMenuOpened && (
+                <CommandMenuOpenContainer>{children}</CommandMenuOpenContainer>
+              )}
+            </AgentChatProvider>
           </AnimatePresence>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
