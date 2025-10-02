@@ -20,7 +20,7 @@ export const workflowFilterActionSettingsSchema =
           id: z.string(),
           type: z.string(),
           stepOutputKey: z.string(),
-          operand: z.union([z.enum(ViewFilterOperand), z.enum(ViewFilterOperandDeprecated)]),
+          operand: z.enum(ViewFilterOperand).or(z.enum(ViewFilterOperandDeprecated)),
           value: z.string(),
           stepFilterGroupId: z.string(),
           positionInStepFilterGroup: z.number().optional(),
