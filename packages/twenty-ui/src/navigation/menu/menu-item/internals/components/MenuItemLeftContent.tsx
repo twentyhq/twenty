@@ -98,17 +98,13 @@ export const MenuItemLeftContent = ({
         )}
         {contextualTextPosition === 'left' && (
           <>
-            {isString(contextualText) ? (
-              <>
-                {isNonEmptyString(contextualText) && (
+            {isString(contextualText)
+              ? isNonEmptyString(contextualText) && (
                   <StyledMenuItemContextualText>
                     <OverflowingTextWithTooltip text={`· ${contextualText}`} />
                   </StyledMenuItemContextualText>
-                )}
-              </>
-            ) : (
-              contextualText
-            )}
+                )
+              : contextualText}
           </>
         )}
       </StyledMenuItemLabel>
