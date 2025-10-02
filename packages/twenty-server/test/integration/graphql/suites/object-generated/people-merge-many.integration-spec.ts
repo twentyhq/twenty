@@ -4,6 +4,7 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { generateUniqString } from 'test/integration/utils/generate-uniq-string.util';
 
 describe('people merge resolvers (integration)', () => {
   let createdPersonIds: string[] = [];
@@ -213,6 +214,11 @@ describe('people merge resolvers (integration)', () => {
     });
 
     it('should handle dry run mode', async () => {
+      const uniqString = generateUniqString();
+      const primaryEmail1 = `test${uniqString}@example.com`;
+      const additionalEmails1 = [`test1${uniqString}.extra@example.com`];
+      const primaryEmail2 = `test${uniqString}@example.com`;
+      const additionalEmails2 = [`test2${uniqString}.extra@example.com`];
       const createPersonsOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -224,8 +230,8 @@ describe('people merge resolvers (integration)', () => {
               lastName: 'User',
             },
             emails: {
-              primaryEmail: 'test1@example.com',
-              additionalEmails: ['test1.extra@example.com'],
+              primaryEmail: primaryEmail1,
+              additionalEmails: additionalEmails1,
             },
           },
           {
@@ -234,8 +240,8 @@ describe('people merge resolvers (integration)', () => {
               lastName: 'User',
             },
             emails: {
-              primaryEmail: 'test2@example.com',
-              additionalEmails: ['test2.extra@example.com'],
+              primaryEmail: primaryEmail2,
+              additionalEmails: additionalEmails2,
             },
           },
         ],
@@ -263,12 +269,9 @@ describe('people merge resolvers (integration)', () => {
 
       const dryRunResult = dryRunResponse.body.data.mergePeople;
 
-      expect(dryRunResult.emails.primaryEmail).toBe('test1@example.com');
+      expect(dryRunResult.emails.primaryEmail).toBe(primaryEmail1);
       expect(dryRunResult.emails.additionalEmails).toEqual(
-        expect.arrayContaining([
-          'test1.extra@example.com',
-          'test2.extra@example.com',
-        ]),
+        expect.arrayContaining([...additionalEmails1, ...additionalEmails2]),
       );
 
       const findOriginalPersons = findOneOperationFactory({
@@ -285,7 +288,7 @@ describe('people merge resolvers (integration)', () => {
 
       expect(findResponse.body.data.person).toBeTruthy();
       expect(findResponse.body.data.person.emails.primaryEmail).toBe(
-        'test2@example.com',
+        primaryEmail2,
       );
     });
 
