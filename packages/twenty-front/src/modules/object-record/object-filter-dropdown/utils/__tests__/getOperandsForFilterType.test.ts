@@ -6,48 +6,48 @@ import { type FilterableFieldType } from 'twenty-shared/types';
 
 describe('getOperandsForFilterType', () => {
   const emptyOperands = [
-    RecordFilterOperand.IsEmpty,
-    RecordFilterOperand.IsNotEmpty,
+    RecordFilterOperand.IS_EMPTY,
+    RecordFilterOperand.IS_NOT_EMPTY,
   ];
 
   const containsOperands = [
-    RecordFilterOperand.Contains,
-    RecordFilterOperand.DoesNotContain,
+    RecordFilterOperand.CONTAINS,
+    RecordFilterOperand.DOES_NOT_CONTAIN,
   ];
 
   const numberOperands = [
-    RecordFilterOperand.GreaterThanOrEqual,
-    RecordFilterOperand.LessThanOrEqual,
+    RecordFilterOperand.GREATER_THAN_OR_EQUAL,
+    RecordFilterOperand.LESS_THAN_OR_EQUAL,
   ];
 
   const currencyAmountMicrosOperands = [
-    RecordFilterOperand.GreaterThanOrEqual,
-    RecordFilterOperand.LessThanOrEqual,
-    RecordFilterOperand.Is,
-    RecordFilterOperand.IsNot,
+    RecordFilterOperand.GREATER_THAN_OR_EQUAL,
+    RecordFilterOperand.LESS_THAN_OR_EQUAL,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
   ];
 
   const currencyCurrencyCodeOperands = [
-    RecordFilterOperand.Is,
-    RecordFilterOperand.IsNot,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
   ];
 
   const actorSourceOperands = [
-    RecordFilterOperand.Is,
-    RecordFilterOperand.IsNot,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
   ];
 
   const dateOperands = [
-    RecordFilterOperand.Is,
-    RecordFilterOperand.IsRelative,
-    RecordFilterOperand.IsInPast,
-    RecordFilterOperand.IsInFuture,
-    RecordFilterOperand.IsToday,
-    RecordFilterOperand.IsBefore,
-    RecordFilterOperand.IsAfter,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_RELATIVE,
+    RecordFilterOperand.IS_IN_PAST,
+    RecordFilterOperand.IS_IN_FUTURE,
+    RecordFilterOperand.IS_TODAY,
+    RecordFilterOperand.IS_BEFORE,
+    RecordFilterOperand.IS_AFTER,
   ];
 
-  const relationOperand = [RecordFilterOperand.Is, RecordFilterOperand.IsNot];
+  const relationOperand = [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT];
 
   const testCases = [
     ['TEXT', [...containsOperands, ...emptyOperands]],

@@ -35,6 +35,7 @@ export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { ObjectsPermissionsByRoleIdDeprecated } from './ObjectsPermissionsByRoleIdDeprecated';
 export type { ObjectsPermissionsDeprecated } from './ObjectsPermissionsDeprecated';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
+export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
 export type {

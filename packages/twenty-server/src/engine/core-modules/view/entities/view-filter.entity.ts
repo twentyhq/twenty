@@ -1,3 +1,4 @@
+import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -15,7 +16,6 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 
 import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';

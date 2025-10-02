@@ -92,7 +92,7 @@ export const RecordDetailRelationSection = ({
   const filterQueryParams = {
     filter: {
       [relationFieldMetadataItem?.name || '']: {
-        [ViewFilterOperand.Is]: {
+        [ViewFilterOperand.IS]: {
           selectedRecordIds: [recordId],
         },
       },

@@ -58,11 +58,9 @@ const StyledButtonsContainer = styled.div`
 
 export const AIChatTab = ({
   agentId,
-  isWorkflowAgentNodeChat,
   uiMessages,
 }: {
   agentId: string;
-  isWorkflowAgentNodeChat?: boolean;
   uiMessages: UIMessageWithMetadata[];
 }) => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -122,28 +120,24 @@ export const AIChatTab = ({
               maxRows={20}
             />
             <StyledButtonsContainer>
-              {!isWorkflowAgentNodeChat && (
-                <>
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    Icon={IconHistory}
-                    onClick={() =>
-                      navigateCommandMenu({
-                        page: CommandMenuPages.ViewPreviousAIChats,
-                        pageTitle: t`View Previous AI Chats`,
-                        pageIcon: IconHistory,
-                      })
-                    }
-                  />
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    Icon={IconMessageCirclePlus}
-                    onClick={() => createAgentChatThread()}
-                  />
-                </>
-              )}
+              <Button
+                variant="secondary"
+                size="small"
+                Icon={IconHistory}
+                onClick={() =>
+                  navigateCommandMenu({
+                    page: CommandMenuPages.ViewPreviousAIChats,
+                    pageTitle: t`View Previous AI Chats`,
+                    pageIcon: IconHistory,
+                  })
+                }
+              />
+              <Button
+                variant="secondary"
+                size="small"
+                Icon={IconMessageCirclePlus}
+                onClick={() => createAgentChatThread()}
+              />
               <AgentChatFileUploadButton agentId={agentId} />
               <SendMessageButton
                 agentId={agentId}

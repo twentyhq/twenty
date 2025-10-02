@@ -34,12 +34,6 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheServi
         workspaceId,
       },
       withDeleted: true,
-      relations: ['viewFields'],
-      select: {
-        viewFields: {
-          id: true,
-        },
-      },
     });
 
     return generateFlatViewMaps(views);
