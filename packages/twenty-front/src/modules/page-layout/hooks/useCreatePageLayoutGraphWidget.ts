@@ -15,6 +15,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { type GraphType } from '~/generated-metadata/graphql';
 import { WidgetType, type PageLayoutWidget } from '~/generated/graphql';
@@ -54,7 +55,7 @@ export const useCreatePageLayoutGraphWidget = (
       (graphType: GraphType): PageLayoutWidget => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 
-        if (!activeTabId) {
+        if (!isDefined(activeTabId)) {
           throw new Error(
             'A tab must be selected to create a new graph widget',
           );

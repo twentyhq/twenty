@@ -193,35 +193,21 @@ describe('useCreatePageLayoutGraphWidget', () => {
     expect(result.current.pageLayoutDraft.tabs[0].widgets).toHaveLength(4);
   });
 
-  it('should not create widget when activeTabId is null', () => {
+  it('should throw an error when activeTabId is null', () => {
     const { result } = renderHook(
       () => {
-        const pageLayoutDraft = useRecoilComponentValue(
-          pageLayoutDraftComponentState,
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        );
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const pageLayoutCurrentLayouts = useRecoilComponentValue(
-          pageLayoutCurrentLayoutsComponentState,
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        );
         const createWidget = useCreatePageLayoutGraphWidget(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        return { allWidgets, pageLayoutCurrentLayouts, createWidget };
+        return { createWidget };
       },
       {
         wrapper: PageLayoutTestWrapper,
       },
     );
 
-    act(() => {
+    expect(() => {
       result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
-    });
-
-    expect(result.current.allWidgets).toHaveLength(0);
-    expect(Object.keys(result.current.pageLayoutCurrentLayouts)).toHaveLength(
-      0,
-    );
+    }).toThrow('A tab must be selected to create a new graph widget');
   });
 });
