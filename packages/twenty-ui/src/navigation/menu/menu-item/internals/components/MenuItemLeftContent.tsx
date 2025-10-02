@@ -13,6 +13,7 @@ import {
   StyledMenuItemContextualText,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
+  StyledRightMenuItemContextualText,
 } from './StyledMenuItemBase';
 
 const StyledMainText = styled.div`
@@ -32,6 +33,10 @@ const StyledIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledMenuItemLabelRight = styled(StyledMenuItemLabel)`
+  margin-left: auto;
+`;
+
 type MenuItemLeftContentProps = {
   className?: string;
   LeftComponent?: ReactNode;
@@ -41,6 +46,7 @@ type MenuItemLeftContentProps = {
   disabled?: boolean;
   text: ReactNode;
   contextualText?: ReactNode;
+  contextualTextPosition?: 'left' | 'right';
 };
 
 export const MenuItemLeftContent = ({
@@ -50,6 +56,7 @@ export const MenuItemLeftContent = ({
   withIconContainer = false,
   text,
   contextualText,
+  contextualTextPosition = 'left',
   showGrip = false,
   disabled = false,
 }: MenuItemLeftContentProps) => {
@@ -89,18 +96,29 @@ export const MenuItemLeftContent = ({
         ) : (
           text
         )}
-        {isString(contextualText) ? (
+        {contextualTextPosition === 'left' && (
           <>
-            {isNonEmptyString(contextualText) && (
-              <StyledMenuItemContextualText>
-                <OverflowingTextWithTooltip text={`· ${contextualText}`} />
-              </StyledMenuItemContextualText>
-            )}
+            {isString(contextualText)
+              ? isNonEmptyString(contextualText) && (
+                  <StyledMenuItemContextualText>
+                    <OverflowingTextWithTooltip text={`· ${contextualText}`} />
+                  </StyledMenuItemContextualText>
+                )
+              : contextualText}
           </>
-        ) : (
-          contextualText
         )}
       </StyledMenuItemLabel>
+      {contextualTextPosition === 'right' && (
+        <StyledMenuItemLabelRight>
+          <StyledRightMenuItemContextualText>
+            {isString(contextualText) ? (
+              <OverflowingTextWithTooltip text={contextualText} />
+            ) : (
+              contextualText
+            )}
+          </StyledRightMenuItemContextualText>
+        </StyledMenuItemLabelRight>
+      )}
     </StyledMenuItemLeftContent>
   );
 };

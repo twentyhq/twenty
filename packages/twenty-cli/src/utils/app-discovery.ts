@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { APP_MANIFEST_SCHEMA_URL } from '../constants/schemas';
 
 export const findProjectRoot = async (): Promise<string | null> => {
   let currentDir = process.cwd();
@@ -53,13 +54,9 @@ export const findNearbyApps = async (startDir: string): Promise<string[]> => {
 
         for (const item of items) {
           if (item.isDirectory()) {
-            const packageJsonPath = path.join(
-              searchPath,
-              item.name,
-              'package.json',
-            );
-            if (await fs.pathExists(packageJsonPath)) {
-              apps.push(path.join(searchPath, item.name));
+            const itemPath = path.join(searchPath, item.name);
+            if (await isValidAppPath(itemPath)) {
+              apps.push(itemPath);
             }
           }
         }
@@ -73,5 +70,18 @@ export const findNearbyApps = async (startDir: string): Promise<string[]> => {
 };
 
 export const isValidAppPath = async (appPath: string): Promise<boolean> => {
-  return fs.pathExists(path.join(appPath, 'package.json'));
+  const packageJsonPath = path.join(appPath, 'package.json');
+
+  if (!(await fs.pathExists(packageJsonPath))) {
+    return false;
+  }
+
+  try {
+    const packageJson = await fs.readJson(packageJsonPath);
+
+    // Check if this is a Twenty app by looking for the exact $schema URL
+    return packageJson.$schema === APP_MANIFEST_SCHEMA_URL;
+  } catch {
+    return false;
+  }
 };

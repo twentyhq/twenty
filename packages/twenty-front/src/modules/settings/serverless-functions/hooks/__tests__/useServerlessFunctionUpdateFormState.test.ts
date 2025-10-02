@@ -32,7 +32,7 @@ describe('useServerlessFunctionUpdateFormState', () => {
     );
     useGetOneServerlessFunctionSourceCodeMock.useGetOneServerlessFunctionSourceCode.mockReturnValue(
       {
-        code: 'export const handler = () => {}',
+        code: { src: { 'index.ts': 'export const handler = () => {}' } },
       },
     );
     const { result } = renderHook(
@@ -44,6 +44,10 @@ describe('useServerlessFunctionUpdateFormState', () => {
 
     const { formValues } = result.current;
 
-    expect(formValues).toEqual({ name: '', description: '', code: undefined });
+    expect(formValues).toEqual({
+      name: '',
+      description: '',
+      code: { src: { 'index.ts': '' } },
+    });
   });
 });

@@ -15,18 +15,18 @@ import {
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @Entity({ name: 'application', schema: 'core' })
 @Index('IDX_APPLICATION_WORKSPACE_ID', ['workspaceId'])
 @Index(
-  'IDX_APPLICATION_STANDARD_ID_WORKSPACE_ID_UNIQUE',
-  ['standardId', 'workspaceId'],
+  'IDX_APPLICATION_UNIVERSAL_IDENTIFIER_WORKSPACE_ID_UNIQUE',
+  ['universalIdentifier', 'workspaceId'],
   {
     unique: true,
-    where: '"deletedAt" IS NULL AND "standardId" IS NOT NULL',
+    where: '"deletedAt" IS NULL AND "universalIdentifier" IS NOT NULL',
   },
 )
 export class ApplicationEntity {
@@ -34,7 +34,7 @@ export class ApplicationEntity {
   id: string;
 
   @Column({ nullable: true, type: 'uuid' })
-  standardId?: string;
+  universalIdentifier?: string;
 
   @Column({ nullable: false, type: 'text' })
   label: string;
