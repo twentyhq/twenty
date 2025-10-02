@@ -1,4 +1,5 @@
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type TabActions } from '@/ui/layout/tab-list/types/TabActions';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 
 export type TabListProps = {
@@ -12,4 +13,5 @@ export type TabListProps = {
   onAddTab?: () => void;
   isDraggable?: boolean;
   onDragEnd?: OnDragEndResponder;
+  tabActions?: TabActions;
 };

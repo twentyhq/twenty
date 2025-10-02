@@ -9,6 +9,8 @@ import { calculateVisibleTabCount } from '@/ui/layout/tab-list/utils/calculateVi
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 
+import { type TabActions } from '@/ui/layout/tab-list/types/TabActions';
+
 export type UseTabListProps = {
   visibleTabs: SingleTabProps[];
   loading?: boolean;
@@ -19,6 +21,7 @@ export type UseTabListProps = {
   onAddTab?: () => void;
   isDraggable?: boolean;
   onDragEnd?: OnDragEndResponder;
+  tabActions?: TabActions;
 };
 
 export type UseTabListResult = {
@@ -38,6 +41,7 @@ export const useTabList = ({
   onAddTab,
   isDraggable,
   onDragEnd,
+  tabActions,
 }: UseTabListProps): UseTabListResult => {
   const navigate = useNavigate();
   const [activeTabId, setActiveTabId] = useRecoilComponentState(
@@ -49,6 +53,7 @@ export const useTabList = ({
   const [containerWidth, setContainerWidth] = useState(0);
   const [moreButtonWidth, setMoreButtonWidth] = useState(0);
   const [addButtonWidth, setAddButtonWidth] = useState(0);
+  const [tabInRenameMode, setTabInRenameMode] = useState<string | null>(null);
 
   const visibleTabCount = useMemo(() => {
     return calculateVisibleTabCount({
@@ -142,6 +147,14 @@ export const useTabList = ({
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
 
+  const handleEnterRenameMode = useCallback((tabId: string) => {
+    setTabInRenameMode(tabId);
+  }, []);
+
+  const handleExitRenameMode = useCallback(() => {
+    setTabInRenameMode(null);
+  }, []);
+
   const initialActiveTabId = (() => {
     if (visibleTabs.length === 0) {
       return null;
@@ -175,6 +188,10 @@ export const useTabList = ({
     onAddButtonWidthChange: handleAddButtonWidthChange,
     isDragAndDropEnabled,
     onDragEnd,
+    tabActions,
+    tabInRenameMode,
+    onEnterRenameMode: handleEnterRenameMode,
+    onExitRenameMode: handleExitRenameMode,
   };
 
   return {

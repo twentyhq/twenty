@@ -17,6 +17,7 @@ export const TabList = ({
   onAddTab,
   isDraggable,
   onDragEnd,
+  tabActions,
 }: TabListProps) => {
   const visibleTabs = useMemo(() => {
     return tabs.filter((tab) => !tab.hide);
@@ -45,6 +46,7 @@ export const TabList = ({
         onAddTab={onAddTab}
         isDraggable={isDraggable}
         onDragEnd={onDragEnd}
+        tabActions={tabActions}
       >
         <TabListMeasurements />
         <TabListContent />

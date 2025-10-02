@@ -6,6 +6,8 @@ import { useTabList } from '@/ui/layout/tab-list/hooks/useTabList';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 
+import { type TabActions } from '@/ui/layout/tab-list/types/TabActions';
+
 export type TabListProviderProps = {
   visibleTabs: SingleTabProps[];
   loading?: boolean;
@@ -16,6 +18,7 @@ export type TabListProviderProps = {
   onAddTab?: () => void;
   isDraggable?: boolean;
   onDragEnd?: OnDragEndResponder;
+  tabActions?: TabActions;
   children: ReactNode;
 };
 
@@ -29,6 +32,7 @@ export const TabListProvider = ({
   onAddTab,
   isDraggable,
   onDragEnd,
+  tabActions,
   children,
 }: TabListProviderProps) => {
   const {
@@ -46,6 +50,7 @@ export const TabListProvider = ({
     onAddTab,
     isDraggable,
     onDragEnd,
+    tabActions,
   });
 
   return (

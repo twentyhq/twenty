@@ -1,4 +1,5 @@
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type TabActions } from '@/ui/layout/tab-list/types/TabActions';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
@@ -33,6 +34,10 @@ export type TabListContextValue = {
   onAddButtonWidthChange: (dimensions: TablistDimensions) => void;
   isDragAndDropEnabled: boolean;
   onDragEnd?: OnDragEndResponder;
+  tabActions?: TabActions;
+  tabInRenameMode: string | null;
+  onEnterRenameMode: (tabId: string) => void;
+  onExitRenameMode: () => void;
 };
 
 export const [TabListContextProvider, useTabListContextOrThrow] =
