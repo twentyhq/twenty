@@ -77,12 +77,12 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
           uuidField: TEST_UUID_FIELD_VALUE,
           textField: 'test',
           phonesField: {
-            primaryPhoneNumber: '1234567890',
+            primaryPhoneNumber: '01234567890',
             primaryPhoneCallingCode: '+33',
             primaryPhoneCountryCode: 'FR',
             additionalPhones: [
               {
-                number: '1234567890',
+                number: '01234567890',
                 callingCode: '+33',
                 countryCode: 'FR',
               },

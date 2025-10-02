@@ -2,6 +2,7 @@ import { successfulFilterInputByFieldMetadataType } from 'test/integration/graph
 import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/args-validation/utils/destroy-many-objects-metadata';
 import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suites/args-validation/utils/setup-test-objects-with-all-field-types.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { isDefined } from 'twenty-shared/utils';
 
 describe('Rest core (workspace) api - args validation', () => {
   let objectMetadataId: string;
@@ -27,20 +28,32 @@ describe('Rest core (workspace) api - args validation', () => {
       successfulFilterInputByFieldMetadataType,
     )) {
       it.each(
-        testCases.map((testCase) => ({
-          ...testCase,
-          stringifiedFilter: JSON.stringify(testCase.restFilterInput),
-        })),
+        testCases
+          .filter((testCase) => isDefined(testCase.restFilterInput))
+          .map((testCase) => ({
+            ...testCase,
+            stringifiedFilter: JSON.stringify(testCase.restFilterInput),
+          })),
       )(
         `${fieldType} - should work with filter : $stringifiedFilter`,
-        async ({ restFilterInput }) => {
-          const path = `/${objectMetadataPluralName}?filter=${restFilterInput}`;
+        async ({ restFilterInput, validateFilter }) => {
           const response = await makeRestAPIRequest({
             method: 'get',
-            path,
+            path: `/${objectMetadataPluralName}`,
+            queryParams: `filter=${restFilterInput}`,
           });
 
+          const records = response.body.data.testObjects;
+
           expect(response.body.errors).toBeUndefined();
+
+          expect(records.length).toBeGreaterThan(0);
+
+          expect(
+            records.every((record: Record<string, any>) =>
+              validateFilter?.(record),
+            ),
+          ).toBe(true);
         },
       );
     }

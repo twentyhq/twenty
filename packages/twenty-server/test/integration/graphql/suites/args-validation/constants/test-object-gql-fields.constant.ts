@@ -1,5 +1,6 @@
 export const TEST_OBJECT_GQL_FIELDS = `
     id
+    manyToOneRelationFieldId
     manyToOneRelationField {
         id
     }
