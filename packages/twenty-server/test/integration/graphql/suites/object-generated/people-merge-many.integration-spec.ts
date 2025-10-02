@@ -4,15 +4,16 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
-import { generateUniqString } from 'test/integration/utils/generate-uniq-string.util';
+
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 describe('people merge resolvers (integration)', () => {
-  let createdPersonIds: string[] = [];
+  let createdPersonIdsForCleaning: string[] = [];
 
   afterEach(async () => {
-    if (createdPersonIds.length > 0) {
-      await deleteRecordsByIds('person', createdPersonIds);
-      createdPersonIds = [];
+    if (createdPersonIdsForCleaning.length > 0) {
+      await deleteRecordsByIds('person', createdPersonIdsForCleaning);
+      createdPersonIdsForCleaning = [];
     }
   });
 
@@ -58,15 +59,16 @@ describe('people merge resolvers (integration)', () => {
 
       expect(createResponse.body.data.createPeople).toHaveLength(2);
 
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
+      const createdPersonIds = [...createResponse.body.data.createPeople].map(
+        ({ id }: { id: string }) => id,
+      );
 
-      createdPersonIds.push(person1Id, person2Id);
+      createdPersonIdsForCleaning.push(...createdPersonIds);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 0,
       });
 
@@ -123,15 +125,17 @@ describe('people merge resolvers (integration)', () => {
       const createResponse = await makeGraphqlAPIRequest(
         createPersonsOperation,
       );
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
 
-      createdPersonIds.push(person1Id, person2Id);
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 0,
       });
 
@@ -189,15 +193,17 @@ describe('people merge resolvers (integration)', () => {
       const createResponse = await makeGraphqlAPIRequest(
         createPersonsOperation,
       );
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
 
-      createdPersonIds.push(person1Id, person2Id);
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
 
       const mergeWithPriority1 = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 1,
       });
 
@@ -214,11 +220,6 @@ describe('people merge resolvers (integration)', () => {
     });
 
     it('should handle dry run mode', async () => {
-      const uniqString = generateUniqString();
-      const primaryEmail1 = `test${uniqString}@example.com`;
-      const additionalEmails1 = [`test1${uniqString}.extra@example.com`];
-      const primaryEmail2 = `test${uniqString}@example.com`;
-      const additionalEmails2 = [`test2${uniqString}.extra@example.com`];
       const createPersonsOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -230,8 +231,8 @@ describe('people merge resolvers (integration)', () => {
               lastName: 'User',
             },
             emails: {
-              primaryEmail: primaryEmail1,
-              additionalEmails: additionalEmails1,
+              primaryEmail: 'test1@example.com',
+              additionalEmails: ['test1.extra@example.com'],
             },
           },
           {
@@ -240,20 +241,26 @@ describe('people merge resolvers (integration)', () => {
               lastName: 'User',
             },
             emails: {
-              primaryEmail: primaryEmail2,
-              additionalEmails: additionalEmails2,
+              primaryEmail: 'test2@example.com',
+              additionalEmails: ['test2.extra@example.com'],
             },
           },
         ],
       });
-
       const createResponse = await makeGraphqlAPIRequest(
         createPersonsOperation,
       );
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
 
-      createdPersonIds.push(person1Id, person2Id);
+      const person1Id = createResponse.body.data.createPeople.find(
+        (people: PersonWorkspaceEntity) =>
+          people.emails.primaryEmail === 'test1@example.com',
+      ).id;
+      const person2Id = createResponse.body.data.createPeople.find(
+        (people: PersonWorkspaceEntity) =>
+          people.emails.primaryEmail === 'test2@example.com',
+      ).id;
+
+      createdPersonIdsForCleaning.push(person1Id, person2Id);
 
       const dryRunMergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
@@ -269,9 +276,12 @@ describe('people merge resolvers (integration)', () => {
 
       const dryRunResult = dryRunResponse.body.data.mergePeople;
 
-      expect(dryRunResult.emails.primaryEmail).toBe(primaryEmail1);
+      expect(dryRunResult.emails.primaryEmail).toBe('test1@example.com');
       expect(dryRunResult.emails.additionalEmails).toEqual(
-        expect.arrayContaining([...additionalEmails1, ...additionalEmails2]),
+        expect.arrayContaining([
+          'test1.extra@example.com',
+          'test2.extra@example.com',
+        ]),
       );
 
       const findOriginalPersons = findOneOperationFactory({
@@ -288,7 +298,7 @@ describe('people merge resolvers (integration)', () => {
 
       expect(findResponse.body.data.person).toBeTruthy();
       expect(findResponse.body.data.person.emails.primaryEmail).toBe(
-        primaryEmail2,
+        'test2@example.com',
       );
     });
 
@@ -367,15 +377,16 @@ describe('people merge resolvers (integration)', () => {
 
       expect(createResponse.body.data.createPeople).toHaveLength(2);
 
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
 
-      createdPersonIds.push(person1Id, person2Id);
+      createdPersonIdsForCleaning.push(...createdPersonIds);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 0,
       });
 
