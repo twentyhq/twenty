@@ -841,7 +841,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
-    description: 'URL for cache storage (e.g., Redis connection URL)',
+    description: 'Redis connection URL used for cache and queues by default',
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
@@ -855,7 +855,8 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
-    description: 'URL for queues (e.g., Redis connection URL)',
+    description:
+      'Optional separate Redis connection for queues with a different eviction policy (advanced production use case, most self-hosters do not need this)',
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
