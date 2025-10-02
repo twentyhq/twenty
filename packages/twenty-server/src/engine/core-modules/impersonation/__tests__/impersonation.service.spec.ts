@@ -11,6 +11,7 @@ import {
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -19,11 +20,19 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 const UserWorkspaceFindOneMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
 const PermissionsServiceUserHasWorkspaceSettingPermissionMock = jest.fn();
+const TwentyConfigServiceGetMock = jest.fn();
 
 describe('ImpersonationService', () => {
   let service: ImpersonationService;
 
   beforeEach(async () => {
+    TwentyConfigServiceGetMock.mockImplementation((key: string) => {
+      if (key === 'NODE_ENV') {
+        return NodeEnvironment.PRODUCTION;
+      }
+
+      return undefined;
+    });
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ImpersonationService,
@@ -43,6 +52,12 @@ describe('ImpersonationService', () => {
           provide: LoginTokenService,
           useValue: {
             generateLoginToken: LoginTokenServiceGenerateLoginTokenMock,
+          },
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: {
+            get: TwentyConfigServiceGetMock,
           },
         },
         {
@@ -364,14 +379,14 @@ describe('ImpersonationService', () => {
   });
 
   describe('2FA requirements for server-level impersonation', () => {
-    const originalEnv = process.env.NODE_ENV;
-
-    afterEach(() => {
-      process.env.NODE_ENV = originalEnv;
-    });
-
     it('should allow server-level impersonation when 2FA is enabled and verified', async () => {
-      process.env.NODE_ENV = NodeEnvironment.PRODUCTION;
+      TwentyConfigServiceGetMock.mockImplementation((key: string) => {
+        if (key === 'NODE_ENV') {
+          return NodeEnvironment.PRODUCTION;
+        }
+
+        return undefined;
+      });
 
       const mockToImpersonateUserWorkspace = {
         userId: 'target-user-id',
@@ -432,7 +447,13 @@ describe('ImpersonationService', () => {
     });
 
     it('should throw an error when 2FA is not enabled for server-level impersonation in production', async () => {
-      process.env.NODE_ENV = NodeEnvironment.PRODUCTION;
+      TwentyConfigServiceGetMock.mockImplementation((key: string) => {
+        if (key === 'NODE_ENV') {
+          return NodeEnvironment.PRODUCTION;
+        }
+
+        return undefined;
+      });
 
       const mockToImpersonateUserWorkspace = {
         userId: 'target-user-id',
@@ -475,7 +496,13 @@ describe('ImpersonationService', () => {
     });
 
     it('should throw an error when 2FA is not verified for server-level impersonation in production', async () => {
-      process.env.NODE_ENV = NodeEnvironment.PRODUCTION;
+      TwentyConfigServiceGetMock.mockImplementation((key: string) => {
+        if (key === 'NODE_ENV') {
+          return NodeEnvironment.PRODUCTION;
+        }
+
+        return undefined;
+      });
 
       const mockToImpersonateUserWorkspace = {
         userId: 'target-user-id',
@@ -524,7 +551,13 @@ describe('ImpersonationService', () => {
     });
 
     it('should allow server-level impersonation without 2FA in development environment', async () => {
-      process.env.NODE_ENV = NodeEnvironment.DEVELOPMENT;
+      TwentyConfigServiceGetMock.mockImplementation((key: string) => {
+        if (key === 'NODE_ENV') {
+          return NodeEnvironment.DEVELOPMENT;
+        }
+
+        return undefined;
+      });
 
       const mockToImpersonateUserWorkspace = {
         userId: 'target-user-id',
