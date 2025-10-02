@@ -1,29 +1,30 @@
-import styled from '@emotion/styled';
-
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
-import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/components/TextVariableEditor';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
+import { TextInput } from '@/ui/field/input/components/TextInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useTheme } from '@emotion/react';
-import { isArray } from '@sniptt/guards';
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
-import Text from '@tiptap/extension-text';
-import { Placeholder } from '@tiptap/extensions';
-import { useEditor } from '@tiptap/react';
-import { useId, useState } from 'react';
+import styled from '@emotion/styled';
+import { useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { VisibilityHidden } from 'twenty-ui/accessibility';
+import { IconPlus } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type FormArrayFieldInputProps = {
   label?: string;
@@ -46,12 +47,17 @@ const StyledDisplayModeReadonlyContainer = styled.div`
 `;
 
 const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
+  height: 30px;
   cursor: pointer;
 
   &:hover,
   &[data-open='true'] {
     background-color: ${({ theme }) => theme.background.transparent.lighter};
   }
+`;
+
+const StyledInput = styled(TextInput)`
+  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
 `;
 
 const StyledSelectInputContainer = styled.div`
@@ -111,32 +117,7 @@ export const FormArrayFieldInput = ({
         },
   );
 
-  const editor = useEditor({
-    extensions: [
-      Document,
-      Paragraph,
-      Text,
-      Placeholder.configure({
-        placeholder: placeholder ?? 'Enter first item',
-      }),
-    ],
-    content: draftValue.type === 'static' ? draftValue.value[0] : '',
-    editorProps: {
-      handleKeyDown: (_view, event) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
-          console.log('save and open popup');
-
-          return false;
-        }
-      },
-    },
-    onUpdate: ({ editor }) => {
-      const jsonContent = editor.getJSON();
-      const parsedContent = parseEditorContent(jsonContent);
-
-      onChange([parsedContent]);
-    },
-  });
+  const [newItemDraftValue, setNewItemDraftValue] = useState('');
 
   const handleDisplayModeClick = () => {
     if (draftValue.type !== 'static') {
@@ -205,17 +186,21 @@ export const FormArrayFieldInput = ({
       editingMode: 'view',
     });
 
+    setNewItemDraftValue('');
+
     onChange([]);
   };
 
-  const selectedNames =
-    draftValue.type === 'static' && isDefined(draftValue.value)
-      ? isArray(draftValue.value)
-        ? draftValue.value
-        : safeParsedValue(draftValue.value)
-      : undefined;
-
   const placeholderText = placeholder ?? label;
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const dropdownId = `dropdown-${instanceId}`;
+
+  const isDropdownOpen = useRecoilComponentValue(
+    isDropdownOpenComponentState,
+    dropdownId,
+  );
 
   return (
     <FormFieldInputContainer data-testid={testId}>
@@ -227,26 +212,69 @@ export const FormArrayFieldInput = ({
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
-            readonly ? null : (
-              // <StyledDisplayModeContainer
-              //   data-open={draftValue.editingMode === 'edit'}
-              //   onClick={handleDisplayModeClick}
-              // >
-              //   <VisibilityHidden>Edit</VisibilityHidden>
+            readonly ? null : draftValue.value.length < 1 ? (
+              <StyledInput
+                instanceId={instanceId}
+                placeholder={'Enter an item'}
+                value={newItemDraftValue}
+                copyButton={false}
+                onChange={(value) => {
+                  setNewItemDraftValue(value);
+                }}
+                onEnter={() => {
+                  setDraftValue({
+                    type: 'static',
+                    editingMode: 'view',
+                    value: [...draftValue.value, newItemDraftValue],
+                  });
 
-              //   <TextVariableEditor
-              //     editor={editor}
-              //     multiline={false}
-              //     readonly={readonly}
-              //   />
-              // </StyledDisplayModeContainer>
+                  onChange([...draftValue.value, newItemDraftValue]);
+                }}
+                disabled={readonly}
+              />
+            ) : (
               <>
-                <VisibilityHidden>Edit</VisibilityHidden>
+                <Dropdown
+                  dropdownId={dropdownId}
+                  dropdownPlacement="bottom-start"
+                  clickableComponent={
+                    <StyledDisplayModeContainer data-open={isDropdownOpen}>
+                      <ArrayDisplay value={draftValue.value} />
+                    </StyledDisplayModeContainer>
+                  }
+                  clickableComponentWidth="100%"
+                  dropdownComponents={
+                    <DropdownContent ref={containerRef}>
+                      <DropdownMenuItemsContainer hasMaxHeight>
+                        {draftValue.type === 'static' &&
+                          draftValue.value.map((value, index) => (
+                            <ArrayFieldMenuItem
+                              key={index}
+                              dropdownId={`array-field-input-${instanceId}-${index}`}
+                              value={value}
+                              onEdit={() => {
+                                console.log('edit item', index);
+                              }}
+                              onDelete={() => {
+                                console.log('delete item', index);
+                              }}
+                            />
+                          ))}
+                      </DropdownMenuItemsContainer>
 
-                <TextVariableEditor
-                  editor={editor}
-                  multiline={false}
-                  readonly={readonly}
+                      <DropdownMenuSeparator />
+
+                      <DropdownMenuItemsContainer>
+                        <MenuItem
+                          onClick={() => {
+                            console.log('add new item');
+                          }}
+                          LeftIcon={IconPlus}
+                          text={`Add item`}
+                        />
+                      </DropdownMenuItemsContainer>
+                    </DropdownContent>
+                  }
                 />
               </>
             )
@@ -257,24 +285,6 @@ export const FormArrayFieldInput = ({
             />
           )}
         </FormFieldInputInnerContainer>
-        {/* <StyledSelectInputContainer>
-          {draftValue.type === 'static' &&
-            draftValue.editingMode === 'edit' && (
-              <OverlayContainer>
-                <MultiSelectInput
-                  selectableListComponentInstanceId={
-                    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
-                  }
-                  focusId={instanceId}
-                  options={options}
-                  onCancel={onCancel}
-                  onOptionSelected={onOptionSelected}
-                  values={selectedNames}
-                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-                />
-              </OverlayContainer>
-            )}
-        </StyledSelectInputContainer> */}
 
         {VariablePicker && !readonly && (
           <VariablePicker
