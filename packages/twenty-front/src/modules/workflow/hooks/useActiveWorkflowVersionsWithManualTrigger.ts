@@ -1,5 +1,4 @@
 import { isGlobalManualTrigger } from '@/action-menu/actions/record-actions/utils/isGlobalManualTrigger';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -50,11 +49,6 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
   if (isDefined(objectMetadataItem)) {
     filters.push(objectTypeFilter);
   }
-
-  const { objectMetadataItem: workflowVersionObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
 
   const { records } = useFindManyRecords<
     Pick<
