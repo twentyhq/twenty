@@ -685,7 +685,7 @@ export class ApplicationSyncService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatRouteTriggerMaps'],
+          flatMapsKeys: ['flatRouteTriggerMaps'],
         },
       );
 
