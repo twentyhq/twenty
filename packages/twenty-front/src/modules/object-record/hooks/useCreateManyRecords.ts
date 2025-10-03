@@ -16,6 +16,7 @@ import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/g
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
@@ -49,6 +50,8 @@ export const useCreateManyRecords = <
   shouldMatchRootQueryFilter,
   shouldRefetchAggregateQueries = true,
 }: useCreateManyRecordsProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
+
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -224,7 +227,11 @@ export const useCreateManyRecords = <
         throw error;
       });
 
-    if (shouldRefetchAggregateQueries) await refetchAggregateQueries();
+    if (shouldRefetchAggregateQueries) {
+      await refetchAggregateQueries();
+    }
+
+    registerObjectOperation(objectNameSingular, { type: 'create-many' });
 
     return createdObjects.data?.[mutationResponseField] ?? [];
   };

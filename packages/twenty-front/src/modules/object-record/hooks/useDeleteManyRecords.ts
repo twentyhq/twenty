@@ -12,6 +12,7 @@ import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode'
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
@@ -32,6 +33,7 @@ export type DeleteManyRecordsProps = {
 export const useDeleteManyRecords = ({
   objectNameSingular,
 }: useDeleteManyRecordProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
   const apiConfig = useRecoilValue(apiConfigState);
 
   const mutationPageSize =
@@ -215,6 +217,11 @@ export const useDeleteManyRecords = ({
       }
     }
     await refetchAggregateQueries();
+
+    registerObjectOperation(objectNameSingular, {
+      type: 'delete-many',
+    });
+
     return deletedRecords;
   };
 

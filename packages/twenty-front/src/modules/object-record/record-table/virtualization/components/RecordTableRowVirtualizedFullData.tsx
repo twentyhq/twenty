@@ -1,0 +1,76 @@
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+
+import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
+import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
+import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
+import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
+import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
+import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
+import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
+import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
+import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
+import { RecordTableRowVirtualizedSkeleton } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedSkeleton';
+import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+
+import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
+import { getDefaultRecordFieldsToListen } from '@/subscription/utils/getDefaultRecordFieldsToListen.util';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isDefined } from 'twenty-shared/utils';
+
+type RecordTableRowVirtualizedFullDataProps = {
+  realIndex: number;
+};
+
+export const RecordTableRowVirtualizedFullData = ({
+  realIndex,
+}: RecordTableRowVirtualizedFullDataProps) => {
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
+  const listenedFields = getDefaultRecordFieldsToListen({
+    objectNameSingular,
+  });
+
+  const isFocused = useRecoilComponentFamilyValue(
+    isRecordTableRowFocusedComponentFamilyState,
+    realIndex ?? 0,
+  );
+
+  const isRowFocusActive = useRecoilComponentValue(
+    isRecordTableRowFocusActiveComponentState,
+  );
+
+  const recordId = useRecoilComponentFamilyValue(
+    recordIdByRealIndexComponentFamilyState,
+    { realIndex },
+  );
+
+  if (!isDefined(recordId)) {
+    return <RecordTableRowVirtualizedSkeleton />;
+  }
+
+  return (
+    <RecordTableDraggableTr
+      recordId={recordId}
+      draggableIndex={realIndex}
+      focusIndex={realIndex}
+    >
+      {isRowFocusActive && isFocused && (
+        <>
+          <RecordTableRowHotkeyEffect />
+          <RecordTableRowArrowKeysEffect />
+        </>
+      )}
+      <RecordTableCellDragAndDrop />
+      <RecordTableCellCheckbox />
+      <RecordTableCells />
+      <RecordTablePlusButtonCellPlaceholder />
+      <RecordTableLastEmptyCell />
+      <ListenRecordUpdatesEffect
+        objectNameSingular={objectNameSingular}
+        recordId={recordId}
+        listenedFields={listenedFields}
+      />
+    </RecordTableDraggableTr>
+  );
+};

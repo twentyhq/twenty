@@ -94,6 +94,10 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
     }
 
+    console.log({
+      appliedFilters,
+    });
+
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataNameSingular,
@@ -129,12 +133,18 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       objectMetadataMaps,
     });
 
+    if (isDefined(executionArgs.args.offset)) {
+      queryBuilder.skip(executionArgs.args.offset);
+    }
+
     const objectRecords = (await queryBuilder
       .setFindOptions({
         select: columnsToSelect,
       })
       .take(limit + 1)
       .getMany()) as ObjectRecord[];
+
+    console.log({ query: queryBuilder.getQueryAndParameters() });
 
     const { hasNextPage, hasPreviousPage } = getPaginationInfo(
       objectRecords,

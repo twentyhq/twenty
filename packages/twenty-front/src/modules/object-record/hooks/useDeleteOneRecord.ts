@@ -12,6 +12,7 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
 import { isNull } from '@sniptt/guards';
@@ -24,6 +25,7 @@ type useDeleteOneRecordProps = {
 export const useDeleteOneRecord = ({
   objectNameSingular,
 }: useDeleteOneRecordProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -154,6 +156,11 @@ export const useDeleteOneRecord = ({
         });
 
       await refetchAggregateQueries();
+
+      registerObjectOperation(objectNameSingular, {
+        type: 'delete-one',
+      });
+
       return deletedRecord.data?.[mutationResponseField] ?? null;
     },
     [
@@ -165,6 +172,8 @@ export const useDeleteOneRecord = ({
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       refetchAggregateQueries,
+      objectNameSingular,
+      registerObjectOperation,
     ],
   );
 

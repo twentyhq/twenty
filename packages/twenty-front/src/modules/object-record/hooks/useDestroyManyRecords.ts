@@ -9,6 +9,7 @@ import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMu
 import { useDestroyManyRecordsMutation } from '@/object-record/hooks/useDestroyManyRecordsMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
@@ -29,6 +30,7 @@ export type DestroyManyRecordsProps = {
 export const useDestroyManyRecords = ({
   objectNameSingular,
 }: useDestroyManyRecordProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
   const apiConfig = useRecoilValue(apiConfigState);
 
   const mutationPageSize =
@@ -137,6 +139,11 @@ export const useDestroyManyRecords = ({
     }
 
     await refetchAggregateQueries();
+
+    registerObjectOperation(objectNameSingular, {
+      type: 'destroy-many',
+    });
+
     return destroyedRecords;
   };
 

@@ -8,6 +8,7 @@ import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDupli
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { useMergeManyRecordsMutation } from '@/object-record/hooks/useMergeManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getMergeManyRecordsMutationResponseField } from '@/object-record/utils/getMergeManyRecordsMutationResponseField';
 import { getOperationName } from '@apollo/client/utilities';
@@ -27,6 +28,7 @@ export const useMergeManyRecords = <
   objectNameSingular,
   recordGqlFields,
 }: UseMergeManyRecordsProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
   const apolloCoreClient = useApolloCoreClient();
   const [loading, setLoading] = useState(false);
 
@@ -98,6 +100,10 @@ export const useMergeManyRecords = <
           await refetchAggregateQueries();
         }
 
+        registerObjectOperation(objectNameSingular, {
+          type: 'merge-records',
+        });
+
         return mergedObject.data?.[mutationResponseField] ?? null;
       } catch (error) {
         setLoading(false);
@@ -111,6 +117,8 @@ export const useMergeManyRecords = <
       mergeManyRecordsMutation,
       objectMetadataItem.namePlural,
       refetchAggregateQueries,
+      registerObjectOperation,
+      objectNameSingular,
     ],
   );
 

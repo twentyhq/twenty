@@ -9,6 +9,7 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { generateUpdateOneRecordMutation } from '@/object-record/multiple-objects/utils/generateUpdateOneRecordMutation';
 import { getTargetFieldMetadataName } from '@/object-record/multiple-objects/utils/getTargetFieldMetadataName';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -33,6 +34,7 @@ type UpdateManyRecordArgs = {
 };
 
 export const useUpdateMultipleRecordsFromManyObjects = () => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
   const { fieldDefinition } = useContext(FieldContext);
   const apolloCoreClient = useApolloCoreClient();
 
@@ -274,7 +276,18 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
       };
       await refetchAggregateQueries();
 
-      return updatedRecord?.data?.[mutationResponseField] ?? null;
+      const mutationResponse =
+        updatedRecord?.data?.[mutationResponseField] ?? null;
+
+      registerObjectOperation(objectMetadataItem.nameSingular, {
+        type: 'update-one',
+        result: {
+          updatedRecord: mutationResponse,
+          updateInput: updateOneRecordInput,
+        },
+      });
+
+      return mutationResponse;
     }
   };
 

@@ -52,6 +52,7 @@ export const RecordTableContent = ({
 
   const handleDragEnd = () => {
     setIsDragging(false);
+
     handleDragSelectionEnd();
   };
 

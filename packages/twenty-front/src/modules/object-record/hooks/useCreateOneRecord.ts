@@ -16,6 +16,7 @@ import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/g
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
@@ -39,6 +40,7 @@ export const useCreateOneRecord = <
   skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
 }: useCreateOneRecordProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
   const apolloCoreClient = useApolloCoreClient();
   const [loading, setLoading] = useState(false);
 
@@ -170,6 +172,9 @@ export const useCreateOneRecord = <
       });
 
     await refetchAggregateQueries();
+
+    registerObjectOperation(objectNameSingular, { type: 'create-one' });
+
     return createdObject.data?.[mutationResponseField] ?? null;
   };
 

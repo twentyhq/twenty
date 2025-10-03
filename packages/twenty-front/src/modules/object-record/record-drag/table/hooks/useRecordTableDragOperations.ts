@@ -14,9 +14,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { extractRecordPositions } from '@/object-record/record-drag/shared/utils/extractRecordPositions';
-import { processSingleDrag } from '@/object-record/record-drag/shared/utils/processSingleDrag';
 import { processMultiDrag } from '@/object-record/record-drag/shared/utils/processMultiDrag';
+import { processSingleDrag } from '@/object-record/record-drag/shared/utils/processSingleDrag';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
+import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
 import { useRecoilCallback } from 'recoil';
 
 export const useRecordTableDragOperations = () => {
@@ -42,9 +44,14 @@ export const useRecordTableDragOperations = () => {
   const { openModal } = useModal();
   const multiDragState = useRecordDragState('table', recordTableId);
 
+  const { resetVirtualization } =
+    useResetVirtualizationBecauseDataChanged(objectNameSingular);
+
+  const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
+
   const processDragOperation = useRecoilCallback(
     ({ snapshot }) =>
-      (result: DropResult) => {
+      async (result: DropResult) => {
         if (!result.destination) return;
 
         if (currentRecordSorts.length > 0) {
@@ -107,6 +114,10 @@ export const useRecordTableDragOperations = () => {
             });
           }
         }
+
+        await resetVirtualization();
+
+        await triggerFetchPagesWithoutDebounce();
       },
     [
       selectedRowIdsSelector,
@@ -115,6 +126,8 @@ export const useRecordTableDragOperations = () => {
       currentRecordSorts,
       multiDragState.originalSelection,
       recordIndexAllRecordIdsSelector,
+      resetVirtualization,
+      triggerFetchPagesWithoutDebounce,
     ],
   );
 

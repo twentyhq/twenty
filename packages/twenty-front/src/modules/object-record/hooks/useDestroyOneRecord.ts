@@ -8,6 +8,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { getDestroyOneRecordMutationResponseField } from '@/object-record/utils/getDestroyOneRecordMutationResponseField';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -19,6 +20,8 @@ type useDestroyOneRecordProps = {
 export const useDestroyOneRecord = ({
   objectNameSingular,
 }: useDestroyOneRecordProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
+
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -81,6 +84,10 @@ export const useDestroyOneRecord = ({
           throw error;
         });
 
+      registerObjectOperation(objectMetadataItem.nameSingular, {
+        type: 'destroy-one',
+      });
+
       return deletedRecord.data?.[mutationResponseField] ?? null;
     },
     [
@@ -92,6 +99,7 @@ export const useDestroyOneRecord = ({
       objectNameSingular,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
+      registerObjectOperation,
     ],
   );
 

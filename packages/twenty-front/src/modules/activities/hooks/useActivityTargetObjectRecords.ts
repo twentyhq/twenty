@@ -7,11 +7,12 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useActivityTargetObjectRecords = (
   activityRecordId?: string,
-  activityTargets?: NoteTarget[] | TaskTarget[],
+  activityTargets?: Nullable<NoteTarget[] | TaskTarget[]>,
 ) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -19,7 +20,7 @@ export const useActivityTargetObjectRecords = (
     recordStoreFamilyState(activityRecordId ?? ''),
   ) as Note | Task | null;
 
-  if (!isDefined(activity) && !isDefined(activityTargets)) {
+  if (!isDefined(activity) || !isDefined(activityTargets)) {
     return { activityTargetObjectRecords: [] };
   }
 
