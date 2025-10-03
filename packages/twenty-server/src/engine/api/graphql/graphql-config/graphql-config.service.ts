@@ -186,10 +186,10 @@ export class GraphQLConfigService
 
     // Get the workspace schema
     const workspaceSchema = await workspaceFactory.createGraphQLSchema(data);
-    
+
     // Get the core schema that contains enum registrations
     const coreSchema = this.graphQLSchemaHost.schema;
-    
+
     // Merge the core schema (with enums) and workspace schema
     const mergedSchema = mergeSchemas({
       schemas: [coreSchema, workspaceSchema],

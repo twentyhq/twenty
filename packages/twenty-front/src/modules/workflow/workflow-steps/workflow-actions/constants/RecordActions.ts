@@ -4,7 +4,11 @@ export const RECORD_ACTIONS: Array<{
   label: string;
   type: Extract<
     WorkflowActionType,
-    'CREATE_RECORD' | 'UPDATE_RECORD' | 'DELETE_RECORD' | 'UPSERT_RECORD' | 'FIND_RECORDS'
+    | 'CREATE_RECORD'
+    | 'UPDATE_RECORD'
+    | 'DELETE_RECORD'
+    | 'UPSERT_RECORD'
+    | 'FIND_RECORDS'
   >;
   icon: string;
 }> = [

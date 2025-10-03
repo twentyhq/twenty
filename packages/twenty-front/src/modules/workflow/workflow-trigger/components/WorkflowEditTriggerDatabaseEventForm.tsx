@@ -19,6 +19,7 @@ import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTri
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
@@ -129,11 +130,30 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
       return;
     }
 
+    const selectedObjectMetadata = objectMetadataItems.find(
+      (item) => item.nameSingular === value,
+    );
+
+    const outputSchema: BaseOutputSchemaV2 = {};
+    if (selectedObjectMetadata !== undefined) {
+      selectedObjectMetadata.fields.forEach((field) => {
+        if (field.isActive === true && field.isSystem === false) {
+          outputSchema[field.name] = {
+            isLeaf: true,
+            type: 'string',
+            label: field.label,
+            value: null,
+          };
+        }
+      });
+    }
+
     triggerOptions.onTriggerUpdate({
       ...trigger,
       settings: {
         ...trigger.settings,
         eventName: `${value}.${triggerEvent.event}`,
+        outputSchema,
       },
     });
     closeDropdown(dropdownId);

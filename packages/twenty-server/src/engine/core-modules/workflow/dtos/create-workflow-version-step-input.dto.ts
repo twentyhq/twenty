@@ -15,7 +15,7 @@ export class CreateWorkflowVersionStepInput {
   })
   workflowVersionId: string;
 
-  @Field(() => String, {
+  @Field(() => WorkflowActionType, {
     description: 'New step type',
     nullable: false,
   })
