@@ -41,7 +41,7 @@ export const ChartColorSelectionDropdownContent = () => {
   const { closeDropdown } = useCloseDropdown();
 
   if (!isDefined(widgetInEditMode)) {
-    return;
+    return null;
   }
 
   if (widgetInEditMode.configuration?.__typename === 'IframeConfiguration') {
