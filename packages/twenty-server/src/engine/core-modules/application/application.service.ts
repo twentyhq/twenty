@@ -70,4 +70,11 @@ export class ApplicationService {
 
     return updatedApplication;
   }
+
+  async delete(universalIdentifier: string, workspaceId: string) {
+    await this.applicationRepository.delete({
+      universalIdentifier,
+      workspaceId,
+    });
+  }
 }

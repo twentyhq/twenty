@@ -143,4 +143,53 @@ export class ApiService {
       throw error;
     }
   }
+
+  async deleteApplication(packageJson: PackageJson): Promise<ApiResponse> {
+    try {
+      const mutation = `
+        mutation DeleteApplication($packageJson: JSON!) {
+          deleteApplication(packageJson: $packageJson)
+        }
+      `;
+
+      const variables = { packageJson };
+
+      const response: AxiosResponse = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+            'x-schema-version': '6',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error:
+            response.data.errors[0]?.message || 'Failed to delete application',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.deleteApplication,
+        message: `Successfully deleted application: ${packageJson.name}`,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          success: false,
+          error: error.response.data?.errors?.[0]?.message || error.message,
+        };
+      }
+      throw error;
+    }
+  }
 }
