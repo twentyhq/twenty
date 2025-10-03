@@ -15,7 +15,7 @@ import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-acti
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
@@ -116,10 +116,10 @@ export const WorkflowEditActionUpsertRecord = ({
     objectMetadataItemId: objectMetadataItem?.id ?? '',
   });
 
-  const viewFields = indexView?.viewFields ?? [];
-
-  const inlineFieldMetadataItems = () => {
+  const inlineFieldMetadataItems = useMemo(() => {
     if (!objectMetadataItem?.fields) return [];
+
+    const viewFields = indexView?.viewFields ?? [];
 
     return objectMetadataItem.fields
       .filter((fieldMetadataItem) =>
@@ -135,12 +135,12 @@ export const WorkflowEditActionUpsertRecord = ({
         };
       })
       .sort(sortByViewFieldPosition);
-  };
+  }, [objectMetadataItem, indexView, action.type]);
 
-  const inlineFieldDefinitions = () => {
+  const inlineFieldDefinitions = useMemo(() => {
     if (!isDefined(objectMetadataItem) || !inlineFieldMetadataItems) return [];
 
-    return inlineFieldMetadataItems().map((fieldMetadataItem) =>
+    return inlineFieldMetadataItems.map((fieldMetadataItem) =>
       formatFieldMetadataItemAsFieldDefinition({
         field: fieldMetadataItem,
         objectMetadataItem,
@@ -148,7 +148,7 @@ export const WorkflowEditActionUpsertRecord = ({
         labelWidth: 90,
       }),
     );
-  };
+  }, [objectMetadataItem, inlineFieldMetadataItems]);
 
   const handleFieldChange = (
     fieldName: keyof UpsertRecordFormData,
@@ -165,7 +165,7 @@ export const WorkflowEditActionUpsertRecord = ({
       return;
     }
 
-    const fieldDefinition = inlineFieldDefinitions()?.find(
+    const fieldDefinition = inlineFieldDefinitions?.find(
       (definition) => definition.metadata.fieldName === fieldName,
     );
 
@@ -257,7 +257,7 @@ export const WorkflowEditActionUpsertRecord = ({
       />
       <WorkflowStepBody>
         <Select
-          dropdownId="workflow-edit-action-record-create-or-update-object-name"
+          dropdownId="workflow-edit-action-upsert-record-object-name"
           label="Object"
           fullWidth
           disabled={isFormDisabled}
@@ -314,7 +314,7 @@ export const WorkflowEditActionUpsertRecord = ({
 
         <HorizontalSeparator noMargin />
 
-        {inlineFieldDefinitions()?.map((fieldDefinition) => {
+        {inlineFieldDefinitions?.map((fieldDefinition) => {
           const isFieldRelationManyToOne =
             isFieldRelation(fieldDefinition) &&
             fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;

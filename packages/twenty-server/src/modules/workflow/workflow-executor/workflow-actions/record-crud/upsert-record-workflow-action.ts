@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectLiteral } from 'typeorm';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
+import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -49,7 +49,7 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
 
     if (!isWorkflowUpsertRecordAction(step)) {
       throw new WorkflowStepExecutorException(
-        'Step is not a upsert record action',
+        'Step is not an upsert record action',
         WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }
@@ -127,6 +127,7 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
           repository,
           workflowActionInput,
           objectMetadataItemWithFieldsMaps,
+          workspaceId,
         );
       }
 
@@ -166,12 +167,9 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
       return null;
     }
 
-    const existingRecords = await repository.find({
+    return await repository.findOne({
       where: whereClause,
-      take: 1,
     });
-
-    return existingRecords.length > 0 ? existingRecords[0] : null;
   }
 
   private async updateExistingRecord(
@@ -231,16 +229,9 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
     repository: ObjectLiteral,
     workflowActionInput: WorkflowUpsertRecordActionInput,
     objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
+    workspaceId: string,
   ): Promise<ObjectLiteral> {
     const { objectRecord } = workflowActionInput;
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
-
-    if (!workspaceId) {
-      throw new RecordCRUDActionException(
-        'Failed to create: Workspace ID is required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
 
     const position = await this.recordPositionService.buildRecordPosition({
       value: 'first',
