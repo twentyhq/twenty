@@ -3,6 +3,8 @@ import { selectorFamily } from 'recoil';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type RelationType } from 'twenty-shared/types';
+import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 
 export const recordStoreMorphOneToManyValueWithObjectNameFamilySelector =
   selectorFamily({
@@ -18,12 +20,17 @@ export const recordStoreMorphOneToManyValueWithObjectNameFamilySelector =
       ({ get }) => {
         const morphValuesWithObjectName = morphRelations.map(
           (morphRelation) => {
+            const fieldName = computeMorphRelationFieldName({
+              fieldName: morphRelation.sourceFieldMetadata.name,
+              relationType: morphRelation.type as RelationType,
+              nameSingular: morphRelation.targetObjectMetadata.nameSingular,
+              namePlural: morphRelation.targetObjectMetadata.namePlural,
+            });
             return {
               objectNameSingular:
                 morphRelation.targetObjectMetadata.nameSingular,
-              value: (get(recordStoreFamilyState(recordId))?.[
-                morphRelation.sourceFieldMetadata.name
-              ] || []) as ObjectRecord[],
+              value: (get(recordStoreFamilyState(recordId))?.[fieldName] ||
+                []) as ObjectRecord[],
             };
           },
         );
