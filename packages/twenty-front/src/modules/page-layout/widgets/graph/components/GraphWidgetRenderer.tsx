@@ -103,6 +103,7 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
       return (
         <Suspense fallback={<ChartSkeletonLoader />}>
           <GraphWidgetBarChart
+            widget={widget}
             data={data.items}
             indexBy={data.indexBy}
             keys={data.keys}

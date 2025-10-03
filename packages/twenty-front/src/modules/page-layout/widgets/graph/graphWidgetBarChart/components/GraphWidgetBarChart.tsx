@@ -11,6 +11,7 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { getBarChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisBottomConfig';
 import { getBarChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisLeftConfig';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
+import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -21,8 +22,13 @@ import styled from '@emotion/styled';
 import { ResponsiveBar, type BarCustomLayerProps } from '@nivo/bar';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  type BarChartConfiguration,
+  type PageLayoutWidget,
+} from '~/generated/graphql';
 
 type GraphWidgetBarChartProps = {
+  widget: PageLayoutWidget;
   data: BarChartDataItem[];
   indexBy: string;
   keys: string[];
@@ -48,6 +54,7 @@ const StyledContainer = styled.div`
 `;
 
 export const GraphWidgetBarChart = ({
+  widget,
   data,
   indexBy,
   keys,
@@ -67,6 +74,16 @@ export const GraphWidgetBarChart = ({
   suffix,
   customFormatter,
 }: GraphWidgetBarChartProps) => {
+  const { data: groupByData, error: groupByError } = useGraphWidgetGroupByQuery(
+    {
+      objectMetadataItemId: widget.objectMetadataId,
+      configuration: widget.configuration as BarChartConfiguration,
+    },
+  );
+
+  console.log(groupByData);
+  console.log(groupByError);
+
   const theme = useTheme();
   const instanceId = useId();
   const colorRegistry = createGraphColorRegistry(theme);
