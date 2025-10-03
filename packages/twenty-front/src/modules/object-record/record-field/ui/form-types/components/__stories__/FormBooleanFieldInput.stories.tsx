@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { FormBooleanFieldInput } from '../FormBooleanFieldInput';
 
 const meta: Meta<typeof FormBooleanFieldInput> = {
@@ -7,6 +8,7 @@ const meta: Meta<typeof FormBooleanFieldInput> = {
   component: FormBooleanFieldInput,
   args: {},
   argTypes: {},
+  decorators: [I18nFrontDecorator],
 };
 
 export default meta;
@@ -18,7 +20,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('False');
+    await canvas.findByText('Select a value');
   },
 };
 
@@ -30,6 +32,17 @@ export const WithLabel: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Boolean');
+  },
+};
+
+export const EmptyByDefault: Story = {
+  args: {
+    defaultValue: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Select a value');
   },
 };
 
