@@ -1,11 +1,10 @@
 import { AgentChatSessionProvider } from '@/ai/components/AgentChatSessionProvider';
-import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   useGetAgentChatMessagesQuery,
@@ -21,26 +20,25 @@ export const AgentChatProvider = ({
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const agentId = currentWorkspace?.defaultAgent?.id;
 
-  const [currentThreadId, setCurrentThreadId] = useRecoilComponentState(
-    currentAIChatThreadComponentState,
-    agentId,
+  const [currentAIChatThread, setCurrentAIChatThread] = useRecoilState(
+    currentAIChatThreadState,
   );
 
   const isAskAIPage = commandMenuPage === CommandMenuPages.AskAI;
 
   const { loading: threadsLoading } = useGetAgentChatThreadsQuery({
     variables: { agentId: agentId! },
-    skip: isDefined(currentThreadId) || !isDefined(agentId) || !isAskAIPage,
+    skip: isDefined(currentAIChatThread) || !isDefined(agentId) || !isAskAIPage,
     onCompleted: (data) => {
       if (data.agentChatThreads.length > 0) {
-        setCurrentThreadId(data.agentChatThreads[0].id);
+        setCurrentAIChatThread(data.agentChatThreads[0].id);
       }
     },
   });
 
   const { loading: messagesLoading, data } = useGetAgentChatMessagesQuery({
-    variables: { threadId: currentThreadId! },
-    skip: !isDefined(currentThreadId) || !isAskAIPage,
+    variables: { threadId: currentAIChatThread! },
+    skip: !isDefined(currentAIChatThread) || !isAskAIPage,
   });
 
   const uiMessages = mapDBMessagesToUIMessages(data?.agentChatMessages || []);

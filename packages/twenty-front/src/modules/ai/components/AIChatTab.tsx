@@ -75,7 +75,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const { uploadFiles } = useAIChatFileUpload({ agentId });
+  const { uploadFiles } = useAIChatFileUpload();
   const { createAgentChatThread } = useCreateNewAIChatThread({ agentId });
   const { navigateCommandMenu } = useCommandMenu();
 
@@ -110,7 +110,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
           {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
 
           <StyledInputArea>
-            <AgentChatContextPreview agentId={agentId} />
+            <AgentChatContextPreview />
             <TextArea
               textAreaId={AI_CHAT_INPUT_ID}
               placeholder={t`Enter a question...`}
@@ -138,7 +138,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
                 Icon={IconMessageCirclePlus}
                 onClick={() => createAgentChatThread()}
               />
-              <AgentChatFileUploadButton agentId={agentId} />
+              <AgentChatFileUploadButton />
               {contextStoreCurrentObjectMetadataItemId ? (
                 <SendMessageWithRecordsContextButton />
               ) : (

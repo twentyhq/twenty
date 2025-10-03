@@ -1,13 +1,13 @@
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilState } from 'recoil';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import {
   type AIChatObjectMetadataAndRecordContext,
-  agentChatObjectMetadataAndRecordContextState,
-} from '@/ai/states/agentChatObjectMetadataAndRecordContextState';
-import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
-import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
-import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
+  agentChatContextState,
+} from '@/ai/states/agentChatContextState';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { isAgentChatCurrentContextActiveState } from '@/ai/states/isAgentChatCurrentContextActiveState';
 import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
@@ -16,7 +16,6 @@ import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObje
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,28 +32,21 @@ export const useAgentChat = (
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const isAgentChatCurrentContextActive = useRecoilComponentValue(
+  const isAgentChatCurrentContextActive = useRecoilValue(
     isAgentChatCurrentContextActiveState,
-    agentId,
   );
 
-  const agentChatSelectedFiles = useRecoilComponentValue(
-    agentChatSelectedFilesComponentState,
-    agentId,
+  const agentChatSelectedFiles = useRecoilValue(agentChatSelectedFilesState);
+
+  const [agentChatContext, setAgentChatContext] = useRecoilState(
+    agentChatContextState,
   );
 
-  const [agentChatContext, setAgentChatContext] = useRecoilComponentState(
-    agentChatObjectMetadataAndRecordContextState,
-    agentId,
-  );
+  const currentAIChatThread = useRecoilValue(currentAIChatThreadState);
 
-  const currentThreadId = useRecoilComponentValue(
-    currentAIChatThreadComponentState,
-    agentId,
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilState(
+    agentChatUploadedFilesState,
   );
-
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
-    useRecoilComponentState(agentChatUploadedFilesComponentState, agentId);
 
   const [agentChatInput, setAgentChatInput] =
     useRecoilState(agentChatInputState);
@@ -74,7 +66,7 @@ export const useAgentChat = (
       }),
     }),
     messages: uiMessages,
-    id: `${currentThreadId}-${uiMessages.length}`,
+    id: `${currentAIChatThread}-${uiMessages.length}`,
     onError: (error) => {
       enqueueErrorSnackBar({ message: error.message });
     },
@@ -90,7 +82,7 @@ export const useAgentChat = (
   };
 
   const isLoading =
-    !currentThreadId || isStreaming || agentChatSelectedFiles.length > 0;
+    !currentAIChatThread || isStreaming || agentChatSelectedFiles.length > 0;
 
   const handleSendMessage = async (records?: ObjectRecord[]) => {
     if (agentChatInput.trim() === '' || isLoading === true) {
@@ -122,7 +114,7 @@ export const useAgentChat = (
       },
       {
         body: {
-          threadId: currentThreadId,
+          threadId: currentAIChatThread,
           recordIdsByObjectMetadataNameSingular,
         },
       },

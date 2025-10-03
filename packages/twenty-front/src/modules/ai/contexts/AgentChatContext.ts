@@ -1,4 +1,4 @@
-import { type AIChatObjectMetadataAndRecordContext } from '@/ai/states/agentChatObjectMetadataAndRecordContextState';
+import { type AIChatObjectMetadataAndRecordContext } from '@/ai/states/agentChatContextState';
 import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { createContext } from 'react';
 import { type ObjectRecord } from '../../object-record/types/ObjectRecord';
