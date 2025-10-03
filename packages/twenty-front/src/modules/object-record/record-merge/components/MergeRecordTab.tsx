@@ -1,6 +1,13 @@
-import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { Section } from 'twenty-ui/layout';
+import React, { Suspense } from 'react';
+import { FieldCardSkeleton } from '@/object-record/record-show/components/FieldCardSkeleton';
+
+const LazyFieldCard = React.lazy(() =>
+  import('@/object-record/record-show/components/CardComponents').then(
+    (mod) => ({ default: mod.CardComponents.FieldCard }),
+  ),
+);
 
 type MergeRecordTabProps = {
   isInRightDrawer?: boolean;
@@ -20,14 +27,16 @@ export const MergeRecordTab = ({
         isInRightDrawer={true}
       />
 
-      <CardComponents.FieldCard
-        targetableObject={{
-          targetObjectNameSingular: objectNameSingular,
-          id: recordId,
-        }}
-        isInRightDrawer={true}
-        showDuplicatesSection={false}
-      />
+      <Suspense fallback={<FieldCardSkeleton isInRightDrawer={true} />}>
+        <LazyFieldCard
+          targetableObject={{
+            targetObjectNameSingular: objectNameSingular,
+            id: recordId,
+          }}
+          isInRightDrawer={true}
+          showDuplicatesSection={false}
+        />
+      </Suspense>
     </Section>
   );
 };
