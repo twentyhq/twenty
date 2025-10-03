@@ -47,7 +47,7 @@ const StyledHeaderIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-type WorkflowStepHeaderProps = {
+type SidePanelHeaderProps = {
   Icon: IconComponent;
   iconColor: string;
   initialTitle: string;
@@ -63,14 +63,14 @@ type WorkflowStepHeaderProps = {
     }
 );
 
-export const WorkflowStepHeader = ({
+export const SidePanelHeader = ({
   Icon,
   iconColor,
   initialTitle,
   headerType,
   disabled,
   onTitleChange,
-}: WorkflowStepHeaderProps) => {
+}: SidePanelHeaderProps) => {
   const theme = useTheme();
 
   const [title, setTitle] = useState(initialTitle);
@@ -90,7 +90,7 @@ export const WorkflowStepHeader = ({
   };
 
   return (
-    <StyledHeader data-testid="workflow-step-header">
+    <StyledHeader data-testid="side-panel-header">
       <StyledHeaderIconContainer>
         <Icon
           color={iconColor}
@@ -101,7 +101,7 @@ export const WorkflowStepHeader = ({
       <StyledHeaderInfo>
         <StyledHeaderTitle>
           <TitleInput
-            instanceId="workflow-step-title-input"
+            instanceId="side-panel-title-input"
             disabled={disabled}
             sizeVariant="md"
             value={title}

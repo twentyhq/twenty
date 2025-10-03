@@ -30,7 +30,7 @@ const StyledInnerList = styled.div`
   );
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
 
   @media (min-width: ${MOBILE_VIEWPORT}px) {

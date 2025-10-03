@@ -1,87 +1,53 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
+import { ChartSettings } from '@/command-menu/pages/page-layout/components/ChartSettings';
+import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
-import { GraphType, WidgetType } from '~/generated-metadata/graphql';
-import styled from '@emotion/styled';
-
-import {
-  IconChartBar,
-  IconChartLine,
-  IconChartPie,
-  IconGauge,
-  IconNumber,
-} from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledSectionTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-`;
-
-const graphTypeOptions = [
-  {
-    type: GraphType.BAR,
-    icon: IconChartBar,
-    title: 'Bar Chart',
-  },
-  {
-    type: GraphType.PIE,
-    icon: IconChartPie,
-    title: 'Pie Chart',
-  },
-  {
-    type: GraphType.GAUGE,
-    icon: IconGauge,
-    title: 'Gauge',
-  },
-  {
-    type: GraphType.NUMBER,
-    icon: IconNumber,
-    title: 'Number',
-  },
-  {
-    type: GraphType.LINE,
-    icon: IconChartLine,
-    title: 'Line Chart',
-  },
-];
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
-  const { closeCommandMenu } = useCommandMenu();
-
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const { createPageLayoutWidget } =
-    useCreatePageLayoutGraphWidget(pageLayoutId);
+  const draftPageLayout = useRecoilComponentValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
 
-  const handleSelectGraphType = (graphType: GraphType) => {
-    createPageLayoutWidget(WidgetType.GRAPH, graphType);
-    closeCommandMenu();
-  };
+  const pageLayoutEditingWidgetId = useRecoilComponentValue(
+    pageLayoutEditingWidgetIdComponentState,
+    pageLayoutId,
+  );
+
+  const widgetInEditMode = draftPageLayout.tabs
+    .flatMap((tab) => tab.widgets)
+    .find((widget) => widget.id === pageLayoutEditingWidgetId);
+
+  const theme = useTheme();
+
+  if (
+    !isDefined(widgetInEditMode?.configuration) ||
+    !('graphType' in widgetInEditMode.configuration)
+  ) {
+    return null;
+  }
+
+  const currentGraphType = widgetInEditMode.configuration.graphType;
 
   return (
-    <StyledContainer>
-      <StyledSectionTitle>Graph type</StyledSectionTitle>
+    <>
+      <SidePanelHeader
+        Icon={GRAPH_TYPE_INFORMATION[currentGraphType].icon}
+        iconColor={theme.font.color.tertiary}
+        initialTitle={t`Chart`}
+        headerType={t(GRAPH_TYPE_INFORMATION[currentGraphType].label)}
+        onTitleChange={() => {}}
+      />
 
-      {graphTypeOptions.map((option) => (
-        <MenuItem
-          withIconContainer={true}
-          key={option.type}
-          LeftIcon={option.icon}
-          text={option.title}
-          onClick={() => handleSelectGraphType(option.type)}
-        />
-      ))}
-    </StyledContainer>
+      <ChartSettings widget={widgetInEditMode} />
+    </>
   );
 };
