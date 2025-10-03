@@ -85,6 +85,10 @@ export const mapFieldMetadataToGraphQLQuery = ({
       }
 
       if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
+        if (gqlField !== relationFieldName) {
+          continue;
+        }
+
         gqlMorphField += `${relationFieldName}
 {
   edges {
@@ -104,6 +108,10 @@ export const mapFieldMetadataToGraphQLQuery = ({
         if (gqlField === fieldMetadata.settings?.joinColumnName) {
           gqlMorphField += `${gqlField}
     `;
+          continue;
+        }
+
+        if (gqlField !== relationFieldName) {
           continue;
         }
 
