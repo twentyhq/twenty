@@ -1,4 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration, GraphOrderBy } from '~/generated/graphql';
 
@@ -40,12 +42,24 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
     );
   }
 
+  const isGroupByFieldXRelation =
+    isFieldRelation(groupByFieldX) || isFieldMorphRelation(groupByFieldX);
+
   const groupBy: Array<Record<string, boolean | Record<string, boolean>>> = [
-    { [groupByFieldX.name]: true },
+    isGroupByFieldXRelation
+      ? { [`${groupByFieldX.name}Id`]: true }
+      : { [groupByFieldX.name]: true },
   ];
 
   if (isDefined(groupByFieldY)) {
-    groupBy.push({ [groupByFieldY.name]: true });
+    const isGroupByFieldYRelation =
+      isFieldRelation(groupByFieldY) || isFieldMorphRelation(groupByFieldY);
+
+    groupBy.push(
+      isGroupByFieldYRelation
+        ? { [`${groupByFieldY.name}Id`]: true }
+        : { [groupByFieldY.name]: true },
+    );
   }
 
   const orderBy: Array<Record<string, string>> = [];
