@@ -12,8 +12,8 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import {
   HTTPMethod,
-  Route,
-} from 'src/engine/metadata-modules/route/route.entity';
+  RouteTrigger,
+} from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import {
@@ -23,23 +23,23 @@ import {
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
-export class RouteService {
+export class RouteTriggerService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly domainManagerService: DomainManagerService,
-    @InjectRepository(Route)
-    private readonly routeRepository: Repository<Route>,
+    @InjectRepository(RouteTrigger)
+    private readonly routeTriggerRepository: Repository<RouteTrigger>,
   ) {}
 
-  private async getOneRouteWithPathParamsOrFail({
+  private async getOneRouteTriggerWithPathParamsOrFail({
     request,
     httpMethod,
   }: {
     request: Request;
     httpMethod: HTTPMethod;
   }): Promise<{
-    route: Route;
+    routeTrigger: RouteTrigger;
     pathParams: Partial<Record<string, string | string[]>>;
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
@@ -57,7 +57,7 @@ export class RouteService {
       ),
     );
 
-    const routes = await this.routeRepository.find({
+    const routeTriggers = await this.routeTriggerRepository.find({
       where: {
         httpMethod,
         workspaceId: workspace.id,
@@ -67,19 +67,21 @@ export class RouteService {
 
     const requestPath = request.path.replace(/^\/s\//, '/');
 
-    for (const route of routes) {
-      const routeMatcher = match(route.path, { decode: decodeURIComponent });
-      const routeMatched = routeMatcher(requestPath);
+    for (const routeTrigger of routeTriggers) {
+      const routeTriggerMatcher = match(routeTrigger.path, {
+        decode: decodeURIComponent,
+      });
+      const routeTriggerMatched = routeTriggerMatcher(requestPath);
 
-      if (routeMatched) {
+      if (routeTriggerMatched) {
         return {
-          route,
-          pathParams: routeMatched.params,
+          routeTrigger,
+          pathParams: routeTriggerMatched.params,
         };
       }
     }
 
-    throw new NotFoundException('No Route found');
+    throw new NotFoundException('No Route trigger found');
   }
 
   private async validateWorkspaceFromRequest({
@@ -108,15 +110,16 @@ export class RouteService {
     request: Request;
     httpMethod: HTTPMethod;
   }) {
-    const routeWithPathParams = await this.getOneRouteWithPathParamsOrFail({
-      request,
-      httpMethod,
-    });
+    const routeTriggerWithPathParams =
+      await this.getOneRouteTriggerWithPathParamsOrFail({
+        request,
+        httpMethod,
+      });
 
-    if (routeWithPathParams.route.isAuthRequired) {
+    if (routeTriggerWithPathParams.routeTrigger.isAuthRequired) {
       await this.validateWorkspaceFromRequest({
         request,
-        workspaceId: routeWithPathParams.route.workspaceId,
+        workspaceId: routeTriggerWithPathParams.routeTrigger.workspaceId,
       });
     }
 
@@ -127,12 +130,12 @@ export class RouteService {
     const executionParams = {
       ...queryParams,
       ...bodyParams,
-      ...routeWithPathParams.pathParams,
+      ...routeTriggerWithPathParams.pathParams,
     };
 
     return await this.serverlessFunctionService.executeOneServerlessFunction(
-      routeWithPathParams.route.serverlessFunction.id,
-      routeWithPathParams.route.workspaceId,
+      routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
+      routeTriggerWithPathParams.routeTrigger.workspaceId,
       executionParams,
       'draft',
     );

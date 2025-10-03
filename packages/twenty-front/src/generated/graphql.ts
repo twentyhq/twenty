@@ -1363,6 +1363,14 @@ export type GridPositionInput = {
   rowSpan: Scalars['Float'];
 };
 
+export enum HttpMethod {
+  DELETE = 'DELETE',
+  GET = 'GET',
+  PATCH = 'PATCH',
+  POST = 'POST',
+  PUT = 'PUT'
+}
+
 export enum HealthIndicatorId {
   app = 'app',
   connectedAccount = 'connectedAccount',
@@ -3322,6 +3330,18 @@ export type Role = {
   workspaceMembers: Array<WorkspaceMember>;
 };
 
+export type RouteTrigger = {
+  __typename?: 'RouteTrigger';
+  createdAt: Scalars['DateTime'];
+  httpMethod: HttpMethod;
+  id: Scalars['ID'];
+  isAuthRequired: Scalars['Boolean'];
+  path: Scalars['String'];
+  serverlessFunctionId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['String'];
+};
+
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']>;
@@ -3674,12 +3694,24 @@ export type UpdateApiKeyDto = {
 };
 
 export type UpdateCronTriggerInput = {
+  /** The id of the cron trigger to update */
   id: Scalars['String'];
+  /** The cron trigger updates */
+  update: UpdateCronTriggerInputUpdates;
+};
+
+export type UpdateCronTriggerInputUpdates = {
   settings: Scalars['JSON'];
 };
 
 export type UpdateDatabaseEventTriggerInput = {
+  /** The id of the database event trigger to update */
   id: Scalars['String'];
+  /** The database event trigger updates */
+  update: UpdateDatabaseEventTriggerInputUpdates;
+};
+
+export type UpdateDatabaseEventTriggerInputUpdates = {
   settings: Scalars['JSON'];
 };
 
@@ -3796,10 +3828,15 @@ export type UpdateRolePayload = {
 };
 
 export type UpdateServerlessFunctionInput = {
+  /** Id of the serverless function to update */
+  id: Scalars['UUID'];
+  /** The serverless function updates */
+  update: UpdateServerlessFunctionInputUpdates;
+};
+
+export type UpdateServerlessFunctionInputUpdates = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
-  /** Id of the serverless function to execute */
-  id: Scalars['UUID'];
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };

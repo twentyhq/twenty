@@ -369,9 +369,11 @@ export class ApplicationSyncService {
 
       const updateServerlessFunctionInput = {
         id: serverlessFunctionToUpdate.id,
-        name: serverlessFunctionToSync.name,
-        timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
-        code: serverlessFunctionToSync.code,
+        update: {
+          name: serverlessFunctionToSync.name,
+          timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
+          code: serverlessFunctionToSync.code,
+        },
       };
 
       await this.serverlessFunctionV2Service.updateOne(
@@ -505,8 +507,10 @@ export class ApplicationSyncService {
 
       const updateDatabaseEventTriggerInput = {
         id: triggerToUpdate.id,
-        settings: {
-          eventName: triggerToSync.eventName,
+        update: {
+          settings: {
+            eventName: triggerToSync.eventName,
+          },
         },
       };
 
@@ -616,8 +620,10 @@ export class ApplicationSyncService {
 
       const updateCronTriggerInput = {
         id: triggerToUpdate.id,
-        settings: {
-          pattern: triggerToSync.schedule,
+        update: {
+          settings: {
+            pattern: triggerToSync.schedule,
+          },
         },
       };
 

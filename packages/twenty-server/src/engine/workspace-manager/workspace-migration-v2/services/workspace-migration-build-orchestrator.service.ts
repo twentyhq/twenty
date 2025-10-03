@@ -17,6 +17,7 @@ import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 's
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/services/workspace-migration-v2-field-actions-builder.service';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
 import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/services/workspace-migration-v2-object-actions-builder.service';
+import { WorkspaceMigrationV2RouteTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/workspace-migration-v2-route-trigger-actions-builder.service';
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
@@ -30,6 +31,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2ServerlessFunctionActionsBuilderService: WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
     private readonly workspaceMigrationV2DatabaseEventTriggerActionsBuilderService: WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService,
     private readonly workspaceMigrationV2CronTriggerActionsBuilderService: WorkspaceMigrationV2CronTriggerActionsBuilderService,
+    private readonly workspaceMigrationV2RouteTriggerActionsBuilderService: WorkspaceMigrationV2RouteTriggerActionsBuilderService,
     private readonly workspaceMigrationV2FieldActionsBuilderService: WorkspaceMigrationV2FieldActionsBuilderService,
   ) {}
 
@@ -84,6 +86,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       serverlessFunction: [],
       databaseEventTrigger: [],
       cronTrigger: [],
+      routeTrigger: [],
       fieldMetadata: [],
     };
 
@@ -99,6 +102,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatServerlessFunctionMaps,
       flatDatabaseEventTriggerMaps,
       flatCronTriggerMaps,
+      flatRouteTriggerMaps,
       flatFieldMetadataMaps,
     } = fromToAllFlatEntityMaps;
 
@@ -289,8 +293,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatDatabaseEventTriggerMaps,
             to: toFlatDatabaseEventTriggerMaps,
             buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatServerlessFunctionMaps:
+                optimisticAllFlatEntityMaps.flatServerlessFunctionMaps,
+            },
             workspaceId,
-            dependencyOptimisticFlatEntityMaps: undefined,
           },
         );
 
@@ -317,8 +324,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatCronTriggerMaps,
             to: toFlatCronTriggerMaps,
             buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatServerlessFunctionMaps:
+                optimisticAllFlatEntityMaps.flatServerlessFunctionMaps,
+            },
             workspaceId,
-            dependencyOptimisticFlatEntityMaps: undefined,
           },
         );
 
@@ -329,6 +339,36 @@ export class WorkspaceMigrationBuildOrchestratorService {
         orchestratorFailureReport.cronTrigger.push(...cronTriggerResult.errors);
       } else {
         orchestratorActionsReport.cronTrigger = cronTriggerResult.actions;
+      }
+    }
+
+    if (isDefined(flatRouteTriggerMaps)) {
+      const { from: fromFlatRouteTriggerMaps, to: toFlatRouteTriggerMaps } =
+        flatRouteTriggerMaps;
+
+      const routeTriggerResult =
+        await this.workspaceMigrationV2RouteTriggerActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatRouteTriggerMaps,
+            to: toFlatRouteTriggerMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatServerlessFunctionMaps:
+                optimisticAllFlatEntityMaps.flatServerlessFunctionMaps,
+            },
+            workspaceId,
+          },
+        );
+
+      optimisticAllFlatEntityMaps.flatRouteTriggerMaps =
+        routeTriggerResult.optimisticFlatEntityMaps;
+
+      if (routeTriggerResult.status === 'fail') {
+        orchestratorFailureReport.routeTrigger.push(
+          ...routeTriggerResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.routeTrigger = routeTriggerResult.actions;
       }
     }
 
@@ -395,6 +435,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.cronTrigger.deleted,
           ...aggregatedOrchestratorActionsReport.cronTrigger.created,
           ...aggregatedOrchestratorActionsReport.cronTrigger.updated,
+          ///
+
+          // Route triggers
+          ...orchestratorActionsReport.routeTrigger.deleted,
+          ...orchestratorActionsReport.routeTrigger.created,
+          ...orchestratorActionsReport.routeTrigger.updated,
           ///
         ],
         workspaceId,

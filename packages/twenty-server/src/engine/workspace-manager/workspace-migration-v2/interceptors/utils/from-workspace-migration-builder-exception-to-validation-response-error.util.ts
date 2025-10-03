@@ -13,6 +13,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       invalidServerlessFunction: 0,
       invalidDatabaseEventTrigger: 0,
       invalidCronTrigger: 0,
+      invalidRouteTrigger: 0,
       invalidFieldMetadata: 0,
       totalErrors: 0,
     },
@@ -25,6 +26,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       serverlessFunction: [],
       databaseEventTrigger: [],
       cronTrigger: [],
+      routeTrigger: [],
     },
   };
 

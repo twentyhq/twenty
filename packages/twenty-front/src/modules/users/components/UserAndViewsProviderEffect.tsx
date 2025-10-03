@@ -15,7 +15,7 @@ import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
@@ -36,6 +36,11 @@ export const UserAndViewsProviderEffect = () => {
   const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
     isCurrentUserLoadedState,
   );
+
+  const [localIsCurrentUserLoaded, setLocalIsCurrentUserLoaded] =
+    useState(false);
+  const [localAreViewsLoaded, setLocalAreViewsLoaded] = useState(false);
+
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
@@ -94,13 +99,14 @@ export const UserAndViewsProviderEffect = () => {
       skip: shouldSkip,
     });
 
-  const { data: queryDataCoreViews } = useFindAllCoreViewsQuery({
-    skip: shouldSkip,
-  });
+  const { data: queryDataCoreViews, loading: queryLoadingCoreViews } =
+    useFindAllCoreViewsQuery({
+      skip: shouldSkip,
+    });
 
   useEffect(() => {
     if (!userQueryLoading) {
-      setIsCurrentUserLoaded(true);
+      setLocalIsCurrentUserLoaded(true);
     }
 
     if (!isDefined(userQueryData?.currentUser)) return;
@@ -189,10 +195,20 @@ export const UserAndViewsProviderEffect = () => {
   ]);
 
   useEffect(() => {
+    if (!queryLoadingCoreViews) {
+      setLocalAreViewsLoaded(true);
+    }
+
     if (!isDefined(queryDataCoreViews?.getCoreViews)) return;
 
     setCoreViews(queryDataCoreViews.getCoreViews);
-  }, [queryDataCoreViews?.getCoreViews, setCoreViews]);
+  }, [queryDataCoreViews?.getCoreViews, setCoreViews, queryLoadingCoreViews]);
+
+  useEffect(() => {
+    if (localIsCurrentUserLoaded && localAreViewsLoaded) {
+      setIsCurrentUserLoaded(true);
+    }
+  }, [localIsCurrentUserLoaded, localAreViewsLoaded, setIsCurrentUserLoaded]);
 
   return null;
 };
