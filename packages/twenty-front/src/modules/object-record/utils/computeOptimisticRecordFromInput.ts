@@ -15,7 +15,7 @@ import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFiel
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildOptimisticActorFieldValueFromCurrentWorkspaceMember } from '@/object-record/utils/buildOptimisticActorFieldValueFromCurrentWorkspaceMember';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { isDefined } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type ComputeOptimisticCacheRecordInputArgs = {
@@ -51,11 +51,15 @@ export const computeOptimisticRecordFromInput = ({
         objectMetadataItem.fields.find((field) => {
           if (!isFieldMorphRelation(field)) return false;
 
-          return field.morphRelations?.some(
-            (morphRelation) =>
-              morphRelation.sourceFieldMetadata.name ===
-              recordKey.replace('Id', ''),
-          );
+          return field.morphRelations?.some((morphRelation) => {
+            const computedFieldName = computeMorphRelationFieldName({
+              fieldName: field.name,
+              relationType: morphRelation.type,
+              nameSingular: morphRelation.targetObjectMetadata.nameSingular,
+              namePlural: morphRelation.targetObjectMetadata.namePlural,
+            });
+            return computedFieldName === recordKey.replace('Id', '');
+          });
         });
 
       const isUnknownField =

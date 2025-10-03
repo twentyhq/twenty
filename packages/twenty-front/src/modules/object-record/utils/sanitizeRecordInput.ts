@@ -2,7 +2,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
-import { isDefined } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const sanitizeRecordInput = ({
@@ -31,11 +31,15 @@ export const sanitizeRecordInput = ({
         const potentialMorphRelationJoinColumnNameFieldMetadataItem =
           objectMetadataItem.fields.find((field) => {
             if (!isFieldMorphRelation(field)) return false;
-            return field.morphRelations?.some(
-              (morphRelation) =>
-                morphRelation.sourceFieldMetadata.name ===
-                fieldName.replace('Id', ''),
-            );
+            return field.morphRelations?.some((morphRelation) => {
+              const computedFieldName = computeMorphRelationFieldName({
+                fieldName: field.name,
+                relationType: morphRelation.type,
+                nameSingular: morphRelation.targetObjectMetadata.nameSingular,
+                namePlural: morphRelation.targetObjectMetadata.namePlural,
+              });
+              return computedFieldName === fieldName.replace('Id', '');
+            });
           });
 
         if (
