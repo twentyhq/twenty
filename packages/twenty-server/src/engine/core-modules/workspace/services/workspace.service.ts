@@ -48,6 +48,7 @@ import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/uti
 import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -504,17 +505,19 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  async checkCustomDomainValidRecords(workspace: Workspace) {
-    if (!workspace.customDomain) return;
+  async checkCustomDomainValidRecords(
+    workspace: Workspace,
+    domainValidRecord?: DomainValidRecords,
+  ) {
+    assertIsDefinedOrThrow(workspace.customDomain);
 
     const customDomainWithRecords =
-      await this.dnsManagerService.getHostnameWithRecords(
+      domainValidRecord ??
+      (await this.dnsManagerService.getHostnameWithRecords(
         workspace.customDomain,
-      );
+      ));
 
-    if (!customDomainWithRecords) return;
-
-    await this.dnsManagerService.refreshHostname(customDomainWithRecords);
+    assertIsDefinedOrThrow(customDomainWithRecords);
 
     const isCustomDomainWorking =
       await this.dnsManagerService.isHostnameWorking(workspace.customDomain);
@@ -537,5 +540,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     return customDomainWithRecords;
+  }
+
+  async findByCustomDomain(customDomain: string) {
+    return this.workspaceRepository.findOne({ where: { customDomain } });
   }
 }

@@ -217,6 +217,7 @@ export const SettingsDomain = () => {
               <SaveAndCancelButtons
                 onCancel={() => navigate(SettingsPath.Domains)}
                 isSaveDisabled={isSubmitting}
+                onSave={handleSave}
               />
             }
           >

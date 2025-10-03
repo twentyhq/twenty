@@ -6,7 +6,7 @@ import {
   type CustomHostnameCreateParams,
   type CustomHostnameListResponse,
 } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import {
   DnsManagerException,
@@ -130,16 +130,25 @@ export class DnsManagerService {
     return this.registerHostname(toHostname, options);
   }
 
-  async refreshHostname(
-    domainValidRecords: DomainValidRecords,
-    options?: DnsManagerOptions,
-  ) {
+  async refreshHostname(hostname: string, options?: DnsManagerOptions) {
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
-    await this.cloudflareClient.customHostnames.edit(domainValidRecords.id, {
-      zone_id: this.getZoneId(options),
-      ssl: this.sslParams,
-    });
+    const publicDomainWithRecords = await this.getHostnameWithRecords(
+      hostname,
+      options,
+    );
+
+    assertIsDefinedOrThrow(publicDomainWithRecords);
+
+    await this.cloudflareClient.customHostnames.edit(
+      publicDomainWithRecords.id,
+      {
+        zone_id: this.getZoneId(options),
+        ssl: this.sslParams,
+      },
+    );
+
+    return publicDomainWithRecords;
   }
 
   async deleteHostnameSilently(hostname: string, options?: DnsManagerOptions) {
