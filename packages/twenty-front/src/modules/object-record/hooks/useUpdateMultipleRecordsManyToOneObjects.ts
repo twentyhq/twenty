@@ -30,7 +30,7 @@ type UpdateManyRecordArgs = {
   idToUpdate: string;
   relatedRecordId: string | null;
   objectMetadataItem: ObjectMetadataItem;
-  objectNameSingulars: string[];
+  targetObjectNameSingulars: string[];
   recordGqlFields?: Record<string, any>;
   fieldDefinition: FieldDefinition<FieldMetadata>;
 };
@@ -49,7 +49,7 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
     for (const {
       idToUpdate,
       objectMetadataItem: objectMetadataItemOfIdToUpdate,
-      objectNameSingulars,
+      targetObjectNameSingulars,
       relatedRecordId,
       recordGqlFields,
       fieldDefinition,
@@ -85,12 +85,12 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
 
       const objectMetadataItemArray = objectMetadataItems.filter(
         (objectMetadataItem) =>
-          objectNameSingulars.includes(objectMetadataItem.nameSingular),
+          targetObjectNameSingulars.includes(objectMetadataItem.nameSingular),
       );
 
       if (objectMetadataItemArray.length === 0) {
         throw new CustomError(
-          `Object metadata item not found ${objectNameSingulars.join(', ')}`,
+          `Object metadata item not found ${targetObjectNameSingulars.join(', ')}`,
           'OBJECT_METADATA_ITEM_NOT_FOUND',
         );
       }
@@ -128,7 +128,7 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
           updateOneRecordInput[`${targetFieldName}Id`] = cachedRelatedRecord.id;
         }
       }
-
+      
       const optimisticRecordInput = computeOptimisticRecordFromInput({
         objectMetadataItem: objectMetadataItemOfIdToUpdate,
         currentWorkspaceMember: currentWorkspaceMember,

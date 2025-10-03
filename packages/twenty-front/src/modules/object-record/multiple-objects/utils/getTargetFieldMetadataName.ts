@@ -4,6 +4,7 @@ import {
   type FieldRelationMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 
 export const getTargetFieldMetadataName = ({
   fieldDefinition,
@@ -17,9 +18,18 @@ export const getTargetFieldMetadataName = ({
   if (isFieldRelation(fieldDefinition)) {
     return fieldDefinition.metadata.fieldName;
   } else {
-    return fieldDefinition.metadata.morphRelations.find(
+    const morphRelation = fieldDefinition.metadata.morphRelations.find(
       (morphRelation) =>
         morphRelation.targetObjectMetadata.nameSingular === objectNameSingular,
-    )?.sourceFieldMetadata.name;
+    );
+    if (!morphRelation) {
+      return undefined;
+    }
+    return computeMorphRelationFieldName({
+      fieldName: fieldDefinition.metadata.fieldName,
+      relationType: fieldDefinition.metadata.relationType,
+      nameSingular: morphRelation.targetObjectMetadata.nameSingular,
+      namePlural: morphRelation.targetObjectMetadata.namePlural,
+    });
   }
 };

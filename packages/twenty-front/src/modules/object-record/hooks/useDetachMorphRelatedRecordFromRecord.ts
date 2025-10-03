@@ -177,7 +177,7 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
           {
             idToUpdate: relatedRecordId,
             objectMetadataItem: relatedObjectMetadataItem,
-            objectNameSingulars: [sourceObjectMetadataItemName],
+            targetObjectNameSingulars: [sourceObjectMetadataItemName],
             relatedRecordId: null,
             fieldDefinition: relatedRecordFieldDefinition,
           },

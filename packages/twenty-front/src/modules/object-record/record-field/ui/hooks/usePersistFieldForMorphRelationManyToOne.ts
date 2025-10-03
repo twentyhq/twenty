@@ -24,7 +24,7 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
     throw new Error('Field is not a morph relation many to one');
   }
 
-  const objectNameSingulars = fieldDefinition.metadata.morphRelations.map(
+  const targetObjectNameSingulars = fieldDefinition.metadata.morphRelations.map(
     (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
   );
 
@@ -40,7 +40,7 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
           updateMultipleRecordsManyToOneObjects?.([
             {
               idToUpdate: recordId,
-              objectNameSingulars,
+              targetObjectNameSingulars,
               relatedRecordId: null,
               objectMetadataItem,
               fieldDefinition,
@@ -57,7 +57,7 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
         const updatedManyRecordsArgs = [
           {
             idToUpdate: recordId,
-            objectNameSingulars,
+            targetObjectNameSingulars,
             relatedRecordId: recordFromPicker.id,
             objectMetadataItem,
             fieldDefinition,
@@ -69,7 +69,7 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
     [
       fieldDefinition,
       objectMetadataItem,
-      objectNameSingulars,
+      targetObjectNameSingulars,
       recordId,
       updateMultipleRecordsManyToOneObjects,
     ],
