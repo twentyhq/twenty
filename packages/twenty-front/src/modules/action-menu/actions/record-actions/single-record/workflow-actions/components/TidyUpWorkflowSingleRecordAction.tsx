@@ -1,5 +1,17 @@
-import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { Action } from '@/action-menu/actions/components/Action';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
+import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
+import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionPositions';
 import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -8,22 +20,13 @@ import {
   type WorkflowAction,
 } from '~/generated-metadata/graphql';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionPositions';
+export const TidyUpWorkflowSingleRecordAction = () => {
+  const recordId = useSelectedRecordIdOrThrow();
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-export const useTidyUpWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
-
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
@@ -36,13 +39,25 @@ export const useTidyUpWorkflowVersion = () => {
     UpdateWorkflowVersionPositionsMutationVariables
   >(UPDATE_WORKFLOW_VERSION_POSITIONS, { client: apolloCoreClient });
 
-  const { getUpdatableWorkflowVersion } =
-    useGetUpdatableWorkflowVersionOrThrow();
+  const onClick = async () => {
+    if (!isDefined(workflowWithCurrentVersion)) {
+      return;
+    }
 
-  const updateWorkflowVersionPosition = async (
-    positions: { id: string; position: { x: number; y: number } }[],
-  ) => {
-    const workflowVersionId = await getUpdatableWorkflowVersion();
+    const workflowVersion = workflowWithCurrentVersion.currentVersion;
+    const workflowVersionId = workflowVersion.id;
+
+    const diagram = getWorkflowVersionDiagram({
+      workflowVersion,
+      workflowContext: 'workflow',
+    });
+
+    const tidiedUpDiagram = getOrganizedDiagram(diagram);
+
+    const positions = tidiedUpDiagram.nodes.map((node) => ({
+      id: node.id,
+      position: node.position,
+    }));
 
     await mutate({ variables: { input: { workflowVersionId, positions } } });
 
@@ -94,12 +109,5 @@ export const useTidyUpWorkflowVersion = () => {
     });
   };
 
-  const tidyUpWorkflowVersion = async (
-    diagram: WorkflowDiagram,
-    positions: { id: string; position: { x: number; y: number } }[],
-  ) => {
-    await updateWorkflowVersionPosition(positions);
-  };
-
-  return { tidyUpWorkflowVersion };
+  return <Action onClick={onClick} />;
 };
