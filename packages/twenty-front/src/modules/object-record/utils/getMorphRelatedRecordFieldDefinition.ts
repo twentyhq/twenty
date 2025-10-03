@@ -1,22 +1,22 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getRelatedRecordFieldDefinition = ({
+export const getMorphRelatedRecordFieldDefinition = ({
   fieldDefinition,
   relatedObjectMetadataItem,
 }: {
-  fieldDefinition: FieldDefinition<FieldRelationMetadata>;
+  fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
   relatedObjectMetadataItem: ObjectMetadataItem;
 }) => {
-  const fieldMetadataOnRelatedObjectId =
-    fieldDefinition.metadata.relationFieldMetadataId;
-
-  const fieldMetadataOnRelatedObject = relatedObjectMetadataItem.fields.find(
-    (field) => field.id === fieldMetadataOnRelatedObjectId,
-  );
+  const fieldMetadataOnRelatedObject =
+    fieldDefinition.metadata.morphRelations.find(
+      (morphRelation) =>
+        morphRelation.targetObjectMetadata.nameSingular ===
+        relatedObjectMetadataItem.nameSingular,
+    )?.targetFieldMetadata;
 
   if (!isDefined(fieldMetadataOnRelatedObject)) {
     throw new Error('Could not find field on related object');
