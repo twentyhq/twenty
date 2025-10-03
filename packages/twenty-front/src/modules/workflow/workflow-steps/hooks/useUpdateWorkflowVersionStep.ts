@@ -10,10 +10,9 @@ import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type UpdateWorkflowVersionStepInput,
-  type UpdateWorkflowVersionStepMutation,
-  type UpdateWorkflowVersionStepMutationVariables,
-  type WorkflowAction,
+    type UpdateWorkflowVersionStepInput,
+    type UpdateWorkflowVersionStepMutation,
+    type UpdateWorkflowVersionStepMutationVariables,
 } from '~/generated-metadata/graphql';
 
 export const useUpdateWorkflowVersionStep = () => {
@@ -52,9 +51,15 @@ export const useUpdateWorkflowVersionStep = () => {
 
     const newCachedRecord = {
       ...cachedRecord,
-      steps: (cachedRecord.steps || []).map((step: WorkflowAction) => {
+      steps: (cachedRecord.steps || []).map((step) => {
         if (step.id === updatedStep.id) {
-          return updatedStep;
+          return {
+            ...updatedStep,
+            position: updatedStep.position ? {
+              x: updatedStep.position.x,
+              y: updatedStep.position.y,
+            } : updatedStep.position,
+          };
         }
         return step;
       }),

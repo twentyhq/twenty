@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type UpdateWorkflowVersionPositionsMutation,
   type UpdateWorkflowVersionPositionsMutationVariables,
-  type WorkflowAction,
 } from '~/generated-metadata/graphql';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -67,7 +66,7 @@ export const useTidyUpWorkflowVersion = () => {
         ? { ...cachedRecord.trigger, position: triggerPosition.position }
         : cachedRecord.trigger;
 
-    const updatedSteps = cachedRecord.steps?.map((step: WorkflowAction) => {
+    const updatedSteps = cachedRecord.steps?.map((step) => {
       const stepPosition = positions.find(
         (position) => position.id === step.id,
       );
