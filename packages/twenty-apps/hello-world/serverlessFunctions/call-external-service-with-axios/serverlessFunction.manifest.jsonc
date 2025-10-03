@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "ae66d2d5-1b14-4798-8192-3b6d4cff88f4",
+  "name": "call-external-service-with-axios"
+}
