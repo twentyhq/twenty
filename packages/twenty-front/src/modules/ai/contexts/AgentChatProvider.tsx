@@ -1,4 +1,4 @@
-import { AgentChatSessionProvider } from '@/ai/components/AgentChatSessionProvider';
+import { LazyAgentChatSessionProvider } from '@/ai/components/LazyAgentChatSessionProvider';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -46,12 +46,12 @@ export const AgentChatProvider = ({
   const isLoading = messagesLoading || threadsLoading;
 
   return (
-    <AgentChatSessionProvider
+    <LazyAgentChatSessionProvider
       agentId={agentId!}
       uiMessages={uiMessages}
       isLoading={isLoading}
     >
       {children}
-    </AgentChatSessionProvider>
+    </LazyAgentChatSessionProvider>
   );
 };
