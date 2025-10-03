@@ -11,13 +11,14 @@ import {
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
-import { type GraphType } from '~/generated-metadata/graphql';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { type WidgetType } from '~/generated/graphql';
+import { type GraphType } from '~/generated-metadata/graphql';
+import { WidgetType, type PageLayoutWidget } from '~/generated/graphql';
 
 export const useCreatePageLayoutGraphWidget = (
   pageLayoutIdFromProps?: string,
@@ -49,13 +50,15 @@ export const useCreatePageLayoutGraphWidget = (
     pageLayoutId,
   );
 
-  const createPageLayoutWidget = useRecoilCallback(
+  const createPageLayoutGraphWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (widgetType: WidgetType, graphType: GraphType) => {
+      (graphType: GraphType): PageLayoutWidget => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 
-        if (!activeTabId) {
-          return;
+        if (!isDefined(activeTabId)) {
+          throw new Error(
+            'A tab must be selected to create a new graph widget',
+          );
         }
 
         const pageLayoutDraft = snapshot
@@ -73,7 +76,7 @@ export const useCreatePageLayoutGraphWidget = (
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const existingWidgetCount = allWidgets.filter(
           (w) =>
-            w.type === widgetType &&
+            w.type === WidgetType.GRAPH &&
             w.configuration &&
             'graphType' in w.configuration &&
             w.configuration.graphType === graphType,
@@ -87,18 +90,18 @@ export const useCreatePageLayoutGraphWidget = (
           defaultSize,
         );
 
-        const newWidget = createDefaultGraphWidget(
-          widgetId,
-          activeTabId,
+        const newWidget = createDefaultGraphWidget({
+          id: widgetId,
+          pageLayoutTabId: activeTabId,
           title,
           graphType,
-          {
+          gridPosition: {
             row: position.y,
             column: position.x,
             rowSpan: position.h,
             columnSpan: position.w,
           },
-        );
+        });
 
         const newLayout = {
           i: widgetId,
@@ -121,6 +124,8 @@ export const useCreatePageLayoutGraphWidget = (
         }));
 
         set(pageLayoutDraggedAreaState, null);
+
+        return newWidget;
       },
     [
       activeTabIdState,
@@ -130,5 +135,5 @@ export const useCreatePageLayoutGraphWidget = (
     ],
   );
 
-  return { createPageLayoutWidget };
+  return { createPageLayoutGraphWidget };
 };

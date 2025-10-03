@@ -57,6 +57,7 @@ export type Agent = {
   id: Scalars['UUID'];
   isCustom: Scalars['Boolean'];
   label: Scalars['String'];
+  modelConfiguration?: Maybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
@@ -269,12 +270,22 @@ export type AvailableWorkspacesAndAccessTokensOutput = {
   tokens: AuthTokenPair;
 };
 
+/** Which axes should display labels */
+export enum AxisNameDisplay {
+  BOTH = 'BOTH',
+  NONE = 'NONE',
+  X = 'X',
+  Y = 'Y'
+}
+
 export type BarChartConfiguration = {
   __typename?: 'BarChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
+  axisNameDisplay: AxisNameDisplay;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
@@ -284,8 +295,6 @@ export type BarChartConfiguration = {
   orderByY?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
-  xAxisName?: Maybe<Scalars['String']>;
-  yAxisName?: Maybe<Scalars['String']>;
 };
 
 export type Billing = {
@@ -485,6 +494,7 @@ export type ClientAiModelConfig = {
   inputCostPer1kTokensInCredits: Scalars['Float'];
   label: Scalars['String'];
   modelId: Scalars['String'];
+  nativeCapabilities?: Maybe<NativeModelCapabilities>;
   outputCostPer1kTokensInCredits: Scalars['Float'];
   provider: ModelProvider;
 };
@@ -697,6 +707,7 @@ export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
+  modelConfiguration?: InputMaybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name?: InputMaybe<Scalars['String']>;
   prompt: Scalars['String'];
@@ -714,6 +725,16 @@ export type CreateApiKeyDto = {
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String'];
   email: Scalars['String'];
+};
+
+export type CreateCronTriggerInput = {
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+};
+
+export type CreateDatabaseEventTriggerInput = {
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
@@ -788,6 +809,7 @@ export type CreateRoleInput = {
 };
 
 export type CreateServerlessFunctionInput = {
+  code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
@@ -899,6 +921,10 @@ export type CronTrigger = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type CronTriggerIdInput = {
+  id: Scalars['String'];
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -916,7 +942,8 @@ export enum DatabaseEventAction {
   DELETED = 'DELETED',
   DESTROYED = 'DESTROYED',
   RESTORED = 'RESTORED',
-  UPDATED = 'UPDATED'
+  UPDATED = 'UPDATED',
+  UPSERTED = 'UPSERTED'
 }
 
 export type DatabaseEventTrigger = {
@@ -926,6 +953,10 @@ export type DatabaseEventTrigger = {
   serverlessFunctionId: Scalars['String'];
   settings: Scalars['JSON'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type DatabaseEventTriggerIdInput = {
+  id: Scalars['String'];
 };
 
 export type DateFilter = {
@@ -1084,6 +1115,23 @@ export type ExecuteServerlessFunctionInput = {
   /** Version of the serverless function to execute */
   version?: Scalars['String'];
 };
+
+export enum ExtendedAggregateOperations {
+  AVG = 'AVG',
+  COUNT = 'COUNT',
+  COUNT_EMPTY = 'COUNT_EMPTY',
+  COUNT_FALSE = 'COUNT_FALSE',
+  COUNT_NOT_EMPTY = 'COUNT_NOT_EMPTY',
+  COUNT_TRUE = 'COUNT_TRUE',
+  COUNT_UNIQUE_VALUES = 'COUNT_UNIQUE_VALUES',
+  EARLIEST = 'EARLIEST',
+  LATEST = 'LATEST',
+  MAX = 'MAX',
+  MIN = 'MIN',
+  PERCENTAGE_EMPTY = 'PERCENTAGE_EMPTY',
+  PERCENTAGE_NOT_EMPTY = 'PERCENTAGE_NOT_EMPTY',
+  SUM = 'SUM'
+}
 
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
@@ -1267,10 +1315,10 @@ export type FullName = {
 export type GaugeChartConfiguration = {
   __typename?: 'GaugeChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateFieldMetadataIdTotal: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
-  aggregateOperationTotal: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
+  color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
 };
@@ -1339,6 +1387,14 @@ export type GridPositionInput = {
   row: Scalars['Float'];
   rowSpan: Scalars['Float'];
 };
+
+export enum HttpMethod {
+  DELETE = 'DELETE',
+  GET = 'GET',
+  PATCH = 'PATCH',
+  POST = 'POST',
+  PUT = 'PUT'
+}
 
 export enum HealthIndicatorId {
   app = 'app',
@@ -1486,9 +1542,11 @@ export type InvalidatePassword = {
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
+  axisNameDisplay: AxisNameDisplay;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
@@ -1498,8 +1556,6 @@ export type LineChartConfiguration = {
   orderByY?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
-  xAxisName?: Maybe<Scalars['String']>;
-  yAxisName?: Maybe<Scalars['String']>;
 };
 
 export type LinkMetadata = {
@@ -1572,6 +1628,8 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
+  createOneCronTrigger: CronTrigger;
+  createOneDatabaseEventTrigger: DatabaseEventTrigger;
   createOneField: Field;
   createOneObject: Object;
   createOneRole: Role;
@@ -1598,6 +1656,8 @@ export type Mutation = {
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
   deleteOneAgent: Agent;
+  deleteOneCronTrigger: CronTrigger;
+  deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -1675,6 +1735,8 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
+  updateOneCronTrigger: CronTrigger;
+  updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRole: Role;
@@ -1842,6 +1904,16 @@ export type MutationCreateOneAgentArgs = {
 };
 
 
+export type MutationCreateOneCronTriggerArgs = {
+  input: CreateCronTriggerInput;
+};
+
+
+export type MutationCreateOneDatabaseEventTriggerArgs = {
+  input: CreateDatabaseEventTriggerInput;
+};
+
+
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
@@ -1960,6 +2032,16 @@ export type MutationDeleteFileArgs = {
 
 export type MutationDeleteOneAgentArgs = {
   input: AgentIdInput;
+};
+
+
+export type MutationDeleteOneCronTriggerArgs = {
+  input: CronTriggerIdInput;
+};
+
+
+export type MutationDeleteOneDatabaseEventTriggerArgs = {
+  input: DatabaseEventTriggerIdInput;
 };
 
 
@@ -2341,6 +2423,16 @@ export type MutationUpdateOneAgentArgs = {
 };
 
 
+export type MutationUpdateOneCronTriggerArgs = {
+  input: UpdateCronTriggerInput;
+};
+
+
+export type MutationUpdateOneDatabaseEventTriggerArgs = {
+  input: UpdateDatabaseEventTriggerInput;
+};
+
+
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
 };
@@ -2485,12 +2577,19 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
   otp: Scalars['String'];
 };
 
+export type NativeModelCapabilities = {
+  __typename?: 'NativeModelCapabilities';
+  twitterSearch?: Maybe<Scalars['Boolean']>;
+  webSearch?: Maybe<Scalars['Boolean']>;
+};
+
 export type NumberChartConfiguration = {
   __typename?: 'NumberChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   format?: Maybe<Scalars['String']>;
   graphType: GraphType;
@@ -2732,9 +2831,10 @@ export enum PermissionFlagType {
 export type PieChartConfiguration = {
   __typename?: 'PieChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataId: Scalars['UUID'];
@@ -2810,9 +2910,13 @@ export type Query = {
   findAgentHandoffTargets: Array<Agent>;
   findAgentHandoffs: Array<AgentHandoffDto>;
   findManyAgents: Array<Agent>;
+  findManyCronTriggers: Array<CronTrigger>;
+  findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
   findManyPublicDomains: Array<PublicDomain>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
+  findOneCronTrigger: CronTrigger;
+  findOneDatabaseEventTrigger: DatabaseEventTrigger;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
@@ -2918,6 +3022,16 @@ export type QueryFindAgentHandoffsArgs = {
 
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
+};
+
+
+export type QueryFindOneCronTriggerArgs = {
+  input: CronTriggerIdInput;
+};
+
+
+export type QueryFindOneDatabaseEventTriggerArgs = {
+  input: DatabaseEventTriggerIdInput;
 };
 
 
@@ -3241,6 +3355,18 @@ export type Role = {
   permissionFlags?: Maybe<Array<PermissionFlag>>;
   standardId?: Maybe<Scalars['UUID']>;
   workspaceMembers: Array<WorkspaceMember>;
+};
+
+export type RouteTrigger = {
+  __typename?: 'RouteTrigger';
+  createdAt: Scalars['DateTime'];
+  httpMethod: HttpMethod;
+  id: Scalars['ID'];
+  isAuthRequired: Scalars['Boolean'];
+  path: Scalars['String'];
+  serverlessFunctionId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['String'];
 };
 
 export type RunWorkflowVersionInput = {
@@ -3579,6 +3705,7 @@ export type UpdateAgentInput = {
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   label: Scalars['String'];
+  modelConfiguration?: InputMaybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
@@ -3591,6 +3718,28 @@ export type UpdateApiKeyDto = {
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
   revokedAt?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateCronTriggerInput = {
+  /** The id of the cron trigger to update */
+  id: Scalars['String'];
+  /** The cron trigger updates */
+  update: UpdateCronTriggerInputUpdates;
+};
+
+export type UpdateCronTriggerInputUpdates = {
+  settings: Scalars['JSON'];
+};
+
+export type UpdateDatabaseEventTriggerInput = {
+  /** The id of the database event trigger to update */
+  id: Scalars['String'];
+  /** The database event trigger updates */
+  update: UpdateDatabaseEventTriggerInputUpdates;
+};
+
+export type UpdateDatabaseEventTriggerInputUpdates = {
+  settings: Scalars['JSON'];
 };
 
 export type UpdateFieldInput = {
@@ -3706,10 +3855,15 @@ export type UpdateRolePayload = {
 };
 
 export type UpdateServerlessFunctionInput = {
+  /** Id of the serverless function to update */
+  id: Scalars['UUID'];
+  /** The serverless function updates */
+  update: UpdateServerlessFunctionInputUpdates;
+};
+
+export type UpdateServerlessFunctionInputUpdates = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
-  /** Id of the serverless function to execute */
-  id: Scalars['UUID'];
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
@@ -4135,6 +4289,7 @@ export type WorkspaceInfo = {
   name: Scalars['String'];
   totalUsers: Scalars['Float'];
   users: Array<UserInfo>;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type WorkspaceInvitation = {
@@ -4220,7 +4375,7 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
-export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, xAxisName?: string | null, yAxisName?: string | null, rangeMin?: number | null, rangeMax?: number | null, filter?: any | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, aggregateOperationTotal: AggregateOperations, aggregateFieldMetadataIdTotal: any, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, orderBy: GraphOrderBy, filter?: any | null } | null };
+export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay: AxisNameDisplay, displayDataLabel: boolean, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel: boolean, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay: AxisNameDisplay, displayDataLabel: boolean, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel: boolean, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, orderBy: GraphOrderBy, displayDataLabel: boolean, color?: string | null, description?: string | null, filter?: any | null } | null };
 
 export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
   id: Scalars['String'];
@@ -4228,7 +4383,7 @@ export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, xAxisName?: string | null, yAxisName?: string | null, rangeMin?: number | null, rangeMax?: number | null, filter?: any | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, aggregateOperationTotal: AggregateOperations, aggregateFieldMetadataIdTotal: any, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, orderBy: GraphOrderBy, filter?: any | null } | null }> | null }> | null } };
+export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay: AxisNameDisplay, displayDataLabel: boolean, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel: boolean, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay: AxisNameDisplay, displayDataLabel: boolean, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel: boolean, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, orderBy: GraphOrderBy, displayDataLabel: boolean, color?: string | null, description?: string | null, filter?: any | null } | null }> | null }> | null } };
 
 export type OnDbEventSubscriptionVariables = Exact<{
   input: OnDbEventInput;
@@ -4422,6 +4577,11 @@ export type UpdateCoreViewSortMutationVariables = Exact<{
 
 export type UpdateCoreViewSortMutation = { __typename?: 'Mutation', updateCoreViewSort: { __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any } };
 
+export type FindAllCoreViewsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindAllCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> }> };
+
 export type FindManyCoreViewFieldsQueryVariables = Exact<{
   viewId: Scalars['String'];
 }>;
@@ -4531,10 +4691,12 @@ export const PageLayoutWidgetFragmentFragmentDoc = gql`
       groupByFieldMetadataIdY
       orderByY
       omitNullValues
-      xAxisName
-      yAxisName
+      axisNameDisplay
+      displayDataLabel
       rangeMin
       rangeMax
+      color
+      description
       filter
     }
     ... on LineChartConfiguration {
@@ -4545,6 +4707,13 @@ export const PageLayoutWidgetFragmentFragmentDoc = gql`
       orderByX
       groupByFieldMetadataIdY
       orderByY
+      omitNullValues
+      axisNameDisplay
+      displayDataLabel
+      rangeMin
+      rangeMax
+      color
+      description
       filter
     }
     ... on PieChartConfiguration {
@@ -4553,12 +4722,16 @@ export const PageLayoutWidgetFragmentFragmentDoc = gql`
       aggregateFieldMetadataId
       aggregateOperation
       orderBy
+      displayDataLabel
+      color
+      description
       filter
     }
     ... on NumberChartConfiguration {
       graphType
       aggregateFieldMetadataId
       aggregateOperation
+      displayDataLabel
       description
       filter
     }
@@ -4566,8 +4739,8 @@ export const PageLayoutWidgetFragmentFragmentDoc = gql`
       graphType
       aggregateFieldMetadataId
       aggregateOperation
-      aggregateOperationTotal
-      aggregateFieldMetadataIdTotal
+      displayDataLabel
+      color
       description
       filter
     }
@@ -5591,6 +5764,40 @@ export function useUpdateCoreViewSortMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateCoreViewSortMutationHookResult = ReturnType<typeof useUpdateCoreViewSortMutation>;
 export type UpdateCoreViewSortMutationResult = Apollo.MutationResult<UpdateCoreViewSortMutation>;
 export type UpdateCoreViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewSortMutation, UpdateCoreViewSortMutationVariables>;
+export const FindAllCoreViewsDocument = gql`
+    query FindAllCoreViews {
+  getCoreViews {
+    ...ViewFragment
+  }
+}
+    ${ViewFragmentFragmentDoc}`;
+
+/**
+ * __useFindAllCoreViewsQuery__
+ *
+ * To run a query within a React component, call `useFindAllCoreViewsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindAllCoreViewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindAllCoreViewsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindAllCoreViewsQuery(baseOptions?: Apollo.QueryHookOptions<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>(FindAllCoreViewsDocument, options);
+      }
+export function useFindAllCoreViewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>(FindAllCoreViewsDocument, options);
+        }
+export type FindAllCoreViewsQueryHookResult = ReturnType<typeof useFindAllCoreViewsQuery>;
+export type FindAllCoreViewsLazyQueryHookResult = ReturnType<typeof useFindAllCoreViewsLazyQuery>;
+export type FindAllCoreViewsQueryResult = Apollo.QueryResult<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>;
 export const FindManyCoreViewFieldsDocument = gql`
     query FindManyCoreViewFields($viewId: String!) {
   getCoreViewFields(viewId: $viewId) {

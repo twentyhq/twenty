@@ -1,3 +1,4 @@
+import { ViewFilterOperandDeprecated } from '@/types';
 import { z } from 'zod';
 import { StepLogicalOperator } from '../../types/StepFilters';
 import { ViewFilterOperand } from '../../types/ViewFilterOperand';
@@ -19,7 +20,7 @@ export const workflowFilterActionSettingsSchema =
           id: z.string(),
           type: z.string(),
           stepOutputKey: z.string(),
-          operand: z.enum(ViewFilterOperand),
+          operand: z.enum(ViewFilterOperand).or(z.enum(ViewFilterOperandDeprecated)),
           value: z.string(),
           stepFilterGroupId: z.string(),
           positionInStepFilterGroup: z.number().optional(),

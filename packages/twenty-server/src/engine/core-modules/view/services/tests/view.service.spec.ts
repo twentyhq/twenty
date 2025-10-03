@@ -15,6 +15,7 @@ import {
   generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('ViewService', () => {
   let viewService: ViewService;
@@ -54,6 +55,12 @@ describe('ViewService', () => {
             save: jest.fn(),
             softDelete: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: WorkspaceCacheStorageService,
+          useValue: {
+            flushGraphQLOperation: jest.fn(),
           },
         },
         {

@@ -168,6 +168,14 @@ export class WorkspaceInsertQueryBuilder<
         authContext: this.authContext,
       });
 
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.UPSERTED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedResultForEvent,
+        authContext: this.authContext,
+      });
+
       // TypeORM returns all entity columns for insertions
       const resultWithoutInsertionExtraColumns = !isDefined(result.raw)
         ? []

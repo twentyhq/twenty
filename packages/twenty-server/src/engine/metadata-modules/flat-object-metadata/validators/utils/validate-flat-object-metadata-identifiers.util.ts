@@ -4,20 +4,28 @@ import {
   isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
-export const validateFlatObjectMetadataIdentifiers = (
-  flatObjectMetadata: FlatObjectMetadata,
-) => {
+export const validateFlatObjectMetadataIdentifiers = ({
+  flatObjectMetadata,
+  objectFlatFieldMetadatas,
+}: {
+  flatObjectMetadata: Pick<
+    FlatObjectMetadata,
+    'labelIdentifierFieldMetadataId' | 'imageIdentifierFieldMetadataId'
+  >;
+  objectFlatFieldMetadatas: FlatFieldMetadata[];
+}) => {
   const errors: FlatObjectMetadataValidationError[] = [];
 
   const { labelIdentifierFieldMetadataId, imageIdentifierFieldMetadataId } =
     flatObjectMetadata;
 
   if (isDefined(labelIdentifierFieldMetadataId)) {
-    const flatFieldMetadata = flatObjectMetadata.flatFieldMetadatas.find(
+    const flatFieldMetadata = objectFlatFieldMetadatas.find(
       (flatFieldMetadata) =>
         flatFieldMetadata.id === labelIdentifierFieldMetadataId,
     );
@@ -40,7 +48,7 @@ export const validateFlatObjectMetadataIdentifiers = (
   }
 
   if (isDefined(imageIdentifierFieldMetadataId)) {
-    const relatedFlatFieldMetadata = flatObjectMetadata.flatFieldMetadatas.find(
+    const relatedFlatFieldMetadata = objectFlatFieldMetadatas.find(
       (flatFieldMetadata) =>
         flatFieldMetadata.id === imageIdentifierFieldMetadataId,
     );

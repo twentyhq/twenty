@@ -12,6 +12,7 @@ import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/
 import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { type ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/types/object-record-upsert.event';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
@@ -24,6 +25,7 @@ type ActionEventMap<T> = {
   [DatabaseEventAction.DELETED]: ObjectRecordDeleteEvent<T>;
   [DatabaseEventAction.DESTROYED]: ObjectRecordDestroyEvent<T>;
   [DatabaseEventAction.RESTORED]: ObjectRecordRestoreEvent<T>;
+  [DatabaseEventAction.UPSERTED]: ObjectRecordUpsertEvent<T>;
 };
 
 @Injectable()
@@ -62,6 +64,7 @@ export class WorkspaceEventEmitter {
       | ObjectRecordCreateEvent<T>
       | ObjectRecordUpdateEvent<T>
       | ObjectRecordDeleteEvent<T>
+      | ObjectRecordUpsertEvent<T>
     )[] = [];
 
     switch (action) {
@@ -136,6 +139,41 @@ export class WorkspaceEventEmitter {
           event.recordId = before.id;
           event.objectMetadata = { ...objectMetadataItem, fields };
           event.properties = { before };
+
+          return event;
+        });
+        break;
+      case DatabaseEventAction.UPSERTED:
+        events = entityArray.map((after, index) => {
+          const event = new ObjectRecordUpsertEvent<T>();
+
+          event.userId = authContext?.user?.id;
+          event.recordId = after.id;
+          event.objectMetadata = { ...objectMetadataItem, fields };
+
+          const before = beforeEntities
+            ? Array.isArray(beforeEntities)
+              ? beforeEntities[index]
+              : beforeEntities
+            : undefined;
+
+          let updatedFields;
+          let diff;
+
+          diff = objectRecordChangedValues(
+            before ?? {},
+            after,
+            objectMetadataItem,
+          ) as Partial<ObjectRecordDiff<T>>;
+
+          updatedFields = Object.keys(diff);
+
+          event.properties = {
+            after,
+            ...(before && { before }),
+            ...(diff && { diff }),
+            ...(updatedFields && { updatedFields }),
+          };
 
           return event;
         });

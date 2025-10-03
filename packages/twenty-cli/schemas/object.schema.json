@@ -6,6 +6,7 @@
   "type": "object",
   "required": [
     "standardId",
+    "universalIdentifier",
     "nameSingular",
     "namePlural",
     "labelSingular",
@@ -16,10 +17,14 @@
       "type": "string",
       "description": "JSON Schema reference for validation and IDE support"
     },
-    "standardId": {
+    "universalIdentifier": {
       "type": "string",
-      "description": "Unique identifier for the object (UUID format recommended)",
+      "description": "Unique identifier (UUID format recommended)",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "standardId": {
+      "const": { "$data": "1/universalIdentifier" },
+      "description": "Should be the same as universalIdentifier"
     },
     "nameSingular": {
       "type": "string",

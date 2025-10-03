@@ -22,6 +22,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -47,6 +48,7 @@ export class WorkspaceInvitationService {
     private readonly onboardingService: OnboardingService,
     private readonly domainManagerService: DomainManagerService,
     private readonly i18nService: I18nService,
+    private readonly fileService: FileService,
   ) {}
 
   async validatePersonalInvitation({
@@ -294,7 +296,15 @@ export class WorkspaceInvitationService {
 
         const emailData = {
           link: link.toString(),
-          workspace: { name: workspace.displayName, logo: workspace.logo },
+          workspace: {
+            name: workspace.displayName,
+            logo: workspace.logo
+              ? this.fileService.signFileUrl({
+                  url: workspace.logo,
+                  workspaceId: workspace.id,
+                })
+              : workspace.logo,
+          },
           sender: {
             email: sender.userEmail,
             firstName: sender.name.firstName,

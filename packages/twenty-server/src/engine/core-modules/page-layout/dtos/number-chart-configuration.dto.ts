@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsObject,
@@ -12,9 +13,9 @@ import { GraphQLJSON } from 'graphql-type-json';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
+import { ExtendedAggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/extended-aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
 @ObjectType('NumberChartConfiguration')
 export class NumberChartConfigurationDTO {
@@ -28,15 +29,20 @@ export class NumberChartConfigurationDTO {
   @IsNotEmpty()
   aggregateFieldMetadataId: string;
 
-  @Field(() => AggregateOperations)
-  @IsEnum(AggregateOperations)
+  @Field(() => ExtendedAggregateOperations)
+  @IsEnum(ExtendedAggregateOperations)
   @IsNotEmpty()
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
 
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   label?: string;
+
+  @Field(() => Boolean)
+  @IsBoolean()
+  @IsNotEmpty()
+  displayDataLabel: boolean;
 
   @Field(() => String, { nullable: true })
   @IsString()

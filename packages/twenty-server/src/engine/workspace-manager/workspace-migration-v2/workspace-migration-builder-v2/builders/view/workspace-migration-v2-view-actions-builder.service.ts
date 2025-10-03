@@ -18,10 +18,10 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
 export type ViewRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
   'flatObjectMetadataMaps'
-  // 'flatFieldMetadataMaps' TODO implement once with extract field from object diffing
 >;
 @Injectable()
 export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'view',
   FlatView,
   WorkspaceMigrationViewActionV2,
   ViewRelatedFlatEntityMaps
@@ -29,7 +29,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
   constructor(
     private readonly flatViewValidatorService: FlatViewValidatorService,
   ) {
-    super();
+    super('view');
   }
 
   protected async validateFlatEntityCreation({
@@ -37,7 +37,11 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     flatEntityToValidate: flatViewToValidate,
     optimisticFlatEntityMaps: optimisticFlatViewMaps,
   }: FlatEntityValidationArgs<FlatView, ViewRelatedFlatEntityMaps>): Promise<
-    FlatEntityValidationReturnType<WorkspaceMigrationViewActionV2, FlatView>
+    FlatEntityValidationReturnType<
+      WorkspaceMigrationViewActionV2,
+      FlatView,
+      ViewRelatedFlatEntityMaps
+    >
   > {
     const validationResult =
       await this.flatViewValidatorService.validateFlatViewCreation({
@@ -59,6 +63,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         type: 'create_view',
         view: flatViewToValidate,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -67,7 +72,11 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     flatEntityToValidate: flatViewToValidate,
     optimisticFlatEntityMaps: optimisticFlatViewMaps,
   }: FlatEntityValidationArgs<FlatView, ViewRelatedFlatEntityMaps>): Promise<
-    FlatEntityValidationReturnType<WorkspaceMigrationViewActionV2, FlatView>
+    FlatEntityValidationReturnType<
+      WorkspaceMigrationViewActionV2,
+      FlatView,
+      ViewRelatedFlatEntityMaps
+    >
   > {
     const validationResult =
       this.flatViewValidatorService.validateFlatViewDeletion({
@@ -89,6 +98,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         type: 'delete_view',
         viewId: flatViewToValidate.id,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -100,7 +110,11 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     FlatView,
     ViewRelatedFlatEntityMaps
   >): Promise<
-    | FlatEntityValidationReturnType<WorkspaceMigrationViewActionV2, FlatView>
+    | FlatEntityValidationReturnType<
+        WorkspaceMigrationViewActionV2,
+        FlatView,
+        ViewRelatedFlatEntityMaps
+      >
     | undefined
   > {
     const viewUpdatedProperties = compareTwoFlatView({
@@ -135,6 +149,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     return {
       status: 'success',
       action: updateViewAction,
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 }
