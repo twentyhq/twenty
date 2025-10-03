@@ -33,7 +33,7 @@ export class FindOneResolverFactory
 
       try {
         return await this.commonFindOneQueryRunnerService.run({
-          rawSelectedFields: selectedFields,
+          rawSelectedFields: { graphqlSelectedFields: selectedFields },
           args,
           authContext: internalContext.authContext,
           objectMetadataMaps: internalContext.objectMetadataMaps,
