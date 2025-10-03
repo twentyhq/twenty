@@ -26,6 +26,7 @@ import {
   IconEyeShare,
   IconHome,
   IconId,
+  IconLink,
   IconUser,
 } from 'twenty-ui/display';
 import { Button, Toggle } from 'twenty-ui/input';
@@ -133,6 +134,10 @@ export const SettingsAdminWorkspaceContent = ({
     });
   };
 
+  const getWorkspaceUrl = (workspaceUrls: WorkspaceInfo['workspaceUrls']) => {
+    return workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl;
+  };
+
   const workspaceInfoItems = [
     {
       Icon: IconHome,
@@ -161,6 +166,13 @@ export const SettingsAdminWorkspaceContent = ({
       value: activeWorkspace?.id,
     },
     {
+      Icon: IconLink,
+      label: t`URL`,
+      value: activeWorkspace?.workspaceUrls
+        ? getWorkspaceUrl(activeWorkspace.workspaceUrls)
+        : '',
+    },
+    {
       Icon: IconUser,
       label: t`Members`,
       value: activeWorkspace?.totalUsers,
@@ -186,7 +198,11 @@ export const SettingsAdminWorkspaceContent = ({
               Icon={IconEyeShare}
               variant="primary"
               accent="default"
-              title={t`Impersonate`}
+              title={
+                activeWorkspace.allowImpersonation === false
+                  ? t`Impersonation is disabled for this workspace`
+                  : t`Impersonate`
+              }
               onClick={() => handleImpersonate(activeWorkspace.id)}
               disabled={
                 isImpersonateLoading ||

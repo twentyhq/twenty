@@ -34,6 +34,7 @@ export class ObjectMetadataRelatedRecordsService {
 
     await this.createViewFields(objectMetadata, view.id);
     await this.createViewWorkspaceFavorite(objectMetadata.workspaceId, view.id);
+    await this.viewService.flushGraphQLCache(objectMetadata.workspaceId);
   }
 
   public async updateLabelMetadataIdentifierInObjectViews({

@@ -7,7 +7,7 @@ export interface TwentyConfig {
 export type PackageJson = {
   $schema?: string;
   universalIdentifier: string;
-  label: string;
+  name: string;
   license: string;
   description?: string;
   engines: {

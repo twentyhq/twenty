@@ -12,31 +12,26 @@ import {
   UpdateServerlessFunctionAction,
   WorkspaceMigrationServerlessFunctionActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-serverless-function-action-v2.type';
-import {
-  FlatServerlessFunctionValidatorService,
-  ServerlessFunctionRelatedFlatEntityMaps,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
+import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
 
 @Injectable()
 export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'serverlessFunction',
   FlatServerlessFunction,
   WorkspaceMigrationServerlessFunctionActionV2,
-  ServerlessFunctionRelatedFlatEntityMaps
+  undefined
 > {
   constructor(
     private readonly flatServerlessFunctionValidatorService: FlatServerlessFunctionValidatorService,
   ) {
-    super();
+    super('serverlessFunction');
   }
 
   protected async validateFlatEntityCreation({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatServerlessFunctionToValidate,
     optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
-  }: FlatEntityValidationArgs<
-    FlatServerlessFunction,
-    ServerlessFunctionRelatedFlatEntityMaps
-  >): Promise<
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityValidationArgs<FlatServerlessFunction>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationServerlessFunctionActionV2,
       FlatServerlessFunction
@@ -47,7 +42,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         {
           flatServerlessFunctionToValidate,
           optimisticFlatServerlessFunctionMaps,
-          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -64,17 +58,15 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         type: 'create_serverless_function',
         serverlessFunction: flatServerlessFunctionToValidate,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
   protected async validateFlatEntityDeletion({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatServerlessFunctionToValidate,
     optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
-  }: FlatEntityValidationArgs<
-    FlatServerlessFunction,
-    ServerlessFunctionRelatedFlatEntityMaps
-  >): Promise<
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityValidationArgs<FlatServerlessFunction>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationServerlessFunctionActionV2,
       FlatServerlessFunction
@@ -85,7 +77,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         {
           flatServerlessFunctionToValidate,
           optimisticFlatServerlessFunctionMaps,
-          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -102,20 +93,18 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         type: 'delete_serverless_function',
         serverlessFunctionId: flatServerlessFunctionToValidate.id,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
   protected async validateFlatEntityUpdate({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityUpdate: {
       from: fromFlatServerlessFunction,
       to: toFlatServerlessFunction,
     },
     optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
-  }: FlatEntityUpdateValidationArgs<
-    FlatServerlessFunction,
-    ServerlessFunctionRelatedFlatEntityMaps
-  >): Promise<
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityUpdateValidationArgs<FlatServerlessFunction>): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationServerlessFunctionActionV2,
         FlatServerlessFunction
@@ -137,7 +126,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         {
           flatServerlessFunctionToValidate: toFlatServerlessFunction,
           optimisticFlatServerlessFunctionMaps,
-          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -158,6 +146,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     return {
       status: 'success',
       action: updateServerlessFunctionAction,
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

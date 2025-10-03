@@ -9,4 +9,5 @@ export class CronTriggerException extends CustomException {
 export enum CronTriggerExceptionCode {
   CRON_TRIGGER_NOT_FOUND = 'CRON_TRIGGER_NOT_FOUND',
   CRON_TRIGGER_ALREADY_EXIST = 'CRON_TRIGGER_ALREADY_EXIST',
+  SERVERLESS_FUNCTION_NOT_FOUND = 'SERVERLESS_FUNCTION_NOT_FOUND',
 }

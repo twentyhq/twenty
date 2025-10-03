@@ -8,23 +8,45 @@ import {
   type StepFilter,
   type StepFilterGroup,
   ViewFilterOperand,
+  type ViewFilterOperandDeprecated,
 } from 'twenty-shared/types';
+import { convertViewFilterOperandToCoreOperand as convertViewFilterOperandDeprecated } from 'twenty-shared/utils';
 
 import { parseAndEvaluateRelativeDateFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/parse-and-evaluate-relative-date-filter.util';
 
-type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
+type ResolvedFilterWithPotentiallyDeprecatedOperand = Omit<
+  StepFilter,
+  'value' | 'stepOutputKey' | 'operand'
+> & {
   rightOperand: unknown;
   leftOperand: unknown;
+  operand: ViewFilterOperand | ViewFilterOperandDeprecated;
 };
 
-function evaluateFilter(filter: ResolvedFilter): boolean {
+type ResolvedFilter = Omit<
+  StepFilter,
+  'value' | 'stepOutputKey' | 'operand'
+> & {
+  rightOperand: unknown;
+  leftOperand: unknown;
+  operand: ViewFilterOperand;
+};
+
+function evaluateFilter(
+  filter: ResolvedFilterWithPotentiallyDeprecatedOperand,
+): boolean {
+  const filterWithConvertedOperand = {
+    ...filter,
+    operand: convertViewFilterOperandDeprecated(filter.operand),
+  };
+
   switch (filter.type) {
     case 'NUMBER':
     case 'NUMERIC':
-      return evaluateNumberFilter(filter);
+      return evaluateNumberFilter(filterWithConvertedOperand);
     case 'DATE':
     case 'DATE_TIME':
-      return evaluateDateFilter(filter);
+      return evaluateDateFilter(filterWithConvertedOperand);
     case 'TEXT':
     case 'MULTI_SELECT':
     case 'FULL_NAME':
@@ -34,19 +56,19 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
     case 'LINKS':
     case 'ARRAY':
     case 'RAW_JSON':
-      return evaluateTextAndArrayFilter(filter);
+      return evaluateTextAndArrayFilter(filterWithConvertedOperand);
     case 'SELECT':
-      return evaluateSelectFilter(filter);
+      return evaluateSelectFilter(filterWithConvertedOperand);
     case 'BOOLEAN':
-      return evaluateBooleanFilter(filter);
+      return evaluateBooleanFilter(filterWithConvertedOperand);
     case 'UUID':
-      return evaluateUuidFilter(filter);
+      return evaluateUuidFilter(filterWithConvertedOperand);
     case 'RELATION':
-      return evaluateRelationFilter(filter);
+      return evaluateRelationFilter(filterWithConvertedOperand);
     case 'CURRENCY':
-      return evaluateCurrencyFilter(filter);
+      return evaluateCurrencyFilter(filterWithConvertedOperand);
     default:
-      return evaluateDefaultFilter(filter);
+      return evaluateDefaultFilter(filterWithConvertedOperand);
   }
 }
 

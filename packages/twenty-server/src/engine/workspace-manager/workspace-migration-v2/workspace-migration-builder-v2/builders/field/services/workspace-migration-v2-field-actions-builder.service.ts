@@ -1,255 +1,217 @@
 import { Injectable } from '@nestjs/common';
 
-import { FromTo } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
-import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { computeMorphOrRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-morph-or-relation-target-flat-object-metadata-maps.util';
-import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
-import { ValidateAndBuildMetadataResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/validate-and-build-metadata-result.type';
-import { type WorkspaceMigrationFieldActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
-import { type UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-field-matrix.util';
 import {
-  getWorkspaceMigrationV2FieldCreateAction,
-  getWorkspaceMigrationV2FieldDeleteAction,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
+  FlatEntityUpdateValidationArgs,
+  FlatEntityValidationArgs,
+  FlatEntityValidationReturnType,
+  WorkspaceEntityMigrationBuilderV2Service,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import {
+  UpdateFieldAction,
+  WorkspaceMigrationFieldActionV2,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
+import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service';
 
-type BuildWorkspaceMigrationV2FieldActionsArgs = FromTo<
-  FlatObjectMetadataMaps,
+export type FieldMetadataRelatedFlatEntityMaps = Pick<
+  AllFlatEntityMaps,
   'flatObjectMetadataMaps'
-> & {
-  buildOptions: WorkspaceMigrationV2BuilderOptions;
-  objectMetadataDeletedCreatedUpdatedFields: UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[];
-};
-
-type ValidateFlatObjectMetadataFlatFieldMetadataMatrixArgs = FromTo<
-  FlatObjectMetadataMaps,
-  'flatObjectMetadataMaps'
-> &
-  UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix & {
-    buildOptions: WorkspaceMigrationV2BuilderOptions;
-  };
-
+>;
 @Injectable()
-export class WorkspaceMigrationV2FieldActionsBuilderService {
+export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  'fieldMetadata',
+  FlatFieldMetadata,
+  WorkspaceMigrationFieldActionV2,
+  FieldMetadataRelatedFlatEntityMaps
+> {
   constructor(
-    private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
-  ) {}
-
-  private async validateFlatObjectMetadataFlatFieldMetadataMatrix({
-    createdFlatFieldMetadatas,
-    deletedFlatFieldMetadatas,
-    flatObjectMetadata,
-    updatedFlatFieldMetadatas,
-    fromFlatObjectMetadataMaps,
-    toFlatObjectMetadataMaps,
-    buildOptions,
-  }: ValidateFlatObjectMetadataFlatFieldMetadataMatrixArgs): Promise<
-    ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2>
-  > {
-    const validateAndBuildResult: ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2> =
-      {
-        failed: [],
-        created: [],
-        deleted: [],
-        updated: [],
-        optimisticFlatObjectMetadataMaps: structuredClone(
-          fromFlatObjectMetadataMaps,
-        ),
-      };
-
-    for (const {
-      from: fromFlatFieldMetadata,
-      to: toFlatFieldMetadata,
-    } of updatedFlatFieldMetadatas) {
-      const updates = compareTwoFlatFieldMetadata({
-        fromFlatFieldMetadata,
-        toFlatFieldMetadata,
-      });
-
-      if (updates.length === 0) {
-        continue;
-      }
-
-      const {
-        workspaceId,
-        id: fieldMetadataId,
-        objectMetadataId,
-      } = toFlatFieldMetadata;
-
-      const validationErrors =
-        await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataUpdate(
-          {
-            existingFlatObjectMetadataMaps:
-              validateAndBuildResult.optimisticFlatObjectMetadataMaps,
-            flatFieldMetadataToValidate: toFlatFieldMetadata,
-            workspaceId,
-            otherFlatObjectMetadataMapsToValidate: undefined,
-          },
-        );
-
-      if (validationErrors.errors.length > 0) {
-        validateAndBuildResult.failed.push(validationErrors);
-        continue;
-      }
-
-      validateAndBuildResult.optimisticFlatObjectMetadataMaps =
-        replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-          flatFieldMetadata: toFlatFieldMetadata,
-          flatObjectMetadataMaps:
-            validateAndBuildResult.optimisticFlatObjectMetadataMaps,
-        });
-
-      validateAndBuildResult.updated.push({
-        type: 'update_field',
-        fieldMetadataId,
-        objectMetadataId,
-        workspaceId,
-        updates,
-      });
-    }
-
-    for (const flatFieldMetadataToCreate of createdFlatFieldMetadatas) {
-      const relationTargetFlatObjectMetadataMaps =
-        isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToCreate)
-          ? computeMorphOrRelationTargetFlatObjectMetadataMaps({
-              flatFieldMetadata: flatFieldMetadataToCreate,
-              flatObjectMetadataMaps: toFlatObjectMetadataMaps,
-            })
-          : undefined;
-
-      const validationErrors =
-        await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataCreation(
-          {
-            existingFlatObjectMetadataMaps:
-              validateAndBuildResult.optimisticFlatObjectMetadataMaps,
-            flatFieldMetadataToValidate: flatFieldMetadataToCreate,
-            workspaceId: flatFieldMetadataToCreate.workspaceId,
-            otherFlatObjectMetadataMapsToValidate:
-              relationTargetFlatObjectMetadataMaps,
-          },
-        );
-
-      if (validationErrors.errors.length > 0) {
-        validateAndBuildResult.failed.push(validationErrors);
-        continue;
-      }
-
-      validateAndBuildResult.optimisticFlatObjectMetadataMaps =
-        addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-          flatFieldMetadata: flatFieldMetadataToCreate,
-          flatObjectMetadataMaps:
-            validateAndBuildResult.optimisticFlatObjectMetadataMaps,
-        });
-
-      const createFieldAction = getWorkspaceMigrationV2FieldCreateAction({
-        flatFieldMetadata: flatFieldMetadataToCreate,
-        flatObjectMetadata,
-      });
-
-      validateAndBuildResult.created.push(createFieldAction);
-    }
-
-    for (const flatFieldMetadataToDelete of buildOptions.inferDeletionFromMissingEntities
-      ? deletedFlatFieldMetadatas
-      : []) {
-      const validationErrors =
-        this.flatFieldMetadataValidatorService.validateFlatFieldMetadataDeletion(
-          {
-            existingFlatObjectMetadataMaps:
-              validateAndBuildResult.optimisticFlatObjectMetadataMaps,
-            flatFieldMetadataToDelete,
-          },
-        );
-
-      if (validationErrors.errors.length > 0) {
-        validateAndBuildResult.failed.push(validationErrors);
-        continue;
-      }
-
-      validateAndBuildResult.optimisticFlatObjectMetadataMaps =
-        deleteFieldFromFlatObjectMetadataMapsOrThrow({
-          fieldMetadataId: flatFieldMetadataToDelete.id,
-          flatObjectMetadataMaps:
-            validateAndBuildResult.optimisticFlatObjectMetadataMaps,
-          objectMetadataId: flatFieldMetadataToDelete.objectMetadataId,
-        });
-
-      const deleteFieldAction = getWorkspaceMigrationV2FieldDeleteAction({
-        flatFieldMetadata: flatFieldMetadataToDelete,
-        flatObjectMetadata,
-      });
-
-      validateAndBuildResult.deleted.push(deleteFieldAction);
-    }
-
-    return validateAndBuildResult;
+    private readonly flatFieldValidatorService: FlatFieldMetadataValidatorService,
+  ) {
+    super('fieldMetadata');
   }
 
-  public async validateAndBuildFieldActions({
-    buildOptions,
-    fromFlatObjectMetadataMaps,
-    toFlatObjectMetadataMaps,
-    objectMetadataDeletedCreatedUpdatedFields,
-  }: BuildWorkspaceMigrationV2FieldActionsArgs): Promise<
-    ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2>
+  protected async validateFlatEntityCreation({
+    dependencyOptimisticFlatEntityMaps,
+    flatEntityToValidate: flatFieldMetadataToValidate,
+    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
+    workspaceId,
+    remainingFlatEntityMapsToValidate,
+  }: FlatEntityValidationArgs<
+    FlatFieldMetadata,
+    FieldMetadataRelatedFlatEntityMaps
+  >): Promise<
+    FlatEntityValidationReturnType<
+      WorkspaceMigrationFieldActionV2,
+      FlatFieldMetadata,
+      FieldMetadataRelatedFlatEntityMaps
+    >
   > {
-    let validateAndBuildResult: ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2> =
-      {
-        failed: [],
-        created: [],
-        deleted: [],
-        updated: [],
-        optimisticFlatObjectMetadataMaps: structuredClone(
-          fromFlatObjectMetadataMaps,
-        ),
-      };
+    const validationResult =
+      await this.flatFieldValidatorService.validateFlatFieldMetadataCreation({
+        dependencyOptimisticFlatEntityMaps,
+        flatFieldMetadataToValidate,
+        optimisticFlatFieldMetadataMaps,
+        workspaceId,
+        remainingFlatEntityMapsToValidate,
+      });
 
-    for (const {
-      createdFlatFieldMetadatas,
-      deletedFlatFieldMetadatas,
-      updatedFlatFieldMetadatas,
-      flatObjectMetadata,
-    } of objectMetadataDeletedCreatedUpdatedFields) {
-      const flatObjectMetadataFlatFieldMatrixValidateAndBuildResult =
-        await this.validateFlatObjectMetadataFlatFieldMetadataMatrix({
-          createdFlatFieldMetadatas,
-          deletedFlatFieldMetadatas,
-          flatObjectMetadata,
-          fromFlatObjectMetadataMaps:
-            validateAndBuildResult.optimisticFlatObjectMetadataMaps,
-          updatedFlatFieldMetadatas,
-          toFlatObjectMetadataMaps,
-          buildOptions,
-        });
-
-      validateAndBuildResult = {
-        failed: [
-          ...validateAndBuildResult.failed,
-          ...flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.failed,
-        ],
-        created: [
-          ...validateAndBuildResult.created,
-          ...flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.created,
-        ],
-        deleted: [
-          ...validateAndBuildResult.deleted,
-          ...flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.deleted,
-        ],
-        updated: [
-          ...validateAndBuildResult.updated,
-          ...flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.updated,
-        ],
-        optimisticFlatObjectMetadataMaps:
-          flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
+    if (validationResult.errors.length > 0) {
+      return {
+        status: 'fail',
+        ...validationResult,
       };
     }
 
-    return validateAndBuildResult;
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+    });
+
+    const updatedFlatObjectMetadataMaps =
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...flatObjectMetadata,
+          fieldMetadataIds: [
+            ...flatObjectMetadata.fieldMetadataIds,
+            flatFieldMetadataToValidate.id,
+          ],
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      });
+
+    return {
+      status: 'success',
+      action: {
+        type: 'create_field',
+        objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
+        flatFieldMetadatas: [flatFieldMetadataToValidate],
+      },
+      dependencyOptimisticFlatEntityMaps: {
+        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+      },
+    };
+  }
+
+  protected async validateFlatEntityDeletion({
+    dependencyOptimisticFlatEntityMaps,
+    flatEntityToValidate: flatFieldMetadataToValidate,
+    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
+    workspaceId,
+  }: FlatEntityValidationArgs<
+    FlatFieldMetadata,
+    FieldMetadataRelatedFlatEntityMaps
+  >): Promise<
+    FlatEntityValidationReturnType<
+      WorkspaceMigrationFieldActionV2,
+      FlatFieldMetadata,
+      FieldMetadataRelatedFlatEntityMaps
+    >
+  > {
+    const validationResult =
+      this.flatFieldValidatorService.validateFlatFieldMetadataDeletion({
+        dependencyOptimisticFlatEntityMaps,
+        flatFieldMetadataToValidate,
+        optimisticFlatFieldMetadataMaps,
+        workspaceId,
+      });
+
+    if (validationResult.errors.length > 0) {
+      return {
+        status: 'fail',
+        ...validationResult,
+      };
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+    });
+
+    const updatedFlatObjectMetadataMaps = isDefined(flatObjectMetadata)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...flatObjectMetadata,
+            fieldMetadataIds: flatObjectMetadata.fieldMetadataIds.filter(
+              (id) => id !== flatFieldMetadataToValidate.id,
+            ),
+          },
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
+
+    return {
+      status: 'success',
+      action: {
+        type: 'delete_field',
+        fieldMetadataId: flatFieldMetadataToValidate.id,
+        objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
+      },
+      dependencyOptimisticFlatEntityMaps: {
+        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+      },
+    };
+  }
+
+  protected async validateFlatEntityUpdate({
+    dependencyOptimisticFlatEntityMaps,
+    flatEntityUpdate: { from: fromFlatFieldMetadata, to: toFlatFieldMetadata },
+    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
+    workspaceId,
+  }: FlatEntityUpdateValidationArgs<
+    FlatFieldMetadata,
+    FieldMetadataRelatedFlatEntityMaps
+  >): Promise<
+    | FlatEntityValidationReturnType<
+        WorkspaceMigrationFieldActionV2,
+        FlatFieldMetadata,
+        FieldMetadataRelatedFlatEntityMaps
+      >
+    | undefined
+  > {
+    const flatFieldMetadataUpdatedProperties = compareTwoFlatFieldMetadata({
+      fromFlatFieldMetadata,
+      toFlatFieldMetadata,
+    });
+
+    if (flatFieldMetadataUpdatedProperties.length === 0) {
+      return undefined;
+    }
+
+    const validationResult =
+      await this.flatFieldValidatorService.validateFlatFieldMetadataUpdate({
+        dependencyOptimisticFlatEntityMaps,
+        flatFieldMetadataToValidate: toFlatFieldMetadata,
+        optimisticFlatFieldMetadataMaps,
+        workspaceId,
+      });
+
+    if (validationResult.errors.length > 0) {
+      return {
+        status: 'fail',
+        ...validationResult,
+      };
+    }
+
+    const updateFieldAction: UpdateFieldAction = {
+      type: 'update_field',
+      fieldMetadataId: toFlatFieldMetadata.id,
+      objectMetadataId: toFlatFieldMetadata.objectMetadataId,
+      updates: flatFieldMetadataUpdatedProperties,
+    };
+
+    return {
+      status: 'success',
+      action: updateFieldAction,
+      dependencyOptimisticFlatEntityMaps,
+    };
   }
 }

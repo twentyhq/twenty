@@ -4,8 +4,8 @@ import {
   type NonNullableRequired,
 } from 'twenty-shared/types';
 
+import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
 
 type GetMorphOrRelationFlatFieldMetadataMockArgs = NonNullableRequired<
   Pick<
@@ -28,7 +28,7 @@ export const getRelationTargetFlatFieldMetadataMock = ({
   relationTargetFieldMetadataId,
   relationTargetObjectMetadataId,
   ...overrides
-}: GetMorphOrRelationFlatFieldMetadataMockArgs): FlatRelationTargetFieldMetadata => {
+}: GetMorphOrRelationFlatFieldMetadataMockArgs): FlatFieldMetadata<MorphOrRelationFieldMetadataType> => {
   const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
 
   return {

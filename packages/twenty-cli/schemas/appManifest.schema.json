@@ -4,7 +4,7 @@
   "title": "Twenty App Manifest",
   "description": "Schema for Twenty application manifest files",
   "type": "object",
-  "required": ["universalIdentifier", "label", "version", "license", "engines", "packageManager"],
+  "required": ["universalIdentifier", "name", "version", "license", "engines", "packageManager"],
   "properties": {
     "$schema": {
       "type": "string",
@@ -15,7 +15,7 @@
       "description": "Unique identifier (UUID format recommended)",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
     },
-    "label": {
+    "name": {
       "type": "string",
       "description": "Human-readable display name for the application",
       "minLength": 1,
@@ -82,7 +82,7 @@
   "examples": [
     {
       "standardId": "550e8400-e29b-41d4-a716-446655440000",
-      "label": "Customer Support App",
+      "name": "Customer Support App",
       "description": "Comprehensive customer support application with AI agents",
       "icon": "🎧",
       "version": "1.0.0",
@@ -90,7 +90,7 @@
       "engines": {
         "node": "^24.5.0",
         "npm": "please-use-yarn",
-        "yarn": ">=4.0.2"
+        "yarn": ">=4.9.2"
       }
     }
   ]

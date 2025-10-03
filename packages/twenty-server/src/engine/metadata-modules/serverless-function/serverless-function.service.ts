@@ -263,9 +263,9 @@ export class ServerlessFunctionService {
     await this.serverlessFunctionRepository.update(
       existingServerlessFunction.id,
       {
-        name: serverlessFunctionInput.name,
-        description: serverlessFunctionInput.description,
-        timeoutSeconds: serverlessFunctionInput.timeoutSeconds,
+        name: serverlessFunctionInput.update.name,
+        description: serverlessFunctionInput.update.description,
+        timeoutSeconds: serverlessFunctionInput.update.timeoutSeconds,
       },
     );
 
@@ -275,7 +275,7 @@ export class ServerlessFunctionService {
     });
 
     await this.fileStorageService.writeFolder(
-      serverlessFunctionInput.code,
+      serverlessFunctionInput.update.code,
       fileFolder,
     );
 
