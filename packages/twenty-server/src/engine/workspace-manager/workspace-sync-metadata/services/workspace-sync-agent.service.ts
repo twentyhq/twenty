@@ -215,7 +215,6 @@ export class WorkspaceSyncAgentService {
         return;
       }
 
-      // Find all standard agents that need handoffs
       const agentsRequiringHandoffs = standardAgentDefinitions.filter(
         (def) => def.createHandoffFromDefaultAgent,
       );
