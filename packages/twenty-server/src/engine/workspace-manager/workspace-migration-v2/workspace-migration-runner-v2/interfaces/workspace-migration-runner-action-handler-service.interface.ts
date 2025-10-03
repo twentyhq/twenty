@@ -1,7 +1,7 @@
 import { Inject, SetMetadata } from '@nestjs/common';
 
-import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import {
   type ExtractAction,
   type WorkspaceMigrationActionTypeV2,

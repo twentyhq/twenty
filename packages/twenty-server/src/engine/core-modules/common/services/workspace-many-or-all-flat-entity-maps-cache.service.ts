@@ -3,9 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/core-modules/common/constant/all-flat-entity-maps-properties.constant';
-import { AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache-registry.service';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
@@ -20,30 +18,34 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
   ) {}
 
   private async executeActionForManyOrAllFlatEntity<
-    T extends (keyof AllFlatEntityMaps)[] = (keyof AllFlatEntityMaps)[],
+    K extends (keyof AllFlatEntityMaps)[] = (keyof AllFlatEntityMaps)[],
   >({
     action,
     flatMapsKeys,
   }: {
-    flatMapsKeys: T | undefined;
+    flatMapsKeys: K | undefined;
     action: (args: {
-      service: WorkspaceFlatMapCacheService<FlatEntityMaps<AllFlatEntities>>;
-      flatEntityName: T[number];
+      service: WorkspaceFlatMapCacheService<AllFlatEntityMaps[K[number]]>;
+      flatMapKey: K[number];
     }) => Promise<void>;
   }): Promise<void> {
-    for (const flatEntityName of ALL_FLAT_ENTITY_MAPS_PROPERTIES) {
-      if (isDefined(flatMapsKeys) && !flatMapsKeys.includes(flatEntityName)) {
-        continue;
-      }
+    const keysToProcess = isDefined(flatMapsKeys)
+      ? flatMapsKeys
+      : ALL_FLAT_ENTITY_MAPS_PROPERTIES;
 
+    for (const flatMapKey of keysToProcess) {
       try {
-        const service =
-          this.cacheRegistry.getCacheServiceOrThrow(flatEntityName);
+        const service = this.cacheRegistry.getCacheServiceOrThrow(
+          flatMapKey as K[number],
+        );
 
-        await action({ flatEntityName, service });
+        await action({
+          flatMapKey: flatMapKey,
+          service,
+        });
       } catch (error) {
         this.logger.error(
-          `Failed to run action on flat entity maps of ${flatEntityName}`,
+          `Failed to run action on flat entity maps of ${flatMapKey}`,
           error,
         );
         throw error;
@@ -63,12 +65,12 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     let pickedFlatEntityMaps = {} as Pick<AllFlatEntityMaps, T[number]>;
 
     await this.executeActionForManyOrAllFlatEntity({
-      action: async ({ service, flatEntityName }) => {
-        const cacheResult = (await service.getExistingOrRecomputeFlatMaps({
+      action: async ({ service, flatMapKey }) => {
+        const cacheResult = await service.getExistingOrRecomputeFlatMaps({
           workspaceId,
-        })) as AllFlatEntityMaps[T[number]];
+        });
 
-        pickedFlatEntityMaps[flatEntityName] = cacheResult;
+        pickedFlatEntityMaps[flatMapKey] = cacheResult;
       },
       flatMapsKeys,
     });
