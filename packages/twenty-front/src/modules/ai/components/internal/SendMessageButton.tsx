@@ -1,5 +1,5 @@
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
-import { useAgentChatContext } from '@/ai/hooks/useAgentChatContext';
+import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
@@ -11,7 +11,7 @@ export const SendMessageButton = ({
 }: {
   records?: ObjectRecord[];
 }) => {
-  const { handleSendMessage, isLoading, input } = useAgentChatContext();
+  const { handleSendMessage, isLoading, input } = useAgentChatContextOrThrow();
 
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],

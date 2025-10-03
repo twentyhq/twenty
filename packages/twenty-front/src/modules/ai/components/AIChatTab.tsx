@@ -17,7 +17,7 @@ import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
-import { useAgentChatContext } from '@/ai/hooks/useAgentChatContext';
+import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
@@ -69,7 +69,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
     scrollWrapperId,
     messages,
     isStreaming,
-  } = useAgentChatContext();
+  } = useAgentChatContextOrThrow();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
