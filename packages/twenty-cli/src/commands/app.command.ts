@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { AppSyncCommand } from './app-sync.command';
 import { AppDevCommand } from './app-dev.command';
 import { AppInitCommand } from './app-init.command';
+import { AppDeleteCommand } from './app-delete.command';
 import {
   AppAddCommand,
   isSyncableEntity,
@@ -12,6 +13,7 @@ import chalk from 'chalk';
 export class AppCommand {
   private devCommand = new AppDevCommand();
   private syncCommand = new AppSyncCommand();
+  private deleteCommand = new AppDeleteCommand();
   private initCommand = new AppInitCommand();
   private addCommand = new AppAddCommand();
 
@@ -32,6 +34,13 @@ export class AppCommand {
       .description('Sync application to Twenty')
       .action(async () => {
         await this.syncCommand.execute();
+      });
+
+    appCommand
+      .command('delete')
+      .description('Delete application from Twenty')
+      .action(async () => {
+        await this.deleteCommand.execute();
       });
 
     appCommand
