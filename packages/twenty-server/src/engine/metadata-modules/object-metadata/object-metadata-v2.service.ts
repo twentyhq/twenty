@@ -14,7 +14,7 @@ import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findObjectFieldsInFlatFieldMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
+import { findObjectFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
@@ -353,11 +353,10 @@ export class ObjectMetadataServiceV2 {
       flatEntityMaps: existingFlatViewMaps,
     });
 
-    const { objectFlatFieldMetadatas } =
-      findObjectFieldsInFlatFieldMetadataMapsOrThrow({
-        flatFieldMetadataMaps: toFlatFieldMetadataMaps,
-        flatObjectMetadata: flatObjectMetadataToCreate,
-      });
+    const { objectFlatFieldMetadatas } = findObjectFlatFieldMetadatasOrThrow({
+      flatFieldMetadataMaps: toFlatFieldMetadataMaps,
+      flatObjectMetadata: flatObjectMetadataToCreate,
+    });
     const flatDefaultViewFieldsToCreate =
       await this.createDefaultFlatViewFields({
         objectFlatFieldMetadatas,

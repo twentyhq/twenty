@@ -12,13 +12,13 @@ import {
 } from 'typeorm';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 @Entity('objectMetadata')
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
@@ -96,6 +96,7 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
   @Column({ nullable: true, type: 'varchar' })
   shortcut: string | null;
 
+  // TODO should not be nullable legacy introduce when label identifier was nullable
   @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId: string | null;
 

@@ -8,7 +8,7 @@ import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findObjectFieldsInFlatFieldMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
+import { findObjectFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-object-metadata-many-to-one-target-morph-relation-flat-field-metadatas-or-throw.util';
 
@@ -43,11 +43,10 @@ export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
   toFlatObjectMetadata,
   flatFieldMetadataMaps,
 }: RenameRelatedMorphFieldOnObjectNamesUpdateArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
-  const { objectFlatFieldMetadatas } =
-    findObjectFieldsInFlatFieldMetadataMapsOrThrow({
-      flatFieldMetadataMaps,
-      flatObjectMetadata: fromFlatObjectMetadata,
-    });
+  const { objectFlatFieldMetadatas } = findObjectFlatFieldMetadatasOrThrow({
+    flatFieldMetadataMaps,
+    flatObjectMetadata: fromFlatObjectMetadata,
+  });
   const manyToOneMorphRelationFlatFieldMetadatas =
     getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow({
       flatFieldMetadataMaps,
