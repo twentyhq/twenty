@@ -7,13 +7,14 @@ import { emailSchema } from '@/object-record/record-field/ui/validation-schemas/
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
+import { DEFAULT_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 export const EmailsFieldInput = () => {
-  const { setDraftValue, draftValue } = useEmailsField();
+  const { setDraftValue, draftValue, fieldDefinition } = useEmailsField();
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
 
@@ -78,6 +79,10 @@ export const EmailsFieldInput = () => {
     onEscape?.({ newValue: draftValue });
   };
 
+  const maxNumberOfValues =
+    fieldDefinition.metadata.settings?.maxNumberOfValues ??
+    DEFAULT_MAX_NUMBER_OF_VALUES;
+
   return (
     <MultiItemFieldInput
       items={emails}
@@ -108,6 +113,7 @@ export const EmailsFieldInput = () => {
         />
       )}
       onError={handleError}
+      maxItemCount={maxNumberOfValues}
     />
   );
 };
