@@ -12,7 +12,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRelatedRecordFieldDefinition } from '@/object-record/utils/getRelatedRecordFieldDefinition';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export const useAttachMorphRelatedRecordFromRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -61,8 +61,15 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
 
         if (isDefined(parentRecord)) {
           relatedObjectMetadataItems.forEach((relatedObjectMetadataItem) => {
+            const computedFieldName = computeMorphRelationFieldName({
+              fieldName: fieldDefinition.metadata.fieldName,
+              relationType: fieldDefinition.metadata.relationType,
+              nameSingular: relatedObjectMetadataItem.nameSingular,
+              namePlural: relatedObjectMetadataItem.namePlural,
+            });
+
             const currentMorphFieldValue =
-              parentRecord[fieldDefinition.metadata.fieldName] || [];
+              parentRecord[computedFieldName] || [];
 
             const objectRecordFromCache = getRecordFromCache({
               objectMetadataItem: relatedObjectMetadataItem,
@@ -77,7 +84,7 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
             }
             set(recordStoreFamilyState(recordId), {
               ...parentRecord,
-              [fieldDefinition.metadata.fieldName]: [
+              [computedFieldName]: [
                 ...currentMorphFieldValue,
                 objectRecordFromCache,
               ],

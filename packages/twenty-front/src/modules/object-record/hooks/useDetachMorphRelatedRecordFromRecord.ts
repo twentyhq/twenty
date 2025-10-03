@@ -14,7 +14,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRelatedRecordFieldDefinition } from '@/object-record/utils/getRelatedRecordFieldDefinition';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export const useDetachMorphRelatedRecordFromRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -62,8 +62,15 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
 
         if (isDefined(parentRecord)) {
           relatedObjectMetadataItems.forEach((relatedObjectMetadataItem) => {
+            const computedFieldName = computeMorphRelationFieldName({
+              fieldName: fieldDefinition.metadata.fieldName,
+              relationType: fieldDefinition.metadata.relationType,
+              nameSingular: relatedObjectMetadataItem.nameSingular,
+              namePlural: relatedObjectMetadataItem.namePlural,
+            });
+
             const currentMorphFieldValue = parentRecord[
-              fieldDefinition.metadata.fieldName
+              computedFieldName
             ] as ObjectRecord[];
 
             const objectRecordFromCache = getRecordFromCache({
@@ -81,10 +88,9 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
             if (Array.isArray(currentMorphFieldValue)) {
               set(recordStoreFamilyState(recordId), {
                 ...parentRecord,
-                [fieldDefinition.metadata.fieldName]:
-                  currentMorphFieldValue.filter(
-                    (record) => record.id !== relatedRecordId,
-                  ),
+                [computedFieldName]: currentMorphFieldValue.filter(
+                  (record) => record.id !== relatedRecordId,
+                ),
               });
             }
           });
@@ -114,11 +120,18 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
         const { objectMetadataItem: relatedObjectMetadataItem } =
           relatedObjectMetadataItemsWithCachedRecord;
 
+        const computedFieldName = computeMorphRelationFieldName({
+          fieldName: fieldDefinition.metadata.fieldName,
+          relationType: fieldDefinition.metadata.relationType,
+          nameSingular: relatedObjectMetadataItem.nameSingular,
+          namePlural: relatedObjectMetadataItem.namePlural,
+        });
+
         modifyRecordFromCache({
           objectMetadataItem,
           cache: apolloCoreClient.cache,
           fieldModifiers: {
-            [fieldDefinition.metadata.fieldName]: (
+            [computedFieldName]: (
               fieldNameOnRecordObjectConnection,
               { readField },
             ) => {
