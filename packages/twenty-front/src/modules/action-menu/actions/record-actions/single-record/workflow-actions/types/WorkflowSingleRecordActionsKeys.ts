@@ -6,4 +6,5 @@ export enum WorkflowSingleRecordActionKeys {
   SEE_RUNS = 'see-runs-workflow-single-record',
   SEE_VERSIONS = 'see-versions-workflow-single-record',
   TEST = 'test-workflow-single-record',
+  ADD_NODE = 'add-node-workflow-single-record',
 }

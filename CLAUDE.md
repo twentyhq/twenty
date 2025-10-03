@@ -29,6 +29,9 @@ npx nx run twenty-server:test:integration:with-db-reset  # Integration tests wit
 # Storybook
 npx nx storybook:build twenty-front         # Build Storybook
 npx nx storybook:serve-and-test:static twenty-front     # Run Storybook tests
+
+
+When testing the UI end to end, click on "Continue with Email" and use the prefilled credentials. 
 ```
 
 ### Code Quality
@@ -121,6 +124,8 @@ packages/
 - **ClickHouse** for analytics (when enabled)
 
 ## Development Workflow
+
+Always use context7 when I need code generation, setup or configuration steps, or library/API documentation. This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask.
 
 ### Before Making Changes
 1. Always run linting and type checking after code changes
