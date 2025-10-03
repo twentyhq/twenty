@@ -103,16 +103,18 @@ export class ImapSmtpCaldavResolver {
       handle,
     );
 
-    await this.imapSmtpCaldavApisService.processAccount({
-      handle,
-      workspaceMemberId: accountOwnerId,
-      workspaceId: workspace.id,
-      connectionParameters: validatedParams,
-      connectedAccountId: id,
-    });
+    const connectedAccountId =
+      await this.imapSmtpCaldavApisService.processAccount({
+        handle,
+        workspaceMemberId: accountOwnerId,
+        workspaceId: workspace.id,
+        connectionParameters: validatedParams,
+        connectedAccountId: id,
+      });
 
     return {
       success: true,
+      connectedAccountId,
     };
   }
 

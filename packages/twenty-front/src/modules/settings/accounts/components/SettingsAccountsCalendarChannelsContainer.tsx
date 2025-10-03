@@ -1,7 +1,10 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
+import {
+  type CalendarChannel,
+  CalendarChannelSyncStage,
+} from '@/accounts/types/CalendarChannel';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -43,6 +46,9 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
     filter: {
       connectedAccountId: {
         in: accounts.map((account) => account.id),
+      },
+      syncStage: {
+        neq: CalendarChannelSyncStage.PENDING_CONFIGURATION,
       },
     },
     skip: !accounts.length,

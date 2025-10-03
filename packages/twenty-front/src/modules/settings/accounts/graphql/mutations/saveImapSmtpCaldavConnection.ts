@@ -14,6 +14,7 @@ export const SAVE_IMAP_SMTP_CALDAV_ACCOUNT = gql`
       id: $id
     ) {
       success
+      connectedAccountId
     }
   }
 `;

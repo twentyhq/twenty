@@ -46,7 +46,7 @@ export class ImapSmtpCalDavAPIService {
     workspaceId: string;
     connectionParameters: EmailAccountConnectionParameters;
     connectedAccountId?: string;
-  }) {
+  }): Promise<string> {
     const { handle, workspaceId, workspaceMemberId, connectedAccountId } =
       input;
 
@@ -125,6 +125,8 @@ export class ImapSmtpCalDavAPIService {
       messageChannel,
       calendarChannel,
     );
+
+    return accountId;
   }
 
   private async upsertConnectedAccount(
