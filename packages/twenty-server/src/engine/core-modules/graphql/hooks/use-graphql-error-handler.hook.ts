@@ -95,6 +95,7 @@ export const useGraphQLErrorHandlerHook = <
         'Anonymous Operation';
       const workspaceInfo = extractWorkspaceInfo(args.contextValue.req);
 
+      // eslint-disable-next-line no-console
       console.log(
         `[GQL Execute] Processing GQL query ${opName} on workspace ${workspaceInfo?.id}`,
       );
