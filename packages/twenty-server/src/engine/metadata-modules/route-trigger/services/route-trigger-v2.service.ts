@@ -36,7 +36,7 @@ export class RouteTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -85,7 +85,7 @@ export class RouteTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatRouteTriggerMaps'],
+          flatMapsKeys: ['flatRouteTriggerMaps'],
         },
       );
 
@@ -103,7 +103,7 @@ export class RouteTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -156,7 +156,7 @@ export class RouteTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatRouteTriggerMaps'],
+          flatMapsKeys: ['flatRouteTriggerMaps'],
         },
       );
 
@@ -180,7 +180,7 @@ export class RouteTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
