@@ -1,12 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { AuthenticatedRequest } from 'src/engine/api/rest/core/interfaces/authenticated-request.interface';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
-import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 
@@ -20,38 +18,45 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
 
   async handle(request: AuthenticatedRequest) {
     try {
-      const { args, options } =
-        await this.buildCommonArgsAndOptionsFromRestRequest(request);
+      const { args, rawSelectedFields } = await this.parseCommonArgs(request);
+      const options = await this.buildCommonOptions(request);
 
-      const record = await this.commonFindOneQueryRunnerService.execute(
+      const record = await this.commonFindOneQueryRunnerService.run(
+        rawSelectedFields,
         args,
         options,
-        CommonQueryNames.findOne,
       );
 
-      return this.formatResult({
-        operation: CommonQueryNames.findOne,
-        objectNameSingular:
-          options.objectMetadataItemWithFieldMaps.nameSingular,
-        data: record,
-      });
+      return this.formatRestResponse(
+        record,
+        options.objectMetadataItemWithFieldMaps.nameSingular,
+      );
     } catch (error) {
       workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private async buildCommonArgsAndOptionsFromRestRequest(
-    request: AuthenticatedRequest,
-  ) {
-    const { id: recordId, object: parsedObject } = parseCorePath(request);
+  private formatRestResponse(record: ObjectRecord, objectNameSingular: string) {
+    return { data: { [objectNameSingular]: record } };
+  }
 
-    if (!isDefined(recordId)) {
-      throw new BadRequestException(
-        'No recordId provided in rest api get one query',
-      );
-    }
-
+  private async parseCommonArgs(request: AuthenticatedRequest) {
+    const { id: recordId } = parseCorePath(request);
+    const filter = { id: { eq: recordId } };
     const depth = this.depthInputFactory.create(request);
+
+    return {
+      args: {
+        filter,
+      },
+      rawSelectedFields: {
+        depth,
+      },
+    };
+  }
+
+  private async buildCommonOptions(request: AuthenticatedRequest) {
+    const { object: parsedObject } = parseCorePath(request);
 
     const { objectMetadataMaps, objectMetadataMapItem } =
       await this.restApiRequestContextService.getObjectMetadata(
@@ -59,36 +64,12 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
         parsedObject,
       );
 
-    const objectsPermissions =
-      await this.restApiRequestContextService.getObjectsRecordPermissions(
-        request,
-      );
-
-    const selectedFieldsResult =
-      this.computeSelectedFieldsService.computeSelectedFields({
-        objectsPermissions,
-        objectMetadataMaps,
-        objectMetadataMapItem,
-        depth,
-      });
-
-    const { filter } = this.getVariablesFactory.create(recordId, request, {
-      objectMetadataMaps,
-      objectMetadataMapItem,
-    });
-
     const authContext = this.getAuthContextFromRequest(request);
 
     return {
-      args: {
-        selectedFieldsResult,
-        filter,
-      },
-      options: {
-        authContext: authContext,
-        objectMetadataItemWithFieldMaps: objectMetadataMapItem,
-        objectMetadataMaps: objectMetadataMaps,
-      },
+      authContext: authContext,
+      objectMetadataItemWithFieldMaps: objectMetadataMapItem,
+      objectMetadataMaps: objectMetadataMaps,
     };
   }
 }

@@ -214,7 +214,7 @@ export class QueryRunnerArgsFactory {
     return allOverriddenRecords;
   }
 
-  private overrideFilterByFieldMetadata(
+  public overrideFilterByFieldMetadata(
     filter: ObjectRecordFilter | undefined,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ) {

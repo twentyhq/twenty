@@ -21,7 +21,6 @@ import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
 import { RestApiRequestContextService } from 'src/engine/api/rest/core/query-builder/rest-api-request-context.service';
-import { ComputeSelectedFieldsService } from 'src/engine/api/rest/core/query-builder/services/compute-selected-fields.service';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { type QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 import {
@@ -98,8 +97,6 @@ export abstract class RestApiBaseHandler {
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
-  @Inject()
-  protected readonly computeSelectedFieldsService: ComputeSelectedFieldsService;
   @Inject()
   protected readonly restApiRequestContextService: RestApiRequestContextService;
 

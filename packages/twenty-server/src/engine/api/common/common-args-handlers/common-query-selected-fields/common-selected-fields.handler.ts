@@ -14,8 +14,8 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Injectable()
-export class ComputeSelectedFieldsService {
-  computeSelectedFields = ({
+export class CommonSelectedFieldsHandler {
+  computeFromDepth = ({
     objectsPermissions,
     objectMetadataMaps,
     objectMetadataMapItem,

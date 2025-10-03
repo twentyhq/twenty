@@ -12,7 +12,6 @@ import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-ap
 import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
 import { CoreQueryBuilderModule } from 'src/engine/api/rest/core/query-builder/core-query-builder.module';
 import { coreQueryBuilderFactories } from 'src/engine/api/rest/core/query-builder/factories/factories';
-import { ComputeSelectedFieldsService } from 'src/engine/api/rest/core/query-builder/services/compute-selected-fields.service';
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
@@ -58,7 +57,6 @@ const restApiCoreResolvers = [
     RestApiCoreService,
     ...coreQueryBuilderFactories,
     ...restApiCoreResolvers,
-    ComputeSelectedFieldsService,
   ],
 })
 export class RestApiCoreModule {}

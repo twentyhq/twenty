@@ -3,63 +3,85 @@ import { Injectable } from '@nestjs/common';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
+import { CommonQueryRunnerOptions } from 'src/engine/api/common/interfaces/common-query-runner-options.interface';
 import {
   ObjectRecord,
   ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
-import { FindOneQueryArgs } from 'src/engine/api/common/types/common-query-args.type';
+import {
+  CommonQueryNames,
+  FindOneQueryArgs,
+  RawSelectedFields,
+} from 'src/engine/api/common/types/common-query-args.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 
 @Injectable()
-export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
-  FindOneQueryArgs,
-  ObjectRecord
-> {
+export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<ObjectRecord> {
   async run(
-    executionContext: CommonBaseQueryRunnerContext<FindOneQueryArgs>,
+    rawSelectedFields: RawSelectedFields,
+    args: FindOneQueryArgs,
+    options: CommonQueryRunnerOptions,
   ): Promise<ObjectRecord> {
-    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
-      executionContext.options;
+    const {
+      workspaceDataSource,
+      repository,
+      roleId,
+      shouldBypassPermissionChecks,
+      objectsPermissions,
+    } = await this.prepareQueryRunnerContext(options);
 
-    const { roleId } = executionContext;
+    const selectedFieldsResult = await this.computeSelectedFields(
+      rawSelectedFields,
+      options,
+      objectsPermissions,
+    );
 
-    const queryBuilder = executionContext.repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
+    const processedArgs = await this.processQueryArgs(options, args);
+
+    if (
+      !processedArgs.filter ||
+      Object.keys(processedArgs.filter).length === 0
+    ) {
+      throw new CommonQueryRunnerException(
+        'Missing filter argument',
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
+
+    const queryBuilder = repository.createQueryBuilder(
+      options.objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     //TODO : Refacto-common - QueryParser should be common branded service
     const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
+      options.objectMetadataItemWithFieldMaps,
+      options.objectMetadataMaps,
     );
 
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
-      executionContext.args.filter ?? ({} as ObjectRecordFilter),
+      options.objectMetadataItemWithFieldMaps.nameSingular,
+      processedArgs.filter ?? ({} as ObjectRecordFilter),
     );
 
     commonQueryParser.applyDeletedAtToBuilder(
       queryBuilder,
-      executionContext.args.filter ?? ({} as ObjectRecordFilter),
+      processedArgs.filter ?? ({} as ObjectRecordFilter),
     );
 
     const columnsToSelect = buildColumnsToSelect({
-      select: executionContext.selectedFieldsResult.select,
-      relations: executionContext.selectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
+      select: selectedFieldsResult.select,
+      relations: selectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps: options.objectMetadataItemWithFieldMaps,
+      objectMetadataMaps: options.objectMetadataMaps,
     });
 
     const objectRecord = await queryBuilder
@@ -77,46 +99,59 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const objectRecords = [objectRecord] as ObjectRecord[];
 
-    if (executionContext.selectedFieldsResult.relations) {
+    if (selectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
-        objectMetadataMaps,
-        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        objectMetadataMaps: options.objectMetadataMaps,
+        parentObjectMetadataItem: options.objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,
         //TODO : Refacto-common - To fix when switching processNestedRelationsHelper to Common
-        relations: executionContext.selectedFieldsResult.relations as Record<
+        relations: selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
         limit: QUERY_MAX_RECORDS,
-        authContext,
-        workspaceDataSource: executionContext.workspaceDataSource,
+        authContext: options.authContext,
+        workspaceDataSource,
         roleId,
-        shouldBypassPermissionChecks:
-          executionContext.shouldBypassPermissionChecks,
-        selectedFields: executionContext.selectedFieldsResult.select,
+        shouldBypassPermissionChecks,
+        selectedFields: selectedFieldsResult.select,
       });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
+      new ObjectRecordsToGraphqlConnectionHelper(options.objectMetadataMaps);
 
-    return typeORMObjectRecordsParser.processRecord({
+    const records = typeORMObjectRecordsParser.processRecord({
       objectRecord: objectRecords[0],
-      objectName: objectMetadataItemWithFieldMaps.nameSingular,
+      objectName: options.objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
       totalCount: 1,
     }) as ObjectRecord;
+
+    return this.enrichResultsWithGettersAndHooks(
+      records,
+      options,
+      CommonQueryNames.findOne,
+    );
   }
 
-  async validate(
-    args: FindOneResolverArgs<ObjectRecordFilter>,
-    _options: WorkspaceQueryRunnerOptions,
-  ): Promise<void> {
-    if (!args.filter || Object.keys(args.filter).length === 0) {
-      throw new CommonQueryRunnerException(
-        'Missing filter argument',
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+  async processQueryArgs(
+    options: CommonQueryRunnerOptions,
+    args: FindOneQueryArgs,
+  ): Promise<FindOneQueryArgs> {
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        options.authContext,
+        options.objectMetadataItemWithFieldMaps.nameSingular,
+        CommonQueryNames.findOne,
+        args,
       );
-    }
+
+    return {
+      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
+        hookedArgs.filter,
+        options.objectMetadataItemWithFieldMaps,
+      ),
+    };
   }
 }
