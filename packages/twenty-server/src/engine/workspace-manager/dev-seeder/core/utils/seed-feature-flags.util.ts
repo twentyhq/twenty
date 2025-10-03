@@ -54,7 +54,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         workspaceId: workspaceId,
-        value: workspaceId === SEED_APPLE_WORKSPACE_ID ? true : false,
+        value: workspaceId === SEED_APPLE_WORKSPACE_ID,
       },
       {
         key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
