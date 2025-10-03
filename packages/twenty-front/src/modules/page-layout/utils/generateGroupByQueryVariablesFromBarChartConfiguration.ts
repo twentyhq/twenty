@@ -72,6 +72,6 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
       filter: barChartConfiguration.filter,
     }),
     ...(orderBy.length > 0 && { orderBy }),
-    ...(viewId && { viewId }),
+    ...(isDefined(viewId) && { viewId }),
   };
 };

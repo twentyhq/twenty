@@ -68,5 +68,7 @@ export const useGraphWidgetGroupByQuery = ({
     loading,
     error,
     refetch,
+    variables,
+    aggregateOperation,
   };
 };
