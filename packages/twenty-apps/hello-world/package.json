@@ -10,5 +10,8 @@
   "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
   "universalIdentifier": "4ec0391d-18d5-411c-b2f3-266ddc1c3ef7",
   "name": "Hello world",
-  "description": "A hello-world application example"
+  "description": "A hello-world application example",
+  "dependencies": {
+    "axios": "^1.12.2"
+  }
 }
