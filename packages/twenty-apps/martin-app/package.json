@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
+  "universalIdentifier": "4cc2fdf3-7e0a-4bec-bcc8-6724ad82e250",
+  "name": "Martin application",
+  "description": "Martin application description",
+  "dependencies": {
+    "axios": "^1.12.2"
+  }
+}
