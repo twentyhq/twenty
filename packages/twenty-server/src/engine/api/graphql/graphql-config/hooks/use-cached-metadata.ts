@@ -46,7 +46,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       // TODO: we should probably override the graphql-yoga request type to include the workspace and locale
       const request = (serverContext as unknown as { req: Request }).req;
 
-      if (!request.workspaceId) {
+      if (!request.workspace?.id) {
         return;
       }
 
@@ -69,7 +69,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     onResponse: async ({ response, serverContext }) => {
       const request = (serverContext as unknown as { req: Request }).req;
 
-      if (!request.workspaceId) {
+      if (!request.workspace?.id) {
         return;
       }
 

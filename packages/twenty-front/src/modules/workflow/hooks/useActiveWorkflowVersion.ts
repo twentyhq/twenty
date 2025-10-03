@@ -9,7 +9,6 @@ type UseActiveWorkflowVersionProps = {
 export const useActiveWorkflowVersion = ({
   workflowId,
 }: UseActiveWorkflowVersionProps) => {
-  console.log('useActiveWorkflowVersion', workflowId);
   const { records: workflowVersions, loading } = useFindManyRecords<
     Pick<WorkflowVersion, 'id' | '__typename'>
   >({
