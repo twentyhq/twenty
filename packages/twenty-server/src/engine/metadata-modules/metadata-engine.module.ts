@@ -13,7 +13,7 @@ import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-fi
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
-import { RouteModule } from 'src/engine/metadata-modules/route/route.module';
+import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 
 @Module({
@@ -30,7 +30,7 @@ import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serve
     RemoteServerModule,
     RoleModule,
     PermissionsModule,
-    RouteModule,
+    RouteTriggerModule,
     CronTriggerModule,
     DatabaseEventTriggerModule,
   ],

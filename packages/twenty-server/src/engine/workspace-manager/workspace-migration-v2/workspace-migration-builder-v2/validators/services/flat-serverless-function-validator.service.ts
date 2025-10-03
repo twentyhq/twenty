@@ -3,21 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { ServerlessFunctionExceptionCode } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
-export type ServerlessFunctionRelatedFlatEntityMaps = Pick<
-  AllFlatEntityMaps,
-  'flatServerlessFunctionMaps'
->;
-
 type ServerlessFunctionValidationArgs = {
   flatServerlessFunctionToValidate: FlatServerlessFunction;
   optimisticFlatServerlessFunctionMaps: FlatEntityMaps<FlatServerlessFunction>;
-  dependencyOptimisticFlatEntityMaps: ServerlessFunctionRelatedFlatEntityMaps;
 };
 @Injectable()
 export class FlatServerlessFunctionValidatorService {

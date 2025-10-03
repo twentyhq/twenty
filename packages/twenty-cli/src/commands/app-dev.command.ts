@@ -1,15 +1,16 @@
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import { ApiService } from '../services/api.service';
-import { resolveAppPath } from '../utils/app-path-resolver';
 import { syncApp } from '../utils/app-sync';
+import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 
 export class AppDevCommand {
   private apiService = new ApiService();
 
-  async execute(options: { path?: string; debounce: string }): Promise<void> {
+  async execute(options: { debounce: string }): Promise<void> {
     try {
-      const appPath = await resolveAppPath(options.path);
+      const appPath = CURRENT_EXECUTION_DIRECTORY;
+
       const debounceMs = parseInt(options.debounce, 10);
 
       this.logStartupInfo(appPath, debounceMs);

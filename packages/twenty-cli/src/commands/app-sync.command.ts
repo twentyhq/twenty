@@ -1,14 +1,14 @@
 import chalk from 'chalk';
 import { ApiService } from '../services/api.service';
-import { resolveAppPath } from '../utils/app-path-resolver';
 import { syncApp } from '../utils/app-sync';
+import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
 
-  async execute(options: { path?: string }): Promise<void> {
+  async execute(): Promise<void> {
     try {
-      const appPath = await resolveAppPath(options.path);
+      const appPath = CURRENT_EXECUTION_DIRECTORY;
 
       console.log(chalk.blue('🚀 Syncing Twenty Application'));
       console.log(chalk.gray(`📁 App Path: ${appPath}`));

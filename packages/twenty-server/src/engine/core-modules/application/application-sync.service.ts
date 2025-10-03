@@ -15,14 +15,13 @@ import {
   ServerlessFunctionManifest,
   ServerlessFunctionTriggerManifest,
 } from 'src/engine/core-modules/application/types/application.types';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
+import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
-import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
-import type { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
@@ -106,7 +105,7 @@ export class ApplicationSyncService {
 
       return await this.applicationService.create({
         universalIdentifier: manifest.universalIdentifier,
-        label: manifest.label,
+        name: manifest.name,
         description: manifest.description,
         version: manifest.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
@@ -124,7 +123,7 @@ export class ApplicationSyncService {
     );
 
     await this.applicationService.update(application.id, {
-      label: manifest.label,
+      name: manifest.name,
       description: manifest.description,
       version: manifest.version,
     });
@@ -196,7 +195,9 @@ export class ApplicationSyncService {
       existingFlatObjectMetadataMaps.byId,
     ).filter(
       (obj) => isDefined(obj) && obj.applicationId === applicationId,
-    ) as FlatObjectMetadataWithFlatFieldMaps[];
+      // TODO handle when migrating to trinite usage
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ) as any[];
 
     const objectsToSyncStandardIds = objectsToSync.map((obj) => obj.standardId);
 
@@ -368,9 +369,11 @@ export class ApplicationSyncService {
 
       const updateServerlessFunctionInput = {
         id: serverlessFunctionToUpdate.id,
-        name: serverlessFunctionToSync.name,
-        timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
-        code: serverlessFunctionToSync.code,
+        update: {
+          name: serverlessFunctionToSync.name,
+          timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
+          code: serverlessFunctionToSync.code,
+        },
       };
 
       await this.serverlessFunctionV2Service.updateOne(
@@ -504,8 +507,10 @@ export class ApplicationSyncService {
 
       const updateDatabaseEventTriggerInput = {
         id: triggerToUpdate.id,
-        settings: {
-          eventName: triggerToSync.eventName,
+        update: {
+          settings: {
+            eventName: triggerToSync.eventName,
+          },
         },
       };
 
@@ -615,8 +620,10 @@ export class ApplicationSyncService {
 
       const updateCronTriggerInput = {
         id: triggerToUpdate.id,
-        settings: {
-          pattern: triggerToSync.schedule,
+        update: {
+          settings: {
+            pattern: triggerToSync.schedule,
+          },
         },
       };
 

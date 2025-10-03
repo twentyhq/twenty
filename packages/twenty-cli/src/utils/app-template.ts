@@ -69,8 +69,6 @@ const createReadmeContent = async ({
 
   readmeContent = readmeContent.replace(/\{description}/g, appDescription);
 
-  readmeContent = readmeContent.replace(/\{appDir}/g, appDirectory);
-
   await fs.writeFile(path.join(appDirectory, 'README.md'), readmeContent);
 };
 
