@@ -19,7 +19,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     private readonly cacheRegistry: WorkspaceFlatMapCacheRegistryService,
   ) {}
 
-  private async executeActionforManyOrAllFlatEntity<
+  private async executeActionForManyOrAllFlatEntity<
     T extends (keyof AllFlatEntityMaps)[] = (keyof AllFlatEntityMaps)[],
   >({
     action,
@@ -28,7 +28,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     flatMapsKeys: T | undefined;
     action: (args: {
       service: WorkspaceFlatMapCacheService<FlatEntityMaps<AllFlatEntities>>;
-      flatEntityName: keyof AllFlatEntityMaps;
+      flatEntityName: T[number];
     }) => Promise<void>;
   }): Promise<void> {
     for (const flatEntityName of ALL_FLAT_ENTITY_MAPS_PROPERTIES) {
@@ -43,7 +43,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
         await action({ flatEntityName, service });
       } catch (error) {
         this.logger.error(
-          `Failed to invalidate flat entity maps for ${flatEntityName}`,
+          `Failed to run action on flat entity maps of ${flatEntityName}`,
           error,
         );
         throw error;
@@ -62,16 +62,13 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
   }): Promise<Pick<AllFlatEntityMaps, T[number]>> {
     let pickedFlatEntityMaps = {} as Pick<AllFlatEntityMaps, T[number]>;
 
-    await this.executeActionforManyOrAllFlatEntity({
+    await this.executeActionForManyOrAllFlatEntity({
       action: async ({ service, flatEntityName }) => {
-        const cacheResult = await service.getExistingOrRecomputeFlatMaps({
+        const cacheResult = (await service.getExistingOrRecomputeFlatMaps({
           workspaceId,
-        });
+        })) as AllFlatEntityMaps[T[number]];
 
-        pickedFlatEntityMaps = {
-          ...pickedFlatEntityMaps,
-          [flatEntityName]: cacheResult,
-        };
+        pickedFlatEntityMaps[flatEntityName] = cacheResult;
       },
       flatMapsKeys,
     });
@@ -88,7 +85,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     workspaceId: string;
     flatMapsKeys?: T;
   }): Promise<void> {
-    await this.executeActionforManyOrAllFlatEntity({
+    await this.executeActionForManyOrAllFlatEntity({
       action: async ({ service }) =>
         await service.invalidateCache({ workspaceId }),
       flatMapsKeys,
@@ -104,7 +101,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     workspaceId: string;
     flatMapsKeys?: T;
   }): Promise<void> {
-    await this.executeActionforManyOrAllFlatEntity({
+    await this.executeActionForManyOrAllFlatEntity({
       action: async ({ service }) => await service.flushCache({ workspaceId }),
       flatMapsKeys,
     });
