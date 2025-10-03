@@ -2,7 +2,7 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { ApiService } from '../services/api.service';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { deleteApp } from '../utils/app-delete';
+import { loadManifest } from '../utils/app-manifest-loader';
 
 export class AppDeleteCommand {
   private apiService = new ApiService();
@@ -20,7 +20,9 @@ export class AppDeleteCommand {
         process.exit(1);
       }
 
-      const result = await deleteApp(appPath, this.apiService);
+      const { packageJson } = await loadManifest(appPath);
+
+      const result = await this.apiService.deleteApplication(packageJson);
 
       if (!result.success) {
         console.error(chalk.red('❌ Deletion failed:'), result.error);
