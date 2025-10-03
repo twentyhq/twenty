@@ -1,4 +1,4 @@
-import { LazyAIChatTab } from '@/ai/components/LazyAIChatTab';
+import { AIChatTab } from '@/ai/components/AIChatTab';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -32,7 +32,7 @@ export const CommandMenuAskAIPage = () => {
 
   return (
     <StyledContainer>
-      <LazyAIChatTab agentId={agentId} />
+      <AIChatTab agentId={agentId} />
     </StyledContainer>
   );
 };
