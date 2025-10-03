@@ -5,6 +5,7 @@ import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
+import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
 import { TextInput } from '@/ui/field/input/components/TextInput';
@@ -13,6 +14,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -25,6 +27,7 @@ import { useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { toSpliced } from '~/utils/array/toSpliced';
 
 type FormArrayFieldInputProps = {
   label?: string;
@@ -49,6 +52,7 @@ const StyledDisplayModeReadonlyContainer = styled.div`
 const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
   height: 30px;
   cursor: pointer;
+  box-sizing: border-box;
 
   &:hover,
   &[data-open='true'] {
@@ -88,6 +92,7 @@ export const FormArrayFieldInput = ({
   testId,
 }: FormArrayFieldInputProps) => {
   const instanceId = useId();
+  const focusId = `form-array-field-input-${instanceId}`;
   const theme = useTheme();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -118,57 +123,10 @@ export const FormArrayFieldInput = ({
   );
 
   const [newItemDraftValue, setNewItemDraftValue] = useState('');
-
-  const handleDisplayModeClick = () => {
-    if (draftValue.type !== 'static') {
-      throw new Error(
-        'This function can only be called when editing a static value.',
-      );
-    }
-
-    setDraftValue({
-      ...draftValue,
-      editingMode: 'edit',
-    });
-
-    pushFocusItemToFocusStack({
-      focusId: instanceId,
-      component: {
-        type: FocusComponentType.FORM_FIELD_INPUT,
-        instanceId,
-      },
-      globalHotkeysConfig: {
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
-  };
-
-  const onOptionSelected = (value: FieldArrayValue) => {
-    if (draftValue.type !== 'static') {
-      throw new Error('Can only be called when editing a static value');
-    }
-
-    setDraftValue({
-      type: 'static',
-      value,
-      editingMode: 'edit',
-    });
-
-    onChange(value);
-  };
-
-  const onCancel = () => {
-    if (draftValue.type !== 'static') {
-      throw new Error('Can only be called when editing a static value');
-    }
-
-    setDraftValue({
-      ...draftValue,
-      editingMode: 'view',
-    });
-
-    removeFocusItemFromFocusStackById({ focusId: instanceId });
-  };
+  const [inputValue, setInputValue] = useState('');
+  const [isInputDisplayed, setIsInputDisplayed] = useState(false);
+  const [itemToEditIndex, setItemToEditIndex] = useState(-1);
+  const isAddingNewItem = itemToEditIndex === -1;
 
   const handleVariableTagInsert = (variableName: string) => {
     setDraftValue({
@@ -191,7 +149,60 @@ export const FormArrayFieldInput = ({
     onChange([]);
   };
 
-  const placeholderText = placeholder ?? label;
+  const handleDeleteItem = (index: number) => {
+    if (draftValue.type !== 'static') {
+      return;
+    }
+
+    const updatedItems = toSpliced(draftValue.value, index, 1);
+
+    setDraftValue({
+      type: 'static',
+      editingMode: 'view',
+      value: updatedItems,
+    });
+    onChange(updatedItems);
+  };
+
+  const handleSubmitInput = () => {
+    const sanitizedInput = inputValue.trim();
+
+    if (sanitizedInput === '' && isAddingNewItem) {
+      return;
+    }
+
+    if (sanitizedInput === '' && !isAddingNewItem) {
+      handleDeleteItem(itemToEditIndex);
+      return;
+    }
+
+    // FIXME
+    const items = draftValue.type === 'static' ? draftValue.value : [];
+
+    if (!isAddingNewItem && sanitizedInput === items[itemToEditIndex]) {
+      setIsInputDisplayed(false);
+      setInputValue('');
+      return;
+    }
+
+    const updatedItems = isAddingNewItem
+      ? [...items, sanitizedInput]
+      : toSpliced(items, itemToEditIndex, 1, sanitizedInput);
+
+    setDraftValue({
+      type: 'static',
+      editingMode: 'view',
+      value: updatedItems,
+    });
+    onChange(updatedItems);
+
+    setIsInputDisplayed(false);
+    setInputValue('');
+
+    removeFocusItemFromFocusStackById({
+      focusId: `array-field-input-new-item-${instanceId}`,
+    });
+  };
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -202,19 +213,22 @@ export const FormArrayFieldInput = ({
     dropdownId,
   );
 
+  const { closeDropdown } = useCloseDropdown();
+
   return (
     <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
-          formFieldInputInstanceId={instanceId}
+          formFieldInputInstanceId={`array-field-input-first-item-${instanceId}`}
+          preventFocusStackUpdate
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             readonly ? null : draftValue.value.length < 1 ? (
               <StyledInput
-                instanceId={instanceId}
+                instanceId={`array-field-input-first-item-${instanceId}`}
                 placeholder={'Enter an item'}
                 value={newItemDraftValue}
                 copyButton={false}
@@ -253,10 +267,12 @@ export const FormArrayFieldInput = ({
                               dropdownId={`array-field-input-${instanceId}-${index}`}
                               value={value}
                               onEdit={() => {
-                                console.log('edit item', index);
+                                setInputValue(draftValue.value[index]);
+                                setItemToEditIndex(index);
+                                setIsInputDisplayed(true);
                               }}
                               onDelete={() => {
-                                console.log('delete item', index);
+                                handleDeleteItem(index);
                               }}
                             />
                           ))}
@@ -264,15 +280,58 @@ export const FormArrayFieldInput = ({
 
                       <DropdownMenuSeparator />
 
-                      <DropdownMenuItemsContainer>
-                        <MenuItem
-                          onClick={() => {
-                            console.log('add new item');
+                      {isInputDisplayed ? (
+                        <MultiItemBaseInput
+                          instanceId={`array-field-input-new-item-${instanceId}`}
+                          autoFocus
+                          placeholder={placeholder}
+                          value={inputValue}
+                          onFocus={() => {
+                            pushFocusItemToFocusStack({
+                              focusId: `array-field-input-new-item-${instanceId}`,
+                              component: {
+                                type: FocusComponentType.FORM_FIELD_INPUT,
+                                instanceId: `array-field-input-new-item-${instanceId}`,
+                              },
+                              globalHotkeysConfig: {
+                                enableGlobalHotkeysConflictingWithKeyboard:
+                                  false,
+                              },
+                            });
                           }}
-                          LeftIcon={IconPlus}
-                          text={`Add item`}
+                          onBlur={() => {
+                            removeFocusItemFromFocusStackById({
+                              focusId: `array-field-input-new-item-${instanceId}`,
+                            });
+                          }}
+                          onEscape={() => {
+                            closeDropdown(dropdownId);
+
+                            setIsInputDisplayed(false);
+                            setInputValue('');
+
+                            removeFocusItemFromFocusStackById({
+                              focusId: `array-field-input-new-item-${instanceId}`,
+                            });
+                          }}
+                          onChange={(value) => {
+                            setInputValue(value);
+                          }}
+                          onEnter={handleSubmitInput}
+                          hasItem
                         />
-                      </DropdownMenuItemsContainer>
+                      ) : (
+                        <DropdownMenuItemsContainer>
+                          <MenuItem
+                            onClick={() => {
+                              setItemToEditIndex(-1);
+                              setIsInputDisplayed(true);
+                            }}
+                            LeftIcon={IconPlus}
+                            text={`Add item`}
+                          />
+                        </DropdownMenuItemsContainer>
+                      )}
                     </DropdownContent>
                   }
                 />

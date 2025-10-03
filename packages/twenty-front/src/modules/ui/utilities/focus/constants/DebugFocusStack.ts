@@ -1,1 +1,1 @@
-export const DEBUG_FOCUS_STACK = false;
+export const DEBUG_FOCUS_STACK = true;
