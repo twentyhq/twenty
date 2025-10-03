@@ -38,7 +38,7 @@ export class ViewV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatObjectMetadataMaps', 'flatViewMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatViewMaps'],
         },
       );
 
@@ -83,7 +83,7 @@ export class ViewV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewMaps'],
+          flatMapsKeys: ['flatViewMaps'],
         },
       );
 
@@ -104,7 +104,7 @@ export class ViewV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewMaps'],
+          flatMapsKeys: ['flatViewMaps'],
         },
       );
 
@@ -151,7 +151,7 @@ export class ViewV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewMaps'],
+          flatMapsKeys: ['flatViewMaps'],
         },
       );
 
@@ -172,7 +172,7 @@ export class ViewV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewMaps'],
+          flatMapsKeys: ['flatViewMaps'],
         },
       );
 
@@ -218,7 +218,7 @@ export class ViewV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewMaps'],
+          flatMapsKeys: ['flatViewMaps'],
         },
       );
 
@@ -239,7 +239,7 @@ export class ViewV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewMaps'],
+          flatMapsKeys: ['flatViewMaps'],
         },
       );
 
