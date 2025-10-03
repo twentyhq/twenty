@@ -5,6 +5,7 @@ import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useOpenMorphRelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationManyToOneFieldInput';
 import { useOpenMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationOneToManyFieldInput';
 import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationFromManyFieldInput';
 import { useOpenRelationToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationToOneFieldInput';
@@ -38,6 +39,9 @@ export const useOpenFieldInputEditMode = () => {
 
   const { openActivityTargetCellEditMode } =
     useOpenActivityTargetCellEditMode();
+
+  const { openMorphRelationManyToOneFieldInput } =
+    useOpenMorphRelationManyToOneFieldInput();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -133,10 +137,10 @@ export const useOpenFieldInputEditMode = () => {
         }
 
         if (isFieldMorphRelationManyToOne(fieldDefinition)) {
-          openRelationToOneFieldInput({
+          openMorphRelationManyToOneFieldInput({
             recordId,
             prefix,
-            fieldName: fieldDefinition.metadata.fieldName,
+            fieldDefinition,
           });
           return;
         }
@@ -162,6 +166,7 @@ export const useOpenFieldInputEditMode = () => {
       },
     [
       openActivityTargetCellEditMode,
+      openMorphRelationManyToOneFieldInput,
       openMorphRelationOneToManyFieldInput,
       openRelationFromManyFieldInput,
       openRelationToOneFieldInput,
