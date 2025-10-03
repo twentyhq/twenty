@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
-
-import { AuthenticatedRequest } from 'src/engine/api/rest/core/interfaces/authenticated-request.interface';
 
 import { RestApiCreateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-many.handler';
 import { RestApiCreateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-one.handler';
@@ -25,27 +24,27 @@ export class RestApiCoreService {
     private readonly restApiFindDuplicatesHandler: RestApiFindDuplicatesHandler,
   ) {}
 
-  async delete(request: AuthenticatedRequest) {
+  async delete(request: Request) {
     return await this.restApiDeleteOneHandler.handle(request);
   }
 
-  async createOne(request: AuthenticatedRequest) {
+  async createOne(request: Request) {
     return await this.restApiCreateOneHandler.handle(request);
   }
 
-  async createMany(request: AuthenticatedRequest) {
+  async createMany(request: Request) {
     return await this.restApiCreateManyHandler.handle(request);
   }
 
-  async findDuplicates(request: AuthenticatedRequest) {
+  async findDuplicates(request: Request) {
     return await this.restApiFindDuplicatesHandler.handle(request);
   }
 
-  async update(request: AuthenticatedRequest) {
+  async update(request: Request) {
     return await this.restApiUpdateOneHandler.handle(request);
   }
 
-  async get(request: AuthenticatedRequest) {
+  async get(request: Request) {
     const { id: recordId } = parseCorePath(request);
 
     if (isDefined(recordId)) {

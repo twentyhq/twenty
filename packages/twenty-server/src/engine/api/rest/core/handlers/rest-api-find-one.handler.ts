@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { Request } from 'express';
+
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { AuthenticatedRequest } from 'src/engine/api/rest/core/interfaces/authenticated-request.interface';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
@@ -16,7 +17,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
     super();
   }
 
-  async handle(request: AuthenticatedRequest) {
+  async handle(request: Request) {
     try {
       const { args, rawSelectedFields } = await this.parseCommonArgs(request);
       const options = await this.buildCommonOptions(request);
@@ -40,7 +41,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
     return { data: { [objectNameSingular]: record } };
   }
 
-  private async parseCommonArgs(request: AuthenticatedRequest) {
+  private async parseCommonArgs(request: Request) {
     const { id: recordId } = parseCorePath(request);
     const filter = { id: { eq: recordId } };
     const depth = this.depthInputFactory.create(request);
@@ -55,11 +56,11 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
     };
   }
 
-  private async buildCommonOptions(request: AuthenticatedRequest) {
+  private async buildCommonOptions(request: Request) {
     const { object: parsedObject } = parseCorePath(request);
 
     const { objectMetadataMaps, objectMetadataMapItem } =
-      await this.restApiRequestContextService.getObjectMetadata(
+      await this.coreQueryBuilderFactory.getObjectMetadata(
         request,
         parsedObject,
       );

@@ -5,7 +5,6 @@ import isEmpty from 'lodash.isempty';
 import { In } from 'typeorm';
 
 import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { AuthenticatedRequest } from 'src/engine/api/rest/core/interfaces/authenticated-request.interface';
 import {
   type FormatResult,
   RestApiBaseHandler,
@@ -15,7 +14,7 @@ import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-c
 
 @Injectable()
 export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
-  async handle(request: AuthenticatedRequest) {
+  async handle(request: Request) {
     this.validate(request);
 
     const {

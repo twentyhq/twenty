@@ -14,19 +14,17 @@ import {
   type ObjectRecord,
   type ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { AuthenticatedRequest } from 'src/engine/api/rest/core/interfaces/authenticated-request.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
-import { RestApiRequestContextService } from 'src/engine/api/rest/core/query-builder/rest-api-request-context.service';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { type QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 import {
-  type Depth,
   DepthInputFactory,
   MAX_DEPTH,
+  type Depth,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
@@ -43,12 +41,14 @@ import {
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -96,16 +96,17 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
   @Inject()
-  protected readonly apiKeyRoleService: ApiKeyRoleService;
+  protected readonly workspaceCacheStorageService: WorkspaceCacheStorageService;
   @Inject()
-  protected readonly restApiRequestContextService: RestApiRequestContextService;
+  protected readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService;
+  @Inject()
+  protected readonly apiKeyRoleService: ApiKeyRoleService;
 
   protected abstract handle(
-    request: AuthenticatedRequest,
+    request: Request,
   ): Promise<FormatResult | { data: FormatResult[] } | undefined>;
 
-  //TODO : Refacto-common - Remove this method and use RestApiRequestContextService instead
-  public async getRepositoryAndMetadataOrFail(request: AuthenticatedRequest) {
+  public async getRepositoryAndMetadataOrFail(request: Request) {
     const { workspace, apiKey, userWorkspaceId } = request;
     const { object: parsedObject } = parseCorePath(request);
 
@@ -113,6 +114,10 @@ export abstract class RestApiBaseHandler {
       request,
       parsedObject,
     );
+
+    if (!workspace?.id) {
+      throw new BadRequestException('Workspace not found');
+    }
 
     if (!objectMetadata) {
       throw new BadRequestException('Object metadata not found');

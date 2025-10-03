@@ -33,9 +33,6 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
-    this.logger.log(
-      `[REST API] Processing BATCH request to ${request.path} on workspace ${request.workspaceId}`,
-    );
     const result = await this.restApiCoreService.createMany(request);
 
     res.status(200).send(result);
@@ -46,9 +43,6 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
-    this.logger.log(
-      `[REST API] Processing DUPLICATES request to ${request.path} on workspace ${request.workspaceId}`,
-    );
     const result = await this.restApiCoreService.findDuplicates(request);
 
     res.status(200).send(result);
@@ -59,9 +53,6 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
-    this.logger.log(
-      `[REST API] Processing POST request to ${request.path} on workspace ${request.workspaceId}`,
-    );
     const result = await this.restApiCoreService.createOne(request);
 
     res.status(201).send(result);
@@ -72,9 +63,6 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
-    this.logger.log(
-      `[REST API] Processing GET request to ${request.path} on workspace ${request.workspaceId}`,
-    );
     const result = await this.restApiCoreService.get(request);
 
     res.status(200).send(result);
@@ -85,9 +73,6 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
-    this.logger.log(
-      `[REST API] Processing DELETE request to ${request.path} on workspace ${request.workspaceId}`,
-    );
     const result = await this.restApiCoreService.delete(request);
 
     res.status(200).send(result);
@@ -98,9 +83,6 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
-    this.logger.log(
-      `[REST API] Processing PATCH request to ${request.path} on workspace ${request.workspaceId}`,
-    );
     const result = await this.restApiCoreService.update(request);
 
     res.status(200).send(result);
@@ -114,9 +96,6 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
-    this.logger.log(
-      `[REST API] Processing PUT request to ${request.path} on workspace ${request.workspaceId}`,
-    );
     const result = await this.restApiCoreService.update(request);
 
     res.status(200).send(result);
