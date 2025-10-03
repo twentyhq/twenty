@@ -6,6 +6,7 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
+import { computeAggregateFromGroupByResult } from './computeAggregateFromGroupByResult';
 
 type TransformGroupByDataToBarChartDataParams = {
   groupByData: Record<string, any> | null | undefined;
@@ -86,7 +87,15 @@ export const transformGroupByDataToBarChartData = ({
 
       const xValue = String(dimensionValues[0]);
       const yValue = String(dimensionValues[1]);
-      const aggregateValue = result[aggregateOperation];
+
+      const aggregate = computeAggregateFromGroupByResult({
+        rawResult: result,
+        aggregateField,
+        // TODO: fix typing
+        aggregateOperation: configuration.aggregateOperation as any,
+        aggregateOperationFromRawResult: aggregateOperation,
+        objectMetadataItem,
+      });
 
       yValues.add(yValue);
 
@@ -97,7 +106,7 @@ export const transformGroupByDataToBarChartData = ({
       }
 
       const dataItem = dataMap.get(xValue)!;
-      dataItem[yValue] = aggregateValue;
+      dataItem[yValue] = aggregate.value ?? 0;
     });
 
     const keys = Array.from(yValues);
@@ -115,15 +124,23 @@ export const transformGroupByDataToBarChartData = ({
   } else {
     const data: BarChartDataItem[] = rawResults.map((result: any) => {
       const dimensionValues = result.groupByDimensionValues;
+
       const xValue = isDefined(dimensionValues?.[0])
         ? String(dimensionValues[0])
         : '';
-      const aggregateValue = result[aggregateOperation];
+
+      const aggregate = computeAggregateFromGroupByResult({
+        rawResult: result,
+        aggregateField,
+        // TODO: fix typing
+        aggregateOperation: configuration.aggregateOperation as any,
+        aggregateOperationFromRawResult: aggregateOperation,
+        objectMetadataItem,
+      });
 
       return {
         [groupByFieldX.name]: xValue,
-        [aggregateField.name]: aggregateValue,
-        colorScheme: configuration.color,
+        [aggregateField.name]: aggregate.value ?? 0,
       };
     });
 

@@ -4,7 +4,7 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration, GraphOrderBy } from '~/generated/graphql';
 
-const mapOrderByToDirection = (orderByEnum: GraphOrderBy) => {
+const _mapOrderByToDirection = (orderByEnum: GraphOrderBy) => {
   switch (orderByEnum) {
     case GraphOrderBy.FIELD_ASC:
       return 'AscNullsLast';
@@ -64,6 +64,7 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
 
   const orderBy: Array<Record<string, string>> = [];
 
+  // TODO: Add orderBy back in when the backend is ready
   // if (isDefined(barChartConfiguration.orderByX)) {
   //   orderBy.push({
   //     [groupByFieldX.name]: mapOrderByToDirection(
