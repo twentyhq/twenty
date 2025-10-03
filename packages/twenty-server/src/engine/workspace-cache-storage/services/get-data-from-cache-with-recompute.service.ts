@@ -83,7 +83,7 @@ export class GetDataFromCacheWithRecomputeService<T, U> {
     });
 
     return {
-      version: cachedVersion as T,
+      version: cachedVersion,
       data: cachedData,
     };
   };

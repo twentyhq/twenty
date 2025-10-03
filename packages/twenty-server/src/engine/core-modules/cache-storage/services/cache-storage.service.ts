@@ -15,9 +15,9 @@ export class CacheStorageService {
   ) {}
 
   async get<T>(key: string): Promise<T | undefined> {
-    const value = await this.cache.get(this.getKey(key));
+    const value = await this.cache.get<T>(this.getKey(key));
 
-    return value as T | undefined;
+    return value;
   }
 
   async set<T>(key: string, value: T, ttl?: Milliseconds) {
