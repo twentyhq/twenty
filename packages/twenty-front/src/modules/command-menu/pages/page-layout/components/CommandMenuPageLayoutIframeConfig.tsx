@@ -8,6 +8,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isValidUrl } from 'twenty-shared/utils';
@@ -119,18 +120,18 @@ export const CommandMenuPageLayoutIframeConfig = () => {
   return (
     <StyledContainer>
       <StyledSectionTitle>
-        {isEditMode ? 'Edit iFrame Widget' : 'Configure iFrame Widget'}
+        {isEditMode ? t`Edit iFrame Widget` : t`Configure iFrame Widget`}
       </StyledSectionTitle>
 
       <FormTextFieldInput
-        label="Widget Title"
-        placeholder="e.g., Analytics Dashboard"
+        label={t`Widget Title`}
+        placeholder={t`e.g., Analytics Dashboard`}
         defaultValue={title}
         onChange={setTitle}
       />
 
       <FormTextFieldInput
-        label="URL to Embed"
+        label={t`URL to Embed`}
         placeholder="https://example.com/embed"
         defaultValue={url}
         onChange={handleUrlChange}
@@ -139,7 +140,7 @@ export const CommandMenuPageLayoutIframeConfig = () => {
 
       <StyledButtonContainer>
         <Button
-          title={isEditMode ? 'Save Changes' : 'Create Widget'}
+          title={isEditMode ? t`Save Changes` : t`Create Widget`}
           onClick={handleSubmit}
           disabled={!isFormValid}
           variant="primary"
