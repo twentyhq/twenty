@@ -45,15 +45,13 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId,
     shouldComputeWorkflowRunStatus = true,
   }: WorkflowExecutorInput) {
-    await Promise.all(
-      stepIds.map(async (stepIdToExecute) => {
-        await this.executeFromStep({
-          stepId: stepIdToExecute,
-          workflowRunId,
-          workspaceId,
-        });
-      }),
-    );
+    for (const stepIdToExecute of stepIds) {
+      await this.executeFromStep({
+        stepId: stepIdToExecute,
+        workflowRunId,
+        workspaceId,
+      });
+    }
 
     if (shouldComputeWorkflowRunStatus) {
       await this.computeWorkflowRunStatus({
