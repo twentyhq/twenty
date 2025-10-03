@@ -516,7 +516,7 @@ export class ApplicationSyncService {
       if (!triggerToSync || triggerToSync.type !== 'databaseEvent') {
         throw new ApplicationException(
           `Failed to find database event trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+          ApplicationExceptionCode.ENTITY_NOT_FOUND,
         );
       }
 
@@ -629,7 +629,7 @@ export class ApplicationSyncService {
       if (!triggerToSync || triggerToSync.type !== 'cron') {
         throw new ApplicationException(
           `Failed to find cron trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+          ApplicationExceptionCode.ENTITY_NOT_FOUND,
         );
       }
 
@@ -744,7 +744,7 @@ export class ApplicationSyncService {
       if (!triggerToSync || triggerToSync.type !== 'route') {
         throw new ApplicationException(
           `Failed to find route trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+          ApplicationExceptionCode.ENTITY_NOT_FOUND,
         );
       }
 

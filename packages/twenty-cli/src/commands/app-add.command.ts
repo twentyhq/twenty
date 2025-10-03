@@ -361,7 +361,7 @@ export class AppAddCommand {
       universalIdentifier: uuid,
       type: 'route',
       path,
-      httpMethod: httpMethod,
+      httpMethod,
       isAuthRequired,
     };
   }
