@@ -106,96 +106,116 @@ export class LocalDriver implements ServerlessDriver {
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
-    const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
-
-    await this.fileStorageService.download({
-      from: { folderPath },
-      to: { folderPath: sourceTemporaryDir },
-    });
-
-    const builtBundleFilePath =
-      await buildServerlessFunctionInMemory(sourceTemporaryDir);
-
     try {
-      await fs.symlink(
-        join(
-          this.getInMemoryLayerFolderPath(serverlessFunction),
-          'node_modules',
-        ),
-        join(sourceTemporaryDir, 'node_modules'),
-        'dir',
-      );
-    } catch (err) {
-      if (err.code !== 'EEXIST') {
-        throw err;
-      }
-    }
+      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
-    let logs = '';
-
-    const consoleListener = new ConsoleListener();
-
-    consoleListener.intercept((type, args) => {
-      const formattedArgs = args.map((arg) => {
-        if (typeof arg === 'object' && arg !== null) {
-          const seen = new WeakSet();
-
-          return JSON.stringify(
-            arg,
-            (_key, value) => {
-              if (typeof value === 'object' && value !== null) {
-                if (seen.has(value)) {
-                  return '[Circular]'; // Handle circular references
-                }
-                seen.add(value);
-              }
-
-              return value;
-            },
-            2,
-          );
-        }
-
-        return arg;
+      await this.fileStorageService.download({
+        from: { folderPath },
+        to: { folderPath: sourceTemporaryDir },
       });
 
-      const formattedType = type === 'log' ? 'info' : type;
+      let builtBundleFilePath = '';
 
-      logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;
-    });
+      try {
+        builtBundleFilePath =
+          await buildServerlessFunctionInMemory(sourceTemporaryDir);
+      } catch (error) {
+        return {
+          data: null,
+          logs: '',
+          duration: Date.now() - startTime,
+          error: {
+            errorType: 'BuildError',
+            errorMessage:
+              // @ts-expect-error legacy noImplicitAny
+              error.errors.map((e) => e.text).join('\n') || 'Unknown error',
+            stackTrace: error.stack ? error.stack.split('\n') : [],
+          },
+          status: ServerlessFunctionExecutionStatus.ERROR,
+        };
+      }
 
-    try {
-      const mainFile = await import(builtBundleFilePath);
+      try {
+        await fs.symlink(
+          join(
+            this.getInMemoryLayerFolderPath(serverlessFunction),
+            'node_modules',
+          ),
+          join(sourceTemporaryDir, 'node_modules'),
+          'dir',
+        );
+      } catch (err) {
+        if (err.code !== 'EEXIST') {
+          throw err;
+        }
+      }
 
-      const result = await this.executeWithTimeout<object | null>(
-        () => mainFile.main(payload),
-        serverlessFunction.timeoutSeconds * 1_000,
-      );
+      let logs = '';
 
-      const duration = Date.now() - startTime;
+      const consoleListener = new ConsoleListener();
 
-      return {
-        data: result,
-        logs,
-        duration,
-        status: ServerlessFunctionExecutionStatus.SUCCESS,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        logs,
-        duration: Date.now() - startTime,
-        error: {
-          errorType: 'UnhandledError',
-          errorMessage: error.message || 'Unknown error',
-          stackTrace: error.stack ? error.stack.split('\n') : [],
-        },
-        status: ServerlessFunctionExecutionStatus.ERROR,
-      };
+      consoleListener.intercept((type, args) => {
+        const formattedArgs = args.map((arg) => {
+          if (typeof arg === 'object' && arg !== null) {
+            const seen = new WeakSet();
+
+            return JSON.stringify(
+              arg,
+              (_key, value) => {
+                if (typeof value === 'object' && value !== null) {
+                  if (seen.has(value)) {
+                    return '[Circular]'; // Handle circular references
+                  }
+                  seen.add(value);
+                }
+
+                return value;
+              },
+              2,
+            );
+          }
+
+          return arg;
+        });
+
+        const formattedType = type === 'log' ? 'info' : type;
+
+        logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;
+      });
+
+      try {
+        const mainFile = await import(builtBundleFilePath);
+
+        const result = await this.executeWithTimeout<object | null>(
+          () => mainFile.main(payload),
+          serverlessFunction.timeoutSeconds * 1_000,
+        );
+
+        const duration = Date.now() - startTime;
+
+        return {
+          data: result,
+          logs,
+          duration,
+          status: ServerlessFunctionExecutionStatus.SUCCESS,
+        };
+      } catch (error) {
+        return {
+          data: null,
+          logs,
+          duration: Date.now() - startTime,
+          error: {
+            errorType: 'UnhandledError',
+            errorMessage: error.message || 'Unknown error',
+            stackTrace: error.stack ? error.stack.split('\n') : [],
+          },
+          status: ServerlessFunctionExecutionStatus.ERROR,
+        };
+      } finally {
+        // Restoring originalConsole
+        consoleListener.release();
+      }
     } finally {
-      // Restoring originalConsole
-      consoleListener.release();
-
       await lambdaBuildDirectoryManager.clean();
     }
   }

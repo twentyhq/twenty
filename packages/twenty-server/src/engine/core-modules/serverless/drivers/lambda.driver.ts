@@ -318,68 +318,88 @@ export class LambdaDriver implements ServerlessDriver {
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
-    const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
-
-    await this.fileStorageService.download({
-      from: { folderPath },
-      to: { folderPath: sourceTemporaryDir },
-    });
-
-    const builtBundleFilePath =
-      await buildServerlessFunctionInMemory(sourceTemporaryDir);
-
-    const compiledCode = (await fs.readFile(builtBundleFilePath)).toString(
-      'utf-8',
-    );
-
-    const executorPayload = {
-      params: payload,
-      code: compiledCode,
-    };
-
-    const params: InvokeCommandInput = {
-      FunctionName: serverlessFunction.id,
-      Payload: JSON.stringify(executorPayload),
-      LogType: LogType.Tail,
-    };
-
-    const command = new InvokeCommand(params);
-
     try {
-      const result = await (await this.getLambdaClient()).send(command);
+      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
-      const parsedResult = result.Payload
-        ? JSON.parse(result.Payload.transformToString())
-        : {};
+      await this.fileStorageService.download({
+        from: { folderPath },
+        to: { folderPath: sourceTemporaryDir },
+      });
 
-      const logs = result.LogResult ? this.extractLogs(result.LogResult) : '';
+      let builtBundleFilePath = '';
 
-      const duration = Date.now() - startTime;
-
-      if (result.FunctionError) {
+      try {
+        builtBundleFilePath =
+          await buildServerlessFunctionInMemory(sourceTemporaryDir);
+      } catch (error) {
         return {
           data: null,
-          duration,
+          logs: '',
+          duration: Date.now() - startTime,
+          error: {
+            errorType: 'BuildError',
+            errorMessage:
+              // @ts-expect-error legacy noImplicitAny
+              error.errors.map((e) => e.text).join('\n') || 'Unknown error',
+            stackTrace: error.stack ? error.stack.split('\n') : [],
+          },
           status: ServerlessFunctionExecutionStatus.ERROR,
-          error: parsedResult,
-          logs,
         };
       }
 
-      return {
-        data: parsedResult,
-        logs,
-        duration,
-        status: ServerlessFunctionExecutionStatus.SUCCESS,
+      const compiledCode = (await fs.readFile(builtBundleFilePath)).toString(
+        'utf-8',
+      );
+
+      const executorPayload = {
+        params: payload,
+        code: compiledCode,
       };
-    } catch (error) {
-      if (error instanceof ResourceNotFoundException) {
-        throw new ServerlessFunctionException(
-          `Function Version '${version}' does not exist`,
-          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-        );
+
+      const params: InvokeCommandInput = {
+        FunctionName: serverlessFunction.id,
+        Payload: JSON.stringify(executorPayload),
+        LogType: LogType.Tail,
+      };
+
+      const command = new InvokeCommand(params);
+
+      try {
+        const result = await (await this.getLambdaClient()).send(command);
+
+        const parsedResult = result.Payload
+          ? JSON.parse(result.Payload.transformToString())
+          : {};
+
+        const logs = result.LogResult ? this.extractLogs(result.LogResult) : '';
+
+        const duration = Date.now() - startTime;
+
+        if (result.FunctionError) {
+          return {
+            data: null,
+            duration,
+            status: ServerlessFunctionExecutionStatus.ERROR,
+            error: parsedResult,
+            logs,
+          };
+        }
+
+        return {
+          data: parsedResult,
+          logs,
+          duration,
+          status: ServerlessFunctionExecutionStatus.SUCCESS,
+        };
+      } catch (error) {
+        if (error instanceof ResourceNotFoundException) {
+          throw new ServerlessFunctionException(
+            `Function Version '${version}' does not exist`,
+            ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+          );
+        }
+        throw error;
       }
-      throw error;
     } finally {
       await lambdaBuildDirectoryManager.clean();
     }
