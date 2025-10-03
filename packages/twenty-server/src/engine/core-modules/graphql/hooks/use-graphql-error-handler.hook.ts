@@ -95,6 +95,10 @@ export const useGraphQLErrorHandlerHook = <
         'Anonymous Operation';
       const workspaceInfo = extractWorkspaceInfo(args.contextValue.req);
 
+      console.log(
+        `[GQL Execute] Processing GQL query ${opName} on workspace ${workspaceInfo?.id}`,
+      );
+
       return {
         onExecuteDone(payload) {
           const handleResult: OnExecuteDoneHookResultOnNextHook<object> = ({
