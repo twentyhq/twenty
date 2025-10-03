@@ -2,6 +2,7 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
@@ -11,7 +12,8 @@ import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/g
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { generateUpdateOneRecordMutation } from '@/object-record/multiple-objects/utils/generateUpdateOneRecordMutation';
 import { getTargetFieldMetadataName } from '@/object-record/multiple-objects/utils/getTargetFieldMetadataName';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -20,7 +22,6 @@ import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryNa
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isNull } from '@sniptt/guards';
-import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
@@ -28,12 +29,13 @@ import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromK
 type UpdateManyRecordArgs = {
   idToUpdate: string;
   relatedRecordId: string | null;
+  objectMetadataItem: ObjectMetadataItem;
   objectNameSingulars: string[];
   recordGqlFields?: Record<string, any>;
+  fieldDefinition: FieldDefinition<FieldMetadata>;
 };
 
-export const useUpdateMultipleRecordsFromManyObjects = () => {
-  const { fieldDefinition } = useContext(FieldContext);
+export const useUpdateMultipleRecordsManyToOneObjects = () => {
   const apolloCoreClient = useApolloCoreClient();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -41,15 +43,46 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const updateMultipleRecordsFromManyObjects = async (
+  const updateMultipleRecordsManyToOneObjects = async (
     updatedManyRecordsArgs: UpdateManyRecordArgs[],
   ) => {
     for (const {
       idToUpdate,
+      objectMetadataItem: objectMetadataItemOfIdToUpdate,
       objectNameSingulars,
       relatedRecordId,
       recordGqlFields,
+      fieldDefinition,
     } of updatedManyRecordsArgs) {
+      if (isNull(idToUpdate)) {
+        throw new CustomError(`idToUpdate id is null`, 'ID_TO_UPDATE_IS_NULL');
+      }
+
+      const cachedRecord = getRecordFromCache({
+        objectMetadataItem: objectMetadataItemOfIdToUpdate,
+        recordId: idToUpdate,
+        cache: apolloCoreClient.cache,
+        objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+      });
+
+      if (!isDefined(cachedRecord)) {
+        throw new CustomError(
+          `Record not found ${idToUpdate}`,
+          'RECORD_NOT_FOUND_IN_OBJECT_METADATA_ITEM',
+        );
+      }
+
+      if (
+        !isFieldRelation(fieldDefinition) &&
+        !isFieldMorphRelation(fieldDefinition)
+      ) {
+        throw new CustomError(
+          `Should never happen`,
+          'TARGET_FIELD_NAME_NOT_FOUND',
+        );
+      }
+
       const objectMetadataItemArray = objectMetadataItems.filter(
         (objectMetadataItem) =>
           objectNameSingulars.includes(objectMetadataItem.nameSingular),
@@ -62,60 +95,42 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
         );
       }
 
-      const objectMetadataItemWithCachedRecord = objectMetadataItemArray
-        .map((objectMetadataItem) => {
-          const cachedRecord = getRecordFromCache({
-            objectMetadataItem,
-            recordId: idToUpdate,
-            cache: apolloCoreClient.cache,
-            objectMetadataItems,
-            objectPermissionsByObjectMetadataId,
-          });
-          return {
-            cachedRecord,
-            objectMetadataItem,
-          };
-        })
-        .find((item) => isDefined(item.cachedRecord));
+      const updateOneRecordInput: Record<string, string | null> = {};
 
-      if (!isDefined(objectMetadataItemWithCachedRecord)) {
-        throw new CustomError(
-          `Record not found ${idToUpdate}`,
-          'RECORD_NOT_FOUND_IN_OBJECT_METADATA_ITEM',
-        );
+      for (const objectMetadataItem of objectMetadataItemArray) {
+        const targetFieldName = getTargetFieldMetadataName({
+          fieldDefinition,
+          objectNameSingular: objectMetadataItem.nameSingular,
+        });
+
+        if (!isDefined(targetFieldName)) {
+          throw new CustomError(
+            `Cannot find Target field name for the (morph) relation field ${fieldDefinition.metadata.fieldName} on ${objectMetadataItem.nameSingular}`,
+            'TARGET_FIELD_NAME_NOT_FOUND',
+          );
+        }
+
+        updateOneRecordInput[`${targetFieldName}Id`] = null;
+
+        if (!isDefined(relatedRecordId)) {
+          continue;
+        }
+
+        const cachedRelatedRecord = getRecordFromCache({
+          objectMetadataItem: objectMetadataItem,
+          recordId: relatedRecordId,
+          cache: apolloCoreClient.cache,
+          objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
+        });
+
+        if (isDefined(cachedRelatedRecord)) {
+          updateOneRecordInput[`${targetFieldName}Id`] = cachedRelatedRecord.id;
+        }
       }
-
-      const { objectMetadataItem, cachedRecord } =
-        objectMetadataItemWithCachedRecord;
-
-      if (
-        !isFieldRelation(fieldDefinition) &&
-        !isFieldMorphRelation(fieldDefinition)
-      ) {
-        throw new CustomError(
-          `Should never happen`,
-          'TARGET_FIELD_NAME_NOT_FOUND',
-        );
-      }
-
-      const targetFieldName = getTargetFieldMetadataName({
-        fieldDefinition,
-        objectNameSingular: objectMetadataItem.nameSingular,
-      });
-
-      if (!isDefined(targetFieldName)) {
-        throw new CustomError(
-          `Cannot find Target field name for the (morph) relation field ${fieldDefinition.metadata.fieldName} on ${objectMetadataItem.nameSingular}`,
-          'TARGET_FIELD_NAME_NOT_FOUND',
-        );
-      }
-
-      const updateOneRecordInput = {
-        [`${targetFieldName}Id`]: relatedRecordId,
-      };
 
       const optimisticRecordInput = computeOptimisticRecordFromInput({
-        objectMetadataItem,
+        objectMetadataItem: objectMetadataItemOfIdToUpdate,
         currentWorkspaceMember: currentWorkspaceMember,
         recordInput: updateOneRecordInput,
         cache: apolloCoreClient.cache,
@@ -125,11 +140,13 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
 
       const computedRecordGqlFields =
         recordGqlFields ??
-        generateDepthOneRecordGqlFields({ objectMetadataItem });
+        generateDepthOneRecordGqlFields({
+          objectMetadataItem: objectMetadataItemOfIdToUpdate,
+        });
 
       const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
         record: cachedRecord,
-        objectMetadataItem,
+        objectMetadataItem: objectMetadataItemOfIdToUpdate,
         objectMetadataItems,
         recordGqlFields: computedRecordGqlFields,
         computeReferences: false,
@@ -139,13 +156,15 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
         ...cachedRecord,
         ...optimisticRecordInput,
         id: idToUpdate,
-        __typename: getObjectTypename(objectMetadataItem.nameSingular),
+        __typename: getObjectTypename(
+          objectMetadataItemOfIdToUpdate.nameSingular,
+        ),
       };
 
       const optimisticRecordWithConnection =
         getRecordNodeFromRecord<ObjectRecord>({
           record: computedOptimisticRecord,
-          objectMetadataItem,
+          objectMetadataItem: objectMetadataItemOfIdToUpdate,
           objectMetadataItems,
           recordGqlFields: computedRecordGqlFields,
           computeReferences: false,
@@ -158,13 +177,13 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
 
       if (shouldHandleOptimisticCache) {
         const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
-          objectMetadataItem,
+          objectMetadataItem: objectMetadataItemOfIdToUpdate,
           record: optimisticRecordInput,
         });
 
         updateRecordFromCache({
           objectMetadataItems,
-          objectMetadataItem,
+          objectMetadataItem: objectMetadataItemOfIdToUpdate,
           cache: apolloCoreClient.cache,
           record: computedOptimisticRecord,
           recordGqlFields,
@@ -173,7 +192,7 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
 
         triggerUpdateRecordOptimisticEffect({
           cache: apolloCoreClient.cache,
-          objectMetadataItem,
+          objectMetadataItem: objectMetadataItemOfIdToUpdate,
           currentRecord: cachedRecordWithConnection,
           updatedRecord: optimisticRecordWithConnection,
           objectMetadataItems,
@@ -181,18 +200,18 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
       }
 
       const mutationResponseField = getUpdateOneRecordMutationResponseField(
-        objectMetadataItem.nameSingular,
+        objectMetadataItemOfIdToUpdate.nameSingular,
       );
 
       const sanitizedInput = {
         ...sanitizeRecordInput({
-          objectMetadataItem,
+          objectMetadataItem: objectMetadataItemOfIdToUpdate,
           recordInput: updateOneRecordInput,
         }),
       };
 
       const updateOneRecordMutation = generateUpdateOneRecordMutation({
-        objectMetadataItem,
+        objectMetadataItem: objectMetadataItemOfIdToUpdate,
         objectMetadataItems,
         recordGqlFields: computedRecordGqlFields,
         computeReferences: false,
@@ -212,7 +231,7 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
 
             triggerUpdateRecordOptimisticEffect({
               cache,
-              objectMetadataItem,
+              objectMetadataItem: objectMetadataItemOfIdToUpdate,
               currentRecord: computedOptimisticRecord,
               updatedRecord: record,
               objectMetadataItems,
@@ -230,7 +249,7 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
 
           const recordGqlFields = {
             ...computeDepthOneRecordGqlFieldsFromRecord({
-              objectMetadataItem,
+              objectMetadataItem: objectMetadataItemOfIdToUpdate,
               record: cachedRecord,
             }),
             ...buildRecordFromKeysWithSameValue(
@@ -241,7 +260,7 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
 
           updateRecordFromCache({
             objectMetadataItems,
-            objectMetadataItem,
+            objectMetadataItem: objectMetadataItemOfIdToUpdate,
             cache: apolloCoreClient.cache,
             record: {
               ...cachedRecord,
@@ -256,7 +275,7 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
 
           triggerUpdateRecordOptimisticEffect({
             cache: apolloCoreClient.cache,
-            objectMetadataItem,
+            objectMetadataItem: objectMetadataItemOfIdToUpdate,
             currentRecord: optimisticRecordWithConnection,
             updatedRecord: cachedRecordWithConnection,
             objectMetadataItems,
@@ -266,7 +285,9 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
         });
 
       const refetchAggregateQueries = async () => {
-        const queryName = getAggregateQueryName(objectMetadataItem.namePlural);
+        const queryName = getAggregateQueryName(
+          objectMetadataItemOfIdToUpdate.namePlural,
+        );
 
         await apolloCoreClient.refetchQueries({
           include: [queryName],
@@ -279,6 +300,6 @@ export const useUpdateMultipleRecordsFromManyObjects = () => {
   };
 
   return {
-    updateMultipleRecordsFromManyObjects,
+    updateMultipleRecordsManyToOneObjects,
   };
 };

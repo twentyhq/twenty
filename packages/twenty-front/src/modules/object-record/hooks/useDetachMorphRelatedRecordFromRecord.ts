@@ -6,11 +6,12 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useUpdateMultipleRecordsFromManyObjects } from '@/object-record/hooks/useUpdateMultipleRecordsFromManyObjects';
+import { useUpdateMultipleRecordsManyToOneObjects } from '@/object-record/hooks/useUpdateMultipleRecordsManyToOneObjects';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getRelatedRecordFieldDefinition } from '@/object-record/utils/getRelatedRecordFieldDefinition';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,8 +20,8 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { fieldDefinition } = useContext(FieldContext);
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { updateMultipleRecordsFromManyObjects } =
-    useUpdateMultipleRecordsFromManyObjects();
+  const { updateMultipleRecordsManyToOneObjects } =
+    useUpdateMultipleRecordsManyToOneObjects();
 
   if (!isFieldMorphRelation(fieldDefinition)) {
     throw new Error('Field is not a morph relation');
@@ -146,21 +147,36 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
           recordId,
         });
 
+        const sourceObjectMetadataItemName =
+          fieldDefinition.metadata.morphRelations[0].sourceObjectMetadata
+            .nameSingular;
+
+        const relatedRecordFieldDefinition = getRelatedRecordFieldDefinition({
+          fieldDefinition,
+          relatedObjectMetadataItem,
+        });
+
+        if (!isDefined(relatedRecordFieldDefinition)) {
+          throw new Error('Could not find related record field definition');
+        }
+
         const updatedManyRecordsArgs = [
           {
             idToUpdate: relatedRecordId,
-            objectNameSingulars,
+            objectMetadataItem: relatedObjectMetadataItem,
+            objectNameSingulars: [sourceObjectMetadataItemName],
             relatedRecordId: null,
+            fieldDefinition: relatedRecordFieldDefinition,
           },
         ];
 
-        await updateMultipleRecordsFromManyObjects(updatedManyRecordsArgs);
+        await updateMultipleRecordsManyToOneObjects(updatedManyRecordsArgs);
       },
     [
       fieldDefinition,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
-      updateMultipleRecordsFromManyObjects,
+      updateMultipleRecordsManyToOneObjects,
       apolloCoreClient.cache,
       objectMetadataItem,
     ],

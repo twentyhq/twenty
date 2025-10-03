@@ -1,4 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,10 +28,20 @@ export const sanitizeRecordInput = ({
               field.type === FieldMetadataType.RELATION &&
               field.settings?.joinColumnName === fieldName,
           );
+        const potentialMorphRelationJoinColumnNameFieldMetadataItem =
+          objectMetadataItem.fields.find((field) => {
+            if (!isFieldMorphRelation(field)) return false;
+            return field.morphRelations?.some(
+              (morphRelation) =>
+                morphRelation.sourceFieldMetadata.name ===
+                fieldName.replace('Id', ''),
+            );
+          });
 
         if (
           !isDefined(fieldMetadataItem) &&
-          !isDefined(potentialJoinColumnNameFieldMetadataItem)
+          !isDefined(potentialJoinColumnNameFieldMetadataItem) &&
+          !isDefined(potentialMorphRelationJoinColumnNameFieldMetadataItem)
         ) {
           return undefined;
         }

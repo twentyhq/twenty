@@ -34,7 +34,7 @@ const meta: Meta<typeof SingleRecordPicker> = {
     I18nFrontDecorator,
   ],
   args: {
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],
     componentInstanceId: 'single-record-picker',
   },
   argTypes: {
