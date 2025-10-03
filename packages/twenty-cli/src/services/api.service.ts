@@ -72,7 +72,6 @@ export class ApiService {
           headers: {
             'Content-Type': 'application/json',
             Accept: '*/*',
-            'x-schema-version': '6',
           },
         },
       );
@@ -115,7 +114,6 @@ export class ApiService {
           headers: {
             'Content-Type': 'application/json',
             Accept: '*/*',
-            'x-schema-version': '6',
           },
         },
       );
@@ -164,7 +162,6 @@ export class ApiService {
           headers: {
             'Content-Type': 'application/json',
             Accept: '*/*',
-            'x-schema-version': '6',
           },
         },
       );
