@@ -3,13 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/core-modules/common/constant/all-flat-entity-maps-properties.constant';
-import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-all-flat-entity-maps.constant';
+import { AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import {
-  WorkspaceFlatMapCacheException,
-  WorkspaceFlatMapCacheExceptionCode,
-} from 'src/engine/workspace-flat-map-cache/exceptions/workspace-flat-map-cache.exception';
+import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache-registry.service';
+import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
 @Injectable()
 export class WorkspaceManyOrAllFlatEntityMapsCacheService {
@@ -21,78 +19,28 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     private readonly cacheRegistry: WorkspaceFlatMapCacheRegistryService,
   ) {}
 
-  public async getOrRecomputeManyOrAllFlatEntityMaps<
+  private async executeActionforManyOrAllFlatEntity<
     T extends (keyof AllFlatEntityMaps)[] = (keyof AllFlatEntityMaps)[],
   >({
-    flatEntities,
-    workspaceId,
+    action,
+    flatMapsKeys,
   }: {
-    workspaceId: string;
-    flatEntities?: T;
-  }): Promise<Pick<AllFlatEntityMaps, T[number]>> {
-    const allFlatEntityMaps: AllFlatEntityMaps = structuredClone(
-      EMPTY_ALL_FLAT_ENTITY_MAPS,
-    );
-
-    for (const flatEntityName of ALL_FLAT_ENTITY_MAPS_PROPERTIES) {
-      if (isDefined(flatEntities) && !flatEntities.includes(flatEntityName)) {
-        delete allFlatEntityMaps[flatEntityName];
-        continue;
-      }
-
-      try {
-        const service = this.cacheRegistry.getCacheService(flatEntityName);
-
-        if (!isDefined(service)) {
-          throw new WorkspaceFlatMapCacheException(
-            `No cache service found for ${flatEntityName}`,
-            WorkspaceFlatMapCacheExceptionCode.INTERNAL_SERVER_ERROR,
-          );
-        }
-
-        const result = await service.getExistingOrRecomputeFlatMaps({
-          workspaceId,
-        });
-
-        // @ts-expect-error todo prastoin once refactored flat object metadata cache
-        allFlatEntityMaps[flatEntityName] = result;
-      } catch (error) {
-        this.logger.error(
-          `Failed to get flat entity maps for ${flatEntityName}`,
-          error,
-        );
-        throw error;
-      }
-    }
-
-    return allFlatEntityMaps;
-  }
-
-  public async invalidateFlatEntityMaps<
-    T extends (keyof AllFlatEntityMaps)[] = (keyof AllFlatEntityMaps)[],
-  >({
-    flatEntities,
-    workspaceId,
-  }: {
-    workspaceId: string;
-    flatEntities?: T;
+    flatMapsKeys: T | undefined;
+    action: (args: {
+      service: WorkspaceFlatMapCacheService<FlatEntityMaps<AllFlatEntities>>;
+      flatEntityName: keyof AllFlatEntityMaps;
+    }) => Promise<void>;
   }): Promise<void> {
     for (const flatEntityName of ALL_FLAT_ENTITY_MAPS_PROPERTIES) {
-      if (isDefined(flatEntities) && !flatEntities.includes(flatEntityName)) {
+      if (isDefined(flatMapsKeys) && !flatMapsKeys.includes(flatEntityName)) {
         continue;
       }
 
       try {
-        const service = this.cacheRegistry.getCacheService(flatEntityName);
+        const service =
+          this.cacheRegistry.getCacheServiceOrThrow(flatEntityName);
 
-        if (!isDefined(service)) {
-          throw new WorkspaceFlatMapCacheException(
-            `No cache service found for ${flatEntityName}`,
-            WorkspaceFlatMapCacheExceptionCode.INTERNAL_SERVER_ERROR,
-          );
-        }
-
-        await service.invalidateCache({ workspaceId });
+        await action({ flatEntityName, service });
       } catch (error) {
         this.logger.error(
           `Failed to invalidate flat entity maps for ${flatEntityName}`,
@@ -101,5 +49,64 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
         throw error;
       }
     }
+  }
+
+  public async getOrRecomputeManyOrAllFlatEntityMaps<
+    T extends (keyof AllFlatEntityMaps)[] = (keyof AllFlatEntityMaps)[],
+  >({
+    flatMapsKeys,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    flatMapsKeys?: T;
+  }): Promise<Pick<AllFlatEntityMaps, T[number]>> {
+    let pickedFlatEntityMaps = {} as Pick<AllFlatEntityMaps, T[number]>;
+
+    await this.executeActionforManyOrAllFlatEntity({
+      action: async ({ service, flatEntityName }) => {
+        const cacheResult = await service.getExistingOrRecomputeFlatMaps({
+          workspaceId,
+        });
+
+        pickedFlatEntityMaps = {
+          ...pickedFlatEntityMaps,
+          [flatEntityName]: cacheResult,
+        };
+      },
+      flatMapsKeys,
+    });
+
+    return pickedFlatEntityMaps;
+  }
+
+  public async invalidateFlatEntityMaps<
+    T extends (keyof AllFlatEntityMaps)[] = (keyof AllFlatEntityMaps)[],
+  >({
+    flatMapsKeys,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    flatMapsKeys?: T;
+  }): Promise<void> {
+    await this.executeActionforManyOrAllFlatEntity({
+      action: async ({ service }) =>
+        await service.invalidateCache({ workspaceId }),
+      flatMapsKeys,
+    });
+  }
+
+  public async flushFlatEntityMaps<
+    T extends (keyof AllFlatEntityMaps)[] = (keyof AllFlatEntityMaps)[],
+  >({
+    flatMapsKeys,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    flatMapsKeys?: T;
+  }): Promise<void> {
+    await this.executeActionforManyOrAllFlatEntity({
+      action: async ({ service }) => await service.flushCache({ workspaceId }),
+      flatMapsKeys,
+    });
   }
 }

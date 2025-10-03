@@ -36,7 +36,7 @@ export class CronTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -86,7 +86,7 @@ export class CronTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -104,7 +104,7 @@ export class CronTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
@@ -157,7 +157,7 @@ export class CronTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps'],
         },
       );
 
@@ -181,7 +181,7 @@ export class CronTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
 
