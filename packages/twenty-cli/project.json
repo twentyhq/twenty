@@ -4,15 +4,6 @@
   "projectType": "application",
   "tags": ["scope:cli"],
   "targets": {
-    "deploy": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "options": {
-        "cwd": "packages/twenty-cli",
-        "commands": ["npm publish --access public"]
-      },
-      "dependsOn": ["build"]
-    },
     "after-build": {
       "executor": "nx:run-commands",
       "cache": true,
