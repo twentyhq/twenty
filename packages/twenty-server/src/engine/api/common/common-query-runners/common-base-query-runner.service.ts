@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { ObjectsPermissions } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { CommonQueryRunnerOptions } from 'src/engine/api/common/interfaces/common-query-runner-options.interface';
+import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
@@ -30,6 +30,8 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -63,14 +65,19 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
 
-  public async prepareQueryRunnerContext(options: CommonQueryRunnerOptions) {
-    const { authContext, objectMetadataItemWithFieldMaps } = options;
-
+  public async prepareQueryRunnerContext({
+    authContext,
+    objectMetadataItemWithFieldMaps,
+  }: {
+    authContext: WorkspaceAuthContext;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+  }) {
     if (objectMetadataItemWithFieldMaps.isSystem === true) {
-      await this.validateSettingsPermissionsOnObjectOrThrow(options);
+      await this.validateSettingsPermissionsOnObjectOrThrow(
+        authContext,
+        objectMetadataItemWithFieldMaps,
+      );
     }
-
-    assertIsDefinedOrThrow(authContext.workspace);
 
     const workspace = authContext.workspace;
 
@@ -90,7 +97,6 @@ export abstract class CommonBaseQueryRunnerService<
     );
 
     return {
-      options,
       workspaceDataSource,
       repository,
       isExecutedByApiKey: isDefined(authContext.apiKey),
@@ -100,13 +106,17 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
-  public async computeSelectedFields(
-    rawSelectedFields: RawSelectedFields,
-    options: CommonQueryRunnerOptions,
-    objectsPermissions: ObjectsPermissions,
-  ): Promise<CommonSelectedFieldsResult> {
-    const { objectMetadataItemWithFieldMaps, objectMetadataMaps } = options;
-
+  public async computeSelectedFields({
+    rawSelectedFields,
+    objectMetadataItemWithFieldMaps,
+    objectMetadataMaps,
+    objectsPermissions,
+  }: {
+    rawSelectedFields: RawSelectedFields;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
+    objectsPermissions: ObjectsPermissions;
+  }): Promise<CommonSelectedFieldsResult> {
     if (isDefined(rawSelectedFields.graphqlSelectedFields)) {
       const graphqlQueryParser = new GraphqlQueryParser(
         objectMetadataItemWithFieldMaps,
@@ -129,23 +139,29 @@ export abstract class CommonBaseQueryRunnerService<
     });
   }
 
-  public async enrichResultsWithGettersAndHooks(
-    results: Response,
-    options: CommonQueryRunnerOptions,
-    operationName: CommonQueryNames,
-  ) {
-    assertIsDefinedOrThrow(options.authContext.workspace);
-
+  public async enrichResultsWithGettersAndHooks({
+    results,
+    operationName,
+    authContext,
+    objectMetadataItemWithFieldMaps,
+    objectMetadataMaps,
+  }: {
+    results: Response;
+    operationName: CommonQueryNames;
+    authContext: WorkspaceAuthContext;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
+  }) {
     const resultWithGetters = await this.queryResultGettersFactory.create(
       results,
-      options.objectMetadataItemWithFieldMaps,
-      options.authContext.workspace.id,
-      options.objectMetadataMaps,
+      objectMetadataItemWithFieldMaps,
+      authContext.workspace.id,
+      objectMetadataMaps,
     );
 
     await this.workspaceQueryHookService.executePostQueryHooks(
-      options.authContext,
-      options.objectMetadataItemWithFieldMaps.nameSingular,
+      authContext,
+      objectMetadataItemWithFieldMaps.nameSingular,
       operationName,
       resultWithGetters,
     );
@@ -154,13 +170,10 @@ export abstract class CommonBaseQueryRunnerService<
   }
 
   private async validateSettingsPermissionsOnObjectOrThrow(
-    options: CommonQueryRunnerOptions,
+    authContext: WorkspaceAuthContext,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ) {
-    const { authContext, objectMetadataItemWithFieldMaps } = options;
-
     const workspace = authContext.workspace;
-
-    assertIsDefinedOrThrow(workspace);
 
     if (
       Object.keys(OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS).includes(

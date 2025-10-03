@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
-import { CommonQueryRunnerOptions } from 'src/engine/api/common/interfaces/common-query-runner-options.interface';
 import {
   type ObjectRecord,
   type ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
   type CreateManyResolverArgs,
   type CreateOneResolverArgs,
@@ -36,7 +36,7 @@ export class QueryRunnerArgsFactory {
 
   async create(
     args: ResolverArgs,
-    options: CommonQueryRunnerOptions,
+    options: WorkspaceQueryRunnerOptions,
     resolverArgsType: ResolverArgsType,
   ) {
     const fieldMetadataMapByNameByName =
@@ -148,7 +148,7 @@ export class QueryRunnerArgsFactory {
 
   private async overrideDataByFieldMetadata(
     partialRecordInputs: Partial<ObjectRecord>[] | undefined,
-    options: CommonQueryRunnerOptions,
+    options: WorkspaceQueryRunnerOptions,
     shouldBackfillPositionIfUndefined = true,
   ): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {

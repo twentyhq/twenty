@@ -20,17 +20,23 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
   async handle(request: Request) {
     try {
       const { args, rawSelectedFields } = await this.parseCommonArgs(request);
-      const options = await this.buildCommonOptions(request);
+      const {
+        authContext,
+        objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+      } = await this.buildCommonOptions(request);
 
-      const record = await this.commonFindOneQueryRunnerService.run(
+      const record = await this.commonFindOneQueryRunnerService.run({
         rawSelectedFields,
         args,
-        options,
-      );
+        authContext,
+        objectMetadataMaps,
+        objectMetadataItemWithFieldMaps,
+      });
 
       return this.formatRestResponse(
         record,
-        options.objectMetadataItemWithFieldMaps.nameSingular,
+        objectMetadataItemWithFieldMaps.nameSingular,
       );
     } catch (error) {
       workspaceQueryRunnerRestApiExceptionHandler(error);

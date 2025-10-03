@@ -32,16 +32,14 @@ export class FindOneResolverFactory
       const selectedFields = graphqlFields(info);
 
       try {
-        return await this.commonFindOneQueryRunnerService.run(
-          { graphqlSelectedFields: selectedFields },
+        return await this.commonFindOneQueryRunnerService.run({
+          rawSelectedFields: selectedFields,
           args,
-          {
-            authContext: internalContext.authContext,
-            objectMetadataMaps: internalContext.objectMetadataMaps,
-            objectMetadataItemWithFieldMaps:
-              internalContext.objectMetadataItemWithFieldMaps,
-          },
-        );
+          authContext: internalContext.authContext,
+          objectMetadataMaps: internalContext.objectMetadataMaps,
+          objectMetadataItemWithFieldMaps:
+            internalContext.objectMetadataItemWithFieldMaps,
+        });
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error);
       }

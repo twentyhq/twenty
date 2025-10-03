@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -15,6 +15,8 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
       throw new BadRequestException(error.message);
     case CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new BadRequestException('Record not found');
+    case CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT:
+      throw new UnauthorizedException(error.message);
     default: {
       return assertUnreachable(error.code);
     }
