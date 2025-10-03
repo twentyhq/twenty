@@ -182,7 +182,6 @@
     "tslib": "2.8.1",
     "type-fest": "4.10.1",
     "typeorm": "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch",
-    "typescript": "5.9.2",
     "unzipper": "^0.12.3",
     "uuid": "9.0.1",
     "vite-tsconfig-paths": "4.3.2",
@@ -232,8 +231,7 @@
     "@yarnpkg/types": "^4.0.0",
     "rimraf": "^5.0.5",
     "twenty-emails": "workspace:*",
-    "twenty-shared": "workspace:*",
-    "typescript": "5.9.2"
+    "twenty-shared": "workspace:*"
   },
   "engines": {
     "node": "^24.5.0",

@@ -52739,7 +52739,6 @@ __metadata:
     twenty-shared: "workspace:*"
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
-    typescript: "npm:5.9.2"
     unzipper: "npm:^0.12.3"
     uuid: "npm:9.0.1"
     vite-tsconfig-paths: "npm:4.3.2"
