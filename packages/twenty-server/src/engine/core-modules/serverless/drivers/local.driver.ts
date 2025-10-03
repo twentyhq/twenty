@@ -1,8 +1,6 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
-import ts, { transpileModule } from 'typescript';
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -11,15 +9,15 @@ import {
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
-import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
+import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -106,30 +104,17 @@ export class LocalDriver implements ServerlessDriver {
       version,
     });
 
-    const tsCodeStream = await this.fileStorageService.read({
-      folderPath: join(folderPath, 'src'),
-      filename: INDEX_FILE_NAME,
+    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+
+    const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
+
+    await this.fileStorageService.download({
+      from: { folderPath },
+      to: { folderPath: sourceTemporaryDir },
     });
 
-    const tsCode = await readFileContent(tsCodeStream);
-
-    const compiledCode = transpileModule(tsCode, {
-      compilerOptions: {
-        module: ts.ModuleKind.CommonJS,
-        target: ts.ScriptTarget.ES2017,
-      },
-    }).outputText;
-
-    const compiledCodeFolderPath = join(
-      SERVERLESS_TMPDIR_FOLDER,
-      `compiled-code-${v4()}`,
-    );
-
-    const compiledCodeFilePath = join(compiledCodeFolderPath, 'main.js');
-
-    await fs.mkdir(compiledCodeFolderPath, { recursive: true });
-
-    await fs.writeFile(compiledCodeFilePath, compiledCode, 'utf8');
+    const builtBundleFilePath =
+      await buildServerlessFunctionInMemory(sourceTemporaryDir);
 
     try {
       await fs.symlink(
@@ -137,7 +122,7 @@ export class LocalDriver implements ServerlessDriver {
           this.getInMemoryLayerFolderPath(serverlessFunction),
           'node_modules',
         ),
-        join(compiledCodeFolderPath, 'node_modules'),
+        join(sourceTemporaryDir, 'node_modules'),
         'dir',
       );
     } catch (err) {
@@ -180,7 +165,7 @@ export class LocalDriver implements ServerlessDriver {
     });
 
     try {
-      const mainFile = await import(compiledCodeFilePath);
+      const mainFile = await import(builtBundleFilePath);
 
       const result = await this.executeWithTimeout<object | null>(
         () => mainFile.main(payload),
@@ -210,7 +195,8 @@ export class LocalDriver implements ServerlessDriver {
     } finally {
       // Restoring originalConsole
       consoleListener.release();
-      await fs.rm(compiledCodeFolderPath, { recursive: true, force: true });
+
+      await lambdaBuildDirectoryManager.clean();
     }
   }
 }

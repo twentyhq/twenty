@@ -20,7 +20,6 @@ import {
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
-import ts, { transpileModule } from 'typescript';
 
 import {
   type ServerlessDriver,
@@ -28,9 +27,7 @@ import {
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
-import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
@@ -48,6 +45,7 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -318,19 +316,21 @@ export class LambdaDriver implements ServerlessDriver {
       version,
     });
 
-    const tsCodeStream = await this.fileStorageService.read({
-      folderPath: join(folderPath, 'src'),
-      filename: INDEX_FILE_NAME,
+    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+
+    const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
+
+    await this.fileStorageService.download({
+      from: { folderPath },
+      to: { folderPath: sourceTemporaryDir },
     });
 
-    const tsCode = await readFileContent(tsCodeStream);
+    const builtBundleFilePath =
+      await buildServerlessFunctionInMemory(sourceTemporaryDir);
 
-    const compiledCode = transpileModule(tsCode, {
-      compilerOptions: {
-        module: ts.ModuleKind.ESNext,
-        target: ts.ScriptTarget.ES2017,
-      },
-    }).outputText;
+    const compiledCode = (await fs.readFile(builtBundleFilePath)).toString(
+      'utf-8',
+    );
 
     const executorPayload = {
       params: payload,
@@ -380,6 +380,8 @@ export class LambdaDriver implements ServerlessDriver {
         );
       }
       throw error;
+    } finally {
+      await lambdaBuildDirectoryManager.clean();
     }
   }
 }
