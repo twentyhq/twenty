@@ -1,7 +1,7 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, type QueryRunner } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -31,7 +31,52 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
 
   override async runOnWorkspace({
     workspaceId,
+    options,
   }: RunOnWorkspaceArgs): Promise<void> {
+    await this.ensureUnaccentFunction();
+
+    this.logger.log(
+      `Regenerating person search vector for workspace ${workspaceId}`,
+    );
+
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+
+    try {
+      await queryRunner.startTransaction();
+
+      await this.regenerateSearchVector(workspaceId, queryRunner);
+
+      if (options.dryRun) {
+        this.logger.log(
+          `DRY RUN: Would regenerate person search vector for workspace ${workspaceId}`,
+        );
+      } else {
+        await queryRunner.commitTransaction();
+        this.logger.log(
+          `Successfully regenerated person search vector for workspace ${workspaceId}`,
+        );
+      }
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
+      this.logger.error(
+        `Failed to regenerate person search vector for workspace ${workspaceId}: ${error.message}`,
+      );
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  private async regenerateSearchVector(
+    workspaceId: string,
+    queryRunner: QueryRunner,
+  ): Promise<void> {
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
     const newSearchVectorExpression = getTsVectorColumnExpressionFromFields(
@@ -42,7 +87,7 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
       `Dropping existing searchVector index for workspace ${workspaceId}`,
     );
 
-    await this.coreDataSource.query(`
+    await queryRunner.query(`
       DROP INDEX IF EXISTS "${schemaName}"."IDX_person_searchVector"
     `);
 
@@ -50,7 +95,7 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
       `Dropping existing searchVector column for workspace ${workspaceId}`,
     );
 
-    await this.coreDataSource.query(`
+    await queryRunner.query(`
       ALTER TABLE IF EXISTS "${schemaName}"."person"
       DROP COLUMN IF EXISTS "searchVector"
     `);
@@ -59,7 +104,7 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
       `Creating new searchVector column with phone indexing for workspace ${workspaceId}`,
     );
 
-    await this.coreDataSource.query(`
+    await queryRunner.query(`
       ALTER TABLE "${schemaName}"."person"
       ADD COLUMN "searchVector" tsvector
       GENERATED ALWAYS AS (${newSearchVectorExpression}) STORED
@@ -69,14 +114,27 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
       `Recreating GIN index on searchVector for workspace ${workspaceId}`,
     );
 
-    await this.coreDataSource.query(`
+    await queryRunner.query(`
       CREATE INDEX "IDX_person_searchVector"
       ON "${schemaName}"."person"
       USING GIN ("searchVector")
     `);
+  }
 
-    this.logger.log(
-      `Successfully regenerated person search vector for workspace ${workspaceId}`,
-    );
+  private async ensureUnaccentFunction(): Promise<void> {
+    const result = await this.coreDataSource.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_proc p
+        JOIN pg_namespace n ON p.pronamespace = n.oid
+        WHERE n.nspname = 'public'
+        AND p.proname = 'unaccent_immutable'
+      ) as function_exists
+    `);
+
+    if (!result[0]?.function_exists) {
+      throw new Error(
+        'The public.unaccent_immutable() function is required but not found. Please run database migrations first.',
+      );
+    }
   }
 }
