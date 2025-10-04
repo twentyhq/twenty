@@ -36,3 +36,12 @@ export type WorkflowFindRecordsActionInput = {
   orderBy?: Partial<ObjectRecordOrderBy>;
   limit?: number;
 };
+
+export type WorkflowUpsertRecordActionInput = {
+  objectName: string;
+  objectRecord: ObjectRecord;
+  upsertCriteria: {
+    matchFields: string[];
+  };
+  fieldsToUpdate?: string[];
+};

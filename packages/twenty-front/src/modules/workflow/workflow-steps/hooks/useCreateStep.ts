@@ -1,7 +1,7 @@
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
-import { type WorkflowStepType } from '@/workflow/types/Workflow';
+import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
@@ -35,7 +35,7 @@ export const useCreateStep = () => {
     position,
     connectionOptions,
   }: {
-    newStepType: WorkflowStepType;
+    newStepType: WorkflowActionType;
     parentStepId: string | undefined;
     nextStepId: string | undefined;
     position?: { x: number; y: number };
@@ -55,7 +55,7 @@ export const useCreateStep = () => {
         await createWorkflowVersionStep({
           id,
           workflowVersionId,
-          stepType: newStepType,
+          type: newStepType,
           parentStepId,
           nextStepId,
           position,
