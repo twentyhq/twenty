@@ -164,7 +164,7 @@
     "cross-var": "^1.1.0",
     "danger": "^11.3.0",
     "dotenv-cli": "^7.2.1",
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.25.10",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
