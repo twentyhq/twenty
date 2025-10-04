@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 
-import { type Request } from 'express';
+import { Request } from 'express';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 

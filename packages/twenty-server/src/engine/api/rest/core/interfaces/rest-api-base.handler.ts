@@ -22,9 +22,9 @@ import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/fact
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { type QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 import {
-  type Depth,
   DepthInputFactory,
   MAX_DEPTH,
+  type Depth,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
@@ -41,12 +41,14 @@ import {
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -94,11 +96,15 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
   @Inject()
+  protected readonly workspaceCacheStorageService: WorkspaceCacheStorageService;
+  @Inject()
+  protected readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService;
+  @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
 
   protected abstract handle(
     request: Request,
-  ): Promise<FormatResult | { data: FormatResult[] }>;
+  ): Promise<FormatResult | { data: FormatResult[] } | undefined>;
 
   public async getRepositoryAndMetadataOrFail(request: Request) {
     const { workspace, apiKey, userWorkspaceId } = request;
@@ -109,12 +115,12 @@ export abstract class RestApiBaseHandler {
       parsedObject,
     );
 
-    if (!objectMetadata) {
-      throw new BadRequestException('Object metadata not found');
-    }
-
     if (!workspace?.id) {
       throw new BadRequestException('Workspace not found');
+    }
+
+    if (!objectMetadata) {
+      throw new BadRequestException('Object metadata not found');
     }
 
     const workspaceDataSource = await this.twentyORMManager.getDatasource();
@@ -134,18 +140,22 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    let roleId: string | undefined = undefined;
-    let shouldBypassPermissionChecks = false;
+    let roleId: string;
 
     if (isDefined(apiKey)) {
       roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
         apiKey.id,
         workspace.id,
       );
-    }
 
-    if (isDefined(userWorkspaceId)) {
-      roleId =
+      if (!isDefined(roleId)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
+          PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
+        );
+      }
+    } else {
+      const userWorkspaceRoleId =
         await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId(
           {
             workspaceId: workspace.id,
@@ -153,53 +163,43 @@ export abstract class RestApiBaseHandler {
           },
         );
 
-      if (!roleId) {
+      if (!isDefined(userWorkspaceRoleId)) {
         throw new PermissionsException(
           PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
           PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         );
       }
-    }
 
-    if (!isDefined(apiKey) && !isDefined(userWorkspaceId)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
-        PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
-      );
+      roleId = userWorkspaceRoleId;
     }
 
     const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
-      shouldBypassPermissionChecks,
+      false,
       roleId,
     );
 
-    let restrictedFields: RestrictedFieldsPermissions = {};
+    const objectMetadataPermissions =
+      await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
+        {
+          workspaceId: workspace.id,
+          roleIds: roleId ? [roleId] : undefined,
+        },
+      );
 
-    if (roleId) {
-      const objectMetadataPermissions =
-        await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
-          {
-            workspaceId: workspace.id,
-            roleIds: roleId ? [roleId] : undefined,
-          },
-        );
-
-      if (
-        !isDefined(
-          objectMetadataPermissions?.[roleId]?.[
-            objectMetadata.objectMetadataMapItem.id
-          ]?.restrictedFields,
-        )
-      ) {
-        throw new InternalServerError('Fields permissions not found for role');
-      }
-
-      restrictedFields =
-        objectMetadataPermissions[roleId][
+    if (
+      !isDefined(
+        objectMetadataPermissions?.[roleId]?.[
           objectMetadata.objectMetadataMapItem.id
-        ].restrictedFields;
+        ]?.restrictedFields,
+      )
+    ) {
+      throw new InternalServerError('Fields permissions not found for role');
     }
+
+    const restrictedFields =
+      objectMetadataPermissions[roleId][objectMetadata.objectMetadataMapItem.id]
+        .restrictedFields;
 
     return {
       objectMetadata,
@@ -207,6 +207,9 @@ export abstract class RestApiBaseHandler {
       workspaceDataSource,
       objectMetadataItemWithFieldsMaps,
       restrictedFields,
+      isExecutedByApiKey: isDefined(apiKey),
+      authContext: this.getAuthContextFromRequest(request),
+      objectsPermissions: objectMetadataPermissions[roleId],
     };
   }
 

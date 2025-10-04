@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Request } from 'express';
+import { Request } from 'express';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
