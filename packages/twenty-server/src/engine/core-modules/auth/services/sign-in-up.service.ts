@@ -361,9 +361,8 @@ export class SignInUpService {
     );
 
     if (isWorkspaceCreationLimited) {
-      const userWorkspacesCount = await this.userWorkspaceService.countUserWorkspaces(
-        currentUser.id,
-      );
+      const userWorkspacesCount =
+        await this.userWorkspaceService.countUserWorkspaces(currentUser.id);
 
       if (userWorkspacesCount > 0 && !currentUser.canAccessFullAdminPanel) {
         throw new AuthException(
@@ -373,6 +372,7 @@ export class SignInUpService {
       }
     }
   }
+
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
   ) {
