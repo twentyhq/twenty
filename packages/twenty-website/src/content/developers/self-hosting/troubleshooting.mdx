@@ -120,6 +120,37 @@ That's expected as user is unauthorized when logged out since its identity is no
 </div>
 - If a **POST request** is received, your worker is running successfully. Otherwise, you need to troubleshoot your worker.
 
+#### Front-end fails to start and returns error TS5042: Option 'project' cannot be mixed with source files on a command line
+
+Comment out checker plugin in `packages/twenty-ui/vite-config.ts` like in example below
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### Admin panel not accessible
+
+Run `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` in database container to get access to admin panel.
+
+
+
 ### 1-click Docker compose
 
 #### Unable to Log In
@@ -154,6 +185,10 @@ If you're running Twenty behind a reverse proxy and experiencing connection issu
 3. **Restart Services:**
 
     After making changes, restart both the reverse proxy and Twenty containers.
+
+### Error when uploading an image - permission denied
+
+Switching the data folder ownership on the host from root to another user and group resolves this problem.
 
 ## Getting Help
 

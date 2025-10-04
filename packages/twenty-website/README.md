@@ -5,7 +5,7 @@ This is not related in any way to the main app, which you can find in twenty-fro
 
 ## Getting Started
 
-We're using Next.JS
+We're using Next.js
 We're using Postgres for the database. Mandatory for the website to work, even locally.
 
 1. Copy the .env.example file to .env and fill in the values.
