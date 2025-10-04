@@ -1,0 +1,75 @@
+import { TabListDraggableTab } from '@/ui/layout/tab-list/components/TabListDraggableTab';
+import { TAB_LIST_DROPPABLE_IDS } from '@/ui/layout/tab-list/constants/TabListDroppableIds';
+import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
+import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListContext';
+import styled from '@emotion/styled';
+import { Droppable } from '@hello-pangea/dnd';
+import { TabButton } from 'twenty-ui/input';
+
+const StyledTabContainer = styled.div`
+  display: flex;
+  gap: ${TAB_LIST_GAP}px;
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+`;
+
+export const TabListVisibleTabsArea = () => {
+  const {
+    visibleTabs,
+    visibleTabCount,
+    activeTabId,
+    loading,
+    behaveAsLinks,
+    onTabSelect,
+    isDragAndDropEnabled,
+  } = useTabListContextOrThrow();
+
+  if (isDragAndDropEnabled) {
+    return (
+      <Droppable
+        droppableId={TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}
+        direction="horizontal"
+      >
+        {(provided) => (
+          <StyledTabContainer
+            ref={provided.innerRef}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...provided.droppableProps}
+          >
+            {visibleTabs.slice(0, visibleTabCount).map((tab, index) => (
+              <TabListDraggableTab
+                key={tab.id}
+                tab={tab}
+                index={index}
+                isActive={tab.id === activeTabId}
+                isDisabled={tab.disabled ?? loading}
+                onSelect={() => onTabSelect(tab.id)}
+              />
+            ))}
+            {provided.placeholder}
+          </StyledTabContainer>
+        )}
+      </Droppable>
+    );
+  }
+
+  return (
+    <StyledTabContainer>
+      {visibleTabs.slice(0, visibleTabCount).map((tab) => (
+        <TabButton
+          key={tab.id}
+          id={tab.id}
+          title={tab.title}
+          LeftIcon={tab.Icon}
+          logo={tab.logo}
+          active={tab.id === activeTabId}
+          disabled={tab.disabled ?? loading}
+          pill={tab.pill}
+          to={behaveAsLinks ? `#${tab.id}` : undefined}
+          onClick={behaveAsLinks ? undefined : () => onTabSelect(tab.id)}
+        />
+      ))}
+    </StyledTabContainer>
+  );
+};
