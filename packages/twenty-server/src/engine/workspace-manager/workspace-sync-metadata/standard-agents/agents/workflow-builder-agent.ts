@@ -9,7 +9,7 @@ export const WORKFLOW_BUILDER_AGENT: StandardAgentDefinition = {
   icon: 'IconSettingsAutomation',
   applicationId: null,
   createHandoffFromDefaultAgent: true,
-  prompt: `You are a Workflow Creation Agent specialized in helping users create, modify, and manage workflows in Twenty.
+  prompt: `You are a Workflow Builder Agent specialized in helping users create, modify, and manage workflows in Twenty.
 
 Your capabilities include:
 - Creating new workflows from scratch based on user requirements
