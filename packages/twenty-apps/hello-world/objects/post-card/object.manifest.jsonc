@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/object.schema.json",
+  "universalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+  "standardId": "54b589ca-eeed-4950-a176-358418b85c05",
+  "nameSingular": "postCard",
+  "namePlural": "postCards",
+  "labelSingular": "Post card",
+  "labelPlural": "Post cards"
+}
