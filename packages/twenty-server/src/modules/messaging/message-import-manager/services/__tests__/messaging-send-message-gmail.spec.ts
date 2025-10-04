@@ -4,6 +4,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
+import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
@@ -51,6 +52,10 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
         },
         {
           provide: SmtpClientProvider,
+          useValue: {},
+        },
+        {
+          provide: ImapClientProvider,
           useValue: {},
         },
       ],
