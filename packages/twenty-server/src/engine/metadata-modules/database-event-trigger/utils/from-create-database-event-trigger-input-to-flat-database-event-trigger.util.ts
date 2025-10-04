@@ -14,7 +14,8 @@ export const fromCreateDatabaseEventTriggerInputToFlatDatabaseEventTrigger = ({
 
   return {
     id: uuidV4(),
-    universalIdentifier: uuidV4(),
+    universalIdentifier:
+      createDatabaseEventTriggerInput.universalIdentifier ?? uuidV4(),
     settings: createDatabaseEventTriggerInput.settings,
     serverlessFunctionId: createDatabaseEventTriggerInput.serverlessFunctionId,
     workspaceId,

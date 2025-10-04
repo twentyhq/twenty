@@ -8,8 +8,7 @@ exports[`updateOne failing update should not update a field name if it is not sy
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -23,9 +22,13 @@ exports[`updateOne failing update should not update a field name if it is not sy
               "name": "newName",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -34,8 +37,10 @@ exports[`updateOne failing update should not update a field name if it is not sy
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -57,8 +62,7 @@ exports[`updateOne failing update should throw if the field name is not availabl
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -78,9 +82,13 @@ exports[`updateOne failing update should throw if the field name is not availabl
               "name": "otherTestName",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -89,8 +97,10 @@ exports[`updateOne failing update should throw if the field name is not availabl
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,

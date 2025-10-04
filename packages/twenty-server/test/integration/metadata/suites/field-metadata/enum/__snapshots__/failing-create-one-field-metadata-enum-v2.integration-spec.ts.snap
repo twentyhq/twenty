@@ -8,8 +8,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -24,9 +23,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -35,8 +38,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -58,8 +63,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -74,9 +78,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -85,8 +93,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -108,8 +118,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -123,9 +132,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -134,8 +147,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -157,8 +172,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -187,9 +201,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -198,8 +216,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -221,8 +241,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -251,9 +270,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -262,8 +285,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -285,8 +310,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -315,9 +339,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -326,8 +354,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -349,8 +379,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -379,9 +408,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -390,8 +423,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -413,8 +448,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -428,9 +462,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -439,8 +477,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -462,8 +502,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -478,9 +517,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -489,8 +532,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -512,8 +557,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -532,9 +576,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -543,8 +591,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -566,8 +616,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -581,9 +630,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -592,8 +645,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -615,8 +670,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -631,9 +685,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -642,8 +700,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -665,8 +725,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -680,9 +739,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -691,8 +754,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -714,8 +779,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -744,9 +808,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -755,8 +823,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -778,8 +848,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -793,9 +862,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -804,8 +877,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -827,8 +902,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -842,9 +916,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -853,8 +931,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -876,8 +956,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -892,9 +971,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -903,8 +986,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -926,8 +1011,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -942,9 +1026,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -953,8 +1041,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -976,8 +1066,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -991,9 +1080,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1002,8 +1095,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1025,8 +1120,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1041,9 +1135,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1052,8 +1150,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1075,8 +1175,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1090,9 +1189,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1101,8 +1204,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1124,8 +1229,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1144,9 +1248,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1155,8 +1263,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1178,8 +1288,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1193,9 +1302,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1204,8 +1317,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1227,8 +1342,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1243,9 +1357,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1254,8 +1372,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1277,8 +1397,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1292,9 +1411,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1303,8 +1426,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1326,8 +1451,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1346,9 +1470,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1357,8 +1485,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1380,8 +1510,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1395,9 +1524,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1406,8 +1539,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1429,8 +1564,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1445,9 +1579,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1456,8 +1594,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1479,8 +1619,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1494,9 +1633,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1505,8 +1648,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1528,8 +1673,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1548,9 +1692,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1559,8 +1707,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1582,8 +1732,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1597,9 +1746,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1608,8 +1761,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1631,8 +1786,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1646,9 +1800,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1657,8 +1815,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1680,8 +1840,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1700,9 +1859,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1711,8 +1874,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1734,8 +1899,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1749,9 +1913,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1760,8 +1928,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1783,8 +1953,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1798,9 +1967,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1809,8 +1982,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1832,8 +2007,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1848,9 +2022,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1859,8 +2037,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1882,8 +2062,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1897,9 +2076,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1908,8 +2091,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1931,8 +2116,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1951,9 +2135,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -1962,8 +2150,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1985,8 +2175,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2000,9 +2189,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2011,8 +2204,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2034,8 +2229,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2049,9 +2243,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2060,8 +2258,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2083,8 +2283,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2113,9 +2312,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2124,8 +2327,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2147,8 +2352,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2177,9 +2381,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2188,8 +2396,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2211,8 +2421,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2241,9 +2450,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2252,8 +2465,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2275,8 +2490,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2305,9 +2519,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2316,8 +2534,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2339,8 +2559,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2355,9 +2574,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2366,8 +2589,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2389,8 +2614,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2409,9 +2633,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2420,8 +2648,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2443,8 +2673,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2458,9 +2687,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2469,8 +2702,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2492,8 +2727,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2508,9 +2742,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2519,8 +2757,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2542,8 +2782,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2557,9 +2796,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2568,8 +2811,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2591,8 +2836,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2606,9 +2850,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2617,8 +2865,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2640,8 +2890,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2655,9 +2904,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2666,8 +2919,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2689,8 +2944,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2705,9 +2959,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2716,8 +2974,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2739,8 +2999,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2754,9 +3013,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2765,8 +3028,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2788,8 +3053,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2804,9 +3068,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2815,8 +3083,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2838,8 +3108,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2853,9 +3122,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2864,8 +3137,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2887,8 +3162,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2907,9 +3181,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2918,8 +3196,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2941,8 +3221,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2956,9 +3235,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -2967,8 +3250,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2990,8 +3275,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3006,9 +3290,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3017,8 +3305,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3040,8 +3330,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3055,9 +3344,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3066,8 +3359,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3089,8 +3384,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3109,9 +3403,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3120,8 +3418,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3143,8 +3443,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3158,9 +3457,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3169,8 +3472,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3192,8 +3497,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3208,9 +3512,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3219,8 +3527,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3242,8 +3552,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3257,9 +3566,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3268,8 +3581,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3291,8 +3606,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3311,9 +3625,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3322,8 +3640,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3345,8 +3665,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3360,9 +3679,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3371,8 +3694,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3394,8 +3719,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3409,9 +3733,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3420,8 +3748,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3443,8 +3773,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3463,9 +3792,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3474,8 +3807,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3497,8 +3832,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3512,9 +3846,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3523,8 +3861,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3546,8 +3886,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3561,9 +3900,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3572,8 +3915,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3595,8 +3940,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3611,9 +3955,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -3622,8 +3970,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
