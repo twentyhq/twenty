@@ -57,7 +57,7 @@ describe('WorkspaceTrashCleanupService', () => {
   });
 
   describe('cleanupWorkspaceTrash', () => {
-    it('should return success with deleted count when cleanup succeeds', async () => {
+    it('should return deleted count when cleanup succeeds', async () => {
       const mockQueryBuilder = {
         innerJoin: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -83,13 +83,10 @@ describe('WorkspaceTrashCleanupService', () => {
         trashRetentionDays: 14,
       });
 
-      expect(result).toEqual({
-        success: true,
-        deletedCount: 50000,
-      });
+      expect(result).toEqual(50000);
     });
 
-    it('should return success with zero count when no tables found', async () => {
+    it('should return zero when no tables found', async () => {
       const mockQueryBuilder = {
         innerJoin: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -109,13 +106,10 @@ describe('WorkspaceTrashCleanupService', () => {
         trashRetentionDays: 14,
       });
 
-      expect(result).toEqual({
-        success: true,
-        deletedCount: 0,
-      });
+      expect(result).toEqual(0);
     });
 
-    it('should return error result when discovery fails', async () => {
+    it('should throw when discovery fails', async () => {
       const mockQueryBuilder = {
         innerJoin: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -129,17 +123,13 @@ describe('WorkspaceTrashCleanupService', () => {
         mockQueryBuilder,
       );
 
-      const result = await service.cleanupWorkspaceTrash({
-        workspaceId: 'workspace-id',
-        schemaName: 'workspace_test',
-        trashRetentionDays: 14,
-      });
-
-      expect(result).toEqual({
-        success: false,
-        deletedCount: 0,
-        error: 'Database error',
-      });
+      await expect(
+        service.cleanupWorkspaceTrash({
+          workspaceId: 'workspace-id',
+          schemaName: 'workspace_test',
+          trashRetentionDays: 14,
+        }),
+      ).rejects.toThrow('Database error');
     });
 
     it('should respect max records limit across multiple tables', async () => {
@@ -171,15 +161,12 @@ describe('WorkspaceTrashCleanupService', () => {
         trashRetentionDays: 14,
       });
 
-      expect(result).toEqual({
-        success: true,
-        deletedCount: 100000,
-      });
+      expect(result).toEqual(100000);
       // Should only process 2 tables (company, person) and stop before opportunity
       expect(mockDataSource.query).toHaveBeenCalledTimes(2);
     });
 
-    it('should return error result when deletion fails', async () => {
+    it('should throw when deletion fails', async () => {
       const mockQueryBuilder = {
         innerJoin: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -197,17 +184,13 @@ describe('WorkspaceTrashCleanupService', () => {
 
       mockDataSource.query.mockRejectedValue(new Error('Deletion failed'));
 
-      const result = await service.cleanupWorkspaceTrash({
-        workspaceId: 'workspace-id',
-        schemaName: 'workspace_test',
-        trashRetentionDays: 14,
-      });
-
-      expect(result).toEqual({
-        success: false,
-        deletedCount: 0,
-        error: 'Deletion failed',
-      });
+      await expect(
+        service.cleanupWorkspaceTrash({
+          workspaceId: 'workspace-id',
+          schemaName: 'workspace_test',
+          trashRetentionDays: 14,
+        }),
+      ).rejects.toThrow('Deletion failed');
     });
   });
 });

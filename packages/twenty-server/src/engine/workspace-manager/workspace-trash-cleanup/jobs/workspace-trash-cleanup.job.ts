@@ -24,18 +24,18 @@ export class WorkspaceTrashCleanupJob {
   async handle(data: WorkspaceTrashCleanupJobData): Promise<void> {
     const { workspaceId, schemaName, trashRetentionDays } = data;
 
-    const result =
+    try {
       await this.workspaceTrashCleanupService.cleanupWorkspaceTrash({
         workspaceId,
         schemaName,
         trashRetentionDays,
       });
-
-    if (!result.success) {
+    } catch (error) {
       this.logger.error(
-        `Trash cleanup failed for workspace ${workspaceId}: ${result.error}`,
+        `Trash cleanup failed for workspace ${workspaceId}`,
+        error instanceof Error ? error.stack : String(error),
       );
-      throw new Error(result.error);
+      throw error;
     }
   }
 }

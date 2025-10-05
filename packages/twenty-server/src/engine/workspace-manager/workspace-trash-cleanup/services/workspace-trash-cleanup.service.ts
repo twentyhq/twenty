@@ -14,12 +14,6 @@ export type WorkspaceTrashCleanupInput = {
   trashRetentionDays: number;
 };
 
-export type WorkspaceTrashCleanupResult = {
-  success: boolean;
-  deletedCount: number;
-  error?: string;
-};
-
 @Injectable()
 export class WorkspaceTrashCleanupService {
   private readonly logger = new Logger(WorkspaceTrashCleanupService.name);
@@ -39,41 +33,29 @@ export class WorkspaceTrashCleanupService {
 
   async cleanupWorkspaceTrash(
     input: WorkspaceTrashCleanupInput,
-  ): Promise<WorkspaceTrashCleanupResult> {
+  ): Promise<number> {
     const { workspaceId, schemaName, trashRetentionDays } = input;
 
-    try {
-      const tableNames = await this.discoverTablesWithSoftDelete(schemaName);
+    const tableNames = await this.discoverTablesWithSoftDelete(schemaName);
 
-      if (tableNames.length === 0) {
-        this.logger.log(
-          `No tables with deletedAt found in workspace ${workspaceId}`,
-        );
+    if (tableNames.length === 0) {
+      this.logger.log(`No tables with deletedAt found in workspace ${workspaceId}`);
 
-        return { success: true, deletedCount: 0 };
-      }
-
-      const deletedCount = await this.deleteSoftDeletedRecords(
-        workspaceId,
-        schemaName,
-        tableNames,
-        trashRetentionDays,
-      );
-
-      this.logger.log(
-        `Deleted ${deletedCount} record(s) from workspace ${workspaceId}`,
-      );
-
-      return { success: true, deletedCount };
-    } catch (error) {
-      const errorMessage = error?.message || String(error);
-
-      this.logger.error(
-        `Failed to cleanup workspace ${workspaceId}: ${errorMessage}`,
-      );
-
-      return { success: false, deletedCount: 0, error: errorMessage };
+      return 0;
     }
+
+    const deletedCount = await this.deleteSoftDeletedRecords(
+      workspaceId,
+      schemaName,
+      tableNames,
+      trashRetentionDays,
+    );
+
+    this.logger.log(
+      `Deleted ${deletedCount} record(s) from workspace ${workspaceId}`,
+    );
+
+    return deletedCount;
   }
 
   private async discoverTablesWithSoftDelete(
