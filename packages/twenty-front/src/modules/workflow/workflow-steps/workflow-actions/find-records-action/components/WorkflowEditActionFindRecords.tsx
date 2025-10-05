@@ -1,7 +1,7 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useEffect, useState } from 'react';
 
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -135,7 +135,7 @@ export const WorkflowEditActionFindRecords = ({
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
             return;

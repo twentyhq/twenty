@@ -35,7 +35,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
       `;
     } else if (focused === true) {
       return css`
-        background: transparent;
+        background: ${theme.background.transparent.light};
       `;
     }
   }}

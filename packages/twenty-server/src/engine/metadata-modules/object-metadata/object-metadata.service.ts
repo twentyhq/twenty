@@ -14,6 +14,7 @@ import {
   type QueryRunner,
 } from 'typeorm';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -52,7 +53,6 @@ import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -288,7 +288,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
-        flatEntities: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+        flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
       });
 
       return createdObjectMetadata;
@@ -475,7 +475,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
-        flatEntities: ['flatObjectMetadataMaps'],
+        flatMapsKeys: ['flatObjectMetadataMaps'],
       });
 
       const formattedUpdatedObject = {
@@ -592,7 +592,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
-        flatEntities: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
       });
 
       await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(

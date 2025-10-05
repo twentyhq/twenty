@@ -70,7 +70,6 @@ export type Agent = {
 export type AgentChatMessage = {
   __typename?: 'AgentChatMessage';
   createdAt: Scalars['DateTime'];
-  files: Array<File>;
   id: Scalars['UUID'];
   parts: Array<AgentChatMessagePart>;
   role: Scalars['String'];
@@ -270,12 +269,22 @@ export type AvailableWorkspacesAndAccessTokensOutput = {
   tokens: AuthTokenPair;
 };
 
+/** Which axes should display labels */
+export enum AxisNameDisplay {
+  BOTH = 'BOTH',
+  NONE = 'NONE',
+  X = 'X',
+  Y = 'Y'
+}
+
 export type BarChartConfiguration = {
   __typename?: 'BarChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
+  axisNameDisplay: AxisNameDisplay;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
@@ -285,8 +294,6 @@ export type BarChartConfiguration = {
   orderByY?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
-  xAxisName?: Maybe<Scalars['String']>;
-  yAxisName?: Maybe<Scalars['String']>;
 };
 
 export type Billing = {
@@ -1151,6 +1158,23 @@ export type ExecuteServerlessFunctionInput = {
   version?: Scalars['String'];
 };
 
+export enum ExtendedAggregateOperations {
+  AVG = 'AVG',
+  COUNT = 'COUNT',
+  COUNT_EMPTY = 'COUNT_EMPTY',
+  COUNT_FALSE = 'COUNT_FALSE',
+  COUNT_NOT_EMPTY = 'COUNT_NOT_EMPTY',
+  COUNT_TRUE = 'COUNT_TRUE',
+  COUNT_UNIQUE_VALUES = 'COUNT_UNIQUE_VALUES',
+  EARLIEST = 'EARLIEST',
+  LATEST = 'LATEST',
+  MAX = 'MAX',
+  MIN = 'MIN',
+  PERCENTAGE_EMPTY = 'PERCENTAGE_EMPTY',
+  PERCENTAGE_NOT_EMPTY = 'PERCENTAGE_NOT_EMPTY',
+  SUM = 'SUM'
+}
+
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   id: Scalars['UUID'];
@@ -1292,7 +1316,6 @@ export type File = {
   createdAt: Scalars['DateTime'];
   fullPath: Scalars['String'];
   id: Scalars['UUID'];
-  messageId?: Maybe<Scalars['UUID']>;
   name: Scalars['String'];
   size: Scalars['Float'];
   type: Scalars['String'];
@@ -1340,10 +1363,10 @@ export type FullName = {
 export type GaugeChartConfiguration = {
   __typename?: 'GaugeChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateFieldMetadataIdTotal: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
-  aggregateOperationTotal: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
+  color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
 };
@@ -1567,9 +1590,11 @@ export type InvalidatePassword = {
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
+  axisNameDisplay: AxisNameDisplay;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
@@ -1579,8 +1604,6 @@ export type LineChartConfiguration = {
   orderByY?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
-  xAxisName?: Maybe<Scalars['String']>;
-  yAxisName?: Maybe<Scalars['String']>;
 };
 
 export type LinkMetadata = {
@@ -1671,6 +1694,7 @@ export type Mutation = {
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
+  deleteApplication: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCoreView: Scalars['Boolean'];
   deleteCoreViewField: CoreViewField;
@@ -2031,6 +2055,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteApplicationArgs = {
+  packageJson: Scalars['JSON'];
 };
 
 
@@ -2675,9 +2704,10 @@ export type NativeModelCapabilities = {
 export type NumberChartConfiguration = {
   __typename?: 'NumberChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   format?: Maybe<Scalars['String']>;
   graphType: GraphType;
@@ -2919,9 +2949,10 @@ export enum PermissionFlagType {
 export type PieChartConfiguration = {
   __typename?: 'PieChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataId: Scalars['UUID'];
@@ -4647,7 +4678,7 @@ export type GetAgentChatMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentChatMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }>, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
+export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentChatMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }> }> };
 
 export type GetAgentChatThreadsQueryVariables = Exact<{
   agentId: Scalars['UUID'];
@@ -6934,14 +6965,6 @@ export const GetAgentChatMessagesDocument = gql`
       fileFilename
       fileUrl
       providerMetadata
-      createdAt
-    }
-    files {
-      id
-      name
-      fullPath
-      size
-      type
       createdAt
     }
   }

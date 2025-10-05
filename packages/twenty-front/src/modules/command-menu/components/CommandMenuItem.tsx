@@ -16,17 +16,25 @@ export type CommandMenuItemProps = {
   Icon?: IconComponent;
   hotKeys?: string[];
   RightComponent?: ReactNode;
+  contextualTextPosition?: 'left' | 'right';
+  hasSubMenu?: boolean;
+  isSubMenuOpened?: boolean;
+  disabled?: boolean;
 };
 
 export const CommandMenuItem = ({
   label,
   description,
+  contextualTextPosition = 'left',
   to,
   id,
   onClick,
   Icon,
   hotKeys,
   RightComponent,
+  hasSubMenu = false,
+  isSubMenuOpened = false,
+  disabled = false,
 }: CommandMenuItemProps) => {
   const { onItemClick } = useCommandMenuOnItemClick();
 
@@ -45,15 +53,22 @@ export const CommandMenuItem = ({
       LeftIcon={Icon}
       text={label}
       contextualText={description}
+      contextualTextPosition={contextualTextPosition}
       hotKeys={hotKeys}
-      onClick={() =>
-        onItemClick({
-          onClick,
-          to,
-        })
+      onClick={
+        onClick || to
+          ? () =>
+              onItemClick({
+                onClick,
+                to,
+              })
+          : undefined
       }
       focused={isSelectedItemId}
       RightComponent={RightComponent}
+      hasSubMenu={hasSubMenu}
+      isSubMenuOpened={isSubMenuOpened}
+      disabled={disabled}
     />
   );
 };
