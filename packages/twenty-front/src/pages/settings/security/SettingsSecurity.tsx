@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { SettingsOptionCardContentInput } from '@/settings/components/SettingsOptions/SettingsOptionCardContentInput';
+import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
@@ -44,19 +45,7 @@ export const SettingsSecurity = () => {
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  const handleTrashRetentionDaysBlur = async (value: string) => {
-    const numValue = parseInt(value, 10);
-
-    // Validate input
-    if (isNaN(numValue) || numValue < 0) {
-      return;
-    }
-
-    // Don't make API call if value hasn't changed
-    if (numValue === currentWorkspace?.trashRetentionDays) {
-      return;
-    }
-
+  const saveWorkspace = useDebouncedCallback(async (value: number) => {
     try {
       if (!currentWorkspace?.id) {
         throw new Error('User is not logged in');
@@ -65,20 +54,32 @@ export const SettingsSecurity = () => {
       await updateWorkspace({
         variables: {
           input: {
-            trashRetentionDays: numValue,
+            trashRetentionDays: value,
           },
         },
-      });
-
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        trashRetentionDays: numValue,
       });
     } catch (err) {
       enqueueErrorSnackBar({
         apolloError: err instanceof ApolloError ? err : undefined,
       });
     }
+  }, 500);
+
+  const handleTrashRetentionDaysChange = (value: number) => {
+    if (!currentWorkspace) {
+      return;
+    }
+
+    if (value === currentWorkspace.trashRetentionDays) {
+      return;
+    }
+
+    setCurrentWorkspace({
+      ...currentWorkspace,
+      trashRetentionDays: value,
+    });
+
+    saveWorkspace(value);
   };
 
   return (
@@ -134,13 +135,14 @@ export const SettingsSecurity = () => {
               description={t`Other security settings`}
             />
             <Card rounded>
-              <SettingsOptionCardContentInput
+              <SettingsOptionCardContentCounter
                 Icon={IconTrash}
                 title={t`Erasure of soft-deleted records`}
                 description={t`Permanent deletion. Enter the number of days.`}
-                value={(currentWorkspace?.trashRetentionDays ?? 14).toString()}
-                onBlur={handleTrashRetentionDaysBlur}
-                placeholder="14"
+                value={currentWorkspace?.trashRetentionDays ?? 14}
+                onChange={handleTrashRetentionDaysChange}
+                minValue={0}
+                showButtons={false}
               />
             </Card>
           </Section>
