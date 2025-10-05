@@ -355,21 +355,32 @@ export class SignInUpService {
     return { canImpersonate: false, canAccessFullAdminPanel: false };
   }
 
-  async isWorkspaceCreationAllowed(currentUser: User) {
-    const isWorkspaceCreationLimited = this.twentyConfigService.get(
-      'IS_WORKSPACE_CREATION_LIMITED_TO_WORKSPACE_ADMINS',
+  private isWorkspaceCreationLimitedToServerAdmins(): boolean {
+    return this.twentyConfigService.get(
+      'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
     );
+  }
 
-    if (isWorkspaceCreationLimited) {
-      const userWorkspacesCount =
-        await this.userWorkspaceService.countUserWorkspaces(currentUser.id);
+  private async isFirstWorkspaceForUser(userId: string): Promise<boolean> {
+    const count = await this.userWorkspaceService.countUserWorkspaces(userId);
+    return count === 0;
+  }
 
-      if (userWorkspacesCount > 0 && !currentUser.canAccessFullAdminPanel) {
-        throw new AuthException(
-          'Workspace creation is restricted to admins',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
+  async checkWorkspaceCreationIsAllowedOrThrow(
+    currentUser: User,
+  ): Promise<void> {
+    if (!this.isWorkspaceCreationLimitedToServerAdmins()) return;
+
+    if (await this.isFirstWorkspaceForUser(currentUser.id)) return;
+
+    if (!currentUser.canAccessFullAdminPanel) {
+      throw new AuthException(
+        'Workspace creation is restricted to admins',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`Workspace creation is restricted to admins`,
+        },
+      );
     }
   }
 

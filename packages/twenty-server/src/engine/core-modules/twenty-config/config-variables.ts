@@ -361,11 +361,11 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description:
-      'When enabled, only workspace admins can create new workspaces. Ignored during initial setup when no workspace exists.',
+      'When enabled, only server admins can create new workspaces. Ignored during initial setup when no workspace exists.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_WORKSPACE_CREATION_LIMITED_TO_WORKSPACE_ADMINS = false;
+  IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
