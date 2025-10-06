@@ -46,18 +46,18 @@ export const useRecordFieldGqlFields = ({
             recordField.fieldMetadataItemId
           ];
 
+        if (!isDefined(fieldMetadataItem)) {
+          throw new Error(
+            `Field ${recordField.fieldMetadataItemId} is missing, please refresh the page. If the problem persists, please contact support.`,
+          );
+        }
+
         // TODO: remove this once we have made the workflowVersion lighter
         if (
           fieldMetadataItem.name === 'versions' ||
           fieldMetadataItem.name === 'workflowVersion'
         ) {
           return [[fieldMetadataItem.name, { id: true, name: true }]];
-        }
-
-        if (!isDefined(fieldMetadataItem)) {
-          throw new Error(
-            `Field ${recordField.fieldMetadataItemId} is missing, please refresh the page. If the problem persists, please contact support.`,
-          );
         }
 
         const isMorphRelation =
