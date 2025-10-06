@@ -1,14 +1,16 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
 
-export const useActiveWorkflowVersion = (workflowId: string) => {
+type UseActiveWorkflowVersionProps = {
+  workflowId: string;
+};
+
+export const useActiveWorkflowVersion = ({
+  workflowId,
+}: UseActiveWorkflowVersionProps) => {
   const { records: workflowVersions, loading } = useFindManyRecords<
-    WorkflowVersion & {
-      workflow: Omit<Workflow, 'versions'> & {
-        versions: Array<{ __typename: string }>;
-      };
-    }
+    Pick<WorkflowVersion, 'id' | '__typename'>
   >({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     filter: {
@@ -21,21 +23,6 @@ export const useActiveWorkflowVersion = (workflowId: string) => {
     },
     recordGqlFields: {
       id: true,
-      name: true,
-      createdAt: true,
-      updatedAt: true,
-      workflowId: true,
-      trigger: true,
-      steps: true,
-      status: true,
-      workflow: {
-        id: true,
-        name: true,
-        statuses: true,
-        versions: {
-          totalCount: true,
-        },
-      },
     },
   });
 

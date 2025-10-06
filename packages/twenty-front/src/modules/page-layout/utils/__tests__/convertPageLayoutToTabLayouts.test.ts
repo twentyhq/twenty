@@ -1,7 +1,7 @@
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import {
+  ExtendedAggregateOperations,
   GraphOrderBy,
   GraphType,
   PageLayoutType,
@@ -30,8 +30,9 @@ describe('convertPageLayoutToTabLayouts', () => {
               type: WidgetType.GRAPH,
               configuration: {
                 graphType: GraphType.NUMBER,
-                aggregateOperation: AggregateOperations.COUNT,
+                aggregateOperation: ExtendedAggregateOperations.COUNT,
                 aggregateFieldMetadataId: 'id',
+                displayDataLabel: false,
               },
               gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
               objectMetadataId: 'object-metadata-1',
@@ -47,10 +48,11 @@ describe('convertPageLayoutToTabLayouts', () => {
               type: WidgetType.GRAPH,
               configuration: {
                 graphType: GraphType.PIE,
-                aggregateOperation: AggregateOperations.COUNT,
+                aggregateOperation: ExtendedAggregateOperations.COUNT,
                 aggregateFieldMetadataId: 'id',
                 groupByFieldMetadataId: 'status',
                 orderBy: GraphOrderBy.VALUE_DESC,
+                displayDataLabel: false,
               },
               gridPosition: { row: 2, column: 0, rowSpan: 2, columnSpan: 2 },
               objectMetadataId: 'object-metadata-1',

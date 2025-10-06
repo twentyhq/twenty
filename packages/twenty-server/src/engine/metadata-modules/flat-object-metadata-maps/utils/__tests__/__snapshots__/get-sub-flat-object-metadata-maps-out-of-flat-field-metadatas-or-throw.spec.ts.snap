@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow should throw when object metadata id is not found 1`] = `"getSubFlatObjectMetadataMapsOfSpecificFieldsOrThrow object metadata not found"`;

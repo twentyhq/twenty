@@ -1,4 +1,5 @@
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
@@ -7,7 +8,6 @@ import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDraw
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
 import { WorkflowFormFieldInput } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFormFieldInput';
 import { useSubmitFormStep } from '@/workflow/workflow-steps/workflow-actions/form-action/hooks/useSubmitFormStep';
@@ -106,7 +106,7 @@ export const WorkflowEditActionFormFiller = ({
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         Icon={getIcon(headerIcon)}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}

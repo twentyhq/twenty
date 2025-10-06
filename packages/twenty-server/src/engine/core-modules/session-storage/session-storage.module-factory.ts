@@ -32,6 +32,8 @@ export const getSessionStorageOptions = (
     proxy: true,
     cookie: {
       secure: !!(SERVER_URL && SERVER_URL.startsWith('https')),
+      httpOnly: true,
+      sameSite: 'lax',
       maxAge: 1000 * 60 * 30, // 30 minutes
     },
   };

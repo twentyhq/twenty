@@ -7,8 +7,7 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
-      "index": [],
-      "objectMetadata": [
+      "fieldMetadata": [
         {
           "errors": [
             {
@@ -23,9 +22,13 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
             "name": "testField",
             "objectMetadataId": Any<String>,
           },
+          "status": "fail",
           "type": "create_field",
         },
       ],
+      "index": [],
+      "objectMetadata": [],
+      "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
       "viewField": [],
@@ -34,8 +37,10 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
     "summary": {
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,

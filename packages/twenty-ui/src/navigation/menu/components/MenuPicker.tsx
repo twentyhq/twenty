@@ -137,6 +137,7 @@ export const MenuPicker = ({
       data-testid={testId}
       aria-pressed={selected}
       aria-disabled={disabled}
+      aria-label={label}
     >
       <StyledIconContainer>
         <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />

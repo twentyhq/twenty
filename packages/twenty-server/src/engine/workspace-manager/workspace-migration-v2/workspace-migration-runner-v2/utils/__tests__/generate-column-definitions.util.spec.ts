@@ -42,7 +42,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: enumField,
-        flatObjectMetadataWithoutFields: mockObjectMetadata,
+        flatObjectMetadata: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(1);
@@ -85,7 +85,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: multiSelectField,
-        flatObjectMetadataWithoutFields: mockObjectMetadata,
+        flatObjectMetadata: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(1);
@@ -115,7 +115,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: relationField,
-        flatObjectMetadataWithoutFields: mockObjectMetadata,
+        flatObjectMetadata: mockObjectMetadata,
       });
 
       // Relations without join columns must return empty array
@@ -136,7 +136,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: relationField,
-        flatObjectMetadataWithoutFields: mockObjectMetadata,
+        flatObjectMetadata: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(1);
@@ -166,7 +166,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: addressField,
-        flatObjectMetadataWithoutFields: mockObjectMetadata,
+        flatObjectMetadata: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(8);
@@ -206,7 +206,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: currencyField,
-        flatObjectMetadataWithoutFields: mockObjectMetadata,
+        flatObjectMetadata: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(2);
@@ -245,7 +245,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: textField,
-        flatObjectMetadataWithoutFields: mockObjectMetadata,
+        flatObjectMetadata: mockObjectMetadata,
       });
 
       expect(columns).toStrictEqual([
@@ -271,7 +271,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: booleanField,
-        flatObjectMetadataWithoutFields: mockObjectMetadata,
+        flatObjectMetadata: mockObjectMetadata,
       });
 
       expect(columns).toStrictEqual([
@@ -298,7 +298,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: textField,
-        flatObjectMetadataWithoutFields: mockObjectMetadata,
+        flatObjectMetadata: mockObjectMetadata,
       });
 
       expect(columns).toStrictEqual([
@@ -323,7 +323,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: uuidField,
-        flatObjectMetadataWithoutFields: mockObjectMetadata,
+        flatObjectMetadata: mockObjectMetadata,
       });
 
       expect(columns).toStrictEqual([

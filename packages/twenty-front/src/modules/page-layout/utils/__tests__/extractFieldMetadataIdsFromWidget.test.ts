@@ -3,7 +3,8 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
-  AggregateOperations,
+  AxisNameDisplay,
+  ExtendedAggregateOperations,
   GraphOrderBy,
   GraphType,
 } from '~/generated/graphql';
@@ -51,9 +52,11 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         __typename: 'BarChartConfiguration' as const,
         graphType: GraphType.BAR,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         groupByFieldMetadataIdX: 'field-2',
         orderByX: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
+        displayDataLabel: false,
       },
       objectMetadataId: 'object-1',
     });
@@ -71,10 +74,12 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         __typename: 'BarChartConfiguration' as const,
         graphType: GraphType.BAR,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         groupByFieldMetadataIdX: 'field-2',
         groupByFieldMetadataIdY: 'field-3',
         orderByX: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
+        displayDataLabel: false,
       },
       objectMetadataId: 'object-1',
     });
@@ -93,9 +98,11 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         __typename: 'LineChartConfiguration' as const,
         graphType: GraphType.LINE,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.SUM,
+        aggregateOperation: ExtendedAggregateOperations.SUM,
         groupByFieldMetadataIdX: 'field-2',
         orderByX: GraphOrderBy.FIELD_DESC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
+        displayDataLabel: false,
       },
       objectMetadataId: 'object-1',
     });
@@ -113,9 +120,10 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         __typename: 'PieChartConfiguration' as const,
         graphType: GraphType.PIE,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         groupByFieldMetadataId: 'field-2',
         orderBy: GraphOrderBy.FIELD_ASC,
+        displayDataLabel: false,
       },
       objectMetadataId: 'object-1',
     });
@@ -133,7 +141,8 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         __typename: 'NumberChartConfiguration' as const,
         graphType: GraphType.NUMBER,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.AVG,
+        aggregateOperation: ExtendedAggregateOperations.AVG,
+        displayDataLabel: false,
       },
       objectMetadataId: 'object-1',
     });
@@ -150,18 +159,16 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         __typename: 'GaugeChartConfiguration' as const,
         graphType: GraphType.GAUGE,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.SUM,
-        aggregateFieldMetadataIdTotal: 'field-2',
-        aggregateOperationTotal: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.SUM,
+        displayDataLabel: false,
       },
       objectMetadataId: 'object-1',
     });
 
     const result = extractFieldMetadataIdsFromWidget(widget);
 
-    expect(result).toHaveLength(2);
+    expect(result).toHaveLength(1);
     expect(result).toContain('field-1');
-    expect(result).toContain('field-2');
   });
 
   it('should not include undefined optional fields', () => {
@@ -170,10 +177,12 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         __typename: 'BarChartConfiguration' as const,
         graphType: GraphType.BAR,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         groupByFieldMetadataIdX: 'field-2',
         groupByFieldMetadataIdY: undefined,
         orderByX: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
+        displayDataLabel: false,
       },
       objectMetadataId: 'object-1',
     });
