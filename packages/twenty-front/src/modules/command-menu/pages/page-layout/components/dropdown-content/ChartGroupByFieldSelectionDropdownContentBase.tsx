@@ -1,10 +1,15 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
+import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
+import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -16,15 +21,25 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { IconChevronLeft, useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
-import { ChartSubFieldSelectionDropdownContent } from './ChartSubFieldSelectionDropdownContent';
 
-export const ChartFieldSelectionDropdownContent = () => {
+type ChartGroupByFieldSelectionDropdownContentBaseProps = {
+  headerLabel: ReactNode;
+  fieldMetadataIdKey: string;
+  subFieldNameKey: string;
+  allowedChartTypes: string[];
+};
+
+export const ChartGroupByFieldSelectionDropdownContentBase = ({
+  headerLabel,
+  fieldMetadataIdKey,
+  subFieldNameKey,
+  allowedChartTypes,
+}: ChartGroupByFieldSelectionDropdownContentBaseProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCompositeField, setSelectedCompositeField] =
     useState<FieldMetadataItem | null>(null);
@@ -33,14 +48,21 @@ export const ChartFieldSelectionDropdownContent = () => {
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   if (
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+    !isDefined(widgetInEditMode?.configuration?.__typename) ||
+    !allowedChartTypes.includes(widgetInEditMode.configuration.__typename)
   ) {
     throw new Error('Invalid configuration type');
   }
 
-  const currentXAxisFieldMetadataId =
-    widgetInEditMode.configuration.groupByFieldMetadataIdX;
+  const currentGroupByFieldMetadataId: string | undefined =
+    widgetInEditMode.configuration[
+      fieldMetadataIdKey as keyof typeof widgetInEditMode.configuration
+    ];
+
+  const currentSubFieldName: string | undefined =
+    widgetInEditMode.configuration[
+      subFieldNameKey as keyof typeof widgetInEditMode.configuration
+    ];
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === widgetInEditMode.objectMetadataId,
@@ -78,8 +100,8 @@ export const ChartFieldSelectionDropdownContent = () => {
     } else {
       updateCurrentWidgetConfig({
         configToUpdate: {
-          groupByFieldMetadataIdX: fieldMetadataItem.id,
-          groupBySubFieldNameX: null,
+          [fieldMetadataIdKey]: fieldMetadataItem.id,
+          [subFieldNameKey]: null,
         },
       });
       closeDropdown();
@@ -90,21 +112,86 @@ export const ChartFieldSelectionDropdownContent = () => {
     setSelectedCompositeField(null);
   };
 
+  const handleSelectSubField = (subFieldName: string) => {
+    if (!isDefined(selectedCompositeField)) {
+      return;
+    }
+
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        [fieldMetadataIdKey]: selectedCompositeField.id,
+        [subFieldNameKey]: subFieldName,
+      },
+    });
+    closeDropdown();
+  };
+
   if (isDefined(selectedCompositeField)) {
+    const compositeFieldType =
+      selectedCompositeField.type as CompositeFieldType;
+
+    const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
+      compositeFieldType
+    ].subFields.map((subField) => subField.subFieldName);
+
+    const selectableItemIdArray = subFieldNames.map(
+      (subFieldName) => subFieldName,
+    );
+
     return (
-      <ChartSubFieldSelectionDropdownContent
-        fieldMetadataItem={selectedCompositeField}
-        axis="X"
-        onBack={handleBack}
-      />
+      <>
+        <DropdownMenuHeader
+          StartComponent={
+            <DropdownMenuHeaderLeftComponent
+              onClick={handleBack}
+              Icon={IconChevronLeft}
+            />
+          }
+        >
+          {headerLabel}: {selectedCompositeField.label}
+        </DropdownMenuHeader>
+        <DropdownMenuItemsContainer>
+          <SelectableList
+            selectableListInstanceId={dropdownId}
+            focusId={dropdownId}
+            selectableItemIdArray={selectableItemIdArray}
+          >
+            {subFieldNames.map((subFieldName) => (
+              <SelectableListItem
+                key={subFieldName}
+                itemId={subFieldName}
+                onEnter={() => {
+                  handleSelectSubField(subFieldName);
+                }}
+              >
+                <MenuItemSelect
+                  text={getCompositeSubFieldLabel(
+                    compositeFieldType,
+                    subFieldName,
+                  )}
+                  selected={currentSubFieldName === subFieldName}
+                  focused={selectedItemId === subFieldName}
+                  onClick={() => {
+                    if (isDefined(subFieldName)) {
+                      handleSelectSubField(subFieldName);
+                    }
+                  }}
+                  LeftIcon={getIcon(
+                    ICON_NAME_BY_SUB_FIELD[subFieldName] ??
+                      selectedCompositeField.icon,
+                  )}
+                />
+              </SelectableListItem>
+            ))}
+          </SelectableList>
+        </DropdownMenuItemsContainer>
+      </>
     );
   }
 
   return (
     <>
-      <DropdownMenuHeader>
-        <Trans>X-Axis Field</Trans>
-      </DropdownMenuHeader>
+      <DropdownMenuHeader>{headerLabel}</DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
@@ -131,7 +218,9 @@ export const ChartFieldSelectionDropdownContent = () => {
             >
               <MenuItemSelect
                 text={fieldMetadataItem.label}
-                selected={currentXAxisFieldMetadataId === fieldMetadataItem.id}
+                selected={
+                  currentGroupByFieldMetadataId === fieldMetadataItem.id
+                }
                 focused={selectedItemId === fieldMetadataItem.id}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}
                 hasSubMenu={isCompositeFieldType(fieldMetadataItem.type)}
