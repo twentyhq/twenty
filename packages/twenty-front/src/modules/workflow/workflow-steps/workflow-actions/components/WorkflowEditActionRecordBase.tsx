@@ -1,3 +1,4 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
@@ -6,6 +7,8 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
+import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
+import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useTheme } from '@emotion/react';
 import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,9 +19,6 @@ import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { RelationType } from '~/generated-metadata/graphql';
 import { WorkflowVariablePicker } from '../../../workflow-variables/components/WorkflowVariablePicker';
-import { WorkflowActionFooter } from '../../components/WorkflowActionFooter';
-import { WorkflowStepBody } from '../../components/WorkflowStepBody';
-import { WorkflowStepHeader } from '../../components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '../hooks/useWorkflowActionHeader';
 import { shouldDisplayFormField } from '../utils/shouldDisplayFormField';
 
@@ -226,7 +226,7 @@ export const WorkflowEditActionRecordBase = <T extends BaseRecordFormData>({
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
             return;
