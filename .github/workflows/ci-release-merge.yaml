@@ -5,6 +5,10 @@ on:
       - closed
 
 jobs:
+  defaults:
+    run:
+      shell: bash --noprofile --norc -euo pipefail {0}
+
   tag_and_release:
     timeout-minutes: 10
     runs-on: ubuntu-latest
@@ -12,33 +16,40 @@ jobs:
     steps:
       - name: Check PR Author
         id: check_author
+        env:
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
         run: |
-          if [[ "${{ github.event.pull_request.user.login }}" != "github-actions[bot]" ]]; then
-            echo "PR author (${AUTHOR}) is not trusted. Exiting."
+          set -euo pipefail
+          if [[ "$PR_AUTHOR" != "github-actions[bot]" ]]; then
+            echo "PR author ($PR_AUTHOR) is not trusted. Exiting."
             exit 1
           fi
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: main
 
       - name: Get version from PR title
         id: extract_version
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          VERSION=$(echo "${{ github.event.pull_request.title }}" | sed -n 's/.*Release v\([0-9.]*\).*/\1/p')
+          set -euo pipefail
+          VERSION=$(printf '%s' "$PR_TITLE" | sed -n 's/.*Release v\([0-9][0-9.]*\).*/\1/p')
           if [ -z "$VERSION" ]; then
             echo "No valid version found in PR title. Exiting."
             exit 1
           fi
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          printf 'VERSION=%s\n' "$VERSION" >> "$GITHUB_ENV"
 
       - name: Push new tag
         run: |
+          set -euo pipefail
           git config --global user.name 'Github Action Deploy'
           git config --global user.email 'github-action-deploy@twenty.com'
-          git tag v${{ env.VERSION }}
-          git push origin v${{ env.VERSION }}
+          git tag "v${{ env.VERSION }}"
+          git push origin "v${{ env.VERSION }}"
 
       - uses: release-drafter/release-drafter@v5
         if: contains(github.event.pull_request.labels.*.name, 'create_release')

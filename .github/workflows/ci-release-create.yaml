@@ -14,23 +14,32 @@ on:
         description: Create a release after merging the PR
 
 jobs:
+  defaults:
+    run:
+      shell: bash --noprofile --norc -euo pipefail {0}
+
   create_pr:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.ref }}
 
       - name: Sanitize version
         id: sanitize
+        env:
+          RAW_VERSION: ${{ github.event.inputs.version }}
         run: |
-          echo version=$(echo ${{ github.event.inputs.version }} | sed 's/^v//') >> $GITHUB_OUTPUT
+          VERSION="${RAW_VERSION#v}"
+          printf 'version=%s\n' "$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Update versions
+        env:
+          VERSION: ${{ steps.sanitize.outputs.version }}
         run: |
-          echo ${{ steps.sanitize.outputs.version }} > version.txt
+          printf '%s\n' "$VERSION" > version.txt
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
