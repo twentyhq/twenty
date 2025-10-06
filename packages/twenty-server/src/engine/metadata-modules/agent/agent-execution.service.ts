@@ -29,6 +29,7 @@ import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modu
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
+import { AgentExecutionContext } from './agent-handoff-executor.service';
 import { AgentModelConfigService } from './agent-model-config.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
@@ -40,7 +41,7 @@ export interface AgentExecutionResult {
 }
 
 @Injectable()
-export class AgentExecutionService {
+export class AgentExecutionService implements AgentExecutionContext {
   private readonly logger = new Logger(AgentExecutionService.name);
 
   constructor(
@@ -61,10 +62,12 @@ export class AgentExecutionService {
     messages,
     system,
     agent,
+    excludeHandoffTools = false,
   }: {
     system: string;
     agent: AgentEntity | null;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
+    excludeHandoffTools?: boolean;
   }) {
     try {
       if (agent) {
@@ -86,11 +89,17 @@ export class AgentExecutionService {
             agent.workspaceId,
           );
 
-        const handoffTools =
-          await this.agentHandoffToolService.generateHandoffTools(
-            agent.id,
-            agent.workspaceId,
-          );
+        let handoffTools = {};
+
+        if (!excludeHandoffTools) {
+          handoffTools =
+            await this.agentHandoffToolService.generateHandoffTools(
+              agent.id,
+              agent.workspaceId,
+              this, // Pass execution context
+            );
+        }
+
         const nativeModelTools =
           this.agentModelConfigService.getNativeModelTools(
             registeredModel,

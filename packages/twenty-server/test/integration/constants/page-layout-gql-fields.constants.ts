@@ -31,8 +31,8 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     groupByFieldMetadataIdY
     orderByY
     omitNullValues
-    xAxisName
-    yAxisName
+    axisNameDisplay
+    displayDataLabel
     rangeMin
     rangeMax
     filter
@@ -48,8 +48,8 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     groupByFieldMetadataIdY
     orderByY
     omitNullValues
-    xAxisName
-    yAxisName
+    axisNameDisplay
+    displayDataLabel
     rangeMin
     rangeMax
     filter
@@ -62,6 +62,7 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     aggregateFieldMetadataId
     aggregateOperation
     orderBy
+    displayDataLabel
     filter
     color
     description
@@ -80,8 +81,6 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     graphType
     aggregateFieldMetadataId
     aggregateOperation
-    aggregateOperationTotal
-    aggregateFieldMetadataIdTotal
     description
     filter
   }
