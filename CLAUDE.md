@@ -66,6 +66,24 @@ npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/mi
 
 # Sync metadata
 npx nx run twenty-server:command workspace:sync-metadata -f
+
+# Fix missing composite field columns (IMAGE/PDF fields)
+npx nx run twenty-server:command workspace:fix-composite-field-columns
+```
+
+### Common Issues & Fixes
+
+**Composite Field Errors**: If you encounter errors with IMAGE or PDF fields like:
+- `column "fieldNameFullPaths" does not exist`
+- `400 Bad Request` when saving IMAGE/PDF fields
+- Data loss in composite fields after page reload
+
+**Solution**: Run the composite field migration command:
+```bash
+npx nx run twenty-server:command workspace:fix-composite-field-columns
+```
+
+For detailed information, see [COMPOSITE_FIELD_MIGRATION_GUIDE.md](./COMPOSITE_FIELD_MIGRATION_GUIDE.md).
 ```
 
 ### GraphQL

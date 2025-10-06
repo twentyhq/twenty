@@ -6,6 +6,18 @@
 
 ---
 
+## ⚠️ Important: Database Migration Required
+
+Before testing IMAGE/PDF fields, ensure all required database columns are present:
+
+```bash
+npx nx run twenty-server:command workspace:fix-composite-field-columns
+```
+
+This command adds missing columns (`fullPaths`, `names`, `types`) for composite fields. See [MIGRATION_COMMAND.md](./MIGRATION_COMMAND.md) for details.
+
+---
+
 ## Prerequisites
 
 **Environment Setup**:

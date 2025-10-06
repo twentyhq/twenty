@@ -21,6 +21,14 @@ export const usePersistFieldFromFieldInputContext = () => {
   });
 
   const persistFieldFromFieldInputContext = (valueToPersist: unknown) => {
+    // Guard against missing metadata (prevents silent persistence failures)
+    if (!objectMetadataItem?.id) {
+      console.error(
+        `[usePersistFieldFromFieldInputContext] Cannot persist: metadata not loaded for field ${fieldDefinition.fieldMetadataId}`,
+      );
+      return;
+    }
+
     persistField({
       recordId,
       fieldDefinition,

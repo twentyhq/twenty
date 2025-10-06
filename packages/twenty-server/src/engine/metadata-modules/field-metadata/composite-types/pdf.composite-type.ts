@@ -11,9 +11,30 @@ export const pdfCompositeType: CompositeType = {
       hidden: false,
       isRequired: false,
     },
+    {
+      name: 'fullPaths',
+      type: FieldMetadataType.RAW_JSON,
+      hidden: false,
+      isRequired: false,
+    },
+    {
+      name: 'names',
+      type: FieldMetadataType.RAW_JSON,
+      hidden: false,
+      isRequired: false,
+    },
+    {
+      name: 'types',
+      type: FieldMetadataType.RAW_JSON,
+      hidden: false,
+      isRequired: false,
+    },
   ],
 };
 
 export type PdfMetadata = {
   attachmentIds: string[] | null;
+  fullPaths: string[] | null;
+  names: string[] | null;
+  types: string[] | null;
 };

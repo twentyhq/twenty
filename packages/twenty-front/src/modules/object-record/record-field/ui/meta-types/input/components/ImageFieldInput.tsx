@@ -1,17 +1,17 @@
 import { AttachmentGrid } from '@/activities/files/components/AttachmentGrid';
 import { AttachmentSelector } from '@/activities/files/components/AttachmentSelector';
+import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useAttachmentsByIds } from '@/activities/files/hooks/useAttachmentsByIds';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/ui/hooks/usePersistFieldFromFieldInputContext';
 import { useImageField } from '@/object-record/record-field/ui/meta-types/hooks/useImageField';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
+import { type ChangeEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconUpload } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -47,25 +47,32 @@ const MODAL_ID = 'image-field-attachment-selector';
 
 export const ImageFieldInput = () => {
   const { t } = useLingui();
-  const { recordId, objectMetadataNameSingular, fieldDefinition, draftValue, setDraftValue, setFieldValue } = useImageField();
+  const { recordId, objectMetadataNameSingular, fieldDefinition, draftValue } = useImageField();
   const { onEscape, onSubmit } = useContext(FieldInputEventContext);
-  const { persistFieldFromFieldInputContext } = usePersistFieldFromFieldInputContext();
   const inputFileRef = useRef<HTMLInputElement>(null);
   const { uploadAttachmentFile } = useUploadAttachmentFile();
   const { openModal, closeModal } = useModal();
   const [isUploading, setIsUploading] = useState(false);
 
-  const attachmentIds = draftValue?.attachmentIds || [];
+  // Memoize attachmentIds to prevent infinite useEffect loop (new array reference every render)
+  const attachmentIds = useMemo(() => draftValue?.attachmentIds || [], [draftValue?.attachmentIds]);
   const { attachments, loading } = useAttachmentsByIds(attachmentIds);
 
   // Check if we have valid object metadata to enable "Link Existing"
   const canLinkExisting =
     objectMetadataNameSingular && objectMetadataNameSingular.trim() !== '';
 
-  const targetableObject: ActivityTargetableObject = {
+  // Memoize targetableObject to prevent infinite re-renders
+  const targetableObject: ActivityTargetableObject = useMemo(() => ({
     id: recordId,
     targetObjectNameSingular: objectMetadataNameSingular || '',
-  };
+  }), [recordId, objectMetadataNameSingular]);
+
+  // Always call useAttachments (hooks can't be conditional), but skip query if not needed
+  const shouldFetchAllAttachments = canLinkExisting && targetableObject.targetObjectNameSingular.trim() !== '';
+  const { attachments: allAttachments } = useAttachments(
+    shouldFetchAllAttachments ? targetableObject : { id: '', targetObjectNameSingular: '' }
+  );
 
   const isImageAttachment = (name: string, type: string) => {
     if (type === 'Image') return true;
@@ -85,21 +92,31 @@ export const ImageFieldInput = () => {
     setIsUploading(true);
 
     try {
-      const uploadedIds: string[] = [];
+      const uploadedData: {
+        ids: string[];
+        paths: string[];
+        names: string[];
+        types: string[];
+      } = { ids: [], paths: [], names: [], types: [] };
 
       for (const file of Array.from(e.target.files)) {
         const result = await uploadAttachmentFile(file, targetableObject);
-        if (result?.attachmentId) {
-          uploadedIds.push(result.attachmentId);
+        if (result?.attachment) {
+          uploadedData.ids.push(result.attachment.id);
+          uploadedData.paths.push(result.attachment.fullPath);
+          uploadedData.names.push(result.attachment.name);
+          uploadedData.types.push(result.attachment.type);
         }
       }
 
-      const newAttachmentIds = [...attachmentIds, ...uploadedIds];
-      const newValue = { attachmentIds: newAttachmentIds };
-      setDraftValue(newValue);
-      // Persist to database immediately after upload (before setFieldValue to avoid race condition)
-      persistFieldFromFieldInputContext(newValue);
-      // setFieldValue will be called by the persistence layer
+      const newValue = {
+        attachmentIds: [...attachmentIds, ...uploadedData.ids],
+        fullPaths: [...(draftValue?.fullPaths || []), ...uploadedData.paths],
+        names: [...(draftValue?.names || []), ...uploadedData.names],
+        types: [...(draftValue?.types || []), ...uploadedData.types],
+      };
+      
+      console.log('[ImageFieldInput] handleFileChange - submitting value:', JSON.stringify(newValue, null, 2));
       onSubmit?.({ newValue });
     } finally {
       setIsUploading(false);
@@ -123,23 +140,56 @@ export const ImageFieldInput = () => {
 
   const handleSelectionChange = (selectedIds: string[]) => {
     setPendingSelection(selectedIds);
-    setDraftValue({ attachmentIds: selectedIds });
   };
 
   const handleModalClose = () => {
     closeModal(MODAL_ID);
-    // Persist the selection to database using the tracked pending selection
-    const newValue = { attachmentIds: pendingSelection };
-    persistFieldFromFieldInputContext(newValue);
+    
+    // Don't persist if no selection changed
+    if (pendingSelection.length === attachmentIds.length && 
+        pendingSelection.every((id, index) => id === attachmentIds[index])) {
+      return;
+    }
+    
+    // Map selected IDs to their attachment details from allAttachments
+    const selectedAttachments = pendingSelection
+      .map(id => {
+        const attachment = allAttachments.find(a => a.id === id);
+        if (!attachment) {
+          console.warn(`[ImageFieldInput] Attachment not found for ID: ${id}`);
+        }
+        return attachment;
+      })
+      .filter(isDefined);
+    
+    // Ensure arrays are same length - if an attachment is missing, skip persistence
+    if (selectedAttachments.length !== pendingSelection.length) {
+      console.error('[ImageFieldInput] Cannot persist: some attachments not found');
+      return;
+    }
+    
+    const newValue = {
+      attachmentIds: pendingSelection,
+      fullPaths: selectedAttachments.map(a => a.fullPath),
+      names: selectedAttachments.map(a => a.name),
+      types: selectedAttachments.map(a => a.type),
+    };
+    
+    console.log('[ImageFieldInput] handleModalClose - submitting value:', JSON.stringify(newValue, null, 2));
     onSubmit?.({ newValue });
   };
 
   const handleRemove = (attachmentId: string) => {
-    const newAttachmentIds = attachmentIds.filter((id: string) => id !== attachmentId);
-    const newValue = { attachmentIds: newAttachmentIds };
-    setDraftValue(newValue);
-    // Persist to database immediately after removal
-    persistFieldFromFieldInputContext(newValue);
+    const index = attachmentIds.indexOf(attachmentId);
+    if (index === -1) return;
+
+    const newValue = {
+      attachmentIds: attachmentIds.filter((_: unknown, i: number) => i !== index),
+      fullPaths: (draftValue?.fullPaths || []).filter((_: unknown, i: number) => i !== index),
+      names: (draftValue?.names || []).filter((_: unknown, i: number) => i !== index),
+      types: (draftValue?.types || []).filter((_: unknown, i: number) => i !== index),
+    };
+
     onSubmit?.({ newValue });
   };
 
