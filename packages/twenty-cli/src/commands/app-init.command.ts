@@ -2,27 +2,28 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
-import {
-  createBasePackageJson,
-  createGitignoreContent,
-  createReadmeContent,
-} from '../utils/app-template';
-import { writeJsoncFile } from '../utils/jsonc-parser';
+import { copyBaseApplicationProject } from '../utils/app-template';
+import kebabCase from 'lodash.kebabcase';
 
 export class AppInitCommand {
-  async execute(options: { path?: string; name?: string }): Promise<void> {
+  async execute(directory?: string): Promise<void> {
     try {
-      const { name, description } = await this.getAppInfos(options.name);
+      const { appName, appDirectory, appDescription } =
+        await this.getAppInfos(directory);
 
-      const appDir = this.determineAppDirectory(name, options.path);
+      await this.validateDirectory(appDirectory);
 
-      await this.validateDirectory(appDir);
+      this.logCreationInfo({ appDirectory, appName });
 
-      this.logCreationInfo(appDir, name);
+      await fs.ensureDir(appDirectory);
 
-      await this.createAppStructure(appDir, name, description);
+      await copyBaseApplicationProject({
+        appName,
+        appDescription,
+        appDirectory,
+      });
 
-      this.logSuccess(appDir);
+      this.logSuccess(appDirectory);
     } catch (error) {
       console.error(
         chalk.red('Initialization failed:'),
@@ -32,22 +33,18 @@ export class AppInitCommand {
     }
   }
 
-  private async getAppInfos(
-    providedName?: string,
-  ): Promise<{ name: string; description: string }> {
-    if (providedName) {
-      return { name: providedName, description: '' };
-    }
-
-    return inquirer.prompt([
+  private async getAppInfos(directory?: string): Promise<{
+    appName: string;
+    appDirectory: string;
+    appDescription: string;
+  }> {
+    const { name, description } = await inquirer.prompt([
       {
         type: 'input',
         name: 'name',
-        message: 'Application name:',
+        message: 'Application name (eg: My awesome application):',
         validate: (input) => {
           if (input.length === 0) return 'Application name is required';
-          if (!/^[a-z0-9-]+$/.test(input))
-            return 'Name must contain only lowercase letters, numbers, and hyphens';
           return true;
         },
       },
@@ -58,66 +55,49 @@ export class AppInitCommand {
         default: '',
       },
     ]);
+
+    const appName = name.trim();
+
+    const appDescription = description.trim();
+
+    const appDirectory = directory
+      ? path.join(process.cwd(), kebabCase(directory))
+      : path.join(process.cwd(), kebabCase(appName));
+
+    return { appName, appDirectory, appDescription };
   }
 
-  private determineAppDirectory(
-    appName: string,
-    providedPath?: string,
-  ): string {
-    if (providedPath) {
-      return path.resolve(providedPath, appName);
-    }
-
-    return path.join(process.cwd(), appName!);
-  }
-
-  private async validateDirectory(appDir: string): Promise<void> {
-    if (!(await fs.pathExists(appDir))) {
+  private async validateDirectory(appDirectory: string): Promise<void> {
+    if (!(await fs.pathExists(appDirectory))) {
       return;
     }
 
-    const files = await fs.readdir(appDir);
+    const files = await fs.readdir(appDirectory);
     if (files.length > 0) {
-      throw new Error(`Directory ${appDir} already exists and is not empty`);
+      throw new Error(
+        `Directory ${appDirectory} already exists and is not empty`,
+      );
     }
   }
 
-  private logCreationInfo(appDir: string, appName: string): void {
+  private logCreationInfo({
+    appDirectory,
+    appName,
+  }: {
+    appDirectory: string;
+    appName: string;
+  }): void {
     console.log(chalk.blue('🎯 Creating Twenty Application'));
-    console.log(chalk.gray(`📁 Directory: ${appDir}`));
+    console.log(chalk.gray(`📁 Directory: ${appDirectory}`));
     console.log(chalk.gray(`📝 Name: ${appName}`));
     console.log('');
   }
 
-  private async createAppStructure(
-    appDir: string,
-    appName: string,
-    description: string,
-  ): Promise<void> {
-    await fs.ensureDir(appDir);
-
-    // Create main basePackageJson with agent references
-    const basePackageJson = createBasePackageJson(appName, description);
-    const basePackageJsonPath = path.join(appDir, 'package.json');
-    await writeJsoncFile(basePackageJsonPath, basePackageJson);
-
-    // Create README
-    const readmeContent = createReadmeContent(appName, appDir);
-    await fs.writeFile(path.join(appDir, 'README.md'), readmeContent);
-
-    // Create empty yarn.lock
-    await fs.writeFile(path.join(appDir, 'yarn.lock'), '');
-
-    // Create .gitignore
-    const gitignoreContent = createGitignoreContent();
-    await fs.writeFile(path.join(appDir, '.gitignore'), gitignoreContent);
-  }
-
-  private logSuccess(appDir: string): void {
+  private logSuccess(appDirectory: string): void {
     console.log(chalk.green('✅ Application created successfully!'));
     console.log('');
     console.log(chalk.blue('Next steps:'));
-    console.log(`  cd ${appDir}`);
+    console.log(`  cd ${appDirectory}`);
     console.log('  twenty app dev');
   }
 }

@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
@@ -94,6 +95,7 @@ export const getPageLayoutWidgetDataSeeds = (
             graphType: 'NUMBER',
             aggregateFieldMetadataId: opportunityAmountFieldId,
             aggregateOperation: AggregateOperations.SUM,
+            displayDataLabel: true,
           }
         : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -115,6 +117,7 @@ export const getPageLayoutWidgetDataSeeds = (
             graphType: 'NUMBER',
             aggregateFieldMetadataId: rocketIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
           }
         : null,
       objectMetadataId: rocketObject?.id ?? null,
@@ -140,6 +143,8 @@ export const getPageLayoutWidgetDataSeeds = (
               aggregateOperation: AggregateOperations.SUM,
               groupByFieldMetadataIdX: opportunityCloseDateFieldId,
               orderByX: 'FIELD_ASC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
             }
           : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -165,6 +170,8 @@ export const getPageLayoutWidgetDataSeeds = (
               aggregateOperation: AggregateOperations.SUM,
               groupByFieldMetadataIdX: opportunityStageFieldId,
               orderByX: 'FIELD_DESC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
             }
           : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -191,6 +198,8 @@ export const getPageLayoutWidgetDataSeeds = (
               aggregateOperation: AggregateOperations.COUNT,
               groupByFieldMetadataIdX: rocketCreatedAtFieldId,
               orderByX: 'FIELD_ASC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
             }
           : null,
       objectMetadataId: rocketObject?.id ?? null,
@@ -212,6 +221,7 @@ export const getPageLayoutWidgetDataSeeds = (
             graphType: 'NUMBER',
             aggregateFieldMetadataId: opportunityIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
           }
         : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -235,6 +245,7 @@ export const getPageLayoutWidgetDataSeeds = (
             graphType: 'NUMBER',
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -259,6 +270,8 @@ export const getPageLayoutWidgetDataSeeds = (
               aggregateOperation: AggregateOperations.COUNT,
               groupByFieldMetadataIdX: companyCreatedAtFieldId,
               orderByX: 'FIELD_ASC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -283,6 +296,8 @@ export const getPageLayoutWidgetDataSeeds = (
               aggregateOperation: AggregateOperations.COUNT,
               groupByFieldMetadataIdX: companyEmployeesFieldId,
               orderByX: 'FIELD_ASC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -306,6 +321,7 @@ export const getPageLayoutWidgetDataSeeds = (
             graphType: 'NUMBER',
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.SUM,
+            displayDataLabel: true,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -330,6 +346,7 @@ export const getPageLayoutWidgetDataSeeds = (
               aggregateOperation: AggregateOperations.SUM,
               groupByFieldMetadataId: companyNameFieldId,
               orderBy: 'VALUE_DESC',
+              displayDataLabel: true,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -351,8 +368,7 @@ export const getPageLayoutWidgetDataSeeds = (
             graphType: 'GAUGE',
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.AVG,
-            aggregateFieldMetadataIdTotal: companyArrFieldId,
-            aggregateOperationTotal: AggregateOperations.MAX,
+            displayDataLabel: true,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -374,6 +390,7 @@ export const getPageLayoutWidgetDataSeeds = (
             graphType: 'NUMBER',
             aggregateFieldMetadataId: companyLinkedinLinkFieldId,
             aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -398,6 +415,7 @@ export const getPageLayoutWidgetDataSeeds = (
               aggregateOperation: AggregateOperations.COUNT,
               groupByFieldMetadataId: companyLinkedinLinkFieldId,
               orderBy: 'VALUE_DESC',
+              displayDataLabel: true,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -418,6 +436,7 @@ export const getPageLayoutWidgetDataSeeds = (
             graphType: 'NUMBER',
             aggregateFieldMetadataId: personIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
           }
         : null,
       objectMetadataId: personObject?.id ?? null,
@@ -442,6 +461,8 @@ export const getPageLayoutWidgetDataSeeds = (
               aggregateOperation: AggregateOperations.COUNT,
               groupByFieldMetadataIdX: personCityFieldId,
               orderByX: 'FIELD_DESC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
             }
           : null,
       objectMetadataId: personObject?.id ?? null,
@@ -468,6 +489,7 @@ export const getPageLayoutWidgetDataSeeds = (
               aggregateOperation: AggregateOperations.COUNT,
               groupByFieldMetadataId: personJobTitleFieldId,
               orderBy: 'VALUE_DESC',
+              displayDataLabel: true,
             }
           : null,
       objectMetadataId: personObject?.id ?? null,
@@ -486,6 +508,7 @@ export const getPageLayoutWidgetDataSeeds = (
             graphType: 'NUMBER',
             aggregateFieldMetadataId: taskIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
           }
         : null,
       objectMetadataId: taskObject?.id ?? null,

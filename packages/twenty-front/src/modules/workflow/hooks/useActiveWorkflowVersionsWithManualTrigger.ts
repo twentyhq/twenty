@@ -1,8 +1,6 @@
 import { isGlobalManualTrigger } from '@/action-menu/actions/record-actions/utils/isGlobalManualTrigger';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
   type ManualTriggerWorkflowVersion,
@@ -52,23 +50,24 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
     filters.push(objectTypeFilter);
   }
 
-  const { objectMetadataItem: workflowVersionObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
-
   const { records } = useFindManyRecords<
-    ManualTriggerWorkflowVersion & { workflow: Workflow }
+    Pick<
+      ManualTriggerWorkflowVersion,
+      'id' | '__typename' | 'trigger' | 'status' | 'workflowId'
+    > & {
+      workflow: Workflow;
+    }
   >({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     filter: {
       and: filters,
     },
     recordGqlFields: {
-      ...generateDepthOneRecordGqlFields({
-        objectMetadataItem: workflowVersionObjectMetadataItem,
-      }),
+      id: true,
+      trigger: true,
+      workflowId: true,
       workflow: true,
+      status: true,
     },
     skip,
   });

@@ -20,6 +20,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
 import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
@@ -34,15 +35,21 @@ export class AdminPanelService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly auditService: AuditService,
+    private readonly fileService: FileService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 
   async userLookup(userIdentifier: string): Promise<UserLookup> {
     const isEmail = userIdentifier.includes('@');
+    const normalizedIdentifier = isEmail
+      ? userIdentifier.toLowerCase()
+      : userIdentifier;
 
     const targetUser = await this.userRepository.findOne({
-      where: isEmail ? { email: userIdentifier } : { id: userIdentifier },
+      where: isEmail
+        ? { email: normalizedIdentifier }
+        : { id: normalizedIdentifier },
       relations: {
         userWorkspaces: {
           workspace: {
@@ -57,7 +64,9 @@ export class AdminPanelService {
 
     userValidator.assertIsDefinedOrThrow(
       targetUser,
-      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT, {
+        userFriendlyMessage: 'User not found. Please check the email or ID.',
+      }),
     );
 
     const allFeatureFlagKeys = Object.values(FeatureFlagKey);
@@ -73,8 +82,18 @@ export class AdminPanelService {
         id: userWorkspace.workspace.id,
         name: userWorkspace.workspace.displayName ?? '',
         totalUsers: userWorkspace.workspace.workspaceUsers.length,
-        logo: userWorkspace.workspace.logo,
+        logo: userWorkspace.workspace.logo
+          ? this.fileService.signFileUrl({
+              url: userWorkspace.workspace.logo,
+              workspaceId: userWorkspace.workspace.id,
+            })
+          : userWorkspace.workspace.logo,
         allowImpersonation: userWorkspace.workspace.allowImpersonation,
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls({
+          subdomain: userWorkspace.workspace.subdomain,
+          customDomain: userWorkspace.workspace.customDomain,
+          isCustomDomainEnabled: userWorkspace.workspace.isCustomDomainEnabled,
+        }),
         users: userWorkspace.workspace.workspaceUsers.map((workspaceUser) => ({
           id: workspaceUser.user.id,
           email: workspaceUser.user.email,

@@ -1,10 +1,10 @@
 import { AgentChatContextRecordPreview } from '@/ai/components/internal/AgentChatContextRecordPreview';
-import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
-import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import { AgentChatFilePreview } from './AgentChatFilePreview';
 
 const StyledContainer = styled.div`
@@ -21,11 +21,13 @@ const StyledPreviewsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
-  const [agentChatSelectedFiles, setAgentChatSelectedFiles] =
-    useRecoilComponentState(agentChatSelectedFilesComponentState, agentId);
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
-    useRecoilComponentState(agentChatUploadedFilesComponentState, agentId);
+export const AgentChatContextPreview = () => {
+  const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilState(
+    agentChatSelectedFilesState,
+  );
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilState(
+    agentChatUploadedFilesState,
+  );
 
   const handleRemoveUploadedFile = async (fileIndex: number) => {
     setAgentChatUploadedFiles(
@@ -62,7 +64,6 @@ export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
         ))}
         {contextStoreCurrentObjectMetadataItemId && (
           <AgentChatContextRecordPreview
-            agentId={agentId}
             contextStoreCurrentObjectMetadataItemId={
               contextStoreCurrentObjectMetadataItemId
             }

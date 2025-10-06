@@ -1,24 +1,26 @@
-import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
-import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { type FileUIPart } from 'ai';
+import { useRecoilState } from 'recoil';
 import { buildSignedPath, isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUploadFileMutation } from '~/generated-metadata/graphql';
 import { FileFolder } from '~/generated/graphql';
 
-export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
+export const useAIChatFileUpload = () => {
   const coreClient = useApolloCoreClient();
   const [uploadFile] = useUploadFileMutation({ client: coreClient });
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [agentChatSelectedFiles, setAgentChatSelectedFiles] =
-    useRecoilComponentState(agentChatSelectedFilesComponentState, agentId);
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
-    useRecoilComponentState(agentChatUploadedFilesComponentState, agentId);
+  const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilState(
+    agentChatSelectedFilesState,
+  );
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilState(
+    agentChatUploadedFilesState,
+  );
 
   const sendFile = async (file: File): Promise<FileUIPart | null> => {
     try {

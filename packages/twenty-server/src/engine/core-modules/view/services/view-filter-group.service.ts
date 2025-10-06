@@ -12,12 +12,14 @@ import {
   generateViewFilterGroupExceptionMessage,
   generateViewFilterGroupUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 @Injectable()
 export class ViewFilterGroupService {
   constructor(
     @InjectRepository(ViewFilterGroupEntity)
     private readonly viewFilterGroupRepository: Repository<ViewFilterGroupEntity>,
+    private readonly viewService: ViewService,
   ) {}
 
   async findByWorkspaceId(
@@ -118,7 +120,14 @@ export class ViewFilterGroupService {
     const viewFilterGroup =
       this.viewFilterGroupRepository.create(viewFilterGroupData);
 
-    return this.viewFilterGroupRepository.save(viewFilterGroup);
+    await this.viewService.flushGraphQLCache(viewFilterGroupData.workspaceId);
+
+    const savedViewFilterGroup =
+      await this.viewFilterGroupRepository.save(viewFilterGroup);
+
+    await this.viewService.flushGraphQLCache(viewFilterGroupData.workspaceId);
+
+    return savedViewFilterGroup;
   }
 
   async update(
@@ -142,6 +151,8 @@ export class ViewFilterGroupService {
       id,
       ...updateData,
     });
+
+    await this.viewService.flushGraphQLCache(workspaceId);
 
     return { ...existingViewFilterGroup, ...updatedViewFilterGroup };
   }
@@ -181,6 +192,8 @@ export class ViewFilterGroupService {
     }
 
     await this.viewFilterGroupRepository.delete(id);
+
+    await this.viewService.flushGraphQLCache(workspaceId);
 
     return true;
   }

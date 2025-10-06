@@ -1,9 +1,10 @@
+import { type HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { type ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
 
 export type PackageJson = {
   $schema?: string;
   universalIdentifier: string;
-  label: string;
+  name: string;
   description?: string;
   engines: {
     node: string;
@@ -44,7 +45,7 @@ export type ServerlessFunctionTriggerManifest = (
   | {
       type: 'route';
       path: string;
-      method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+      httpMethod: HTTPMethod;
       isAuthRequired: boolean;
     }
 ) & {

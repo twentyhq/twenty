@@ -82,7 +82,12 @@ export { DEFAULT_RELATIVE_DATE_VALUE } from './RelativeDateValue';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 export { SettingsPath } from './SettingsPath';
-export type { StepFilterGroup, StepFilter } from './StepFilters';
+export type {
+  StepFilterGroup,
+  StepFilter,
+  StepFilterWithPotentiallyDeprecatedOperand,
+} from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { ViewFilterOperand } from './ViewFilterOperand';
+export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
