@@ -5,6 +5,7 @@ import { TabListDropdownMenuItem } from '@/ui/layout/tab-list/components/TabList
 import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -141,8 +142,8 @@ export const TabListDropdownMenuItemWithActions = ({
         onDuplicateRight={handleDuplicateRight}
         onDelete={handleDelete}
         isDeleteDisabled={!canDeleteTab}
-        duplicateLeftLabel="Duplicate Above"
-        duplicateRightLabel="Duplicate Below"
+        duplicateLeftLabel={t`Duplicate Above`}
+        duplicateRightLabel={t`Duplicate Below`}
       />
     </StyledMenuItemWrapper>
   );

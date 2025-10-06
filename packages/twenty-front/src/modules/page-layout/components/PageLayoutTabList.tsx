@@ -7,6 +7,7 @@ import { useReorderPageLayoutTabs } from '@/page-layout/hooks/useReorderPageLayo
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import styled from '@emotion/styled';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledTabList = styled(TabList)`
@@ -38,8 +39,10 @@ export const PageLayoutTabList = ({
     return null;
   }
 
-  const sortedTabs = [...currentPageLayout.tabs].sort(
-    (a, b) => a.position - b.position,
+  const sortedTabs = useMemo(
+    () =>
+      [...currentPageLayout.tabs].sort((a, b) => a.position - b.position),
+    [currentPageLayout.tabs],
   );
 
   const tabActions = isInEditMode

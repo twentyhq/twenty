@@ -51,8 +51,6 @@ export const TabListDraggableTab = ({
   const isInRenameMode = tabInRenameMode === tab.id;
 
   const handleClick = () => {
-    // If tab is already active and tabActions exist, dropdown will handle it
-    // Otherwise, select the tab
     if (!isActive) {
       onSelect();
     }

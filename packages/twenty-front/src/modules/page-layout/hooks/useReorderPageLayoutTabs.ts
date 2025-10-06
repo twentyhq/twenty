@@ -1,10 +1,11 @@
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
-import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
-import { useCallback } from 'react';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
@@ -13,25 +14,34 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const { currentPageLayout } = useCurrentPageLayout();
   const { setPageLayoutDraft } = usePageLayoutDraftState(pageLayoutId);
 
-  const handleReorderTabs: OnDragEndResponder = useCallback(
-    (result) => {
-      const { source, destination, draggableId } = result;
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
 
-      if (!isDefined(destination) || !isDefined(currentPageLayout)) return;
+  const handleReorderTabs: OnDragEndResponder = useRecoilCallback(
+    ({ snapshot }) =>
+      (result) => {
+        const pageLayoutDraft = snapshot
+          .getLoadable(pageLayoutDraftState)
+          .getValue();
 
-      if (
-        source.droppableId === destination.droppableId &&
-        source.index === destination.index
-      ) {
-        return;
-      }
+        const { source, destination, draggableId } = result;
 
-      const sortedTabs = [...currentPageLayout.tabs].sort(
-        (a, b) => a.position - b.position,
-      );
+        if (!isDefined(destination) || !isDefined(pageLayoutDraft)) return;
+
+        if (
+          source.droppableId === destination.droppableId &&
+          source.index === destination.index
+        ) {
+          return;
+        }
+
+        const sortedTabs = [...pageLayoutDraft.tabs].sort(
+          (a, b) => a.position - b.position,
+        );
 
       const draggedTab = sortedTabs.find((t) => t.id === draggableId);
       if (!isDefined(draggedTab)) return;
@@ -58,8 +68,8 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
           tab.id === draggableId ? { ...tab, position: newPosition } : tab,
         ),
       }));
-    },
-    [currentPageLayout, setPageLayoutDraft],
+      },
+    [pageLayoutDraftState, setPageLayoutDraft],
   );
 
   return { handleReorderTabs };

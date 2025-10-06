@@ -1,8 +1,8 @@
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
-import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -18,8 +18,12 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const { currentPageLayout } = useCurrentPageLayout();
   const { setPageLayoutDraft } = usePageLayoutDraftState(pageLayoutId);
+
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
 
   const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
     pageLayoutCurrentLayoutsComponentState,
@@ -36,9 +40,13 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   const duplicatePageLayoutTab = useRecoilCallback(
     ({ snapshot, set }) =>
       (tabId: string, insertAt: 'before' | 'after') => {
-        if (!currentPageLayout) return;
+        const pageLayoutDraft = snapshot
+          .getLoadable(pageLayoutDraftState)
+          .getValue();
 
-        const sortedTabs = [...currentPageLayout.tabs].sort(
+        if (!pageLayoutDraft) return;
+
+        const sortedTabs = [...pageLayoutDraft.tabs].sort(
           (a, b) => a.position - b.position,
         );
 
@@ -109,7 +117,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         setActiveTabId(newTabId);
       },
     [
-      currentPageLayout,
+      pageLayoutDraftState,
       setPageLayoutDraft,
       pageLayoutCurrentLayoutsState,
       setActiveTabId,

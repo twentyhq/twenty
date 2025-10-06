@@ -4,6 +4,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { IconCopy, IconPencil, IconTrash } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -32,8 +33,8 @@ export const TabActionsDropdown = ({
   onDuplicateRight,
   onDelete,
   isDeleteDisabled,
-  duplicateLeftLabel = 'Duplicate Left',
-  duplicateRightLabel = 'Duplicate Right',
+  duplicateLeftLabel = t`Duplicate Left`,
+  duplicateRightLabel = t`Duplicate Right`,
 }: TabActionsDropdownProps) => {
   const { closeDropdown } = useCloseDropdown();
 
@@ -67,7 +68,7 @@ export const TabActionsDropdown = ({
           <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
             <DropdownMenuItemsContainer>
               <MenuItem
-                text="Rename"
+                text={t`Rename`}
                 LeftIcon={IconPencil}
                 onClick={handleRename}
               />
@@ -82,7 +83,7 @@ export const TabActionsDropdown = ({
                 onClick={handleDuplicateRight}
               />
               <MenuItem
-                text="Delete"
+                text={t`Delete`}
                 accent="danger"
                 LeftIcon={IconTrash}
                 onClick={handleDelete}
