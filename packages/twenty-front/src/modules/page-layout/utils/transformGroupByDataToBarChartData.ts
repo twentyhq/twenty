@@ -7,6 +7,7 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 import { computeAggregateFromGroupByResult } from './computeAggregateFromGroupByResult';
+import { getGroupByQueryName } from './getGroupByQueryName';
 
 type TransformGroupByDataToBarChartDataParams = {
   groupByData: Record<string, any> | null | undefined;
@@ -61,7 +62,7 @@ export const transformGroupByDataToBarChartData = ({
     };
   }
 
-  const queryName = `${objectMetadataItem.namePlural}GroupBy`;
+  const queryName = getGroupByQueryName(objectMetadataItem);
   // TODO: Add a limit to the query instead of slicing here
   const rawResults = groupByData[queryName].slice(
     0,
@@ -121,44 +122,44 @@ export const transformGroupByDataToBarChartData = ({
       keys,
       series,
     };
-  } else {
-    const data: BarChartDataItem[] = rawResults.map((result: any) => {
-      const dimensionValues = result.groupByDimensionValues;
+  }
 
-      const xValue = isDefined(dimensionValues?.[0])
-        ? String(dimensionValues[0])
-        : '';
+  const data: BarChartDataItem[] = rawResults.map((result: any) => {
+    const dimensionValues = result.groupByDimensionValues;
 
-      const aggregate = computeAggregateFromGroupByResult({
-        rawResult: result,
-        aggregateField,
-        // TODO: fix typing
-        aggregateOperation: configuration.aggregateOperation as any,
-        aggregateOperationFromRawResult: aggregateOperation,
-        objectMetadataItem,
-      });
+    const xValue = isDefined(dimensionValues?.[0])
+      ? String(dimensionValues[0])
+      : '';
 
-      return {
-        [groupByFieldX.name]: xValue,
-        [aggregateField.name]: aggregate.value ?? 0,
-      };
+    const aggregate = computeAggregateFromGroupByResult({
+      rawResult: result,
+      aggregateField,
+      // TODO: fix typing
+      aggregateOperation: configuration.aggregateOperation as any,
+      aggregateOperationFromRawResult: aggregateOperation,
+      objectMetadataItem,
     });
 
-    const series: BarChartSeries[] = [
-      {
-        key: aggregateField.name,
-        label: aggregateField.label,
-        color: (isDefined(configuration.color)
-          ? configuration.color
-          : 'blue') as GraphColor,
-      },
-    ];
-
     return {
-      data,
-      indexBy: groupByFieldX.name,
-      keys: [aggregateField.name],
-      series,
+      [groupByFieldX.name]: xValue,
+      [aggregateField.name]: aggregate.value ?? 0,
     };
-  }
+  });
+
+  const series: BarChartSeries[] = [
+    {
+      key: aggregateField.name,
+      label: aggregateField.label,
+      color: (isDefined(configuration.color)
+        ? configuration.color
+        : 'blue') as GraphColor,
+    },
+  ];
+
+  return {
+    data,
+    indexBy: groupByFieldX.name,
+    keys: [aggregateField.name],
+    series,
+  };
 };

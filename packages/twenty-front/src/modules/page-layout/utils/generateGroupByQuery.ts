@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from 'twenty-shared/utils';
+import { getGroupByQueryName } from './getGroupByQueryName';
 
 export const generateGroupByQuery = ({
   objectMetadataItem,
@@ -12,6 +13,7 @@ export const generateGroupByQuery = ({
 }) => {
   const capitalizedSingular = capitalize(objectMetadataItem.nameSingular);
   const queryName = `${capitalize(objectMetadataItem.namePlural)}GroupBy`;
+  const queryFieldName = getGroupByQueryName(objectMetadataItem);
 
   return gql`
     query ${queryName}(
@@ -20,7 +22,7 @@ export const generateGroupByQuery = ({
       $orderBy: [${capitalizedSingular}OrderByWithGroupByInput!]
       $viewId: UUID
     ) {
-      ${objectMetadataItem.namePlural}GroupBy(
+      ${queryFieldName}(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
