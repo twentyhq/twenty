@@ -1,7 +1,6 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
-import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
@@ -21,7 +20,6 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -64,24 +62,6 @@ const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
 `;
 
-const StyledSelectInputContainer = styled.div`
-  position: absolute;
-  z-index: 1;
-  top: ${({ theme }) => theme.spacing(9)};
-`;
-
-const StyledPlaceholder = styled(FormFieldPlaceholder)`
-  width: 100%;
-`;
-
-const safeParsedValue = (value: string) => {
-  try {
-    return JSON.parse(value);
-  } catch {
-    return value;
-  }
-};
-
 export const FormArrayFieldInput = ({
   label,
   defaultValue,
@@ -92,8 +72,6 @@ export const FormArrayFieldInput = ({
   testId,
 }: FormArrayFieldInputProps) => {
   const instanceId = useId();
-  const focusId = `form-array-field-input-${instanceId}`;
-  const theme = useTheme();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -215,6 +193,9 @@ export const FormArrayFieldInput = ({
 
   const { closeDropdown } = useCloseDropdown();
 
+  const preventContainerFocusStackUpdate =
+    draftValue.type === 'static' && draftValue.value.length >= 1;
+
   return (
     <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
@@ -222,7 +203,7 @@ export const FormArrayFieldInput = ({
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={`array-field-input-first-item-${instanceId}`}
-          preventFocusStackUpdate
+          preventFocusStackUpdate={preventContainerFocusStackUpdate}
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
