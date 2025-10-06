@@ -10,7 +10,6 @@ import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields
 import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -22,7 +21,6 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { type SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 
 type SettingsObjectNewFieldSelectorProps = {
@@ -105,9 +103,7 @@ export const SettingsObjectNewFieldSelector = ({
         break;
     }
   };
-  const isMorphRelationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
-  );
+
   return (
     <>
       {' '}
@@ -136,12 +132,7 @@ export const SettingsObjectNewFieldSelector = ({
                 <StyledContainer>
                   {fieldTypeConfigs
                     .filter(([, config]) => config.category === category)
-                    .filter(([key]) => {
-                      return (
-                        key !== FieldMetadataType.MORPH_RELATION ||
-                        isMorphRelationEnabled
-                      );
-                    })
+                    .filter(([key]) => key !== FieldMetadataType.MORPH_RELATION)
                     .map(([key, config]) => (
                       <StyledCardContainer key={key}>
                         <UndecoratedLink

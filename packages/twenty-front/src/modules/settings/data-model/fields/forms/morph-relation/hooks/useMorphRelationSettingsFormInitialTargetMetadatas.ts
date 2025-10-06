@@ -36,12 +36,6 @@ export const useMorphRelationSettingsFormInitialTargetMetadatas = ({
       'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
     );
   }
-  const secondInitialObjectCandidate = availableItems[1];
-  if (!isDefined(secondInitialObjectCandidate)) {
-    throw new Error(
-      'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
-    );
-  }
 
-  return [firstInitialObjectCandidate, secondInitialObjectCandidate];
+  return [firstInitialObjectCandidate];
 };

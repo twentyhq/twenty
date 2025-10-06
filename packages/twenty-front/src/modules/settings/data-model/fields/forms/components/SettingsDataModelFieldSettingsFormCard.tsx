@@ -29,8 +29,13 @@ import {
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
+
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useFormContext } from 'react-hook-form';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+} from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 const isUniqueFieldFormSchema = z.object({
@@ -59,8 +64,11 @@ const relationFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.RELATION) })
   .extend(settingsDataModelFieldRelationFormSchema.shape);
 
+// todo @guillim : remove this once we have a proper morph relation form
 const morphRelationFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.MORPH_RELATION) })
+  .object({
+    type: z.literal(FieldMetadataType.MORPH_RELATION),
+  })
   .extend(settingsDataModelFieldMorphRelationFormSchema.shape);
 
 const selectFieldFormSchema = z
@@ -167,6 +175,9 @@ export const SettingsDataModelFieldSettingsFormCard = ({
 }: SettingsDataModelFieldSettingsFormCardProps) => {
   const { watch } = useFormContext<SettingsDataModelFieldEditFormValues>();
 
+  const isMorphRelationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
+  );
   if (!previewableTypes.includes(fieldType)) {
     return null;
   }
@@ -203,15 +214,15 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   }
 
   if (fieldType === FieldMetadataType.RELATION) {
-    return (
-      <SettingsDataModelFieldRelationSettingsFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        objectNameSingular={objectNameSingular}
-      />
-    );
-  }
+    if (!isMorphRelationEnabled) {
+      return (
+        <SettingsDataModelFieldRelationSettingsFormCard
+          existingFieldMetadataId={existingFieldMetadataId}
+          objectNameSingular={objectNameSingular}
+        />
+      );
+    }
 
-  if (fieldType === FieldMetadataType.MORPH_RELATION) {
     return (
       <SettingsDataModelFieldMorphRelationFormCard
         existingFieldMetadataId={existingFieldMetadataId}

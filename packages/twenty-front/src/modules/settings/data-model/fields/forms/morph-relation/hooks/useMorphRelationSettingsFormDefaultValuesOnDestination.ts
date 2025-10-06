@@ -3,7 +3,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 import { RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
   fieldMetadataItem,
@@ -38,7 +38,7 @@ export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
 
       return {
         icon: targetFieldMetadata?.icon ?? 'IconUsers',
-        label: targetFieldMetadata?.label ?? '',
+        label: capitalize(targetFieldMetadata?.label ?? ''),
       };
     }
   }
@@ -50,7 +50,7 @@ export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
 
     return {
       icon: objectMetadataItem.icon ?? 'IconUsers',
-      label,
+      label: capitalize(label),
     };
   }
 
