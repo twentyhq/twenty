@@ -83,6 +83,7 @@
     "input-otp": "^1.4.2",
     "js-cookie": "^3.0.5",
     "json-2-csv": "^5.4.0",
+    "jwt-decode": "^4.0.0",
     "qs": "^6.11.2",
     "react-data-grid": "7.0.0-beta.13",
     "react-datepicker": "^6.7.1",

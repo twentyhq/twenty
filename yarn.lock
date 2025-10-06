@@ -13925,7 +13925,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prettier/sync@npm:0.5.3, @prettier/sync@npm:^0.5.2":
+"@prettier/sync@npm:^0.5.2":
   version: 0.5.3
   resolution: "@prettier/sync@npm:0.5.3"
   dependencies:
@@ -20514,17 +20514,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ts-morph/common@npm:~0.25.0":
-  version: 0.25.0
-  resolution: "@ts-morph/common@npm:0.25.0"
-  dependencies:
-    minimatch: "npm:^9.0.4"
-    path-browserify: "npm:^1.0.1"
-    tinyglobby: "npm:^0.2.9"
-  checksum: 10c0/c67e66db678e44886e9823e6482834acebfae0ea52ccbfa2af1ca9abfe5a9774dad6e852c8f480909bc196175f17e15454af71d7a41a1c137db09e74f046a830
-  languageName: node
-  linkType: hard
-
 "@tsconfig/node10@npm:^1.0.7":
   version: 1.0.11
   resolution: "@tsconfig/node10@npm:1.0.11"
@@ -21162,7 +21151,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/handlebars@npm:4.1.0, @types/handlebars@npm:^4.1.0":
+"@types/handlebars@npm:^4.1.0":
   version: 4.1.0
   resolution: "@types/handlebars@npm:4.1.0"
   dependencies:
@@ -28219,13 +28208,6 @@ __metadata:
   version: 4.6.0
   resolution: "co@npm:4.6.0"
   checksum: 10c0/c0e85ea0ca8bf0a50cbdca82efc5af0301240ca88ebe3644a6ffb8ffe911f34d40f8fbcf8f1d52c5ddd66706abd4d3bfcd64259f1e8e2371d4f47573b0dc8c28
-  languageName: node
-  linkType: hard
-
-"code-block-writer@npm:^13.0.3":
-  version: 13.0.3
-  resolution: "code-block-writer@npm:13.0.3"
-  checksum: 10c0/87db97b37583f71cfd7eced8bf3f0a0a0ca53af912751a734372b36c08cd27f3e8a4878ec05591c0cd9ae11bea8add1423e132d660edd86aab952656dd41fd66
   languageName: node
   linkType: hard
 
@@ -49846,13 +49828,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"slash@npm:5.1.0, slash@npm:^5.0.0, slash@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "slash@npm:5.1.0"
-  checksum: 10c0/eb48b815caf0bdc390d0519d41b9e0556a14380f6799c72ba35caf03544d501d18befdeeef074bc9c052acf69654bc9e0d79d7f1de0866284137a40805299eb3
-  languageName: node
-  linkType: hard
-
 "slash@npm:^1.0.0":
   version: 1.0.0
   resolution: "slash@npm:1.0.0"
@@ -49864,6 +49839,13 @@ __metadata:
   version: 2.0.0
   resolution: "slash@npm:2.0.0"
   checksum: 10c0/f83dbd3cb62c41bb8fcbbc6bf5473f3234b97fa1d008f571710a9d3757a28c7169e1811cad1554ccb1cc531460b3d221c9a7b37f549398d9a30707f0a5af9193
+  languageName: node
+  linkType: hard
+
+"slash@npm:^5.0.0, slash@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "slash@npm:5.1.0"
+  checksum: 10c0/eb48b815caf0bdc390d0519d41b9e0556a14380f6799c72ba35caf03544d501d18befdeeef074bc9c052acf69654bc9e0d79d7f1de0866284137a40805299eb3
   languageName: node
   linkType: hard
 
@@ -51673,7 +51655,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyglobby@npm:^0.2.12, tinyglobby@npm:^0.2.14, tinyglobby@npm:^0.2.9":
+"tinyglobby@npm:^0.2.12, tinyglobby@npm:^0.2.14":
   version: 0.2.14
   resolution: "tinyglobby@npm:0.2.14"
   dependencies:
@@ -52152,16 +52134,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-morph@npm:^24.0.0":
-  version: 24.0.0
-  resolution: "ts-morph@npm:24.0.0"
-  dependencies:
-    "@ts-morph/common": "npm:~0.25.0"
-    code-block-writer: "npm:^13.0.3"
-  checksum: 10c0/2a0813ba428a154966d4038901f6c32457a60870936b23778f2629433257f87d1881fc4ecae7b791a223a88c2edf96aaac9fb0f88bf34d3c652af8c09c4f43bc
-  languageName: node
-  linkType: hard
-
 "ts-node@npm:10.9.1":
   version: 10.9.1
   resolution: "ts-node@npm:10.9.1"
@@ -52546,6 +52518,7 @@ __metadata:
     input-otp: "npm:^1.4.2"
     js-cookie: "npm:^3.0.5"
     json-2-csv: "npm:^5.4.0"
+    jwt-decode: "npm:^4.0.0"
     monaco-editor: "npm:^0.51.0"
     monaco-editor-auto-typings: "npm:^0.4.5"
     optionator: "npm:^0.9.1"
@@ -52637,7 +52610,6 @@ __metadata:
     "@opentelemetry/exporter-metrics-otlp-http": "npm:^0.200.0"
     "@opentelemetry/sdk-metrics": "npm:^2.0.0"
     "@opentelemetry/sdk-node": "npm:^0.202.0"
-    "@prettier/sync": "npm:0.5.3"
     "@ptc-org/nestjs-query-core": "npm:4.4.0"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
     "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
@@ -52654,7 +52626,6 @@ __metadata:
     "@types/express": "npm:^4.17.13"
     "@types/express-session": "npm:^1.18.0"
     "@types/graphql-upload": "npm:^8.0.12"
-    "@types/handlebars": "npm:4.1.0"
     "@types/html-to-text": "npm:^9.0.4"
     "@types/imapflow": "npm:^1.0.21"
     "@types/lodash.chunk": "npm:^4.2.9"
@@ -52723,7 +52694,6 @@ __metadata:
     graphql-type-json: "npm:0.3.2"
     graphql-upload: "npm:13.0.0"
     graphql-yoga: "npm:4.0.5"
-    handlebars: "npm:^4.7.8"
     html-to-text: "npm:^9.0.5"
     imapflow: "npm:1.0.187"
     ioredis: "npm:5.6.0"
@@ -52731,7 +52701,6 @@ __metadata:
     json-schema: "npm:0.4.0"
     jsonc-eslint-parser: "npm:2.4.0"
     jsonwebtoken: "npm:9.0.2"
-    jwt-decode: "npm:^4.0.0"
     libphonenumber-js: "npm:1.11.5"
     lodash.camelcase: "npm:4.3.0"
     lodash.chunk: "npm:4.2.0"
@@ -52776,10 +52745,8 @@ __metadata:
     rxjs: "npm:7.8.1"
     semver: "npm:7.6.3"
     sharp: "npm:0.32.6"
-    slash: "npm:5.1.0"
     stripe: "npm:17.3.1"
     transliteration: "npm:2.3.5"
-    ts-morph: "npm:^24.0.0"
     tsconfig-paths: "npm:^4.2.0"
     tsdav: "npm:^2.1.5"
     tslib: "npm:2.8.1"
@@ -52791,7 +52758,6 @@ __metadata:
     uuid: "npm:9.0.1"
     vite-tsconfig-paths: "npm:4.3.2"
     zod: "npm:^4.1.11"
-    zod-to-json-schema: "npm:^3.23.1"
   languageName: unknown
   linkType: soft
 
@@ -56284,15 +56250,6 @@ __metadata:
     compress-commons: "npm:^6.0.2"
     readable-stream: "npm:^4.0.0"
   checksum: 10c0/50f2fb30327fb9d09879abf7ae2493705313adf403e794b030151aaae00009162419d60d0519e807673ec04d442e140c8879ca14314df0a0192de3b233e8f28b
-  languageName: node
-  linkType: hard
-
-"zod-to-json-schema@npm:^3.23.1":
-  version: 3.24.5
-  resolution: "zod-to-json-schema@npm:3.24.5"
-  peerDependencies:
-    zod: ^3.24.1
-  checksum: 10c0/0745b94ba53e652d39f262641cdeb2f75d24339fb6076a38ce55bcf53d82dfaea63adf524ebc5f658681005401687f8e9551c4feca7c4c882e123e66091dfb90
   languageName: node
   linkType: hard
 
