@@ -42895,6 +42895,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"monaco-editor-auto-typings@npm:^0.4.5":
+  version: 0.4.6
+  resolution: "monaco-editor-auto-typings@npm:0.4.6"
+  peerDependencies:
+    monaco-editor: "*"
+  checksum: 10c0/5ee2b6f2380fd984511309c5efca1d13ba2daf887b51a9632ee7b94643fca63ddda7c422e606bca2ae6ab90847293052d60f34da9194061e0910d6822787bb49
+  languageName: node
+  linkType: hard
+
+"monaco-editor@npm:^0.51.0":
+  version: 0.51.0
+  resolution: "monaco-editor@npm:0.51.0"
+  checksum: 10c0/7fde310c747e46cd7293e1a0f5e1fa85c389df9a1f8db03b9ccd58fd45356ab021a591b46198d19345566ad54556158f6489e2da4ad428a7a6ca3ea7b504afcb
+  languageName: node
+  linkType: hard
+
 "moo@npm:^0.5.1":
   version: 0.5.2
   resolution: "moo@npm:0.5.2"
@@ -52423,6 +52439,7 @@ __metadata:
     "@lingui/react": "npm:^5.1.2"
     "@lingui/swc-plugin": "npm:^5.6.0"
     "@lingui/vite-plugin": "npm:^5.1.2"
+    "@monaco-editor/react": "npm:^4.6.0"
     "@nivo/bar": "npm:^0.99.0"
     "@nivo/core": "npm:^0.99.0"
     "@nivo/line": "npm:^0.99.0"
@@ -52481,6 +52498,8 @@ __metadata:
     input-otp: "npm:^1.4.2"
     js-cookie: "npm:^3.0.5"
     json-2-csv: "npm:^5.4.0"
+    monaco-editor: "npm:^0.51.0"
+    monaco-editor-auto-typings: "npm:^0.4.5"
     optionator: "npm:^0.9.1"
     qs: "npm:^6.11.2"
     react-data-grid: "npm:7.0.0-beta.13"
