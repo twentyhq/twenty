@@ -9882,16 +9882,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/devtools-integration@npm:^0.1.6":
-  version: 0.1.6
-  resolution: "@nestjs/devtools-integration@npm:0.1.6"
+"@nestjs/devtools-integration@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@nestjs/devtools-integration@npm:0.2.1"
   dependencies:
+    "@nyariv/sandboxjs": "npm:0.8.25"
     chalk: "npm:^4.1.2"
     node-fetch: "npm:^2.6.9"
   peerDependencies:
-    "@nestjs/common": ^9.3.7 || ^10.0.0
-    "@nestjs/core": ^9.3.7 || ^10.0.0
-  checksum: 10c0/7a8e5297469a6105fedd2283c5de21ff07bfa8b4d173faf540cc935ae67cbce7cf3fc14485e9ef4c3c6c85be9aa9e28bd5838dc236f8800dfdabc61899e1eba8
+    "@nestjs/common": ^9.3.7 || ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^9.3.7 || ^10.0.0 || ^11.0.0
+  checksum: 10c0/1499243eb8b34040783644bf79b3e57f43d0a8835e71de36ab05a5be8c9245dbbbed3be1160047fb821ce014e73b96d05b2d56567f552a3847c3ba2d95016ecb
   languageName: node
   linkType: hard
 
@@ -11317,6 +11318,13 @@ __metadata:
     tslib: "npm:^2.3.0"
     yargs-parser: "npm:21.1.1"
   checksum: 10c0/d652c048cfffa6467e7294115fb4b6849d25fbbca1c020740b173c9dddcd0d80df15b0b94fd36775885470478ebd1b4e41202bb5af98910e1dd84f15fee4c123
+  languageName: node
+  linkType: hard
+
+"@nyariv/sandboxjs@npm:0.8.25":
+  version: 0.8.25
+  resolution: "@nyariv/sandboxjs@npm:0.8.25"
+  checksum: 10c0/9d656b43035348a743dd0e3e5b92351b48f39a506b98c9070deba524cce8e547945305b5a4b868d5ede303ce012917a92f7daecd6ee5222bafb20b9d0e9dafea
   languageName: node
   linkType: hard
 
@@ -52609,7 +52617,7 @@ __metadata:
     "@nestjs/common": "npm:9.4.3"
     "@nestjs/config": "npm:2.3.4"
     "@nestjs/core": "npm:9.4.3"
-    "@nestjs/devtools-integration": "npm:^0.1.6"
+    "@nestjs/devtools-integration": "npm:^0.2.1"
     "@nestjs/event-emitter": "npm:2.0.4"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch"
     "@nestjs/jwt": "npm:10.2.0"
