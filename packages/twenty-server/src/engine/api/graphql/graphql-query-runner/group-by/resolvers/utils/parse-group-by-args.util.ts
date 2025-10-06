@@ -7,9 +7,8 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
+import { shouldGroupByDateBucket as shouldGroupByDateBucketUtil } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/should-group-by-date-bucket.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-
-import { shouldGroupByDateBucket as shouldGroupByDateBucketUtil } from './should-group-by-date-bucker';
 
 export const parseGroupByArgs = (
   args: GroupByResolverArgs,
