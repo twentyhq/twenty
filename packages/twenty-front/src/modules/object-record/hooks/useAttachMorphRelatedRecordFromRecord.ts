@@ -196,8 +196,8 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
             objectMetadataItem: relatedObjectMetadataItem,
             targetObjectNameSingulars: [sourceObjectMetadataItemName],
             relatedRecordId: recordId,
-            fieldDefinition: relatedRecordFieldDefinition,
-            // recordGqlFields: gqlFields,
+            // TODO
+            targetGQLFieldName: fieldDefinition.metadata.fieldName,
           },
         ];
 

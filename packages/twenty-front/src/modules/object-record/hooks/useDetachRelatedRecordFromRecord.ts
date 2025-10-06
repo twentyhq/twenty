@@ -114,7 +114,7 @@ export const useDetachRelatedRecordFromRecord = ({
         objectMetadataItem: relatedObjectMetadataItem,
         targetObjectNameSingulars: [objectMetadataItem.nameSingular],
         relatedRecordId: null,
-        fieldDefinition: relatedRecordFieldDefinition,
+        targetGQLFieldName: relationTargetGQLfieldName,
       },
     ];
 

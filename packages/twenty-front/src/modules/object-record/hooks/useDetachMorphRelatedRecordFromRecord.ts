@@ -183,7 +183,7 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
             objectMetadataItem: relatedObjectMetadataItem,
             targetObjectNameSingulars: [sourceObjectMetadataItemName],
             relatedRecordId: null,
-            fieldDefinition: relatedRecordFieldDefinition,
+            targetGQLFieldName: computedFieldName,
           },
         ];
 

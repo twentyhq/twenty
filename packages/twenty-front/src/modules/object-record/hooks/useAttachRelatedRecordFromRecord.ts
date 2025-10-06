@@ -143,7 +143,7 @@ export const useAttachRelatedRecordFromRecord = ({
         objectMetadataItem: relatedObjectMetadataItem,
         targetObjectNameSingulars: [objectMetadataItem.nameSingular],
         relatedRecordId: recordId,
-        fieldDefinition: relatedRecordFieldDefinition,
+        targetGQLFieldName: relationTargetGQLfieldName,
       },
     ];
 

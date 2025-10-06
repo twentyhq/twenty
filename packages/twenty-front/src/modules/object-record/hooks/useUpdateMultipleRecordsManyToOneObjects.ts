@@ -11,11 +11,6 @@ import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphq
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { generateUpdateOneRecordMutation } from '@/object-record/multiple-objects/utils/generateUpdateOneRecordMutation';
-import { getTargetFieldMetadataName } from '@/object-record/multiple-objects/utils/getTargetFieldMetadataName';
-import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
@@ -31,8 +26,8 @@ type UpdateManyRecordArgs = {
   relatedRecordId: string | null;
   objectMetadataItem: ObjectMetadataItem;
   targetObjectNameSingulars: string[];
+  targetGQLFieldName: string;
   recordGqlFields?: Record<string, any>;
-  fieldDefinition: FieldDefinition<FieldMetadata>;
 };
 
 export const useUpdateMultipleRecordsManyToOneObjects = () => {
@@ -50,9 +45,9 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
       idToUpdate,
       objectMetadataItem: objectMetadataItemOfIdToUpdate,
       targetObjectNameSingulars,
-      relatedRecordId,
+      targetGQLFieldName,
       recordGqlFields,
-      fieldDefinition,
+      relatedRecordId,
     } of updatedManyRecordsArgs) {
       if (isNull(idToUpdate)) {
         throw new CustomError(`idToUpdate id is null`, 'ID_TO_UPDATE_IS_NULL');
@@ -73,16 +68,6 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
         );
       }
 
-      if (
-        !isFieldRelation(fieldDefinition) &&
-        !isFieldMorphRelation(fieldDefinition)
-      ) {
-        throw new CustomError(
-          `Should never happen`,
-          'TARGET_FIELD_NAME_NOT_FOUND',
-        );
-      }
-
       const objectMetadataItemArray = objectMetadataItems.filter(
         (objectMetadataItem) =>
           targetObjectNameSingulars.includes(objectMetadataItem.nameSingular),
@@ -98,19 +83,7 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
       const updateOneRecordInput: Record<string, string | null> = {};
 
       for (const objectMetadataItem of objectMetadataItemArray) {
-        const targetFieldName = getTargetFieldMetadataName({
-          fieldDefinition,
-          objectNameSingular: objectMetadataItem.nameSingular,
-        });
-
-        if (!isDefined(targetFieldName)) {
-          throw new CustomError(
-            `Cannot find Target field name for the (morph) relation field ${fieldDefinition.metadata.fieldName} on ${objectMetadataItem.nameSingular}`,
-            'TARGET_FIELD_NAME_NOT_FOUND',
-          );
-        }
-
-        updateOneRecordInput[`${targetFieldName}Id`] = null;
+        updateOneRecordInput[`${targetGQLFieldName}Id`] = null;
 
         if (!isDefined(relatedRecordId)) {
           continue;
@@ -125,7 +98,8 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
         });
 
         if (isDefined(cachedRelatedRecord)) {
-          updateOneRecordInput[`${targetFieldName}Id`] = cachedRelatedRecord.id;
+          updateOneRecordInput[`${targetGQLFieldName}Id`] =
+            cachedRelatedRecord.id;
         }
       }
 

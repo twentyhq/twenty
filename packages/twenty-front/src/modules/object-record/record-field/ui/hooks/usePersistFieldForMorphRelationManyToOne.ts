@@ -43,7 +43,8 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
               targetObjectNameSingulars,
               relatedRecordId: null,
               objectMetadataItem,
-              fieldDefinition,
+              // TODO
+              targetGQLFieldName: fieldDefinition.metadata.fieldName,
             },
           ]);
           return;
@@ -60,7 +61,8 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
             targetObjectNameSingulars,
             relatedRecordId: recordFromPicker.id,
             objectMetadataItem,
-            fieldDefinition,
+            // TODO
+            targetGQLFieldName: fieldDefinition.metadata.fieldName,
           },
         ];
 
