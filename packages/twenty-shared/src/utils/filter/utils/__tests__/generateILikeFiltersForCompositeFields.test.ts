@@ -1,4 +1,4 @@
-import { generateILikeFiltersForCompositeFields } from "@/utils/filter/utils/generateILikeFiltersForCompositeFields";
+import { generateILikeFiltersForCompositeFields } from '@/utils/filter/utils/generateILikeFiltersForCompositeFields';
 
 describe('generateILikeFiltersForCompositeFields', () => {
   it('should format composite filters for simple filter string', () => {
