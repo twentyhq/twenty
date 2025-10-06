@@ -4,6 +4,7 @@ import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-action
 import { NoSelectionWorkflowRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/workflow-actions/types/NoSelectionWorkflowRecordActionKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/ActivateWorkflowSingleRecordAction';
+import { AddNodeWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/AddNodeWorkflowSingleRecordAction';
 import { DeactivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DeactivateWorkflowSingleRecordAction';
 import { DiscardDraftWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DiscardDraftWorkflowSingleRecordAction';
 import { SeeActiveVersionWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeActiveVersionWorkflowSingleRecordAction';
@@ -29,6 +30,7 @@ import {
   IconNoteOff,
   IconPlayerPause,
   IconPlayerPlay,
+  IconPlus,
   IconPower,
   IconVersions,
 } from 'twenty-ui/display';
@@ -192,6 +194,21 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       ],
       component: <TestWorkflowSingleRecordAction />,
     },
+    [WorkflowSingleRecordActionKeys.ADD_NODE]: {
+      key: WorkflowSingleRecordActionKeys.ADD_NODE,
+      label: msg`Add a node`,
+      shortLabel: msg`Add a node`,
+      isPinned: false,
+      position: 8,
+      Icon: IconPlus,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
+        areWorkflowTriggerAndStepsDefined(workflowWithCurrentVersion) &&
+        !isDefined(selectedRecord?.deletedAt),
+      availableOn: [ActionViewType.SHOW_PAGE],
+      component: <AddNodeWorkflowSingleRecordAction />,
+    },
     [NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS]: {
       type: ActionType.Navigation,
       scope: ActionScope.Global,
@@ -243,82 +260,82 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       label: msg`Create new workflow`,
     },
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
-      position: 8,
-    },
-    [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
       position: 9,
     },
-    [SingleRecordActionKeys.DELETE]: {
+    [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
       position: 10,
+    },
+    [SingleRecordActionKeys.DELETE]: {
+      position: 11,
       label: msg`Delete workflow`,
     },
     [MultipleRecordsActionKeys.DELETE]: {
-      position: 11,
+      position: 12,
       label: msg`Delete workflows`,
     },
     [SingleRecordActionKeys.DESTROY]: {
-      position: 12,
+      position: 13,
       label: msg`Permanently destroy workflow`,
     },
     [SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX]: {
-      position: 13,
+      position: 14,
       label: msg`Export workflow`,
       shouldBeRegistered: ({ selectedRecord }) =>
         !isDefined(selectedRecord?.deletedAt),
     },
     [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
-      position: 14,
+      position: 15,
       label: msg`Export workflow`,
     },
     [MultipleRecordsActionKeys.EXPORT]: {
-      position: 15,
+      position: 16,
       label: msg`Export workflows`,
     },
     [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
-      position: 15,
+      position: 16,
       label: msg`Export view`,
     },
     [MultipleRecordsActionKeys.DESTROY]: {
-      position: 16,
+      position: 17,
       label: msg`Permanently destroy workflows`,
     },
     [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-      position: 17,
+      position: 18,
       label: msg`Navigate to previous workflow`,
     },
     [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
-      position: 18,
+      position: 19,
       label: msg`Navigate to next workflow`,
     },
     [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
-      position: 19,
+      position: 20,
       label: msg`See deleted workflows`,
     },
     [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
-      position: 20,
+      position: 21,
       label: msg`Hide deleted workflows`,
     },
     [NoSelectionRecordActionKeys.IMPORT_RECORDS]: {
-      position: 21,
+      position: 22,
       label: msg`Import workflows`,
     },
     [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
-      position: 22,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
       position: 23,
     },
-    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
       position: 24,
     },
-    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
       position: 25,
     },
-    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
       position: 26,
     },
-    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
       position: 27,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+      position: 28,
     },
   },
 });

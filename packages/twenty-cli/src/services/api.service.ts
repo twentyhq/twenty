@@ -55,11 +55,9 @@ export class ApiService {
   async validateAuth(): Promise<boolean> {
     try {
       const query = `
-        query FindManyAgents {
-          findManyAgents {
-            id
-            name
-          }
+        query CurrentWorkspace {
+          currentWorkspace {
+          id
         }
       `;
 

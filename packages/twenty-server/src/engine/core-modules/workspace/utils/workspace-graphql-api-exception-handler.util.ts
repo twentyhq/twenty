@@ -15,6 +15,7 @@ export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
     switch (error.code) {
       case WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND:
       case WorkspaceExceptionCode.WORKSPACE_NOT_FOUND:
+      case WorkspaceExceptionCode.CUSTOM_DOMAIN_NOT_FOUND:
         throw new NotFoundError(error);
       case WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN:
       case WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN:

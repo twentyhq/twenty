@@ -77,12 +77,14 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return typeORMObjectRecordsParser.processRecord({
+    const result = typeORMObjectRecordsParser.processRecord({
       objectRecord: deletedRecord,
       objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
       totalCount: 1,
     });
+
+    return result;
   }
 
   async validate(

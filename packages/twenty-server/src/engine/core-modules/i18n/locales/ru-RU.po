@@ -3893,6 +3893,11 @@ msgstr "ВерсияРабочегоПроцесса"
 msgid "WorkflowVersion workflow"
 msgstr "ВерсияРабочегоПроцесса рабочий процесс"
 
+#. js-lingui-id: XsSVrR
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace creation is restricted to admins"
+msgstr ""
+
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
