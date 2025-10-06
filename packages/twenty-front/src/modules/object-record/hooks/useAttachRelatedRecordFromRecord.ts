@@ -1,80 +1,89 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useUpdateMultipleRecordsManyToOneObjects } from '@/object-record/hooks/useUpdateMultipleRecordsManyToOneObjects';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { getRelatedRecordFieldDefinition } from '@/object-record/utils/getRelatedRecordFieldDefinition';
+import { useContext } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type useAttachRelatedRecordFromRecordProps = {
   recordObjectNameSingular: string;
-  fieldNameOnRecordObject: string;
 };
 
 export const useAttachRelatedRecordFromRecord = ({
   recordObjectNameSingular,
-  fieldNameOnRecordObject,
 }: useAttachRelatedRecordFromRecordProps) => {
   const apolloCoreClient = useApolloCoreClient();
-
+  const { fieldDefinition } = useContext(FieldContext);
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: recordObjectNameSingular,
   });
-
-  const fieldOnObject = objectMetadataItem.readableFields.find((field) => {
-    return field.name === fieldNameOnRecordObject;
-  });
-
-  const relatedRecordObjectNameSingular =
-    fieldOnObject?.relation?.targetObjectMetadata.nameSingular;
-
-  if (!relatedRecordObjectNameSingular) {
-    throw new CustomError(
-      `Could not find record related to ${recordObjectNameSingular}`,
-      'RELATED_RECORD_NOT_FOUND',
-    );
-  }
-  const { objectMetadataItem: relatedObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: relatedRecordObjectNameSingular,
-    });
-
-  const fieldOnRelatedObject =
-    fieldOnObject?.relation?.targetFieldMetadata.name;
-
-  if (!fieldOnRelatedObject) {
-    throw new CustomError(
-      `Missing target field for ${fieldNameOnRecordObject}`,
-      'MISSING_TARGET_FIELD',
-    );
-  }
-
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: relatedRecordObjectNameSingular,
-  });
-
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular: recordObjectNameSingular,
-  });
-
-  const getRelatedRecordFromCache = useGetRecordFromCache({
-    objectNameSingular: relatedRecordObjectNameSingular,
-  });
+  const { updateMultipleRecordsManyToOneObjects } =
+    useUpdateMultipleRecordsManyToOneObjects();
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const updateOneRecordAndAttachRelations = async ({
     recordId,
     relatedRecordId,
+    relationTargetgqlfieldName,
   }: {
     recordId: string;
     relatedRecordId: string;
+    relationTargetgqlfieldName: string;
   }) => {
-    const cachedRelatedRecord =
-      getRelatedRecordFromCache<ObjectRecord>(relatedRecordId);
+    const fieldOnObject = objectMetadataItem.readableFields.find((field) => {
+      return field.name === relationTargetgqlfieldName;
+    });
+
+    const relatedRecordObjectNameSingular =
+      fieldOnObject?.relation?.targetObjectMetadata.nameSingular;
+
+    if (!relatedRecordObjectNameSingular) {
+      throw new CustomError(
+        `Could not find record related to ${recordObjectNameSingular}`,
+        'RELATED_RECORD_NOT_FOUND',
+      );
+    }
+
+    const relatedObjectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.nameSingular === relatedRecordObjectNameSingular,
+    );
+
+    if (!relatedObjectMetadataItem) {
+      throw new CustomError(
+        `Could not find related object metadata for ${relatedRecordObjectNameSingular}`,
+        'RELATED_OBJECT_METADATA_NOT_FOUND',
+      );
+    }
+
+    const fieldOnRelatedObject =
+      fieldOnObject?.relation?.targetFieldMetadata.name;
+
+    if (!fieldOnRelatedObject) {
+      throw new CustomError(
+        `Missing target field for ${relationTargetgqlfieldName}`,
+        'MISSING_TARGET_FIELD',
+      );
+    }
+
+    const cachedRelatedRecord = getRecordFromCache({
+      objectMetadataItem: relatedObjectMetadataItem,
+      recordId: relatedRecordId,
+      cache: apolloCoreClient.cache,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+    });
 
     if (!cachedRelatedRecord) {
       throw new Error('Could not find cached related record');
@@ -83,7 +92,13 @@ export const useAttachRelatedRecordFromRecord = ({
     const previousRecordId = cachedRelatedRecord?.[`${fieldOnRelatedObject}Id`];
 
     if (isDefined(previousRecordId)) {
-      const previousRecord = getRecordFromCache<ObjectRecord>(previousRecordId);
+      const previousRecord = getRecordFromCache({
+        objectMetadataItem: objectMetadataItem,
+        recordId: previousRecordId,
+        cache: apolloCoreClient.cache,
+        objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+      });
 
       const previousRecordWithRelation = {
         ...cachedRelatedRecord,
@@ -106,12 +121,32 @@ export const useAttachRelatedRecordFromRecord = ({
       });
     }
 
-    await updateOneRecord({
-      idToUpdate: relatedRecordId,
-      updateOneRecordInput: {
-        [`${fieldOnRelatedObject}Id`]: recordId,
-      },
+    assertFieldMetadata(
+      FieldMetadataType.RELATION,
+      isFieldRelation,
+      fieldDefinition,
+    );
+
+    const relatedRecordFieldDefinition = getRelatedRecordFieldDefinition({
+      fieldDefinition: fieldDefinition,
+      relatedObjectMetadataItem,
     });
+
+    if (!isDefined(relatedRecordFieldDefinition)) {
+      throw new Error('Could not find related record field definition');
+    }
+
+    const updatedManyRecordsArgs = [
+      {
+        idToUpdate: relatedRecordId,
+        objectMetadataItem: relatedObjectMetadataItem,
+        targetObjectNameSingulars: [objectMetadataItem.nameSingular],
+        relatedRecordId: recordId,
+        fieldDefinition: relatedRecordFieldDefinition,
+      },
+    ];
+
+    await updateMultipleRecordsManyToOneObjects(updatedManyRecordsArgs);
   };
 
   return { updateOneRecordAndAttachRelations };

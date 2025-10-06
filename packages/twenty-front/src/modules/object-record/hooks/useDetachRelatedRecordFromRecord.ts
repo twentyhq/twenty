@@ -2,57 +2,87 @@ import { type Reference } from '@apollo/client';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useUpdateMultipleRecordsManyToOneObjects } from '@/object-record/hooks/useUpdateMultipleRecordsManyToOneObjects';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { getRelatedRecordFieldDefinition } from '@/object-record/utils/getRelatedRecordFieldDefinition';
+import { useContext } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type useDetachRelatedRecordFromRecordProps = {
   recordObjectNameSingular: string;
-  fieldNameOnRecordObject: string;
 };
 
 export const useDetachRelatedRecordFromRecord = ({
   recordObjectNameSingular,
-  fieldNameOnRecordObject,
 }: useDetachRelatedRecordFromRecordProps) => {
   const apolloCoreClient = useApolloCoreClient();
+  const { fieldDefinition } = useContext(FieldContext);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: recordObjectNameSingular,
   });
 
-  const fieldOnObject = objectMetadataItem.readableFields.find((field) => {
-    return field.name === fieldNameOnRecordObject;
-  });
+  const { updateMultipleRecordsManyToOneObjects } =
+    useUpdateMultipleRecordsManyToOneObjects();
 
-  const relatedRecordObjectNameSingular =
-    fieldOnObject?.relation?.targetObjectMetadata.nameSingular;
-
-  const fieldOnRelatedObject =
-    fieldOnObject?.relation?.targetFieldMetadata.name;
-
-  if (!relatedRecordObjectNameSingular) {
-    throw new Error(
-      `Could not find record related to ${recordObjectNameSingular}`,
-    );
-  }
-
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: relatedRecordObjectNameSingular,
-  });
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const updateOneRecordAndDetachRelations = async ({
     recordId,
     relatedRecordId,
+    relationTargetgqlfieldName,
   }: {
     recordId: string;
     relatedRecordId: string;
+    relationTargetgqlfieldName: string;
   }) => {
+    const fieldOnObject = objectMetadataItem.readableFields.find((field) => {
+      return field.name === relationTargetgqlfieldName;
+    });
+
+    const relatedRecordObjectNameSingular =
+      fieldOnObject?.relation?.targetObjectMetadata.nameSingular;
+
+    if (!relatedRecordObjectNameSingular) {
+      throw new Error(
+        `Could not find record related to ${recordObjectNameSingular}`,
+      );
+    }
+
+    const relatedObjectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.nameSingular === relatedRecordObjectNameSingular,
+    );
+
+    if (!relatedObjectMetadataItem) {
+      throw new Error('Could not find related object metadata item');
+    }
+
+    assertFieldMetadata(
+      FieldMetadataType.RELATION,
+      isFieldRelation,
+      fieldDefinition,
+    );
+    const relatedRecordFieldDefinition = getRelatedRecordFieldDefinition({
+      fieldDefinition: fieldDefinition,
+      relatedObjectMetadataItem,
+    });
+
+    if (!isDefined(relatedRecordFieldDefinition)) {
+      throw new Error('Could not find related record field definition');
+    }
+
     modifyRecordFromCache({
       objectMetadataItem,
       cache: apolloCoreClient.cache,
       fieldModifiers: {
-        [fieldNameOnRecordObject]: (
+        [relationTargetgqlfieldName]: (
           fieldNameOnRecordObjectConnection,
           { readField },
         ) => {
@@ -77,12 +107,18 @@ export const useDetachRelatedRecordFromRecord = ({
       },
       recordId,
     });
-    await updateOneRecord({
-      idToUpdate: relatedRecordId,
-      updateOneRecordInput: {
-        [`${fieldOnRelatedObject}Id`]: null,
+
+    const updatedManyRecordsArgs = [
+      {
+        idToUpdate: relatedRecordId,
+        objectMetadataItem: relatedObjectMetadataItem,
+        targetObjectNameSingulars: [objectMetadataItem.nameSingular],
+        relatedRecordId: null,
+        fieldDefinition: relatedRecordFieldDefinition,
       },
-    });
+    ];
+
+    await updateMultipleRecordsManyToOneObjects(updatedManyRecordsArgs);
   };
 
   return { updateOneRecordAndDetachRelations };
