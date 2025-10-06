@@ -30,7 +30,7 @@ describe('workspace members permissions', () => {
 
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
-
+      expect(response.body.errors).not.toBeDefined();
       expect(response.body.data).toStrictEqual({
         updateWorkspaceMember: {
           id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
