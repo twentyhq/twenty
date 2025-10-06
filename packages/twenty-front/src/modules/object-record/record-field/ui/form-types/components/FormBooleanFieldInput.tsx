@@ -83,15 +83,17 @@ export const FormBooleanFieldInput = ({
   };
 
   const onSelect = (option: string) => {
+    const optionAsBoolean = parseStringifiedBooleanToBoolean(option);
+
     setDraftValue({
       type: 'static',
-      value: parseStringifiedBooleanToBoolean(option),
+      value: optionAsBoolean,
       editingMode: 'view',
     });
 
     removeFocusItemFromFocusStackById({ focusId: instanceId });
 
-    onChange(option);
+    onChange(optionAsBoolean);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
