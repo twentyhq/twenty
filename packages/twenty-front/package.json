@@ -46,6 +46,7 @@
     "@lingui/core": "^5.1.2",
     "@lingui/detect-locale": "^5.2.0",
     "@lingui/react": "^5.1.2",
+    "@monaco-editor/react": "^4.6.0",
     "@nivo/bar": "^0.99.0",
     "@nivo/core": "^0.99.0",
     "@nivo/line": "^0.99.0",
@@ -133,6 +134,8 @@
     "eslint-plugin-storybook": "^0.9.0",
     "eslint-plugin-unicorn": "^56.0.1",
     "eslint-plugin-unused-imports": "^3.0.0",
+    "monaco-editor": "^0.51.0",
+    "monaco-editor-auto-typings": "^0.4.5",
     "optionator": "^0.9.1",
     "rollup-plugin-visualizer": "^5.14.0",
     "vite-tsconfig-paths": "^4.2.1"
