@@ -40,11 +40,13 @@ export class GetDataFromCacheWithRecomputeService<T, U> {
 
     cachedVersion = await getCacheVersion(workspaceId);
 
-    const cacheKey = `${workspaceId}-${cachedVersion}`;
-    const cachedValue = this.cache.get(cacheKey);
+    if (isDefined(cachedVersion)) {
+      const cacheKey = `${workspaceId}-${cachedVersion}`;
+      const cachedValue = this.cache.get(cacheKey);
 
-    if (cachedValue) {
-      return cachedValue;
+      if (cachedValue) {
+        return cachedValue;
+      }
     }
 
     cachedData = await getCacheData(workspaceId);
@@ -77,6 +79,7 @@ export class GetDataFromCacheWithRecomputeService<T, U> {
       }
     }
 
+    const cacheKey = `${workspaceId}-${cachedVersion}`;
     this.cache.set(cacheKey, {
       version: cachedVersion,
       data: cachedData,
