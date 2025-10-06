@@ -363,6 +363,7 @@ export class SignInUpService {
 
   private async isFirstWorkspaceForUser(userId: string): Promise<boolean> {
     const count = await this.userWorkspaceService.countUserWorkspaces(userId);
+
     return count === 0;
   }
 
