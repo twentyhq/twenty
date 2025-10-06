@@ -239,7 +239,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     const hasServerLevelImpersonatePermission =
       impersonatorUserWorkspace.user.canImpersonate === true &&
-      workspace.allowImpersonation === true;
+      impersonatedUserWorkspace.workspace.allowImpersonation === true;
 
     if (isServerLevelImpersonation) {
       if (!hasServerLevelImpersonatePermission)
