@@ -1,3 +1,4 @@
+import assert from 'assert';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
@@ -7,6 +8,8 @@ import {
 } from '../types/config.types';
 import { parseJsoncFile } from './jsonc-parser';
 import { validateSchema } from '../utils/schema-validator';
+
+type Sources = { [key: string]: string | Sources };
 
 const findPathFile = async (
   appPath: string,
@@ -28,15 +31,48 @@ const loadCoreEntity = async (
   const coreEntities: CoreEntityManifest[] = [];
 
   if (await fs.pathExists(coreEntityPath)) {
-    const files = await fs.readdir(coreEntityPath);
-    const coreEntityFileNames = files.filter(
-      (file) => file.endsWith('.jsonc') || file.endsWith('.json'),
-    );
+    const entities = await fs.readdir(coreEntityPath);
 
-    for (const fileName of coreEntityFileNames) {
-      const coreEntityManifest = await parseJsoncFile(
-        path.join(coreEntityPath, fileName),
+    for (const entity of entities) {
+      const entityPath = path.join(coreEntityPath, entity);
+      const entityResources = await fs.readdir(entityPath);
+
+      const entityManifests = entityResources.filter(
+        (file) =>
+          file.endsWith('.manifest.jsonc') || file.endsWith('.manifest.json'),
       );
+
+      assert(
+        entityManifests.length === 1,
+        'Entity should have strictly one manifest file',
+      );
+
+      const entityManifest = entityManifests[0];
+
+      const coreEntityManifest = await parseJsoncFile(
+        path.join(coreEntityPath, entity, entityManifest),
+      );
+
+      const entitySources = entityResources.filter(
+        (folder) => folder === 'src',
+      );
+
+      assert(
+        entitySources.length <= 1,
+        'Entity should have less than one src folder or file',
+      );
+
+      if (entitySources.length === 1) {
+        const entitySourcePath = path.join(
+          coreEntityPath,
+          entity,
+          entitySources[0],
+        );
+
+        const sources = await loadFolderContentIntoJson(entitySourcePath);
+
+        coreEntityManifest['code'] = { src: sources };
+      }
 
       await validator(coreEntityManifest, coreEntityPath);
 
@@ -45,6 +81,26 @@ const loadCoreEntity = async (
   }
 
   return coreEntities;
+};
+
+const loadFolderContentIntoJson = async (
+  sourcePath: string,
+): Promise<Sources> => {
+  const sources: Sources = {};
+
+  const resources = await fs.readdir(sourcePath);
+
+  for (const resource of resources) {
+    const resourcePath = path.join(sourcePath, resource);
+    const stats = await fs.stat(resourcePath);
+    if (stats.isFile()) {
+      sources[resource] = await fs.readFile(resourcePath, 'utf8');
+    } else {
+      sources[resource] = await loadFolderContentIntoJson(resourcePath);
+    }
+  }
+
+  return sources;
 };
 
 export const loadManifest = async (
@@ -60,7 +116,7 @@ export const loadManifest = async (
   const yarnLockPath = await findPathFile(appPath, 'yarn.lock');
   const rawYarnLock = await fs.readFile(yarnLockPath, 'utf8');
 
-  await validateSchema('app-manifest', rawPackageJson, packageJsonPath);
+  await validateSchema('appManifest', rawPackageJson, packageJsonPath);
 
   const agents = await loadCoreEntity(
     path.join(appPath, 'agents'),
@@ -72,6 +128,11 @@ export const loadManifest = async (
     (manifest, path) => validateSchema('object', manifest, path),
   );
 
+  const serverlessFunctions = await loadCoreEntity(
+    path.join(appPath, 'serverlessFunctions'),
+    (manifest, path) => validateSchema('serverlessFunction', manifest, path),
+  );
+
   return {
     packageJson: rawPackageJson,
     yarnLock: rawYarnLock,
@@ -79,6 +140,7 @@ export const loadManifest = async (
       ...rawPackageJson,
       agents,
       objects,
+      serverlessFunctions,
     },
   };
 };

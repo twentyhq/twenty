@@ -39,6 +39,6 @@ import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serve
     ServerlessFunctionResolver,
     WorkspaceFlatServerlessFunctionMapCacheService,
   ],
-  exports: [ServerlessFunctionService],
+  exports: [ServerlessFunctionService, ServerlessFunctionV2Service],
 })
 export class ServerlessFunctionModule {}

@@ -17,15 +17,15 @@ import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import {
+  WorkflowStatus,
+  type WorkflowWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import {
-  WorkflowStatus,
-  type WorkflowWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 export type ObjectMetadataInfo = {
   objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
@@ -94,6 +94,7 @@ export class WorkflowCommonWorkspaceService {
   async getObjectMetadataMaps(
     workspaceId: string,
   ): Promise<ObjectMetadataMaps> {
+    // TODO: replace this with the new cache service
     const objectMetadataMaps =
       await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspaceId,

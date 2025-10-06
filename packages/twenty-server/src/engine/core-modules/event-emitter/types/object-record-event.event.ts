@@ -3,10 +3,12 @@ import { type ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emit
 import { type ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
 import { type ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { type ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { type ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/types/object-record-upsert.event';
 
 export type ObjectRecordEvent<T = object> =
   | ObjectRecordUpdateEvent<T>
   | ObjectRecordDeleteEvent<T>
   | ObjectRecordCreateEvent<T>
   | ObjectRecordDestroyEvent<T>
-  | ObjectRecordRestoreEvent<T>;
+  | ObjectRecordRestoreEvent<T>
+  | ObjectRecordUpsertEvent<T>;
