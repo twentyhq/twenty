@@ -3,10 +3,10 @@ import process from 'process';
 import opentelemetry from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import {
-    AggregationTemporality,
-    ConsoleMetricExporter,
-    MeterProvider,
-    PeriodicExportingMetricReader,
+  AggregationTemporality,
+  ConsoleMetricExporter,
+  MeterProvider,
+  PeriodicExportingMetricReader,
 } from '@opentelemetry/sdk-metrics';
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
