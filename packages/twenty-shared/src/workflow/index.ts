@@ -37,6 +37,8 @@ export { workflowIteratorActionSchema } from './schemas/iterator-action-schema';
 export { workflowIteratorActionSettingsSchema } from './schemas/iterator-action-settings-schema';
 export { workflowManualTriggerSchema } from './schemas/manual-trigger-schema';
 export { objectRecordSchema } from './schemas/object-record-schema';
+export { workflowDelayActionSchema } from './schemas/workflow-delay-action-schema';
+export { workflowDelayActionSettingsSchema } from './schemas/workflow-delay-action-settings-schema';
 export { workflowSendEmailActionSchema } from './schemas/send-email-action-schema';
 export { workflowSendEmailActionSettingsSchema } from './schemas/send-email-action-settings-schema';
 export { workflowUpdateRecordActionSchema } from './schemas/update-record-action-schema';

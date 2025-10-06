@@ -171,6 +171,7 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
       attempts: 1 + (options?.retryLimit || 0),
       removeOnComplete: true,
       removeOnFail: 100,
+      delay: options?.delay,
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
