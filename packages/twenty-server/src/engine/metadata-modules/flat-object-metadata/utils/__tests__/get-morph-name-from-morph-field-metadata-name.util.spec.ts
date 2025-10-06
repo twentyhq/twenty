@@ -31,7 +31,7 @@ describe('getMorphNameFromMorphFieldMetadataName', () => {
     expect(result).toBe('contact');
   });
 
-  it('should fail extract base morph field name for MANY_TO_ONE if casing is not correct', () => {
+  it('should also work extract base morph field name for MANY_TO_ONE if casing is not correct', () => {
     const morphRelationFlatFieldMetadata =
       createMorphRelationFlatFieldMetadataMock(
         'contactDeal',
@@ -44,7 +44,7 @@ describe('getMorphNameFromMorphFieldMetadataName', () => {
       namePlural: 'deals',
     });
 
-    expect(result).toBe('contactDeal');
+    expect(result).toBe('contact');
   });
 
   it('should extract base morph field name for ONE_TO_MANY (removes plural suffix)', () => {
