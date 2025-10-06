@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -7,31 +8,20 @@ import {
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
 export type GetRelationFlatFieldMetadatasUtilArgs = {
-  flatObjectMetadataMaps: FlatObjectMetadataMaps;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
 };
 
 export const findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow = ({
-  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
   flatFieldMetadata,
 }: GetRelationFlatFieldMetadatasUtilArgs): FlatFieldMetadata<MorphOrRelationFieldMetadataType> => {
-  const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
-    flatFieldMetadata;
+  const { relationTargetFieldMetadataId } = flatFieldMetadata;
 
-  const relatedFlatObjectMetadata =
-    flatObjectMetadataMaps.byId[relationTargetObjectMetadataId];
-
-  if (!isDefined(relatedFlatObjectMetadata)) {
-    throw new FieldMetadataException(
-      `Deleted field metadata relation object metadata target not found`,
-      FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-    );
-  }
   const relatedFlatFieldMetadata =
-    relatedFlatObjectMetadata.fieldsById[relationTargetFieldMetadataId];
+    flatFieldMetadataMaps.byId[relationTargetFieldMetadataId];
 
   if (!isDefined(relatedFlatFieldMetadata)) {
     throw new FieldMetadataException(

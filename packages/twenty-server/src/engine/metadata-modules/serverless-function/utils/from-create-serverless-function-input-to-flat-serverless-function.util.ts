@@ -4,6 +4,7 @@ import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/l
 import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ServerlessFunctionRuntime } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 
 export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
   createServerlessFunctionInput,
@@ -13,14 +14,14 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
   workspaceId: string;
 }): FlatServerlessFunction => {
   const id = v4();
-  const universalIdentifier = v4();
   const currentDate = new Date();
 
   return {
     id,
     name: createServerlessFunctionInput.name,
     description: createServerlessFunctionInput.description ?? null,
-    universalIdentifier,
+    universalIdentifier:
+      createServerlessFunctionInput.universalIdentifier ?? v4(),
     createdAt: currentDate,
     updatedAt: currentDate,
     deletedAt: null,
@@ -34,6 +35,11 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     serverlessFunctionLayerId:
       createServerlessFunctionInput.serverlessFunctionLayerId ?? null,
     workspaceId,
-    checksum: null,
+    code: createServerlessFunctionInput?.code,
+    checksum: createServerlessFunctionInput?.code
+      ? serverlessFunctionCreateHash(
+          JSON.stringify(createServerlessFunctionInput.code),
+        )
+      : null,
   };
 };

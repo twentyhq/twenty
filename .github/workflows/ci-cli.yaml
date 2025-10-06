@@ -1,4 +1,5 @@
 name: CI CLI
+
 on:
   push:
     branches:

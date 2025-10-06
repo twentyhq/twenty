@@ -16,7 +16,7 @@ const StyledToggleContainer = styled.label`
   width: 100%;
 `;
 
-type MenuItemToggleProps = {
+export type MenuItemToggleProps = {
   focused?: boolean;
   LeftIcon?: IconComponent;
   withIconContainer?: boolean;

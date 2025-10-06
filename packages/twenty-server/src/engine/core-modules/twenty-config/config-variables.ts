@@ -359,6 +359,15 @@ export class ConfigVariables {
   EMAIL_SMTP_PASSWORD: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description:
+      'When enabled, only server admins can create new workspaces. Ignored during initial setup when no workspace exists.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
     description: 'Type of storage to use (local or S3)',
     type: ConfigVariableType.ENUM,
@@ -841,7 +850,22 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
-    description: 'URL for cache storage (e.g., Redis connection URL)',
+    description: 'Redis connection URL used for cache and queues by default',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsUrl({
+    protocols: ['redis', 'rediss'],
+    require_tld: false,
+    allow_underscores: true,
+  })
+  REDIS_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    isSensitive: true,
+    description:
+      'Optional separate Redis connection for queues with a different eviction policy (advanced production use case, most self-hosters do not need this)',
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
@@ -851,7 +875,7 @@ export class ConfigVariables {
     require_tld: false,
     allow_underscores: true,
   })
-  REDIS_URL: string;
+  REDIS_QUEUE_URL: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,

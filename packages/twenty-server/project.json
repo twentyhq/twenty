@@ -9,6 +9,7 @@
       "cache": true,
       "options": {
         "cwd": "packages/twenty-server",
+        "parallel": false,
         "commands": ["rimraf dist", "nest build --path ./tsconfig.build.json"]
       },
       "dependsOn": ["^build"]

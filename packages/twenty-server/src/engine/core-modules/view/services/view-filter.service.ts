@@ -12,12 +12,14 @@ import {
   generateViewFilterExceptionMessage,
   generateViewFilterUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 @Injectable()
 export class ViewFilterService {
   constructor(
     @InjectRepository(ViewFilterEntity)
     private readonly viewFilterRepository: Repository<ViewFilterEntity>,
+    private readonly viewService: ViewService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFilterEntity[]> {
@@ -109,7 +111,13 @@ export class ViewFilterService {
 
     const viewFilter = this.viewFilterRepository.create(viewFilterData);
 
-    return this.viewFilterRepository.save(viewFilter);
+    await this.viewService.flushGraphQLCache(viewFilterData.workspaceId);
+
+    const savedViewFilter = await this.viewFilterRepository.save(viewFilter);
+
+    await this.viewService.flushGraphQLCache(viewFilterData.workspaceId);
+
+    return savedViewFilter;
   }
 
   async update(
@@ -134,6 +142,8 @@ export class ViewFilterService {
       ...updateData,
     });
 
+    await this.viewService.flushGraphQLCache(workspaceId);
+
     return { ...existingViewFilter, ...updatedViewFilter };
   }
 
@@ -152,6 +162,8 @@ export class ViewFilterService {
 
     await this.viewFilterRepository.softDelete(id);
 
+    await this.viewService.flushGraphQLCache(workspaceId);
+
     return viewFilter;
   }
 
@@ -169,6 +181,8 @@ export class ViewFilterService {
     }
 
     await this.viewFilterRepository.delete(id);
+
+    await this.viewService.flushGraphQLCache(workspaceId);
 
     return true;
   }

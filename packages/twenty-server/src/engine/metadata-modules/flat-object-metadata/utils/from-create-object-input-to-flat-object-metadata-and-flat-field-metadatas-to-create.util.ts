@@ -4,9 +4,9 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
@@ -17,16 +17,16 @@ type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs 
   {
     createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
     workspaceId: string;
-    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  };
+  } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
   ({
     createObjectInput: rawCreateObjectInput,
     workspaceId,
-    existingFlatObjectMetadataMaps,
+    flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
     flatObjectMetadataToCreate: FlatObjectMetadata;
     relationTargetFlatFieldMetadataToCreate: FlatFieldMetadata[];
+    flatFieldMetadataToCreateOnObject: FlatFieldMetadata[];
     flatIndexMetadataToCreate: FlatIndexMetadata[];
   } => {
     const createObjectInput =
@@ -53,8 +53,9 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       });
     const createdAt = new Date();
     const flatObjectMetadataToCreate: FlatObjectMetadata = {
+      fieldMetadataIds: [],
+      indexMetadataIds: [],
       createdAt,
-      flatFieldMetadatas: [],
       updatedAt: createdAt,
       duplicateCriteria: null,
       description: createObjectInput.description ?? null,
@@ -93,12 +94,13 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       workspaceId,
     });
 
-    flatObjectMetadataToCreate.flatFieldMetadatas = [
+    const objectFlatFieldMetadatas: FlatFieldMetadata[] = [
       ...Object.values(defaultFlatFieldForCustomObjectMaps.fields),
       ...standardSourceFlatFieldMetadatas,
     ];
 
     const defaultIndexesForCustomObject = buildDefaultIndexesForCustomObject({
+      objectFlatFieldMetadatas,
       defaultFlatFieldForCustomObjectMaps,
       flatObjectMetadata: flatObjectMetadataToCreate,
       workspaceId,
@@ -106,9 +108,10 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
 
     return {
       flatObjectMetadataToCreate,
-      relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,
       flatIndexMetadataToCreate: Object.values(
         defaultIndexesForCustomObject.indexes,
       ),
+      relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,
+      flatFieldMetadataToCreateOnObject: objectFlatFieldMetadatas,
     };
   };
