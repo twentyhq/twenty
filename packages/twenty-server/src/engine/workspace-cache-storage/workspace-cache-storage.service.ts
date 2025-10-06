@@ -261,7 +261,7 @@ export class WorkspaceCacheStorageService {
     await this.flushVersionedMetadata(workspaceId, metadataVersion);
 
     await Promise.all(
-      Object.values(METADATA_VERSIONED_WORKSPACE_CACHE_KEY).map(
+      Object.values(WORKSPACE_CACHE_KEYS).map(
         async (key) =>
           await this.cacheStorageService.del(`${key}:${workspaceId}`),
       ),
