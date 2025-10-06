@@ -36,7 +36,7 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: [
+          flatMapsKeys: [
             'flatDatabaseEventTriggerMaps',
             'flatServerlessFunctionMaps',
           ],
@@ -94,7 +94,7 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatMapsKeys: ['flatDatabaseEventTriggerMaps'],
         },
       );
 
@@ -112,7 +112,7 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: [
+          flatMapsKeys: [
             'flatDatabaseEventTriggerMaps',
             'flatServerlessFunctionMaps',
           ],
@@ -175,7 +175,7 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatMapsKeys: ['flatDatabaseEventTriggerMaps'],
         },
       );
 
@@ -199,7 +199,7 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: [
+          flatMapsKeys: [
             'flatDatabaseEventTriggerMaps',
             'flatServerlessFunctionMaps',
           ],
