@@ -49,6 +49,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -509,17 +510,19 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  async checkCustomDomainValidRecords(workspace: Workspace) {
-    if (!workspace.customDomain) return;
+  async checkCustomDomainValidRecords(
+    workspace: Workspace,
+    domainValidRecord?: DomainValidRecords,
+  ) {
+    assertIsDefinedOrThrow(workspace.customDomain);
 
     const customDomainWithRecords =
-      await this.dnsManagerService.getHostnameWithRecords(
+      domainValidRecord ??
+      (await this.dnsManagerService.getHostnameWithRecords(
         workspace.customDomain,
-      );
+      ));
 
-    if (!customDomainWithRecords) return;
-
-    await this.dnsManagerService.refreshHostname(customDomainWithRecords);
+    assertIsDefinedOrThrow(customDomainWithRecords);
 
     const isCustomDomainWorking =
       await this.dnsManagerService.isHostnameWorking(workspace.customDomain);
@@ -542,5 +545,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     return customDomainWithRecords;
+  }
+
+  async findByCustomDomain(customDomain: string) {
+    return this.workspaceRepository.findOne({ where: { customDomain } });
   }
 }

@@ -1,4 +1,9 @@
 name: "Release: create"
+
+permissions:
+  contents: read
+  pull-requests: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -35,11 +40,11 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-            branch: release/${{ steps.sanitize.outputs.version }}
-            commit-message: "chore: release v${{ steps.sanitize.outputs.version }}"
-            committer: Github Action Deploy <github-action-deploy@twenty.com>
-            author: Github Action Deploy <github-action-deploy@twenty.com>
-            title: Release v${{ steps.sanitize.outputs.version }}
-            labels: |
-              release
-              ${{ github.event.inputs.create_release == true && 'create_release' || '' }}
+          branch: release/${{ steps.sanitize.outputs.version }}
+          commit-message: "chore: release v${{ steps.sanitize.outputs.version }}"
+          committer: Github Action Deploy <github-action-deploy@twenty.com>
+          author: Github Action Deploy <github-action-deploy@twenty.com>
+          title: Release v${{ steps.sanitize.outputs.version }}
+          labels: |
+            release
+            ${{ github.event.inputs.create_release == true && 'create_release' || '' }}
