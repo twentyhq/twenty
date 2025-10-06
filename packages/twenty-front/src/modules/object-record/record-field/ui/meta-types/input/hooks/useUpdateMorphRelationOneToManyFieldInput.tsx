@@ -7,6 +7,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useUpdateMorphRelationOneToManyFieldInput = () => {
@@ -33,27 +34,31 @@ export const useUpdateMorphRelationOneToManyFieldInput = () => {
       async (
         morphItem: Pick<
           RecordPickerPickableMorphItem,
-          'recordId' | 'isSelected'
+          'recordId' | 'isSelected' | 'objectMetadataId'
         >,
       ) => {
         if (!fieldDefinition.metadata.objectMetadataNameSingular) {
           throw new Error('ObjectMetadataNameSingular is required');
         }
 
-        // const recordObjectNameSingulars =
-        //   fieldDefinition.metadata.morphRelations.map(
-        //     (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
-        //   );
+        const targetMorphRelation =
+          fieldDefinition.metadata.morphRelations.find(
+            (morphRelation) =>
+              morphRelation.targetObjectMetadata.id ===
+              morphItem.objectMetadataId,
+          );
+
+        if (!isDefined(targetMorphRelation)) {
+          throw new Error('TargetMorphRelation is required');
+        }
+
         if (morphItem.isSelected) {
           await recordOneToManyFieldAttachTargetRecord({
             sourceObjectNameSingular:
               fieldDefinition.metadata.objectMetadataNameSingular,
             targetObjectNameSingular:
-              fieldDefinition.metadata.morphRelations[0].targetObjectMetadata
-                .nameSingular,
-            targetGQLFieldName:
-              fieldDefinition.metadata.morphRelations[0].targetFieldMetadata
-                .name,
+              targetMorphRelation.targetObjectMetadata.nameSingular,
+            targetGQLFieldName: targetMorphRelation.targetFieldMetadata.name,
             sourceRecordId: recordId,
             targetRecordId: morphItem.recordId,
           });
@@ -62,11 +67,8 @@ export const useUpdateMorphRelationOneToManyFieldInput = () => {
             sourceObjectNameSingular:
               fieldDefinition.metadata.objectMetadataNameSingular,
             targetObjectNameSingular:
-              fieldDefinition.metadata.morphRelations[0].targetObjectMetadata
-                .nameSingular,
-            targetGQLFieldName:
-              fieldDefinition.metadata.morphRelations[0].targetFieldMetadata
-                .name,
+              targetMorphRelation.targetObjectMetadata.nameSingular,
+            targetGQLFieldName: targetMorphRelation.targetFieldMetadata.name,
             sourceRecordId: recordId,
             targetRecordId: morphItem.recordId,
           });

@@ -7,10 +7,7 @@ import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphq
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { useContext } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const useRecordOneToManyFieldAttachTargetRecord = () => {
@@ -103,12 +100,6 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
         objectPermissionsByObjectMetadataId,
       });
     }
-
-    assertFieldMetadata(
-      FieldMetadataType.RELATION,
-      isFieldRelation,
-      fieldDefinition,
-    );
 
     await updateOneRecord({
       objectNameSingular: targetObjectNameSingular,
