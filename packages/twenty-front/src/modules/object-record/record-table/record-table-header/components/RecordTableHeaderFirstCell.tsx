@@ -21,13 +21,11 @@ import { cx } from '@linaria/core';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledColumnHeadContainer = styled.div`
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-  overflow: hidden;
+const StyledPlusButtonWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
 `;
 
 export const RecordTableHeaderFirstCell = () => {
@@ -85,13 +83,16 @@ export const RecordTableHeaderFirstCell = () => {
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       isResizing={isResizingAnyColumn}
     >
-      <StyledColumnHeadContainer>
-        <RecordTableColumnHeadWithDropdown
-          recordField={recordField}
-          objectMetadataId={objectMetadataItem.id}
-        />
-        {iconIsVisible && <RecordTableHeaderLabelIdentifierCellPlusButton />}
-      </StyledColumnHeadContainer>
+      <RecordTableColumnHeadWithDropdown
+        recordField={recordField}
+        objectMetadataId={objectMetadataItem.id}
+      />
+      {iconIsVisible && (
+        <StyledPlusButtonWrapper>
+          <RecordTableHeaderLabelIdentifierCellPlusButton />
+        </StyledPlusButtonWrapper>
+      )}
+
       <RecordTableHeaderResizeHandler recordFieldIndex={0} position="right" />
     </RecordTableHeaderCellContainer>
   );
