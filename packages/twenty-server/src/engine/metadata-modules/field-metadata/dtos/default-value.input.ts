@@ -218,3 +218,17 @@ export class FieldMetadataDefaultArray {
   @IsArray()
   value: string[] | null;
 }
+
+export class FieldMetadataDefaultValuePdf {
+  @ValidateIf((_object, value) => value !== null)
+  @IsArray()
+  @IsOptional()
+  attachmentIds: string[] | null;
+}
+
+export class FieldMetadataDefaultValueImage {
+  @ValidateIf((_object, value) => value !== null)
+  @IsArray()
+  @IsOptional()
+  attachmentIds: string[] | null;
+}

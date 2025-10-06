@@ -140,7 +140,7 @@ export class EntitySchemaColumnFactory {
       entitySchemaColumnMap[columnName] = {
         name: columnName,
         type: columnType as ColumnType,
-        nullable: compositeProperty.isRequired,
+        nullable: !compositeProperty.isRequired,
         default: defaultValue,
       };
 

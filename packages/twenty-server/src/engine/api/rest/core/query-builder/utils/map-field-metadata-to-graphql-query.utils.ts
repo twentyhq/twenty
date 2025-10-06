@@ -184,5 +184,19 @@ export const mapFieldMetadataToGraphqlQuery = (
         markdown
       }
     `;
+  } else if (fieldType === FieldMetadataType.PDF) {
+    return `
+      ${field.name}
+      {
+        attachmentIds
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.IMAGE) {
+    return `
+      ${field.name}
+      {
+        attachmentIds
+      }
+    `;
   }
 };

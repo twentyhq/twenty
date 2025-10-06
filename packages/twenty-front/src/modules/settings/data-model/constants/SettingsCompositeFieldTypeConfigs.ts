@@ -7,6 +7,8 @@ import {
   type FieldLinksValue,
   type FieldPhonesValue,
   type FieldRichTextV2Value,
+  type FieldPdfValue,
+  type FieldImageValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
@@ -542,4 +544,61 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       },
     ],
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextV2Value>,
+  [FieldMetadataType.PDF]: {
+    label: 'PDF',
+    Icon: IllustrationIconText,
+    category: 'Basic',
+    subFields: [
+      {
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.PDF]
+            .attachmentIds,
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PDF].attachmentIds,
+        isImportable: false,
+        isFilterable: true,
+        isIncludedInUniqueConstraint: false,
+      },
+    ],
+    exampleValues: [
+      {
+        attachmentIds: ['uuid-pdf-1', 'uuid-pdf-2'],
+      },
+      {
+        attachmentIds: ['uuid-pdf-3'],
+      },
+      {
+        attachmentIds: [],
+      },
+    ],
+  } as const satisfies SettingsCompositeFieldTypeConfig<FieldPdfValue>,
+  [FieldMetadataType.IMAGE]: {
+    label: 'Image',
+    Icon: IllustrationIconText,
+    category: 'Basic',
+    subFields: [
+      {
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.IMAGE]
+            .attachmentIds,
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.IMAGE]
+            .attachmentIds,
+        isImportable: false,
+        isFilterable: true,
+        isIncludedInUniqueConstraint: false,
+      },
+    ],
+    exampleValues: [
+      {
+        attachmentIds: ['uuid-img-1', 'uuid-img-2', 'uuid-img-3'],
+      },
+      {
+        attachmentIds: ['uuid-img-4', 'uuid-img-5'],
+      },
+      {
+        attachmentIds: [],
+      },
+    ],
+  } as const satisfies SettingsCompositeFieldTypeConfig<FieldImageValue>,
 } as const satisfies SettingsCompositeFieldTypeConfigArray;

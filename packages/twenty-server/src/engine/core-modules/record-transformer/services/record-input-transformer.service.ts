@@ -7,8 +7,8 @@ import { transformLinksValue } from 'src/engine/core-modules/record-transformer/
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
-  type RichTextV2Metadata,
-  richTextV2ValueSchema,
+    type RichTextV2Metadata,
+    richTextV2ValueSchema,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
@@ -159,6 +159,10 @@ export class RecordInputTransformerService {
       return value;
     }
 
+    if (!isDefined(value) || typeof value !== 'object') {
+      return value;
+    }
+
     return Object.entries(value).reduce(
       (acc, [subFieldName, subFieldValue]) => {
         const subFieldType = compositeType.properties.find(
@@ -185,6 +189,10 @@ export class RecordInputTransformerService {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
     if (!compositeType) {
+      return value;
+    }
+
+    if (!isDefined(value) || typeof value !== 'object') {
       return value;
     }
 

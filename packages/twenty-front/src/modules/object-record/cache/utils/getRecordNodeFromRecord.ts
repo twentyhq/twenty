@@ -136,7 +136,9 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           case FieldMetadataType.LINKS:
           case FieldMetadataType.ADDRESS:
           case FieldMetadataType.FULL_NAME:
-          case FieldMetadataType.CURRENCY: {
+          case FieldMetadataType.CURRENCY:
+          case FieldMetadataType.PDF:
+          case FieldMetadataType.IMAGE: {
             return [
               fieldName,
               {

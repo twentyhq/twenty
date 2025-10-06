@@ -107,6 +107,8 @@ export class WorkspaceMigrationFactory {
         FieldMetadataType.RICH_TEXT_V2,
         { factory: this.compositeColumnActionFactory },
       ],
+      [FieldMetadataType.PDF, { factory: this.compositeColumnActionFactory }],
+      [FieldMetadataType.IMAGE, { factory: this.compositeColumnActionFactory }],
       [
         FieldMetadataType.RELATION,
         { factory: this.relationColumnActionFactory },

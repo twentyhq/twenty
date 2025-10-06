@@ -38,6 +38,10 @@ export const getSubfieldsForAggregateOperation = (
         ];
       case FieldMetadataType.RICH_TEXT_V2:
         return ['blocknote', 'markdown'];
+      case FieldMetadataType.PDF:
+      case FieldMetadataType.IMAGE:
+        // No subfields are aggregatable for PDF/IMAGE; return an empty list
+        return [];
       default:
         throw new Error(`Unsupported composite field type: ${fieldType}`);
     }

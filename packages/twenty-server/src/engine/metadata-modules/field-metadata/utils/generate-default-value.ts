@@ -56,6 +56,10 @@ export function generateDefaultValue(
         name: "'System'",
         workspaceMemberId: null,
       } satisfies FieldMetadataDefaultValue<FieldMetadataType.ACTOR>;
+    case FieldMetadataType.PDF:
+      return null;
+    case FieldMetadataType.IMAGE:
+      return null;
     default:
       return null;
   }

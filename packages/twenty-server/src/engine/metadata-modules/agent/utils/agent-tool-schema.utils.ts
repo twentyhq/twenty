@@ -764,6 +764,32 @@ const generateFieldFilterJsonSchema = (
 
       return null;
 
+    case FieldMetadataType.PDF:
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (PDF field)`,
+        properties: {
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'PDF attachments exist or not',
+          },
+        },
+      };
+
+    case FieldMetadataType.IMAGE:
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (image field)`,
+        properties: {
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Image attachments exist or not',
+          },
+        },
+      };
+
     case FieldMetadataType.RAW_JSON:
       return {
         type: 'object',

@@ -1,0 +1,914 @@
+openapi: 3.1.0
+info:
+  title: Twenty CRM REST API - PDF and Image Fields
+  version: 1.0.0
+  description: |
+    REST API contract for PDF and IMAGE field types in Twenty CRM.
+    Auto-generated from GraphQL schema and field metadata.
+    
+    **Features**:
+    - Create/update/delete records with PDF/IMAGE fields
+    - Upload PDF and image files
+    - Retrieve attachments metadata
+    - Filter and query by attachment presence
+    
+    **Validation Rules**:
+    - Maximum 10 attachments per field
+    - PDF fields: Only application/pdf MIME type
+    - IMAGE fields: Only image/jpeg, image/png, image/gif, image/webp, image/svg+xml
+    - Attachments deleted immediately when removed from field
+  contact:
+    name: Twenty CRM
+    url: https://twenty.com
+
+servers:
+  - url: https://api.twenty.com/rest
+    description: Production server
+  - url: http://localhost:3000/rest
+    description: Development server
+
+security:
+  - bearerAuth: []
+
+# ============================================================================
+# PATHS
+# ============================================================================
+
+paths:
+  # --------------------------------------------------------------------------
+  # FIELD METADATA (Admin Operations)
+  # --------------------------------------------------------------------------
+  
+  /metadata/objects/{objectId}/fields:
+    post:
+      summary: Create a new field (including PDF/IMAGE types)
+      description: |
+        Creates a new field on an object. For PDF and IMAGE types, the system
+        automatically configures composite field storage with attachmentIds array.
+      operationId: createField
+      tags:
+        - Field Metadata
+      parameters:
+        - $ref: '#/components/parameters/ObjectIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFieldRequest'
+            examples:
+              pdfField:
+                summary: Create PDF field
+                value:
+                  type: PDF
+                  name: contractDocuments
+                  label: Contract Documents
+                  description: Legal contracts for this deal
+                  isNullable: true
+                  defaultValue:
+                    attachmentIds: []
+              imageField:
+                summary: Create Image field
+                value:
+                  type: IMAGE
+                  name: productImages
+                  label: Product Images
+                  description: Photos of the product
+                  isNullable: true
+                  defaultValue:
+                    attachmentIds: []
+      responses:
+        '201':
+          description: Field created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldMetadata'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /metadata/fields/{fieldId}:
+    get:
+      summary: Get field metadata by ID
+      operationId: getField
+      tags:
+        - Field Metadata
+      parameters:
+        - $ref: '#/components/parameters/FieldIdParam'
+      responses:
+        '200':
+          description: Field metadata retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldMetadata'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    patch:
+      summary: Update field metadata
+      operationId: updateField
+      tags:
+        - Field Metadata
+      parameters:
+        - $ref: '#/components/parameters/FieldIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFieldRequest'
+      responses:
+        '200':
+          description: Field updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldMetadata'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete a field
+      description: |
+        Deletes a field and all its data. For PDF/IMAGE fields, also deletes
+        associated attachments that are not shared.
+      operationId: deleteField
+      tags:
+        - Field Metadata
+      parameters:
+        - $ref: '#/components/parameters/FieldIdParam'
+      responses:
+        '200':
+          description: Field deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldMetadata'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # --------------------------------------------------------------------------
+  # OBJECT RECORDS (with PDF/IMAGE fields)
+  # --------------------------------------------------------------------------
+  
+  /objects/{objectName}/records:
+    get:
+      summary: List records with filtering
+      description: |
+        Query records with optional filtering on PDF/IMAGE fields.
+        Supports isEmpty, isNotEmpty, contains filters.
+      operationId: listRecords
+      tags:
+        - Records
+      parameters:
+        - $ref: '#/components/parameters/ObjectNameParam'
+        - name: filter
+          in: query
+          description: JSON filter expression
+          schema:
+            type: string
+          example: '{"contractDocuments": {"isNotEmpty": true}}'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Records retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordsResponse'
+              examples:
+                dealsWithPdfs:
+                  summary: Deals with PDF contracts
+                  value:
+                    data:
+                      - id: deal-uuid-1
+                        name: Acme Corp Deal
+                        contractDocuments:
+                          attachmentIds:
+                            - attach-uuid-1
+                            - attach-uuid-2
+                        productImages:
+                          attachmentIds:
+                            - attach-uuid-3
+                        createdAt: '2025-10-06T10:00:00Z'
+                        updatedAt: '2025-10-06T10:05:00Z'
+                    pageInfo:
+                      hasNextPage: false
+                      total: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    
+    post:
+      summary: Create a new record with PDF/IMAGE fields
+      operationId: createRecord
+      tags:
+        - Records
+      parameters:
+        - $ref: '#/components/parameters/ObjectNameParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRecordRequest'
+            examples:
+              dealWithPdfs:
+                summary: Create deal with PDF contracts
+                value:
+                  name: Acme Corp Deal
+                  contractDocuments:
+                    attachmentIds:
+                      - attach-uuid-1
+                      - attach-uuid-2
+                  productImages:
+                    attachmentIds:
+                      - attach-uuid-3
+      responses:
+        '201':
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Record'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /objects/{objectName}/records/{recordId}:
+    get:
+      summary: Get a record by ID
+      operationId: getRecord
+      tags:
+        - Records
+      parameters:
+        - $ref: '#/components/parameters/ObjectNameParam'
+        - $ref: '#/components/parameters/RecordIdParam'
+      responses:
+        '200':
+          description: Record retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Record'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    patch:
+      summary: Update a record's PDF/IMAGE fields
+      description: |
+        Updates record fields. For PDF/IMAGE fields, provide new attachmentIds array.
+        Removed attachment IDs are deleted from storage immediately.
+      operationId: updateRecord
+      tags:
+        - Records
+      parameters:
+        - $ref: '#/components/parameters/ObjectNameParam'
+        - $ref: '#/components/parameters/RecordIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRecordRequest'
+            examples:
+              addPdf:
+                summary: Add PDF to contract field
+                value:
+                  contractDocuments:
+                    attachmentIds:
+                      - attach-uuid-1
+                      - attach-uuid-2
+                      - attach-uuid-3
+              removePdf:
+                summary: Remove PDF from field
+                value:
+                  contractDocuments:
+                    attachmentIds:
+                      - attach-uuid-1
+      responses:
+        '200':
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Record'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete a record
+      description: |
+        Deletes a record. Cascades to attachments in PDF/IMAGE fields.
+      operationId: deleteRecord
+      tags:
+        - Records
+      parameters:
+        - $ref: '#/components/parameters/ObjectNameParam'
+        - $ref: '#/components/parameters/RecordIdParam'
+      responses:
+        '200':
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Record'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # --------------------------------------------------------------------------
+  # FILE UPLOADS
+  # --------------------------------------------------------------------------
+  
+  /files/upload/pdf:
+    post:
+      summary: Upload a PDF file
+      description: |
+        Uploads a PDF file and creates an attachment record.
+        Returns attachment ID to add to PDF field's attachmentIds array.
+      operationId: uploadPdf
+      tags:
+        - Files
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: PDF file to upload
+      responses:
+        '201':
+          description: PDF uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentUploadResponse'
+        '400':
+          description: Invalid file type or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                invalidType:
+                  summary: Non-PDF file rejected
+                  value:
+                    error: ValidationError
+                    message: Only PDF files are allowed for this field
+                    statusCode: 400
+
+  /files/upload/image:
+    post:
+      summary: Upload an image file
+      description: |
+        Uploads an image file and creates an attachment record.
+        Returns attachment ID to add to IMAGE field's attachmentIds array.
+        Supported formats: JPEG, PNG, GIF, WebP, SVG
+      operationId: uploadImage
+      tags:
+        - Files
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Image file to upload
+      responses:
+        '201':
+          description: Image uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentUploadResponse'
+        '400':
+          description: Invalid file type or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                invalidType:
+                  summary: Non-image file rejected
+                  value:
+                    error: ValidationError
+                    message: Only image files are allowed for this field
+                    statusCode: 400
+
+  # --------------------------------------------------------------------------
+  # ATTACHMENTS
+  # --------------------------------------------------------------------------
+  
+  /attachments/{attachmentId}:
+    get:
+      summary: Get attachment metadata
+      description: |
+        Retrieves attachment metadata including name, type, and download URL.
+        Used to resolve attachmentIds in PDF/IMAGE fields.
+      operationId: getAttachment
+      tags:
+        - Attachments
+      parameters:
+        - $ref: '#/components/parameters/AttachmentIdParam'
+      responses:
+        '200':
+          description: Attachment metadata retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete an attachment
+      description: |
+        Deletes an attachment record and its file from storage.
+        Used when removing files from PDF/IMAGE fields.
+      operationId: deleteAttachment
+      tags:
+        - Attachments
+      parameters:
+        - $ref: '#/components/parameters/AttachmentIdParam'
+      responses:
+        '200':
+          description: Attachment deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /attachments:
+    post:
+      summary: Batch retrieve attachments
+      description: |
+        Retrieves multiple attachments by IDs.
+        Optimized for loading PDF/IMAGE field attachments.
+      operationId: batchGetAttachments
+      tags:
+        - Attachments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ids
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  maxItems: 100
+                  example:
+                    - attach-uuid-1
+                    - attach-uuid-2
+                    - attach-uuid-3
+      responses:
+        '200':
+          description: Attachments retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Attachment'
+
+# ============================================================================
+# COMPONENTS
+# ============================================================================
+
+components:
+  # --------------------------------------------------------------------------
+  # SECURITY SCHEMES
+  # --------------------------------------------------------------------------
+  
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from authentication endpoint
+
+  # --------------------------------------------------------------------------
+  # PARAMETERS
+  # --------------------------------------------------------------------------
+  
+  parameters:
+    ObjectIdParam:
+      name: objectId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Object metadata UUID
+    
+    FieldIdParam:
+      name: fieldId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Field metadata UUID
+    
+    ObjectNameParam:
+      name: objectName
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z][a-zA-Z0-9]*$'
+      description: Object name (camelCase, e.g., "deal", "person")
+      example: deal
+    
+    RecordIdParam:
+      name: recordId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Record UUID
+    
+    AttachmentIdParam:
+      name: attachmentId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Attachment UUID
+
+  # --------------------------------------------------------------------------
+  # SCHEMAS
+  # --------------------------------------------------------------------------
+  
+  schemas:
+    # Field Metadata Schemas
+    
+    FieldMetadata:
+      type: object
+      required:
+        - id
+        - type
+        - name
+        - label
+        - isNullable
+        - isActive
+        - isCustom
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/FieldType'
+        name:
+          type: string
+          pattern: '^[a-z][a-zA-Z0-9]*$'
+        label:
+          type: string
+        description:
+          type: string
+          nullable: true
+        isNullable:
+          type: boolean
+        isActive:
+          type: boolean
+        isCustom:
+          type: boolean
+        defaultValue:
+          type: object
+          nullable: true
+        settings:
+          type: object
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    
+    FieldType:
+      type: string
+      enum:
+        - UUID
+        - TEXT
+        - NUMBER
+        - DATE
+        - DATE_TIME
+        - BOOLEAN
+        - SELECT
+        - MULTI_SELECT
+        - RELATION
+        - CURRENCY
+        - LINKS
+        - EMAILS
+        - PHONES
+        - ADDRESS
+        - FULL_NAME
+        - RATING
+        - RICH_TEXT
+        - RICH_TEXT_V2
+        - ACTOR
+        - ARRAY
+        - RAW_JSON
+        - PDF
+        - IMAGE
+    
+    CreateFieldRequest:
+      type: object
+      required:
+        - type
+        - name
+        - label
+      properties:
+        type:
+          $ref: '#/components/schemas/FieldType'
+        name:
+          type: string
+          pattern: '^[a-z][a-zA-Z0-9]*$'
+        label:
+          type: string
+        description:
+          type: string
+        isNullable:
+          type: boolean
+          default: true
+        defaultValue:
+          type: object
+          description: For PDF/IMAGE fields, use {"attachmentIds": []}
+    
+    UpdateFieldRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        isNullable:
+          type: boolean
+    
+    # Record Schemas
+    
+    Record:
+      type: object
+      required:
+        - id
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: true
+      description: |
+        Record schema is dynamic based on object fields.
+        PDF/IMAGE fields appear as objects with attachmentIds arrays.
+      example:
+        id: deal-uuid-1
+        name: Acme Corp Deal
+        contractDocuments:
+          attachmentIds:
+            - attach-uuid-1
+            - attach-uuid-2
+        productImages:
+          attachmentIds:
+            - attach-uuid-3
+        createdAt: '2025-10-06T10:00:00Z'
+        updatedAt: '2025-10-06T10:05:00Z'
+    
+    CreateRecordRequest:
+      type: object
+      additionalProperties: true
+      description: |
+        Request body is dynamic based on object fields.
+        For PDF/IMAGE fields, provide attachmentIds array.
+      example:
+        name: New Deal
+        contractDocuments:
+          attachmentIds:
+            - attach-uuid-1
+        productImages:
+          attachmentIds: []
+    
+    UpdateRecordRequest:
+      type: object
+      additionalProperties: true
+      description: |
+        Partial update request. Only provided fields are updated.
+        For PDF/IMAGE fields, the entire attachmentIds array replaces existing.
+      example:
+        contractDocuments:
+          attachmentIds:
+            - attach-uuid-1
+            - attach-uuid-2
+            - attach-uuid-3
+    
+    RecordsResponse:
+      type: object
+      required:
+        - data
+        - pageInfo
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Record'
+        pageInfo:
+          type: object
+          properties:
+            hasNextPage:
+              type: boolean
+            total:
+              type: integer
+    
+    # Attachment Schemas
+    
+    Attachment:
+      type: object
+      required:
+        - id
+        - name
+        - fullPath
+        - type
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Original filename
+        fullPath:
+          type: string
+          format: uri
+          description: Signed download URL
+        type:
+          type: string
+          description: MIME type
+          example: application/pdf
+        author:
+          $ref: '#/components/schemas/WorkspaceMember'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    
+    AttachmentUploadResponse:
+      type: object
+      required:
+        - id
+        - name
+        - fullPath
+        - type
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Attachment UUID to add to field's attachmentIds
+        name:
+          type: string
+        fullPath:
+          type: string
+          format: uri
+        type:
+          type: string
+    
+    WorkspaceMember:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    
+    # Error Schemas
+    
+    Error:
+      type: object
+      required:
+        - error
+        - message
+        - statusCode
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        statusCode:
+          type: integer
+        details:
+          type: object
+          additionalProperties: true
+
+  # --------------------------------------------------------------------------
+  # RESPONSES
+  # --------------------------------------------------------------------------
+  
+  responses:
+    BadRequest:
+      description: Bad request (validation error, invalid input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            maxAttachments:
+              summary: Exceeded 10 attachment limit
+              value:
+                error: ValidationError
+                message: PDF fields support maximum 10 attachments
+                statusCode: 400
+            invalidMimeType:
+              summary: Invalid file type
+              value:
+                error: ValidationError
+                message: Only PDF files are allowed for this field
+                statusCode: 400
+    
+    Unauthorized:
+      description: Unauthorized (missing or invalid token)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Forbidden:
+      description: Forbidden (insufficient permissions)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+# ============================================================================
+# TAGS
+# ============================================================================
+
+tags:
+  - name: Field Metadata
+    description: Admin operations for creating/managing PDF and IMAGE fields
+  - name: Records
+    description: CRUD operations on records with PDF/IMAGE fields
+  - name: Files
+    description: File upload operations for PDFs and images
+  - name: Attachments
+    description: Attachment metadata and deletion operations
+

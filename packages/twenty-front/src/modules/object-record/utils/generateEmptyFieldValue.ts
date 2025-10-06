@@ -123,6 +123,16 @@ export const generateEmptyFieldValue = ({
     case FieldMetadataType.TS_VECTOR: {
       return null;
     }
+    case FieldMetadataType.PDF: {
+      return {
+        attachmentIds: [],
+      };
+    }
+    case FieldMetadataType.IMAGE: {
+      return {
+        attachmentIds: [],
+      };
+    }
     default: {
       return assertUnreachable(
         fieldMetadataItem.type,

@@ -136,6 +136,12 @@ export const MultiItemFieldInput = <T,>({
         item = items[index] as string;
         setInputValue(item);
         break;
+      case FieldMetadataType.PDF:
+      case FieldMetadataType.IMAGE:
+        throw new CustomError(
+          `Field type ${fieldMetadataType} not yet implemented for MultiItemFieldInput`,
+          'NOT_YET_IMPLEMENTED',
+        );
       default:
         throw new CustomError(
           `Unsupported field type: ${fieldMetadataType}`,

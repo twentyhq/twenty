@@ -1,26 +1,26 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
-  type FieldMetadataType,
-  type NullablePartial,
+    type FieldMetadataType,
+    type NullablePartial,
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
 
 import {
-  type FieldMetadataDefaultValueForAnyType,
-  type FieldMetadataDefaultValueForType,
+    type FieldMetadataDefaultValueForAnyType,
+    type FieldMetadataDefaultValueForType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
-  type AllFieldMetadataSettings,
-  type FieldMetadataDateSettings,
-  type FieldMetadataDateTimeSettings,
-  type FieldMetadataNumberSettings,
-  type FieldMetadataRelationSettings,
-  type FieldMetadataTextSettings,
+    type AllFieldMetadataSettings,
+    type FieldMetadataDateSettings,
+    type FieldMetadataDateTimeSettings,
+    type FieldMetadataNumberSettings,
+    type FieldMetadataRelationSettings,
+    type FieldMetadataTextSettings,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
+    type FieldMetadataComplexOption,
+    type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -80,6 +80,10 @@ type EmailsFieldMetadata = FieldMetadataEntity<FieldMetadataType.EMAILS>;
 
 type LinksFieldMetadata = FieldMetadataEntity<FieldMetadataType.LINKS>;
 
+type PdfFieldMetadata = FieldMetadataEntity<FieldMetadataType.PDF>;
+
+type ImageFieldMetadata = FieldMetadataEntity<FieldMetadataType.IMAGE>;
+
 type RelationFieldMetadata = FieldMetadataEntity<FieldMetadataType.RELATION>;
 
 type MorphRelationFieldMetadata =
@@ -106,6 +110,8 @@ type RelationAssertions = [
   Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<EmailsFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<LinksFieldMetadata, NotDefinedRelationRecord>>,
+  Expect<HasAllProperties<PdfFieldMetadata, NotDefinedRelationRecord>>,
+  Expect<HasAllProperties<ImageFieldMetadata, NotDefinedRelationRecord>>,
 
   Expect<HasAllProperties<RelationFieldMetadata, DefinedRelationRecord>>,
   Expect<HasAllProperties<MorphRelationFieldMetadata, DefinedRelationRecord>>,
@@ -137,6 +143,8 @@ type SettingsAssertions = [
   Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<EmailsFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<LinksFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<PdfFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<ImageFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<BooleanFieldMetadata, NotDefinedSettings>>,
 
@@ -334,6 +342,22 @@ type DefaultValueAssertions = [
       }
     >
   >,
+  Expect<
+    HasAllProperties<
+      PdfFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.PDF>;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      ImageFieldMetadata,
+      {
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.IMAGE>;
+      }
+    >
+  >,
 
   Expect<
     HasAllProperties<RelationFieldMetadata, { defaultValue: never | null }>
@@ -388,6 +412,8 @@ type OptionsAssertions = [
   Expect<HasAllProperties<RichTextFieldMetadata, NotDefinedOptions>>,
   Expect<HasAllProperties<ActorFieldMetadata, NotDefinedOptions>>,
   Expect<HasAllProperties<ArrayFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<PdfFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<ImageFieldMetadata, NotDefinedOptions>>,
   Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedOptions>>,
   Expect<HasAllProperties<EmailsFieldMetadata, NotDefinedOptions>>,
   Expect<HasAllProperties<LinksFieldMetadata, NotDefinedOptions>>,

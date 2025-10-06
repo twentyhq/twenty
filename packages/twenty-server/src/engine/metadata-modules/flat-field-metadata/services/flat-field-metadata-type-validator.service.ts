@@ -166,6 +166,12 @@ export class FlatFieldMetadataTypeValidatorService {
       UUID: async (_args) => {
         return [];
       },
+      PDF: async (_args) => {
+        return [];
+      },
+      IMAGE: async (_args) => {
+        return [];
+      },
     };
 
   public async validateFlatFieldMetadataTypeSpecificities<

@@ -11,6 +11,8 @@ export const COMPOSITE_FIELD_TYPES = [
   'FULL_NAME',
   'ACTOR',
   'RICH_TEXT_V2',
+  'PDF',
+  'IMAGE',
 ] as const;
 
 type CompositeFieldTypeBaseLiteral = (typeof COMPOSITE_FIELD_TYPES)[number];

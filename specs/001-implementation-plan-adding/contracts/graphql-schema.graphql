@@ -1,0 +1,447 @@
+# GraphQL Schema Contract: PDF and Image Field Types
+# Auto-generated types expected from field metadata definitions
+# Date: 2025-10-06
+# Status: Contract Test Target (tests written before implementation)
+
+# ============================================================================
+# COMPOSITE FIELD TYPES
+# ============================================================================
+
+"""
+PDF field composite type.
+Stores references to PDF attachment entities.
+Maximum 10 attachments per field (enforced in business logic).
+"""
+type PdfField {
+  """Array of attachment UUIDs"""
+  attachmentIds: [UUID!]!
+}
+
+"""
+Image field composite type.
+Stores references to image attachment entities.
+Maximum 10 attachments per field (enforced in business logic).
+"""
+type ImageField {
+  """Array of attachment UUIDs"""
+  attachmentIds: [UUID!]!
+}
+
+# ============================================================================
+# INPUT TYPES (for mutations)
+# ============================================================================
+
+"""Input for creating/updating PDF fields"""
+input PdfFieldInput {
+  """Array of attachment UUIDs (max 10)"""
+  attachmentIds: [UUID!]!
+}
+
+"""Input for creating/updating Image fields"""
+input ImageFieldInput {
+  """Array of attachment UUIDs (max 10)"""
+  attachmentIds: [UUID!]!
+}
+
+# ============================================================================
+# FILTER TYPES (for queries)
+# ============================================================================
+
+"""Filter operations for PDF fields"""
+input PdfFieldFilterInput {
+  """Check if attachmentIds array is empty"""
+  isEmpty: Boolean
+  
+  """Check if attachmentIds array is not empty"""
+  isNotEmpty: Boolean
+  
+  """Check if specific attachment ID exists in array"""
+  contains: UUID
+}
+
+"""Filter operations for Image fields"""
+input ImageFieldFilterInput {
+  """Check if attachmentIds array is empty"""
+  isEmpty: Boolean
+  
+  """Check if attachmentIds array is not empty"""
+  isNotEmpty: Boolean
+  
+  """Check if specific attachment ID exists in array"""
+  contains: UUID
+}
+
+# ============================================================================
+# FILE UPLOAD MUTATIONS
+# ============================================================================
+
+"""Result of file upload operation"""
+type SignedFile {
+  """URL to access the uploaded file"""
+  path: String!
+  
+  """Signed URL with expiration"""
+  url: String!
+}
+
+extend type Mutation {
+  """
+  Upload a PDF file and create an attachment record.
+  Returns signed URL for the uploaded file.
+  """
+  uploadPdf(
+    """PDF file to upload"""
+    file: Upload!
+    
+    """Target workspace ID"""
+    workspaceId: UUID!
+  ): SignedFile!
+  
+  """
+  Upload an image file and create an attachment record.
+  Returns signed URL for the uploaded file.
+  """
+  uploadImage(
+    """Image file to upload (jpeg, png, gif, webp, svg)"""
+    file: Upload!
+    
+    """Target workspace ID"""
+    workspaceId: UUID!
+  ): SignedFile!
+}
+
+# ============================================================================
+# ATTACHMENT MANAGEMENT
+# ============================================================================
+
+"""Attachment entity (existing, extended for PDF/IMAGE fields)"""
+type Attachment {
+  """Unique identifier"""
+  id: UUID!
+  
+  """Original filename"""
+  name: String!
+  
+  """Storage path or signed URL"""
+  fullPath: String!
+  
+  """MIME type (e.g., application/pdf, image/png)"""
+  type: String!
+  
+  """Author who uploaded the file"""
+  author: WorkspaceMember
+  
+  """Upload timestamp"""
+  createdAt: DateTime!
+  
+  """Last modification timestamp"""
+  updatedAt: DateTime!
+}
+
+extend type Query {
+  """
+  Retrieve attachment by ID.
+  Used to resolve attachmentIds in PDF/IMAGE fields.
+  """
+  attachment(id: UUID!): Attachment
+  
+  """
+  Retrieve multiple attachments by IDs.
+  Optimized for batch loading PDF/IMAGE field attachments.
+  """
+  attachments(ids: [UUID!]!): [Attachment!]!
+}
+
+extend type Mutation {
+  """
+  Delete an attachment by ID.
+  Used when removing files from PDF/IMAGE fields.
+  Cascades to file storage deletion.
+  """
+  deleteAttachment(id: UUID!): Attachment!
+}
+
+# ============================================================================
+# EXAMPLE OBJECT WITH PDF/IMAGE FIELDS
+# ============================================================================
+
+"""
+Example: Deal object with PDF and Image fields.
+Schema auto-generated when workspace admin creates these fields.
+"""
+type Deal {
+  """Unique identifier"""
+  id: UUID!
+  
+  """Deal name"""
+  name: String!
+  
+  """PDF field: Contract documents (up to 10 PDFs)"""
+  contractDocuments: PdfField
+  
+  """Image field: Product images (up to 10 images)"""
+  productImages: ImageField
+  
+  """Standard timestamps"""
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Input for creating a Deal with PDF/IMAGE fields"""
+input DealCreateInput {
+  name: String!
+  contractDocuments: PdfFieldInput
+  productImages: ImageFieldInput
+}
+
+"""Input for updating a Deal's PDF/IMAGE fields"""
+input DealUpdateInput {
+  name: String
+  contractDocuments: PdfFieldInput
+  productImages: ImageFieldInput
+}
+
+"""Filter for querying Deals by PDF/IMAGE fields"""
+input DealFilterInput {
+  name: StringFilterInput
+  contractDocuments: PdfFieldFilterInput
+  productImages: ImageFieldFilterInput
+}
+
+extend type Query {
+  """Get a single Deal by ID"""
+  deal(id: UUID!): Deal
+  
+  """Query Deals with filtering, sorting, pagination"""
+  deals(
+    filter: DealFilterInput
+    orderBy: [DealOrderByInput!]
+    first: Int
+    after: String
+  ): DealConnection!
+}
+
+extend type Mutation {
+  """Create a new Deal with PDF/IMAGE fields"""
+  createDeal(data: DealCreateInput!): Deal!
+  
+  """Update an existing Deal's PDF/IMAGE fields"""
+  updateDeal(id: UUID!, data: DealUpdateInput!): Deal!
+  
+  """Delete a Deal (cascades to attachments if not shared)"""
+  deleteDeal(id: UUID!): Deal!
+}
+
+# ============================================================================
+# FIELD METADATA QUERIES (for admins creating fields)
+# ============================================================================
+
+"""Field metadata definition"""
+type FieldMetadata {
+  """Unique identifier"""
+  id: UUID!
+  
+  """Field type (includes PDF, IMAGE)"""
+  type: FieldMetadataType!
+  
+  """Field name (programmatic identifier)"""
+  name: String!
+  
+  """Display label"""
+  label: String!
+  
+  """Optional description"""
+  description: String
+  
+  """Whether field can be null"""
+  isNullable: Boolean!
+  
+  """Whether field is active"""
+  isActive: Boolean!
+  
+  """Whether field is custom (vs. standard)"""
+  isCustom: Boolean!
+  
+  """Default value (JSON)"""
+  defaultValue: JSON
+  
+  """Field-specific settings (JSON)"""
+  settings: JSON
+}
+
+"""Field metadata type enum (includes PDF and IMAGE)"""
+enum FieldMetadataType {
+  # Existing types
+  UUID
+  TEXT
+  NUMBER
+  DATE
+  DATE_TIME
+  BOOLEAN
+  SELECT
+  MULTI_SELECT
+  RELATION
+  CURRENCY
+  LINKS
+  EMAILS
+  PHONES
+  ADDRESS
+  FULL_NAME
+  RATING
+  RICH_TEXT
+  RICH_TEXT_V2
+  ACTOR
+  ARRAY
+  RAW_JSON
+  
+  # New types
+  PDF
+  IMAGE
+}
+
+"""Input for creating a PDF field"""
+input CreatePdfFieldInput {
+  """Object to add the field to"""
+  objectMetadataId: UUID!
+  
+  """Field type (must be PDF)"""
+  type: FieldMetadataType!
+  
+  """Field name (camelCase, unique within object)"""
+  name: String!
+  
+  """Display label"""
+  label: String!
+  
+  """Optional description"""
+  description: String
+  
+  """Whether field is nullable (default: true)"""
+  isNullable: Boolean
+  
+  """Default value (default: {"attachmentIds": []})"""
+  defaultValue: JSON
+}
+
+"""Input for creating an Image field"""
+input CreateImageFieldInput {
+  """Object to add the field to"""
+  objectMetadataId: UUID!
+  
+  """Field type (must be IMAGE)"""
+  type: FieldMetadataType!
+  
+  """Field name (camelCase, unique within object)"""
+  name: String!
+  
+  """Display label"""
+  label: String!
+  
+  """Optional description"""
+  description: String
+  
+  """Whether field is nullable (default: true)"""
+  isNullable: Boolean
+  
+  """Default value (default: {"attachmentIds": []})"""
+  defaultValue: JSON
+}
+
+extend type Mutation {
+  """Create a new PDF field on an object"""
+  createPdfField(data: CreatePdfFieldInput!): FieldMetadata!
+  
+  """Create a new Image field on an object"""
+  createImageField(data: CreateImageFieldInput!): FieldMetadata!
+  
+  """Update field metadata (name, label, description)"""
+  updateFieldMetadata(id: UUID!, data: UpdateFieldMetadataInput!): FieldMetadata!
+  
+  """Delete a field (cascades to data, attachments)"""
+  deleteFieldMetadata(id: UUID!): FieldMetadata!
+}
+
+# ============================================================================
+# WORKFLOW INTEGRATION
+# ============================================================================
+
+"""
+Workflow trigger payload when PDF/IMAGE field changes.
+Automatically includes the updated field values.
+"""
+type WorkflowTriggerPayload {
+  """Triggered object name"""
+  objectName: String!
+  
+  """Record ID that triggered the workflow"""
+  recordId: UUID!
+  
+  """Action that triggered (created, updated, deleted)"""
+  action: String!
+  
+  """Array of field names that changed (for update triggers)"""
+  updatedFields: [String!]
+  
+  """Full record data including PDF/IMAGE field values"""
+  record: JSON!
+}
+
+# ============================================================================
+# VALIDATION ERRORS
+# ============================================================================
+
+"""Custom error for field validation failures"""
+type FieldValidationError implements Error {
+  """Error message"""
+  message: String!
+  
+  """Field name that failed validation"""
+  fieldName: String!
+  
+  """Validation rule that failed"""
+  rule: String!
+}
+
+# ============================================================================
+# SUBSCRIPTION SUPPORT (for real-time updates)
+# ============================================================================
+
+extend type Subscription {
+  """
+  Subscribe to record changes for objects with PDF/IMAGE fields.
+  Fires when attachmentIds array changes.
+  """
+  onRecordUpdated(
+    """Object name to watch"""
+    objectName: String!
+    
+    """Optional: Specific record ID"""
+    recordId: UUID
+    
+    """Optional: Watch specific fields"""
+    fields: [String!]
+  ): Deal!
+}
+
+# ============================================================================
+# NOTES
+# ============================================================================
+
+# VALIDATION RULES (enforced in resolvers, not schema):
+# - Maximum 10 attachmentIds per PDF/IMAGE field
+# - PDF fields: Only application/pdf MIME type
+# - IMAGE fields: Only image/* MIME types (jpeg, png, gif, webp, svg+xml)
+# - Attachment deletion: Immediate when removed from field (never shared)
+
+# AUTO-GENERATION:
+# - Object types (Deal, etc.) generated from ObjectMetadata
+# - PdfField/ImageField types generated from composite type definitions
+# - Mutations/queries generated from field metadata
+# - All types cached in Redis, invalidated on schema changes
+
+# TESTING REQUIREMENTS:
+# - Contract tests must validate all types exist
+# - Contract tests must validate mutation/query signatures
+# - Contract tests must fail initially (no implementation yet)
+# - Integration tests validate end-to-end flows with real data
+

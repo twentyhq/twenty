@@ -7,13 +7,13 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.util';
 import {
-  computeDepthParameters,
-  computeEndingBeforeParameters,
-  computeFilterParameters,
-  computeIdPathParameter,
-  computeLimitParameters,
-  computeOrderByParameters,
-  computeStartingAfterParameters,
+    computeDepthParameters,
+    computeEndingBeforeParameters,
+    computeFilterParameters,
+    computeIdPathParameter,
+    computeLimitParameters,
+    computeOrderByParameters,
+    computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { convertObjectMetadataToSchemaProperties } from 'src/engine/utils/convert-object-metadata-to-schema-properties.util';
@@ -55,7 +55,9 @@ const getSchemaComponentsExample = (
       case FieldMetadataType.FULL_NAME:
       case FieldMetadataType.SELECT:
       case FieldMetadataType.MULTI_SELECT:
-      case FieldMetadataType.PHONES: {
+      case FieldMetadataType.PHONES:
+      case FieldMetadataType.PDF:
+      case FieldMetadataType.IMAGE: {
         return {
           ...node,
           [field.name]: generateRandomFieldValue({ field }),

@@ -18,12 +18,16 @@ import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldEmailsValue } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guards/isFieldFullNameValue';
+import { isFieldImage } from '@/object-record/record-field/ui/types/guards/isFieldImage';
+import { isFieldImageValue } from '@/object-record/record-field/ui/types/guards/isFieldImageValue';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldLinksValue } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelectValue';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
+import { isFieldPdf } from '@/object-record/record-field/ui/types/guards/isFieldPdf';
+import { isFieldPdfValue } from '@/object-record/record-field/ui/types/guards/isFieldPdfValue';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { isFieldPosition } from '@/object-record/record-field/ui/types/guards/isFieldPosition';
@@ -158,6 +162,22 @@ export const isFieldValueEmpty = ({
   if (isFieldRichTextV2(fieldDefinition)) {
     return (
       !isFieldRichTextV2Value(fieldValue) || isValueEmpty(fieldValue?.markdown)
+    );
+  }
+
+  if (isFieldPdf(fieldDefinition)) {
+    return (
+      !isFieldPdfValue(fieldValue) ||
+      !isDefined(fieldValue.attachmentIds) ||
+      fieldValue.attachmentIds.length === 0
+    );
+  }
+
+  if (isFieldImage(fieldDefinition)) {
+    return (
+      !isFieldImageValue(fieldValue) ||
+      !isDefined(fieldValue.attachmentIds) ||
+      fieldValue.attachmentIds.length === 0
     );
   }
 

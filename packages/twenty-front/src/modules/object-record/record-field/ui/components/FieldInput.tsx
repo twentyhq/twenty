@@ -10,8 +10,12 @@ import { PhonesFieldInput } from '@/object-record/record-field/ui/meta-types/inp
 import { RawJsonFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput';
 import { RelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationFromManyFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/SelectFieldInput';
+import { PdfFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/PdfFieldInput';
+import { ImageFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/ImageFieldInput';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/types/guards/isFieldRelationFromManyObjects';
+import { isFieldPdf } from '@/object-record/record-field/ui/types/guards/isFieldPdf';
+import { isFieldImage } from '@/object-record/record-field/ui/types/guards/isFieldImage';
 
 import { ArrayFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldInput';
 import { MorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MorphRelationOneToManyFieldInput';
@@ -88,6 +92,10 @@ export const FieldInput = () => {
         <ArrayFieldInput />
       ) : isFieldRichTextV2(fieldDefinition) ? (
         <RichTextFieldInput />
+      ) : isFieldPdf(fieldDefinition) ? (
+        <PdfFieldInput />
+      ) : isFieldImage(fieldDefinition) ? (
+        <ImageFieldInput />
       ) : (
         <></>
       )}

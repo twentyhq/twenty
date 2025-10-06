@@ -63,6 +63,14 @@ export const getOrderByForFieldMetadataType = (
           } satisfies { [key in keyof FieldPhonesValue]?: OrderBy },
         },
       ];
+    case FieldMetadataType.PDF:
+    case FieldMetadataType.IMAGE:
+      // No stable subfield to order on; fallback to raw field (no-op on server)
+      return [
+        {
+          [field.name]: direction ?? 'AscNullsLast',
+        },
+      ];
     default:
       return [
         {

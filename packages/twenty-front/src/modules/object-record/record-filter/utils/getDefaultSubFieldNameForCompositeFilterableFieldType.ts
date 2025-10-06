@@ -28,6 +28,10 @@ export const getDefaultSubFieldNameForCompositeFilterableFieldType = (
       return 'name';
     case 'FULL_NAME':
       return undefined;
+    case 'PDF':
+      return undefined;
+    case 'IMAGE':
+      return undefined;
     default:
       assertUnreachable(compositeFieldType);
   }

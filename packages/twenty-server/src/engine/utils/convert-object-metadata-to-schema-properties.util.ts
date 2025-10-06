@@ -2,8 +2,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type FieldMetadataSettings,
-  NumberDataType,
+    type FieldMetadataSettings,
+    NumberDataType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -325,6 +325,32 @@ export const convertObjectMetadataToSchemaProperties = ({
             },
             markdown: {
               type: 'string',
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.PDF:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            attachmentIds: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.IMAGE:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            attachmentIds: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
             },
           },
         };

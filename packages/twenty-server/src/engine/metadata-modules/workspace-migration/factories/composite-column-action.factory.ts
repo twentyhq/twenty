@@ -27,7 +27,9 @@ export type CompositeFieldMetadataType =
   | FieldMetadataType.LINKS
   | FieldMetadataType.EMAILS
   | FieldMetadataType.PHONES
-  | FieldMetadataType.RICH_TEXT_V2;
+  | FieldMetadataType.RICH_TEXT_V2
+  | FieldMetadataType.PDF
+  | FieldMetadataType.IMAGE;
 
 @Injectable()
 export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<CompositeFieldMetadataType> {

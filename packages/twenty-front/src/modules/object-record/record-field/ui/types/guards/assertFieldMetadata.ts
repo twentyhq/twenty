@@ -28,6 +28,8 @@ import {
   type FieldSelectMetadata,
   type FieldTextMetadata,
   type FieldUuidMetadata,
+  type FieldPdfMetadata,
+  type FieldImageMetadata,
 } from '../FieldMetadata';
 
 type AssertFieldMetadataFunction = <
@@ -82,7 +84,11 @@ type AssertFieldMetadataFunction = <
                                                   ? FieldArrayMetadata
                                                   : E extends 'PHONES'
                                                     ? FieldPhonesMetadata
-                                                    : never,
+                                                    : E extends 'PDF'
+                                                      ? FieldPdfMetadata
+                                                      : E extends 'IMAGE'
+                                                        ? FieldImageMetadata
+                                                        : never,
 >(
   fieldType: E,
   fieldTypeGuard: (
