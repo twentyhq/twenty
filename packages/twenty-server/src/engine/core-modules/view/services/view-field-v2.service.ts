@@ -41,7 +41,7 @@ export class ViewFieldV2Service {
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
-        flatEntities: [
+        flatMapsKeys: [
           'flatViewFieldMaps',
           'flatViewMaps',
           'flatFieldMetadataMaps',
@@ -92,7 +92,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps'],
         },
       );
 
@@ -113,7 +113,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps'],
         },
       );
 
@@ -160,7 +160,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps'],
         },
       );
 
@@ -181,7 +181,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps'],
         },
       );
 
@@ -224,7 +224,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps'],
         },
       );
 
@@ -248,7 +248,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps', 'flatViewMaps'],
+          flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
         },
       );
 

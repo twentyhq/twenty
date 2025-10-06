@@ -402,7 +402,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
-        flatEntities: ['flatFieldMetadataMaps'],
+        flatMapsKeys: ['flatFieldMetadataMaps'],
       });
 
       return updatedFieldMetadata;
@@ -590,7 +590,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
-        flatEntities: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
       });
 
       return fieldMetadata;
@@ -786,7 +786,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
-        flatEntities: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
       });
 
       return createdFieldMetadatas;

@@ -98,6 +98,14 @@ export class WorkspacePermissionsCacheStorageService {
     );
   }
 
+  getUserWorkspaceRoleMapVersion(
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    return this.cacheStorageService.get<string>(
+      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapVersion}:${workspaceId}`,
+    );
+  }
+
   removeUserWorkspaceRoleMap(workspaceId: string) {
     return this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMap}:${workspaceId}`,
@@ -123,6 +131,14 @@ export class WorkspacePermissionsCacheStorageService {
   ): Promise<Record<string, string> | undefined> {
     return this.cacheStorageService.get<Record<string, string>>(
       `${WorkspaceCacheKeys.MetadataPermissionsApiKeyRoleMap}:${workspaceId}`,
+    );
+  }
+
+  async getApiKeyRoleMapVersion(
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    return this.cacheStorageService.get<string>(
+      `${WorkspaceCacheKeys.MetadataPermissionsApiKeyRoleMapVersion}:${workspaceId}`,
     );
   }
 

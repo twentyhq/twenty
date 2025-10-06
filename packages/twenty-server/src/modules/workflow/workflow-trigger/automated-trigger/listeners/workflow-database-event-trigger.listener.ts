@@ -16,6 +16,8 @@ import { type ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emit
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
@@ -134,11 +136,17 @@ export class WorkflowDatabaseEventTriggerListener {
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
     const workspaceId = payload.workspaceId;
+    const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        payload.events[0].objectMetadata.nameSingular,
+        workspaceId,
+      );
 
     await this.enrichRecordsWithRelations({
       records: payload.events.map((event) => event.properties.after),
-      objectMetadataNameSingular: payload.events[0].objectMetadata.nameSingular,
       workspaceId,
+      objectMetadataMaps,
+      objectMetadataItemWithFieldsMaps,
     });
   }
 
@@ -146,16 +154,23 @@ export class WorkflowDatabaseEventTriggerListener {
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
   ) {
     const workspaceId = payload.workspaceId;
+    const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        payload.events[0].objectMetadata.nameSingular,
+        workspaceId,
+      );
 
     await this.enrichRecordsWithRelations({
       records: payload.events.map((event) => event.properties.before),
-      objectMetadataNameSingular: payload.events[0].objectMetadata.nameSingular,
       workspaceId,
+      objectMetadataMaps,
+      objectMetadataItemWithFieldsMaps,
     });
     await this.enrichRecordsWithRelations({
       records: payload.events.map((event) => event.properties.after),
-      objectMetadataNameSingular: payload.events[0].objectMetadata.nameSingular,
       workspaceId,
+      objectMetadataMaps,
+      objectMetadataItemWithFieldsMaps,
     });
   }
 
@@ -163,11 +178,17 @@ export class WorkflowDatabaseEventTriggerListener {
     payload: WorkspaceEventBatch<ObjectRecordDeleteEvent>,
   ) {
     const workspaceId = payload.workspaceId;
+    const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        payload.events[0].objectMetadata.nameSingular,
+        workspaceId,
+      );
 
     await this.enrichRecordsWithRelations({
       records: payload.events.map((event) => event.properties.before),
-      objectMetadataNameSingular: payload.events[0].objectMetadata.nameSingular,
       workspaceId,
+      objectMetadataMaps,
+      objectMetadataItemWithFieldsMaps,
     });
   }
 
@@ -175,29 +196,31 @@ export class WorkflowDatabaseEventTriggerListener {
     payload: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
   ) {
     const workspaceId = payload.workspaceId;
+    const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        payload.events[0].objectMetadata.nameSingular,
+        workspaceId,
+      );
 
     await this.enrichRecordsWithRelations({
       records: payload.events.map((event) => event.properties.before),
-      objectMetadataNameSingular: payload.events[0].objectMetadata.nameSingular,
+      objectMetadataMaps,
       workspaceId,
+      objectMetadataItemWithFieldsMaps,
     });
   }
 
   private async enrichRecordsWithRelations({
     records,
-    objectMetadataNameSingular,
     workspaceId,
+    objectMetadataMaps,
+    objectMetadataItemWithFieldsMaps,
   }: {
     records: Partial<ObjectRecord>[];
-    objectMetadataNameSingular: string;
     workspaceId: string;
+    objectMetadataMaps: ObjectMetadataMaps;
+    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
   }) {
-    const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        objectMetadataNameSingular,
-        workspaceId,
-      );
-
     for (const [joinColumnName, joinFieldId] of Object.entries(
       objectMetadataItemWithFieldsMaps.fieldIdByJoinColumnName,
     )) {

@@ -72,7 +72,7 @@ export class FieldMetadataServiceV2 {
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
-        flatEntities: [
+        flatMapsKeys: [
           'flatObjectMetadataMaps',
           'flatIndexMaps',
           'flatFieldMetadataMaps',
@@ -180,7 +180,7 @@ export class FieldMetadataServiceV2 {
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
-        flatEntities: [
+        flatMapsKeys: [
           'flatObjectMetadataMaps',
           'flatIndexMaps',
           'flatFieldMetadataMaps',
@@ -288,7 +288,7 @@ export class FieldMetadataServiceV2 {
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
-        flatEntities: [
+        flatMapsKeys: [
           'flatObjectMetadataMaps',
           'flatIndexMaps',
           'flatFieldMetadataMaps',
