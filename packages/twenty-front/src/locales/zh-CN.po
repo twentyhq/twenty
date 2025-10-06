@@ -6665,6 +6665,11 @@ msgstr "从上一步选择一个字段"
 msgid "Select a target agent"
 msgstr "选择目标代理"
 
+#. js-lingui-id: jL3gox
+#: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
+msgid "Select a value"
+msgstr ""
+
 #. js-lingui-id: YcJS1T
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx

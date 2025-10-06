@@ -70,7 +70,6 @@ export type Agent = {
 export type AgentChatMessage = {
   __typename?: 'AgentChatMessage';
   createdAt: Scalars['DateTime'];
-  files: Array<File>;
   id: Scalars['UUID'];
   parts: Array<AgentChatMessagePart>;
   role: Scalars['String'];
@@ -1196,7 +1195,6 @@ export enum FeatureFlagKey {
   IS_CALENDAR_VIEW_ENABLED = 'IS_CALENDAR_VIEW_ENABLED',
   IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
-  IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
   IS_DYNAMIC_SEARCH_FIELDS_ENABLED = 'IS_DYNAMIC_SEARCH_FIELDS_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
   IS_GROUP_BY_ENABLED = 'IS_GROUP_BY_ENABLED',
@@ -1317,7 +1315,6 @@ export type File = {
   createdAt: Scalars['DateTime'];
   fullPath: Scalars['String'];
   id: Scalars['UUID'];
-  messageId?: Maybe<Scalars['UUID']>;
   name: Scalars['String'];
   size: Scalars['Float'];
   type: Scalars['String'];
@@ -1696,6 +1693,7 @@ export type Mutation = {
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
+  deleteApplication: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCoreView: Scalars['Boolean'];
   deleteCoreViewField: CoreViewField;
@@ -2056,6 +2054,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteApplicationArgs = {
+  packageJson: Scalars['JSON'];
 };
 
 
@@ -4674,7 +4677,7 @@ export type GetAgentChatMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentChatMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }>, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
+export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentChatMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }> }> };
 
 export type GetAgentChatThreadsQueryVariables = Exact<{
   agentId: Scalars['UUID'];
@@ -6961,14 +6964,6 @@ export const GetAgentChatMessagesDocument = gql`
       fileFilename
       fileUrl
       providerMetadata
-      createdAt
-    }
-    files {
-      id
-      name
-      fullPath
-      size
-      type
       createdAt
     }
   }

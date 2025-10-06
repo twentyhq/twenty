@@ -4,6 +4,7 @@ import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-action
 import { NoSelectionWorkflowRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/workflow-actions/types/NoSelectionWorkflowRecordActionKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/ActivateWorkflowSingleRecordAction';
+import { AddNodeWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/AddNodeWorkflowSingleRecordAction';
 import { DeactivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DeactivateWorkflowSingleRecordAction';
 import { DiscardDraftWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DiscardDraftWorkflowSingleRecordAction';
 import { SeeActiveVersionWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeActiveVersionWorkflowSingleRecordAction';
@@ -30,6 +31,7 @@ import {
   IconNoteOff,
   IconPlayerPause,
   IconPlayerPlay,
+  IconPlus,
   IconPower,
   IconReorder,
   IconVersions,
@@ -194,12 +196,27 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       ],
       component: <TestWorkflowSingleRecordAction />,
     },
+    [WorkflowSingleRecordActionKeys.ADD_NODE]: {
+      key: WorkflowSingleRecordActionKeys.ADD_NODE,
+      label: msg`Add a node`,
+      shortLabel: msg`Add a node`,
+      isPinned: false,
+      position: 8,
+      Icon: IconPlus,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
+        areWorkflowTriggerAndStepsDefined(workflowWithCurrentVersion) &&
+        !isDefined(selectedRecord?.deletedAt),
+      availableOn: [ActionViewType.SHOW_PAGE],
+      component: <AddNodeWorkflowSingleRecordAction />,
+    },
     [WorkflowSingleRecordActionKeys.TIDY_UP]: {
       key: WorkflowSingleRecordActionKeys.TIDY_UP,
       label: msg`Tidy up workflow`,
       shortLabel: msg`Tidy up workflow`,
       isPinned: false,
-      position: 8,
+      position: 9,
       Icon: IconReorder,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
