@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
-  FieldMetadataType,
   PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
 } from 'twenty-shared/types';
@@ -12,7 +11,6 @@ import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
-  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -23,17 +21,16 @@ import {
 import {
   ObjectRecord,
   ObjectRecordFilter,
-  ObjectRecordGroupByDateBucket,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
+import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
+import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
+import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
@@ -41,16 +38,8 @@ import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/vi
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
-
-type GroupByField = {
-  fieldMetadata: FieldMetadataEntity;
-  subFieldName?: string;
-  dateBucket?: ObjectRecordGroupByDateBucket;
-};
-
 @Injectable()
 export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolverService<
   GroupByResolverArgs,
@@ -106,7 +95,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       objectMetadataNameSingular,
     });
 
-    const groupByFields = this.parseGroupByArgs(
+    const groupByFields = parseGroupByArgs(
       executionArgs.args,
       objectMetadataItemWithFieldMaps,
     );
@@ -121,7 +110,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
 
       return {
         columnNameWithQuotes,
-        expression: this.getGroupByExpression({
+        expression: getGroupByExpression({
           groupByField,
           columnNameWithQuotes,
         }),
@@ -131,7 +120,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     groupByExpressions.forEach((groupByColumn, index) => {
       queryBuilder.addSelect(
         groupByColumn.expression,
-        this.removeQuotes(groupByColumn.columnNameWithQuotes),
+        removeQuotes(groupByColumn.columnNameWithQuotes),
       );
 
       if (index === 0) {
@@ -154,112 +143,12 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
 
     const result = await queryBuilder.getRawMany();
 
-    return this.formatResultWithGroupByDimensionValues(
+    return formatResultWithGroupByDimensionValues(
       result,
       groupByExpressions.map(
         (groupByColumn) => groupByColumn.columnNameWithQuotes,
       ),
     );
-  }
-
-  private formatResultWithGroupByDimensionValues(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    result: any[],
-    groupByColumnsWithQuotes: string[],
-  ): IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] {
-    let formattedResult: IGroupByConnection<
-      ObjectRecord,
-      IEdge<ObjectRecord>
-    >[] = [];
-
-    result.forEach((group) => {
-      let dimensionValues = [];
-
-      for (const groupByColumn of groupByColumnsWithQuotes) {
-        const groupByColumnWithoutQuotes = this.removeQuotes(groupByColumn);
-
-        dimensionValues.push(group[groupByColumnWithoutQuotes]);
-      }
-      formattedResult.push({
-        groupByDimensionValues: dimensionValues,
-        ...group,
-      });
-    });
-
-    return formattedResult;
-  }
-
-  private parseGroupByArgs(
-    args: GroupByResolverArgs,
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-  ): GroupByField[] {
-    const groupByFieldNames = args.groupBy;
-
-    const groupByFields: GroupByField[] = [];
-
-    for (const fieldNames of groupByFieldNames) {
-      if (Object.keys(fieldNames).length > 1) {
-        throw new GraphqlQueryRunnerException(
-          'You cannot provide multiple fields in one GroupByInput, split them into multiple GroupByInput',
-          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        );
-      }
-      for (const fieldName of Object.keys(fieldNames)) {
-        const fieldMetadataId =
-          objectMetadataItemWithFieldMaps.fieldIdByName[fieldName];
-        const fieldMetadata =
-          objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
-
-        if (
-          fieldMetadata.type === FieldMetadataType.DATE ||
-          fieldMetadata.type === FieldMetadataType.DATE_TIME
-        ) {
-          const fieldGroupByDefinition = fieldNames[fieldName];
-
-          const shouldGroupByDateBucket = this.shouldGroupByDateBucket(
-            fieldGroupByDefinition,
-          );
-
-          if (shouldGroupByDateBucket) {
-            groupByFields.push({
-              fieldMetadata,
-              dateBucket: fieldGroupByDefinition.bucket,
-            });
-            continue;
-          }
-        }
-
-        if (fieldNames[fieldName] === true) {
-          groupByFields.push({
-            fieldMetadata,
-            subFieldName: undefined,
-          });
-          continue;
-        } else if (typeof fieldNames[fieldName] === 'object') {
-          if (Object.keys(fieldNames[fieldName]).length > 1) {
-            throw new GraphqlQueryRunnerException(
-              'You cannot provide multiple subfields in one GroupByInput, split them into multiple GroupByInput',
-              GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-            );
-          }
-          for (const subFieldName of Object.keys(fieldNames[fieldName])) {
-            if (
-              (fieldNames[fieldName] as Record<string, boolean>)[
-                subFieldName
-              ] === true
-            ) {
-              groupByFields.push({
-                fieldMetadata,
-                subFieldName,
-              });
-              continue;
-            }
-          }
-        }
-      }
-    }
-
-    return groupByFields;
   }
 
   private async addFiltersFromView({
@@ -351,64 +240,6 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     ]);
 
     return appliedFilters;
-  }
-
-  private removeQuotes(string: string): string {
-    return string.replace(/["']/g, '');
-  }
-
-  private getGroupByExpression = ({
-    groupByField,
-    columnNameWithQuotes,
-  }: {
-    groupByField: GroupByField;
-    columnNameWithQuotes: string;
-  }) => {
-    if (isDefined(groupByField.dateBucket)) {
-      if (
-        groupByField.dateBucket ===
-        ObjectRecordGroupByDateBucket.DAY_OF_THE_WEEK
-      ) {
-        return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'TMDay'))`;
-      }
-
-      if (
-        groupByField.dateBucket ===
-        ObjectRecordGroupByDateBucket.MONTH_OF_THE_YEAR
-      ) {
-        return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'TMMonth'))`;
-      }
-
-      if (
-        groupByField.dateBucket ===
-        ObjectRecordGroupByDateBucket.QUARTER_OF_THE_YEAR
-      ) {
-        return `TO_CHAR(${columnNameWithQuotes}, '"Q"Q')`;
-      }
-
-      return `DATE_TRUNC('${groupByField.dateBucket}', ${columnNameWithQuotes})`;
-    }
-
-    return columnNameWithQuotes;
-  };
-
-  private isBoolean(value: unknown): value is boolean {
-    return typeof value === 'boolean';
-  }
-
-  private shouldGroupByDateBucket(
-    fieldGroupByDefinition:
-      | boolean
-      | Record<string, boolean>
-      | { bucket: ObjectRecordGroupByDateBucket }
-      | undefined,
-  ): fieldGroupByDefinition is { bucket: ObjectRecordGroupByDateBucket } {
-    return (
-      typeof fieldGroupByDefinition === 'object' &&
-      'bucket' in fieldGroupByDefinition &&
-      isDefined(fieldGroupByDefinition.bucket) &&
-      !this.isBoolean(fieldGroupByDefinition.bucket)
-    );
   }
 
   async validate(
