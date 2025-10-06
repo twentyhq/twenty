@@ -4,11 +4,11 @@ on:
     types:
       - closed
 
-jobs:
-  defaults:
-    run:
-      shell: bash --noprofile --norc -euo pipefail {0}
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
 
+jobs:
   tag_and_release:
     timeout-minutes: 10
     runs-on: ubuntu-latest

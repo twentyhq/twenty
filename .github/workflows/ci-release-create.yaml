@@ -13,11 +13,11 @@ on:
         default: true
         description: Create a release after merging the PR
 
-jobs:
-  defaults:
-    run:
-      shell: bash --noprofile --norc -euo pipefail {0}
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
 
+jobs:
   create_pr:
     timeout-minutes: 10
     runs-on: ubuntu-latest
