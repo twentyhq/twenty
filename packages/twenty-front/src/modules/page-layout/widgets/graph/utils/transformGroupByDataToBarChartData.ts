@@ -8,7 +8,7 @@ import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widg
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToBarChartData';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
-import { getGroupByQueryName } from '../../../utils/getGroupByQueryName';
+import { getGroupByQueryName } from './getGroupByQueryName';
 
 type TransformGroupByDataToBarChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;

@@ -1,8 +1,8 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
-import { generateGroupByQuery } from '@/page-layout/utils/generateGroupByQuery';
-import { generateGroupByQueryVariablesFromBarChartConfiguration } from '@/page-layout/utils/generateGroupByQueryVariablesFromBarChartConfiguration';
+import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
+import { generateGroupByQueryVariablesFromBarChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromBarChartConfiguration';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
