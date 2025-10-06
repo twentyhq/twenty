@@ -90,16 +90,16 @@ msgstr "[空字符串]"
 
 #. js-lingui-id: m6BGdm
 #. placeholder {0}: Math.abs(days)
-#. placeholder {1}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
-#. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#. placeholder {1}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { CustomError, isDefined } from 'twenty-shared/utils'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { CustomError, isDefined } from 'twenty-shared/utils'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} {1}} other {{days} {2}}}"
 msgstr "{0, plural, other {{天数} {2}}}"
 
 #. js-lingui-id: FYY5cK
 #. placeholder {0}: Math.abs(years)
-#. placeholder {1}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
-#. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#. placeholder {1}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { CustomError, isDefined } from 'twenty-shared/utils'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { CustomError, isDefined } from 'twenty-shared/utils'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} {1}} other {{years} {2}}}"
 msgstr "{0, plural, other {{年数} {2}}}"
@@ -143,6 +143,11 @@ msgstr "{roleLabel} 不能 {humanReadableAction} {objectLabel} 记录"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName}将被分配到“{newRoleName}”角色。"
+
+#. js-lingui-id: riMLMq
+#: src/modules/workflow/workflow-steps/components/WorkflowIteratorSubStepSwitcher.tsx
+msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
+msgstr ""
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -372,6 +377,12 @@ msgstr "活跃"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "由您或您的团队创建的活跃 API 密钥。"
+
+#. js-lingui-id: m3/V2n
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Add a node"
+msgstr ""
 
 #. js-lingui-id: KKfos4
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
@@ -912,6 +923,9 @@ msgstr "确定吗？您当前的信息将不会被保存。"
 #. js-lingui-id: nYD/Cq
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
 msgid "Ascending"
 msgstr "升序"
 
@@ -1112,6 +1126,16 @@ msgstr "可用性"
 msgid "Average"
 msgstr "平均"
 
+#. js-lingui-id: li9In6
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Axis name"
+msgstr ""
+
+#. js-lingui-id: yzbH0K
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAxisNameSelectionDropdownContent.tsx
+msgid "Axis Name"
+msgstr ""
+
 #. js-lingui-id: iH8pgl
 #: src/pages/onboarding/BookCall.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
@@ -1123,6 +1147,11 @@ msgstr "返回"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "返回内容"
+
+#. js-lingui-id: LiFJll
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Bar Chart"
+msgstr ""
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -1180,6 +1209,11 @@ msgstr "预订您的入职"
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Boolean"
 msgstr "布尔值"
+
+#. js-lingui-id: njBeMm
+#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+msgid "Both"
+msgstr ""
 
 #. js-lingui-id: qDsMss
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -1404,6 +1438,12 @@ msgstr "更改为年度计划吗？"
 msgid "Changelog"
 msgstr "更新日志"
 
+#. js-lingui-id: nuBbBr
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
+msgid "Chart"
+msgstr ""
+
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
@@ -1547,10 +1587,20 @@ msgstr "代码编辑器"
 msgid "Collapse"
 msgstr "折叠"
 
+#. js-lingui-id: jZlrte
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
+msgid "Color"
+msgstr ""
+
 #. js-lingui-id: Xose0w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
 msgstr "颜色代码"
+
+#. js-lingui-id: 1HfW/F
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Colors"
+msgstr ""
 
 #. js-lingui-id: P8gRog
 #: src/modules/spreadsheet-import/utils/setColumn.ts
@@ -1635,6 +1685,11 @@ msgstr "配置我们应如何在您的日历中展示您的事件"
 #. js-lingui-id: EZzl/g
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Configure iFrame"
+msgstr ""
+
+#. js-lingui-id: 3La0aM
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
+msgid "Configure iFrame Widget"
 msgstr ""
 
 #. js-lingui-id: jbuOOX
@@ -1776,11 +1831,6 @@ msgstr "继续使用 Google"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithMicrosoft.tsx
 msgid "Continue with Microsoft"
 msgstr "继续使用 Microsoft"
-
-#. js-lingui-id: XgMEX4
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Control which folders are synced"
-msgstr "控制同步哪些文件夹"
 
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
@@ -2160,6 +2210,11 @@ msgstr "数据"
 msgid "Data deletion"
 msgstr "数据删除"
 
+#. js-lingui-id: xpZXLn
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Data labels"
+msgstr ""
+
 #. js-lingui-id: 5cNMFz
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2175,6 +2230,13 @@ msgstr "数据模型"
 #: src/utils/title-utils.ts
 msgid "Data model - Settings"
 msgstr "数据模型 - 设置"
+
+#. js-lingui-id: fM466x
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Data on display"
+msgstr ""
 
 #. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -2480,6 +2542,9 @@ msgstr "删除此方法将永久从您的账户中移除。"
 #. js-lingui-id: Cko536
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
 msgid "Descending"
 msgstr "降序"
 
@@ -2670,10 +2735,20 @@ msgstr "荷兰语"
 msgid "E.g. backoffice integration"
 msgstr "例如后台集成"
 
+#. js-lingui-id: BtKcxf
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
+msgid "e.g., Analytics Dashboard"
+msgstr ""
+
 #. js-lingui-id: GhTFTJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "e.g., summary, status, count"
 msgstr "例如：总结、状态、计数"
+
+#. js-lingui-id: 79hamt
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Each slice represents"
+msgstr ""
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -2738,9 +2813,19 @@ msgstr "编辑字段值"
 msgid "Edit Fields"
 msgstr "编辑字段"
 
+#. js-lingui-id: JTcEch
+#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
+msgid "Edit Graph"
+msgstr ""
+
 #. js-lingui-id: WXPnsc
 #: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 msgid "Edit iFrame"
+msgstr ""
+
+#. js-lingui-id: mY8UAQ
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
+msgid "Edit iFrame Widget"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
@@ -2865,6 +2950,11 @@ msgstr ""
 msgid "Emails"
 msgstr "电子邮件"
 
+#. js-lingui-id: Ft+sR1
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
+msgstr ""
+
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Emails settings"
@@ -2912,6 +3002,11 @@ msgstr ""
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "空对象"
+
+#. js-lingui-id: gZo0V9
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Enable model-specific features"
+msgstr ""
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -3201,6 +3296,7 @@ msgstr ""
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Everything"
@@ -3397,11 +3493,6 @@ msgstr "创建交接失败"
 msgid "Failed to load webhook"
 msgstr "无法加载webhook"
 
-#. js-lingui-id: XMjWWv
-#: src/modules/ai/components/internal/AgentChatContextPreview.tsx
-msgid "Failed to remove file"
-msgstr "未能移除文件"
-
 #. js-lingui-id: 99t8X7
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Failed to remove handoff"
@@ -3452,6 +3543,12 @@ msgstr "功能标志"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Feature Flags & Impersonation"
 msgstr "功能标志与假装"
+
+#. js-lingui-id: AXjA78
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
+msgid "Field"
+msgstr ""
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -3510,6 +3607,7 @@ msgstr "第五"
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Filter"
 msgstr "过滤"
 
@@ -3576,15 +3674,10 @@ msgstr "名字"
 msgid "Flow"
 msgstr ""
 
-#. js-lingui-id: kNqMMd
-#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
-msgid "Folder"
-msgstr "文件夹"
-
-#. js-lingui-id: NRJn87
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Folder Management"
-msgstr "文件夹管理"
+#. js-lingui-id: HSh8u/
+#: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
+msgid "Folders"
+msgstr ""
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
@@ -3646,6 +3739,11 @@ msgstr "功能"
 #: src/utils/title-utils.ts
 msgid "Functions - Settings"
 msgstr "功能 - 设置"
+
+#. js-lingui-id: vYj1cC
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Gauge Chart"
+msgstr ""
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -3781,6 +3879,7 @@ msgstr "分组"
 #. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Group by"
 msgstr "分组依据"
 
@@ -3932,6 +4031,11 @@ msgstr "如果这出乎预料，请核对您的设置。"
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "如果您丢失了此密钥，可以重新生成，但请注意，任何使用此密钥的脚本都需要更新。请键入\"{confirmationValue}\"确认。"
 
+#. js-lingui-id: YdCuhS
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "IframeConfiguration is not supported"
+msgstr ""
+
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Configuration"
@@ -3974,15 +4078,31 @@ msgstr "假装"
 msgid "Impersonate workspace users"
 msgstr ""
 
+#. js-lingui-id: yImXof
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Impersonation is disabled for this workspace"
+msgstr ""
+
 #. js-lingui-id: l3s5ri
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import"
 msgstr "导入"
+
+#. js-lingui-id: sqOGcv
+#: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
+msgid "Import all emails"
+msgstr ""
 
 #. js-lingui-id: 2CeOI3
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Import CSV"
 msgstr "导入CSV"
+
+#. js-lingui-id: D5QSQM
+#: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
+msgid "Import only selected folders/labels"
+msgstr ""
 
 #. js-lingui-id: eECp4f
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4487,6 +4607,11 @@ msgstr "小于或等于"
 msgid "Light"
 msgstr "浅色"
 
+#. js-lingui-id: pFkLY3
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Line Chart"
+msgstr ""
+
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
@@ -4531,6 +4656,11 @@ msgstr "加载中……"
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
 msgstr "退出登录"
+
+#. js-lingui-id: hykMbH
+#: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
+msgid "Logged in as {impersonatedUser}"
+msgstr ""
 
 #. js-lingui-id: VLuNNu
 #: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
@@ -5035,6 +5165,11 @@ msgstr "没有可用的代理进行交接"
 msgid "No agents match your search"
 msgstr "没有与您的搜索匹配的代理"
 
+#. js-lingui-id: B85wFV
+#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
+msgid "No AI Agent found."
+msgstr ""
+
 #. js-lingui-id: 9mx36q
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "No API keys assigned"
@@ -5243,10 +5378,12 @@ msgid "No workflow versions yet"
 msgstr "尚无工作流版本"
 
 #. js-lingui-id: EdQY6l
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 msgid "None"
 msgstr "无"
 
@@ -5314,6 +5451,11 @@ msgstr "现在"
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
 msgstr "数字"
+
+#. js-lingui-id: oVhZzL
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Number Chart"
+msgstr ""
 
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -5683,6 +5825,11 @@ msgstr ""
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Picture"
 msgstr "图片"
+
+#. js-lingui-id: 3ubdv5
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Pie Chart"
+msgstr ""
 
 #. js-lingui-id: GdgCoi
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -6314,6 +6461,11 @@ msgstr "搜索任意字段"
 msgid "Search API keys"
 msgstr "搜索 API 密钥"
 
+#. js-lingui-id: yI4D/V
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
+msgid "Search colors"
+msgstr ""
+
 #. js-lingui-id: 3UPqHL
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableSearchInput.tsx
 msgid "Search config variables"
@@ -6336,8 +6488,16 @@ msgstr "搜索货币"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContent.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionDropdownContent.tsx
 msgid "Search fields"
 msgstr "搜索字段"
+
+#. js-lingui-id: rXrG+N
+#: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
+msgid "Search folders..."
+msgstr ""
 
 #. js-lingui-id: ofuw3g
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -6353,6 +6513,16 @@ msgstr "搜索交接..."
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Search icon"
 msgstr "搜索图标"
+
+#. js-lingui-id: two5rl
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+msgid "Search objects"
+msgstr ""
+
+#. js-lingui-id: pGn7U0
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
+msgid "Search operations"
+msgstr ""
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -6496,15 +6666,15 @@ msgstr "查看工作流"
 msgid "Select a field from a previous step"
 msgstr "从上一步选择一个字段"
 
-#. js-lingui-id: h4pFju
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
-msgid "Select a role"
-msgstr "选择角色"
-
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Select a target agent"
 msgstr "选择目标代理"
+
+#. js-lingui-id: jL3gox
+#: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
+msgid "Select a value"
+msgstr ""
 
 #. js-lingui-id: YcJS1T
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -6835,6 +7005,11 @@ msgstr "smtp.example.com"
 msgid "Some"
 msgstr "一些"
 
+#. js-lingui-id: RwCYVZ
+#: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
+msgid "Some folders"
+msgstr ""
+
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
@@ -6848,8 +7023,16 @@ msgstr "抱歉，出了点问题"
 msgid "Sort"
 msgstr "排序"
 
+#. js-lingui-id: /HgF9q
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Sort by"
+msgstr ""
+
 #. js-lingui-id: wdxz7K
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 msgid "Source"
 msgstr "来源"
 
@@ -6910,6 +7093,11 @@ msgstr "状态"
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "状态"
+
+#. js-lingui-id: I8EmDx
+#: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
+msgid "Stop impersonating"
+msgstr ""
 
 #. js-lingui-id: qn1Xxf
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
@@ -7049,11 +7237,6 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Yearly"
 msgstr "切换至年度计划"
-
-#. js-lingui-id: Nu4DdT
-#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
-msgid "Sync"
-msgstr "同步"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -7425,6 +7608,11 @@ msgstr "时间戳和参与者将与您的团队分享。"
 msgid "Today"
 msgstr "今天"
 
+#. js-lingui-id: GFxnQR
+#: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
+msgid "Toggle all folders"
+msgstr ""
+
 #. js-lingui-id: XArpJK
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
@@ -7514,6 +7702,11 @@ msgstr ""
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "土耳其语"
+
+#. js-lingui-id: YIjS4q
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Twitter/X Search"
+msgstr ""
 
 #. js-lingui-id: tuvLv1
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -7660,6 +7853,11 @@ msgstr "上传文件"
 msgid "Upload the XML file with your connection infos"
 msgstr "上传包含连接信息的 XML 文件"
 
+#. js-lingui-id: IagCbF
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "URL"
+msgstr ""
+
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -7737,6 +7935,7 @@ msgstr "验证数据"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
 #: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
 msgid "Value"
 msgstr "值"
 
@@ -7885,6 +8084,11 @@ msgstr "我们将为每个新事件以 application/json 格式向此端点发送
 msgid "We will send your a link to verify domain ownership"
 msgstr "我们将发送您一个链接以验证域名所有权"
 
+#. js-lingui-id: LnnVIT
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Web Search"
+msgstr ""
+
 #. js-lingui-id: Tvdycs
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
 msgid "Webhook {targetUrl} created successfully"
@@ -7945,6 +8149,16 @@ msgstr "API 密钥的过期时间。"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "密钥何时会被禁用"
+
+#. js-lingui-id: Z4rkzJ
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
+msgid "Widget Title"
+msgstr ""
+
+#. js-lingui-id: fANaAS
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+msgid "Widget type"
+msgstr ""
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -8038,6 +8252,46 @@ msgstr "撰写描述"
 msgid "Write a description for this agent"
 msgstr "为此代理撰写描述"
 
+#. js-lingui-id: SHqkdn
+#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+msgid "X axis"
+msgstr ""
+
+#. js-lingui-id: RcQhRY
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionDropdownContent.tsx
+msgid "X-Axis Field"
+msgstr ""
+
+#. js-lingui-id: zYqibM
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartXAxisSortBySelectionDropdownContent.tsx
+msgid "X-Axis Sort By"
+msgstr ""
+
+#. js-lingui-id: fplGg6
+#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+msgid "Y axis"
+msgstr ""
+
+#. js-lingui-id: uE3dsE
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
+msgid "Y-Axis Aggregate Operation"
+msgstr ""
+
+#. js-lingui-id: ceYpLC
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
+msgid "Y-Axis Field"
+msgstr ""
+
+#. js-lingui-id: mlqi7p
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContent.tsx
+msgid "Y-Axis Group By Field"
+msgstr ""
+
+#. js-lingui-id: Q+dSNn
+#: src/modules/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent.tsx
+msgid "Y-Axis Sort By"
+msgstr ""
+
 #. js-lingui-id: 7qI8sJ
 #: src/utils/date-utils.ts
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -8094,6 +8348,21 @@ msgid ""
 msgstr ""
 "您不能编辑此连接，因为它具有跟踪表。\n"
 "如果您需要进行更改，请创建新连接或首先取消同步表。"
+
+#. js-lingui-id: CjCGSm
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
+msgid "You do not have permission to access the {fieldsList} {fieldWord}"
+msgstr ""
+
+#. js-lingui-id: eqUj2Z
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
+msgid "You do not have permission to access the {objectName} object"
+msgstr ""
+
+#. js-lingui-id: D0mU8n
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
+msgid "You do not have permission to view this widget"
+msgstr ""
 
 #. js-lingui-id: M2lYgq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

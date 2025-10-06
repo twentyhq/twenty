@@ -6,8 +6,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -22,17 +23,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -52,8 +61,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -68,17 +78,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -98,8 +116,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -113,17 +132,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -143,8 +170,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -173,17 +201,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -203,8 +239,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -233,17 +270,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -263,8 +308,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -293,17 +339,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -323,8 +377,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -353,17 +408,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -383,8 +446,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -398,17 +462,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -428,8 +500,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -444,17 +517,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -474,8 +555,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -494,17 +576,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -524,8 +614,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -539,17 +630,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -569,8 +668,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -585,17 +685,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -615,8 +723,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -630,17 +739,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -660,8 +777,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -690,17 +808,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -720,8 +846,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -735,17 +862,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -765,8 +900,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -780,17 +916,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -810,8 +954,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -826,17 +971,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -856,8 +1009,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -872,17 +1026,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -902,8 +1064,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -917,17 +1080,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -947,8 +1118,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -963,17 +1135,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -993,8 +1173,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1008,17 +1189,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1038,8 +1227,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1058,17 +1248,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1088,8 +1286,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1103,17 +1302,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1133,8 +1340,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1149,17 +1357,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1179,8 +1395,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1194,17 +1411,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1224,8 +1449,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1244,17 +1470,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1274,8 +1508,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1289,17 +1524,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1319,8 +1562,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1335,17 +1579,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1365,8 +1617,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1380,17 +1633,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1410,8 +1671,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1430,17 +1692,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1460,8 +1730,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1475,17 +1746,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1505,8 +1784,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1520,17 +1800,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1550,8 +1838,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1570,17 +1859,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1600,8 +1897,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1615,17 +1913,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1645,8 +1951,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1660,17 +1967,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1690,8 +2005,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1706,17 +2022,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1736,8 +2060,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1751,17 +2076,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1781,8 +2114,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1801,17 +2135,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1831,8 +2173,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1846,17 +2189,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1876,8 +2227,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1891,17 +2243,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1921,8 +2281,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -1951,17 +2312,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1981,8 +2350,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2011,17 +2381,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2041,8 +2419,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2071,17 +2450,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2101,8 +2488,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2131,17 +2519,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2161,8 +2557,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2177,17 +2574,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2207,8 +2612,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2227,17 +2633,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2257,8 +2671,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2272,17 +2687,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2302,8 +2725,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2318,17 +2742,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2348,8 +2780,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2363,17 +2796,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2393,8 +2834,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2408,17 +2850,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2438,8 +2888,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2453,17 +2904,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2483,8 +2942,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2499,17 +2959,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2529,8 +2997,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2544,17 +3013,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2574,8 +3051,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2590,17 +3068,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2620,8 +3106,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2635,17 +3122,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2665,8 +3160,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2685,17 +3181,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2715,8 +3219,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2730,17 +3235,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2760,8 +3273,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2776,17 +3290,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2806,8 +3328,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2821,17 +3344,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2851,8 +3382,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2871,17 +3403,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2901,8 +3441,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2916,17 +3457,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2946,8 +3495,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -2962,17 +3512,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -2992,8 +3550,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3007,17 +3566,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3037,8 +3604,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3057,17 +3625,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3087,8 +3663,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3102,17 +3679,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3132,8 +3717,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3147,17 +3733,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3177,8 +3771,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3197,17 +3792,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3227,8 +3830,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3242,17 +3846,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3272,8 +3884,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3287,17 +3900,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -3317,8 +3938,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -3333,17 +3955,25 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               "name": "testField",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,

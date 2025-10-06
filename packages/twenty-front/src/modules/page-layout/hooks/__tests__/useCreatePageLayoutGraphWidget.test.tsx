@@ -1,5 +1,4 @@
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
-import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -7,6 +6,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
+import { GraphType, WidgetType } from '~/generated-metadata/graphql';
 import { PageLayoutType } from '~/generated/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -82,10 +82,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
     });
 
     act(() => {
-      result.current.createWidget.createPageLayoutWidget(
-        WidgetType.GRAPH,
-        GraphType.BAR,
-      );
+      result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
     });
 
     expect(result.current.allWidgets).toHaveLength(1);
@@ -167,10 +164,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     graphTypes.forEach((graphType) => {
       act(() => {
-        result.current.createWidget.createPageLayoutWidget(
-          WidgetType.GRAPH,
-          graphType,
-        );
+        result.current.createWidget.createPageLayoutGraphWidget(graphType);
       });
     });
 
@@ -180,7 +174,11 @@ describe('useCreatePageLayoutGraphWidget', () => {
       const widget = result.current.allWidgets[index];
       expect(widget.type).toBe(WidgetType.GRAPH);
       expect(widget.pageLayoutTabId).toBe('tab-1');
-      expect(widget.configuration.graphType).toBe(graphType);
+      expect(
+        widget.configuration && 'graphType' in widget.configuration
+          ? widget.configuration.graphType
+          : null,
+      ).toBe(graphType);
       expect(widget.id).toBe('mock-uuid');
     });
 
@@ -195,38 +193,21 @@ describe('useCreatePageLayoutGraphWidget', () => {
     expect(result.current.pageLayoutDraft.tabs[0].widgets).toHaveLength(4);
   });
 
-  it('should not create widget when activeTabId is null', () => {
+  it('should throw an error when activeTabId is null', () => {
     const { result } = renderHook(
       () => {
-        const pageLayoutDraft = useRecoilComponentValue(
-          pageLayoutDraftComponentState,
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        );
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const pageLayoutCurrentLayouts = useRecoilComponentValue(
-          pageLayoutCurrentLayoutsComponentState,
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        );
         const createWidget = useCreatePageLayoutGraphWidget(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        return { allWidgets, pageLayoutCurrentLayouts, createWidget };
+        return { createWidget };
       },
       {
         wrapper: PageLayoutTestWrapper,
       },
     );
 
-    act(() => {
-      result.current.createWidget.createPageLayoutWidget(
-        WidgetType.GRAPH,
-        GraphType.BAR,
-      );
-    });
-
-    expect(result.current.allWidgets).toHaveLength(0);
-    expect(Object.keys(result.current.pageLayoutCurrentLayouts)).toHaveLength(
-      0,
-    );
+    expect(() => {
+      result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
+    }).toThrow('A tab must be selected to create a new graph widget');
   });
 });

@@ -186,13 +186,13 @@ msgid "Action Needed to Reset Password"
 msgstr "Şifreyi sıfırlamak için eylem gerekli"
 
 #. js-lingui-id: 52fA3U
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
 msgstr "Aktif alanlar silinemez"
 
 #. js-lingui-id: 0N5kF6
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Active objects cannot be deleted"
 msgstr "Aktif nesneler silinemez"
 
@@ -602,7 +602,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "Taslak dışında bir durumla iş akışı sürümü oluşturulamaz."
 
 #. js-lingui-id: AQyr9X
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Silinemiyor, lütfen önce etiket tanımlayıcı alanını güncelleyin."
@@ -823,6 +823,24 @@ msgstr "Oluşturulma Tarihi ve Saati"
 msgid "Cron pattern '{pattern}' is invalid"
 msgstr "Cron deseni '{pattern}' geçersiz"
 
+#. js-lingui-id: GuyjcQ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Cron trigger already exists"
+msgstr ""
+
+#. js-lingui-id: Ej90Yp
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Cron trigger not found"
+msgstr ""
+
+#. js-lingui-id: vz7B0E
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Cron trigger with same id already exists"
+msgstr ""
+
 #. js-lingui-id: Mikszu
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Custom Connection Parameters"
@@ -855,6 +873,24 @@ msgstr "Pano başlığı"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboards"
 msgstr "Panolar"
+
+#. js-lingui-id: K2CQHf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+msgid "Database event trigger already exists"
+msgstr ""
+
+#. js-lingui-id: iS6kjG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+msgid "Database event trigger not found"
+msgstr ""
+
+#. js-lingui-id: 0vtv+s
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+msgid "Database event trigger with same id already exists"
+msgstr ""
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1273,7 +1309,7 @@ msgid "Favorites tied to the {label}"
 msgstr "<b>{label}</b> ile Bağlantılı Favoriler"
 
 #. js-lingui-id: vngnhF
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
 msgstr "Alan zaten mevcut"
 
@@ -1321,15 +1357,15 @@ msgstr "Alan Metadata Id"
 msgid "Field metadata not found"
 msgstr ""
 
+#. js-lingui-id: uTPwH1
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Field metadata to delete not found"
+msgstr ""
+
 #. js-lingui-id: Ljqo/T
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update not found"
 msgstr "Güncellenecek alan metadatası bulunamadı"
-
-#. js-lingui-id: p3kNMz
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Field metadata to update object metadata not found"
-msgstr "Güncellenecek nesne metadatası bulunamadı"
 
 #. js-lingui-id: g+t8w9
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1338,7 +1374,7 @@ msgid "Field metadata used for aggregate operation"
 msgstr "Toplu İşlem için Kullanılan Alan Metadata"
 
 #. js-lingui-id: prTOhK
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field name is not synced with field label"
 msgstr "Alan ismi, alan etiketiyle senkronize değil"
 
@@ -1348,12 +1384,12 @@ msgid "Field referenced in index does not exist"
 msgstr ""
 
 #. js-lingui-id: cK8ILP
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field to create related object not found"
 msgstr "İlişkili nesne oluşturulacak alan bulunamadı"
 
 #. js-lingui-id: K6qzz4
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field to update not found"
 msgstr "Güncellenecek alan bulunamadı"
 
@@ -1408,7 +1444,7 @@ msgid "Folder name"
 msgstr "Klasör İsmi"
 
 #. js-lingui-id: eWmJYU
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Forbidden updated properties for relation field metadata"
 msgstr "İlişki alan metadatası için yasaklanmış güncellenmiş özellikler"
 
@@ -1895,6 +1931,12 @@ msgstr "Mesaj Harici Id"
 msgid "Message Folder"
 msgstr "Mesaj Klasörü"
 
+#. js-lingui-id: XCJIdB
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Message folder import policy"
+msgstr ""
+
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2091,8 +2133,8 @@ msgid "Name should be in camelCase"
 msgstr "İsim camelCase olmalı"
 
 #. js-lingui-id: Dr0xtb
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Names are not synced with labels"
 msgstr "İsimler, etiketlerle senkronize değil"
 
@@ -2235,8 +2277,8 @@ msgid "Number of employees in the company"
 msgstr "Şirkette çalışanların sayısı"
 
 #. js-lingui-id: ECRKYR
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object already exists"
 msgstr "Nesne zaten mevcut"
 
@@ -2261,18 +2303,13 @@ msgstr "Nesne Metaveri Kimliği"
 msgid "Object metadata not found"
 msgstr ""
 
-#. js-lingui-id: lG0Qqm
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
-msgid "Object related to field to delete not found"
-msgstr "Silinecek alana ilişkin nesne bulunamadı"
-
 #. js-lingui-id: E8vJ0A
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Object related to field to update not found"
 msgstr "Güncellenecek alana ilişkin nesne bulunamadı"
 
 #. js-lingui-id: MnOwTp
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Object related to updated field does not have a label identifier"
 msgstr "Güncellenen alana ilişkin nesnenin etiket tanımlayıcısı yok"
 
@@ -2287,20 +2324,20 @@ msgid "Object targeted by the relation not found"
 msgstr "İlişkiye hedeflenen nesne bulunamadı"
 
 #. js-lingui-id: bMeJkW
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to delete not found"
 msgstr "Silinecek nesne bulunamadı"
 
 #. js-lingui-id: pQ5dZU
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
 msgstr "Güncellenecek nesne bulunamadı"
 
 #. js-lingui-id: cdjRFZ
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object with same id already exists"
 msgstr "Aynı ID'ye sahip nesne zaten mevcut"
 
@@ -2641,15 +2678,15 @@ msgid "Relations"
 msgstr "İlişkiler"
 
 #. js-lingui-id: PWdFkY
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Remote objects are not production ready yet"
 msgstr "Uzaktan nesneler henüz üretime hazır değil"
 
 #. js-lingui-id: yVxtzR
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Remote objects are not supported yet"
 msgstr "Uzaktan nesneler henüz desteklenmiyor"
 
@@ -2669,6 +2706,34 @@ msgstr "Yanıt Durumu"
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Role"
 msgstr "Rol"
+
+#. js-lingui-id: MFW30/
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route already exists"
+msgstr ""
+
+#. js-lingui-id: ldQZkA
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route not found"
+msgstr ""
+
+#. js-lingui-id: NCQS+K
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route path already exists"
+msgstr ""
+
+#. js-lingui-id: v5H7VS
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route with same id already exists"
+msgstr ""
+
+#. js-lingui-id: c10Yre
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route with same path already exists"
+msgstr ""
 
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2697,6 +2762,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Serverless function not found"
 msgstr ""
 
@@ -2726,13 +2803,13 @@ msgid "Stage"
 msgstr "Aşama"
 
 #. js-lingui-id: dc5N0o
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Standard fields cannot be deleted"
 msgstr "Standart alanlar silinemez"
 
 #. js-lingui-id: Ptv+nG
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
 msgstr "Standart nesneler silinemez"
 
@@ -3213,7 +3290,7 @@ msgid "Update DateTime"
 msgstr "Güncelleme Tarihi Saati"
 
 #. js-lingui-id: r5C2wB
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Updated field name is not synced with label"
 msgstr "Güncellenen alan ismi, etiketle senkronize değil"
 
@@ -3815,6 +3892,11 @@ msgstr "İş Akışı Sürümü"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "WorkflowVersion workflow"
 msgstr "WorkflowVersion iş akışı"
+
+#. js-lingui-id: XsSVrR
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace creation is restricted to admins"
+msgstr ""
 
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts

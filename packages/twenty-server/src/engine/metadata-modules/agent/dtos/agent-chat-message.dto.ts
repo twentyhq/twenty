@@ -1,7 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
+
+import { AgentChatMessagePartDTO } from './agent-chat-message-part.dto';
 
 @ObjectType('AgentChatMessage')
 export class AgentChatMessageDTO {
@@ -14,11 +15,8 @@ export class AgentChatMessageDTO {
   @Field()
   role: 'user' | 'assistant';
 
-  @Field({ nullable: true })
-  rawContent: string;
-
-  @Field(() => [FileDTO])
-  files: FileDTO[];
+  @Field(() => [AgentChatMessagePartDTO])
+  parts: AgentChatMessagePartDTO[];
 
   @Field()
   createdAt: Date;

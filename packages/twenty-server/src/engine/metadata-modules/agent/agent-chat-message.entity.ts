@@ -10,8 +10,9 @@ import {
   Relation,
 } from 'typeorm';
 
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
+
+import { AgentChatMessagePartEntity } from './agent-chat-message-part.entity';
 
 export enum AgentChatMessageRole {
   USER = 'user',
@@ -36,11 +37,8 @@ export class AgentChatMessageEntity {
   @Column({ type: 'enum', enum: AgentChatMessageRole })
   role: AgentChatMessageRole;
 
-  @Column({ type: 'text', nullable: true })
-  rawContent: string | null;
-
-  @OneToMany(() => FileEntity, (file) => file.message)
-  files: Relation<FileEntity[]>;
+  @OneToMany(() => AgentChatMessagePartEntity, (part) => part.message)
+  parts: Relation<AgentChatMessagePartEntity[]>;
 
   @CreateDateColumn()
   createdAt: Date;

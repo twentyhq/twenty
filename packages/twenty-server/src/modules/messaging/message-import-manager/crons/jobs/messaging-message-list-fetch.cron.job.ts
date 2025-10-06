@@ -18,7 +18,7 @@ import {
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
-export const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/5 * * * *';
+export const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '2-59/5 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageListFetchCronJob {

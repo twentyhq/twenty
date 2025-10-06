@@ -3,10 +3,10 @@ import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/C
 import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordContextText';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useRecoilState } from 'recoil';
 import { MultipleAvatarChip } from 'twenty-ui/components';
 import { IconReload, IconX } from 'twenty-ui/display';
 
@@ -24,10 +24,8 @@ const StyledChipWrapper = styled.div<{ isActive: boolean }>`
 `;
 
 export const AgentChatContextRecordPreview = ({
-  agentId,
   contextStoreCurrentObjectMetadataItemId,
 }: {
-  agentId: string;
   contextStoreCurrentObjectMetadataItemId: string;
 }) => {
   const theme = useTheme();
@@ -41,7 +39,7 @@ export const AgentChatContextRecordPreview = ({
   });
 
   const [isAgentChatCurrentContextActive, setIsAgentChatCurrentContextActive] =
-    useRecoilComponentState(isAgentChatCurrentContextActiveState, agentId);
+    useRecoilState(isAgentChatCurrentContextActiveState);
 
   const Avatars = records.map((record) => (
     // @todo move this components to be less specific. (Outside of CommandMenu

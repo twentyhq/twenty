@@ -71,22 +71,9 @@ export const usePageLayoutHandleLayoutChange = (
             ...prev,
             tabs: prev.tabs.map((tab) => {
               if (tab.id === activeTabId) {
-                const tabWidgets = updatedWidgets
-                  .filter((w) => w.pageLayoutTabId === activeTabId)
-                  .map((widget) => ({
-                    id: widget.id,
-                    pageLayoutTabId: widget.pageLayoutTabId || activeTabId,
-                    title: widget.title,
-                    type: widget.type,
-                    objectMetadataId: null,
-                    gridPosition: widget.gridPosition,
-                    configuration: widget.configuration || undefined,
-                    createdAt:
-                      tab.widgets.find((w) => w.id === widget.id)?.createdAt ||
-                      new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                    deletedAt: null,
-                  }));
+                const tabWidgets = updatedWidgets.filter(
+                  (w) => w.pageLayoutTabId === activeTabId,
+                );
                 return {
                   ...tab,
                   widgets: tabWidgets,

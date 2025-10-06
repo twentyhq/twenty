@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, IsNull, Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -78,7 +79,7 @@ export class ApiKeyService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<ApiKey>,
+    updateData: QueryDeepPartialEntity<ApiKey>,
   ): Promise<ApiKey | null> {
     const apiKey = await this.findById(id, workspaceId);
 

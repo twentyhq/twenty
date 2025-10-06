@@ -1,6 +1,10 @@
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import chalk from 'chalk';
-import { type ApiResponse, type AppManifest } from '../types/config.types';
+import {
+  type ApiResponse,
+  type AppManifest,
+  type PackageJson,
+} from '../types/config.types';
 import { ConfigService } from './config.service';
 
 export class ApiService {
@@ -51,11 +55,9 @@ export class ApiService {
   async validateAuth(): Promise<boolean> {
     try {
       const query = `
-        query FindManyAgents {
-          findManyAgents {
-            id
-            name
-          }
+        query CurrentWorkspace {
+          currentWorkspace {
+          id
         }
       `;
 
@@ -68,7 +70,6 @@ export class ApiService {
           headers: {
             'Content-Type': 'application/json',
             Accept: '*/*',
-            'x-schema-version': '6',
           },
         },
       );
@@ -79,16 +80,26 @@ export class ApiService {
     }
   }
 
-  async syncApplication(manifest: AppManifest): Promise<ApiResponse> {
+  async syncApplication({
+    packageJson,
+    yarnLock,
+    manifest,
+  }: {
+    packageJson: PackageJson;
+    yarnLock: string;
+    manifest: AppManifest;
+  }): Promise<ApiResponse> {
     try {
       const mutation = `
-        mutation SyncApplication($manifest: JSON!) {
-          syncApplication(manifest: $manifest)
+        mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {
+          syncApplication(manifest: $manifest, packageJson: $packageJson, yarnLock: $yarnLock)
         }
       `;
 
       const variables = {
         manifest,
+        yarnLock,
+        packageJson,
       };
 
       const response: AxiosResponse = await this.client.post(
@@ -101,7 +112,6 @@ export class ApiService {
           headers: {
             'Content-Type': 'application/json',
             Accept: '*/*',
-            'x-schema-version': '6',
           },
         },
       );
@@ -117,7 +127,55 @@ export class ApiService {
       return {
         success: true,
         data: response.data.data.syncApplication,
-        message: `Successfully synced application: ${manifest.label}`,
+        message: `Successfully synced application: ${manifest.name}`,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          success: false,
+          error: error.response.data?.errors?.[0]?.message || error.message,
+        };
+      }
+      throw error;
+    }
+  }
+
+  async deleteApplication(packageJson: PackageJson): Promise<ApiResponse> {
+    try {
+      const mutation = `
+        mutation DeleteApplication($packageJson: JSON!) {
+          deleteApplication(packageJson: $packageJson)
+        }
+      `;
+
+      const variables = { packageJson };
+
+      const response: AxiosResponse = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error:
+            response.data.errors[0]?.message || 'Failed to delete application',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.deleteApplication,
+        message: `Successfully deleted application: ${packageJson.name}`,
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

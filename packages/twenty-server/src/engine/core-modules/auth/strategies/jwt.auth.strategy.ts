@@ -124,10 +124,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     if (payload.isImpersonating === true) {
-      context.impersonationContext = await this.validateImpersonation(
-        payload,
-        workspace,
-      );
+      context.impersonationContext = await this.validateImpersonation(payload);
     }
 
     const userId = payload.sub ?? payload.userId;
@@ -179,10 +176,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     return context;
   }
 
-  private async validateImpersonation(
-    payload: AccessTokenJwtPayload,
-    workspace: Workspace,
-  ) {
+  private async validateImpersonation(payload: AccessTokenJwtPayload) {
     // Validate required impersonation fields
     if (
       !payload.impersonatorUserWorkspaceId ||
@@ -239,13 +233,19 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     const hasServerLevelImpersonatePermission =
       impersonatorUserWorkspace.user.canImpersonate === true &&
-      workspace.allowImpersonation === true;
+      impersonatedUserWorkspace.workspace.allowImpersonation === true;
 
-    if (isServerLevelImpersonation && !hasServerLevelImpersonatePermission) {
-      throw new AuthException(
-        'Server level impersonation not allowed',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+    if (isServerLevelImpersonation) {
+      if (!hasServerLevelImpersonatePermission)
+        throw new AuthException(
+          'Server level impersonation not allowed',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+
+      return {
+        impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
+      };
     }
 
     const hasWorkspaceLevelImpersonatePermission =
@@ -255,10 +255,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         workspaceId: impersonatedUserWorkspace.workspace.id,
       });
 
-    if (
-      !hasWorkspaceLevelImpersonatePermission &&
-      !hasServerLevelImpersonatePermission
-    ) {
+    if (!hasWorkspaceLevelImpersonatePermission) {
       throw new AuthException(
         'Impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,

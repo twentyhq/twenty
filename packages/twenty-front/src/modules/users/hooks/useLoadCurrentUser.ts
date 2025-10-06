@@ -14,7 +14,10 @@ import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ColorScheme } from 'twenty-ui/input';
-import { useGetCurrentUserLazyQuery } from '~/generated-metadata/graphql';
+import {
+  useFindAllCoreViewsLazyQuery,
+  useGetCurrentUserLazyQuery,
+} from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
@@ -37,9 +40,14 @@ export const useLoadCurrentUser = () => {
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
+  const [findAllCoreViews] = useFindAllCoreViewsLazyQuery();
 
   const loadCurrentUser = useCallback(async () => {
     const currentUserResult = await getCurrentUser({
+      fetchPolicy: 'network-only',
+    });
+
+    const coreViewsResult = await findAllCoreViews({
       fetchPolicy: 'network-only',
     });
 
@@ -102,8 +110,8 @@ export const useLoadCurrentUser = () => {
       });
     }
 
-    if (isDefined(workspace) && isDefined(workspace.views)) {
-      setCoreViews(workspace.views);
+    if (isDefined(coreViewsResult.data?.getCoreViews)) {
+      setCoreViews(coreViewsResult.data.getCoreViews);
     }
 
     return {
@@ -113,16 +121,17 @@ export const useLoadCurrentUser = () => {
     };
   }, [
     getCurrentUser,
-    isOnAWorkspace,
-    setAvailableWorkspaces,
-    setCoreViews,
+    findAllCoreViews,
     setCurrentUser,
-    setCurrentUserWorkspace,
     setCurrentWorkspace,
-    setCurrentWorkspaceMember,
+    isOnAWorkspace,
     setCurrentWorkspaceMembers,
+    setAvailableWorkspaces,
+    setCurrentUserWorkspace,
+    setCurrentWorkspaceMember,
     initializeFormatPreferences,
     setLastAuthenticateWorkspaceDomain,
+    setCoreViews,
   ]);
 
   return {

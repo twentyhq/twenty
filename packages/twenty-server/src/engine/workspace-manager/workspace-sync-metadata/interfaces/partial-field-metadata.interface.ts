@@ -1,4 +1,7 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
+import {
+  type ExcludeFunctions,
+  type FieldMetadataType,
+} from 'twenty-shared/types';
 
 import { type WorkspaceDynamicRelationMetadataArgsFactory } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
 
