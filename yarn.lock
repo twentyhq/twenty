@@ -42895,22 +42895,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor-auto-typings@npm:^0.4.5":
-  version: 0.4.5
-  resolution: "monaco-editor-auto-typings@npm:0.4.5"
-  peerDependencies:
-    monaco-editor: "*"
-  checksum: 10c0/1127183865f3ed486eb3bad407da3d8d8ca47ba3bd382a146a692741f9de4eb4f2335dc616b612cdaadfb3844e9b948060d407ea8a585c6710043b8bba29ed77
-  languageName: node
-  linkType: hard
-
-"monaco-editor@npm:^0.51.0":
-  version: 0.51.0
-  resolution: "monaco-editor@npm:0.51.0"
-  checksum: 10c0/7fde310c747e46cd7293e1a0f5e1fa85c389df9a1f8db03b9ccd58fd45356ab021a591b46198d19345566ad54556158f6489e2da4ad428a7a6ca3ea7b504afcb
-  languageName: node
-  linkType: hard
-
 "moo@npm:^0.5.1":
   version: 0.5.2
   resolution: "moo@npm:0.5.2"
@@ -52560,7 +52544,6 @@ __metadata:
     "@lingui/vite-plugin": "npm:5.1.2"
     "@microsoft/microsoft-graph-client": "npm:3.0.7"
     "@microsoft/microsoft-graph-types": "npm:^2.40.0"
-    "@monaco-editor/react": "npm:^4.6.0"
     "@nestjs/axios": "npm:3.0.2"
     "@nestjs/cache-manager": "npm:^2.2.1"
     "@nestjs/cli": "npm:10.3.0"
@@ -52702,8 +52685,6 @@ __metadata:
     lodash.upperfirst: "npm:4.3.1"
     mailparser: "npm:3.7.3"
     microdiff: "npm:1.4.0"
-    monaco-editor: "npm:^0.51.0"
-    monaco-editor-auto-typings: "npm:^0.4.5"
     ms: "npm:2.1.3"
     nest-commander: "npm:^3.19.1"
     node-ical: "npm:^0.20.1"
