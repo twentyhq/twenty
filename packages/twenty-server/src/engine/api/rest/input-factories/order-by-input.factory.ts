@@ -38,7 +38,7 @@ export class OrderByInputFactory {
       // orderByItem -> field_1[AscNullsFirst]
       if (orderByItem.includes('[') && orderByItem.includes(']')) {
         const [fieldsString, direction] = orderByItem
-          .replace(']', '')
+          .replace(/\]/g, '')
           .split('[');
 
         // fields -> [field_1] ; direction -> AscNullsFirst
