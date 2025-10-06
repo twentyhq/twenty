@@ -490,6 +490,10 @@ export class AuthResolver {
     @AuthUser() currentUser: User,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpOutput> {
+    await this.signInUpService.checkWorkspaceCreationIsAllowedOrThrow(
+      currentUser,
+    );
+
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: currentUser },
     );
