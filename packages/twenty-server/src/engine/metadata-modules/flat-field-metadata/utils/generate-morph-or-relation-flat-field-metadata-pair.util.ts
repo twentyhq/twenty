@@ -86,7 +86,6 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     options: null,
     relationTargetFieldMetadataId: targetRelationTargetFieldMetadataId,
     relationTargetObjectMetadataId: targetFlatObjectMetadata.id,
-    flatRelationTargetObjectMetadata: targetFlatObjectMetadata,
   };
 
   const targetCreateFieldInput: CreateFieldInput = {
@@ -122,14 +121,16 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       options: null,
       relationTargetFieldMetadataId: sourceRelationTargetFieldMetadataId,
       relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
-      flatRelationTargetFieldMetadata: sourceFlatFieldMetadata,
-      flatRelationTargetObjectMetadata: sourceFlatObjectMetadata,
     };
 
   const indexId = v4();
   const createdAt = new Date();
   const indexMetadata: FlatIndexMetadata =
     generateFlatIndexMetadataWithNameOrThrow({
+      objectFlatFieldMetadatas:
+        relationCreationPayload.type === RelationType.MANY_TO_ONE
+          ? [sourceFlatFieldMetadata]
+          : [targetFlatFieldMetadata],
       flatIndex: {
         createdAt,
         flatIndexFieldMetadatas: [
@@ -158,32 +159,14 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         updatedAt: createdAt,
         workspaceId,
       },
-      flatObjectMetadata: (relationCreationPayload.type ===
-      RelationType.MANY_TO_ONE
-        ? {
-            ...sourceFlatObjectMetadata,
-            flatFieldMetadatas: [
-              ...sourceFlatObjectMetadata.flatFieldMetadatas,
-              sourceFlatFieldMetadata,
-            ],
-          }
-        : {
-            ...targetFlatObjectMetadata,
-            flatFieldMetadatas: [
-              ...targetFlatObjectMetadata.flatFieldMetadatas,
-              targetFlatFieldMetadata,
-            ],
-          }) as FlatObjectMetadata,
+      flatObjectMetadata:
+        relationCreationPayload.type === RelationType.MANY_TO_ONE
+          ? sourceFlatObjectMetadata
+          : targetFlatObjectMetadata,
     });
 
   return {
-    flatFieldMetadatas: [
-      {
-        ...sourceFlatFieldMetadata,
-        flatRelationTargetFieldMetadata: targetFlatFieldMetadata,
-      },
-      targetFlatFieldMetadata,
-    ],
+    flatFieldMetadatas: [sourceFlatFieldMetadata, targetFlatFieldMetadata],
     indexMetadatas: [indexMetadata],
   };
 };

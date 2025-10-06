@@ -42,14 +42,14 @@ export const fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOr
     const updatedEditableFieldProperties = {
       ...extractAndSanitizeObjectStringFields(
         {
-          ...rawUpdateServerlessFunctionInput,
+          ...rawUpdateServerlessFunctionInput.update,
           checksum: serverlessFunctionCreateHash(
-            JSON.stringify(rawUpdateServerlessFunctionInput.code),
+            JSON.stringify(rawUpdateServerlessFunctionInput.update.code),
           ),
         },
         FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES,
       ),
-      code: rawUpdateServerlessFunctionInput.code,
+      code: rawUpdateServerlessFunctionInput.update.code,
     };
 
     return mergeUpdateInExistingRecord({

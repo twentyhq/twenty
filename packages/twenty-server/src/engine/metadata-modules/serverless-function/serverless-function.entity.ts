@@ -17,7 +17,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 
 import { CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
-import { Route } from 'src/engine/metadata-modules/route/route.entity';
+import { RouteTrigger } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionEntityRelationProperties } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -33,7 +33,7 @@ export enum ServerlessFunctionRuntime {
 export const SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES = [
   'cronTriggers',
   'databaseEventTriggers',
-  'routes',
+  'routeTriggers',
 ] as const satisfies readonly ServerlessFunctionEntityRelationProperties[];
 
 @Entity('serverlessFunction')
@@ -119,10 +119,14 @@ export class ServerlessFunctionEntity
   )
   databaseEventTriggers: DatabaseEventTrigger[];
 
-  @OneToMany(() => Route, (route) => route.serverlessFunction, {
-    cascade: true,
-  })
-  routes: Route[];
+  @OneToMany(
+    () => RouteTrigger,
+    (routeTrigger) => routeTrigger.serverlessFunction,
+    {
+      cascade: true,
+    },
+  )
+  routeTriggers: RouteTrigger[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

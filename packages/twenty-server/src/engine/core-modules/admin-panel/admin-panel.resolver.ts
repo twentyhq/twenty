@@ -25,6 +25,7 @@ import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/conf
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
+import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -46,7 +47,7 @@ export class AdminPanelResolver {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ServerLevelImpersonateGuard)
   @Mutation(() => UserLookup)
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,

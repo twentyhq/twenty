@@ -6,10 +6,10 @@ import { copyBaseApplicationProject } from '../utils/app-template';
 import kebabCase from 'lodash.kebabcase';
 
 export class AppInitCommand {
-  async execute(options: { path?: string }): Promise<void> {
+  async execute(directory?: string): Promise<void> {
     try {
       const { appName, appDirectory, appDescription } =
-        await this.getAppInfos(options);
+        await this.getAppInfos(directory);
 
       await this.validateDirectory(appDirectory);
 
@@ -33,7 +33,7 @@ export class AppInitCommand {
     }
   }
 
-  private async getAppInfos(options: { path?: string }): Promise<{
+  private async getAppInfos(directory?: string): Promise<{
     appName: string;
     appDirectory: string;
     appDescription: string;
@@ -60,9 +60,9 @@ export class AppInitCommand {
 
     const appDescription = description.trim();
 
-    const appDirectory = options.path
-      ? path.resolve(options.path, kebabCase(appName))
-      : path.join(process.cwd(), kebabCase(appName)!);
+    const appDirectory = directory
+      ? path.join(process.cwd(), kebabCase(directory))
+      : path.join(process.cwd(), kebabCase(appName));
 
     return { appName, appDirectory, appDescription };
   }

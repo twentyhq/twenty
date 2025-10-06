@@ -43,14 +43,20 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
 
   return {
     onRequest: async ({ endResponse, serverContext }) => {
+      // TODO: we should probably override the graphql-yoga request type to include the workspace and locale
+      const request = (serverContext as unknown as { req: Request }).req;
+
+      if (!request.workspace?.id) {
+        return;
+      }
+
       if (!config.operationsToCache.includes(getOperationName(serverContext))) {
         return;
       }
 
       const cacheKey = computeCacheKey({
         operationName: getOperationName(serverContext),
-        // TODO: we should probably override the graphql-yoga request type to include the workspace and locale
-        request: (serverContext as unknown as { req: Request }).req,
+        request,
       });
       const cachedResponse = await config.cacheGetter(cacheKey);
 
@@ -61,13 +67,19 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       }
     },
     onResponse: async ({ response, serverContext }) => {
+      const request = (serverContext as unknown as { req: Request }).req;
+
+      if (!request.workspace?.id) {
+        return;
+      }
+
       if (!config.operationsToCache.includes(getOperationName(serverContext))) {
         return;
       }
 
       const cacheKey = computeCacheKey({
         operationName: getOperationName(serverContext),
-        request: (serverContext as unknown as { req: Request }).req,
+        request,
       });
 
       const cachedResponse = await config.cacheGetter(cacheKey);

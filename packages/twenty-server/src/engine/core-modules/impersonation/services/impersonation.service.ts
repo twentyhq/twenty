@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
@@ -12,6 +14,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -23,6 +27,7 @@ export class ImpersonationService {
     private readonly auditService: AuditService,
     private readonly domainManagerService: DomainManagerService,
     private readonly loginTokenService: LoginTokenService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly permissionsService: PermissionsService,
@@ -45,7 +50,7 @@ export class ImpersonationService {
     const impersonatorUserWorkspace =
       await this.userWorkspaceRepository.findOne({
         where: { id: impersonatorUserWorkspaceId },
-        relations: ['user', 'workspace'],
+        relations: ['user', 'workspace', 'twoFactorAuthenticationMethods'],
       });
 
     if (
@@ -67,11 +72,39 @@ export class ImpersonationService {
       impersonatorUserWorkspace.workspace.allowImpersonation === true;
 
     if (isServerLevelImpersonation) {
-      if (!hasServerLevelImpersonatePermission)
+      if (!hasServerLevelImpersonatePermission) {
         throw new AuthException(
           'Impersonation not enabled for the impersonator user or the target workspace',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
         );
+      }
+
+      const isDevelopment =
+        this.twentyConfigService.get('NODE_ENV') ===
+        NodeEnvironment.DEVELOPMENT;
+
+      if (isDevelopment) {
+        return this.generateImpersonationLoginToken(
+          impersonatorUserWorkspace,
+          toImpersonateUserWorkspace,
+          'server',
+        );
+      }
+
+      const has2FAEnabled =
+        twoFactorAuthenticationMethodsValidator.areDefined(
+          impersonatorUserWorkspace.twoFactorAuthenticationMethods,
+        ) &&
+        twoFactorAuthenticationMethodsValidator.areVerified(
+          impersonatorUserWorkspace.twoFactorAuthenticationMethods,
+        );
+
+      if (!has2FAEnabled) {
+        throw new AuthException(
+          'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
 
       return this.generateImpersonationLoginToken(
         impersonatorUserWorkspace,

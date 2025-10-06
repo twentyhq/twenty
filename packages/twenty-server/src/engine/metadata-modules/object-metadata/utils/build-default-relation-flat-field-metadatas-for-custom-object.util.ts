@@ -4,9 +4,10 @@ import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   ObjectMetadataException,
@@ -15,19 +16,16 @@ import {
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
-import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
 import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   STANDARD_OBJECT_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { type STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { createRelationDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
-
-type FlatFieldMetadataRelationWithoutRelations = Omit<
-  FlatFieldMetadata<FieldMetadataType.RELATION>,
-  'flatRelationTargetFieldMetadata' | 'flatRelationTargetObjectMetadata'
->;
+import {
+  createDeterministicUuid,
+  createRelationDeterministicUuid,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 const generateSourceFlatFieldMetadata = ({
   workspaceId,
@@ -39,7 +37,7 @@ const generateSourceFlatFieldMetadata = ({
 > & {
   sourceFlatObjectMetadata: FlatObjectMetadata;
   targetFlatObjectMetadata: FlatObjectMetadata;
-}): FlatFieldMetadataRelationWithoutRelations => {
+}): FlatFieldMetadata<FieldMetadataType.RELATION> => {
   const { description } = buildDescriptionForRelationFieldMetadataOnFromField({
     relationObjectMetadataNamePlural: targetFlatObjectMetadata.namePlural,
     targetObjectLabelSingular: sourceFlatObjectMetadata.labelSingular,
@@ -90,7 +88,10 @@ const generateSourceFlatFieldMetadata = ({
     standardId,
     standardOverrides: null,
     type: FieldMetadataType.RELATION,
-    universalIdentifier: standardId,
+    universalIdentifier: createDeterministicUuid([
+      sourceFlatObjectMetadata.id,
+      standardId,
+    ]),
     workspaceId,
     morphId: null,
   };
@@ -107,8 +108,8 @@ const generateTargetFlatFieldMetadata = ({
 > & {
   sourceFlatObjectMetadata: FlatObjectMetadata;
   targetFlatObjectMetadata: FlatObjectMetadata;
-  sourceFlatFieldMetadata: FlatFieldMetadataRelationWithoutRelations;
-}): FlatFieldMetadataRelationWithoutRelations => {
+  sourceFlatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
+}): FlatFieldMetadata<FieldMetadataType.RELATION> => {
   const customStandardFieldId =
     STANDARD_OBJECT_FIELD_IDS[
       targetFlatObjectMetadata.nameSingular as (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number]
@@ -154,7 +155,10 @@ const generateTargetFlatFieldMetadata = ({
     relationTargetFieldMetadataId: sourceFlatFieldMetadata.id,
     relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
     standardOverrides: null,
-    universalIdentifier: standardId,
+    universalIdentifier: createDeterministicUuid([
+      targetFlatObjectMetadata.id,
+      standardId,
+    ]),
   };
 };
 
@@ -167,7 +171,7 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
 ] as const satisfies (keyof typeof STANDARD_OBJECT_IDS)[];
 
 export type BuildDefaultRelationFieldsForCustomObjectArgs = {
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   workspaceId: string;
   sourceFlatObjectMetadata: FlatObjectMetadata;
 };
@@ -187,12 +191,23 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   sourceFlatObjectMetadata,
   workspaceId,
 }: BuildDefaultRelationFieldsForCustomObjectArgs): SourceAndTargetFlatFieldMetadatasRecord => {
-  return DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce(
+  const objectIdByNameSingular = Object.values(
+    existingFlatObjectMetadataMaps.byId,
+  ).reduce<Record<string, string>>((acc, flatObject) => {
+    if (!isDefined(flatObject)) {
+      return acc;
+    }
+
+    return {
+      ...acc,
+      [flatObject.nameSingular]: flatObject.id,
+    };
+  }, {});
+
+  return DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce<SourceAndTargetFlatFieldMetadatasRecord>(
     (sourceAndTargetFlatFieldMetadatasRecord, objectMetadataNameSingular) => {
       const targetFlatObjectMetadataId =
-        existingFlatObjectMetadataMaps.idByNameSingular[
-          objectMetadataNameSingular
-        ];
+        objectIdByNameSingular[objectMetadataNameSingular];
 
       if (!isDefined(targetFlatObjectMetadataId)) {
         throw new ObjectMetadataException(
@@ -201,11 +216,10 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
         );
       }
 
-      const targetFlatObjectMetadata =
-        findFlatObjectMetadataInFlatObjectMetadataMaps({
-          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-          objectMetadataId: targetFlatObjectMetadataId,
-        });
+      const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityMaps: existingFlatObjectMetadataMaps,
+        flatEntityId: targetFlatObjectMetadataId,
+      });
 
       if (!isDefined(targetFlatObjectMetadata)) {
         throw new ObjectMetadataException(
@@ -216,7 +230,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
 
       const sourceFlatFieldMetadata = generateSourceFlatFieldMetadata({
         sourceFlatObjectMetadata,
-        targetFlatObjectMetadata: targetFlatObjectMetadata,
+        targetFlatObjectMetadata,
         workspaceId,
       });
 
@@ -230,33 +244,11 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
       return {
         standardSourceFlatFieldMetadatas: [
           ...sourceAndTargetFlatFieldMetadatasRecord.standardSourceFlatFieldMetadatas,
-          {
-            ...sourceFlatFieldMetadata,
-            flatRelationTargetFieldMetadata: {
-              ...targetFlatFieldMetadata,
-              flatRelationTargetFieldMetadata: null,
-              flatRelationTargetObjectMetadata: null,
-            },
-            flatRelationTargetObjectMetadata:
-              fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
-                targetFlatObjectMetadata,
-              ),
-          },
+          sourceFlatFieldMetadata,
         ],
         standardTargetFlatFieldMetadatas: [
           ...sourceAndTargetFlatFieldMetadatasRecord.standardTargetFlatFieldMetadatas,
-          {
-            ...targetFlatFieldMetadata,
-            flatRelationTargetFieldMetadata: {
-              ...sourceFlatFieldMetadata,
-              flatRelationTargetFieldMetadata: null,
-              flatRelationTargetObjectMetadata: null,
-            },
-            flatRelationTargetObjectMetadata:
-              fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
-                sourceFlatObjectMetadata,
-              ),
-          },
+          targetFlatFieldMetadata,
         ],
       };
     },

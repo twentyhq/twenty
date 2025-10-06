@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
@@ -33,7 +34,7 @@ export class ApplicationService {
 
   async create(data: {
     universalIdentifier?: string;
-    label: string;
+    name: string;
     description?: string;
     version?: string;
     serverlessFunctionLayerId: string;
@@ -51,7 +52,7 @@ export class ApplicationService {
   async update(
     id: string,
     data: {
-      label?: string;
+      name?: string;
       description?: string;
       version?: string;
       sourcePath?: string;
@@ -69,5 +70,21 @@ export class ApplicationService {
     }
 
     return updatedApplication;
+  }
+
+  async delete(universalIdentifier: string, workspaceId: string) {
+    const application = await this.findByUniversalIdentifier(
+      universalIdentifier,
+      workspaceId,
+    );
+
+    if (!isDefined(application)) {
+      throw new Error(`Application does not exist`);
+    }
+
+    await this.applicationRepository.delete({
+      universalIdentifier,
+      workspaceId,
+    });
   }
 }

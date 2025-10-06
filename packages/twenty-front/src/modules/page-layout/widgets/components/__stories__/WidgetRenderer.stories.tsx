@@ -1,9 +1,9 @@
 import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { GraphType } from '~/generated-metadata/graphql';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { GraphType } from '~/generated-metadata/graphql';
 
 const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
@@ -30,18 +30,18 @@ type Story = StoryObj<typeof WidgetRenderer>;
 
 export const WithNumberChart: Story = {
   args: {
-    widget: createDefaultGraphWidget(
-      'widget-1',
-      'tab-overview',
-      'Sales Pipeline',
-      GraphType.NUMBER,
-      {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
+      title: 'Sales Pipeline',
+      graphType: GraphType.NUMBER,
+      gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 3,
       },
-    ),
+    }),
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
@@ -52,18 +52,18 @@ export const WithNumberChart: Story = {
 
 export const WithGaugeChart: Story = {
   args: {
-    widget: createDefaultGraphWidget(
-      'widget-1',
-      'tab-overview',
-      'Conversion Rate',
-      GraphType.GAUGE,
-      {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
+      title: 'Conversion Rate',
+      graphType: GraphType.GAUGE,
+      gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 5,
         columnSpan: 3,
       },
-    ),
+    }),
   },
   render: (args) => (
     <div style={{ width: '300px', height: '400px' }}>
@@ -74,18 +74,18 @@ export const WithGaugeChart: Story = {
 
 export const WithPieChart: Story = {
   args: {
-    widget: createDefaultGraphWidget(
-      'widget-1',
-      'tab-overview',
-      'Lead Distribution',
-      GraphType.PIE,
-      {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
+      title: 'Lead Distribution',
+      graphType: GraphType.PIE,
+      gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 5,
         columnSpan: 3,
       },
-    ),
+    }),
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
@@ -96,18 +96,18 @@ export const WithPieChart: Story = {
 
 export const SmallWidget: Story = {
   args: {
-    widget: createDefaultGraphWidget(
-      'widget-1',
-      'tab-overview',
-      'Small Widget (2x2 grid)',
-      GraphType.NUMBER,
-      {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
+      title: 'Small Widget (2x2 grid)',
+      graphType: GraphType.NUMBER,
+      gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 2,
       },
-    ),
+    }),
   },
   parameters: {
     docs: {
@@ -125,18 +125,18 @@ export const SmallWidget: Story = {
 
 export const MediumWidget: Story = {
   args: {
-    widget: createDefaultGraphWidget(
-      'widget-1',
-      'tab-overview',
-      'Medium Widget (4x3 grid)',
-      GraphType.GAUGE,
-      {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
+      title: 'Medium Widget (4x3 grid)',
+      graphType: GraphType.GAUGE,
+      gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 3,
         columnSpan: 4,
       },
-    ),
+    }),
   },
   parameters: {
     docs: {
@@ -154,18 +154,18 @@ export const MediumWidget: Story = {
 
 export const LargeWidget: Story = {
   args: {
-    widget: createDefaultGraphWidget(
-      'widget-1',
-      'tab-overview',
-      'Large Widget (6x4 grid)',
-      GraphType.PIE,
-      {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
+      title: 'Large Widget (6x4 grid)',
+      graphType: GraphType.PIE,
+      gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 4,
         columnSpan: 6,
       },
-    ),
+    }),
   },
   parameters: {
     docs: {
@@ -183,18 +183,18 @@ export const LargeWidget: Story = {
 
 export const WideWidget: Story = {
   args: {
-    widget: createDefaultGraphWidget(
-      'widget-1',
-      'tab-overview',
-      'Wide Widget (8x2 grid)',
-      GraphType.NUMBER,
-      {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
+      title: 'Wide Widget (8x2 grid)',
+      graphType: GraphType.NUMBER,
+      gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 8,
       },
-    ),
+    }),
   },
   parameters: {
     docs: {
@@ -212,18 +212,18 @@ export const WideWidget: Story = {
 
 export const TallWidget: Story = {
   args: {
-    widget: createDefaultGraphWidget(
-      'widget-1',
-      'tab-overview',
-      'Tall Widget (3x6 grid)',
-      GraphType.GAUGE,
-      {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
+      title: 'Tall Widget (3x6 grid)',
+      graphType: GraphType.GAUGE,
+      gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 6,
         columnSpan: 3,
       },
-    ),
+    }),
   },
   parameters: {
     docs: {

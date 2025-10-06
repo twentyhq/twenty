@@ -13,6 +13,7 @@ import {
   generateViewFilterUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 describe('ViewFilterService', () => {
   let viewFilterService: ViewFilterService;
@@ -35,6 +36,12 @@ describe('ViewFilterService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ViewFilterService,
+        {
+          provide: ViewService,
+          useValue: {
+            flushGraphQLCache: jest.fn(),
+          },
+        },
         {
           provide: getRepositoryToken(ViewFilterEntity),
           useValue: {
