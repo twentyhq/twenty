@@ -28,9 +28,11 @@ export class GroupByDateBucketInputTypeGenerator {
               },
               {} as Record<string, { value: string }>,
             ),
-            description: 'Date bucket (e.g. day, week, month, year)',
+            description:
+              'Date bucket (e.g. day, month, quarter, year, day of the week, quarter of the year, month of the year)',
           }),
-          description: 'Date bucket (e.g. day, week, month, year)',
+          description:
+            'Date bucket (e.g. day, month, quarter, year, day of the week, quarter of the year, month of the year)',
         },
       },
     });
