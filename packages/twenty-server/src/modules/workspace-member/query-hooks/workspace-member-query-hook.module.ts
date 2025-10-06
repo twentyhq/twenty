@@ -30,7 +30,7 @@ import { WorkspaceMemberUpdateOnePreQueryHook } from 'src/modules/workspace-memb
     WorkspaceMemberRestoreManyPreQueryHook,
     WorkspaceMemberUpdateOnePreQueryHook,
     WorkspaceMemberUpdateManyPreQueryHook,
-    WorkspacePermissionsCacheModule
+    WorkspacePermissionsCacheModule,
   ],
   imports: [
     FeatureFlagModule,

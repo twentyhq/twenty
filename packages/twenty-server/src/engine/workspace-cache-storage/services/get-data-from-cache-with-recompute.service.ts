@@ -80,6 +80,7 @@ export class GetDataFromCacheWithRecomputeService<T, U> {
     }
 
     const cacheKey = `${workspaceId}-${cachedVersion}`;
+
     this.cache.set(cacheKey, {
       version: cachedVersion,
       data: cachedData,
