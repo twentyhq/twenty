@@ -16,10 +16,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 type useDetachRelatedRecordFromRecordProps = {
   recordObjectNameSingular: string;
+  relationTargetGQLfieldName: string;
 };
 
 export const useDetachRelatedRecordFromRecord = ({
   recordObjectNameSingular,
+  relationTargetGQLfieldName,
 }: useDetachRelatedRecordFromRecordProps) => {
   const apolloCoreClient = useApolloCoreClient();
   const { fieldDefinition } = useContext(FieldContext);
@@ -36,14 +38,12 @@ export const useDetachRelatedRecordFromRecord = ({
   const updateOneRecordAndDetachRelations = async ({
     recordId,
     relatedRecordId,
-    relationTargetgqlfieldName,
   }: {
     recordId: string;
     relatedRecordId: string;
-    relationTargetgqlfieldName: string;
   }) => {
     const fieldOnObject = objectMetadataItem.readableFields.find((field) => {
-      return field.name === relationTargetgqlfieldName;
+      return field.name === relationTargetGQLfieldName;
     });
 
     const relatedRecordObjectNameSingular =
@@ -82,7 +82,7 @@ export const useDetachRelatedRecordFromRecord = ({
       objectMetadataItem,
       cache: apolloCoreClient.cache,
       fieldModifiers: {
-        [relationTargetgqlfieldName]: (
+        [relationTargetGQLfieldName]: (
           fieldNameOnRecordObjectConnection,
           { readField },
         ) => {

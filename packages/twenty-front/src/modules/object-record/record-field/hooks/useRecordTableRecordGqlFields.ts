@@ -65,8 +65,10 @@ export const useRecordFieldGqlFields = ({
         const computedFieldName = computeMorphRelationFieldName({
           fieldName: fieldMetadataItem.name,
           relationType: fieldMetadataItem.settings?.relationType,
-          targetObjectMetadataNameSingular: morphRelation.targetObjectMetadata.nameSingular,
-          targetObjectMetadataNamePlural: morphRelation.targetObjectMetadata.namePlural,
+          targetObjectMetadataNameSingular:
+            morphRelation.targetObjectMetadata.nameSingular,
+          targetObjectMetadataNamePlural:
+            morphRelation.targetObjectMetadata.namePlural,
         });
 
         return [computedFieldName, true];

@@ -26,12 +26,14 @@ export const useUpdateRelationFromManyFieldInput = () => {
     useDetachRelatedRecordFromRecord({
       recordObjectNameSingular:
         fieldDefinition.metadata.objectMetadataNameSingular,
+      relationTargetGQLfieldName: fieldDefinition.metadata.fieldName,
     });
 
   const { updateOneRecordAndAttachRelations } =
     useAttachRelatedRecordFromRecord({
       recordObjectNameSingular:
         fieldDefinition.metadata.objectMetadataNameSingular,
+      relationTargetGQLfieldName: fieldDefinition.metadata.fieldName,
     });
 
   const updateRelation = useRecoilCallback(
@@ -40,18 +42,15 @@ export const useUpdateRelationFromManyFieldInput = () => {
         await updateOneRecordAndAttachRelations({
           recordId,
           relatedRecordId: morphItem.recordId,
-          relationTargetgqlfieldName: fieldDefinition.metadata.fieldName,
         });
       } else {
         await updateOneRecordAndDetachRelations({
           recordId,
           relatedRecordId: morphItem.recordId,
-          relationTargetgqlfieldName: fieldDefinition.metadata.fieldName,
         });
       }
     },
     [
-      fieldDefinition.metadata.fieldName,
       recordId,
       updateOneRecordAndAttachRelations,
       updateOneRecordAndDetachRelations,

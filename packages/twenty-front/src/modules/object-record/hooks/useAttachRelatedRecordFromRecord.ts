@@ -17,10 +17,12 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type useAttachRelatedRecordFromRecordProps = {
   recordObjectNameSingular: string;
+  relationTargetGQLfieldName: string;
 };
 
 export const useAttachRelatedRecordFromRecord = ({
   recordObjectNameSingular,
+  relationTargetGQLfieldName,
 }: useAttachRelatedRecordFromRecordProps) => {
   const apolloCoreClient = useApolloCoreClient();
   const { fieldDefinition } = useContext(FieldContext);
@@ -32,17 +34,16 @@ export const useAttachRelatedRecordFromRecord = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
   const updateOneRecordAndAttachRelations = async ({
     recordId,
     relatedRecordId,
-    relationTargetgqlfieldName,
   }: {
     recordId: string;
     relatedRecordId: string;
-    relationTargetgqlfieldName: string;
   }) => {
     const fieldOnObject = objectMetadataItem.readableFields.find((field) => {
-      return field.name === relationTargetgqlfieldName;
+      return field.name === relationTargetGQLfieldName;
     });
 
     const relatedRecordObjectNameSingular =
@@ -72,7 +73,7 @@ export const useAttachRelatedRecordFromRecord = ({
 
     if (!fieldOnRelatedObject) {
       throw new CustomError(
-        `Missing target field for ${relationTargetgqlfieldName}`,
+        `Missing target field for ${relationTargetGQLfieldName}`,
         'MISSING_TARGET_FIELD',
       );
     }
