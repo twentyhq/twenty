@@ -30878,17 +30878,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv-cli@npm:^7.2.1":
-  version: 7.4.2
-  resolution: "dotenv-cli@npm:7.4.2"
+"dotenv-cli@npm:^7.4.4":
+  version: 7.4.4
+  resolution: "dotenv-cli@npm:7.4.4"
   dependencies:
-    cross-spawn: "npm:^7.0.3"
+    cross-spawn: "npm:^7.0.6"
     dotenv: "npm:^16.3.0"
     dotenv-expand: "npm:^10.0.0"
     minimist: "npm:^1.2.6"
   bin:
     dotenv: cli.js
-  checksum: 10c0/7841bfaa78975aa6b51e529bf5795e062bc6e595021d1931427bb55a6f75e1775d944f4dd91bef8accbbd539c466bfee48fa804e0f6b3a1bcf18ae7de0d64bed
+  checksum: 10c0/180801e02dcc02da4557338f48caa54740e38ffef39c7cd231e283d6fc32f4112186980773344df85a4514db28fdedace94d1b83a706ac39a4f1c2c3a402e71d
   languageName: node
   linkType: hard
 
@@ -53398,7 +53398,7 @@ __metadata:
     date-fns: "npm:^2.30.0"
     date-fns-tz: "npm:^2.0.0"
     deep-equal: "npm:^2.2.2"
-    dotenv-cli: "npm:^7.2.1"
+    dotenv-cli: "npm:^7.4.4"
     drizzle-orm: "npm:^0.29.3"
     esbuild: "npm:^0.25.10"
     eslint: "npm:^9.32.0"
