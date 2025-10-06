@@ -305,7 +305,12 @@ export const usePersistField = ({
           );
         }
       },
-    [updateOneRecord],
+    [
+      apolloCoreClient.cache,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+      updateOneRecord,
+    ],
   );
 
   return persistField;

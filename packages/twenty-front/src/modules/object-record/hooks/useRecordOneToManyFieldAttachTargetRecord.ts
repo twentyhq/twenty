@@ -6,13 +6,10 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useContext } from 'react';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const useRecordOneToManyFieldAttachTargetRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
-  const { fieldDefinition } = useContext(FieldContext);
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
