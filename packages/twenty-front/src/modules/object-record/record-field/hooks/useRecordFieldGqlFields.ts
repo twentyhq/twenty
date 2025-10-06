@@ -47,7 +47,10 @@ export const useRecordFieldGqlFields = ({
           ];
 
         // TODO: remove this once we have made the workflowVersion lighter
-        if (fieldMetadataItem.name === 'workflowVersion') {
+        if (
+          fieldMetadataItem.name === 'versions' ||
+          fieldMetadataItem.name === 'workflowVersion'
+        ) {
           return [[fieldMetadataItem.name, { id: true, name: true }]];
         }
 
