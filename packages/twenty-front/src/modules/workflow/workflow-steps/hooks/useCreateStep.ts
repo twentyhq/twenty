@@ -55,7 +55,7 @@ export const useCreateStep = () => {
         await createWorkflowVersionStep({
           id,
           workflowVersionId,
-          type: newStepType,
+          stepType: newStepType,
           parentStepId,
           nextStepId,
           position,

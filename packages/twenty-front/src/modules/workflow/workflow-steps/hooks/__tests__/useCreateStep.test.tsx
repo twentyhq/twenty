@@ -77,9 +77,10 @@ describe('useCreateStep', () => {
     expect(mockCreateWorkflowVersionStep).toHaveBeenCalledWith({
       id: 'step-id',
       workflowVersionId: mockWorkflowVersionId,
-      stepType: 'CODE',
+      type: 'CODE',
       parentStepId: 'parent-step-id',
       nextStepId: undefined,
+      parentStepConnectionOptions: undefined,
       position: undefined,
     });
   });

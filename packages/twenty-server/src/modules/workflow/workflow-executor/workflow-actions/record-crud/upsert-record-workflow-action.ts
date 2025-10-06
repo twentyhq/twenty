@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined, resolveInput } from 'twenty-shared/utils';
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
-
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
@@ -19,7 +16,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
@@ -27,25 +23,32 @@ import {
 import { isWorkflowUpsertRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-upsert-record-action.guard';
 import { type WorkflowUpsertRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
+import { RecordCrudWorkflowActionBase } from './record-crud-workflow-action-base';
+
 @Injectable()
-export class UpsertRecordWorkflowAction implements WorkflowAction {
+export class UpsertRecordWorkflowAction extends RecordCrudWorkflowActionBase {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly recordInputTransformerService: RecordInputTransformerService,
-    private readonly recordPositionService: RecordPositionService,
-  ) {}
+    twentyORMGlobalManager: TwentyORMGlobalManager,
+    scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    recordInputTransformerService: RecordInputTransformerService,
+    recordPositionService: RecordPositionService,
+  ) {
+    super(
+      twentyORMGlobalManager,
+      scopedWorkspaceContextFactory,
+      workflowCommonWorkspaceService,
+      recordInputTransformerService,
+      recordPositionService,
+    );
+  }
 
   async execute({
     currentStepId,
     steps,
     context,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
-    const step = findStepOrThrow({
-      stepId: currentStepId,
-      steps,
-    });
+    const step = await this.findStepOrThrowSafe(steps, currentStepId);
 
     if (!isWorkflowUpsertRecordAction(step)) {
       throw new WorkflowStepExecutorException(
@@ -54,59 +57,20 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const workflowActionInput = resolveInput(
-      step.settings.input,
-      context,
-    ) as WorkflowUpsertRecordActionInput;
-
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
-
-    if (!workspaceId) {
-      throw new RecordCRUDActionException(
-        'Failed to upsert: Workspace ID is required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+    const workflowActionInput =
+      this.resolveInputSafe<WorkflowUpsertRecordActionInput>(
+        step.settings.input as Record<string, unknown>,
+        context,
       );
-    }
 
-    if (!isDefined(workflowActionInput.objectName)) {
-      throw new RecordCRUDActionException(
-        'Failed to upsert: Object name is required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
+    const workspaceId = await this.getWorkspaceId();
 
     try {
-      const repository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      const { repository, objectMetadataItemWithFieldsMaps } =
+        await this.getRepositoryAndMetadata(
           workspaceId,
           workflowActionInput.objectName,
-          { shouldBypassPermissionChecks: true },
         );
-
-      const { objectMetadataItemWithFieldsMaps } =
-        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-          workflowActionInput.objectName,
-          workspaceId,
-        );
-
-      if (!objectMetadataItemWithFieldsMaps) {
-        throw new RecordCRUDActionException(
-          `Object "${workflowActionInput.objectName}" not found`,
-          RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
-        );
-      }
-
-      if (
-        !canObjectBeManagedByWorkflow({
-          nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
-          isSystem: objectMetadataItemWithFieldsMaps.isSystem,
-        })
-      ) {
-        throw new RecordCRUDActionException(
-          'Failed to upsert: Object cannot be managed by workflow',
-          RecordCRUDActionExceptionCode.INVALID_REQUEST,
-        );
-      }
 
       const existingRecord = await this.findExistingRecord(
         repository,
@@ -123,9 +87,9 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
           objectMetadataItemWithFieldsMaps,
         );
       } else {
-        result = await this.createNewRecord(
+        result = await this.createRecord(
           repository,
-          workflowActionInput,
+          workflowActionInput.objectRecord,
           objectMetadataItemWithFieldsMaps,
           workspaceId,
         );

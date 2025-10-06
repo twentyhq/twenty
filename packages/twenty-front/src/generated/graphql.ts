@@ -899,7 +899,7 @@ export type CreateWorkflowVersionStepInput = {
   /** Step position */
   position?: InputMaybe<WorkflowStepPositionInput>;
   /** New step type */
-  stepType: WorkflowActionType;
+  stepType: Scalars['String'];
   /** Workflow version ID */
   workflowVersionId: Scalars['UUID'];
 };
