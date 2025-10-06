@@ -96,7 +96,7 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
   @Column({ nullable: true, type: 'varchar' })
   shortcut: string | null;
 
-  // TODO should not be nullable legacy introduce when label identifier was nullable
+  // TODO: This should not be nullable - legacy field introduced when label identifier was nullable
   @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId: string | null;
 
