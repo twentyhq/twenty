@@ -13,10 +13,14 @@ import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldEmailsValue } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guards/isFieldFullNameValue';
+import { isFieldImage } from '@/object-record/record-field/ui/types/guards/isFieldImage';
+import { isFieldImageValue } from '@/object-record/record-field/ui/types/guards/isFieldImageValue';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldLinksValue } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelectValue';
+import { isFieldPdf } from '@/object-record/record-field/ui/types/guards/isFieldPdf';
+import { isFieldPdfValue } from '@/object-record/record-field/ui/types/guards/isFieldPdfValue';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
@@ -142,6 +146,12 @@ export const usePersistField = ({
         const fieldIsArray =
           isFieldArray(fieldDefinition) && isFieldArrayValue(valueToPersist);
 
+        const fieldIsImage =
+          isFieldImage(fieldDefinition) && isFieldImageValue(valueToPersist);
+
+        const fieldIsPdf =
+          isFieldPdf(fieldDefinition) && isFieldPdfValue(valueToPersist);
+
         const fieldIsUIReadOnly =
           fieldDefinition.metadata.isUIReadOnly ?? false;
 
@@ -168,7 +178,9 @@ export const usePersistField = ({
           fieldIsRawJson ||
           fieldIsArray ||
           fieldIsRichText ||
-          fieldIsRichTextV2;
+          fieldIsRichTextV2 ||
+          fieldIsImage ||
+          fieldIsPdf;
 
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;

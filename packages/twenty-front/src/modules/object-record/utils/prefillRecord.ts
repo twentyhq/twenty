@@ -26,14 +26,23 @@ export const prefillRecord = <T extends ObjectRecord>({
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE
         ) {
-          const joinColumnValue =
-            input[fieldMetadataItem.settings?.joinColumnName];
+          const joinColumnName = fieldMetadataItem.settings?.joinColumnName;
+          const joinColumnValue = input[joinColumnName as string];
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
 
-          return [
-            [fieldMetadataItem.name, fieldValue],
-            [fieldMetadataItem.settings?.joinColumnName, joinColumnValue],
-          ];
+          const pairs: Array<[string, unknown]> = [[
+            fieldMetadataItem.name,
+            fieldValue,
+          ]];
+
+          // Only include the join column when a concrete value is provided.
+          // This avoids writing undefined values into the cache (which Apollo treats as missing fields),
+          // and prevents generateDepthOneRecordGqlFieldsFromRecord from marking those fields as required.
+          if (isDefined(joinColumnName) && isDefined(joinColumnValue)) {
+            pairs.push([joinColumnName as string, joinColumnValue]);
+          }
+
+          return pairs;
         }
 
         return [[fieldMetadataItem.name, fieldValue]];

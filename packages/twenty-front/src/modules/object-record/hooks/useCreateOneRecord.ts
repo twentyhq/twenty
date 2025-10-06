@@ -169,7 +169,9 @@ export const useCreateOneRecord = <
         throw error;
       });
 
-    await refetchAggregateQueries();
+    if (shouldMatchRootQueryFilter !== false) {
+      await refetchAggregateQueries();
+    }
     return createdObject.data?.[mutationResponseField] ?? null;
   };
 

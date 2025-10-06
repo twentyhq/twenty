@@ -24,8 +24,12 @@ import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
+import { AttachmentLimitValidatorService } from 'src/engine/metadata-modules/field-metadata/validators/attachment-limit-validator.service';
+import { CompositeFieldValidatorService } from 'src/engine/metadata-modules/field-metadata/validators/composite-field-validator.service';
+import { ImageMimeValidatorService } from 'src/engine/metadata-modules/field-metadata/validators/image-mime-validator.service';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
+import { PdfMimeValidatorService } from 'src/engine/metadata-modules/field-metadata/validators/pdf-mime-validator.service';
 import { FlatFieldMetadataModule } from 'src/engine/metadata-modules/flat-field-metadata/flat-field-metadata.module';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -119,6 +123,10 @@ import { FieldMetadataService } from './services/field-metadata.service';
     FieldMetadataEnumValidationService,
     FieldMetadataResolver,
     BeforeUpdateOneField,
+    ImageMimeValidatorService,
+    PdfMimeValidatorService,
+    AttachmentLimitValidatorService,
+    CompositeFieldValidatorService,
   ],
   exports: [
     FieldMetadataService,
@@ -128,6 +136,10 @@ import { FieldMetadataService } from './services/field-metadata.service';
     FieldMetadataRelatedRecordsService,
     FieldMetadataEnumValidationService,
     FieldMetadataValidationService,
+    ImageMimeValidatorService,
+    PdfMimeValidatorService,
+    AttachmentLimitValidatorService,
+    CompositeFieldValidatorService,
   ],
 })
 export class FieldMetadataModule {}

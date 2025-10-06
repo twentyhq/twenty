@@ -10,8 +10,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FileFolder,
-  useUploadFileMutation,
+    FileFolder,
+    useUploadFileMutation,
 } from '~/generated-metadata/graphql';
 
 export const useUploadAttachmentFile = () => {
@@ -22,7 +22,7 @@ export const useUploadAttachmentFile = () => {
   const { createOneRecord: createOneAttachment } =
     useCreateOneRecord<Attachment>({
       objectNameSingular: CoreObjectNameSingular.Attachment,
-      shouldMatchRootQueryFilter: true,
+      shouldMatchRootQueryFilter: false,
     });
 
   const uploadAttachmentFile = async (
@@ -60,7 +60,11 @@ export const useUploadAttachmentFile = () => {
 
     const createdAttachment = await createOneAttachment(attachmentToCreate);
 
-    return { attachmentAbsoluteURL: createdAttachment.fullPath };
+    return {
+      attachmentId: createdAttachment.id,
+      attachmentAbsoluteURL: createdAttachment.fullPath,
+      attachment: createdAttachment,
+    };
   };
 
   return { uploadAttachmentFile };

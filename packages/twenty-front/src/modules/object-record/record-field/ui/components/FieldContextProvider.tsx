@@ -3,9 +3,9 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import {
-  FieldContext,
-  type RecordUpdateHook,
-  type RecordUpdateHookParams,
+    FieldContext,
+    type RecordUpdateHook,
+    type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { type ReactNode } from 'react';
 
@@ -72,6 +72,7 @@ export const FieldContextProvider = ({
       key={objectRecordId + fieldMetadataItem.id}
       value={{
         recordId: objectRecordId,
+        objectMetadataNameSingular: objectNameSingular,
         isLabelIdentifier,
         fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
           field: fieldMetadataItem,

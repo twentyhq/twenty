@@ -556,7 +556,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PDF].attachmentIds,
         isImportable: false,
-        isFilterable: true,
+        isFilterable: false,
         isIncludedInUniqueConstraint: false,
       },
     ],
@@ -585,7 +585,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.IMAGE]
             .attachmentIds,
         isImportable: false,
-        isFilterable: true,
+        isFilterable: false,
         isIncludedInUniqueConstraint: false,
       },
     ],

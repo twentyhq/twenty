@@ -13,11 +13,21 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
 export const useImageField = () => {
-  const { recordId, fieldDefinition } = useContext(FieldContext);
+  const {
+    recordId,
+    objectMetadataNameSingular: contextObjectName,
+    fieldDefinition,
+  } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.IMAGE, isFieldImage, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
+
+  // Fallback: try context first, then fieldDefinition metadata
+  const objectMetadataNameSingular =
+    contextObjectName ||
+    fieldDefinition.metadata.objectMetadataNameSingular ||
+    '';
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldImageValue>(
     recordStoreFamilySelector({
@@ -33,6 +43,8 @@ export const useImageField = () => {
   );
 
   return {
+    recordId,
+    objectMetadataNameSingular,
     fieldDefinition,
     fieldValue,
     draftValue,
