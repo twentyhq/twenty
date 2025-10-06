@@ -52,8 +52,10 @@ export const mapFieldMetadataToGraphQLQuery = ({
       const relationFieldName = computeMorphRelationFieldName({
         fieldName: fieldMetadata.name,
         relationType: fieldMetadata.settings?.relationType,
-        nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-        namePlural: morphRelation.targetObjectMetadata.namePlural,
+        targetObjectMetadataNameSingular:
+          morphRelation.targetObjectMetadata.nameSingular,
+        targetObjectMetadataNamePlural:
+          morphRelation.targetObjectMetadata.namePlural,
       });
       const relationMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>

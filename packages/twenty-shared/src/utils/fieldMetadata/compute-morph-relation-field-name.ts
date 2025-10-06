@@ -10,15 +10,15 @@ enum RelationType {
 type ComputeMorphRelationFieldNameArgs = {
   fieldName: string;
   relationType: RelationType;
-  nameSingular: string;
-  namePlural: string;
+  targetObjectMetadataNameSingular: string;
+  targetObjectMetadataNamePlural: string;
 };
 
 export const computeMorphRelationFieldName = ({
   fieldName,
   relationType,
-  nameSingular,
-  namePlural,
+  targetObjectMetadataNameSingular: nameSingular,
+  targetObjectMetadataNamePlural: namePlural,
 }: ComputeMorphRelationFieldNameArgs): string => {
   if (relationType === RelationType.MANY_TO_ONE) {
     return `${fieldName}${capitalize(nameSingular)}`;

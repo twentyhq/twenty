@@ -74,8 +74,10 @@ export const mapObjectMetadataToGraphQLQuery = ({
         gqlField: computeMorphRelationFieldName({
           fieldName: fieldMetadata.name,
           relationType: morphRelation.type,
-          nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-          namePlural: morphRelation.targetObjectMetadata.namePlural,
+          targetObjectMetadataNameSingular:
+            morphRelation.targetObjectMetadata.nameSingular,
+          targetObjectMetadataNamePlural:
+            morphRelation.targetObjectMetadata.namePlural,
         }),
         fieldMetadata: fieldMetadata,
       }));
@@ -107,8 +109,10 @@ export const mapObjectMetadataToGraphQLQuery = ({
       gqlField: computeMorphRelationFieldName({
         fieldName: fieldMetadata.name,
         relationType: morphRelation.type,
-        nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-        namePlural: morphRelation.targetObjectMetadata.namePlural,
+        targetObjectMetadataNameSingular:
+          morphRelation.targetObjectMetadata.nameSingular,
+        targetObjectMetadataNamePlural:
+          morphRelation.targetObjectMetadata.namePlural,
       }),
       fieldMetadata,
     }));

@@ -64,8 +64,10 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
             const computedFieldName = computeMorphRelationFieldName({
               fieldName: fieldDefinition.metadata.fieldName,
               relationType: fieldDefinition.metadata.relationType,
-              nameSingular: relatedObjectMetadataItem.nameSingular,
-              namePlural: relatedObjectMetadataItem.namePlural,
+              targetObjectMetadataNameSingular:
+                relatedObjectMetadataItem.nameSingular,
+              targetObjectMetadataNamePlural:
+                relatedObjectMetadataItem.namePlural,
             });
 
             const currentMorphFieldValue =

@@ -35,8 +35,8 @@ export const sanitizeRecordInput = ({
               const computedFieldName = computeMorphRelationFieldName({
                 fieldName: field.name,
                 relationType: morphRelation.type,
-                nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-                namePlural: morphRelation.targetObjectMetadata.namePlural,
+                targetObjectMetadataNameSingular: morphRelation.targetObjectMetadata.nameSingular,
+                targetObjectMetadataNamePlural: morphRelation.targetObjectMetadata.namePlural,
               });
               return computedFieldName === fieldName.replace('Id', '');
             });

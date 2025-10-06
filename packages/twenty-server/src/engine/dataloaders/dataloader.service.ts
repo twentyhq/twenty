@@ -155,31 +155,12 @@ export class DataloaderService {
               FieldMetadataType.MORPH_RELATION,
             )
           ) {
-            // const allMorphFlatFieldMetadatas = [
-            //   sourceFlatFieldMetadata.flatRelationTargetFieldMetadata,
-            //   ...findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
-            //     flatFieldMetadata:
-            //       sourceFlatFieldMetadata.flatRelationTargetFieldMetadata,
-            //     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-            //   }),
-            // ].sort((a, b) => (a.id > b.id ? 1 : -1));
-
             const morphNameFromMorphFieldMetadataName =
               getMorphNameFromMorphFieldMetadataName({
                 morphRelationFlatFieldMetadata: targetFlatFieldMetadata,
                 nameSingular: sourceFlatObjectMetadata.nameSingular,
                 namePlural: sourceFlatObjectMetadata.namePlural,
               });
-
-            // relationDtos.push(
-            //   fromMorphOrRelationFlatFieldMetadataToRelationDto({
-            //     flatFieldMetadata: {
-            //       ...sourceFlatFieldMetadata,
-            //       flatRelationTargetFieldMetadata: {
-            //         ...allMorphFlatFieldMetadatas[0],
-            //         name: morphNameFromMorphFieldMetadataName,
-            //       },
-            //     },
 
             const allMorphFlatFieldMetadatas = [
               targetFlatFieldMetadata,

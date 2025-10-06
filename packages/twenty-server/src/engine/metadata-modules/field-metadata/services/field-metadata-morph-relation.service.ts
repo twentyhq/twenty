@@ -74,8 +74,8 @@ export class FieldMetadataMorphRelationService {
       const currentMorphRelationFieldName = computeMorphRelationFieldName({
         fieldName: fieldMetadataForCreate.name,
         relationType: relationCreationPayload.type,
-        nameSingular: targetObjectMetadata.nameSingular,
-        namePlural: targetObjectMetadata.namePlural,
+        targetObjectMetadataNameSingular: targetObjectMetadata.nameSingular,
+        targetObjectMetadataNamePlural: targetObjectMetadata.namePlural,
       });
       const relationFieldMetadataForCreate =
         this.fieldMetadataRelationService.computeCustomRelationFieldMetadataForCreation(

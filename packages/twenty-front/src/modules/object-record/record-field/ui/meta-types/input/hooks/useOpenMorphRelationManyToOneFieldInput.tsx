@@ -33,8 +33,10 @@ export const useOpenMorphRelationManyToOneFieldInput = () => {
             return computeMorphRelationFieldName({
               fieldName: fieldDefinition.metadata.fieldName,
               relationType: fieldDefinition.metadata.relationType,
-              nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-              namePlural: morphRelation.targetObjectMetadata.namePlural,
+              targetObjectMetadataNameSingular:
+                morphRelation.targetObjectMetadata.nameSingular,
+              targetObjectMetadataNamePlural:
+                morphRelation.targetObjectMetadata.namePlural,
             });
           },
         );

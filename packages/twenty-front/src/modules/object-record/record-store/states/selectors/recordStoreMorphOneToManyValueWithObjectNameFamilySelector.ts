@@ -23,8 +23,10 @@ export const recordStoreMorphOneToManyValueWithObjectNameFamilySelector =
             const fieldName = computeMorphRelationFieldName({
               fieldName: morphRelation.sourceFieldMetadata.name,
               relationType: morphRelation.type as RelationType,
-              nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-              namePlural: morphRelation.targetObjectMetadata.namePlural,
+              targetObjectMetadataNameSingular:
+                morphRelation.targetObjectMetadata.nameSingular,
+              targetObjectMetadataNamePlural:
+                morphRelation.targetObjectMetadata.namePlural,
             });
             return {
               objectNameSingular:

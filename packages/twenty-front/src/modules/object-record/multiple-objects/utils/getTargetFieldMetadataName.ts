@@ -1,7 +1,7 @@
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
-  type FieldMorphRelationMetadata,
-  type FieldRelationMetadata,
+    type FieldMorphRelationMetadata,
+    type FieldRelationMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
@@ -28,8 +28,8 @@ export const getTargetFieldMetadataName = ({
     return computeMorphRelationFieldName({
       fieldName: fieldDefinition.metadata.fieldName,
       relationType: fieldDefinition.metadata.relationType,
-      nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-      namePlural: morphRelation.targetObjectMetadata.namePlural,
+      targetObjectMetadataNameSingular: morphRelation.targetObjectMetadata.nameSingular,
+      targetObjectMetadataNamePlural: morphRelation.targetObjectMetadata.namePlural,
     });
   }
 };

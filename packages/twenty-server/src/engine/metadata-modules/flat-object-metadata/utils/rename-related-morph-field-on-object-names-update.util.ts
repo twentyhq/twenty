@@ -51,8 +51,8 @@ export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
         const newMorphFieldName = computeMorphRelationFieldName({
           fieldName: initialMorphRelationFieldName,
           relationType: morphRelationFlatFieldMetadata.settings.relationType,
-          nameSingular: toFlatObjectMetadata.nameSingular,
-          namePlural: toFlatObjectMetadata.namePlural,
+          targetObjectMetadataNameSingular: toFlatObjectMetadata.nameSingular,
+          targetObjectMetadataNamePlural: toFlatObjectMetadata.namePlural,
         });
         const newJoinColumnName = isManyToOneRelationType
           ? computeMorphOrRelationFieldJoinColumnName({
