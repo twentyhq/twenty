@@ -46,6 +46,7 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
+import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -332,19 +333,7 @@ export class LambdaDriver implements ServerlessDriver {
         builtBundleFilePath =
           await buildServerlessFunctionInMemory(sourceTemporaryDir);
       } catch (error) {
-        return {
-          data: null,
-          logs: '',
-          duration: Date.now() - startTime,
-          error: {
-            errorType: 'BuildError',
-            errorMessage:
-              // @ts-expect-error legacy noImplicitAny
-              error.errors.map((e) => e.text).join('\n') || 'Unknown error',
-            stackTrace: error.stack ? error.stack.split('\n') : [],
-          },
-          status: ServerlessFunctionExecutionStatus.ERROR,
-        };
+        return formatBuildError(error, startTime);
       }
 
       const compiledCode = (await fs.readFile(builtBundleFilePath)).toString(

@@ -18,6 +18,7 @@ import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/s
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
 import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
+import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -120,19 +121,7 @@ export class LocalDriver implements ServerlessDriver {
         builtBundleFilePath =
           await buildServerlessFunctionInMemory(sourceTemporaryDir);
       } catch (error) {
-        return {
-          data: null,
-          logs: '',
-          duration: Date.now() - startTime,
-          error: {
-            errorType: 'BuildError',
-            errorMessage:
-              // @ts-expect-error legacy noImplicitAny
-              error.errors.map((e) => e.text).join('\n') || 'Unknown error',
-            stackTrace: error.stack ? error.stack.split('\n') : [],
-          },
-          status: ServerlessFunctionExecutionStatus.ERROR,
-        };
+        return formatBuildError(error, startTime);
       }
 
       try {
@@ -212,7 +201,6 @@ export class LocalDriver implements ServerlessDriver {
           status: ServerlessFunctionExecutionStatus.ERROR,
         };
       } finally {
-        // Restoring originalConsole
         consoleListener.release();
       }
     } finally {
