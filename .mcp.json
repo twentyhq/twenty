@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "postgres-mcp", "--access-mode=unrestricted"],
+      "env": {
+        "DATABASE_URI": "${PG_DATABASE_URL}"
+      }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest", "--no-sandbox", "--headless"],
+      "env": {}
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {}
+    }
+  }
+}
