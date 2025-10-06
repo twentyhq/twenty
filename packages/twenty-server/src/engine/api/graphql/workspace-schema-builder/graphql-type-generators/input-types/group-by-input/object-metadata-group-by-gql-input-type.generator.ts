@@ -80,20 +80,20 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
       fieldMetadata.type === FieldMetadataType.DATE ||
       fieldMetadata.type === FieldMetadataType.DATE_TIME
     ) {
-      const groupByDataBucketInputType = this.gqlTypesStorage.getGqlTypeByKey(
+      const groupByDateBucketInputType = this.gqlTypesStorage.getGqlTypeByKey(
         GROUP_BY_DATE_BUCKET_INPUT_KEY,
       );
 
       if (
-        !isDefined(groupByDataBucketInputType) ||
-        !isInputObjectType(groupByDataBucketInputType)
+        !isDefined(groupByDateBucketInputType) ||
+        !isInputObjectType(groupByDateBucketInputType)
       ) {
         throw new Error(
           'Could not find a GraphQL input type for GroupByDateBucketInput',
         );
       }
 
-      type = groupByDataBucketInputType;
+      type = groupByDateBucketInputType;
     } else {
       type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
     }
