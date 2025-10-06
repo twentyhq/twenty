@@ -4,7 +4,6 @@ import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { RelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationFromManyFieldInput';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -17,6 +16,7 @@ import {
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
+import { RelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationOneToManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -37,7 +37,7 @@ const RelationWorkspaceSetterEffect = () => {
   return <></>;
 };
 
-const RelationManyFieldInputWithContext = () => {
+const RelationOneToManyFieldInputWithContext = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const fieldDefinition = useMemo(
@@ -104,7 +104,7 @@ const RelationManyFieldInputWithContext = () => {
           }}
         >
           <RelationWorkspaceSetterEffect />
-          <RelationFromManyFieldInput />
+          <RelationOneToManyFieldInput />
         </FieldContext.Provider>
       </RecordFieldComponentInstanceContext.Provider>
       <div data-testid="data-field-input-click-outside-div" />
@@ -112,8 +112,8 @@ const RelationManyFieldInputWithContext = () => {
   );
 };
 const meta: Meta = {
-  title: 'UI/Data/Field/Input/RelationManyFieldInput',
-  component: RelationManyFieldInputWithContext,
+  title: 'UI/Data/Field/Input/RelationOneToManyFieldInput',
+  component: RelationOneToManyFieldInputWithContext,
   args: {},
   decorators: [ObjectMetadataItemsDecorator, SnackBarDecorator],
   parameters: {
@@ -124,6 +124,6 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof RelationManyFieldInputWithContext>;
+type Story = StoryObj<typeof RelationOneToManyFieldInputWithContext>;
 
 export const Default: Story = {};

@@ -3,6 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldMetadata,
+  type FieldMorphRelationMetadata,
   type FieldRelationMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
@@ -21,8 +22,6 @@ import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
 import { isFieldRawJsonValue } from '@/object-record/record-field/ui/types/guards/isFieldRawJsonValue';
-import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
-import { isFieldRelationToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneValue';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -31,6 +30,9 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
+import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
+import { isFieldRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOneValue';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 import { isFieldRichTextValue } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValue';
@@ -74,10 +76,15 @@ export const usePersistField = ({
         fieldDefinition: FieldDefinition<FieldMetadata>;
         valueToPersist: unknown;
       }) => {
-        const fieldIsRelationToOneObject =
-          isFieldRelationToOneObject(
+        const fieldIsRelationManyToOne =
+          isFieldRelationManyToOne(
             fieldDefinition as FieldDefinition<FieldRelationMetadata>,
-          ) && isFieldRelationToOneValue(valueToPersist);
+          ) && isFieldRelationManyToOneValue(valueToPersist);
+
+        const fieldIsMorphRelationManyToOne =
+          isFieldMorphRelationManyToOne(
+            fieldDefinition as FieldDefinition<FieldMorphRelationMetadata>,
+          ) && isFieldRelationManyToOneValue(valueToPersist);
 
         const fieldIsText =
           isFieldText(fieldDefinition) && isFieldTextValue(valueToPersist);
@@ -150,7 +157,8 @@ export const usePersistField = ({
         }
 
         const isValuePersistable =
-          fieldIsRelationToOneObject ||
+          fieldIsMorphRelationManyToOne ||
+          fieldIsRelationManyToOne ||
           fieldIsText ||
           fieldIsBoolean ||
           fieldIsEmails ||
@@ -178,7 +186,7 @@ export const usePersistField = ({
             .getValue();
 
           if (
-            fieldIsRelationToOneObject &&
+            fieldIsRelationManyToOne &&
             valueToPersist?.id === currentValue?.id
           ) {
             return;
@@ -193,7 +201,18 @@ export const usePersistField = ({
             valueToPersist,
           );
 
-          if (fieldIsRelationToOneObject) {
+          if (fieldIsRelationManyToOne) {
+            updateOneRecord?.({
+              idToUpdate: recordId,
+              updateOneRecordInput: {
+                [getForeignKeyNameFromRelationFieldName(fieldName)]:
+                  valueToPersist?.id ?? null,
+              },
+            });
+            return;
+          }
+
+          if (fieldIsMorphRelationManyToOne) {
             updateOneRecord?.({
               idToUpdate: recordId,
               updateOneRecordInput: {

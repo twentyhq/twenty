@@ -8,14 +8,14 @@ import { LinksFieldInput } from '@/object-record/record-field/ui/meta-types/inpu
 import { MultiSelectFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiSelectFieldInput';
 import { PhonesFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput';
 import { RawJsonFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput';
-import { RelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationFromManyFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/SelectFieldInput';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
-import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/types/guards/isFieldRelationFromManyObjects';
 
 import { ArrayFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldInput';
 import { MorphRelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MorphRelationManyToOneFieldInput';
 import { MorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MorphRelationOneToManyFieldInput';
+import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput';
+import { RelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationOneToManyFieldInput';
 import { RichTextFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldInput';
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
@@ -32,7 +32,8 @@ import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
-import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
+import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { FieldContext } from '../contexts/FieldContext';
@@ -41,7 +42,6 @@ import { CurrencyFieldInput } from '../meta-types/input/components/CurrencyField
 import { DateTimeFieldInput } from '../meta-types/input/components/DateTimeFieldInput';
 import { NumberFieldInput } from '../meta-types/input/components/NumberFieldInput';
 import { RatingFieldInput } from '../meta-types/input/components/RatingFieldInput';
-import { RelationToOneFieldInput } from '../meta-types/input/components/RelationToOneFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
 import { isFieldText } from '../types/guards/isFieldText';
 
@@ -50,10 +50,10 @@ export const FieldInput = () => {
 
   return (
     <>
-      {isFieldRelationToOneObject(fieldDefinition) ? (
-        <RelationToOneFieldInput />
-      ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
-        <RelationFromManyFieldInput />
+      {isFieldRelationManyToOne(fieldDefinition) ? (
+        <RelationManyToOneFieldInput />
+      ) : isFieldRelationOneToMany(fieldDefinition) ? (
+        <RelationOneToManyFieldInput />
       ) : isFieldMorphRelationManyToOne(fieldDefinition) ? (
         <MorphRelationManyToOneFieldInput />
       ) : isFieldMorphRelationOneToMany(fieldDefinition) ? (

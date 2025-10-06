@@ -1,7 +1,6 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { usePersistFieldForMorphRelationManyToOne } from '@/object-record/record-field/ui/hooks/usePersistFieldForMorphRelationManyToOne';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
@@ -17,20 +16,17 @@ import { IconForbid } from 'twenty-ui/display';
 export const MorphRelationManyToOneFieldInput = () => {
   const { fieldDefinition } = useContext(FieldContext);
 
-  const { onCancel } = useContext(FieldInputEventContext);
+  const { onCancel, onSubmit } = useContext(FieldInputEventContext);
   const { onCloseTableCell } = useRecordTableBodyContextOrThrow();
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
-  const persistFieldForMorphRelationManyToOne =
-    usePersistFieldForMorphRelationManyToOne();
-
   const handleRecordSelected = (
     selectedRecord: SingleRecordPickerRecord | null | undefined,
   ) => {
-    persistFieldForMorphRelationManyToOne(selectedRecord);
+    onSubmit?.({ newValue: selectedRecord?.record ?? null });
     onCloseTableCell();
   };
 

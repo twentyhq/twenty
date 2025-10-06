@@ -42,7 +42,7 @@ import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
-import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
@@ -210,10 +210,10 @@ export const FormFieldInput = ({
       readonly={readonly}
       placeholder={placeholder}
     />
-  ) : isFieldRelationToOneObject(field) ? (
+  ) : isFieldRelationManyToOne(field) ? (
     <FormRelationToOneFieldInput
       label={field.label}
-      objectNameSingular={field.metadata.relationObjectMetadataNameSingular}
+      objectNameSingular={field.metadata.objectMetadataNameSingular}
       defaultValue={
         defaultValue as FieldRelationValue<FieldRelationToOneValue> | string
       }

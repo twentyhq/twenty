@@ -22,8 +22,8 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
-import { RelationToOneFieldInput } from '../RelationToOneFieldInput';
 
+import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
 
@@ -56,14 +56,14 @@ const {
   handleCancelMocked,
 } = getFieldInputEventContextProviderWithJestMocks();
 
-type RelationToOneFieldInputWithContextProps = {
+type RelationManyToOneFieldInputWithContextProps = {
   value: number;
   recordId: string;
 };
 
-const RelationToOneFieldInputWithContext = ({
+const RelationManyToOneFieldInputWithContext = ({
   recordId,
-}: RelationToOneFieldInputWithContextProps) => {
+}: RelationManyToOneFieldInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   useEffect(() => {
@@ -108,7 +108,7 @@ const RelationToOneFieldInputWithContext = ({
           <FieldInputEventContextProviderWithJestMocks>
             <RelationWorkspaceSetterEffect />
 
-            <RelationToOneFieldInput />
+            <RelationManyToOneFieldInput />
           </FieldInputEventContextProviderWithJestMocks>
         </RecordFieldComponentInstanceContext.Provider>
       </FieldContext.Provider>
@@ -126,8 +126,8 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Data/Field/Input/RelationToOneFieldInput',
-  component: RelationToOneFieldInputWithContext,
+  title: 'UI/Data/Field/Input/RelationManyToOneFieldInput',
+  component: RelationManyToOneFieldInputWithContext,
   args: {
     useEditButton: true,
     onSubmit: handleSubmitMocked,
@@ -151,7 +151,7 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof RelationToOneFieldInputWithContext>;
+type Story = StoryObj<typeof RelationManyToOneFieldInputWithContext>;
 
 export const Default: Story = {};
 
