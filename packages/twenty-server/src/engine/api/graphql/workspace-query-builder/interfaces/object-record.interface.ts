@@ -13,7 +13,9 @@ export type ObjectRecordFilter = Partial<{
 }>;
 
 export type ObjectRecordGroupBy = Array<
-  ObjectRecordGroupByForAtomicField | ObjectRecordGroupByForCompositeField
+  | ObjectRecordGroupByForAtomicField
+  | ObjectRecordGroupByForCompositeField
+  | ObjectRecordGroupByForDateField
 >;
 
 export type ObjectRecordGroupByForAtomicField = Partial<{
@@ -24,11 +26,27 @@ export type ObjectRecordGroupByForCompositeField = Partial<{
   [Property in keyof ObjectRecord]: Record<string, boolean>;
 }>;
 
+export type ObjectRecordGroupByForDateField = Partial<{
+  [Property in keyof ObjectRecord]: {
+    bucket: ObjectRecordGroupByDateBucket;
+  };
+}>;
+
 export enum OrderByDirection {
   AscNullsFirst = 'AscNullsFirst',
   AscNullsLast = 'AscNullsLast',
   DescNullsFirst = 'DescNullsFirst',
   DescNullsLast = 'DescNullsLast',
+}
+
+export enum ObjectRecordGroupByDateBucket {
+  DAY = 'DAY',
+  MONTH = 'MONTH',
+  QUARTER = 'QUARTER',
+  YEAR = 'YEAR',
+  DAY_OF_THE_WEEK = 'DAY_OF_THE_WEEK',
+  QUARTER_OF_THE_YEAR = 'QUARTER_OF_THE_YEAR',
+  MONTH_OF_THE_YEAR = 'MONTH_OF_THE_YEAR',
 }
 
 export type ObjectRecordOrderBy = Array<
