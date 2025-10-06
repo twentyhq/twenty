@@ -5,8 +5,13 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 
+type GroupByRawResult = {
+  groupByDimensionValues: unknown[];
+  [key: string]: unknown;
+};
+
 type ComputeAggregateFromGroupByResultParams = {
-  rawResult: any;
+  rawResult: GroupByRawResult;
   aggregateField: FieldMetadataItem;
   aggregateOperation: ExtendedAggregateOperations;
   aggregateOperationFromRawResult: string;
