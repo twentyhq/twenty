@@ -20,7 +20,7 @@
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "deep-equal": "^2.2.2",
-    "dotenv-cli": "^7.2.1",
+    "dotenv-cli": "^7.4.4",
     "drizzle-orm": "^0.29.3",
     "file-type": "16.5.4",
     "framer-motion": "^11.18.0",
@@ -163,7 +163,7 @@
     "concurrently": "^8.2.2",
     "cross-var": "^1.1.0",
     "danger": "^11.3.0",
-    "dotenv-cli": "^7.2.1",
+    "dotenv-cli": "^7.4.4",
     "esbuild": "^0.25.10",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^9.1.0",
@@ -229,8 +229,7 @@
   "version": "0.2.1",
   "nx": {},
   "scripts": {
-    "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'",
-    "noop": "echo 'I exist to trigger the CI'"
+    "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'"
   },
   "workspaces": {
     "packages": [
