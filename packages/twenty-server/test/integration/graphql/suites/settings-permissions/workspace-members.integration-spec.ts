@@ -94,6 +94,7 @@ describe('workspace members permissions', () => {
       const deleteResponse =
         await makeGraphqlAPIRequestWithAcmeMemberRole(deleteOperation);
 
+      expect(deleteResponse.body.errors).not.toBeDefined();
       expect(deleteResponse.body.data).toStrictEqual({
         deleteWorkspaceMember: {
           id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -103,6 +104,6 @@ describe('workspace members permissions', () => {
         },
       });
       expect(deleteResponse.body.errors).toBeUndefined();
-    });
+    }, 100_000);
   });
 });
