@@ -39458,6 +39458,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jwt-decode@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "jwt-decode@npm:4.0.0"
+  checksum: 10c0/de75bbf89220746c388cf6a7b71e56080437b77d2edb29bae1c2155048b02c6b8c59a3e5e8d6ccdfd54f0b8bda25226e491a4f1b55ac5f8da04cfbadec4e546c
+  languageName: node
+  linkType: hard
+
 "keygrip@npm:~1.1.0":
   version: 1.1.0
   resolution: "keygrip@npm:1.1.0"
@@ -52511,6 +52518,7 @@ __metadata:
     input-otp: "npm:^1.4.2"
     js-cookie: "npm:^3.0.5"
     json-2-csv: "npm:^5.4.0"
+    jwt-decode: "npm:^4.0.0"
     monaco-editor: "npm:^0.51.0"
     monaco-editor-auto-typings: "npm:^0.4.5"
     optionator: "npm:^0.9.1"
