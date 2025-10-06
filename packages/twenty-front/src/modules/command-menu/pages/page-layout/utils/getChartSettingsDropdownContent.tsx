@@ -4,6 +4,7 @@ import { ChartDataSourceDropdownContent } from '@/command-menu/pages/page-layout
 import { ChartFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionDropdownContent';
 import { ChartFieldSelectionForAggregateOperationDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent';
 import { ChartGroupByFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContent';
+import { ChartPieFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartPieFieldSelectionDropdownContent';
 import { ChartSortByGroupByFieldDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartSortByGroupByFieldDropdownContent';
 import { ChartXAxisSortBySelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartXAxisSortBySelectionDropdownContent';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
@@ -25,6 +26,8 @@ export const getChartSettingsDropdownContent = (itemId: string) => {
       );
     case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
       return <ChartGroupByFieldSelectionDropdownContent />;
+    case CHART_CONFIGURATION_SETTING_IDS.EACH_SLICE_REPRESENTS:
+      return <ChartPieFieldSelectionDropdownContent />;
     case CHART_CONFIGURATION_SETTING_IDS.COLORS:
       return <ChartColorSelectionDropdownContent />;
     case CHART_CONFIGURATION_SETTING_IDS.AXIS_NAME:
