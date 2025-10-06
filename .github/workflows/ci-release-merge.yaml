@@ -1,4 +1,8 @@
 name: "Release: on merge"
+
+permissions:
+  contents: write
+
 on:
   pull_request:
     types:
