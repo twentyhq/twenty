@@ -128,7 +128,7 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
           updateOneRecordInput[`${targetFieldName}Id`] = cachedRelatedRecord.id;
         }
       }
-      
+
       const optimisticRecordInput = computeOptimisticRecordFromInput({
         objectMetadataItem: objectMetadataItemOfIdToUpdate,
         currentWorkspaceMember: currentWorkspaceMember,
