@@ -378,6 +378,12 @@ msgstr "Aktiv"
 msgid "Active API keys created by you or your team."
 msgstr "Aktiva API-nycklar skapade av dig eller ditt team."
 
+#. js-lingui-id: m3/V2n
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Add a node"
+msgstr ""
+
 #. js-lingui-id: KKfos4
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
@@ -6668,6 +6674,11 @@ msgstr "Välj ett fält från ett tidigare steg"
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Select a target agent"
 msgstr "Välj en målagent"
+
+#. js-lingui-id: jL3gox
+#: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
+msgid "Select a value"
+msgstr ""
 
 #. js-lingui-id: YcJS1T
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
