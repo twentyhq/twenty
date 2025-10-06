@@ -18,7 +18,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useId } from 'react';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
@@ -89,6 +89,13 @@ export const FormSingleRecordPicker = ({
         type: 'static',
         value: defaultValue || '',
       };
+
+  if (objectNameSingulars.length === 0) {
+    throw new CustomError(
+      'Object is missing while building form single record picker',
+      'FORM_SINGLE_RECORD_PICKER_OBJECT_NAME_SINGULAR_IS_MISSING',
+    );
+  }
 
   const { record: selectedRecord } = useFindOneRecord({
     objectRecordId:

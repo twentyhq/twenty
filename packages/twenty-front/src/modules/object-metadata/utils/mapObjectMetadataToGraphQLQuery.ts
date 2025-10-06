@@ -43,7 +43,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
       return '';
     }
   }
-  // if (objectMetadataItem.nameSingular === 'pet') debugger;
+
   const manyToOneRelationFields = objectMetadataItem?.readableFields
     .filter((field) => field.isActive)
     .filter(
@@ -118,17 +118,10 @@ export const mapObjectMetadataToGraphQLQuery = ({
     }));
   });
 
-  const gqlFieldSet = new Set();
   const gqlFieldsWithFieldMetadata = [
     ...activeReadableFields,
     ...manyToOneRelationGqlFieldWithFieldMetadata,
-  ].filter((item) => {
-    if (gqlFieldSet.has(item.gqlField)) {
-      return false;
-    }
-    gqlFieldSet.add(item.gqlField);
-    return true;
-  });
+  ];
 
   const gqlFieldWithFieldMetadataThatCouldBeQueried =
     gqlFieldsWithFieldMetadata.sort(

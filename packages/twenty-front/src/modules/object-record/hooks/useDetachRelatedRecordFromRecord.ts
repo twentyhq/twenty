@@ -9,11 +9,8 @@ import { useUpdateMultipleRecordsManyToOneObjects } from '@/object-record/hooks/
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { getRelatedRecordFieldDefinition } from '@/object-record/utils/getRelatedRecordFieldDefinition';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
 type useDetachRelatedRecordFromRecordProps = {
   recordObjectNameSingular: string;
   relationTargetGQLfieldName: string;
@@ -69,14 +66,6 @@ export const useDetachRelatedRecordFromRecord = ({
       isFieldRelation,
       fieldDefinition,
     );
-    const relatedRecordFieldDefinition = getRelatedRecordFieldDefinition({
-      fieldDefinition: fieldDefinition,
-      relatedObjectMetadataItem,
-    });
-
-    if (!isDefined(relatedRecordFieldDefinition)) {
-      throw new Error('Could not find related record field definition');
-    }
 
     modifyRecordFromCache({
       objectMetadataItem,

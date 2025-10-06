@@ -11,7 +11,6 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getMorphRelatedRecordFieldDefinition } from '@/object-record/utils/getMorphRelatedRecordFieldDefinition';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
@@ -166,16 +165,6 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
         const sourceObjectMetadataItemName =
           fieldDefinition.metadata.morphRelations[0].sourceObjectMetadata
             .nameSingular;
-
-        const relatedRecordFieldDefinition =
-          getMorphRelatedRecordFieldDefinition({
-            fieldDefinition,
-            relatedObjectMetadataItem,
-          });
-
-        if (!isDefined(relatedRecordFieldDefinition)) {
-          throw new Error('Could not find related record field definition');
-        }
 
         const updatedManyRecordsArgs = [
           {
