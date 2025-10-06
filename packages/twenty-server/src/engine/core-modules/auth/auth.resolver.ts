@@ -707,7 +707,7 @@ export class AuthResolver {
 
     const hasServerLevelImpersonatePermission =
       impersonatorUserWorkspace.user.canImpersonate === true &&
-      impersonatorUserWorkspace.workspace.allowImpersonation === true;
+      toImpersonateUserWorkspace.workspace.allowImpersonation === true;
 
     if (isServerLevelImpersonation) {
       if (!hasServerLevelImpersonatePermission) {
