@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
@@ -7,7 +8,10 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToBarChartData';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToBarChartData';
 import { isDefined } from 'twenty-shared/utils';
-import { type BarChartConfiguration } from '~/generated/graphql';
+import {
+  AxisNameDisplay,
+  type BarChartConfiguration,
+} from '~/generated/graphql';
 import { getGroupByQueryName } from '../../../utils/getGroupByQueryName';
 
 type TransformGroupByDataToBarChartDataParams = {
@@ -22,6 +26,8 @@ type TransformGroupByDataToBarChartDataResult = {
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
+  xAxisLabel?: string;
+  yAxisLabel?: string;
 };
 
 const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
@@ -29,6 +35,8 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
   indexBy: '',
   keys: [],
   series: [],
+  xAxisLabel: undefined,
+  yAxisLabel: undefined,
 };
 
 export const transformGroupByDataToBarChartData = ({
@@ -73,6 +81,19 @@ export const transformGroupByDataToBarChartData = ({
   // TODO: Add a limit to the query instead of slicing here
   const rawResults = queryResults.slice(0, GRAPH_MAXIMUM_NUMBER_OF_GROUPS);
 
+  // Determine axis labels based on axisNameDisplay configuration
+  const showXAxis =
+    configuration.axisNameDisplay === AxisNameDisplay.X ||
+    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+  const showYAxis =
+    configuration.axisNameDisplay === AxisNameDisplay.Y ||
+    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const xAxisLabel = showXAxis ? groupByFieldX.label : undefined;
+  const yAxisLabel = showYAxis
+    ? `${aggregateField.label} (${getAggregateOperationLabel(configuration.aggregateOperation)})`
+    : undefined;
+
   if (isDefined(groupByFieldY)) {
     return transformTwoDimensionalGroupByToBarChartData({
       rawResults,
@@ -82,6 +103,8 @@ export const transformGroupByDataToBarChartData = ({
       configuration,
       aggregateOperation,
       objectMetadataItem,
+      xAxisLabel,
+      yAxisLabel,
     });
   }
 
@@ -92,5 +115,7 @@ export const transformGroupByDataToBarChartData = ({
     configuration,
     aggregateOperation,
     objectMetadataItem,
+    xAxisLabel,
+    yAxisLabel,
   });
 };

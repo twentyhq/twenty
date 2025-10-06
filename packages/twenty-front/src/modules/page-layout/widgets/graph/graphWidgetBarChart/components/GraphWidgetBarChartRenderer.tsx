@@ -20,11 +20,19 @@ export const GraphWidgetBarChartRenderer = ({
 }: {
   widget: PageLayoutWidget;
 }) => {
-  const { data, indexBy, keys, series, loading, error } =
-    useGraphBarChartWidgetData({
-      objectMetadataItemId: widget.objectMetadataId,
-      configuration: widget.configuration as BarChartConfiguration,
-    });
+  const {
+    data,
+    indexBy,
+    keys,
+    series,
+    xAxisLabel,
+    yAxisLabel,
+    loading,
+    error,
+  } = useGraphBarChartWidgetData({
+    objectMetadataItemId: widget.objectMetadataId,
+    configuration: widget.configuration as BarChartConfiguration,
+  });
 
   if (loading) {
     return <ChartSkeletonLoader />;
@@ -41,6 +49,8 @@ export const GraphWidgetBarChartRenderer = ({
         series={series}
         indexBy={indexBy}
         keys={keys}
+        xAxisLabel={xAxisLabel}
+        yAxisLabel={yAxisLabel}
         id={widget.id}
       />
     </Suspense>

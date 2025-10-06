@@ -18,6 +18,8 @@ type TransformOneDimensionalGroupByToBarChartDataParams = {
   configuration: BarChartConfiguration;
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
+  xAxisLabel?: string;
+  yAxisLabel?: string;
 };
 
 type TransformOneDimensionalGroupByToBarChartDataResult = {
@@ -25,6 +27,8 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
+  xAxisLabel?: string;
+  yAxisLabel?: string;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -34,6 +38,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   configuration,
   aggregateOperation,
   objectMetadataItem,
+  xAxisLabel,
+  yAxisLabel,
 }: TransformOneDimensionalGroupByToBarChartDataParams): TransformOneDimensionalGroupByToBarChartDataResult => {
   const data: BarChartDataItem[] = rawResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
@@ -70,5 +76,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     indexBy: groupByFieldX.name,
     keys: [aggregateField.name],
     series,
+    xAxisLabel,
+    yAxisLabel,
   };
 };
