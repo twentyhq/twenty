@@ -104,6 +104,6 @@ describe('workspace members permissions', () => {
         },
       });
       expect(deleteResponse.body.errors).toBeUndefined();
-    }, 100_000);
+    });
   });
 });
