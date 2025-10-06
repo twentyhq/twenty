@@ -77,7 +77,7 @@ describe('useCreateStep', () => {
     expect(mockCreateWorkflowVersionStep).toHaveBeenCalledWith({
       id: 'step-id',
       workflowVersionId: mockWorkflowVersionId,
-      type: 'CODE',
+      stepType: 'CODE',
       parentStepId: 'parent-step-id',
       nextStepId: undefined,
       parentStepConnectionOptions: undefined,
