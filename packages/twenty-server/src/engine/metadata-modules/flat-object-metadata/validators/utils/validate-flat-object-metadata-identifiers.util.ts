@@ -39,7 +39,6 @@ export const validateFlatObjectMetadataIdentifiers = ({
         message:
           'labelIdentifierFieldMetadataId validation failed: related field metadata not found',
         userFriendlyMessage: t`Field declared as label identifier not found`,
-        value: labelIdentifierFieldMetadataId,
       });
     } else if (!isLabelIdentifierFieldMetadataTypes(flatFieldMetadata.type)) {
       errors.push({
@@ -47,7 +46,6 @@ export const validateFlatObjectMetadataIdentifiers = ({
         message:
           'labelIdentifierFieldMetadataId validation failed: field type not compatible',
         userFriendlyMessage: t`Field cannot be used as label identifier`,
-        value: labelIdentifierFieldMetadataId,
       });
     }
   }
@@ -64,7 +62,6 @@ export const validateFlatObjectMetadataIdentifiers = ({
         message:
           'imageIdentifierFieldMetadataId validation failed: related field metadata not found',
         userFriendlyMessage: t`Field declared as image identifier not found`,
-        value: relatedFlatFieldMetadata,
       });
     }
   }

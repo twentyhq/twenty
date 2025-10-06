@@ -135,12 +135,12 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       >
     | undefined
   > {
-    const objectMetadataUpdatedProperties = compareTwoFlatObjectMetadata({
+    const flatObjectPropertiesUpdates = compareTwoFlatObjectMetadata({
       fromFlatObjectMetadata,
       toFlatObjectMetadata,
     });
 
-    if (objectMetadataUpdatedProperties.length === 0) {
+    if (flatObjectPropertiesUpdates.length === 0) {
       return undefined;
     }
 
@@ -150,6 +150,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         flatObjectMetadataToValidate: toFlatObjectMetadata,
         optimisticFlatObjectMetadataMaps,
         dependencyOptimisticFlatEntityMaps,
+        flatObjectPropertiesUpdates: flatObjectPropertiesUpdates,
       });
 
     if (validationResult.errors.length > 0) {
@@ -162,7 +163,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     const updateObjectAction: UpdateObjectAction = {
       type: 'update_object',
       objectMetadataId: toFlatObjectMetadata.id,
-      updates: objectMetadataUpdatedProperties,
+      updates: flatObjectPropertiesUpdates,
     };
 
     return {

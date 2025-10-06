@@ -30,7 +30,6 @@ const labelIdentifierFailingTestsUseCase: CreateOneObjectMetadataItemTestingCont
       },
     },
     {
-      only: true,
       title: 'when labelIdentifier is not a known field metadata id',
       context: {
         labelIdentifierFieldMetadataId: '42422020-f49c-4159-8751-76a24f47b360',

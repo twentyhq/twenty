@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-all-flat-entity-maps.constant';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { EMPTY_ORCHESTRATOR_ACTIONS_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import {
@@ -115,12 +114,23 @@ export class WorkspaceMigrationBuildOrchestratorService {
         await this.workspaceMigrationV2ObjectActionsBuilderService.validateAndBuild(
           {
             buildOptions,
-            // dependencyOptimisticFlatEntityMaps: undefined,
-            // TODO That's hacky also not reliable ?
+            // Note: That's a hacky way to allow validating object against field metadatas, not optimal
             dependencyOptimisticFlatEntityMaps: {
-              flatFieldMetadataMaps:
-                flatFieldMetadataMaps?.to ?? EMPTY_FLAT_ENTITY_MAPS,
+              flatFieldMetadataMaps: {
+                byId: {
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps?.byId,
+                  ...flatFieldMetadataMaps?.from.byId,
+                  ...flatFieldMetadataMaps?.to.byId,
+                },
+                idByUniversalIdentifier: {
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
+                    ?.idByUniversalIdentifier,
+                  ...flatFieldMetadataMaps?.from.idByUniversalIdentifier,
+                  ...flatFieldMetadataMaps?.to.idByUniversalIdentifier,
+                },
+              },
             },
+            ///
             from: fromFlatObjectMetadataMaps,
             to: toFlatObjectMetadataMaps,
             workspaceId,

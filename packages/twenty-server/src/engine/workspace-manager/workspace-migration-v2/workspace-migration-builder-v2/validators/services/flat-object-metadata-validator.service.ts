@@ -12,6 +12,7 @@ import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standar
 import { ObjectMetadataRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/services/workspace-migration-v2-object-actions-builder.service';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
+import { FlatObjectPropertiesUpdates } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 
 export type ValidateOneObjectMetadataArgs = {
   flatObjectMetadataToValidate: FlatObjectMetadata;
@@ -26,7 +27,10 @@ export class FlatObjectMetadataValidatorService {
     optimisticFlatObjectMetadataMaps,
     flatObjectMetadataToValidate: updatedFlatObjectMetadata,
     dependencyOptimisticFlatEntityMaps: { flatFieldMetadataMaps },
-  }: ValidateOneObjectMetadataArgs): FailedFlatEntityValidation<FlatObjectMetadata> {
+    flatObjectPropertiesUpdates,
+  }: ValidateOneObjectMetadataArgs & {
+    flatObjectPropertiesUpdates: FlatObjectPropertiesUpdates;
+  }): FailedFlatEntityValidation<FlatObjectMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatObjectMetadata> = {
       type: 'update_object',
       errors: [],
@@ -60,12 +64,28 @@ export class FlatObjectMetadataValidatorService {
       }),
     );
 
-    validationResult.errors.push(
-      ...validateFlatObjectMetadataIdentifiers({
-        flatObjectMetadata: existingFlatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    );
+    const labelIdentifierFieldMetadataIdUpdate =
+      flatObjectPropertiesUpdates.find(
+        (update) => update.property === 'labelIdentifierFieldMetadataId',
+      );
+
+    // TODO remove this once we migrated labelIdentifierFieldMetadataId as non nullable
+    if (isDefined(labelIdentifierFieldMetadataIdUpdate)) {
+      if (!isDefined(labelIdentifierFieldMetadataIdUpdate.to)) {
+        validationResult.errors.push({
+          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          message: 'labelIdentifierFieldMetadataId cannot be null',
+          userFriendlyMessage: t`Field label identifier is required`,
+        });
+      }
+
+      validationResult.errors.push(
+        ...validateFlatObjectMetadataIdentifiers({
+          flatObjectMetadata: updatedFlatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      );
+    }
 
     return validationResult;
   }
