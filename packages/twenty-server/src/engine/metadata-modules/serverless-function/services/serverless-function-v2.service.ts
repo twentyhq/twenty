@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -36,7 +36,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -84,7 +84,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -102,7 +102,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -155,7 +155,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -168,15 +168,17 @@ export class ServerlessFunctionV2Service {
   async deleteOne({
     deleteServerlessFunctionInput,
     workspaceId,
+    isSystemBuild = false,
   }: {
     deleteServerlessFunctionInput: ServerlessFunctionIdInput;
     workspaceId: string;
+    isSystemBuild?: boolean;
   }): Promise<FlatServerlessFunction> {
     const { flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -211,8 +213,8 @@ export class ServerlessFunctionV2Service {
             },
           },
           buildOptions: {
-            isSystemBuild: false,
             inferDeletionFromMissingEntities: false,
+            isSystemBuild,
           },
           workspaceId,
         },
@@ -231,7 +233,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -244,15 +246,17 @@ export class ServerlessFunctionV2Service {
   async destroyOne({
     destroyServerlessFunctionInput,
     workspaceId,
+    isSystemBuild = false,
   }: {
     destroyServerlessFunctionInput: ServerlessFunctionIdInput;
     workspaceId: string;
+    isSystemBuild?: boolean;
   }): Promise<FlatServerlessFunction> {
     const { flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -288,7 +292,7 @@ export class ServerlessFunctionV2Service {
             },
           },
           buildOptions: {
-            isSystemBuild: false,
+            isSystemBuild,
             inferDeletionFromMissingEntities: true,
           },
           workspaceId,

@@ -26,7 +26,7 @@ export const fromUpdateDatabaseEventTriggerInputToFlatDatabaseEventTriggerToUpda
 
     return {
       ...existingFlatDatabaseEventTrigger,
-      settings: updateDatabaseEventTriggerInput.settings,
+      settings: updateDatabaseEventTriggerInput.update.settings,
       updatedAt: new Date(),
     };
   };

@@ -11,6 +11,10 @@ import {
   type ObjectRecordUpdatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-updated';
 import {
+  type OBJECT_RECORD_UPSERTED_EVENT,
+  type ObjectRecordUpsertedTrackEvent,
+} from 'src/engine/core-modules/audit/utils/events/object-event/object-record-upserted';
+import {
   type CUSTOM_DOMAIN_ACTIVATED_EVENT,
   type CustomDomainActivatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
@@ -50,6 +54,7 @@ export type TrackEventName =
   | typeof OBJECT_RECORD_CREATED_EVENT
   | typeof OBJECT_RECORD_UPDATED_EVENT
   | typeof OBJECT_RECORD_DELETED_EVENT
+  | typeof OBJECT_RECORD_UPSERTED_EVENT
   | typeof USER_SIGNUP_EVENT;
 
 // Map event names to their corresponding event types
@@ -64,6 +69,7 @@ export interface TrackEvents {
   [OBJECT_RECORD_DELETED_EVENT]: ObjectRecordDeletedTrackEvent;
   [OBJECT_RECORD_CREATED_EVENT]: ObjectRecordCreatedTrackEvent;
   [OBJECT_RECORD_UPDATED_EVENT]: ObjectRecordUpdatedTrackEvent;
+  [OBJECT_RECORD_UPSERTED_EVENT]: ObjectRecordUpsertedTrackEvent;
 }
 
 export type TrackEventProperties<T extends TrackEventName> =

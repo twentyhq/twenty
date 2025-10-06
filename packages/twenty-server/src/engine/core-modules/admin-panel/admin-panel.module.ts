@@ -9,6 +9,7 @@ import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { ImpersonationModule } from 'src/engine/core-modules/impersonation/impersonation.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
@@ -21,6 +22,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     TypeOrmModule.forFeature([User]),
     AuthModule,
     DomainManagerModule,
+    FileModule,
     HealthModule,
     RedisClientModule,
     TerminusModule,

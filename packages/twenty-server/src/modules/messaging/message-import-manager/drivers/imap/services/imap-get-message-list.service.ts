@@ -33,15 +33,12 @@ export class ImapGetMessageListService {
     messageFolders,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     let client: ImapFlow | null = null;
-    const syncedMessageFolders = messageFolders.filter(
-      (folder) => folder.isSynced,
-    );
 
     try {
       client = await this.imapClientProvider.getClient(connectedAccount);
       const result: GetMessageListsResponse = [];
 
-      for (const folder of syncedMessageFolders) {
+      for (const folder of messageFolders) {
         this.logger.log(`Processing folder: ${folder.name}`);
 
         try {
@@ -79,7 +76,7 @@ export class ImapGetMessageListService {
 
       this.imapHandleErrorService.handleImapMessageListFetchError(error);
 
-      return syncedMessageFolders.map((folder) => ({
+      return messageFolders.map((folder) => ({
         messageExternalIds: [],
         nextSyncCursor: folder.syncCursor || '',
         previousSyncCursor: folder.syncCursor,

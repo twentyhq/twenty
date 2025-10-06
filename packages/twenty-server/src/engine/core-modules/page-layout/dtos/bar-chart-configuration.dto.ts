@@ -14,10 +14,11 @@ import { GraphQLJSON } from 'graphql-type-json';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
-import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
+import { ExtendedAggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/extended-aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
+import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
+import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
 @ObjectType('BarChartConfiguration')
 export class BarChartConfigurationDTO {
@@ -31,10 +32,10 @@ export class BarChartConfigurationDTO {
   @IsNotEmpty()
   aggregateFieldMetadataId: string;
 
-  @Field(() => AggregateOperations)
-  @IsEnum(AggregateOperations)
+  @Field(() => ExtendedAggregateOperations)
+  @IsEnum(ExtendedAggregateOperations)
   @IsNotEmpty()
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
@@ -61,15 +62,15 @@ export class BarChartConfigurationDTO {
   @IsOptional()
   omitNullValues?: boolean;
 
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  xAxisName?: string;
+  @Field(() => AxisNameDisplay)
+  @IsEnum(AxisNameDisplay)
+  @IsNotEmpty()
+  axisNameDisplay: AxisNameDisplay;
 
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  yAxisName?: string;
+  @Field(() => Boolean)
+  @IsBoolean()
+  @IsNotEmpty()
+  displayDataLabel: boolean;
 
   @Field(() => Number, { nullable: true })
   @IsNumber()

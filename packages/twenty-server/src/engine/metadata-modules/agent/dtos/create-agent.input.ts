@@ -11,6 +11,7 @@ import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { ModelConfiguration } from 'src/engine/metadata-modules/agent/types/modelConfiguration';
 
 @InputType()
 export class CreateAgentInput {
@@ -53,6 +54,11 @@ export class CreateAgentInput {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   responseFormat?: object;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  modelConfiguration?: ModelConfiguration;
 
   @HideField()
   standardId?: string;

@@ -1,7 +1,10 @@
+import { type HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { type ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
+
 export type PackageJson = {
   $schema?: string;
-  standardId: string;
-  label: string;
+  universalIdentifier: string;
+  name: string;
   description?: string;
   engines: {
     node: string;
@@ -17,6 +20,36 @@ export type PackageJson = {
 export type AppManifest = PackageJson & {
   agents: AgentManifest[];
   objects: ObjectManifest[];
+  serverlessFunctions: ServerlessFunctionManifest[];
+};
+
+export type ServerlessFunctionManifest = {
+  $schema?: string;
+  universalIdentifier: string;
+  name: string;
+  description?: string;
+  timeoutSeconds?: number;
+  triggers: ServerlessFunctionTriggerManifest[];
+  code: ServerlessFunctionCode;
+};
+
+export type ServerlessFunctionTriggerManifest = (
+  | {
+      type: 'cron';
+      schedule: string;
+    }
+  | {
+      type: 'databaseEvent';
+      eventName: string;
+    }
+  | {
+      type: 'route';
+      path: string;
+      httpMethod: HTTPMethod;
+      isAuthRequired: boolean;
+    }
+) & {
+  universalIdentifier: string;
 };
 
 export type ObjectManifest = {

@@ -96,6 +96,10 @@ export const StyledMenuItemLabel = styled.div`
   white-space: nowrap;
 `;
 
+export const StyledMenuItemLabelLight = styled(StyledMenuItemLabel)`
+  color: ${({ theme }) => theme.font.color.light};
+`;
+
 export const StyledNoIconFiller = styled.div`
   width: ${({ theme }) => theme.spacing(1)};
 `;
@@ -108,16 +112,22 @@ export const StyledMenuItemLeftContent = styled.div`
 
   gap: ${({ theme }) => theme.spacing(2)};
   min-width: 0;
-  max-width: 100%;
+  width: 100%;
 
-  flex-shrink: 0;
+  & svg {
+    flex-shrink: 0;
+  }
 `;
 
 export const StyledMenuItemRightContent = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  overflow: hidden;
+  gap: ${({ theme }) => theme.spacing(2)};
+
+  & svg {
+    flex-shrink: 0;
+  }
 `;
 
 export const StyledDraggableItem = styled.div`
@@ -183,7 +193,5 @@ export const StyledMenuItemContextualText = styled.div`
 export const StyledRightMenuItemContextualText = styled(
   StyledMenuItemContextualText,
 )`
-  display: flex;
   text-align: right;
-  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
