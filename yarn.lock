@@ -42896,11 +42896,11 @@ __metadata:
   linkType: hard
 
 "monaco-editor-auto-typings@npm:^0.4.5":
-  version: 0.4.5
-  resolution: "monaco-editor-auto-typings@npm:0.4.5"
+  version: 0.4.6
+  resolution: "monaco-editor-auto-typings@npm:0.4.6"
   peerDependencies:
     monaco-editor: "*"
-  checksum: 10c0/1127183865f3ed486eb3bad407da3d8d8ca47ba3bd382a146a692741f9de4eb4f2335dc616b612cdaadfb3844e9b948060d407ea8a585c6710043b8bba29ed77
+  checksum: 10c0/5ee2b6f2380fd984511309c5efca1d13ba2daf887b51a9632ee7b94643fca63ddda7c422e606bca2ae6ab90847293052d60f34da9194061e0910d6822787bb49
   languageName: node
   linkType: hard
 
@@ -52439,6 +52439,7 @@ __metadata:
     "@lingui/react": "npm:^5.1.2"
     "@lingui/swc-plugin": "npm:^5.6.0"
     "@lingui/vite-plugin": "npm:^5.1.2"
+    "@monaco-editor/react": "npm:^4.6.0"
     "@nivo/bar": "npm:^0.99.0"
     "@nivo/core": "npm:^0.99.0"
     "@nivo/line": "npm:^0.99.0"
@@ -52497,6 +52498,8 @@ __metadata:
     input-otp: "npm:^1.4.2"
     js-cookie: "npm:^3.0.5"
     json-2-csv: "npm:^5.4.0"
+    monaco-editor: "npm:^0.51.0"
+    monaco-editor-auto-typings: "npm:^0.4.5"
     optionator: "npm:^0.9.1"
     qs: "npm:^6.11.2"
     react-data-grid: "npm:7.0.0-beta.13"
@@ -52560,7 +52563,6 @@ __metadata:
     "@lingui/vite-plugin": "npm:5.1.2"
     "@microsoft/microsoft-graph-client": "npm:3.0.7"
     "@microsoft/microsoft-graph-types": "npm:^2.40.0"
-    "@monaco-editor/react": "npm:^4.6.0"
     "@nestjs/axios": "npm:3.0.2"
     "@nestjs/cache-manager": "npm:^2.2.1"
     "@nestjs/cli": "npm:10.3.0"
@@ -52702,8 +52704,6 @@ __metadata:
     lodash.upperfirst: "npm:4.3.1"
     mailparser: "npm:3.7.3"
     microdiff: "npm:1.4.0"
-    monaco-editor: "npm:^0.51.0"
-    monaco-editor-auto-typings: "npm:^0.4.5"
     ms: "npm:2.1.3"
     nest-commander: "npm:^3.19.1"
     node-ical: "npm:^0.20.1"
