@@ -1,39 +1,34 @@
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
-import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import {
+  fromCreateFieldInputToFlatFieldMetadatasToCreate,
+  type FromCreateFieldInputToFlatObjectMetadataArgs,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
+import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/flat-object-metadata-maps.mock';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
 
-const existingFlatObjectMetadataMaps = [
+const flatObjectMetadataMaps = [
   COMPANY_FLAT_OBJECT_MOCK,
   ROCKET_FLAT_OBJECT_MOCK,
   PET_FLAT_OBJECT_MOCK,
 ].reduce((flatObjectMetadataMaps, flatObjectMetadata) => {
-  return replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
-    flatObjectMetadata: {
-      ...flatObjectMetadata,
-      flatFieldMetadatas: [],
-    },
-    flatObjectMetadataMaps,
+  return addFlatEntityToFlatEntityMapsOrThrow({
+    flatEntity: flatObjectMetadata,
+    flatEntityMaps: flatObjectMetadataMaps,
   });
-}, FLAT_OBJECT_METADATA_MAPS_MOCKS);
+}, EMPTY_FLAT_ENTITY_MAPS);
 
 type TestCase = EachTestingContext<{
-  input: {
-    rawCreateFieldInput: CreateFieldInput &
-      Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>;
-    workspaceId: string;
-    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  };
+  input: FromCreateFieldInputToFlatObjectMetadataArgs;
   expected: 'success' | 'fail';
 }>;
 
@@ -47,13 +42,12 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           'should create morph relation field metadata with valid input on rocket object to pet object',
         context: {
           input: {
-            rawCreateFieldInput: {
+            createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
               description: 'new field description',
               type: FieldMetadataType.MORPH_RELATION,
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-              workspaceId: mockWorkspaceId,
               morphRelationsCreationPayload: [
                 {
                   type: RelationType.ONE_TO_MANY,
@@ -70,7 +64,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
               ],
             },
             workspaceId: mockWorkspaceId,
-            existingFlatObjectMetadataMaps,
+            flatObjectMetadataMaps,
           },
           expected: 'success',
         },
@@ -87,8 +81,11 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
         if (result.status !== 'success') {
           throw new Error('Should never occur, typecheck');
         }
+        jestExpectToBeDefined(
+          input.createFieldInput.morphRelationsCreationPayload,
+        );
         expect(result.result.flatFieldMetadatas.length).toBe(
-          input.rawCreateFieldInput.morphRelationsCreationPayload.length * 2,
+          input.createFieldInput.morphRelationsCreationPayload.length * 2,
         );
         expect(result).toMatchSnapshot(
           extractRecordIdsAndDatesAsExpectAny(result),
@@ -103,17 +100,16 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
         title: 'should fail when morphRelationsCreationPayload is missing',
         context: {
           input: {
-            rawCreateFieldInput: {
+            createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
               description: 'new field description',
               type: FieldMetadataType.MORPH_RELATION,
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-              workspaceId: mockWorkspaceId,
               morphRelationsCreationPayload: undefined as any,
             },
             workspaceId: mockWorkspaceId,
-            existingFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
           expected: 'fail',
         },
@@ -122,17 +118,16 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
         title: 'should fail when morphRelationsCreationPayload is empty array',
         context: {
           input: {
-            rawCreateFieldInput: {
+            createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
               description: 'new field description',
               type: FieldMetadataType.MORPH_RELATION,
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-              workspaceId: mockWorkspaceId,
               morphRelationsCreationPayload: [],
             },
             workspaceId: mockWorkspaceId,
-            existingFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
           expected: 'fail',
         },
@@ -142,13 +137,12 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           'should fail when morphRelationsCreationPayload has different relation types',
         context: {
           input: {
-            rawCreateFieldInput: {
+            createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
               description: 'new field description',
               type: FieldMetadataType.MORPH_RELATION,
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-              workspaceId: mockWorkspaceId,
               morphRelationsCreationPayload: [
                 {
                   type: RelationType.ONE_TO_MANY,
@@ -165,7 +159,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
               ],
             },
             workspaceId: mockWorkspaceId,
-            existingFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
           expected: 'fail',
         },
@@ -175,13 +169,12 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           'should fail when morphRelationsCreationPayload has several references to same object metadata',
         context: {
           input: {
-            rawCreateFieldInput: {
+            createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
               description: 'new field description',
               type: FieldMetadataType.MORPH_RELATION,
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-              workspaceId: mockWorkspaceId,
               morphRelationsCreationPayload: [
                 {
                   type: RelationType.MANY_TO_ONE,
@@ -198,7 +191,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
               ],
             },
             workspaceId: mockWorkspaceId,
-            existingFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
           expected: 'fail',
         },
@@ -208,13 +201,12 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           'should fail when morphRelationsCreationPayload has invalid relation payload',
         context: {
           input: {
-            rawCreateFieldInput: {
+            createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
               description: 'new field description',
               type: FieldMetadataType.MORPH_RELATION,
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-              workspaceId: mockWorkspaceId,
               morphRelationsCreationPayload: [
                 {
                   type: RelationType.ONE_TO_MANY,
@@ -224,7 +216,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
               ],
             },
             workspaceId: mockWorkspaceId,
-            existingFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
           expected: 'fail',
         },
@@ -233,13 +225,12 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
         title: 'should fail when target object metadata is not found',
         context: {
           input: {
-            rawCreateFieldInput: {
+            createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
               description: 'new field description',
               type: FieldMetadataType.MORPH_RELATION,
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-              workspaceId: mockWorkspaceId,
               morphRelationsCreationPayload: [
                 {
                   type: RelationType.ONE_TO_MANY,
@@ -250,7 +241,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
               ],
             },
             workspaceId: mockWorkspaceId,
-            existingFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
           expected: 'fail',
         },

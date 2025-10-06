@@ -53,6 +53,7 @@ describe('ViewFieldService', () => {
           provide: ViewService,
           useValue: {
             findByIdWithRelatedObjectMetadata: jest.fn(),
+            flushGraphQLCache: jest.fn(),
           },
         },
       ],

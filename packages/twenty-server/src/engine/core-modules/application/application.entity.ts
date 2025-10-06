@@ -37,7 +37,7 @@ export class ApplicationEntity {
   universalIdentifier?: string;
 
   @Column({ nullable: false, type: 'text' })
-  label: string;
+  name: string;
 
   @Column({ nullable: true, type: 'text' })
   description: string | null;

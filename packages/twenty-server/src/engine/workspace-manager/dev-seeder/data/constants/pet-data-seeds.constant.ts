@@ -111,7 +111,7 @@ export const PET_DATA_SEEDS: PetDataSeed[] = [
     interestingFacts: [
       'World’s Best Sock Thief',
       'Expert at Puppy Eyes',
-      'Fearless… Except Around Bananas',
+      'Fearless Except Around Bananas',
       'Signature Ear Flip',
     ],
     extraData: JSON.stringify({

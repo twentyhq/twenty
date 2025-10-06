@@ -8,8 +8,7 @@ exports[`Field metadata relation update should fail relation when name is change
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -23,6 +22,7 @@ exports[`Field metadata relation update should fail relation when name is change
               "name": "newName",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
           {
@@ -38,9 +38,13 @@ exports[`Field metadata relation update should fail relation when name is change
               "name": "newName",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -49,8 +53,10 @@ exports[`Field metadata relation update should fail relation when name is change
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -72,8 +78,7 @@ exports[`Field metadata relation update should fail relation when name is not in
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
-        "index": [],
-        "objectMetadata": [
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -99,6 +104,7 @@ exports[`Field metadata relation update should fail relation when name is not in
               "name": "New Name",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
           {
@@ -126,9 +132,13 @@ exports[`Field metadata relation update should fail relation when name is not in
               "name": "New Name",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "update_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -137,8 +147,10 @@ exports[`Field metadata relation update should fail relation when name is not in
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,

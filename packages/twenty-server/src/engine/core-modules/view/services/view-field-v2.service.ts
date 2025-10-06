@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -35,16 +35,16 @@ export class ViewFieldV2Service {
     workspaceId: string;
   }): Promise<ViewFieldDTO> {
     const {
-      flatObjectMetadataMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewMaps: existingFlatViewMaps,
+      flatViewMaps,
+      flatFieldMetadataMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
-        flatEntities: [
-          'flatObjectMetadataMaps',
+        flatMapsKeys: [
           'flatViewFieldMaps',
           'flatViewMaps',
+          'flatFieldMetadataMaps',
         ],
       },
     );
@@ -70,8 +70,8 @@ export class ViewFieldV2Service {
             },
           },
           dependencyAllFlatEntityMaps: {
-            flatObjectMetadataMaps,
-            flatViewMaps: existingFlatViewMaps,
+            flatFieldMetadataMaps,
+            flatViewMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -92,7 +92,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps'],
         },
       );
 
@@ -113,7 +113,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps'],
         },
       );
 
@@ -160,7 +160,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps'],
         },
       );
 
@@ -181,7 +181,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps'],
         },
       );
 
@@ -224,7 +224,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps'],
         },
       );
 
@@ -248,7 +248,7 @@ export class ViewFieldV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatViewFieldMaps', 'flatViewMaps'],
+          flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
         },
       );
 

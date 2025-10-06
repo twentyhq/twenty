@@ -221,6 +221,18 @@ export class WorkspaceCacheStorageService {
     );
   }
 
+  async flushGraphQLOperation({
+    operationName,
+    workspaceId,
+  }: {
+    operationName: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.cacheStorageService.flushByPattern(
+      `${WorkspaceCacheKeys.GraphQLOperations}:${operationName}:${workspaceId}:*`,
+    );
+  }
+
   async flushVersionedMetadata(
     workspaceId: string,
     metadataVersion?: number,

@@ -381,7 +381,12 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       id: workspace.id,
       displayName: workspace.displayName,
       workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
-      logo: workspace.logo,
+      logo: workspace.logo
+        ? this.fileService.signFileUrl({
+            url: workspace.logo,
+            workspaceId: workspace.id,
+          })
+        : workspace.logo,
       sso:
         workspace.workspaceSSOIdentityProviders?.reduce(
           (acc, identityProvider) =>

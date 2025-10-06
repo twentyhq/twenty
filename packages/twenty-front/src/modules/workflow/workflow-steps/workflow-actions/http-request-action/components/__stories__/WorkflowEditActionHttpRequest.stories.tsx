@@ -118,7 +118,7 @@ export const Configured: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const header = await canvas.findByTestId('workflow-step-header');
+    const header = await canvas.findByTestId('side-panel-header');
     const headerCanvas = within(header);
     expect(await headerCanvas.findByText('API Call')).toBeVisible();
 
