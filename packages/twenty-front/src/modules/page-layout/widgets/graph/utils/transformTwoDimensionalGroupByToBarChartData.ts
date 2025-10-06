@@ -17,8 +17,6 @@ type TransformTwoDimensionalGroupByToBarChartDataParams = {
   configuration: BarChartConfiguration;
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
-  xAxisLabel?: string;
-  yAxisLabel?: string;
 };
 
 type TransformTwoDimensionalGroupByToBarChartDataResult = {
@@ -26,8 +24,6 @@ type TransformTwoDimensionalGroupByToBarChartDataResult = {
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
-  xAxisLabel?: string;
-  yAxisLabel?: string;
 };
 
 export const transformTwoDimensionalGroupByToBarChartData = ({
@@ -38,8 +34,6 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   configuration,
   aggregateOperation,
   objectMetadataItem,
-  xAxisLabel,
-  yAxisLabel,
 }: TransformTwoDimensionalGroupByToBarChartDataParams): TransformTwoDimensionalGroupByToBarChartDataResult => {
   const dataMap = new Map<string, BarChartDataItem>();
   const yValues = new Set<string>();
@@ -83,7 +77,5 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     indexBy: groupByFieldX.name,
     keys,
     series,
-    xAxisLabel,
-    yAxisLabel,
   };
 };

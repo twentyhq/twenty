@@ -18,6 +18,7 @@ type UseGraphBarChartWidgetDataResult = {
   series: BarChartSeries[];
   xAxisLabel?: string;
   yAxisLabel?: string;
+  showDataLabels: boolean;
   loading: boolean;
   error?: Error;
 };

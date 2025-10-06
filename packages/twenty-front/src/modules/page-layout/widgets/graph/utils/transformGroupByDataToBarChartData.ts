@@ -28,6 +28,7 @@ type TransformGroupByDataToBarChartDataResult = {
   series: BarChartSeries[];
   xAxisLabel?: string;
   yAxisLabel?: string;
+  showDataLabels: boolean;
 };
 
 const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
@@ -37,6 +38,7 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
   series: [],
   xAxisLabel: undefined,
   yAxisLabel: undefined,
+  showDataLabels: false,
 };
 
 export const transformGroupByDataToBarChartData = ({
@@ -81,41 +83,45 @@ export const transformGroupByDataToBarChartData = ({
   // TODO: Add a limit to the query instead of slicing here
   const rawResults = queryResults.slice(0, GRAPH_MAXIMUM_NUMBER_OF_GROUPS);
 
-  // Determine axis labels based on axisNameDisplay configuration
   const showXAxis =
     configuration.axisNameDisplay === AxisNameDisplay.X ||
     configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
   const showYAxis =
     configuration.axisNameDisplay === AxisNameDisplay.Y ||
     configuration.axisNameDisplay === AxisNameDisplay.BOTH;
 
   const xAxisLabel = showXAxis ? groupByFieldX.label : undefined;
+
   const yAxisLabel = showYAxis
-    ? `${aggregateField.label} (${getAggregateOperationLabel(configuration.aggregateOperation)})`
+    ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
     : undefined;
 
-  if (isDefined(groupByFieldY)) {
-    return transformTwoDimensionalGroupByToBarChartData({
-      rawResults,
-      groupByFieldX,
-      groupByFieldY,
-      aggregateField,
-      configuration,
-      aggregateOperation,
-      objectMetadataItem,
-      xAxisLabel,
-      yAxisLabel,
-    });
-  }
+  const showDataLabels = configuration.displayDataLabel;
 
-  return transformOneDimensionalGroupByToBarChartData({
-    rawResults,
-    groupByFieldX,
-    aggregateField,
-    configuration,
-    aggregateOperation,
-    objectMetadataItem,
+  const baseResult = isDefined(groupByFieldY)
+    ? transformTwoDimensionalGroupByToBarChartData({
+        rawResults,
+        groupByFieldX,
+        groupByFieldY,
+        aggregateField,
+        configuration,
+        aggregateOperation,
+        objectMetadataItem,
+      })
+    : transformOneDimensionalGroupByToBarChartData({
+        rawResults,
+        groupByFieldX,
+        aggregateField,
+        configuration,
+        aggregateOperation,
+        objectMetadataItem,
+      });
+
+  return {
+    ...baseResult,
     xAxisLabel,
     yAxisLabel,
-  });
+    showDataLabels,
+  };
 };
