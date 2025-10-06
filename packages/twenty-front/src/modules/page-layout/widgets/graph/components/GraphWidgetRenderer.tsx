@@ -1,16 +1,9 @@
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartRenderer';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
 import { lazy, Suspense } from 'react';
 import { GraphType, type PageLayoutWidget } from '~/generated-metadata/graphql';
-
-const GraphWidgetBarChartRenderer = lazy(() =>
-  import(
-    '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartRenderer'
-  ).then((module) => ({
-    default: module.GraphWidgetBarChartRenderer,
-  })),
-);
 
 const GraphWidgetLineChart = lazy(() =>
   import(
@@ -100,11 +93,7 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
       );
 
     case GraphType.BAR:
-      return (
-        <Suspense fallback={<ChartSkeletonLoader />}>
-          <GraphWidgetBarChartRenderer widget={widget} />
-        </Suspense>
-      );
+      return <GraphWidgetBarChartRenderer widget={widget} />;
 
     case GraphType.LINE:
       return (
