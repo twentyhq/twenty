@@ -10,6 +10,7 @@ export const objectMetadataEntityRelationProperties = [
   'application',
   'objectPermissions',
   'fieldPermissions',
+  'views',
 ] as const satisfies ObjectMetadataRelationProperties[];
 
 type ObjectMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
