@@ -1,0 +1,141 @@
+{
+  "$schema": "https://app.flightcontrol.dev/schema.json",
+  "environments": [
+    {
+      "id": "production",
+      "name": "Production",
+      "region": "us-east-1",
+      "source": {
+        "branch": "main"
+      },
+      "services": [
+        {
+          "id": "twenty-db",
+          "name": "Twenty Database",
+          "type": "rds",
+          "engine": "postgres",
+          "engineVersion": "16",
+          "instanceSize": "db.t4g.micro",
+          "storage": 20,
+          "private": false,
+          "envVariables": {
+            "POSTGRES_USER": {
+              "fromParameterStore": "PG_DATABASE_USER"
+            },
+            "POSTGRES_PASSWORD": {
+              "fromParameterStore": "PG_DATABASE_PASSWORD"
+            }
+          }
+        },
+        {
+          "id": "twenty-redis",
+          "name": "Twenty Redis",
+          "type": "redis",
+          "engineVersion": "7.0",
+          "instanceSize": "cache.t4g.micro",
+          "private": false
+        },
+        {
+          "id": "twenty-server",
+          "name": "Twenty Server",
+          "type": "fargate",
+          "buildType": "docker",
+          "dockerfilePath": "Dockerfile",
+          "dockerContext": ".",
+          "cpu": 0.5,
+          "memory": 1,
+          "minInstances": 1,
+          "maxInstances": 3,
+          "port": 3000,
+          "healthCheckPath": "/healthz",
+          "envVariables": {
+            "NODE_PORT": "3000",
+            "PG_DATABASE_URL": {
+              "fromService": {
+                "id": "twenty-db",
+                "value": "dbConnectionString"
+              }
+            },
+            "REDIS_URL": {
+              "fromService": {
+                "id": "twenty-redis",
+                "value": "connectionString"
+              }
+            },
+            "SERVER_URL": {
+              "fromParameterStore": "SERVER_URL"
+            },
+            "STORAGE_TYPE": {
+              "fromParameterStore": "STORAGE_TYPE"
+            },
+            "STORAGE_S3_REGION": {
+              "fromParameterStore": "STORAGE_S3_REGION"
+            },
+            "STORAGE_S3_NAME": {
+              "fromParameterStore": "STORAGE_S3_NAME"
+            },
+            "STORAGE_S3_ENDPOINT": {
+              "fromParameterStore": "STORAGE_S3_ENDPOINT"
+            },
+            "APP_SECRET": {
+              "fromParameterStore": "APP_SECRET"
+            },
+            "DISABLE_DB_MIGRATIONS": {
+              "fromParameterStore": "DISABLE_DB_MIGRATIONS"
+            },
+            "DISABLE_CRON_JOBS_REGISTRATION": {
+              "fromParameterStore": "DISABLE_CRON_JOBS_REGISTRATION"
+            }
+          }
+        },
+        {
+          "id": "twenty-worker",
+          "name": "Twenty Worker",
+          "type": "fargate",
+          "buildType": "docker",
+          "dockerfilePath": "Dockerfile",
+          "dockerContext": ".",
+          "cpu": 0.5,
+          "memory": 1,
+          "minInstances": 1,
+          "maxInstances": 2,
+          "startCommand": "yarn worker:prod",
+          "envVariables": {
+            "PG_DATABASE_URL": {
+              "fromService": {
+                "id": "twenty-db",
+                "value": "dbConnectionString"
+              }
+            },
+            "REDIS_URL": {
+              "fromService": {
+                "id": "twenty-redis",
+                "value": "connectionString"
+              }
+            },
+            "SERVER_URL": {
+              "fromParameterStore": "SERVER_URL"
+            },
+            "STORAGE_TYPE": {
+              "fromParameterStore": "STORAGE_TYPE"
+            },
+            "STORAGE_S3_REGION": {
+              "fromParameterStore": "STORAGE_S3_REGION"
+            },
+            "STORAGE_S3_NAME": {
+              "fromParameterStore": "STORAGE_S3_NAME"
+            },
+            "STORAGE_S3_ENDPOINT": {
+              "fromParameterStore": "STORAGE_S3_ENDPOINT"
+            },
+            "APP_SECRET": {
+              "fromParameterStore": "APP_SECRET"
+            },
+            "DISABLE_DB_MIGRATIONS": "true",
+            "DISABLE_CRON_JOBS_REGISTRATION": "true"
+          }
+        }
+      ]
+    }
+  ]
+}
