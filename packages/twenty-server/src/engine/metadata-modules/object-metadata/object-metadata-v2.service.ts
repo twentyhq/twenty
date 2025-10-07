@@ -157,6 +157,9 @@ export class ObjectMetadataServiceV2 {
               to: toFlatViewFieldMaps,
             },
           },
+          dependencyAllFlatEntityMaps: {
+            flatViewMaps: existingFlatViewMaps,
+          },
           buildOptions: {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: false,
