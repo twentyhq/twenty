@@ -26,6 +26,9 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
     case 'EMPTY': {
       return msg`Add an Action`;
     }
+    case 'DELAY': {
+      return msg`Delay`;
+    }
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);
   }

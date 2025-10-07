@@ -25,6 +25,8 @@ export const getActionIcon = (actionType: WorkflowActionType) => {
       return 'IconRepeat';
     case 'EMPTY':
       return 'IconSettingsAutomation';
+    case 'DELAY':
+      return 'IconPlayerPause';
     default:
       return 'IconDefault';
   }
