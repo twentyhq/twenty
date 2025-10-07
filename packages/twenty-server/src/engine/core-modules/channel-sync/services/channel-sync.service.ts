@@ -63,11 +63,6 @@ export class ChannelSyncService {
     });
 
     for (const messageChannel of messageChannels) {
-      await messageChannelRepository.update(messageChannel.id, {
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-        syncStatus: MessageChannelSyncStatus.ONGOING,
-      });
-
       await this.messageQueueService.add<MessagingMessageListFetchJobData>(
         MessagingMessageListFetchJob.name,
         {
@@ -75,6 +70,11 @@ export class ChannelSyncService {
           messageChannelId: messageChannel.id,
         },
       );
+
+      await messageChannelRepository.update(messageChannel.id, {
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+        syncStatus: MessageChannelSyncStatus.ONGOING,
+      });
     }
   }
 
@@ -96,11 +96,6 @@ export class ChannelSyncService {
     });
 
     for (const calendarChannel of calendarChannels) {
-      await calendarChannelRepository.update(calendarChannel.id, {
-        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-        syncStatus: CalendarChannelSyncStatus.ONGOING,
-      });
-
       await this.calendarQueueService.add<CalendarEventListFetchJobData>(
         CalendarEventListFetchJob.name,
         {
@@ -108,6 +103,11 @@ export class ChannelSyncService {
           workspaceId,
         },
       );
+
+      await calendarChannelRepository.update(calendarChannel.id, {
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
+        syncStatus: CalendarChannelSyncStatus.ONGOING,
+      });
     }
   }
 }

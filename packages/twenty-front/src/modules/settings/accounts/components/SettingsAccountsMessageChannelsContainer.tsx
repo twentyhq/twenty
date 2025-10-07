@@ -2,7 +2,10 @@ import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { type MessageChannel, MessageChannelSyncStage } from '@/accounts/types/MessageChannel';
+import {
+  type MessageChannel,
+  MessageChannelSyncStage,
+} from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

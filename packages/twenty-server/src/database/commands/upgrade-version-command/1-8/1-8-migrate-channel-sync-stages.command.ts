@@ -59,7 +59,11 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
-    await this.migrateMessageChannelSyncStages(workspaceId, schemaName, options);
+    await this.migrateMessageChannelSyncStages(
+      workspaceId,
+      schemaName,
+      options,
+    );
 
     await this.migrateCalendarChannelSyncStages(
       workspaceId,
