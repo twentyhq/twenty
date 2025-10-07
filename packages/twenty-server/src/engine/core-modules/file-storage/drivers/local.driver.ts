@@ -83,17 +83,20 @@ export class LocalDriver implements StorageDriver {
       params.folderPath,
       params.filename,
     );
+    let filePath: string;
 
-    if (!existsSync(joinedPath)) {
+    try {
+      filePath = realpathSync(path.resolve(joinedPath));
+    } catch {
       throw new FileStorageException(
         'File not found',
         FileStorageExceptionCode.FILE_NOT_FOUND,
       );
     }
-
     const storageRoot = realpathSync(path.resolve(this.options.storagePath));
 
-    if (!joinedPath.startsWith(storageRoot + path.sep)) {
+    if (!filePath.startsWith(storageRoot + path.sep)) {
+      // Prevent directory traversal
       throw new FileStorageException(
         'Access denied',
         FileStorageExceptionCode.FILE_NOT_FOUND,
@@ -101,7 +104,7 @@ export class LocalDriver implements StorageDriver {
     }
 
     try {
-      return createReadStream(joinedPath);
+      return createReadStream(filePath);
     } catch (error) {
       if (error.code === 'ENOENT') {
         throw new FileStorageException(
