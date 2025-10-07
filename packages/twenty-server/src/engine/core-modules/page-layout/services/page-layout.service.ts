@@ -46,6 +46,11 @@ export class PageLayoutService {
         deletedAt: IsNull(),
       },
       relations: ['tabs', 'tabs.widgets'],
+      order: {
+        tabs: {
+          position: 'ASC',
+        },
+      },
     });
   }
 
@@ -63,6 +68,11 @@ export class PageLayoutService {
         deletedAt: IsNull(),
       },
       relations: ['tabs', 'tabs.widgets'],
+      order: {
+        tabs: {
+          position: 'ASC',
+        },
+      },
     });
   }
 
@@ -80,6 +90,11 @@ export class PageLayoutService {
         deletedAt: IsNull(),
       },
       relations: ['tabs', 'tabs.widgets'],
+      order: {
+        tabs: {
+          position: 'ASC',
+        },
+      },
     });
 
     if (!isDefined(pageLayout)) {

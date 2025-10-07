@@ -49,13 +49,11 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
         if (!pageLayoutDraft) return;
 
-        const sortedTabs = [...pageLayoutDraft.tabs].sort(
-          (a, b) => a.position - b.position,
+        if (pageLayoutDraft.tabs.length <= 1) return;
+
+        const tabIndex = pageLayoutDraft.tabs.findIndex(
+          (tab) => tab.id === tabId,
         );
-
-        if (sortedTabs.length <= 1) return;
-
-        const tabIndex = sortedTabs.findIndex((tab) => tab.id === tabId);
         const currentActiveTabId = snapshot
           .getLoadable(activeTabIdState)
           .getValue();
@@ -72,7 +70,9 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
         if (currentActiveTabId === tabId) {
           const newActiveIndex = tabIndex > 0 ? tabIndex - 1 : 0;
-          const remainingTabs = sortedTabs.filter((tab) => tab.id !== tabId);
+          const remainingTabs = pageLayoutDraft.tabs.filter(
+            (tab) => tab.id !== tabId,
+          );
           const newActiveTab = remainingTabs[newActiveIndex];
           if (isDefined(newActiveTab)) {
             setActiveTabId(newActiveTab.id);

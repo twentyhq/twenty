@@ -46,21 +46,21 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
         if (!pageLayoutDraft) return;
 
-        const sortedTabs = [...pageLayoutDraft.tabs].sort(
-          (a, b) => a.position - b.position,
+        const tabToDuplicate = pageLayoutDraft.tabs.find(
+          (tab) => tab.id === tabId,
         );
-
-        const tabToDuplicate = sortedTabs.find((tab) => tab.id === tabId);
         if (!tabToDuplicate) return;
 
-        const currentTabIndex = sortedTabs.findIndex((tab) => tab.id === tabId);
+        const currentTabIndex = pageLayoutDraft.tabs.findIndex(
+          (tab) => tab.id === tabId,
+        );
         const destinationIndex =
           insertAt === 'before' ? currentTabIndex : currentTabIndex + 1;
 
         const newPosition = calculateNewPosition({
           destinationIndex,
-          sourceIndex: sortedTabs.length,
-          items: sortedTabs,
+          sourceIndex: pageLayoutDraft.tabs.length,
+          items: pageLayoutDraft.tabs,
         });
 
         const clonedTab = structuredClone(tabToDuplicate);
@@ -88,7 +88,9 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
         setPageLayoutDraft((prev) => ({
           ...prev,
-          tabs: [...prev.tabs, duplicatedTab],
+          tabs: [...prev.tabs, duplicatedTab].sort(
+            (a, b) => a.position - b.position,
+          ),
         }));
 
         const currentLayouts = snapshot

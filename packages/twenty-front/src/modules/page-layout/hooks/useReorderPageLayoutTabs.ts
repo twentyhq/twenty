@@ -39,35 +39,37 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
           return;
         }
 
-        const sortedTabs = [...pageLayoutDraft.tabs].sort(
-          (a, b) => a.position - b.position,
+        const draggedTab = pageLayoutDraft.tabs.find(
+          (t) => t.id === draggableId,
+        );
+        if (!isDefined(draggedTab)) return;
+
+        const tabsWithoutDragged = pageLayoutDraft.tabs.filter(
+          (t) => t.id !== draggableId,
         );
 
-      const draggedTab = sortedTabs.find((t) => t.id === draggableId);
-      if (!isDefined(draggedTab)) return;
+        const movingBetweenDroppables =
+          source.droppableId !== destination.droppableId;
 
-      const tabsWithoutDragged = sortedTabs.filter((t) => t.id !== draggableId);
+        const destinationIndexAdjusted =
+          movingBetweenDroppables && destination.index > source.index
+            ? destination.index - 1
+            : destination.index;
 
-      const movingBetweenDroppables =
-        source.droppableId !== destination.droppableId;
+        const newPosition = calculateNewPosition({
+          destinationIndex: destinationIndexAdjusted,
+          sourceIndex: source.index,
+          items: tabsWithoutDragged,
+        });
 
-      const destinationIndexAdjusted =
-        movingBetweenDroppables && destination.index > source.index
-          ? destination.index - 1
-          : destination.index;
-
-      const newPosition = calculateNewPosition({
-        destinationIndex: destinationIndexAdjusted,
-        sourceIndex: source.index,
-        items: tabsWithoutDragged,
-      });
-
-      setPageLayoutDraft((prev) => ({
-        ...prev,
-        tabs: prev.tabs.map((tab) =>
-          tab.id === draggableId ? { ...tab, position: newPosition } : tab,
-        ),
-      }));
+        setPageLayoutDraft((prev) => ({
+          ...prev,
+          tabs: prev.tabs
+            .map((tab) =>
+              tab.id === draggableId ? { ...tab, position: newPosition } : tab,
+            )
+            .sort((a, b) => a.position - b.position),
+        }));
       },
     [pageLayoutDraftState, setPageLayoutDraft],
   );

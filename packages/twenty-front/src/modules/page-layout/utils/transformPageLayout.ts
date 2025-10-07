@@ -7,13 +7,11 @@ export const transformPageLayout = (
 ): PageLayout => {
   return {
     ...pageLayout,
-    tabs: (pageLayout.tabs ?? [])
-      .toSorted((a, b) => a.position - b.position)
-      .map(
-        (tab): PageLayoutTab => ({
-          ...tab,
-          widgets: tab.widgets ?? [],
-        }),
-      ),
+    tabs: (pageLayout.tabs ?? []).map(
+      (tab): PageLayoutTab => ({
+        ...tab,
+        widgets: tab.widgets ?? [],
+      }),
+    ),
   };
 };

@@ -53,7 +53,9 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
           deletedAt: null,
         };
 
-        const updatedTabs = [...(pageLayoutDraft.tabs || []), newTab];
+        const updatedTabs = [...(pageLayoutDraft.tabs || []), newTab].sort(
+          (a, b) => a.position - b.position,
+        );
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
