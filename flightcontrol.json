@@ -31,6 +31,7 @@
           "id": "twenty-redis",
           "name": "Twenty Redis",
           "type": "elasticache",
+          "engine": "redis",
           "engineVersion": "7.0",
           "instanceSize": "cache.t4g.micro"
         },
