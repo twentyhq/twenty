@@ -3,6 +3,7 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -12,14 +13,13 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { validateMorphRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> & {
     type: FieldMetadataType.MORPH_RELATION;
   };
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   sourceFlatObjectMetadata: FlatObjectMetadata;
   workspaceId: string;
 };

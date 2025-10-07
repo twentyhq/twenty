@@ -15,6 +15,7 @@ import {
   generateViewExceptionMessage,
   generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class ViewService {
@@ -22,6 +23,7 @@ export class ViewService {
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
     private readonly i18nService: I18nService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
@@ -134,7 +136,11 @@ export class ViewService {
       isCustom: true,
     });
 
-    return this.viewRepository.save(view);
+    const savedView = await this.viewRepository.save(view);
+
+    await this.flushGraphQLCache(viewData.workspaceId);
+
+    return savedView;
   }
 
   async update(
@@ -159,6 +165,8 @@ export class ViewService {
       ...updateData,
     });
 
+    await this.flushGraphQLCache(workspaceId);
+
     return { ...existingView, ...updatedView };
   }
 
@@ -177,6 +185,8 @@ export class ViewService {
 
     await this.viewRepository.softDelete(id);
 
+    await this.flushGraphQLCache(workspaceId);
+
     return view;
   }
 
@@ -194,6 +204,7 @@ export class ViewService {
     }
 
     await this.viewRepository.delete(id);
+    await this.flushGraphQLCache(workspaceId);
 
     return true;
   }
@@ -234,5 +245,12 @@ export class ViewService {
     }
 
     return viewName;
+  }
+
+  async flushGraphQLCache(workspaceId: string): Promise<void> {
+    await this.workspaceCacheStorageService.flushGraphQLOperation({
+      operationName: 'FindAllCoreViews',
+      workspaceId,
+    });
   }
 }

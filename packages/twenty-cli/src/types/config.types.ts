@@ -7,7 +7,7 @@ export interface TwentyConfig {
 export type PackageJson = {
   $schema?: string;
   universalIdentifier: string;
-  label: string;
+  name: string;
   license: string;
   description?: string;
   engines: {
@@ -43,6 +43,14 @@ export type ServerlessFunctionManifest = {
   code: ServerlessFunctionCodeManifest;
 };
 
+export enum HTTPMethod {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  PATCH = 'PATCH',
+  DELETE = 'DELETE',
+}
+
 export type ServerlessFunctionTriggerManifest =
   | {
       type: 'cron';
@@ -55,7 +63,7 @@ export type ServerlessFunctionTriggerManifest =
   | {
       type: 'route';
       path: string;
-      method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+      httpMethod: HTTPMethod;
       isAuthRequired: boolean;
     };
 

@@ -4,15 +4,18 @@ import { expect, within } from '@storybook/test';
 import { MemoryRouter } from 'react-router-dom';
 
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
+import { RecoilRoot } from 'recoil';
 import {
   GraphOrderBy,
   GraphType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { RecoilRoot } from 'recoil';
-import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
+import {
+  ExtendedAggregateOperations,
+  PageLayoutType,
+  type PageLayoutWidget,
+} from '~/generated/graphql';
 
 const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
@@ -60,7 +63,7 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             __typename: 'NumberChartConfiguration',
             graphType: GraphType.NUMBER,
-            aggregateOperation: AggregateOperations.COUNT,
+            aggregateOperation: ExtendedAggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
           },
           createdAt: '2024-01-01T00:00:00Z',
@@ -84,10 +87,9 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             __typename: 'GaugeChartConfiguration',
             graphType: GraphType.GAUGE,
-            aggregateOperation: AggregateOperations.COUNT,
+            aggregateOperation: ExtendedAggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
-            aggregateOperationTotal: AggregateOperations.COUNT,
-            aggregateFieldMetadataIdTotal: 'id',
+            displayDataLabel: false,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -110,7 +112,7 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             __typename: 'PieChartConfiguration',
             graphType: GraphType.PIE,
-            aggregateOperation: AggregateOperations.COUNT,
+            aggregateOperation: ExtendedAggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
             groupByFieldMetadataId: 'createdAt',
             orderBy: GraphOrderBy.VALUE_DESC,
@@ -136,7 +138,7 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             __typename: 'BarChartConfiguration',
             graphType: GraphType.BAR,
-            aggregateOperation: AggregateOperations.COUNT,
+            aggregateOperation: ExtendedAggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
             groupByFieldMetadataIdX: 'createdAt',
             orderByX: GraphOrderBy.FIELD_ASC,

@@ -20,8 +20,8 @@
     },
     "name": {
       "type": "string",
-      "description": "Name singular for the serverless function",
-      "pattern": "^[a-zA-Z][a-zA-Z0-9]*$",
+      "description": "Name singular for the serverless function (eg: my-serverless-function)",
+      "pattern": "^[a-z0-9-]+$",
       "minLength": 1,
       "maxLength": 100
     },
