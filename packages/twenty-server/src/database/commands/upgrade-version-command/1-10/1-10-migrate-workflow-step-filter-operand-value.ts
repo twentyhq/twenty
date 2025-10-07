@@ -1,8 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isString } from 'class-validator';
 import { Command } from 'nest-commander';
-import { convertViewFilterOperandToCoreOperand } from 'twenty-shared/utils';
-import { Raw, Repository } from 'typeorm';
+import {
+  convertViewFilterOperandToCoreOperand,
+  isDefined,
+} from 'twenty-shared/utils';
+import { In, Raw, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -10,9 +14,14 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowRunState,
+  WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-
+import { isWorkflowFilterAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/guards/is-workflow-filter-action.guard';
+import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 @Command({
   name: 'upgrade:1-10:migrate-workflow-step-filter-operand-value',
   description:
@@ -63,33 +72,31 @@ export class MigrateWorkflowStepFilterOperandValueCommand extends ActiveOrSuspen
     );
 
     for (const workflowVersion of workflowVersionsToMigrate) {
-      let steps: unknown;
+      let steps: WorkflowAction[] | null | undefined;
 
-      try {
-        steps =
-          typeof workflowVersion.steps === 'string'
-            ? JSON.parse(workflowVersion.steps)
-            : workflowVersion.steps;
-      } catch (error) {
-        this.logger.warn(
-          `Could not parse steps for workflowVersion ${workflowVersion.id} in workspace ${workspaceId}: ${error.message}`,
-        );
-        continue;
-      }
-
-      if (!Array.isArray(steps)) {
-        continue;
-      }
+      steps = workflowVersion.steps;
 
       let hasChanged = false;
 
-      for (const step of steps) {
-        if (
-          step?.settings?.input?.stepFilters &&
-          Array.isArray(step.settings.input.stepFilters)
-        ) {
-          for (const filter of step.settings.input.stepFilters) {
-            if (typeof filter.operand === 'string') {
+      for (const step of steps ?? []) {
+        if (isWorkflowFilterAction(step)) {
+          for (const filter of step.settings.input.stepFilters ?? []) {
+            if (isString(filter.operand)) {
+              const newOperand = convertViewFilterOperandToCoreOperand(
+                filter.operand,
+              );
+
+              if (newOperand && newOperand !== filter.operand) {
+                filter.operand = newOperand;
+                hasChanged = true;
+              }
+            }
+          }
+        }
+        if (isWorkflowFindRecordsAction(step)) {
+          for (const filter of step.settings.input.filter?.recordFilters ??
+            []) {
+            if (isString(filter.operand)) {
               const newOperand = convertViewFilterOperandToCoreOperand(
                 filter.operand,
               );
@@ -115,12 +122,12 @@ export class MigrateWorkflowStepFilterOperandValueCommand extends ActiveOrSuspen
 
           await workflowVersionRepository.update(
             { id: workflowVersion.id },
-            { steps: JSON.stringify(steps) as unknown as () => string },
+            { steps },
           );
         }
 
         this.logger.log(
-          `Updated workflowVersion ${workflowVersion.id} in workspace ${workspaceId}`,
+          `${options.dryRun ? 'DRY RUN - Would have' : ''} Updated workflowVersion ${workflowVersion.id} in workspace ${workspaceId}`,
         );
       }
     }
@@ -134,13 +141,13 @@ export class MigrateWorkflowStepFilterOperandValueCommand extends ActiveOrSuspen
       );
 
     const workflowRunsToMigrate = await workflowRunRepository.find({
-      where: [
-        {
-          state: Raw((_alias) => `"workflowRun"."state"::text LIKE :search`, {
-            search: '%operand%',
-          }),
-        },
-      ],
+      where: {
+        workflowVersionId: In(
+          workflowVersionsToMigrate.map(
+            (workflowVersion) => workflowVersion.id,
+          ),
+        ),
+      },
     });
 
     this.logger.log(
@@ -148,33 +155,34 @@ export class MigrateWorkflowStepFilterOperandValueCommand extends ActiveOrSuspen
     );
 
     for (const workflowRun of workflowRunsToMigrate) {
-      let state: unknown;
+      let state: WorkflowRunState | null | undefined = workflowRun.state;
 
-      try {
-        state =
-          typeof workflowRun.state === 'string'
-            ? JSON.parse(workflowRun.state)
-            : workflowRun.state;
-      } catch (error) {
-        this.logger.warn(
-          `Could not parse state for workflowRun ${workflowRun.id} in workspace ${workspaceId}: ${error.message}`,
-        );
-        continue;
-      }
-
-      if (!Array.isArray(state)) {
+      if (!isDefined(state)) {
         continue;
       }
 
       let hasChanged = false;
 
-      for (const stateDetails of state) {
-        if (
-          stateDetails?.settings?.input?.stepFilters &&
-          Array.isArray(stateDetails.settings.input.stepFilters)
-        ) {
-          for (const filter of stateDetails.settings.input.stepFilters) {
-            if (typeof filter.operand === 'string') {
+      for (const stateDetails of state.flow.steps) {
+        if (isWorkflowFindRecordsAction(stateDetails)) {
+          const filter = stateDetails.settings.input.filter;
+
+          for (const recordFilter of filter?.recordFilters ?? []) {
+            if (isString(recordFilter.operand)) {
+              const newOperand = convertViewFilterOperandToCoreOperand(
+                recordFilter.operand,
+              );
+
+              if (newOperand && newOperand !== recordFilter.operand) {
+                recordFilter.operand = newOperand;
+                hasChanged = true;
+              }
+            }
+          }
+        }
+        if (isWorkflowFilterAction(stateDetails)) {
+          for (const filter of stateDetails.settings.input.stepFilters ?? []) {
+            if (isString(filter.operand)) {
               const newOperand = convertViewFilterOperandToCoreOperand(
                 filter.operand,
               );
@@ -198,10 +206,7 @@ export class MigrateWorkflowStepFilterOperandValueCommand extends ActiveOrSuspen
             `Updating workflowRun ${workflowRun.id} in workspace ${workspaceId}`,
           );
 
-          await workflowRunRepository.update(
-            { id: workflowRun.id },
-            { state: JSON.stringify(state) as unknown as () => string },
-          );
+          await workflowRunRepository.update({ id: workflowRun.id }, { state });
         }
 
         this.logger.log(
