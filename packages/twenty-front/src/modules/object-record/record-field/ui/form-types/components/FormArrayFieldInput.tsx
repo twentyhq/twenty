@@ -21,6 +21,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useId, useRef, useState } from 'react';
@@ -68,6 +69,10 @@ const StyledPlaceholder = styled(FormFieldPlaceholder)`
   width: 100%;
 `;
 
+const parseSpacingValueAsNumber = (value: string) => {
+  return Number(value.replace('px', ''));
+};
+
 export const FormArrayFieldInput = ({
   label,
   defaultValue,
@@ -78,6 +83,7 @@ export const FormArrayFieldInput = ({
   testId,
 }: FormArrayFieldInputProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
 
   const instanceId = useId();
 
@@ -296,6 +302,9 @@ export const FormArrayFieldInput = ({
               <Dropdown
                 dropdownId={dropdownId}
                 dropdownPlacement="bottom-start"
+                dropdownOffset={{
+                  y: parseSpacingValueAsNumber(theme.spacing(1)),
+                }}
                 clickableComponent={
                   <StyledDisplayModeContainer data-open={isDropdownOpen}>
                     <ArrayDisplay value={draftValue.value} />
