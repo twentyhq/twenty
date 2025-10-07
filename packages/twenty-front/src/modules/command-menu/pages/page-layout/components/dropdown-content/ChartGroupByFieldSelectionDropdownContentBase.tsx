@@ -7,7 +7,6 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -28,7 +27,6 @@ import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 type ChartGroupByFieldSelectionDropdownContentBaseProps<
   T extends ChartConfiguration,
 > = {
-  headerLabel: string;
   fieldMetadataIdKey: keyof T;
   subFieldNameKey: keyof T;
 };
@@ -36,7 +34,6 @@ type ChartGroupByFieldSelectionDropdownContentBaseProps<
 export const ChartGroupByFieldSelectionDropdownContentBase = <
   T extends ChartConfiguration,
 >({
-  headerLabel,
   fieldMetadataIdKey,
   subFieldNameKey,
 }: ChartGroupByFieldSelectionDropdownContentBaseProps<T>) => {
@@ -130,7 +127,6 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
   if (isDefined(selectedCompositeField)) {
     return (
       <ChartGroupByFieldSelectionCompositeFieldView
-        headerLabel={headerLabel}
         compositeField={selectedCompositeField}
         currentSubFieldName={currentSubFieldName}
         onBack={handleBack}
@@ -141,7 +137,6 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
 
   return (
     <>
-      <DropdownMenuHeader>{headerLabel}</DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
         type="text"

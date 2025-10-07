@@ -1,5 +1,4 @@
 import { ChartGroupByFieldSelectionDropdownContentBase } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase';
-import { t } from '@lingui/core/macro';
 import {
   type BarChartConfiguration,
   type LineChartConfiguration,
@@ -10,7 +9,6 @@ export const ChartGroupByFieldSelectionDropdownContent = () => {
     <ChartGroupByFieldSelectionDropdownContentBase<
       BarChartConfiguration | LineChartConfiguration
     >
-      headerLabel={t`Group By`}
       fieldMetadataIdKey="groupByFieldMetadataIdY"
       subFieldNameKey="groupBySubFieldNameY"
     />

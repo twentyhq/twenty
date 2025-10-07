@@ -16,7 +16,6 @@ import { IconChevronLeft, useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type ChartGroupByFieldSelectionCompositeFieldViewProps = {
-  headerLabel: string;
   compositeField: FieldMetadataItem;
   currentSubFieldName: string | undefined;
   onBack: () => void;
@@ -24,7 +23,6 @@ type ChartGroupByFieldSelectionCompositeFieldViewProps = {
 };
 
 export const ChartGroupByFieldSelectionCompositeFieldView = ({
-  headerLabel,
   compositeField,
   currentSubFieldName,
   onBack,
@@ -57,7 +55,7 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
           />
         }
       >
-        {headerLabel}: {compositeField.label}
+        {compositeField.label}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
