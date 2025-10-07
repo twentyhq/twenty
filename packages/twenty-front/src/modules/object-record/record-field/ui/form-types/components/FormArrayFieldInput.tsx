@@ -152,6 +152,10 @@ export const FormArrayFieldInput = ({
     openDropdown({
       dropdownComponentInstanceIdFromProps: dropdownId,
     });
+
+    removeFocusItemFromFocusStackById({
+      focusId: formFieldInputInstanceId,
+    });
   };
 
   const handleEditItem = (index: number) => {
