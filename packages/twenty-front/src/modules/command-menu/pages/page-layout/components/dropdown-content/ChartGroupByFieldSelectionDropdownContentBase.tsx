@@ -2,6 +2,7 @@ import { ChartGroupByFieldSelectionCompositeFieldView } from '@/command-menu/pag
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -23,45 +24,43 @@ import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
-type ChartGroupByFieldSelectionDropdownContentBaseProps = {
+type ChartGroupByFieldSelectionDropdownContentBaseProps<
+  T extends ChartConfiguration,
+> = {
   headerLabel: ReactNode;
-  fieldMetadataIdKey: string;
-  subFieldNameKey: string;
-  allowedChartTypes: string[];
+  fieldMetadataIdKey: keyof T;
+  subFieldNameKey: keyof T;
 };
 
-export const ChartGroupByFieldSelectionDropdownContentBase = ({
+export const ChartGroupByFieldSelectionDropdownContentBase = <
+  T extends ChartConfiguration,
+>({
   headerLabel,
   fieldMetadataIdKey,
   subFieldNameKey,
-  allowedChartTypes,
-}: ChartGroupByFieldSelectionDropdownContentBaseProps) => {
+}: ChartGroupByFieldSelectionDropdownContentBaseProps<T>) => {
   const [searchQuery, setSearchQuery] = useState('');
+
   const [selectedCompositeField, setSelectedCompositeField] =
     useState<FieldMetadataItem | null>(null);
+
   const { objectMetadataItems } = useObjectMetadataItems();
+
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  if (
-    !isDefined(widgetInEditMode?.configuration?.__typename) ||
-    !allowedChartTypes.includes(widgetInEditMode.configuration.__typename)
-  ) {
-    throw new Error('Invalid configuration type');
-  }
+  const configuration = widgetInEditMode?.configuration as T;
 
-  const currentGroupByFieldMetadataId: string | undefined =
-    widgetInEditMode.configuration[
-      fieldMetadataIdKey as keyof typeof widgetInEditMode.configuration
-    ];
-
-  const currentSubFieldName: string | undefined =
-    widgetInEditMode.configuration[
-      subFieldNameKey as keyof typeof widgetInEditMode.configuration
-    ];
+  const currentGroupByFieldMetadataId = configuration?.[fieldMetadataIdKey] as
+    | string
+    | undefined;
+  const currentSubFieldName = configuration?.[subFieldNameKey] as
+    | string
+    | undefined;
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === widgetInEditMode.objectMetadataId,
+    (item) => item.id === widgetInEditMode?.objectMetadataId,
   );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
