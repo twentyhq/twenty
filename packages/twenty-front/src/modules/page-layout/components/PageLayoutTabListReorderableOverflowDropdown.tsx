@@ -90,7 +90,10 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
       dropdownOffset={{ x: 0, y: 8 }}
       onClickOutside={onClose}
       clickableComponent={
-        <TabMoreButton hiddenTabsCount={hiddenTabsCount} active={isActiveTabHidden} />
+        <TabMoreButton
+          hiddenTabsCount={hiddenTabsCount}
+          active={isActiveTabHidden}
+        />
       }
       dropdownComponents={
         <DropdownContent>

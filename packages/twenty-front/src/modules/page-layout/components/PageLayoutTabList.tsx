@@ -3,16 +3,16 @@ import { DragDropContext, type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconPlus } from 'twenty-ui/display';
-import { IconButton, TabButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/input';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
-import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
+import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 
@@ -39,15 +39,6 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledHiddenMeasurement = styled.div`
-  display: flex;
-  gap: ${TAB_LIST_GAP}px;
-  pointer-events: none;
-  position: absolute;
-  top: -9999px;
-  visibility: hidden;
-`;
-
 const StyledAddButton = styled.div`
   display: flex;
   align-items: center;
@@ -57,6 +48,7 @@ const StyledAddButton = styled.div`
 
 type PageLayoutTabListProps = TabListProps & {
   isReorderEnabled: boolean;
+  onAddTab?: () => void;
   onReorder?: OnDragEndResponder;
 };
 
@@ -166,37 +158,27 @@ export const PageLayoutTabList = ({
       />
 
       {visibleTabs.length > 1 && (
-        <StyledHiddenMeasurement>
-          {visibleTabs.map((tab) => (
-            <NodeDimension
-              key={tab.id}
-              onDimensionChange={onTabWidthChange(tab.id)}
-            >
-              <TabButton
-                id={tab.id}
-                title={tab.title}
-                LeftIcon={tab.Icon}
-                logo={tab.logo}
-                active={tab.id === activeTabId}
-                disabled={tab.disabled ?? loading}
-                pill={tab.pill}
-                disableTestId={true}
-              />
-            </NodeDimension>
-          ))}
-
-          <NodeDimension onDimensionChange={onMoreButtonWidthChange}>
-            <TabMoreButton hiddenTabsCount={1} active={false} />
-          </NodeDimension>
-
-          {onAddTab && (
-            <NodeDimension onDimensionChange={onAddButtonWidthChange}>
-              <StyledAddButton>
-                <IconButton Icon={IconPlus} size="small" variant="tertiary" />
-              </StyledAddButton>
-            </NodeDimension>
-          )}
-        </StyledHiddenMeasurement>
+        <TabListHiddenMeasurements
+          visibleTabs={visibleTabs}
+          activeTabId={activeTabId}
+          loading={loading}
+          onTabWidthChange={onTabWidthChange}
+          onMoreButtonWidthChange={onMoreButtonWidthChange}
+          onAddButtonWidthChange={onAddTab ? onAddButtonWidthChange : undefined}
+          renderAddButton={
+            onAddTab
+              ? () => (
+                  <StyledAddButton>
+                    <IconButton
+                      Icon={IconPlus}
+                      size="small"
+                      variant="tertiary"
+                    />
+                  </StyledAddButton>
+                )
+              : undefined
+          }
+        />
       )}
 
       <NodeDimension onDimensionChange={onContainerWidthChange}>

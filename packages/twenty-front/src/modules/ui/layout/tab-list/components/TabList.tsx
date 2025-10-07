@@ -4,16 +4,15 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
+import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconPlus } from 'twenty-ui/display';
-import { IconButton, TabButton } from 'twenty-ui/input';
+import { TabButton } from 'twenty-ui/input';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
-import { TabMoreButton } from './TabMoreButton';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -42,22 +41,6 @@ const StyledTabContainer = styled.div`
   max-width: 100%;
 `;
 
-const StyledHiddenMeasurement = styled.div`
-  display: flex;
-  gap: ${TAB_LIST_GAP}px;
-  pointer-events: none;
-  position: absolute;
-  top: -9999px;
-  visibility: hidden;
-`;
-
-const StyledAddButton = styled.div`
-  display: flex;
-  align-items: center;
-  height: ${({ theme }) => theme.spacing(10)};
-  margin-left: ${TAB_LIST_GAP}px;
-`;
-
 export const TabList = ({
   tabs,
   loading,
@@ -66,7 +49,6 @@ export const TabList = ({
   className,
   componentInstanceId,
   onChangeTab,
-  onAddTab,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
   const navigate = useNavigate();
@@ -87,10 +69,9 @@ export const TabList = ({
     onTabWidthChange,
     onContainerWidthChange,
     onMoreButtonWidthChange,
-    onAddButtonWidthChange,
   } = useTabListMeasurements({
     visibleTabs,
-    hasAddButton: Boolean(onAddTab),
+    hasAddButton: false,
   });
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
@@ -141,37 +122,13 @@ export const TabList = ({
         />
 
         {visibleTabs.length > 1 && (
-          <StyledHiddenMeasurement>
-            {visibleTabs.map((tab) => (
-              <NodeDimension
-                key={tab.id}
-                onDimensionChange={onTabWidthChange(tab.id)}
-              >
-                <TabButton
-                  id={tab.id}
-                  title={tab.title}
-                  LeftIcon={tab.Icon}
-                  logo={tab.logo}
-                  active={tab.id === activeTabId}
-                  disabled={tab.disabled ?? loading}
-                  pill={tab.pill}
-                  disableTestId={true}
-                />
-              </NodeDimension>
-            ))}
-
-            <NodeDimension onDimensionChange={onMoreButtonWidthChange}>
-              <TabMoreButton hiddenTabsCount={1} active={false} />
-            </NodeDimension>
-
-            {onAddTab && (
-              <NodeDimension onDimensionChange={onAddButtonWidthChange}>
-                <StyledAddButton>
-                  <IconButton Icon={IconPlus} size="small" variant="tertiary" />
-                </StyledAddButton>
-              </NodeDimension>
-            )}
-          </StyledHiddenMeasurement>
+          <TabListHiddenMeasurements
+            visibleTabs={visibleTabs}
+            activeTabId={activeTabId}
+            loading={loading}
+            onTabWidthChange={onTabWidthChange}
+            onMoreButtonWidthChange={onMoreButtonWidthChange}
+          />
         )}
 
         <NodeDimension onDimensionChange={onContainerWidthChange}>
@@ -212,17 +169,6 @@ export const TabList = ({
                 onTabSelect={handleTabSelectFromDropdown}
                 loading={loading}
               />
-            )}
-
-            {onAddTab && (
-              <StyledAddButton>
-                <IconButton
-                  Icon={IconPlus}
-                  size="small"
-                  variant="tertiary"
-                  onClick={() => onAddTab()}
-                />
-              </StyledAddButton>
             )}
           </StyledContainer>
         </NodeDimension>
