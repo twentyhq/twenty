@@ -1,4 +1,5 @@
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -10,7 +11,9 @@ export const useCanAddSelectOption = (fieldName: string) => {
   );
 
   const canAddSelectOption =
-    userHasPermissionToEditDataModel && !!fieldName && !!objectNamePlural;
+    userHasPermissionToEditDataModel &&
+    isNonEmptyString(fieldName) &&
+    isNonEmptyString(objectNamePlural);
 
   return { canAddSelectOption };
 };

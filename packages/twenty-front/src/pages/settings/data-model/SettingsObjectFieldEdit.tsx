@@ -23,8 +23,8 @@ import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/vali
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
@@ -182,6 +182,10 @@ export const SettingsObjectFieldEdit = () => {
     });
   };
 
+  const handleCancel = () => {
+    navigateBackOrToSettings();
+  };
+
   const handleDeactivate = async () => {
     await deactivateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigateSettings(SettingsPath.ObjectDetail, {
@@ -226,7 +230,7 @@ export const SettingsObjectFieldEdit = () => {
               isLoading={isSubmitting}
               isSaveDisabled={!canSave}
               isCancelDisabled={isSubmitting}
-              onCancel={navigateBackOrToSettings}
+              onCancel={handleCancel}
               onSave={formConfig.handleSubmit(handleSave)}
             />
           }

@@ -117,6 +117,7 @@ export const SettingsDataModelFieldSelectForm = ({
     useSelectSettingsFormInitialValues({
       fieldMetadataId: existingFieldMetadataId,
     });
+
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   const [searchParams] = useSearchParams();
@@ -132,9 +133,12 @@ export const SettingsDataModelFieldSelectForm = ({
 
   useEffect(() => {
     const newOptionValue = searchParams.get('newOption');
+
     if (isDefined(newOptionValue) && !hasAppliedNewOption) {
       const newOption = generateNewSelectOption(initialOptions, newOptionValue);
+
       const optionsWithNew = [...initialOptions, newOption];
+
       setFormValue('options', optionsWithNew, { shouldDirty: true });
       setHasAppliedNewOption(true);
     }

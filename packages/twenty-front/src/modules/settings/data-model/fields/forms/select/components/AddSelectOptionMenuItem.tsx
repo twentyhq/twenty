@@ -14,7 +14,8 @@ export const AddSelectOptionMenuItem = ({
   onAddSelectOption,
 }: AddSelectOptionMenuItemProps) => {
   const trimmedName = name.trim();
-  const showAddOption = isNonEmptyString(trimmedName) && !!onAddSelectOption;
+  const showAddOption =
+    isNonEmptyString(trimmedName) && isDefined(onAddSelectOption);
 
   const handleClick = () => {
     if (isDefined(onAddSelectOption)) {
