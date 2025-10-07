@@ -5,7 +5,7 @@ const meta: Meta<typeof TabMoreButton> = {
   title: 'UI/Layout/TabList/TabMoreButton',
   component: TabMoreButton,
   args: {
-    overflowCount: 3,
+    hiddenTabsCount: 3,
     active: false,
   },
 };
@@ -15,14 +15,14 @@ type Story = StoryObj<typeof TabMoreButton>;
 
 export const Default: Story = {
   args: {
-    overflowCount: 3,
+    hiddenTabsCount: 3,
     active: false,
   },
 };
 
 export const Active: Story = {
   args: {
-    overflowCount: 5,
+    hiddenTabsCount: 5,
     active: true,
   },
 };

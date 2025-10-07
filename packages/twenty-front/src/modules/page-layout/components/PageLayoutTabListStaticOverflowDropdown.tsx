@@ -6,45 +6,41 @@ import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
-type TabListDropdownProps = {
+type PageLayoutTabListStaticOverflowDropdownProps = {
   dropdownId: string;
-  onClose: () => void;
-  overflow: {
-    hiddenTabsCount: number;
-    isActiveTabHidden: boolean;
-  };
   hiddenTabs: SingleTabProps[];
+  hiddenTabsCount: number;
+  isActiveTabHidden: boolean;
   activeTabId: string | null;
-  onTabSelect: (tabId: string) => void;
   loading?: boolean;
+  onSelect: (tabId: string) => void;
+  onClose: () => void;
 };
 
-export const TabListDropdown = ({
+export const PageLayoutTabListStaticOverflowDropdown = ({
   dropdownId,
-  onClose,
-  overflow,
   hiddenTabs,
+  hiddenTabsCount,
+  isActiveTabHidden,
   activeTabId,
-  onTabSelect,
   loading,
-}: TabListDropdownProps) => {
+  onSelect,
+  onClose,
+}: PageLayoutTabListStaticOverflowDropdownProps) => {
   return (
     <Dropdown
       dropdownId={dropdownId}
       dropdownPlacement="bottom-end"
-      onClickOutside={onClose}
       dropdownOffset={{ x: 0, y: 8 }}
+      onClickOutside={onClose}
       clickableComponent={
-        <TabMoreButton
-          hiddenTabsCount={overflow.hiddenTabsCount}
-          active={overflow.isActiveTabHidden}
-        />
+        <TabMoreButton hiddenTabsCount={hiddenTabsCount} active={isActiveTabHidden} />
       }
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {hiddenTabs.map((tab) => {
-              const isDisabled = tab.disabled ?? loading;
+              const disabled = tab.disabled ?? loading;
 
               return (
                 <MenuItemSelectAvatar
@@ -53,14 +49,14 @@ export const TabListDropdown = ({
                   avatar={<TabAvatar tab={tab} />}
                   selected={tab.id === activeTabId}
                   onClick={
-                    isDisabled
+                    disabled
                       ? undefined
                       : () => {
-                          onTabSelect(tab.id);
+                          onSelect(tab.id);
                           onClose();
                         }
                   }
-                  disabled={isDisabled}
+                  disabled={disabled}
                 />
               );
             })}

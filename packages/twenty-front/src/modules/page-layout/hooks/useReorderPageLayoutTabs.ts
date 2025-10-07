@@ -16,11 +16,13 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
   const { currentPageLayout } = useCurrentPageLayout();
   const { setPageLayoutDraft } = usePageLayoutDraftState(pageLayoutId);
 
-  const handleReorderTabs: OnDragEndResponder = useCallback(
+  const reorderTabs: OnDragEndResponder = useCallback(
     (result) => {
       const { source, destination, draggableId } = result;
 
-      if (!isDefined(destination) || !isDefined(currentPageLayout)) return;
+      if (!isDefined(destination) || !isDefined(currentPageLayout)) {
+        return;
+      }
 
       if (
         source.droppableId === destination.droppableId &&
@@ -33,10 +35,14 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
         (a, b) => a.position - b.position,
       );
 
-      const draggedTab = sortedTabs.find((t) => t.id === draggableId);
-      if (!isDefined(draggedTab)) return;
+      const draggedTab = sortedTabs.find((tab) => tab.id === draggableId);
+      if (!isDefined(draggedTab)) {
+        return;
+      }
 
-      const tabsWithoutDragged = sortedTabs.filter((t) => t.id !== draggableId);
+      const tabsWithoutDragged = sortedTabs.filter(
+        (tab) => tab.id !== draggableId,
+      );
 
       const movingBetweenDroppables =
         source.droppableId !== destination.droppableId;
@@ -62,5 +68,5 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
     [currentPageLayout, setPageLayoutDraft],
   );
 
-  return { handleReorderTabs };
+  return { reorderTabs };
 };
