@@ -18,8 +18,8 @@ import {
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
-import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/types/guards/isFieldRelationFromManyObjects';
-import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
+import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -57,7 +57,7 @@ export const useOpenFieldInputEditMode = () => {
         prefix?: string;
       }) => {
         if (
-          isFieldRelationFromManyObjects(fieldDefinition) &&
+          isFieldRelationOneToMany(fieldDefinition) &&
           ['taskTarget', 'noteTarget'].includes(
             fieldDefinition.metadata.relationObjectMetadataNameSingular,
           )
@@ -96,7 +96,7 @@ export const useOpenFieldInputEditMode = () => {
           return;
         }
 
-        if (isFieldRelationToOneObject(fieldDefinition)) {
+        if (isFieldRelationManyToOne(fieldDefinition)) {
           openRelationToOneFieldInput({
             fieldName: fieldDefinition.metadata.fieldName,
             recordId,
@@ -119,7 +119,7 @@ export const useOpenFieldInputEditMode = () => {
           return;
         }
 
-        if (isFieldRelationFromManyObjects(fieldDefinition)) {
+        if (isFieldRelationOneToMany(fieldDefinition)) {
           if (
             isDefined(
               fieldDefinition.metadata.relationObjectMetadataNameSingular,

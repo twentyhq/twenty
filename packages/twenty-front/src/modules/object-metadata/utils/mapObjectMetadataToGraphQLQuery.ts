@@ -146,7 +146,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
       __ref
     }`;
   }
-  // if (objectMetadataItem.nameSingular === 'pet') debugger;
   const mappedFields = gqlFieldWithFieldMetadataThatSouldBeQueried
     .map((gqlFieldWithFieldMetadata) => {
       const currentRecordGqlFields =
