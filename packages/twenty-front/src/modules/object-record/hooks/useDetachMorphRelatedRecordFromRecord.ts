@@ -13,7 +13,11 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationFieldName,
+  CustomError,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const useDetachMorphRelatedRecordFromRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -166,13 +170,27 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
           fieldDefinition.metadata.morphRelations[0].sourceObjectMetadata
             .nameSingular;
 
+        const targetFieldMetadataName =
+          fieldDefinition.metadata.morphRelations.find(
+            (morphRelation) =>
+              morphRelation.targetObjectMetadata.nameSingular ===
+              relatedObjectMetadataItem.nameSingular,
+          )?.targetFieldMetadata.name;
+
+        if (!isDefined(targetFieldMetadataName)) {
+          throw new CustomError(
+            `Error while trying to fetch ${relatedObjectMetadataItem.nameSingular}`,
+            'CANNOT_FIND_TARGET_FIELD_METADATA_NAME',
+          );
+        }
+
         const updatedManyRecordsArgs = [
           {
             idToUpdate: relatedRecordId,
             objectMetadataItem: relatedObjectMetadataItem,
             targetObjectNameSingulars: [sourceObjectMetadataItemName],
             relatedRecordId: null,
-            targetGQLFieldName: computedFieldName,
+            targetGQLFieldName: targetFieldMetadataName,
           },
         ];
 
