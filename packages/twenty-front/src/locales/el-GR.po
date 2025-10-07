@@ -124,6 +124,11 @@ msgstr "{failedCount} αρχείο(-α) απέτυχε να μεταφορτωθ
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} από {formattedRecordsToImportCount} εγγραφές εισήχθησαν."
 
+#. js-lingui-id: 2EPGDl
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
+msgid "{graphTypeLabel} Chart"
+msgstr ""
+
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
@@ -378,6 +383,11 @@ msgstr "Ενεργό"
 msgid "Active API keys created by you or your team."
 msgstr "Ενεργά API keys που έχουν δημιουργηθεί από εσάς ή την ομάδα σας."
 
+#. js-lingui-id: QXX2VR
+#: src/modules/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem.tsx
+msgid "Add \"{trimmedName}\" to options"
+msgstr ""
+
 #. js-lingui-id: m3/V2n
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -444,6 +454,11 @@ msgstr "Προσθήκη Χειρισμού"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Add inputs to your form"
 msgstr "Προσθέστε εισόδους στη φόρμα σας"
+
+#. js-lingui-id: NQ8llq
+#: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
+msgid "Add item"
+msgstr ""
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
@@ -1148,9 +1163,9 @@ msgstr "Πίσω"
 msgid "Back to content"
 msgstr "Επιστροφή στο περιεχόμενο"
 
-#. js-lingui-id: LiFJll
+#. js-lingui-id: GoBp8L
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Bar Chart"
+msgid "Bar"
 msgstr ""
 
 #. js-lingui-id: NgFKo1
@@ -3048,6 +3063,11 @@ msgstr "Πληκτρολογήστε μια τιμή για να αποθηκε�
 msgid "Enter agent name*"
 msgstr "Εισάγετε το όνομα του πράκτορα*"
 
+#. js-lingui-id: wgNkIh
+#: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
+msgid "Enter an item"
+msgstr ""
+
 #. js-lingui-id: kOybqX
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Enter array of items or variable expression"
@@ -3740,9 +3760,9 @@ msgstr "Λειτουργίες"
 msgid "Functions - Settings"
 msgstr "Λειτουργίες - Ρυθμίσεις"
 
-#. js-lingui-id: vYj1cC
+#. js-lingui-id: IZUMtC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Gauge Chart"
+msgid "Gauge"
 msgstr ""
 
 #. js-lingui-id: Weq9zb
@@ -4607,9 +4627,9 @@ msgstr "Μικρότερο από ή ίσο"
 msgid "Light"
 msgstr "Φωτεινό"
 
-#. js-lingui-id: pFkLY3
+#. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Line Chart"
+msgid "Line"
 msgstr ""
 
 #. js-lingui-id: pQjjYo
@@ -4641,6 +4661,11 @@ msgstr "Φόρτωση csv ... "
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
 msgstr "Φόρτωση δεδομένων μετρήσεων..."
+
+#. js-lingui-id: tVSmFT
+#: src/modules/ui/input/components/IconPicker.tsx
+msgid "Loading more..."
+msgstr ""
 
 #. js-lingui-id: Z3FXyt
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -5131,14 +5156,9 @@ msgid "No"
 msgstr "Όχι"
 
 #. js-lingui-id: xUXmJM
-#: src/modules/object-record/record-field/ui/meta-types/input/components/RelationToOneFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput.tsx
 msgid "No {fieldLabel}"
 msgstr "Όχι {fieldLabel}"
-
-#. js-lingui-id: yWS1Mx
-#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
-msgid "No {objectNameSingular}"
-msgstr "Όχι {objectNameSingular}"
 
 #. js-lingui-id: vhsJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -5337,6 +5357,7 @@ msgid "No records found"
 msgstr "Δεν βρέθηκαν εγγραφές"
 
 #. js-lingui-id: Ev2r9A
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 msgid "No results"
@@ -5448,14 +5469,10 @@ msgstr "τώρα"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
 msgstr "Αριθμός"
-
-#. js-lingui-id: oVhZzL
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Number Chart"
-msgstr ""
 
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -5826,9 +5843,9 @@ msgstr ""
 msgid "Picture"
 msgstr "Εικόνα"
 
-#. js-lingui-id: 3ubdv5
+#. js-lingui-id: ZjVniv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Pie Chart"
+msgid "Pie"
 msgstr ""
 
 #. js-lingui-id: GdgCoi
@@ -7010,6 +7027,11 @@ msgstr "Μερικά"
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Some folders"
+msgstr ""
+
+#. js-lingui-id: yHwG3y
+#: src/modules/command-menu/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Soon"
 msgstr ""
 
 #. js-lingui-id: wTrpxV

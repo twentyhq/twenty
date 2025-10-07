@@ -3,9 +3,11 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
+import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { useRecoilValue } from 'recoil';
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useChartSettingsValues = ({
@@ -43,6 +45,15 @@ export const useChartSettingsValues = ({
         )
       : undefined;
 
+  const groupBySubFieldNameXLabel =
+    'groupBySubFieldNameX' in configuration && isDefined(groupByFieldX)
+      ? getFieldLabelWithSubField({
+          field: groupByFieldX,
+          subFieldName:
+            configuration.groupBySubFieldNameX as CompositeFieldSubFieldName,
+        })
+      : undefined;
+
   const aggregateField = objectMetadataItem?.fields.find(
     (fieldMetadataItem) =>
       fieldMetadataItem.id === configuration.aggregateFieldMetadataId,
@@ -66,6 +77,8 @@ export const useChartSettingsValues = ({
       ? getXSortOptionLabel({
           graphOrderBy: xAxisOrderBy,
           groupByFieldMetadataIdX: configuration.groupByFieldMetadataIdX,
+          groupBySubFieldNameX:
+            configuration.groupBySubFieldNameX as CompositeFieldSubFieldName,
           aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
           aggregateOperation: configuration.aggregateOperation,
         })
@@ -88,6 +101,12 @@ export const useChartSettingsValues = ({
           : 'groupByFieldMetadataId' in configuration
             ? configuration.groupByFieldMetadataId
             : undefined,
+      groupBySubFieldName:
+        'groupBySubFieldNameY' in configuration
+          ? (configuration.groupBySubFieldNameY as CompositeFieldSubFieldName)
+          : 'groupBySubFieldName' in configuration
+            ? (configuration.groupBySubFieldName as CompositeFieldSubFieldName)
+            : undefined,
     });
 
   const getChartSettingsValues = (
@@ -97,7 +116,7 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.SOURCE:
         return objectMetadataItem?.labelPlural;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X:
-        return groupByFieldX?.label;
+        return groupBySubFieldNameXLabel;
       case CHART_CONFIGURATION_SETTING_IDS.COLORS:
         return isDefined(configuration.color) && 'color' in configuration
           ? capitalize(configuration.color)

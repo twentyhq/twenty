@@ -290,6 +290,11 @@ msgstr "Approved access domain does not match email domain"
 msgid "Approved access domain has already been validated"
 msgstr "Approved access domain has already been validated"
 
+#. js-lingui-id: naCW6Z
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "April"
+msgstr "April"
+
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ARR"
@@ -427,6 +432,11 @@ msgstr "Attachments linked to the workflow"
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments tied to the {label}"
 msgstr "Attachments tied to the {label}"
+
+#. js-lingui-id: DBHTm/
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "August"
+msgstr "August"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -897,6 +907,11 @@ msgstr "Date format"
 msgid "Date when the record was deleted"
 msgstr "Date when the record was deleted"
 
+#. js-lingui-id: r6zgGo
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "December"
+msgstr "December"
+
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
@@ -1303,6 +1318,11 @@ msgstr "Favorites linked to the workspace member"
 msgid "Favorites tied to the {label}"
 msgstr "Favorites tied to the {label}"
 
+#. js-lingui-id: 4lgLew
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "February"
+msgstr "February"
+
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
@@ -1462,6 +1482,11 @@ msgstr "Form action fields must have unique names"
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "Form action must have at least one field"
+
+#. js-lingui-id: 39y5bn
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Friday"
+msgstr "Friday"
 
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1720,6 +1745,11 @@ msgstr "Is Sync Enabled"
 msgid "Is Synced"
 msgstr "Is Synced"
 
+#. js-lingui-id: rjyWPb
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "January"
+msgstr "January"
+
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Job Title"
@@ -1749,6 +1779,16 @@ msgstr "Json object to provide trigger"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "Json value for event details"
+
+#. js-lingui-id: u4ex5r
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "July"
+msgstr "July"
+
+#. js-lingui-id: zeEQd/
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "June"
+msgstr "June"
 
 #. js-lingui-id: qmarO2
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1861,10 +1901,20 @@ msgstr "Logical Operator"
 msgid "Logical operator for the filter group"
 msgstr "Logical operator for the filter group"
 
+#. js-lingui-id: hg6l4j
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "March"
+msgstr "March"
+
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
 msgstr "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+
+#. js-lingui-id: 3JzsDb
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "May"
+msgstr "May"
 
 #. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2029,6 +2079,11 @@ msgstr "Messaging provider refresh token"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
+
+#. js-lingui-id: hty0d5
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Monday"
+msgstr "Monday"
 
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -2266,6 +2321,11 @@ msgstr "NoteTarget opportunity"
 msgid "NoteTarget person"
 msgstr "NoteTarget person"
 
+#. js-lingui-id: t9QlBd
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "November"
+msgstr "November"
+
 #. js-lingui-id: bR2sEm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Number format"
@@ -2345,6 +2405,11 @@ msgstr "Object with same id already exists"
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
 msgstr "ObjectMetadataId is required to create a view."
+
+#. js-lingui-id: dzQfDY
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "October"
+msgstr "October"
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2741,6 +2806,11 @@ msgstr "Route with same path already exists"
 msgid "Runs"
 msgstr "Runs"
 
+#. js-lingui-id: +5kO8P
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Saturday"
+msgstr "Saturday"
+
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2751,6 +2821,11 @@ msgstr "Scopes"
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "Search vector"
+
+#. js-lingui-id: hgvbYY
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "September"
+msgstr "September"
 
 #. js-lingui-id: F3+i2a
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
@@ -2870,6 +2945,11 @@ msgstr "Sub field name"
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "Subject"
+
+#. js-lingui-id: DBC3t5
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Sunday"
+msgstr "Sunday"
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -3177,6 +3257,11 @@ msgstr "Thread id from the messaging provider"
 msgid "Throttle Failure Count"
 msgstr "Throttle Failure Count"
 
+#. js-lingui-id: kkDQ8m
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Thursday"
+msgstr "Thursday"
+
 #. js-lingui-id: n9nSNJ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Time format"
@@ -3259,6 +3344,11 @@ msgstr "Timeline Activity"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "Title"
+
+#. js-lingui-id: G3myU+
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Tuesday"
+msgstr "Tuesday"
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3733,6 +3823,11 @@ msgstr "Visible"
 #: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "We are experiencing a temporary issue with our database. Please try again later."
+
+#. js-lingui-id: VAcXNz
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Wednesday"
+msgstr "Wednesday"
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts

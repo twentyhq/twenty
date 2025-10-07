@@ -7,9 +7,9 @@ import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/c
 
 export const generateNewSelectOption = (
   options: FieldMetadataItemOption[],
+  label?: string,
 ): FieldMetadataItemOption => {
-  const newOptionLabel = generateNewSelectOptionLabel(options);
-
+  const newOptionLabel = label ?? generateNewSelectOptionLabel(options);
   return {
     color: getNextThemeColor(options[options.length - 1]?.color),
     id: v4(),

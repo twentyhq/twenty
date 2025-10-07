@@ -3,7 +3,7 @@ import omit from 'lodash.omit';
 import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { type z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -23,8 +23,11 @@ import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/vali
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
+import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui/display';
@@ -44,6 +47,17 @@ export const SettingsObjectFieldEdit = () => {
   const navigateSettings = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { t } = useLingui();
+
+  const navigate = useNavigate();
+
+  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
+    navigationMemorizedUrlState,
+  );
+
+  const [
+    shouldNavigateBackToMemorizedUrlOnSave,
+    setShouldNavigateBackToMemorizedUrlOnSave,
+  ] = useRecoilState(shouldNavigateBackToMemorizedUrlOnSaveState);
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -141,15 +155,35 @@ export const SettingsObjectFieldEdit = () => {
           updatePayload: formattedInput,
         });
 
-        navigateSettings(SettingsPath.ObjectDetail, {
-          objectNamePlural,
-        });
+        navigateBackOrToSettings();
       }
     } catch (error) {
       enqueueErrorSnackBar({
         apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
+  };
+
+  const navigateBackOrToSettings = () => {
+    if (
+      shouldNavigateBackToMemorizedUrlOnSave &&
+      isDefined(navigationMemorizedUrl)
+    ) {
+      navigate(navigationMemorizedUrl, { replace: true });
+
+      setShouldNavigateBackToMemorizedUrlOnSave(false);
+      setNavigationMemorizedUrl('/');
+
+      return;
+    }
+
+    navigateSettings(SettingsPath.ObjectDetail, {
+      objectNamePlural,
+    });
+  };
+
+  const handleCancel = () => {
+    navigateBackOrToSettings();
   };
 
   const handleDeactivate = async () => {
@@ -196,11 +230,7 @@ export const SettingsObjectFieldEdit = () => {
               isLoading={isSubmitting}
               isSaveDisabled={!canSave}
               isCancelDisabled={isSubmitting}
-              onCancel={() =>
-                navigateSettings(SettingsPath.ObjectDetail, {
-                  objectNamePlural,
-                })
-              }
+              onCancel={handleCancel}
               onSave={formConfig.handleSubmit(handleSave)}
             />
           }

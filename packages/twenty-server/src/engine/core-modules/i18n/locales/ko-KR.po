@@ -295,6 +295,11 @@ msgstr "승인된 액세스 도메인이 이메일 도메인과 일치하지 않
 msgid "Approved access domain has already been validated"
 msgstr "승인된 접근 도메인은 이미 검증되었습니다"
 
+#. js-lingui-id: naCW6Z
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "April"
+msgstr ""
+
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ARR"
@@ -432,6 +437,11 @@ msgstr ""
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments tied to the {label}"
 msgstr "{label}에 연결된 첨부 파일"
+
+#. js-lingui-id: DBHTm/
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "August"
+msgstr ""
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -902,6 +912,11 @@ msgstr "날짜 형식"
 msgid "Date when the record was deleted"
 msgstr "레코드가 삭제된 날짜"
 
+#. js-lingui-id: r6zgGo
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "December"
+msgstr ""
+
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
@@ -1308,6 +1323,11 @@ msgstr "워크스페이스 멤버에 연결된 즐겨찾기"
 msgid "Favorites tied to the {label}"
 msgstr "{label}에 연결된 즐겨찾기"
 
+#. js-lingui-id: 4lgLew
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "February"
+msgstr ""
+
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
@@ -1467,6 +1487,11 @@ msgstr "폼 작업 필드에는 고유한 이름이 있어야 합니다"
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "폼 작업에는 적어도 하나의 필드가 있어야 합니다"
+
+#. js-lingui-id: 39y5bn
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Friday"
+msgstr ""
 
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1725,6 +1750,11 @@ msgstr "동기화 사용 여부"
 msgid "Is Synced"
 msgstr "동기화됨 여부"
 
+#. js-lingui-id: rjyWPb
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "January"
+msgstr ""
+
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Job Title"
@@ -1754,6 +1784,16 @@ msgstr "트리거를 제공하는 Json 객체"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "이벤트 세부 정보를 위한 Json 값"
+
+#. js-lingui-id: u4ex5r
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "July"
+msgstr ""
+
+#. js-lingui-id: zeEQd/
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "June"
+msgstr ""
 
 #. js-lingui-id: qmarO2
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1866,9 +1906,19 @@ msgstr "논리 연산자"
 msgid "Logical operator for the filter group"
 msgstr "필터 그룹의 논리 연산자"
 
+#. js-lingui-id: hg6l4j
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "March"
+msgstr ""
+
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+msgstr ""
+
+#. js-lingui-id: 3JzsDb
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "May"
 msgstr ""
 
 #. js-lingui-id: EnfPm2
@@ -2034,6 +2084,11 @@ msgstr "메시징 제공업체 새로 고침 토큰"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "필수 필드 부족: '{connectFieldName}'에 대해 하나의 고유 제약 조건을 완전히 채워야 합니다."
+
+#. js-lingui-id: hty0d5
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Monday"
+msgstr ""
 
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -2271,6 +2326,11 @@ msgstr "노트 대상 기회"
 msgid "NoteTarget person"
 msgstr "노트 대상자"
 
+#. js-lingui-id: t9QlBd
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "November"
+msgstr ""
+
 #. js-lingui-id: bR2sEm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Number format"
@@ -2350,6 +2410,11 @@ msgstr "같은 ID를 가진 객체가 이미 존재합니다"
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
 msgstr "뷰를 생성하려면 ObjectMetadataId가 필요합니다."
+
+#. js-lingui-id: dzQfDY
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "October"
+msgstr ""
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2746,6 +2811,11 @@ msgstr ""
 msgid "Runs"
 msgstr "실행"
 
+#. js-lingui-id: +5kO8P
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Saturday"
+msgstr ""
+
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2756,6 +2826,11 @@ msgstr "범위"
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "검색 벡터"
+
+#. js-lingui-id: hgvbYY
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "September"
+msgstr ""
 
 #. js-lingui-id: F3+i2a
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
@@ -2875,6 +2950,11 @@ msgstr "하위 필드 이름"
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "제목"
+
+#. js-lingui-id: DBC3t5
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Sunday"
+msgstr ""
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -3182,6 +3262,11 @@ msgstr "메시징 제공업체의 스레드 ID"
 msgid "Throttle Failure Count"
 msgstr "제한 실패 횟수"
 
+#. js-lingui-id: kkDQ8m
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Thursday"
+msgstr ""
+
 #. js-lingui-id: n9nSNJ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Time format"
@@ -3264,6 +3349,11 @@ msgstr "타임라인 활동"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "제목"
+
+#. js-lingui-id: G3myU+
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Tuesday"
+msgstr ""
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3738,6 +3828,11 @@ msgstr "보임"
 #: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "현재 데이터베이스에 일시적인 문제가 발생했습니다. 나중에 다시 시도해 주세요."
+
+#. js-lingui-id: VAcXNz
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Wednesday"
+msgstr ""
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts

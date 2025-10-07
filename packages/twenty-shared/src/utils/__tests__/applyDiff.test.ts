@@ -6,19 +6,19 @@ describe('applyDiff', () => {
   describe('input validation', () => {
     it('should throw error for non-array diffs', () => {
       const obj = { test: 'value' };
-      
+
       expect(() => applyDiff(obj, null as any)).toThrow(
-        'Diffs must be an array'
+        'Diffs must be an array',
       );
       expect(() => applyDiff(obj, 'invalid' as any)).toThrow(
-        'Diffs must be an array'
+        'Diffs must be an array',
       );
     });
 
     it('should handle empty diffs array', () => {
       const obj = { test: 'value' };
       const result = applyDiff(obj, []);
-      
+
       expect(result).toEqual({ test: 'value' });
       expect(result).not.toBe(obj); // Should return a copy
     });
@@ -30,7 +30,7 @@ describe('applyDiff', () => {
         { type: 'CREATE', path: [], value: 'test' } as any,
         { type: 'CREATE', path: ['test'], value: 'updated' },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({ test: 'updated' });
     });
@@ -42,7 +42,7 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'CREATE', path: ['newProp'], value: 'newValue' },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         existing: 'value',
@@ -55,7 +55,7 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'CREATE', path: ['level1', 'newProp'], value: 'newValue' },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         level1: {
@@ -70,7 +70,7 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'CREATE', path: [1], value: 'newElement' },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual(['existing', 'newElement']);
     });
@@ -80,7 +80,7 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'CREATE', path: ['level1', 'level2', 'prop'], value: 'deep' },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         level1: {
@@ -98,7 +98,7 @@ describe('applyDiff', () => {
         { type: 'CREATE', path: ['level1', 'level2'], value: {} },
         { type: 'CREATE', path: ['level1', 'level2', 'prop'], value: 'deep' },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         level1: {
@@ -114,9 +114,14 @@ describe('applyDiff', () => {
     it('should change existing properties', () => {
       const obj = { prop: 'oldValue' };
       const diffs: Difference[] = [
-        { type: 'CHANGE', path: ['prop'], oldValue: 'oldValue', value: 'newValue' },
+        {
+          type: 'CHANGE',
+          path: ['prop'],
+          oldValue: 'oldValue',
+          value: 'newValue',
+        },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({ prop: 'newValue' });
     });
@@ -124,9 +129,14 @@ describe('applyDiff', () => {
     it('should change nested properties', () => {
       const obj = { level1: { prop: 'oldValue' } };
       const diffs: Difference[] = [
-        { type: 'CHANGE', path: ['level1', 'prop'], oldValue: 'oldValue', value: 'newValue' },
+        {
+          type: 'CHANGE',
+          path: ['level1', 'prop'],
+          oldValue: 'oldValue',
+          value: 'newValue',
+        },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         level1: { prop: 'newValue' },
@@ -138,7 +148,7 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'CHANGE', path: [0], oldValue: 'old', value: 'new' },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual(['new', 'values']);
     });
@@ -151,9 +161,14 @@ describe('applyDiff', () => {
         ],
       };
       const diffs: Difference[] = [
-        { type: 'CHANGE', path: ['users', 0, 'name'], oldValue: 'John', value: 'Johnny' },
+        {
+          type: 'CHANGE',
+          path: ['users', 0, 'name'],
+          oldValue: 'John',
+          value: 'Johnny',
+        },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         users: [
@@ -170,7 +185,7 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'REMOVE', path: ['remove'], oldValue: 'toDelete' },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({ keep: 'value' });
     });
@@ -185,7 +200,7 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'REMOVE', path: ['level1', 'remove'], oldValue: 'toDelete' },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         level1: { keep: 'value' },
@@ -197,7 +212,7 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'REMOVE', path: [1], oldValue: 'remove' },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual(['keep1', 'keep2']);
     });
@@ -208,7 +223,7 @@ describe('applyDiff', () => {
         { type: 'REMOVE', path: [1], oldValue: 'b' }, // Remove 'b'
         { type: 'REMOVE', path: [3], oldValue: 'd' }, // Remove 'd'
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual(['a', 'c', 'e']);
     });
@@ -220,7 +235,7 @@ describe('applyDiff', () => {
         { type: 'REMOVE', path: [2], oldValue: 'c' }, // Remove 'c'
         { type: 'REMOVE', path: [4], oldValue: 'e' }, // Remove 'e'
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual(['b', 'd', 'f']);
     });
@@ -235,7 +250,7 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'REMOVE', path: ['items', 0, 'tags', 1], oldValue: 'tag2' }, // Remove 'tag2'
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         items: [
@@ -250,9 +265,9 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'REMOVE', path: ['invalid'], oldValue: 'invalid' },
       ];
-      
+
       expect(() => applyDiff(obj, diffs)).toThrow(
-        'Expected numeric index for array removal, got string'
+        'Expected numeric index for array removal, got string',
       );
     });
   });
@@ -267,15 +282,20 @@ describe('applyDiff', () => {
           array: ['a', 'b', 'c'],
         },
       };
-      
+
       const diffs: Difference[] = [
         { type: 'CREATE', path: ['newProp'], value: 'newValue' },
-        { type: 'CHANGE', path: ['change'], oldValue: 'oldValue', value: 'newValue' },
+        {
+          type: 'CHANGE',
+          path: ['change'],
+          oldValue: 'oldValue',
+          value: 'newValue',
+        },
         { type: 'REMOVE', path: ['remove'], oldValue: 'toDelete' },
         { type: 'REMOVE', path: ['nested', 'array', 1], oldValue: 'b' }, // Remove 'b'
         { type: 'CREATE', path: ['nested', 'newArray'], value: [1, 2, 3] },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         keep: 'value',
@@ -296,7 +316,7 @@ describe('applyDiff', () => {
         { type: 'REMOVE', path: [3], oldValue: 'd' }, // Remove 'd'
         { type: 'REMOVE', path: [3], oldValue: 'd' }, // Remove 'd'
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual(['A', 'c']);
     });
@@ -308,20 +328,25 @@ describe('applyDiff', () => {
       const diffs: Difference[] = [
         { type: 'INVALID' as any, path: ['test'], value: 'newValue' },
       ];
-      
+
       expect(() => applyDiff(obj, diffs)).toThrow(
-        'Unsupported diff type: INVALID'
+        'Unsupported diff type: INVALID',
       );
     });
 
     it('should throw error with path information for invalid operations', () => {
       const obj = { test: 'value' };
       const diffs: Difference[] = [
-        { type: 'CHANGE', path: ['nonExistent', 'deep', 'path'], oldValue: 'value', value: 'value' },
+        {
+          type: 'CHANGE',
+          path: ['nonExistent', 'deep', 'path'],
+          oldValue: 'value',
+          value: 'value',
+        },
       ];
-      
+
       expect(() => applyDiff(obj, diffs)).toThrow(
-        'Failed to apply diff at path nonExistent.deep.path'
+        'Failed to apply diff at path nonExistent.deep.path',
       );
     });
   });
@@ -335,7 +360,7 @@ describe('applyDiff', () => {
       ];
 
       expect(() => applyDiff(obj, diffs)).toThrow(
-        "Refusing to set forbidden property key '__proto__' on object (prototype pollution protection)"
+        "Refusing to set forbidden property key '__proto__' on object (prototype pollution protection)",
       );
     });
 
@@ -344,20 +369,20 @@ describe('applyDiff', () => {
 
       const unicodeBypassAttempts = [
         // __proto__ with Unicode escapes
-        '__\u0070roto__',  // \u0070 = 'p'
-        '__\u{70}roto__',  // ES6 syntax
-        '__pr\u006fto__',  // \u006f = 'o'
+        '__\u0070roto__', // \u0070 = 'p'
+        '__\u{70}roto__', // ES6 syntax
+        '__pr\u006fto__', // \u006f = 'o'
         '__proto\u005f\u005f', // \u005f = '_'
 
-        // constructor with Unicode escapes  
+        // constructor with Unicode escapes
         'construc\u0074or', // \u0074 = 't'
         'constr\u0075ctor', // \u0075 = 'u'
         '\u0063onstructor', // \u0063 = 'c'
 
         // prototype with Unicode escapes
-        'proto\u0074ype',   // \u0074 = 't'
-        'prototy\u0070e',   // \u0070 = 'p'
-        '\u0070rototype',   // \u0070 = 'p'
+        'proto\u0074ype', // \u0074 = 't'
+        'prototy\u0070e', // \u0070 = 'p'
+        '\u0070rototype', // \u0070 = 'p'
       ];
 
       unicodeBypassAttempts.forEach((maliciousKey) => {
@@ -366,7 +391,9 @@ describe('applyDiff', () => {
         ];
 
         expect(() => applyDiff(obj, diffs)).toThrow(
-          new RegExp(`Refusing to set forbidden property key.*prototype pollution protection`)
+          new RegExp(
+            `Refusing to set forbidden property key.*prototype pollution protection`,
+          ),
         );
       });
     });
@@ -375,11 +402,16 @@ describe('applyDiff', () => {
       const obj = { safe: 'value' };
 
       const diffs: Difference[] = [
-        { type: 'CHANGE', path: ['constructor'], oldValue: 'old', value: 'malicious' },
+        {
+          type: 'CHANGE',
+          path: ['constructor'],
+          oldValue: 'old',
+          value: 'malicious',
+        },
       ];
 
       expect(() => applyDiff(obj, diffs)).toThrow(
-        "Refusing to set forbidden property key 'constructor' on object (prototype pollution protection)"
+        "Refusing to set forbidden property key 'constructor' on object (prototype pollution protection)",
       );
     });
 
@@ -414,36 +446,51 @@ describe('applyDiff', () => {
     it('should not modify the original object', () => {
       const obj = { prop: 'value', nested: { deep: 'value' } };
       const originalObj = JSON.parse(JSON.stringify(obj));
-      
+
       const diffs: Difference[] = [
-        { type: 'CHANGE', path: ['prop'], oldValue: 'value', value: 'newValue' },
-        { type: 'CHANGE', path: ['nested', 'deep'], oldValue: 'value', value: 'newDeepValue' },
+        {
+          type: 'CHANGE',
+          path: ['prop'],
+          oldValue: 'value',
+          value: 'newValue',
+        },
+        {
+          type: 'CHANGE',
+          path: ['nested', 'deep'],
+          oldValue: 'value',
+          value: 'newDeepValue',
+        },
       ];
-      
+
       applyDiff(obj, diffs);
-      
+
       expect(obj).toEqual(originalObj);
     });
 
     it('should not modify the original array', () => {
       const obj = ['a', 'b', 'c'];
       const originalObj = [...obj];
-      
+
       const diffs: Difference[] = [
         { type: 'REMOVE', path: [1], oldValue: 'b' },
       ];
-      
+
       applyDiff(obj, diffs);
-      
+
       expect(obj).toEqual(originalObj);
     });
 
     it('should handle frozen objects', () => {
       const obj = Object.freeze({ prop: 'value' });
       const diffs: Difference[] = [
-        { type: 'CHANGE', path: ['prop'], oldValue: 'value', value: 'newValue' },
+        {
+          type: 'CHANGE',
+          path: ['prop'],
+          oldValue: 'value',
+          value: 'newValue',
+        },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({ prop: 'newValue' });
       expect(obj.prop).toBe('value'); // Original unchanged
@@ -470,22 +517,36 @@ describe('applyDiff', () => {
           },
         ],
       };
-      
+
       const diffs: Difference[] = [
         // Update trigger settings
-        { type: 'CHANGE', path: ['trigger', 'settings', 'table'], oldValue: 'users', value: 'contacts' },
+        {
+          type: 'CHANGE',
+          path: ['trigger', 'settings', 'table'],
+          oldValue: 'users',
+          value: 'contacts',
+        },
         // Remove first step
         { type: 'REMOVE', path: ['steps', 0], oldValue: '1' },
         // Update remaining step
-        { type: 'CHANGE', path: ['steps', 1, 'settings', 'to'], oldValue: 'test@example.com', value: 'new@example.com' },
+        {
+          type: 'CHANGE',
+          path: ['steps', 1, 'settings', 'to'],
+          oldValue: 'test@example.com',
+          value: 'new@example.com',
+        },
         // Add new step
-        { type: 'CREATE', path: ['steps', 2], value: {
-          id: '3',
-          type: 'WEBHOOK',
-          settings: { url: 'https://api.example.com/webhook' },
-        }},
+        {
+          type: 'CREATE',
+          path: ['steps', 2],
+          value: {
+            id: '3',
+            type: 'WEBHOOK',
+            settings: { url: 'https://api.example.com/webhook' },
+          },
+        },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         trigger: {
@@ -517,18 +578,27 @@ describe('applyDiff', () => {
           { id: 5, name: 'Item 5' },
         ],
       };
-      
+
       const diffs: Difference[] = [
         // Remove items at indices 1 and 3 (Item 2 and Item 4)
         { type: 'REMOVE', path: ['items', 1], oldValue: 'Item 2' },
         { type: 'REMOVE', path: ['items', 3], oldValue: 'Item 4' },
         { type: 'REMOVE', path: ['items', 3], oldValue: 'Item 4' },
         // Update remaining item
-        { type: 'CHANGE', path: ['items', 0, 'name'], oldValue: 'Item 1', value: 'Updated Item 1' },
+        {
+          type: 'CHANGE',
+          path: ['items', 0, 'name'],
+          oldValue: 'Item 1',
+          value: 'Updated Item 1',
+        },
         // Add new item
-        { type: 'CREATE', path: ['items', 5], value: { id: 6, name: 'New Item' } },
+        {
+          type: 'CREATE',
+          path: ['items', 5],
+          value: { id: 6, name: 'New Item' },
+        },
       ];
-      
+
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({
         items: [
