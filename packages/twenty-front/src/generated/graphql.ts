@@ -481,6 +481,11 @@ export enum CaptchaDriverType {
   TURNSTILE = 'TURNSTILE'
 }
 
+export type ChannelSyncSuccess = {
+  __typename?: 'ChannelSyncSuccess';
+  success: Scalars['Boolean'];
+};
+
 export type CheckUserExistOutput = {
   __typename?: 'CheckUserExistOutput';
   availableWorkspacesCount: Scalars['Float'];
@@ -1427,6 +1432,7 @@ export type ImapSmtpCaldavConnectionParameters = {
 
 export type ImapSmtpCaldavConnectionSuccess = {
   __typename?: 'ImapSmtpCaldavConnectionSuccess';
+  connectedAccountId: Scalars['String'];
   success: Scalars['Boolean'];
 };
 
@@ -1727,6 +1733,7 @@ export type Mutation = {
   signUpInWorkspace: SignUpOutput;
   skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
+  startChannelSync: ChannelSyncSuccess;
   submitFormStep: Scalars['Boolean'];
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
@@ -2367,6 +2374,11 @@ export type MutationSignUpInWorkspaceArgs = {
   workspaceId?: InputMaybe<Scalars['UUID']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationStartChannelSyncArgs = {
+  connectedAccountId: Scalars['UUID'];
 };
 
 

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { compareTwoFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
 import {
@@ -14,13 +13,13 @@ import {
   WorkspaceMigrationObjectActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { FlatObjectMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service';
-export type ObjectMetadataRelatedFlatEntityMaps = Pick<
-  AllFlatEntityMaps,
-  'flatFieldMetadataMaps'
->;
+// export type ObjectMetadataRelatedFlatEntityMaps = Pick<
+//   AllFlatEntityMaps,
+//   'flatFieldMetadataMaps'
+// >;
 
 // TODO find a solution in order to handle label indentifier validation
-// export type ObjectMetadataRelatedFlatEntityMaps = undefined;
+export type ObjectMetadataRelatedFlatEntityMaps = undefined;
 
 @Injectable()
 export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
@@ -135,12 +134,12 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       >
     | undefined
   > {
-    const flatObjectPropertiesUpdates = compareTwoFlatObjectMetadata({
+    const objectMetadataUpdatedProperties = compareTwoFlatObjectMetadata({
       fromFlatObjectMetadata,
       toFlatObjectMetadata,
     });
 
-    if (flatObjectPropertiesUpdates.length === 0) {
+    if (objectMetadataUpdatedProperties.length === 0) {
       return undefined;
     }
 
@@ -150,7 +149,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         flatObjectMetadataToValidate: toFlatObjectMetadata,
         optimisticFlatObjectMetadataMaps,
         dependencyOptimisticFlatEntityMaps,
-        flatObjectPropertiesUpdates: flatObjectPropertiesUpdates,
       });
 
     if (validationResult.errors.length > 0) {
@@ -163,7 +161,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     const updateObjectAction: UpdateObjectAction = {
       type: 'update_object',
       objectMetadataId: toFlatObjectMetadata.id,
-      updates: flatObjectPropertiesUpdates,
+      updates: objectMetadataUpdatedProperties,
     };
 
     return {

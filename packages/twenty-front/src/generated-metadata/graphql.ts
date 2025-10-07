@@ -481,6 +481,11 @@ export enum CaptchaDriverType {
   TURNSTILE = 'TURNSTILE'
 }
 
+export type ChannelSyncSuccess = {
+  __typename?: 'ChannelSyncSuccess';
+  success: Scalars['Boolean'];
+};
+
 export type CheckUserExistOutput = {
   __typename?: 'CheckUserExistOutput';
   availableWorkspacesCount: Scalars['Float'];
@@ -1470,6 +1475,7 @@ export type ImapSmtpCaldavConnectionParameters = {
 
 export type ImapSmtpCaldavConnectionSuccess = {
   __typename?: 'ImapSmtpCaldavConnectionSuccess';
+  connectedAccountId: Scalars['String'];
   success: Scalars['Boolean'];
 };
 
@@ -1772,6 +1778,7 @@ export type Mutation = {
   signUpInWorkspace: SignUpOutput;
   skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
+  startChannelSync: ChannelSyncSuccess;
   submitFormStep: Scalars['Boolean'];
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
@@ -2436,6 +2443,11 @@ export type MutationSignUpInWorkspaceArgs = {
   workspaceId?: InputMaybe<Scalars['UUID']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationStartChannelSyncArgs = {
+  connectedAccountId: Scalars['UUID'];
 };
 
 
@@ -5138,7 +5150,14 @@ export type SaveImapSmtpCaldavAccountMutationVariables = Exact<{
 }>;
 
 
-export type SaveImapSmtpCaldavAccountMutation = { __typename?: 'Mutation', saveImapSmtpCaldavAccount: { __typename?: 'ImapSmtpCaldavConnectionSuccess', success: boolean } };
+export type SaveImapSmtpCaldavAccountMutation = { __typename?: 'Mutation', saveImapSmtpCaldavAccount: { __typename?: 'ImapSmtpCaldavConnectionSuccess', success: boolean, connectedAccountId: string } };
+
+export type StartChannelSyncMutationVariables = Exact<{
+  connectedAccountId: Scalars['UUID'];
+}>;
+
+
+export type StartChannelSyncMutation = { __typename?: 'Mutation', startChannelSync: { __typename?: 'ChannelSyncSuccess', success: boolean } };
 
 export type GetConnectedImapSmtpCaldavAccountQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -9423,6 +9442,7 @@ export const SaveImapSmtpCaldavAccountDocument = gql`
     id: $id
   ) {
     success
+    connectedAccountId
   }
 }
     `;
@@ -9455,6 +9475,39 @@ export function useSaveImapSmtpCaldavAccountMutation(baseOptions?: Apollo.Mutati
 export type SaveImapSmtpCaldavAccountMutationHookResult = ReturnType<typeof useSaveImapSmtpCaldavAccountMutation>;
 export type SaveImapSmtpCaldavAccountMutationResult = Apollo.MutationResult<SaveImapSmtpCaldavAccountMutation>;
 export type SaveImapSmtpCaldavAccountMutationOptions = Apollo.BaseMutationOptions<SaveImapSmtpCaldavAccountMutation, SaveImapSmtpCaldavAccountMutationVariables>;
+export const StartChannelSyncDocument = gql`
+    mutation StartChannelSync($connectedAccountId: UUID!) {
+  startChannelSync(connectedAccountId: $connectedAccountId) {
+    success
+  }
+}
+    `;
+export type StartChannelSyncMutationFn = Apollo.MutationFunction<StartChannelSyncMutation, StartChannelSyncMutationVariables>;
+
+/**
+ * __useStartChannelSyncMutation__
+ *
+ * To run a mutation, you first call `useStartChannelSyncMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartChannelSyncMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startChannelSyncMutation, { data, loading, error }] = useStartChannelSyncMutation({
+ *   variables: {
+ *      connectedAccountId: // value for 'connectedAccountId'
+ *   },
+ * });
+ */
+export function useStartChannelSyncMutation(baseOptions?: Apollo.MutationHookOptions<StartChannelSyncMutation, StartChannelSyncMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StartChannelSyncMutation, StartChannelSyncMutationVariables>(StartChannelSyncDocument, options);
+      }
+export type StartChannelSyncMutationHookResult = ReturnType<typeof useStartChannelSyncMutation>;
+export type StartChannelSyncMutationResult = Apollo.MutationResult<StartChannelSyncMutation>;
+export type StartChannelSyncMutationOptions = Apollo.BaseMutationOptions<StartChannelSyncMutation, StartChannelSyncMutationVariables>;
 export const GetConnectedImapSmtpCaldavAccountDocument = gql`
     query GetConnectedImapSmtpCaldavAccount($id: UUID!) {
   getConnectedImapSmtpCaldavAccount(id: $id) {

@@ -1,4 +1,4 @@
-import { createReadStream, existsSync, realpathSync } from 'fs';
+import { createReadStream, existsSync } from 'fs';
 import * as fs from 'fs/promises';
 import path, { dirname, join } from 'path';
 import { type Readable } from 'stream';
@@ -78,27 +78,15 @@ export class LocalDriver implements StorageDriver {
     folderPath: string;
     filename: string;
   }): Promise<Readable> {
-    const joinedPath = join(
+    const filePath = join(
       `${this.options.storagePath}/`,
       params.folderPath,
       params.filename,
     );
-    let filePath: string;
 
-    try {
-      filePath = realpathSync(path.resolve(joinedPath));
-    } catch {
+    if (!existsSync(filePath)) {
       throw new FileStorageException(
         'File not found',
-        FileStorageExceptionCode.FILE_NOT_FOUND,
-      );
-    }
-    const storageRoot = realpathSync(path.resolve(this.options.storagePath));
-
-    if (!filePath.startsWith(storageRoot + path.sep)) {
-      // Prevent directory traversal
-      throw new FileStorageException(
-        'Access denied',
         FileStorageExceptionCode.FILE_NOT_FOUND,
       );
     }

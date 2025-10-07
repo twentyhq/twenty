@@ -1,4 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { MessageChannelSyncStage } from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -25,14 +26,25 @@ export const SettingsAccounts = () => {
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
   });
 
-  const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
+  const { records: allAccounts, loading } =
+    useFindManyRecords<ConnectedAccount>({
+      objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
+      filter: {
+        accountOwnerId: {
+          eq: currentWorkspaceMember?.id,
+        },
       },
-    },
-    recordGqlFields: generateDepthOneRecordGqlFields({ objectMetadataItem }),
+      recordGqlFields: generateDepthOneRecordGqlFields({ objectMetadataItem }),
+    });
+
+  const accountsToShow = allAccounts.filter((account) => {
+    return (
+      account.messageChannels.length === 0 ||
+      account.messageChannels.some(
+        (channel) =>
+          channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION,
+      )
+    );
   });
 
   return (
@@ -56,7 +68,9 @@ export const SettingsAccounts = () => {
                 title={t`Connected accounts`}
                 description={t`Manage your internet accounts.`}
               />
-              <SettingsAccountsConnectedAccountsListCard accounts={accounts} />
+              <SettingsAccountsConnectedAccountsListCard
+                accounts={accountsToShow}
+              />
             </Section>
             <SettingsAccountsBlocklistSection />
             <SettingsAccountsSettingsSection />

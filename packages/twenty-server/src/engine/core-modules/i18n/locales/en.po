@@ -1338,11 +1338,6 @@ msgstr "Field does not belong to the indexed object"
 msgid "Field ID is already used in another index"
 msgstr "Field ID is already used in another index"
 
-#. js-lingui-id: AgbRjM
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
-msgid "Field label identifier is required"
-msgstr "Field label identifier is required"
-
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -2133,8 +2128,8 @@ msgid "Name should be in camelCase"
 msgstr "Name should be in camelCase"
 
 #. js-lingui-id: Dr0xtb
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Names are not synced with labels"
 msgstr "Names are not synced with labels"
 
@@ -2277,8 +2272,8 @@ msgid "Number of employees in the company"
 msgstr "Number of employees in the company"
 
 #. js-lingui-id: ECRKYR
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Object already exists"
 

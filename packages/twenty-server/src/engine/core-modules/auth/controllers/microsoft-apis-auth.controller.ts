@@ -95,15 +95,16 @@ export class MicrosoftAPIsAuthController {
 
       const handle = emails[0].value;
 
-      await this.microsoftAPIsService.refreshMicrosoftRefreshToken({
-        handle,
-        workspaceMemberId: workspaceMemberId,
-        workspaceId: workspaceId,
-        accessToken,
-        refreshToken,
-        calendarVisibility,
-        messageVisibility,
-      });
+      const connectedAccountId =
+        await this.microsoftAPIsService.refreshMicrosoftRefreshToken({
+          handle,
+          workspaceMemberId: workspaceMemberId,
+          workspaceId: workspaceId,
+          accessToken,
+          refreshToken,
+          calendarVisibility,
+          messageVisibility,
+        });
 
       if (userId) {
         await this.onboardingService.setOnboardingConnectAccountPending({
@@ -120,15 +121,18 @@ export class MicrosoftAPIsAuthController {
         );
       }
 
-      return res.redirect(
-        this.domainManagerService
-          .buildWorkspaceURL({
-            workspace,
-            pathname:
-              redirectLocation || getSettingsPath(SettingsPath.Accounts),
-          })
-          .toString(),
-      );
+      const pathname =
+        redirectLocation ||
+        getSettingsPath(SettingsPath.AccountsConfiguration, {
+          connectedAccountId,
+        });
+
+      const url = this.domainManagerService.buildWorkspaceURL({
+        workspace,
+        pathname,
+      });
+
+      return res.redirect(url.toString());
     } catch (error) {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({

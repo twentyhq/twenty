@@ -4,8 +4,6 @@ import {
   isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -13,25 +11,24 @@ import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-
 
 export const validateFlatObjectMetadataIdentifiers = ({
   flatObjectMetadata,
-  flatFieldMetadataMaps,
+  objectFlatFieldMetadatas,
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
     'labelIdentifierFieldMetadataId' | 'imageIdentifierFieldMetadataId'
   >;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  objectFlatFieldMetadatas: FlatFieldMetadata[];
 }) => {
   const errors: FlatObjectMetadataValidationError[] = [];
 
   const { labelIdentifierFieldMetadataId, imageIdentifierFieldMetadataId } =
     flatObjectMetadata;
 
-  // TODO should not be nullable
   if (isDefined(labelIdentifierFieldMetadataId)) {
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: labelIdentifierFieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    const flatFieldMetadata = objectFlatFieldMetadatas.find(
+      (flatFieldMetadata) =>
+        flatFieldMetadata.id === labelIdentifierFieldMetadataId,
+    );
 
     if (!isDefined(flatFieldMetadata)) {
       errors.push({
@@ -51,10 +48,10 @@ export const validateFlatObjectMetadataIdentifiers = ({
   }
 
   if (isDefined(imageIdentifierFieldMetadataId)) {
-    const relatedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: imageIdentifierFieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    const relatedFlatFieldMetadata = objectFlatFieldMetadatas.find(
+      (flatFieldMetadata) =>
+        flatFieldMetadata.id === imageIdentifierFieldMetadataId,
+    );
 
     if (!isDefined(relatedFlatFieldMetadata)) {
       errors.push({

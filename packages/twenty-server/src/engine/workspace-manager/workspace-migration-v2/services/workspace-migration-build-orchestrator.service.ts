@@ -114,23 +114,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
         await this.workspaceMigrationV2ObjectActionsBuilderService.validateAndBuild(
           {
             buildOptions,
-            // Note: That's a hacky way to allow validating object against field metadatas, not optimal
-            dependencyOptimisticFlatEntityMaps: {
-              flatFieldMetadataMaps: {
-                byId: {
-                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps?.byId,
-                  ...flatFieldMetadataMaps?.from.byId,
-                  ...flatFieldMetadataMaps?.to.byId,
-                },
-                idByUniversalIdentifier: {
-                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
-                    ?.idByUniversalIdentifier,
-                  ...flatFieldMetadataMaps?.from.idByUniversalIdentifier,
-                  ...flatFieldMetadataMaps?.to.idByUniversalIdentifier,
-                },
-              },
-            },
-            ///
+            dependencyOptimisticFlatEntityMaps: undefined,
+            // TODO That's hacky also not reliable ?
+            // dependencyOptimisticFlatEntityMaps: {
+            //   flatFieldMetadataMaps:
+            //     flatFieldMetadataMaps?.to ?? EMPTY_FLAT_ENTITY_MAPS,
+            // },
             from: fromFlatObjectMetadataMaps,
             to: toFlatObjectMetadataMaps,
             workspaceId,

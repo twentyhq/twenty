@@ -4,6 +4,7 @@ export enum SettingsPath {
   Experience = 'experience',
   Accounts = 'accounts',
   NewAccount = 'accounts/new',
+  AccountsConfiguration = 'accounts/configuration/:connectedAccountId',
   AccountsCalendars = 'accounts/calendars',
   AccountsEmails = 'accounts/emails',
   NewImapSmtpCaldavConnection = 'accounts/new-imap-smtp-caldav-connection',
