@@ -10,7 +10,7 @@ export const ChartXAxisFieldSelectionDropdownContent = () => {
     <ChartGroupByFieldSelectionDropdownContentBase<
       BarChartConfiguration | LineChartConfiguration
     >
-      headerLabel={t`X-Axis Field`}
+      headerLabel={t`X-Axis`}
       fieldMetadataIdKey="groupByFieldMetadataIdX"
       subFieldNameKey="groupBySubFieldNameX"
     />
