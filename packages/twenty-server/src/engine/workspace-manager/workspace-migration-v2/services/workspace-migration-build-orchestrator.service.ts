@@ -224,6 +224,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
 
       optimisticAllFlatEntityMaps.flatViewMaps =
         viewResult.optimisticFlatEntityMaps;
+      optimisticAllFlatEntityMaps.flatObjectMetadataMaps =
+        viewResult.dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
 
       if (viewResult.status === 'fail') {
         orchestratorFailureReport.view.push(...viewResult.errors);
@@ -256,6 +258,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
         viewFieldResult.optimisticFlatEntityMaps;
       optimisticAllFlatEntityMaps.flatViewMaps =
         viewFieldResult.dependencyOptimisticFlatEntityMaps.flatViewMaps;
+      optimisticAllFlatEntityMaps.flatFieldMetadataMaps =
+        viewFieldResult.dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps;
 
       if (viewFieldResult.status === 'fail') {
         orchestratorFailureReport.viewField.push(...viewFieldResult.errors);

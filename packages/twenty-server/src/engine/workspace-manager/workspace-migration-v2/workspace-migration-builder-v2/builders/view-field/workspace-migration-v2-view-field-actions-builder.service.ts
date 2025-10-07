@@ -70,9 +70,10 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       replaceFlatEntityInFlatEntityMapsOrThrow({
         flatEntity: {
           ...flatFieldMetadata,
-          viewFieldIds: flatFieldMetadata.viewFieldIds.filter(
-            (id) => id !== flatViewFieldToValidate.id,
-          ),
+          viewFieldIds: [
+            ...flatFieldMetadata.viewFieldIds,
+            flatViewFieldToValidate.id,
+          ],
         },
         flatEntityMaps:
           dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,

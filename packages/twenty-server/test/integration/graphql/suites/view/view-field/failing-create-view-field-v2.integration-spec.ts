@@ -8,6 +8,9 @@ import {
 
 import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 
+import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
+import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
+import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/find-core-view-fields.util';
 import {
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
@@ -16,9 +19,27 @@ import {
 
 describe('View Field Resolver - Failing Create Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;
-
+  let createdFlatViewFieldIds: string[] = [];
   beforeAll(async () => {
     testSetup = await setupViewFieldTestV2();
+  });
+
+  afterEach(async () => {
+    for (const viewFieldId of createdFlatViewFieldIds) {
+      await deleteOneCoreViewField({
+        input: {
+          id: viewFieldId,
+        },
+        expectToFail: false,
+      });
+
+      await destroyOneCoreViewField({
+        input: {
+          id: viewFieldId,
+        },
+        expectToFail: false,
+      });
+    }
   });
 
   afterAll(async () => {
@@ -64,9 +85,64 @@ describe('View Field Resolver - Failing Create Operation - v2', () => {
       expect(response.errors.length).toBe(1);
       const [firstError] = response.errors;
 
+      expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
       expect(firstError).toMatchSnapshot(
         extractRecordIdsAndDatesAsExpectAny(firstError),
       );
     },
   );
+
+  it('Should fail to create a conflicting view field on view and field metadata', async () => {
+    const viewFieldId = '20202020-7ace-42ee-aecf-2b1c1bd34bce';
+    const {
+      data: {
+        createCoreViewField: { id: createdFlatViewFieldId },
+      },
+    } = await createOneCoreViewField({
+      input: {
+        id: viewFieldId,
+        fieldMetadataId: testSetup.testFieldMetadataId,
+        viewId: testSetup.testViewId,
+      },
+      expectToFail: false,
+    });
+    createdFlatViewFieldIds.push(createdFlatViewFieldId);
+
+    const {
+      data: { getCoreViewFields },
+    } = await findCoreViewFields({
+      viewId: testSetup.testViewId,
+      expectToFail: false,
+      gqlFields: `
+        id
+        fieldMetadataId
+        viewId
+      `,
+    });
+
+    expect(getCoreViewFields).toStrictEqual([
+      {
+        id: viewFieldId,
+        fieldMetadataId: testSetup.testFieldMetadataId,
+        viewId: testSetup.testViewId,
+      },
+    ]);
+
+    const response = await createOneCoreViewField({
+      input: {
+        fieldMetadataId: testSetup.testFieldMetadataId,
+        viewId: testSetup.testViewId,
+      },
+      expectToFail: true,
+    });
+
+    expect(response.errors).toBeDefined();
+    expect(response.errors.length).toBe(1);
+    const [firstError] = response.errors;
+
+    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+    expect(firstError).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstError),
+    );
+  });
 });
