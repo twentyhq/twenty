@@ -254,6 +254,50 @@ export const ReplaceItemsWithVariable: Story = {
   },
 };
 
+export const ReplaceVariableWithItems: Story = {
+  args: {
+    label: 'Items',
+    defaultValue: `{{${MOCKED_STEP_ID}.createdAt}}`,
+    onChange: fn(),
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const deleteVariableButton = await canvas.findByRole('button', {
+      name: 'Remove variable',
+    });
+
+    await userEvent.click(deleteVariableButton);
+
+    await waitFor(() => {
+      expect(args.onChange).toHaveBeenCalledWith([]);
+    });
+
+    const emptyInput = await canvas.findByPlaceholderText('Enter an item');
+
+    await userEvent.type(emptyInput, 'First item{enter}');
+
+    await waitFor(() => {
+      expect(args.onChange).toHaveBeenCalledWith(['First item']);
+    });
+
+    const firstItemChip = await canvas.findByText('First item');
+
+    expect(firstItemChip).toBeVisible();
+  },
+};
+
 export const DisabledEmptyField: Story = {
   args: {
     defaultValue: undefined,
