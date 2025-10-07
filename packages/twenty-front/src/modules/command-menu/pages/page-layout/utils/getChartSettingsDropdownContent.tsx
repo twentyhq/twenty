@@ -8,7 +8,6 @@ import { ChartSortByGroupByFieldDropdownContent } from '@/command-menu/pages/pag
 import { ChartXAxisFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartXAxisFieldSelectionDropdownContent';
 import { ChartXAxisSortBySelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartXAxisSortBySelectionDropdownContent';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
-import { t } from '@lingui/core/macro';
 
 export const getChartSettingsDropdownContent = (itemId: string) => {
   switch (itemId) {
@@ -21,9 +20,7 @@ export const getChartSettingsDropdownContent = (itemId: string) => {
     case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
       return <ChartFieldSelectionForAggregateOperationDropdownContent />;
     case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD:
-      return (
-        <ChartSortByGroupByFieldDropdownContent title={t`Y-Axis Sort By`} />
-      );
+      return <ChartSortByGroupByFieldDropdownContent />;
     case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
       return <ChartGroupByFieldSelectionDropdownContent />;
     case CHART_CONFIGURATION_SETTING_IDS.EACH_SLICE_REPRESENTS:
