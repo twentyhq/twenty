@@ -124,6 +124,11 @@ msgstr "Archivo(s) {failedCount} no se pudo/pudieron subir"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} de {formattedRecordsToImportCount} registros importados."
 
+#. js-lingui-id: 2EPGDl
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
+msgid "{graphTypeLabel} Chart"
+msgstr ""
+
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
@@ -377,6 +382,11 @@ msgstr "Activo"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "Claves API activas creadas por usted o su equipo."
+
+#. js-lingui-id: QXX2VR
+#: src/modules/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem.tsx
+msgid "Add \"{trimmedName}\" to options"
+msgstr ""
 
 #. js-lingui-id: m3/V2n
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -1148,9 +1158,9 @@ msgstr "Regresar"
 msgid "Back to content"
 msgstr "Volver al contenido"
 
-#. js-lingui-id: LiFJll
+#. js-lingui-id: GoBp8L
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Bar Chart"
+msgid "Bar"
 msgstr ""
 
 #. js-lingui-id: NgFKo1
@@ -3740,9 +3750,9 @@ msgstr "Funciones"
 msgid "Functions - Settings"
 msgstr "Funciones - Ajustes"
 
-#. js-lingui-id: vYj1cC
+#. js-lingui-id: IZUMtC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Gauge Chart"
+msgid "Gauge"
 msgstr ""
 
 #. js-lingui-id: Weq9zb
@@ -4607,9 +4617,9 @@ msgstr "Menor o igual"
 msgid "Light"
 msgstr "Claro"
 
-#. js-lingui-id: pFkLY3
+#. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Line Chart"
+msgid "Line"
 msgstr ""
 
 #. js-lingui-id: pQjjYo
@@ -5337,6 +5347,7 @@ msgid "No records found"
 msgstr "No se encontraron registros"
 
 #. js-lingui-id: Ev2r9A
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 msgid "No results"
@@ -5448,14 +5459,10 @@ msgstr "ahora"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
 msgstr "Número"
-
-#. js-lingui-id: oVhZzL
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Number Chart"
-msgstr ""
 
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -5826,9 +5833,9 @@ msgstr ""
 msgid "Picture"
 msgstr "Foto"
 
-#. js-lingui-id: 3ubdv5
+#. js-lingui-id: ZjVniv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Pie Chart"
+msgid "Pie"
 msgstr ""
 
 #. js-lingui-id: GdgCoi
@@ -7008,6 +7015,11 @@ msgstr "Alguno"
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Some folders"
+msgstr ""
+
+#. js-lingui-id: yHwG3y
+#: src/modules/command-menu/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Soon"
 msgstr ""
 
 #. js-lingui-id: wTrpxV

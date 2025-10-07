@@ -18,6 +18,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -145,6 +146,7 @@ export const ObjectFilterDropdownOptionSelect = ({
   );
 
   const showNoResult = optionsInDropdown?.length === 0;
+
   const objectRecordsIds = optionsInDropdown.map((option) => option.id);
 
   return (
@@ -155,7 +157,7 @@ export const ObjectFilterDropdownOptionSelect = ({
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {showNoResult ? (
-          <MenuItem text="No results" />
+          <MenuItem text={t`No results`} />
         ) : (
           optionsInDropdown?.map((option) => (
             <MenuItemMultiSelect
