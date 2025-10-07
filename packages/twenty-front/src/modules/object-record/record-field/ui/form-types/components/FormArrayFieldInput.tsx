@@ -15,6 +15,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -90,6 +91,8 @@ export const FormArrayFieldInput = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
+  const { closeDropdown } = useCloseDropdown();
+  const { openDropdown } = useOpenDropdown();
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -118,6 +121,20 @@ export const FormArrayFieldInput = ({
   const [itemToEditIndex, setItemToEditIndex] = useState(-1);
   const isAddingNewItem = itemToEditIndex === -1;
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const dropdownId = `dropdown-${instanceId}`;
+  const isDropdownOpen = useRecoilComponentValue(
+    isDropdownOpenComponentState,
+    dropdownId,
+  );
+
+  const preventContainerFocusStackUpdate =
+    draftValue.type === 'static' && draftValue.value.length >= 1;
+
+  const formFieldInputInstanceId = `form-array-field-container-${instanceId}`;
+  const newItemInputInstanceId = `array-field-input-new-item-${instanceId}`;
+
   const handleFirstItemInputChange = (value: string) => {
     setNewItemDraftValue(value);
   };
@@ -131,6 +148,10 @@ export const FormArrayFieldInput = ({
     onChange([...draftValue.value, newItemDraftValue]);
 
     setNewItemDraftValue('');
+
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: dropdownId,
+    });
   };
 
   const handleEditItem = (index: number) => {
@@ -258,23 +279,6 @@ export const FormArrayFieldInput = ({
 
     onChange([]);
   };
-
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const dropdownId = `dropdown-${instanceId}`;
-
-  const isDropdownOpen = useRecoilComponentValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
-
-  const { closeDropdown } = useCloseDropdown();
-
-  const preventContainerFocusStackUpdate =
-    draftValue.type === 'static' && draftValue.value.length >= 1;
-
-  const formFieldInputInstanceId = `form-array-field-container-${instanceId}`;
-  const newItemInputInstanceId = `array-field-input-new-item-${instanceId}`;
 
   return (
     <FormFieldInputContainer data-testid={testId}>

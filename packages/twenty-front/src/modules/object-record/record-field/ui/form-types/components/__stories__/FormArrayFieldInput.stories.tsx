@@ -44,8 +44,6 @@ export const AddTwoItems: Story = {
       expect(emptyInput).not.toBeVisible();
     });
 
-    await userEvent.click(firstItemChip);
-
     const addItemButton = await within(
       getCanvasElementForDropdownTesting(),
     ).findByText('Add item');
