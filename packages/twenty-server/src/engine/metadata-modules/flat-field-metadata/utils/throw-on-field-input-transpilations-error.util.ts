@@ -24,6 +24,7 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
       throw new WorkspaceMigrationBuilderExceptionV2(
         {
           report: {
+            fieldMetadata: [],
             index: [],
             view: [],
             viewField: [],
@@ -34,6 +35,10 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
                 flatEntityMinimalInformation: {},
               },
             ],
+            serverlessFunction: [],
+            databaseEventTrigger: [],
+            cronTrigger: [],
+            routeTrigger: [],
           },
           status: 'fail',
         },

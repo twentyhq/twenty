@@ -57,6 +57,7 @@ export type Agent = {
   id: Scalars['UUID'];
   isCustom: Scalars['Boolean'];
   label: Scalars['String'];
+  modelConfiguration?: Maybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
@@ -69,11 +70,39 @@ export type Agent = {
 export type AgentChatMessage = {
   __typename?: 'AgentChatMessage';
   createdAt: Scalars['DateTime'];
-  files: Array<File>;
   id: Scalars['UUID'];
-  rawContent?: Maybe<Scalars['String']>;
+  parts: Array<AgentChatMessagePart>;
   role: Scalars['String'];
   threadId: Scalars['UUID'];
+};
+
+export type AgentChatMessagePart = {
+  __typename?: 'AgentChatMessagePart';
+  createdAt: Scalars['DateTime'];
+  errorDetails?: Maybe<Scalars['JSON']>;
+  errorMessage?: Maybe<Scalars['String']>;
+  fileFilename?: Maybe<Scalars['String']>;
+  fileMediaType?: Maybe<Scalars['String']>;
+  fileUrl?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  messageId: Scalars['UUID'];
+  orderIndex: Scalars['Int'];
+  providerMetadata?: Maybe<Scalars['JSON']>;
+  reasoningContent?: Maybe<Scalars['String']>;
+  sourceDocumentFilename?: Maybe<Scalars['String']>;
+  sourceDocumentMediaType?: Maybe<Scalars['String']>;
+  sourceDocumentSourceId?: Maybe<Scalars['String']>;
+  sourceDocumentTitle?: Maybe<Scalars['String']>;
+  sourceUrlSourceId?: Maybe<Scalars['String']>;
+  sourceUrlTitle?: Maybe<Scalars['String']>;
+  sourceUrlUrl?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  textContent?: Maybe<Scalars['String']>;
+  toolCallId?: Maybe<Scalars['String']>;
+  toolInput?: Maybe<Scalars['JSON']>;
+  toolName?: Maybe<Scalars['String']>;
+  toolOutput?: Maybe<Scalars['JSON']>;
+  type: Scalars['String'];
 };
 
 export type AgentChatThread = {
@@ -171,20 +200,6 @@ export type AppTokenEdge = {
   node: AppToken;
 };
 
-export type Application = {
-  __typename?: 'Application';
-  createdAt: Scalars['DateTime'];
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  label: Scalars['String'];
-  sourcePath: Scalars['String'];
-  sourceType: Scalars['String'];
-  standardId?: Maybe<Scalars['UUID']>;
-  updatedAt: Scalars['DateTime'];
-  version?: Maybe<Scalars['String']>;
-  workspaceId: Scalars['UUID'];
-};
-
 export type ApprovedAccessDomain = {
   __typename?: 'ApprovedAccessDomain';
   createdAt: Scalars['DateTime'];
@@ -252,6 +267,33 @@ export type AvailableWorkspacesAndAccessTokensOutput = {
   __typename?: 'AvailableWorkspacesAndAccessTokensOutput';
   availableWorkspaces: AvailableWorkspaces;
   tokens: AuthTokenPair;
+};
+
+/** Which axes should display labels */
+export enum AxisNameDisplay {
+  BOTH = 'BOTH',
+  NONE = 'NONE',
+  X = 'X',
+  Y = 'Y'
+}
+
+export type BarChartConfiguration = {
+  __typename?: 'BarChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: ExtendedAggregateOperations;
+  axisNameDisplay: AxisNameDisplay;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
+  groupByFieldMetadataIdX: Scalars['UUID'];
+  groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
+  omitNullValues?: Maybe<Scalars['Boolean']>;
+  orderByX: GraphOrderBy;
+  orderByY?: Maybe<GraphOrderBy>;
+  rangeMax?: Maybe<Scalars['Float']>;
+  rangeMin?: Maybe<Scalars['Float']>;
 };
 
 export type Billing = {
@@ -451,6 +493,7 @@ export type ClientAiModelConfig = {
   inputCostPer1kTokensInCredits: Scalars['Float'];
   label: Scalars['String'];
   modelId: Scalars['String'];
+  nativeCapabilities?: Maybe<NativeModelCapabilities>;
   outputCostPer1kTokensInCredits: Scalars['Float'];
   provider: ModelProvider;
 };
@@ -458,6 +501,8 @@ export type ClientAiModelConfig = {
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
+  /** Workflow version ID */
+  workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
 export enum ConfigSource {
@@ -661,6 +706,7 @@ export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
+  modelConfiguration?: InputMaybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name?: InputMaybe<Scalars['String']>;
   prompt: Scalars['String'];
@@ -682,6 +728,16 @@ export type CreateAppTokenInput = {
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String'];
   email: Scalars['String'];
+};
+
+export type CreateCronTriggerInput = {
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+};
+
+export type CreateDatabaseEventTriggerInput = {
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
@@ -787,7 +843,15 @@ export type CreateRoleInput = {
   label: Scalars['String'];
 };
 
+export type CreateRouteTriggerInput = {
+  httpMethod?: HttpMethod;
+  isAuthRequired?: Scalars['Boolean'];
+  path: Scalars['String'];
+  serverlessFunctionId: Scalars['String'];
+};
+
 export type CreateServerlessFunctionInput = {
+  code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
@@ -890,6 +954,19 @@ export type CreateWorkflowVersionStepInput = {
   workflowVersionId: Scalars['UUID'];
 };
 
+export type CronTrigger = {
+  __typename?: 'CronTrigger';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type CronTriggerIdInput = {
+  id: Scalars['String'];
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -907,8 +984,22 @@ export enum DatabaseEventAction {
   DELETED = 'DELETED',
   DESTROYED = 'DESTROYED',
   RESTORED = 'RESTORED',
-  UPDATED = 'UPDATED'
+  UPDATED = 'UPDATED',
+  UPSERTED = 'UPSERTED'
 }
+
+export type DatabaseEventTrigger = {
+  __typename?: 'DatabaseEventTrigger';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type DatabaseEventTriggerIdInput = {
+  id: Scalars['String'];
+};
 
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']>;
@@ -1067,6 +1158,23 @@ export type ExecuteServerlessFunctionInput = {
   version?: Scalars['String'];
 };
 
+export enum ExtendedAggregateOperations {
+  AVG = 'AVG',
+  COUNT = 'COUNT',
+  COUNT_EMPTY = 'COUNT_EMPTY',
+  COUNT_FALSE = 'COUNT_FALSE',
+  COUNT_NOT_EMPTY = 'COUNT_NOT_EMPTY',
+  COUNT_TRUE = 'COUNT_TRUE',
+  COUNT_UNIQUE_VALUES = 'COUNT_UNIQUE_VALUES',
+  EARLIEST = 'EARLIEST',
+  LATEST = 'LATEST',
+  MAX = 'MAX',
+  MIN = 'MIN',
+  PERCENTAGE_EMPTY = 'PERCENTAGE_EMPTY',
+  PERCENTAGE_NOT_EMPTY = 'PERCENTAGE_NOT_EMPTY',
+  SUM = 'SUM'
+}
+
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   id: Scalars['UUID'];
@@ -1087,7 +1195,6 @@ export enum FeatureFlagKey {
   IS_CALENDAR_VIEW_ENABLED = 'IS_CALENDAR_VIEW_ENABLED',
   IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
-  IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
   IS_DYNAMIC_SEARCH_FIELDS_ENABLED = 'IS_DYNAMIC_SEARCH_FIELDS_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
   IS_GROUP_BY_ENABLED = 'IS_GROUP_BY_ENABLED',
@@ -1208,18 +1315,19 @@ export type File = {
   createdAt: Scalars['DateTime'];
   fullPath: Scalars['String'];
   id: Scalars['UUID'];
-  messageId?: Maybe<Scalars['UUID']>;
   name: Scalars['String'];
   size: Scalars['Float'];
   type: Scalars['String'];
 };
 
 export enum FileFolder {
+  AgentChat = 'AgentChat',
   Attachment = 'Attachment',
   File = 'File',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
+  ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -1249,6 +1357,17 @@ export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+};
+
+export type GaugeChartConfiguration = {
+  __typename?: 'GaugeChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: ExtendedAggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
 };
 
 export type GetApiKeyDto = {
@@ -1284,6 +1403,23 @@ export type GetWebhookDto = {
   id: Scalars['UUID'];
 };
 
+/** Order by options for graph widgets */
+export enum GraphOrderBy {
+  FIELD_ASC = 'FIELD_ASC',
+  FIELD_DESC = 'FIELD_DESC',
+  VALUE_ASC = 'VALUE_ASC',
+  VALUE_DESC = 'VALUE_DESC'
+}
+
+/** Type of graph widget */
+export enum GraphType {
+  BAR = 'BAR',
+  GAUGE = 'GAUGE',
+  LINE = 'LINE',
+  NUMBER = 'NUMBER',
+  PIE = 'PIE'
+}
+
 export type GridPosition = {
   __typename?: 'GridPosition';
   column: Scalars['Float'];
@@ -1299,6 +1435,14 @@ export type GridPositionInput = {
   rowSpan: Scalars['Float'];
 };
 
+export enum HttpMethod {
+  DELETE = 'DELETE',
+  GET = 'GET',
+  PATCH = 'PATCH',
+  POST = 'POST',
+  PUT = 'PUT'
+}
+
 export enum HealthIndicatorId {
   app = 'app',
   connectedAccount = 'connectedAccount',
@@ -1311,6 +1455,11 @@ export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
 }
+
+export type IframeConfiguration = {
+  __typename?: 'IframeConfiguration';
+  url: Scalars['String'];
+};
 
 export type ImapSmtpCaldavConnectionParameters = {
   __typename?: 'ImapSmtpCaldavConnectionParameters';
@@ -1437,6 +1586,25 @@ export type InvalidatePassword = {
   success: Scalars['Boolean'];
 };
 
+export type LineChartConfiguration = {
+  __typename?: 'LineChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: ExtendedAggregateOperations;
+  axisNameDisplay: AxisNameDisplay;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
+  groupByFieldMetadataIdX: Scalars['UUID'];
+  groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
+  omitNullValues?: Maybe<Scalars['Boolean']>;
+  orderByX: GraphOrderBy;
+  orderByY?: Maybe<GraphOrderBy>;
+  rangeMax?: Maybe<Scalars['Float']>;
+  rangeMin?: Maybe<Scalars['Float']>;
+};
+
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String'];
@@ -1507,11 +1675,15 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
+  createOneCronTrigger: CronTrigger;
+  createOneDatabaseEventTrigger: DatabaseEventTrigger;
   createOneField: Field;
   createOneObject: Object;
   createOneRemoteServer: RemoteServer;
   createOneRole: Role;
+  createOneRouteTrigger: RouteTrigger;
   createOneServerlessFunction: ServerlessFunction;
+  createOneServerlessFunctionLayer: ServerlessFunctionLayer;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
@@ -1521,6 +1693,7 @@ export type Mutation = {
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
+  deleteApplication: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCoreView: Scalars['Boolean'];
   deleteCoreViewField: CoreViewField;
@@ -1533,10 +1706,13 @@ export type Mutation = {
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
   deleteOneAgent: Agent;
+  deleteOneCronTrigger: CronTrigger;
+  deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
   deleteOneRole: Scalars['String'];
+  deleteOneRouteTrigger: RouteTrigger;
   deleteOneServerlessFunction: ServerlessFunction;
   deletePageLayout: PageLayout;
   deletePageLayoutTab: Scalars['Boolean'];
@@ -1599,7 +1775,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
-  syncApplication: Application;
+  syncApplication: Scalars['Boolean'];
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   trackAnalytics: Analytics;
@@ -1614,10 +1790,13 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
+  updateOneCronTrigger: CronTrigger;
+  updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
   updateOneRole: Role;
+  updateOneRouteTrigger: RouteTrigger;
   updateOneServerlessFunction: ServerlessFunction;
   updatePageLayout: PageLayout;
   updatePageLayoutTab: PageLayoutTab;
@@ -1787,6 +1966,16 @@ export type MutationCreateOneAppTokenArgs = {
 };
 
 
+export type MutationCreateOneCronTriggerArgs = {
+  input: CreateCronTriggerInput;
+};
+
+
+export type MutationCreateOneDatabaseEventTriggerArgs = {
+  input: CreateDatabaseEventTriggerInput;
+};
+
+
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
@@ -1807,8 +1996,19 @@ export type MutationCreateOneRoleArgs = {
 };
 
 
+export type MutationCreateOneRouteTriggerArgs = {
+  input: CreateRouteTriggerInput;
+};
+
+
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
+};
+
+
+export type MutationCreateOneServerlessFunctionLayerArgs = {
+  packageJson: Scalars['JSON'];
+  yarnLock: Scalars['String'];
 };
 
 
@@ -1854,6 +2054,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteApplicationArgs = {
+  packageJson: Scalars['JSON'];
 };
 
 
@@ -1912,6 +2117,16 @@ export type MutationDeleteOneAgentArgs = {
 };
 
 
+export type MutationDeleteOneCronTriggerArgs = {
+  input: CronTriggerIdInput;
+};
+
+
+export type MutationDeleteOneDatabaseEventTriggerArgs = {
+  input: DatabaseEventTriggerIdInput;
+};
+
+
 export type MutationDeleteOneFieldArgs = {
   input: DeleteOneFieldInput;
 };
@@ -1929,6 +2144,11 @@ export type MutationDeleteOneRemoteServerArgs = {
 
 export type MutationDeleteOneRoleArgs = {
   roleId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteOneRouteTriggerArgs = {
+  input: RouteTriggerIdInput;
 };
 
 
@@ -2226,6 +2446,8 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationSyncApplicationArgs = {
   manifest: Scalars['JSON'];
+  packageJson: Scalars['JSON'];
+  yarnLock: Scalars['String'];
 };
 
 
@@ -2308,6 +2530,16 @@ export type MutationUpdateOneAgentArgs = {
 };
 
 
+export type MutationUpdateOneCronTriggerArgs = {
+  input: UpdateCronTriggerInput;
+};
+
+
+export type MutationUpdateOneDatabaseEventTriggerArgs = {
+  input: UpdateDatabaseEventTriggerInput;
+};
+
+
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
 };
@@ -2325,6 +2557,11 @@ export type MutationUpdateOneRemoteServerArgs = {
 
 export type MutationUpdateOneRoleArgs = {
   updateRoleInput: UpdateRoleInput;
+};
+
+
+export type MutationUpdateOneRouteTriggerArgs = {
+  input: UpdateRouteTriggerInput;
 };
 
 
@@ -2455,6 +2692,25 @@ export type MutationVerifyEmailingDomainArgs = {
 
 export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
   otp: Scalars['String'];
+};
+
+export type NativeModelCapabilities = {
+  __typename?: 'NativeModelCapabilities';
+  twitterSearch?: Maybe<Scalars['Boolean']>;
+  webSearch?: Maybe<Scalars['Boolean']>;
+};
+
+export type NumberChartConfiguration = {
+  __typename?: 'NumberChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: ExtendedAggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
+  filter?: Maybe<Scalars['JSON']>;
+  format?: Maybe<Scalars['String']>;
+  graphType: GraphType;
+  label?: Maybe<Scalars['String']>;
 };
 
 export type Object = {
@@ -2655,7 +2911,7 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
-  configuration?: Maybe<Scalars['JSON']>;
+  configuration?: Maybe<WidgetConfiguration>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   gridPosition: GridPosition;
@@ -2688,6 +2944,19 @@ export enum PermissionFlagType {
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
+
+export type PieChartConfiguration = {
+  __typename?: 'PieChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: ExtendedAggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
+  groupByFieldMetadataId: Scalars['UUID'];
+  orderBy: GraphOrderBy;
+};
 
 export type PlaceDetailsResultDto = {
   __typename?: 'PlaceDetailsResultDto';
@@ -2759,11 +3028,17 @@ export type Query = {
   findAgentHandoffs: Array<AgentHandoffDto>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
+  findManyCronTriggers: Array<CronTrigger>;
+  findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
   findManyPublicDomains: Array<PublicDomain>;
   findManyRemoteServersByType: Array<RemoteServer>;
+  findManyRouteTriggers: Array<RouteTrigger>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
+  findOneCronTrigger: CronTrigger;
+  findOneDatabaseEventTrigger: DatabaseEventTrigger;
   findOneRemoteServerById: RemoteServer;
+  findOneRouteTrigger: RouteTrigger;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
@@ -2893,8 +3168,23 @@ export type QueryFindOneAgentArgs = {
 };
 
 
+export type QueryFindOneCronTriggerArgs = {
+  input: CronTriggerIdInput;
+};
+
+
+export type QueryFindOneDatabaseEventTriggerArgs = {
+  input: DatabaseEventTriggerIdInput;
+};
+
+
 export type QueryFindOneRemoteServerByIdArgs = {
   input: RemoteServerIdInput;
+};
+
+
+export type QueryFindOneRouteTriggerArgs = {
+  input: RouteTriggerIdInput;
 };
 
 
@@ -3256,6 +3546,22 @@ export type Role = {
   workspaceMembers: Array<WorkspaceMember>;
 };
 
+export type RouteTrigger = {
+  __typename?: 'RouteTrigger';
+  createdAt: Scalars['DateTime'];
+  httpMethod: HttpMethod;
+  id: Scalars['ID'];
+  isAuthRequired: Scalars['Boolean'];
+  path: Scalars['String'];
+  serverlessFunctionId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['String'];
+};
+
+export type RouteTriggerIdInput = {
+  id: Scalars['String'];
+};
+
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']>;
@@ -3370,6 +3676,14 @@ export enum ServerlessFunctionExecutionStatus {
 export type ServerlessFunctionIdInput = {
   /** The id of the function. */
   id: Scalars['ID'];
+};
+
+export type ServerlessFunctionLayer = {
+  __typename?: 'ServerlessFunctionLayer';
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type SetupOidcSsoInput = {
@@ -3584,6 +3898,7 @@ export type UpdateAgentInput = {
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   label: Scalars['String'];
+  modelConfiguration?: InputMaybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
@@ -3596,6 +3911,28 @@ export type UpdateApiKeyDto = {
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
   revokedAt?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateCronTriggerInput = {
+  /** The id of the cron trigger to update */
+  id: Scalars['String'];
+  /** The cron trigger updates */
+  update: UpdateCronTriggerInputUpdates;
+};
+
+export type UpdateCronTriggerInputUpdates = {
+  settings: Scalars['JSON'];
+};
+
+export type UpdateDatabaseEventTriggerInput = {
+  /** The id of the database event trigger to update */
+  id: Scalars['String'];
+  /** The database event trigger updates */
+  update: UpdateDatabaseEventTriggerInputUpdates;
+};
+
+export type UpdateDatabaseEventTriggerInputUpdates = {
+  settings: Scalars['JSON'];
 };
 
 export type UpdateFieldInput = {
@@ -3673,7 +4010,7 @@ export type UpdatePageLayoutWidgetInput = {
 };
 
 export type UpdatePageLayoutWidgetWithIdInput = {
-  configuration: Scalars['JSON'];
+  configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition: GridPositionInput;
   id: Scalars['UUID'];
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
@@ -3718,11 +4055,29 @@ export type UpdateRolePayload = {
   label?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateRouteTriggerInput = {
+  /** The id of the route to update */
+  id: Scalars['String'];
+  /** The route updates */
+  update: UpdateRouteTriggerInputUpdates;
+};
+
+export type UpdateRouteTriggerInputUpdates = {
+  httpMethod: HttpMethod;
+  isAuthRequired: Scalars['Boolean'];
+  path: Scalars['String'];
+};
+
 export type UpdateServerlessFunctionInput = {
+  /** Id of the serverless function to update */
+  id: Scalars['UUID'];
+  /** The serverless function updates */
+  update: UpdateServerlessFunctionInputUpdates;
+};
+
+export type UpdateServerlessFunctionInputUpdates = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
-  /** Id of the serverless function to execute */
-  id: Scalars['UUID'];
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
@@ -4028,6 +4383,8 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
+export type WidgetConfiguration = BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | NumberChartConfiguration | PieChartConfiguration;
+
 export enum WidgetType {
   FIELDS = 'FIELDS',
   GRAPH = 'GRAPH',
@@ -4156,6 +4513,7 @@ export type WorkspaceInfo = {
   name: Scalars['String'];
   totalUsers: Scalars['Float'];
   users: Array<UserInfo>;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type WorkspaceInvitation = {
@@ -4229,7 +4587,7 @@ export type WorkspaceUrlsAndId = {
   workspaceUrls: WorkspaceUrls;
 };
 
-export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, createdAt: string, updatedAt: string };
+export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string };
 
 export type AssignRoleToAgentMutationVariables = Exact<{
   agentId: Scalars['UUID'];
@@ -4258,14 +4616,14 @@ export type CreateOneAgentMutationVariables = Exact<{
 }>;
 
 
-export type CreateOneAgentMutation = { __typename?: 'Mutation', createOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, createdAt: string, updatedAt: string } };
+export type CreateOneAgentMutation = { __typename?: 'Mutation', createOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string } };
 
 export type DeleteOneAgentMutationVariables = Exact<{
   input: AgentIdInput;
 }>;
 
 
-export type DeleteOneAgentMutation = { __typename?: 'Mutation', deleteOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, createdAt: string, updatedAt: string } };
+export type DeleteOneAgentMutation = { __typename?: 'Mutation', deleteOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string } };
 
 export type RemoveAgentHandoffMutationVariables = Exact<{
   input: RemoveAgentHandoffInput;
@@ -4286,7 +4644,7 @@ export type UpdateOneAgentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, createdAt: string, updatedAt: string } };
+export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string } };
 
 export type FindAgentHandoffTargetsQueryVariables = Exact<{
   input: AgentIdInput;
@@ -4305,21 +4663,21 @@ export type FindAgentHandoffsQuery = { __typename?: 'Query', findAgentHandoffs: 
 export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyAgentsQuery = { __typename?: 'Query', findManyAgents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, createdAt: string, updatedAt: string }> };
+export type FindManyAgentsQuery = { __typename?: 'Query', findManyAgents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string }> };
 
 export type FindOneAgentQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, createdAt: string, updatedAt: string } };
+export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string } };
 
 export type GetAgentChatMessagesQueryVariables = Exact<{
   threadId: Scalars['UUID'];
 }>;
 
 
-export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, rawContent?: string | null, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
+export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentChatMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }> }> };
 
 export type GetAgentChatThreadsQueryVariables = Exact<{
   agentId: Scalars['UUID'];
@@ -4838,7 +5196,7 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 }>;
 
 
-export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
+export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', customUrl?: string | null, subdomainUrl: string }, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
 
 export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5066,7 +5424,7 @@ export type UpsertPermissionFlagsMutation = { __typename?: 'Mutation', upsertPer
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, createdAt: string, updatedAt: string }>, apiKeys: Array<{ __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, fieldPermissions?: Array<{ __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string }> | null }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string }>, apiKeys: Array<{ __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, fieldPermissions?: Array<{ __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string }> | null }> };
 
 export type CreateApprovedAccessDomainMutationVariables = Exact<{
   input: CreateApprovedAccessDomainInput;
@@ -5201,7 +5559,7 @@ export type BillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscri
 
 export type CurrentBillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: string } | null, views?: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string }> }> | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: string } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type WorkspaceUrlsFragmentFragment = { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null };
 
@@ -5220,7 +5578,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: string } | null, views?: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string }> }> | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: string } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -5406,6 +5764,11 @@ export type UpdateCoreViewSortMutationVariables = Exact<{
 
 
 export type UpdateCoreViewSortMutation = { __typename?: 'Mutation', updateCoreViewSort: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string } };
+
+export type FindAllCoreViewsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindAllCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string }> }> };
 
 export type FindManyCoreViewFieldsQueryVariables = Exact<{
   viewId: Scalars['String'];
@@ -5673,6 +6036,7 @@ export const AgentFieldsFragmentDoc = gql`
   responseFormat
   roleId
   isCustom
+  modelConfiguration
   createdAt
   updatedAt
 }
@@ -5937,96 +6301,6 @@ export const RoleFragmentFragmentDoc = gql`
   canBeAssignedToApiKeys
 }
     `;
-export const ViewFieldFragmentFragmentDoc = gql`
-    fragment ViewFieldFragment on CoreViewField {
-  id
-  fieldMetadataId
-  viewId
-  isVisible
-  position
-  size
-  aggregateOperation
-  createdAt
-  updatedAt
-  deletedAt
-}
-    `;
-export const ViewFilterFragmentFragmentDoc = gql`
-    fragment ViewFilterFragment on CoreViewFilter {
-  id
-  fieldMetadataId
-  operand
-  value
-  viewFilterGroupId
-  positionInViewFilterGroup
-  subFieldName
-  viewId
-}
-    `;
-export const ViewFilterGroupFragmentFragmentDoc = gql`
-    fragment ViewFilterGroupFragment on CoreViewFilterGroup {
-  id
-  parentViewFilterGroupId
-  logicalOperator
-  positionInViewFilterGroup
-  viewId
-}
-    `;
-export const ViewSortFragmentFragmentDoc = gql`
-    fragment ViewSortFragment on CoreViewSort {
-  id
-  fieldMetadataId
-  direction
-  viewId
-}
-    `;
-export const ViewGroupFragmentFragmentDoc = gql`
-    fragment ViewGroupFragment on CoreViewGroup {
-  id
-  fieldMetadataId
-  isVisible
-  fieldValue
-  position
-  viewId
-}
-    `;
-export const ViewFragmentFragmentDoc = gql`
-    fragment ViewFragment on CoreView {
-  id
-  name
-  objectMetadataId
-  type
-  key
-  icon
-  position
-  isCompact
-  openRecordIn
-  kanbanAggregateOperation
-  kanbanAggregateOperationFieldMetadataId
-  anyFieldFilterValue
-  calendarFieldMetadataId
-  calendarLayout
-  viewFields {
-    ...ViewFieldFragment
-  }
-  viewFilters {
-    ...ViewFilterFragment
-  }
-  viewFilterGroups {
-    ...ViewFilterGroupFragment
-  }
-  viewSorts {
-    ...ViewSortFragment
-  }
-  viewGroups {
-    ...ViewGroupFragment
-  }
-}
-    ${ViewFieldFragmentFragmentDoc}
-${ViewFilterFragmentFragmentDoc}
-${ViewFilterGroupFragmentFragmentDoc}
-${ViewSortFragmentFragmentDoc}
-${ViewGroupFragmentFragmentDoc}`;
 export const AvailableWorkspaceFragmentFragmentDoc = gql`
     fragment AvailableWorkspaceFragment on AvailableWorkspace {
   id
@@ -6125,9 +6399,6 @@ export const UserQueryFragmentFragmentDoc = gql`
       id
     }
     isTwoFactorAuthenticationEnforced
-    views {
-      ...ViewFragment
-    }
   }
   availableWorkspaces {
     ...AvailableWorkspacesFragment
@@ -6142,8 +6413,97 @@ ${WorkspaceUrlsFragmentFragmentDoc}
 ${CurrentBillingSubscriptionFragmentFragmentDoc}
 ${BillingSubscriptionFragmentFragmentDoc}
 ${RoleFragmentFragmentDoc}
-${ViewFragmentFragmentDoc}
 ${AvailableWorkspacesFragmentFragmentDoc}`;
+export const ViewFieldFragmentFragmentDoc = gql`
+    fragment ViewFieldFragment on CoreViewField {
+  id
+  fieldMetadataId
+  viewId
+  isVisible
+  position
+  size
+  aggregateOperation
+  createdAt
+  updatedAt
+  deletedAt
+}
+    `;
+export const ViewFilterFragmentFragmentDoc = gql`
+    fragment ViewFilterFragment on CoreViewFilter {
+  id
+  fieldMetadataId
+  operand
+  value
+  viewFilterGroupId
+  positionInViewFilterGroup
+  subFieldName
+  viewId
+}
+    `;
+export const ViewFilterGroupFragmentFragmentDoc = gql`
+    fragment ViewFilterGroupFragment on CoreViewFilterGroup {
+  id
+  parentViewFilterGroupId
+  logicalOperator
+  positionInViewFilterGroup
+  viewId
+}
+    `;
+export const ViewSortFragmentFragmentDoc = gql`
+    fragment ViewSortFragment on CoreViewSort {
+  id
+  fieldMetadataId
+  direction
+  viewId
+}
+    `;
+export const ViewGroupFragmentFragmentDoc = gql`
+    fragment ViewGroupFragment on CoreViewGroup {
+  id
+  fieldMetadataId
+  isVisible
+  fieldValue
+  position
+  viewId
+}
+    `;
+export const ViewFragmentFragmentDoc = gql`
+    fragment ViewFragment on CoreView {
+  id
+  name
+  objectMetadataId
+  type
+  key
+  icon
+  position
+  isCompact
+  openRecordIn
+  kanbanAggregateOperation
+  kanbanAggregateOperationFieldMetadataId
+  anyFieldFilterValue
+  calendarFieldMetadataId
+  calendarLayout
+  viewFields {
+    ...ViewFieldFragment
+  }
+  viewFilters {
+    ...ViewFilterFragment
+  }
+  viewFilterGroups {
+    ...ViewFilterGroupFragment
+  }
+  viewSorts {
+    ...ViewSortFragment
+  }
+  viewGroups {
+    ...ViewGroupFragment
+  }
+}
+    ${ViewFieldFragmentFragmentDoc}
+${ViewFilterFragmentFragmentDoc}
+${ViewFilterGroupFragmentFragmentDoc}
+${ViewSortFragmentFragmentDoc}
+${ViewGroupFragmentFragmentDoc}`;
 export const WorkflowDiffFragmentFragmentDoc = gql`
     fragment WorkflowDiffFragment on WorkflowVersionStepChanges {
   triggerDiff
@@ -6579,13 +6939,31 @@ export const GetAgentChatMessagesDocument = gql`
     threadId
     role
     createdAt
-    rawContent
-    files {
+    parts {
       id
-      name
-      fullPath
-      size
+      messageId
+      orderIndex
       type
+      textContent
+      reasoningContent
+      toolName
+      toolCallId
+      toolInput
+      toolOutput
+      state
+      errorMessage
+      errorDetails
+      sourceUrlSourceId
+      sourceUrlUrl
+      sourceUrlTitle
+      sourceDocumentSourceId
+      sourceDocumentMediaType
+      sourceDocumentTitle
+      sourceDocumentFilename
+      fileMediaType
+      fileFilename
+      fileUrl
+      providerMetadata
       createdAt
     }
   }
@@ -9372,6 +9750,10 @@ export const UserLookupAdminPanelDocument = gql`
       logo
       totalUsers
       allowImpersonation
+      workspaceUrls {
+        customUrl
+        subdomainUrl
+      }
       users {
         id
         email
@@ -12126,6 +12508,40 @@ export function useUpdateCoreViewSortMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateCoreViewSortMutationHookResult = ReturnType<typeof useUpdateCoreViewSortMutation>;
 export type UpdateCoreViewSortMutationResult = Apollo.MutationResult<UpdateCoreViewSortMutation>;
 export type UpdateCoreViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewSortMutation, UpdateCoreViewSortMutationVariables>;
+export const FindAllCoreViewsDocument = gql`
+    query FindAllCoreViews {
+  getCoreViews {
+    ...ViewFragment
+  }
+}
+    ${ViewFragmentFragmentDoc}`;
+
+/**
+ * __useFindAllCoreViewsQuery__
+ *
+ * To run a query within a React component, call `useFindAllCoreViewsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindAllCoreViewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindAllCoreViewsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindAllCoreViewsQuery(baseOptions?: Apollo.QueryHookOptions<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>(FindAllCoreViewsDocument, options);
+      }
+export function useFindAllCoreViewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>(FindAllCoreViewsDocument, options);
+        }
+export type FindAllCoreViewsQueryHookResult = ReturnType<typeof useFindAllCoreViewsQuery>;
+export type FindAllCoreViewsLazyQueryHookResult = ReturnType<typeof useFindAllCoreViewsLazyQuery>;
+export type FindAllCoreViewsQueryResult = Apollo.QueryResult<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>;
 export const FindManyCoreViewFieldsDocument = gql`
     query FindManyCoreViewFields($viewId: String!) {
   getCoreViewFields(viewId: $viewId) {

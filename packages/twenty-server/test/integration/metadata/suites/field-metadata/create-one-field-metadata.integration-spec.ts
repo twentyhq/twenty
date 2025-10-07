@@ -1,6 +1,8 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('createOne FieldMetadataService name/label sync', () => {
@@ -24,6 +26,15 @@ describe('createOne FieldMetadataService name/label sync', () => {
     createdObjectMetadataId = objectMetadataId;
   });
   afterEach(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataId },
     });
@@ -89,7 +100,7 @@ describe('createOne FieldMetadataService name/label sync', () => {
     };
 
     // Act
-    const { errors } = await createOneFieldMetadata({
+    const response = await createOneFieldMetadata({
       input: createFieldInput,
       gqlFields: `
             id
@@ -101,8 +112,11 @@ describe('createOne FieldMetadataService name/label sync', () => {
     });
 
     // Assert
-    expect(errors[0].message).toBe(
-      'Name is not synced with label. Expected name: "differentLabel", got testField',
+    expect(response.errors.length).toBe(1);
+    const [firstError] = response.errors;
+
+    expect(firstError).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstError),
     );
   });
 });

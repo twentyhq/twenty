@@ -1,4 +1,3 @@
-import { CustomError } from '@/error-handler/CustomError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -8,7 +7,7 @@ import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphq
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type useAttachRelatedRecordFromRecordProps = {
   recordObjectNameSingular: string;

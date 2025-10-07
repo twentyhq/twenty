@@ -49,7 +49,7 @@ export class UpdatePageLayoutWidgetWithIdInput {
   @IsNotEmpty()
   gridPosition: GridPositionInput;
 
-  @Field(() => GraphQLJSON)
+  @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()
   @IsOptional()
   configuration: Record<string, unknown> | null;

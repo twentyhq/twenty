@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -11,6 +12,7 @@ import {
 } from 'typeorm';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -33,6 +35,9 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @Column({ nullable: true, type: 'uuid' })
   standardId: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  applicationId: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   dataSourceId: string;
@@ -91,6 +96,7 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
   @Column({ nullable: true, type: 'varchar' })
   shortcut: string | null;
 
+  // TODO: This should not be nullable - legacy field introduced when label identifier was nullable
   @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId: string | null;
 
@@ -129,6 +135,13 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @ManyToOne(() => ApplicationEntity, (application) => application.objects, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationId' })
+  application: Relation<ApplicationEntity> | null;
 
   @OneToMany(
     () => ObjectPermissionEntity,

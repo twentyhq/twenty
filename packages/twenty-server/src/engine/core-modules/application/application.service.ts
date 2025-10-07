@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
 
 @Injectable()
 export class ApplicationService {
@@ -18,23 +20,24 @@ export class ApplicationService {
     });
   }
 
-  async findByStandardId(
-    standardId: string,
+  async findByUniversalIdentifier(
+    universalIdentifier: string,
     workspaceId: string,
-  ): Promise<ApplicationEntity[]> {
-    return this.applicationRepository.find({
+  ) {
+    return this.applicationRepository.findOne({
       where: {
-        standardId,
+        universalIdentifier,
         workspaceId,
       },
     });
   }
 
   async create(data: {
-    standardId?: string;
-    label: string;
+    universalIdentifier?: string;
+    name: string;
     description?: string;
     version?: string;
+    serverlessFunctionLayerId: string;
     sourcePath: string;
     workspaceId: string;
   }): Promise<ApplicationEntity> {
@@ -49,10 +52,13 @@ export class ApplicationService {
   async update(
     id: string,
     data: {
-      label?: string;
+      name?: string;
       description?: string;
       version?: string;
       sourcePath?: string;
+      packageJson?: PackageJson;
+      yarnLock?: string;
+      packageChecksum?: string;
     },
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
@@ -64,5 +70,21 @@ export class ApplicationService {
     }
 
     return updatedApplication;
+  }
+
+  async delete(universalIdentifier: string, workspaceId: string) {
+    const application = await this.findByUniversalIdentifier(
+      universalIdentifier,
+      workspaceId,
+    );
+
+    if (!isDefined(application)) {
+      throw new Error(`Application does not exist`);
+    }
+
+    await this.applicationRepository.delete({
+      universalIdentifier,
+      workspaceId,
+    });
   }
 }

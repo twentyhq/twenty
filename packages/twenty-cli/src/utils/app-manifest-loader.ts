@@ -1,95 +1,146 @@
+import assert from 'assert';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { AgentManifest, AppManifest } from '../types/config.types';
+import {
+  AppManifest,
+  CoreEntityManifest,
+  PackageJson,
+} from '../types/config.types';
 import { parseJsoncFile } from './jsonc-parser';
-import { schemaValidator } from './schema-validator';
+import { validateSchema } from '../utils/schema-validator';
 
-export interface AppManifestWithMeta extends AppManifest {
-  _meta?: {
-    agentFiles?: string[];
-    manifestPath?: string;
-  };
-}
+type Sources = { [key: string]: string | Sources };
 
-export type AppManifestRaw = Omit<AppManifest, 'agents'> & {
-  // agents will be discovered from the agents/ folder
-  agents?: AgentManifest[];
+const findPathFile = async (
+  appPath: string,
+  fileName: string,
+): Promise<string> => {
+  const jsonPath = path.join(appPath, fileName);
+
+  if (await fs.pathExists(jsonPath)) {
+    return jsonPath;
+  }
+
+  throw new Error(`${fileName} not found in ${appPath}`);
 };
 
-export class AppManifestLoader {
-  private appPath: string;
+const loadCoreEntity = async (
+  coreEntityPath: string,
+  validator: (manifest: CoreEntityManifest, path: string) => Promise<void>,
+): Promise<CoreEntityManifest[]> => {
+  const coreEntities: CoreEntityManifest[] = [];
 
-  constructor(appPath: string) {
-    this.appPath = appPath;
-  }
+  if (await fs.pathExists(coreEntityPath)) {
+    const entities = await fs.readdir(coreEntityPath);
 
-  async loadManifest(): Promise<AppManifestWithMeta> {
-    const packageJsonPath = await this.findPackageJsonFile();
-    const rawPackageJson = await parseJsoncFile(packageJsonPath);
+    for (const entity of entities) {
+      const entityPath = path.join(coreEntityPath, entity);
+      const entityResources = await fs.readdir(entityPath);
 
-    // Validate the raw manifest structure
-    await schemaValidator.validateAppManifest(rawPackageJson, packageJsonPath);
-
-    return this.discoverAndLoadAgents(rawPackageJson, packageJsonPath);
-  }
-
-  private async findPackageJsonFile(): Promise<string> {
-    const jsonPath = path.join(this.appPath, 'package.json');
-
-    if (await fs.pathExists(jsonPath)) {
-      return jsonPath;
-    }
-
-    throw new Error(`package.json not found in ${this.appPath}`);
-  }
-
-  private async discoverAndLoadAgents(
-    rawManifest: AppManifestRaw,
-    manifestPath: string,
-  ): Promise<AppManifestWithMeta> {
-    const agentsDir = path.join(this.appPath, 'agents');
-    const agentFiles: string[] = [];
-    const agents: AgentManifest[] = [];
-
-    // Check if agents directory exists
-    if (await fs.pathExists(agentsDir)) {
-      const files = await fs.readdir(agentsDir);
-      const agentFileNames = files.filter(
-        (file) => file.endsWith('.jsonc') || file.endsWith('.json'),
+      const entityManifests = entityResources.filter(
+        (file) =>
+          file.endsWith('.manifest.jsonc') || file.endsWith('.manifest.json'),
       );
 
-      for (const fileName of agentFileNames) {
-        const agentPath = path.join(agentsDir, fileName);
-        const agentManifest = await parseJsoncFile(agentPath);
+      assert(
+        entityManifests.length === 1,
+        'Entity should have strictly one manifest file',
+      );
 
-        // Validate the agent against schema
-        await schemaValidator.validateAgent(agentManifest, agentPath);
+      const entityManifest = entityManifests[0];
 
-        agents.push(agentManifest);
-        agentFiles.push(`agents/${fileName}`);
+      const coreEntityManifest = await parseJsoncFile(
+        path.join(coreEntityPath, entity, entityManifest),
+      );
+
+      const entitySources = entityResources.filter(
+        (folder) => folder === 'src',
+      );
+
+      assert(
+        entitySources.length <= 1,
+        'Entity should have less than one src folder or file',
+      );
+
+      if (entitySources.length === 1) {
+        const entitySourcePath = path.join(
+          coreEntityPath,
+          entity,
+          entitySources[0],
+        );
+
+        const sources = await loadFolderContentIntoJson(entitySourcePath);
+
+        coreEntityManifest['code'] = { src: sources };
       }
+
+      await validator(coreEntityManifest, coreEntityPath);
+
+      coreEntities.push(coreEntityManifest);
     }
-
-    return {
-      ...rawManifest,
-      agents,
-      _meta: {
-        agentFiles,
-        manifestPath,
-      },
-    };
   }
-}
 
-// Convenience function for backward compatibility
-export const loadAppManifest = async (
+  return coreEntities;
+};
+
+const loadFolderContentIntoJson = async (
+  sourcePath: string,
+): Promise<Sources> => {
+  const sources: Sources = {};
+
+  const resources = await fs.readdir(sourcePath);
+
+  for (const resource of resources) {
+    const resourcePath = path.join(sourcePath, resource);
+    const stats = await fs.stat(resourcePath);
+    if (stats.isFile()) {
+      sources[resource] = await fs.readFile(resourcePath, 'utf8');
+    } else {
+      sources[resource] = await loadFolderContentIntoJson(resourcePath);
+    }
+  }
+
+  return sources;
+};
+
+export const loadManifest = async (
   appPath: string,
-): Promise<AppManifest> => {
-  const loader = new AppManifestLoader(appPath);
-  const manifest = await loader.loadManifest();
+): Promise<{
+  packageJson: PackageJson;
+  yarnLock: string;
+  manifest: AppManifest;
+}> => {
+  const packageJsonPath = await findPathFile(appPath, 'package.json');
+  const rawPackageJson = await parseJsoncFile(packageJsonPath);
 
-  // Remove meta information for backward compatibility
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { _meta, ...cleanManifest } = manifest;
-  return cleanManifest;
+  const yarnLockPath = await findPathFile(appPath, 'yarn.lock');
+  const rawYarnLock = await fs.readFile(yarnLockPath, 'utf8');
+
+  await validateSchema('appManifest', rawPackageJson, packageJsonPath);
+
+  const agents = await loadCoreEntity(
+    path.join(appPath, 'agents'),
+    (manifest, path) => validateSchema('agent', manifest, path),
+  );
+
+  const objects = await loadCoreEntity(
+    path.join(appPath, 'objects'),
+    (manifest, path) => validateSchema('object', manifest, path),
+  );
+
+  const serverlessFunctions = await loadCoreEntity(
+    path.join(appPath, 'serverlessFunctions'),
+    (manifest, path) => validateSchema('serverlessFunction', manifest, path),
+  );
+
+  return {
+    packageJson: rawPackageJson,
+    yarnLock: rawYarnLock,
+    manifest: {
+      ...rawPackageJson,
+      agents,
+      objects,
+      serverlessFunctions,
+    },
+  };
 };

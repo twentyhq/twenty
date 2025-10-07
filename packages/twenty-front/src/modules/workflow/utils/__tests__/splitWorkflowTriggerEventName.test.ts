@@ -99,4 +99,15 @@ describe('splitWorkflowTriggerEventName', () => {
       event: '',
     });
   });
+
+  it('should split event name with upserted event', () => {
+    const eventName = 'company.upserted';
+
+    const result = splitWorkflowTriggerEventName(eventName);
+
+    expect(result).toEqual({
+      objectType: 'company',
+      event: 'upserted',
+    });
+  });
 });

@@ -96,6 +96,10 @@ export const StyledMenuItemLabel = styled.div`
   white-space: nowrap;
 `;
 
+export const StyledMenuItemLabelLight = styled(StyledMenuItemLabel)`
+  color: ${({ theme }) => theme.font.color.light};
+`;
+
 export const StyledNoIconFiller = styled.div`
   width: ${({ theme }) => theme.spacing(1)};
 `;
@@ -110,7 +114,7 @@ export const StyledMenuItemLeftContent = styled.div`
   min-width: 0;
   width: 100%;
 
-  & > svg {
+  & svg {
     flex-shrink: 0;
   }
 `;
@@ -119,6 +123,11 @@ export const StyledMenuItemRightContent = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(2)};
+
+  & svg {
+    flex-shrink: 0;
+  }
 `;
 
 export const StyledDraggableItem = styled.div`
@@ -169,4 +178,20 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
 export const StyledMenuItemIconCheck = styled(IconCheck)`
   flex-shrink: 0;
   margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+export const StyledMenuItemContextualText = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  flex-shrink: 1;
+  overflow: hidden;
+`;
+
+export const StyledRightMenuItemContextualText = styled(
+  StyledMenuItemContextualText,
+)`
+  text-align: right;
 `;

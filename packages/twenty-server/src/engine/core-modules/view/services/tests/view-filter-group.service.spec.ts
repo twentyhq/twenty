@@ -13,6 +13,7 @@ import {
   generateViewFilterGroupUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 describe('ViewFilterGroupService', () => {
   let viewFilterGroupService: ViewFilterGroupService;
@@ -42,6 +43,12 @@ describe('ViewFilterGroupService', () => {
             save: jest.fn(),
             softDelete: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: ViewService,
+          useValue: {
+            flushGraphQLCache: jest.fn(),
           },
         },
       ],

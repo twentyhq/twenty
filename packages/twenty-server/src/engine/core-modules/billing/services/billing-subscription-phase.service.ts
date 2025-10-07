@@ -17,6 +17,7 @@ import { BillingPlanService } from 'src/engine/core-modules/billing/services/bil
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 
 @Injectable()
 export class BillingSubscriptionPhaseService {
@@ -24,14 +25,17 @@ export class BillingSubscriptionPhaseService {
     @InjectRepository(BillingPrice)
     private readonly billingPriceRepository: Repository<BillingPrice>,
     private readonly billingPlanService: BillingPlanService,
+    private readonly billingPriceService: BillingPriceService,
   ) {}
 
   async getDetailsFromPhase(phase: BillingSubscriptionSchedulePhase) {
-    const meteredPrice = await this.billingPriceRepository.findOneByOrFail({
-      stripePriceId: findOrThrow(
-        phase.items,
-        ({ quantity }) => !isDefined(quantity),
-      ).price,
+    const meteredPrice = await this.billingPriceRepository.findOneOrFail({
+      where: {
+        stripePriceId: findOrThrow(
+          phase.items,
+          ({ quantity }) => !isDefined(quantity),
+        ).price,
+      },
     });
 
     const { quantity, price: licensedItemPriceId } = findOrThrow(
@@ -39,8 +43,10 @@ export class BillingSubscriptionPhaseService {
       ({ quantity }) => isDefined(quantity),
     );
 
-    const licensedPrice = await this.billingPriceRepository.findOneByOrFail({
-      stripePriceId: licensedItemPriceId,
+    const licensedPrice = await this.billingPriceRepository.findOneOrFail({
+      where: {
+        stripePriceId: licensedItemPriceId,
+      },
     });
 
     const plan = await this.billingPlanService.getPlanByPriceId(
@@ -77,13 +83,12 @@ export class BillingSubscriptionPhaseService {
     } as Stripe.SubscriptionScheduleUpdateParams.Phase;
   }
 
-  buildSnapshot(
+  async buildSnapshot(
     base: Stripe.SubscriptionScheduleUpdateParams.Phase,
     licensedPriceId: string,
     seats: number,
     meteredPriceId: string,
-    billing_thresholds?: Stripe.SubscriptionScheduleUpdateParams.Phase.BillingThresholds,
-  ): Stripe.SubscriptionScheduleUpdateParams.Phase {
+  ): Promise<Stripe.SubscriptionScheduleUpdateParams.Phase> {
     return {
       start_date: base.start_date,
       end_date: base.end_date,
@@ -92,7 +97,10 @@ export class BillingSubscriptionPhaseService {
         { price: licensedPriceId, quantity: seats },
         { price: meteredPriceId },
       ],
-      ...(billing_thresholds ? { billing_thresholds } : {}),
+      billing_thresholds:
+        await this.billingPriceService.getBillingThresholdsByMeterPriceId(
+          meteredPriceId,
+        ),
     };
   }
 

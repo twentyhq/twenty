@@ -6,12 +6,10 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { type ToolInput } from '@/ai/types/ToolInput';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import type {
-  ToolCallEvent,
-  ToolEvent,
-  ToolResultEvent,
-} from 'twenty-shared/ai';
+import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
+import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -70,31 +68,27 @@ const StyledIconTextContainer = styled.div`
   }
 `;
 
-export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
+export const ToolStepRenderer = ({
+  input,
+  output,
+  toolName,
+}: {
+  input: ToolInput;
+  output: ToolUIPart['output'];
+  toolName: string;
+}) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const toolCallEvent = events[0] as ToolCallEvent | undefined;
-  const toolResultEvent = events.find(
-    (event): event is ToolResultEvent => event.type === 'tool-result',
-  );
+  const isExpandable = isDefined(output);
 
-  if (!toolCallEvent) {
-    return null;
-  }
-
-  const toolOutput =
-    toolResultEvent?.output?.error ?? toolResultEvent?.output?.result;
-
-  const isExpandable = isDefined(toolOutput);
-
-  if (!toolResultEvent) {
+  if (!output) {
     return (
       <StyledContainer>
         <StyledLoadingContainer>
           <ShimmeringText>
             <StyledDisplayMessage>
-              {toolCallEvent.input.loadingMessage}
+              {getToolDisplayMessage(input, toolName, false)}
             </StyledDisplayMessage>
           </ShimmeringText>
         </StyledLoadingContainer>
@@ -103,13 +97,19 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
   }
 
   const displayMessage =
-    toolResultEvent?.output &&
-    typeof toolResultEvent.output === 'object' &&
-    'message' in toolResultEvent.output
-      ? (toolResultEvent.output as { message: string }).message
-      : undefined;
+    output &&
+    typeof output === 'object' &&
+    'message' in output &&
+    typeof output.message === 'string'
+      ? output.message
+      : getToolDisplayMessage(input, toolName, true);
 
-  const ToolIcon = getToolIcon(toolCallEvent.toolName);
+  const result =
+    output && typeof output === 'object' && 'result' in output
+      ? (output as { result: string }).result
+      : output;
+
+  const ToolIcon = getToolIcon(toolName);
 
   return (
     <StyledContainer>
@@ -132,7 +132,7 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
       {isExpandable && (
         <AnimatedExpandableContainer isExpanded={isExpanded}>
           <StyledContentContainer>
-            <StyledPre>{JSON.stringify(toolOutput, null, 2)}</StyledPre>
+            <StyledPre>{JSON.stringify(result, null, 2)}</StyledPre>
           </StyledContentContainer>
         </AnimatedExpandableContainer>
       )}
