@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 import { compareTwoFlatView } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view.util';
 import {
@@ -14,6 +17,7 @@ import {
   WorkspaceMigrationViewActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2.type';
 import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service';
+import { isDefined } from 'twenty-shared/utils';
 
 export type ViewRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
@@ -56,6 +60,19 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         ...validationResult,
       };
     }
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatViewToValidate.objectMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+    });
+    const updatedFlatObjectMetadataMaps =
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...flatObjectMetadata,
+          viewIds: [...flatObjectMetadata.viewIds, flatViewToValidate.id],
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      });
 
     return {
       status: 'success',
@@ -63,7 +80,9 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         type: 'create_view',
         view: flatViewToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMaps: {
+        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+      },
     };
   }
 
@@ -92,13 +111,33 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
       };
     }
 
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewToValidate.objectMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+    });
+
+    const updatedFlatObjectMetadataMaps = isDefined(flatObjectMetadata)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...flatObjectMetadata,
+            viewIds: flatObjectMetadata.viewIds.filter(
+              (id) => id !== flatViewToValidate.id,
+            ),
+          },
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
+
     return {
       status: 'success',
       action: {
         type: 'delete_view',
         viewId: flatViewToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMaps: {
+        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+      },
     };
   }
 
