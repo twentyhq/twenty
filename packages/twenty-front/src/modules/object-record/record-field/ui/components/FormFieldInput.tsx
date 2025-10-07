@@ -20,6 +20,7 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldAddressValue,
+  type FieldArrayValue,
   type FieldEmailsValue,
   type FieldFullNameValue,
   type FieldLinksValue,
@@ -226,7 +227,7 @@ export const FormFieldInput = ({
   ) : isFieldArray(field) ? (
     <FormArrayFieldInput
       label={field.label}
-      defaultValue={defaultValue as FieldMultiSelectValue | string | undefined}
+      defaultValue={defaultValue as FieldArrayValue | string | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
