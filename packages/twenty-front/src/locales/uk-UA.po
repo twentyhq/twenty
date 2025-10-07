@@ -455,6 +455,11 @@ msgstr "Додати передачу"
 msgid "Add inputs to your form"
 msgstr "Додайте введення у вашу форму"
 
+#. js-lingui-id: NQ8llq
+#: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
+msgid "Add item"
+msgstr ""
+
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
@@ -3057,6 +3062,11 @@ msgstr "Введіть значення, яке потрібно зберегт�
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Enter agent name*"
 msgstr "Введіть ім'я агента*"
+
+#. js-lingui-id: wgNkIh
+#: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
+msgid "Enter an item"
+msgstr ""
 
 #. js-lingui-id: kOybqX
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx

@@ -1,4 +1,5 @@
 import { FormAddressFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAddressFieldInput';
+import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
 import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
 import { FormCurrencyFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput';
 import { FormDateFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateFieldInput';
@@ -19,6 +20,7 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldAddressValue,
+  type FieldArrayValue,
   type FieldEmailsValue,
   type FieldFullNameValue,
   type FieldLinksValue,
@@ -31,6 +33,7 @@ import {
   type FormFieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
+import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { isFieldDate } from '@/object-record/record-field/ui/types/guards/isFieldDate';
@@ -220,6 +223,15 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+    />
+  ) : isFieldArray(field) ? (
+    <FormArrayFieldInput
+      label={field.label}
+      defaultValue={defaultValue as FieldArrayValue | string | undefined}
+      onChange={onChange}
+      VariablePicker={VariablePicker}
+      readonly={readonly}
+      placeholder={placeholder}
     />
   ) : null;
 };

@@ -455,6 +455,11 @@ msgstr "添加移交"
 msgid "Add inputs to your form"
 msgstr "增加輸入到您的表單"
 
+#. js-lingui-id: NQ8llq
+#: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
+msgid "Add item"
+msgstr ""
+
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
@@ -3057,6 +3062,11 @@ msgstr "輸入要存儲在資料庫中的值"
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Enter agent name*"
 msgstr "輸入代理名稱*"
+
+#. js-lingui-id: wgNkIh
+#: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
+msgid "Enter an item"
+msgstr ""
 
 #. js-lingui-id: kOybqX
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
