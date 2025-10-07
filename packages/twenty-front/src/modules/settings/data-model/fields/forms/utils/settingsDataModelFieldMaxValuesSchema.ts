@@ -3,10 +3,7 @@ import { z } from 'zod';
 
 export const settingsDataModelFieldMaxValuesSchema = z.object({
   settings: z.object({
-    maxNumberOfValues: z
-      .number()
-      .int()
-      .min(MIN_MAX_NUMBER_OF_VALUES),
+    maxNumberOfValues: z.number().int().min(MIN_MAX_NUMBER_OF_VALUES),
   }),
 });
 

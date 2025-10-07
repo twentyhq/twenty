@@ -8,10 +8,11 @@ import {
   DEFAULT_MAX_NUMBER_OF_VALUES,
   MIN_MAX_NUMBER_OF_VALUES,
 } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { type FieldMetadataMultipleValuesSettings } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type FieldMetadataMultipleValuesSettings,
+} from 'twenty-shared/types';
 import { IconNumber } from 'twenty-ui/display';
-import { IconBoxMultiple1 } from '@tabler/icons-react';
 
 type SettingsDataModelFieldMaxValuesFormProps = {
   disabled?: boolean;
@@ -77,7 +78,7 @@ export const SettingsDataModelFieldMaxValuesForm = ({
 
         return (
           <SettingsOptionCardContentCounter
-            Icon={IconBoxMultiple1}
+            Icon={IconNumber}
             title={title}
             description={description}
             disabled={disabled}

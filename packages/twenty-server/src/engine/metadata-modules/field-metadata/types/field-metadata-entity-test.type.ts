@@ -1,6 +1,7 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
   type FieldMetadataType,
+  type FieldMetadataMultipleValuesSettings,
   type NullablePartial,
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
@@ -17,7 +18,6 @@ import {
   type FieldMetadataRelationSettings,
   type FieldMetadataTextSettings,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import { type FieldMetadataMultipleValuesSettings } from 'twenty-shared/types';
 
 import {
   type FieldMetadataComplexOption,

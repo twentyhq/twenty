@@ -1,9 +1,9 @@
 import {
   type AllowedAddressSubField,
+  type FieldMetadataMultipleValuesSettings,
   type FieldMetadataType,
   type IsExactly,
 } from 'twenty-shared/types';
-import { type FieldMetadataMultipleValuesSettings } from 'twenty-shared/types';
 
 import { type RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';

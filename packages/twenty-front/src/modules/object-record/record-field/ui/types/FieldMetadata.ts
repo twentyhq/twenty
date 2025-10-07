@@ -5,8 +5,8 @@ import { type CurrencyCode } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   type AllowedAddressSubField,
+  type FieldMetadataMultipleValuesSettings,
 } from 'twenty-shared/types';
-import { type FieldMetadataMultipleValuesSettings } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';

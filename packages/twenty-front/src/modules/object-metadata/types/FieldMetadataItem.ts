@@ -1,8 +1,10 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
 
-import { type PartialFieldMetadataItemOption } from 'twenty-shared/types';
-import { type FieldMetadataMultipleValuesSettings } from 'twenty-shared/types';
+import {
+  type FieldMetadataMultipleValuesSettings,
+  type PartialFieldMetadataItemOption,
+} from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { type Field } from '~/generated-metadata/graphql';
 

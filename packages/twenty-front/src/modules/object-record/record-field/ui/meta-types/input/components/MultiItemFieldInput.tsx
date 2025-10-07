@@ -219,9 +219,9 @@ export const MultiItemFieldInput = <T,>({
               }),
             )}
           </DropdownMenuItemsContainer>
-          {(isInputDisplayed || !isLimitReached) && (
+          {isInputDisplayed || !isLimitReached ? (
             <DropdownMenuSeparator />
-          )}
+          ) : null}
         </>
       )}
       {isInputDisplayed || !items.length ? (

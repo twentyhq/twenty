@@ -309,9 +309,11 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       }
       form={
         <>
-          {[FieldMetadataType.EMAILS, FieldMetadataType.LINKS, FieldMetadataType.ARRAY].includes(
-            fieldType,
-          ) && (
+          {[
+            FieldMetadataType.EMAILS,
+            FieldMetadataType.LINKS,
+            FieldMetadataType.ARRAY,
+          ].includes(fieldType) && (
             <>
               <SettingsDataModelFieldMaxValuesForm
                 existingFieldMetadataId={existingFieldMetadataId}
