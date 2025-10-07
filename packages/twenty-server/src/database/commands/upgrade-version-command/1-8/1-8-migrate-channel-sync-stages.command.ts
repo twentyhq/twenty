@@ -8,9 +8,11 @@ import {
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
   CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
@@ -29,40 +31,91 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
   constructor(
     @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
   override async runOnWorkspace({
     workspaceId,
+    options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    await this.updateMessageChannelSyncStageFieldMetadata(workspaceId);
+    this.logger.log(
+      `Migrating channel sync stages for workspace ${workspaceId}`,
+    );
 
-    await this.updateCalendarChannelSyncStageFieldMetadata(workspaceId);
+    await this.updateMessageChannelSyncStageFieldMetadata(workspaceId, options);
+
+    await this.updateCalendarChannelSyncStageFieldMetadata(
+      workspaceId,
+      options,
+    );
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
-    this.logger.log(
-      `Migrating channel sync stages for workspace ${workspaceId} in schema ${schemaName}`,
+    await this.migrateMessageChannelSyncStages(workspaceId, schemaName, options);
+
+    await this.migrateCalendarChannelSyncStages(
+      workspaceId,
+      schemaName,
+      options,
     );
 
-    const messageChannelTableExists = await this.coreDataSource.query(`
+    this.logger.log(
+      `Successfully migrated channel sync stages for workspace ${workspaceId}`,
+    );
+  }
+
+  private async migrateMessageChannelSyncStages(
+    workspaceId: string,
+    schemaName: string,
+    options: RunOnWorkspaceArgs['options'],
+  ): Promise<void> {
+    const messageChannelObject = await this.objectMetadataRepository.findOne({
+      where: {
+        standardId: STANDARD_OBJECT_IDS.messageChannel,
+        workspaceId,
+      },
+    });
+
+    if (!messageChannelObject) {
+      this.logger.log(
+        `MessageChannel object not found for workspace ${workspaceId}, skipping schema migration`,
+      );
+
+      return;
+    }
+
+    const tableName = computeObjectTargetTable(messageChannelObject);
+
+    const tableExists = await this.coreDataSource.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables
         WHERE table_schema = '${schemaName}'
-        AND table_name = 'messageChannel'
+        AND table_name = '${tableName}'
       );
     `);
 
-    if (messageChannelTableExists[0]?.exists) {
-      // Step 1: Add new enum values for MessageChannelSyncStage
+    if (!tableExists[0]?.exists) {
+      this.logger.log(
+        `Table ${schemaName}.${tableName} does not exist in workspace ${workspaceId}, skipping schema migration`,
+      );
+
+      return;
+    }
+
+    // Add new enum values for MessageChannelSyncStage
+    if (options.dryRun) {
+      this.logger.log(
+        `Would try to add PENDING_CONFIGURATION to messageChannel_syncStage_enum for workspace ${workspaceId}`,
+      );
+    } else {
       try {
         await this.coreDataSource.query(
           `ALTER TYPE ${schemaName}."messageChannel_syncStage_enum" ADD VALUE 'PENDING_CONFIGURATION'`,
@@ -70,12 +123,18 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         this.logger.log(
           `Added PENDING_CONFIGURATION to messageChannel_syncStage_enum for workspace ${workspaceId}`,
         );
-      } catch {
-        this.logger.log(
-          `PENDING_CONFIGURATION already exists in messageChannel_syncStage_enum for workspace ${workspaceId}`,
+      } catch (error) {
+        this.logger.error(
+          `Error adding PENDING_CONFIGURATION to messageChannel_syncStage_enum for workspace ${workspaceId}: ${error}`,
         );
       }
+    }
 
+    if (options.dryRun) {
+      this.logger.log(
+        `Would try to add MESSAGE_LIST_FETCH_SCHEDULED to messageChannel_syncStage_enum for workspace ${workspaceId}`,
+      );
+    } else {
       try {
         await this.coreDataSource.query(
           `ALTER TYPE ${schemaName}."messageChannel_syncStage_enum" ADD VALUE 'MESSAGE_LIST_FETCH_SCHEDULED'`,
@@ -83,47 +142,77 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         this.logger.log(
           `Added MESSAGE_LIST_FETCH_SCHEDULED to messageChannel_syncStage_enum for workspace ${workspaceId}`,
         );
-      } catch {
-        this.logger.log(
-          `MESSAGE_LIST_FETCH_SCHEDULED already exists in messageChannel_syncStage_enum for workspace ${workspaceId}`,
-        );
-      }
-
-      // Step 2: Migrate deprecated MessageChannel sync stages
-      try {
-        const messageChannelUpdateResult = await this.coreDataSource.query(
-          `UPDATE "${schemaName}"."messageChannel"
-           SET "syncStage" = 'MESSAGE_LIST_FETCH_PENDING'
-           WHERE "syncStage" IN ('FULL_MESSAGE_LIST_FETCH_PENDING', 'PARTIAL_MESSAGE_LIST_FETCH_PENDING')`,
-        );
-
-        const messageChannelRowsUpdated = messageChannelUpdateResult[1] || 0;
-
-        this.logger.log(
-          `Migrated ${messageChannelRowsUpdated} messageChannel records from deprecated sync stages in workspace ${workspaceId}`,
-        );
       } catch (error) {
         this.logger.error(
-          `Failed to migrate messageChannel sync stages for workspace ${workspaceId}: ${error.message}`,
+          `Error adding MESSAGE_LIST_FETCH_SCHEDULED to messageChannel_syncStage_enum for workspace ${workspaceId}: ${error}`,
         );
-        throw error;
       }
-    } else {
-      this.logger.log(
-        `messageChannel table does not exist in workspace ${workspaceId}, skipping`,
-      );
     }
 
-    const calendarChannelTableExists = await this.coreDataSource.query(`
+    // Migrate deprecated MessageChannel sync stages
+    if (options.dryRun) {
+      this.logger.log(
+        `Would migrate deprecated messageChannel sync stages for workspace ${workspaceId}`,
+      );
+    } else {
+      const messageChannelUpdateResult = await this.coreDataSource.query(
+        `UPDATE "${schemaName}"."${tableName}"
+         SET "syncStage" = 'MESSAGE_LIST_FETCH_PENDING'
+         WHERE "syncStage" IN ('FULL_MESSAGE_LIST_FETCH_PENDING', 'PARTIAL_MESSAGE_LIST_FETCH_PENDING')`,
+      );
+
+      const messageChannelRowsUpdated = messageChannelUpdateResult[1] || 0;
+
+      this.logger.log(
+        `Migrated ${messageChannelRowsUpdated} messageChannel records from deprecated sync stages in workspace ${workspaceId}`,
+      );
+    }
+  }
+
+  private async migrateCalendarChannelSyncStages(
+    workspaceId: string,
+    schemaName: string,
+    options: RunOnWorkspaceArgs['options'],
+  ): Promise<void> {
+    const calendarChannelObject = await this.objectMetadataRepository.findOne({
+      where: {
+        standardId: STANDARD_OBJECT_IDS.calendarChannel,
+        workspaceId,
+      },
+    });
+
+    if (!calendarChannelObject) {
+      this.logger.log(
+        `CalendarChannel object not found for workspace ${workspaceId}, skipping schema migration`,
+      );
+
+      return;
+    }
+
+    const tableName = computeObjectTargetTable(calendarChannelObject);
+
+    const tableExists = await this.coreDataSource.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables
         WHERE table_schema = '${schemaName}'
-        AND table_name = 'calendarChannel'
+        AND table_name = '${tableName}'
       );
     `);
 
-    if (calendarChannelTableExists[0]?.exists) {
-      // Step 3: Add new enum values for CalendarChannelSyncStage
+    if (!tableExists[0]?.exists) {
+      this.logger.log(
+        `Table ${schemaName}.${tableName} does not exist in workspace ${workspaceId}, skipping schema migration`,
+      );
+
+      return;
+    }
+
+    // Add new enum values for CalendarChannelSyncStage
+    if (options.dryRun) {
+      this.logger.log(
+        `Would try to add PENDING_CONFIGURATION to calendarChannel_syncStage_enum for workspace ${workspaceId}`,
+      );
+    } else {
       try {
         await this.coreDataSource.query(
           `ALTER TYPE ${schemaName}."calendarChannel_syncStage_enum" ADD VALUE 'PENDING_CONFIGURATION'`,
@@ -131,12 +220,18 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         this.logger.log(
           `Added PENDING_CONFIGURATION to calendarChannel_syncStage_enum for workspace ${workspaceId}`,
         );
-      } catch {
-        this.logger.log(
-          `PENDING_CONFIGURATION already exists in calendarChannel_syncStage_enum for workspace ${workspaceId}`,
+      } catch (error) {
+        this.logger.error(
+          `Error adding PENDING_CONFIGURATION to calendarChannel_syncStage_enum for workspace ${workspaceId}: ${error}`,
         );
       }
+    }
 
+    if (options.dryRun) {
+      this.logger.log(
+        `Would try to add CALENDAR_EVENT_LIST_FETCH_SCHEDULED to calendarChannel_syncStage_enum for workspace ${workspaceId}`,
+      );
+    } else {
       try {
         await this.coreDataSource.query(
           `ALTER TYPE ${schemaName}."calendarChannel_syncStage_enum" ADD VALUE 'CALENDAR_EVENT_LIST_FETCH_SCHEDULED'`,
@@ -144,44 +239,36 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         this.logger.log(
           `Added CALENDAR_EVENT_LIST_FETCH_SCHEDULED to calendarChannel_syncStage_enum for workspace ${workspaceId}`,
         );
-      } catch {
-        this.logger.log(
-          `CALENDAR_EVENT_LIST_FETCH_SCHEDULED already exists in calendarChannel_syncStage_enum for workspace ${workspaceId}`,
-        );
-      }
-
-      // Step 4: Migrate deprecated CalendarChannel sync stages
-      try {
-        const calendarChannelUpdateResult = await this.coreDataSource.query(
-          `UPDATE "${schemaName}"."calendarChannel"
-           SET "syncStage" = 'CALENDAR_EVENT_LIST_FETCH_PENDING'
-           WHERE "syncStage" IN ('FULL_CALENDAR_EVENT_LIST_FETCH_PENDING', 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING')`,
-        );
-
-        const calendarChannelRowsUpdated = calendarChannelUpdateResult[1] || 0;
-
-        this.logger.log(
-          `Migrated ${calendarChannelRowsUpdated} calendarChannel records from deprecated sync stages in workspace ${workspaceId}`,
-        );
       } catch (error) {
         this.logger.error(
-          `Failed to migrate calendarChannel sync stages for workspace ${workspaceId}: ${error.message}`,
+          `Error adding CALENDAR_EVENT_LIST_FETCH_SCHEDULED to calendarChannel_syncStage_enum for workspace ${workspaceId}: ${error}`,
         );
-        throw error;
       }
-    } else {
-      this.logger.log(
-        `calendarChannel table does not exist in workspace ${workspaceId}, skipping`,
-      );
     }
 
-    this.logger.log(
-      `Successfully migrated channel sync stages for workspace ${workspaceId}`,
-    );
+    // Migrate deprecated CalendarChannel sync stages
+    if (options.dryRun) {
+      this.logger.log(
+        `Would migrate deprecated calendarChannel sync stages for workspace ${workspaceId}`,
+      );
+    } else {
+      const calendarChannelUpdateResult = await this.coreDataSource.query(
+        `UPDATE "${schemaName}"."${tableName}"
+         SET "syncStage" = 'CALENDAR_EVENT_LIST_FETCH_PENDING'
+         WHERE "syncStage" IN ('FULL_CALENDAR_EVENT_LIST_FETCH_PENDING', 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING')`,
+      );
+
+      const calendarChannelRowsUpdated = calendarChannelUpdateResult[1] || 0;
+
+      this.logger.log(
+        `Migrated ${calendarChannelRowsUpdated} calendarChannel records from deprecated sync stages in workspace ${workspaceId}`,
+      );
+    }
   }
 
   private async updateMessageChannelSyncStageFieldMetadata(
     workspaceId: string,
+    options: RunOnWorkspaceArgs['options'],
   ): Promise<void> {
     const messageChannelObject = await this.objectMetadataRepository.findOne({
       where: {
@@ -214,14 +301,15 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    const options = syncStageField.options || [];
+    const fieldOptions = (syncStageField.options ||
+      []) as FieldMetadataComplexOption[];
 
-    const hasMessageListFetchScheduled = options.some(
+    const hasMessageListFetchScheduled = fieldOptions.some(
       (option) =>
         option.value === MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
     );
 
-    const hasPendingConfiguration = options.some(
+    const hasPendingConfiguration = fieldOptions.some(
       (option) =>
         option.value === MessageChannelSyncStage.PENDING_CONFIGURATION,
     );
@@ -234,33 +322,33 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    if (!hasMessageListFetchScheduled) {
-      const insertIndex =
-        options.findIndex(
-          (opt) =>
-            opt.value === MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-        ) + 1;
+    if (options.dryRun) {
+      this.logger.log(
+        `Would update MessageChannel syncStage field metadata for workspace ${workspaceId}`,
+      );
 
-      options.splice(insertIndex, 0, {
+      return;
+    }
+
+    if (!hasMessageListFetchScheduled) {
+      fieldOptions.push({
         value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
         label: 'Messages list fetch scheduled',
-        position: insertIndex,
+        position: 1,
+        color: 'green',
       });
     }
 
     if (!hasPendingConfiguration) {
-      options.push({
+      fieldOptions.push({
         value: MessageChannelSyncStage.PENDING_CONFIGURATION,
         label: 'Pending configuration',
-        position: options.length,
+        position: 9,
+        color: 'gray',
       });
     }
 
-    options.forEach((option, index) => {
-      option.position = index;
-    });
-
-    syncStageField.options = options;
+    syncStageField.options = fieldOptions;
 
     await this.fieldMetadataRepository.save(syncStageField);
 
@@ -271,6 +359,7 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
 
   private async updateCalendarChannelSyncStageFieldMetadata(
     workspaceId: string,
+    options: RunOnWorkspaceArgs['options'],
   ): Promise<void> {
     const calendarChannelObject = await this.objectMetadataRepository.findOne({
       where: {
@@ -303,15 +392,16 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    const options = syncStageField.options || [];
+    const fieldOptions = (syncStageField.options ||
+      []) as FieldMetadataComplexOption[];
 
-    const hasCalendarEventListFetchScheduled = options.some(
+    const hasCalendarEventListFetchScheduled = fieldOptions.some(
       (option) =>
         option.value ===
         CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
     );
 
-    const hasPendingConfiguration = options.some(
+    const hasPendingConfiguration = fieldOptions.some(
       (option) =>
         option.value === CalendarChannelSyncStage.PENDING_CONFIGURATION,
     );
@@ -324,34 +414,33 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    if (!hasCalendarEventListFetchScheduled) {
-      const insertIndex =
-        options.findIndex(
-          (opt) =>
-            opt.value ===
-            CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-        ) + 1;
+    if (options.dryRun) {
+      this.logger.log(
+        `Would update CalendarChannel syncStage field metadata for workspace ${workspaceId}`,
+      );
 
-      options.splice(insertIndex, 0, {
+      return;
+    }
+
+    if (!hasCalendarEventListFetchScheduled) {
+      fieldOptions.push({
         value: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
         label: 'Calendar event list fetch scheduled',
-        position: insertIndex,
+        position: 1,
+        color: 'green',
       });
     }
 
     if (!hasPendingConfiguration) {
-      options.push({
+      fieldOptions.push({
         value: CalendarChannelSyncStage.PENDING_CONFIGURATION,
         label: 'Pending configuration',
-        position: options.length,
+        position: 9,
+        color: 'gray',
       });
     }
 
-    options.forEach((option, index) => {
-      option.position = index;
-    });
-
-    syncStageField.options = options;
+    syncStageField.options = fieldOptions;
 
     await this.fieldMetadataRepository.save(syncStageField);
 
