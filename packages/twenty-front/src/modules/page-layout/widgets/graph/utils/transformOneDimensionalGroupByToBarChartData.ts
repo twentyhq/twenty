@@ -8,6 +8,7 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { computeAggregateFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateFromGroupByResult';
+import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -39,7 +40,10 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     const dimensionValues = result.groupByDimensionValues;
 
     const xValue = isDefined(dimensionValues?.[0])
-      ? String(dimensionValues[0])
+      ? formatDimensionValue({
+          value: dimensionValues[0],
+          fieldMetadata: groupByFieldX,
+        })
       : '';
 
     const aggregate = computeAggregateFromGroupByResult({

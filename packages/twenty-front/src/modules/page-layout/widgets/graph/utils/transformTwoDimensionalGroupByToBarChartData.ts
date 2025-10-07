@@ -6,6 +6,7 @@ import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBa
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { computeAggregateFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateFromGroupByResult';
+import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -29,7 +30,7 @@ type TransformTwoDimensionalGroupByToBarChartDataResult = {
 export const transformTwoDimensionalGroupByToBarChartData = ({
   rawResults,
   groupByFieldX,
-  groupByFieldY: _groupByFieldY,
+  groupByFieldY,
   aggregateField,
   configuration,
   aggregateOperation,
@@ -42,8 +43,14 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     const dimensionValues = result.groupByDimensionValues;
     if (!isDefined(dimensionValues) || dimensionValues.length < 2) return;
 
-    const xValue = String(dimensionValues[0]);
-    const yValue = String(dimensionValues[1]);
+    const xValue = formatDimensionValue({
+      value: dimensionValues[0],
+      fieldMetadata: groupByFieldX,
+    });
+    const yValue = formatDimensionValue({
+      value: dimensionValues[1],
+      fieldMetadata: groupByFieldY,
+    });
 
     const aggregate = computeAggregateFromGroupByResult({
       rawResult: result,
