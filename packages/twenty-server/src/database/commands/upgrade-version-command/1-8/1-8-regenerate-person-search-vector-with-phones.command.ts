@@ -9,6 +9,7 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { SEARCH_FIELDS_FOR_PERSON } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -25,6 +26,7 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspaceSchemaManager: WorkspaceSchemaManagerService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -44,20 +46,38 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
     await queryRunner.connect();
 
     try {
+      const schemaName = getWorkspaceSchemaName(workspaceId);
+
+      const newSearchVectorExpression = getTsVectorColumnExpressionFromFields(
+        SEARCH_FIELDS_FOR_PERSON,
+      );
+
+      const isDryRun = Boolean(options.dryRun);
+
       await queryRunner.startTransaction();
 
-      await this.regenerateSearchVector(workspaceId, queryRunner);
+      await this.applySearchVectorChanges(
+        schemaName,
+        workspaceId,
+        newSearchVectorExpression,
+        queryRunner,
+      );
 
-      if (options.dryRun) {
+      if (isDryRun) {
+        await queryRunner.rollbackTransaction();
+
         this.logger.log(
           `DRY RUN: Would regenerate person search vector for workspace ${workspaceId}`,
         );
-      } else {
-        await queryRunner.commitTransaction();
-        this.logger.log(
-          `Successfully regenerated person search vector for workspace ${workspaceId}`,
-        );
+
+        return;
       }
+
+      await queryRunner.commitTransaction();
+
+      this.logger.log(
+        `Successfully regenerated person search vector for workspace ${workspaceId}`,
+      );
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
@@ -73,52 +93,66 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
     }
   }
 
-  private async regenerateSearchVector(
+  private async applySearchVectorChanges(
+    schemaName: string,
     workspaceId: string,
+    newSearchVectorExpression: string,
     queryRunner: QueryRunner,
   ): Promise<void> {
-    const schemaName = getWorkspaceSchemaName(workspaceId);
-
-    const newSearchVectorExpression = getTsVectorColumnExpressionFromFields(
-      SEARCH_FIELDS_FOR_PERSON,
-    );
-
     this.logger.log(
       `Dropping existing searchVector index for workspace ${workspaceId}`,
     );
 
-    await queryRunner.query(`
-      DROP INDEX IF EXISTS "${schemaName}"."IDX_person_searchVector"
-    `);
+    await this.workspaceSchemaManager.indexManager.dropIndex({
+      queryRunner,
+      schemaName,
+      indexName: 'IDX_person_searchVector',
+    });
 
     this.logger.log(
       `Dropping existing searchVector column for workspace ${workspaceId}`,
     );
 
-    await queryRunner.query(`
-      ALTER TABLE IF EXISTS "${schemaName}"."person"
-      DROP COLUMN IF EXISTS "searchVector"
-    `);
+    await this.workspaceSchemaManager.columnManager.dropColumns({
+      queryRunner,
+      schemaName,
+      tableName: 'person',
+      columnNames: ['searchVector'],
+    });
 
     this.logger.log(
       `Creating new searchVector column with phone indexing for workspace ${workspaceId}`,
     );
 
-    await queryRunner.query(`
-      ALTER TABLE "${schemaName}"."person"
-      ADD COLUMN "searchVector" tsvector
-      GENERATED ALWAYS AS (${newSearchVectorExpression}) STORED
-    `);
+    await this.workspaceSchemaManager.columnManager.addColumns({
+      queryRunner,
+      schemaName,
+      tableName: 'person',
+      columnDefinitions: [
+        {
+          name: 'searchVector',
+          type: 'tsvector',
+          isNullable: true,
+          asExpression: newSearchVectorExpression,
+          generatedType: 'STORED',
+        },
+      ],
+    });
 
     this.logger.log(
       `Recreating GIN index on searchVector for workspace ${workspaceId}`,
     );
 
-    await queryRunner.query(`
-      CREATE INDEX "IDX_person_searchVector"
-      ON "${schemaName}"."person"
-      USING GIN ("searchVector")
-    `);
+    await this.workspaceSchemaManager.indexManager.createIndex({
+      queryRunner,
+      schemaName,
+      tableName: 'person',
+      index: {
+        name: 'IDX_person_searchVector',
+        columns: ['searchVector'],
+        type: 'GIN',
+      },
+    });
   }
 
   private async ensureUnaccentFunction(): Promise<void> {
@@ -137,4 +171,5 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
       );
     }
   }
+
 }
