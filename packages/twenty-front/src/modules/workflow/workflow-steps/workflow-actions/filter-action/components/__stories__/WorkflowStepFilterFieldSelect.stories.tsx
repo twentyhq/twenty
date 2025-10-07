@@ -14,7 +14,7 @@ const DEFAULT_STEP_FILTER: StepFilter = {
   stepFilterGroupId: 'filter-group-1',
   stepOutputKey: '',
   type: 'text',
-  operand: ViewFilterOperand.Is,
+  operand: ViewFilterOperand.IS,
   value: '',
   positionInStepFilterGroup: 0,
 };

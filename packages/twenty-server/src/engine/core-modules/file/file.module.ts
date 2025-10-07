@@ -11,8 +11,6 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { FileController } from './controllers/file.controller';
-import { CleanupOrphanedFilesCronCommand } from './crons/commands/cleanup-orphaned-files.cron.command';
-import { CleanupOrphanedFilesCronJob } from './crons/jobs/cleanup-orphaned-files.cron.job';
 import { FileEntity } from './entities/file.entity';
 import { FileUploadService } from './file-upload/services/file-upload.service';
 import { FileResolver } from './resolvers/file.resolver';
@@ -34,11 +32,9 @@ import { FileService } from './services/file.service';
     FileWorkspaceMemberListener,
     FileWorkspaceFolderDeletionJob,
     FileDeletionJob,
-    CleanupOrphanedFilesCronJob,
-    CleanupOrphanedFilesCronCommand,
     FileUploadService,
   ],
-  exports: [FileService, FileMetadataService, CleanupOrphanedFilesCronCommand],
+  exports: [FileService, FileMetadataService],
   controllers: [FileController],
 })
 export class FileModule {}

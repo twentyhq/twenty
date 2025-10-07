@@ -22,6 +22,7 @@ import { restorePageLayoutTabOperationFactory } from 'test/integration/graphql/u
 import { updatePageLayoutTabOperationFactory } from 'test/integration/graphql/utils/update-page-layout-tab-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { assertPageLayoutTabStructure } from 'test/integration/utils/page-layout-tab-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -63,6 +64,15 @@ describe('Page Layout Tab Resolver', () => {
 
   afterAll(async () => {
     await cleanupPageLayoutRecordsWithGraphQL();
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });

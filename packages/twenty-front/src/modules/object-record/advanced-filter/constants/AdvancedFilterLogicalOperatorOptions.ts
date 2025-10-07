@@ -1,4 +1,4 @@
-import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
+import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 export const ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS = [
   {

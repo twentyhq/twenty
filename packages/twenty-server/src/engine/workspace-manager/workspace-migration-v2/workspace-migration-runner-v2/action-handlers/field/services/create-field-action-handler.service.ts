@@ -9,10 +9,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-with-flat-field-maps-in-flat-object-metadata-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
@@ -40,15 +40,19 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     action,
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateFieldAction>): Partial<AllFlatEntityMaps> {
-    const { flatObjectMetadataMaps } = allFlatEntityMaps;
-    const updatedFlatObjectMetadataMaps =
-      addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-        flatFieldMetadata: action.flatFieldMetadata,
-        flatObjectMetadataMaps,
-      });
+    const { flatFieldMetadataMaps: existingFlatFieldMetadataMaps } =
+      allFlatEntityMaps;
+    const updatedFlatFieldMetadataMaps = action.flatFieldMetadatas.reduce(
+      (flatFieldMetadataMaps, flatFieldMetadata) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatFieldMetadata,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
+      existingFlatFieldMetadataMaps,
+    );
 
     return {
-      flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
     };
   }
 
@@ -61,9 +65,11 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         FieldMetadataEntity,
       );
 
-    const { flatFieldMetadata } = action;
+    const { flatFieldMetadatas } = action;
 
-    await fieldMetadataRepository.insert(flatFieldMetadata);
+    for (const flatFieldMetadata of flatFieldMetadatas) {
+      await fieldMetadataRepository.insert(flatFieldMetadata);
+    }
   }
 
   async executeForWorkspaceSchema(
@@ -75,76 +81,83 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: { flatObjectMetadataMaps },
       workspaceId,
     } = context;
-    const { flatFieldMetadata } = action;
+    const { flatFieldMetadatas } = action;
 
-    const flatObjectMetadataWithFlatFieldMaps =
-      findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps,
-        objectMetadataId: flatFieldMetadata.objectMetadataId,
+    // TODO prastoin improve doing batchs
+    for (const flatFieldMetadata of flatFieldMetadatas) {
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityId: flatFieldMetadata.objectMetadataId,
       });
 
-    const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
-      workspaceId,
-      flatObjectMetadata: flatObjectMetadataWithFlatFieldMaps,
-    });
+      const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
+        workspaceId,
+        flatObjectMetadata,
+      });
 
-    const enumOperations = collectEnumOperationsForField({
-      flatFieldMetadata: flatFieldMetadata,
-      tableName,
-      operation: EnumOperation.CREATE,
-    });
+      const enumOperations = collectEnumOperationsForField({
+        flatFieldMetadata,
+        tableName,
+        operation: EnumOperation.CREATE,
+      });
 
-    const columnDefinitions = generateColumnDefinitions({
-      flatFieldMetadata: flatFieldMetadata,
-      flatObjectMetadataWithoutFields: flatObjectMetadataWithFlatFieldMaps,
-    });
+      const columnDefinitions = generateColumnDefinitions({
+        flatFieldMetadata,
+        flatObjectMetadata,
+      });
 
-    await executeBatchEnumOperations({
-      enumOperations,
-      queryRunner,
-      schemaName,
-      workspaceSchemaManagerService: this.workspaceSchemaManagerService,
-    });
+      await executeBatchEnumOperations({
+        enumOperations,
+        queryRunner,
+        schemaName,
+        workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+      });
 
-    await this.workspaceSchemaManagerService.columnManager.addColumns({
-      queryRunner,
-      schemaName,
-      tableName,
-      columnDefinitions,
-    });
+      await this.workspaceSchemaManagerService.columnManager.addColumns({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnDefinitions,
+      });
 
-    if (
-      isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
-      flatFieldMetadata.settings.relationType === RelationType.MANY_TO_ONE
-    ) {
-      const referencedTableName = computeObjectTargetTable(
-        flatFieldMetadata.flatRelationTargetObjectMetadata,
-      );
+      if (
+        isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
+        flatFieldMetadata.settings.relationType === RelationType.MANY_TO_ONE
+      ) {
+        const targetFlatObjectMetadata =
+          findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          });
+        const referencedTableName = computeObjectTargetTable(
+          targetFlatObjectMetadata,
+        );
 
-      const joinColumnName = flatFieldMetadata.settings.joinColumnName;
+        const joinColumnName = flatFieldMetadata.settings.joinColumnName;
 
-      if (!isDefined(joinColumnName)) {
-        throw new Error(
-          'Join column name is not defined in a MANY_TO_ONE relation',
+        if (!isDefined(joinColumnName)) {
+          throw new Error(
+            'Join column name is not defined in a MANY_TO_ONE relation',
+          );
+        }
+
+        await this.workspaceSchemaManagerService.foreignKeyManager.createForeignKey(
+          {
+            queryRunner,
+            schemaName,
+            foreignKey: {
+              tableName,
+              columnName: joinColumnName,
+              referencedTableName,
+              referencedColumnName: 'id',
+              onDelete:
+                convertOnDeleteActionToOnDelete(
+                  flatFieldMetadata.settings.onDelete,
+                ) ?? 'CASCADE',
+            },
+          },
         );
       }
-
-      await this.workspaceSchemaManagerService.foreignKeyManager.createForeignKey(
-        {
-          queryRunner,
-          schemaName,
-          foreignKey: {
-            tableName,
-            columnName: joinColumnName,
-            referencedTableName,
-            referencedColumnName: 'id',
-            onDelete:
-              convertOnDeleteActionToOnDelete(
-                flatFieldMetadata.settings.onDelete,
-              ) ?? 'CASCADE',
-          },
-        },
-      );
     }
   }
 }

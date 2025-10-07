@@ -10,17 +10,16 @@ import { type ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/ty
 import { type ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
 import { type ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { type ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 import { CallWebhookJobsJob } from 'src/engine/core-modules/webhook/jobs/call-webhook-jobs.job';
 import { type ObjectRecordEventForWebhook } from 'src/engine/core-modules/webhook/types/object-record-event-for-webhook.type';
-import { CallDatabaseEventTriggerJobsJob } from 'src/engine/metadata-modules/trigger/jobs/call-database-event-trigger-jobs.job';
+import { CallDatabaseEventTriggerJobsJob } from 'src/engine/metadata-modules/database-event-trigger/jobs/call-database-event-trigger-jobs.job';
 import { SubscriptionsService } from 'src/engine/subscriptions/subscriptions.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -81,12 +80,6 @@ export class EntityEventsToDbListener {
         },
       }));
 
-    const isDatabaseEventTriggerEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_DATABASE_EVENT_TRIGGER_ENABLED,
-        batchEvent.workspaceId,
-      );
-
     const promises = [
       this.subscriptionsService.publish(batchEvent),
       this.webhookQueueService.add<
@@ -100,15 +93,13 @@ export class EntityEventsToDbListener {
       ),
     ];
 
-    if (isDatabaseEventTriggerEnabled) {
-      promises.push(
-        this.triggerQueueService.add<WorkspaceEventBatch<T>>(
-          CallDatabaseEventTriggerJobsJob.name,
-          batchEvent,
-          { retryLimit: 3 },
-        ),
-      );
-    }
+    promises.push(
+      this.triggerQueueService.add<WorkspaceEventBatch<T>>(
+        CallDatabaseEventTriggerJobsJob.name,
+        batchEvent,
+        { retryLimit: 3 },
+      ),
+    );
 
     if (auditLogsEvents.length > 0) {
       promises.push(

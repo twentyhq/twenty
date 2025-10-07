@@ -11,7 +11,6 @@ import {
   WorkspaceMigrationV2ExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration.exception';
 
-// TODO: replace build logic by orchestrator service
 @Injectable()
 export class WorkspaceMigrationValidateBuildAndRunService {
   private readonly logger = new Logger(

@@ -1,9 +1,9 @@
 import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
+import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { WidgetType } from '~/generated/graphql';
+import { GraphType } from '~/generated-metadata/graphql';
 
 const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
@@ -30,23 +30,18 @@ type Story = StoryObj<typeof WidgetRenderer>;
 
 export const WithNumberChart: Story = {
   args: {
-    widget: {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
       title: 'Sales Pipeline',
-      type: WidgetType.GRAPH,
-      configuration: {
-        graphType: GraphType.NUMBER,
-      },
+      graphType: GraphType.NUMBER,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 3,
       },
-      id: 'widget-1',
-      pageLayoutTabId: 'tab-overview',
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
+    }),
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
@@ -57,23 +52,18 @@ export const WithNumberChart: Story = {
 
 export const WithGaugeChart: Story = {
   args: {
-    widget: {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
       title: 'Conversion Rate',
-      type: WidgetType.GRAPH,
-      configuration: {
-        graphType: GraphType.GAUGE,
-      },
-      createdAt: '2024-01-01T00:00:00Z',
+      graphType: GraphType.GAUGE,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 5,
         columnSpan: 3,
       },
-      id: 'widget-1',
-      pageLayoutTabId: 'tab-overview',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
+    }),
   },
   render: (args) => (
     <div style={{ width: '300px', height: '400px' }}>
@@ -84,23 +74,18 @@ export const WithGaugeChart: Story = {
 
 export const WithPieChart: Story = {
   args: {
-    widget: {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
       title: 'Lead Distribution',
-      type: WidgetType.GRAPH,
-      configuration: {
-        graphType: GraphType.PIE,
-      },
-      createdAt: '2024-01-01T00:00:00Z',
+      graphType: GraphType.PIE,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 5,
         columnSpan: 3,
       },
-      id: 'widget-1',
-      pageLayoutTabId: 'tab-overview',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
+    }),
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
@@ -111,23 +96,18 @@ export const WithPieChart: Story = {
 
 export const SmallWidget: Story = {
   args: {
-    widget: {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
       title: 'Small Widget (2x2 grid)',
-      type: WidgetType.GRAPH,
-      configuration: {
-        graphType: GraphType.NUMBER,
-      },
-      createdAt: '2024-01-01T00:00:00Z',
+      graphType: GraphType.NUMBER,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 2,
       },
-      id: 'widget-1',
-      pageLayoutTabId: 'tab-overview',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
+    }),
   },
   parameters: {
     docs: {
@@ -145,23 +125,18 @@ export const SmallWidget: Story = {
 
 export const MediumWidget: Story = {
   args: {
-    widget: {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
       title: 'Medium Widget (4x3 grid)',
-      type: WidgetType.GRAPH,
-      configuration: {
-        graphType: GraphType.GAUGE,
-      },
-      createdAt: '2024-01-01T00:00:00Z',
+      graphType: GraphType.GAUGE,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 3,
         columnSpan: 4,
       },
-      id: 'widget-1',
-      pageLayoutTabId: 'tab-overview',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
+    }),
   },
   parameters: {
     docs: {
@@ -179,23 +154,18 @@ export const MediumWidget: Story = {
 
 export const LargeWidget: Story = {
   args: {
-    widget: {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
       title: 'Large Widget (6x4 grid)',
-      type: WidgetType.GRAPH,
-      configuration: {
-        graphType: GraphType.PIE,
-      },
-      createdAt: '2024-01-01T00:00:00Z',
+      graphType: GraphType.PIE,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 4,
         columnSpan: 6,
       },
-      id: 'widget-1',
-      pageLayoutTabId: 'tab-overview',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
+    }),
   },
   parameters: {
     docs: {
@@ -213,23 +183,18 @@ export const LargeWidget: Story = {
 
 export const WideWidget: Story = {
   args: {
-    widget: {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
       title: 'Wide Widget (8x2 grid)',
-      type: WidgetType.GRAPH,
-      configuration: {
-        graphType: GraphType.NUMBER,
-      },
-      createdAt: '2024-01-01T00:00:00Z',
+      graphType: GraphType.NUMBER,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 8,
       },
-      id: 'widget-1',
-      pageLayoutTabId: 'tab-overview',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
+    }),
   },
   parameters: {
     docs: {
@@ -247,23 +212,18 @@ export const WideWidget: Story = {
 
 export const TallWidget: Story = {
   args: {
-    widget: {
+    widget: createDefaultGraphWidget({
+      id: 'widget-1',
+      pageLayoutTabId: 'tab-overview',
       title: 'Tall Widget (3x6 grid)',
-      type: WidgetType.GRAPH,
-      configuration: {
-        graphType: GraphType.GAUGE,
-      },
-      createdAt: '2024-01-01T00:00:00Z',
+      graphType: GraphType.GAUGE,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 6,
         columnSpan: 3,
       },
-      id: 'widget-1',
-      pageLayoutTabId: 'tab-overview',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
+    }),
   },
   parameters: {
     docs: {

@@ -490,6 +490,10 @@ export class AuthResolver {
     @AuthUser() currentUser: User,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpOutput> {
+    await this.signInUpService.checkWorkspaceCreationIsAllowedOrThrow(
+      currentUser,
+    );
+
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: currentUser },
     );
@@ -703,18 +707,33 @@ export class AuthResolver {
 
     const hasServerLevelImpersonatePermission =
       impersonatorUserWorkspace.user.canImpersonate === true &&
-      impersonatorUserWorkspace.workspace.allowImpersonation === true;
+      toImpersonateUserWorkspace.workspace.allowImpersonation === true;
 
-    if (isServerLevelImpersonation && !hasServerLevelImpersonatePermission) {
+    if (isServerLevelImpersonation) {
+      if (!hasServerLevelImpersonatePermission) {
+        await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+          eventName: 'server.impersonation.token_exchange_failed',
+          message: `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
+        });
+
+        throw new AuthException(
+          'Server level impersonation not allowed on this workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
       await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: 'server.impersonation.token_exchange_failed',
-        message: `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
+        eventName: `server.impersonation.token_exchange_success`,
+        message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
 
-      throw new AuthException(
-        'Server level impersonation not allowed on this workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+      return {
+        workspaceId: workspace.id,
+        impersonatorUserWorkspaceId: impersonatorUserWorkspace.id,
+        impersonatedUserWorkspaceId: toImpersonateUserWorkspace.id,
+        impersonatorUserId: impersonatorUserWorkspace.user.id,
+        impersonatedUserId: toImpersonateUserWorkspace.user.id,
+      };
     }
 
     const hasWorkspaceLevelImpersonatePermission =
@@ -724,12 +743,9 @@ export class AuthResolver {
         workspaceId: workspace.id,
       });
 
-    if (
-      !hasWorkspaceLevelImpersonatePermission &&
-      !hasServerLevelImpersonatePermission
-    ) {
+    if (!hasWorkspaceLevelImpersonatePermission) {
       await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.token_exchange_failed`,
+        eventName: 'workspace.impersonation.token_exchange_failed',
         message: `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
       throw new AuthException(
@@ -739,7 +755,7 @@ export class AuthResolver {
     }
 
     await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.token_exchange_success`,
+      eventName: 'workspace.impersonation.token_exchange_success',
       message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
     });
 

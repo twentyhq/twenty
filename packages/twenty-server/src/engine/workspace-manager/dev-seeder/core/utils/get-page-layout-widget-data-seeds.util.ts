@@ -1,7 +1,13 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
 import { PAGE_LAYOUT_WIDGET_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-widget-seeds.constant';
 import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 type PageLayoutWidgetDataSeed = {
   id: string;
@@ -18,686 +24,494 @@ type PageLayoutWidgetDataSeed = {
   objectMetadataId: string | null;
 };
 
+const getFieldId = (
+  object: ObjectMetadataEntity | undefined,
+  fieldName: string,
+): string | undefined => {
+  return object?.fields?.find((field) => field.name === fieldName)?.id;
+};
+
 export const getPageLayoutWidgetDataSeeds = (
   workspaceId: string,
-): PageLayoutWidgetDataSeed[] => [
-  // Sales Overview Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.SALES_PIPELINE_NUMBER,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
-    ),
-    title: 'Pipeline Value',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
-    configuration: { graphType: 'NUMBER' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.SALES_CONVERSION_GAUGE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
-    ),
-    title: 'Conversion Rate',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 3, rowSpan: 4, columnSpan: 4 },
-    configuration: { graphType: 'GAUGE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.SALES_MONTHLY_REVENUE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
-    ),
-    title: 'Monthly Revenue',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 7, rowSpan: 8, columnSpan: 5 },
-    configuration: { graphType: 'LINE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.SALES_DEALS_BY_STAGE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
-    ),
-    title: 'Deals by Stage',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 4, column: 0, rowSpan: 4, columnSpan: 6 },
-    configuration: { graphType: 'BAR' },
-    objectMetadataId: null,
-  },
+  objectMetadataItems: ObjectMetadataEntity[],
+): PageLayoutWidgetDataSeed[] => {
+  const opportunityObject = objectMetadataItems.find(
+    (obj) => obj.standardId === STANDARD_OBJECT_IDS.opportunity,
+  );
+  const companyObject = objectMetadataItems.find(
+    (obj) => obj.standardId === STANDARD_OBJECT_IDS.company,
+  );
+  const personObject = objectMetadataItems.find(
+    (obj) => obj.standardId === STANDARD_OBJECT_IDS.person,
+  );
+  const taskObject = objectMetadataItems.find(
+    (obj) => obj.standardId === STANDARD_OBJECT_IDS.task,
+  );
+  const rocketObject = objectMetadataItems.find(
+    (obj) => obj.nameSingular === 'rocket',
+  );
 
-  // Sales Details Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.SALES_TOP_PERFORMERS,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.SALES_DETAILS,
-    ),
-    title: 'Top Sales Performers',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 5 },
-    configuration: { graphType: 'BAR' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.SALES_FORECAST_LINE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.SALES_DETAILS,
-    ),
-    title: 'Sales Forecast',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 5, rowSpan: 5, columnSpan: 7 },
-    configuration: { graphType: 'LINE' },
-    objectMetadataId: null,
-  },
+  const opportunityAmountFieldId = getFieldId(opportunityObject, 'amount');
+  const opportunityCloseDateFieldId = getFieldId(
+    opportunityObject,
+    'closeDate',
+  );
+  const opportunityStageFieldId = getFieldId(opportunityObject, 'stage');
 
-  // Customer Overview Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_TOTAL_COUNT,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
-    ),
-    title: 'Total Customers',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
-    configuration: { graphType: 'NUMBER' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_ACQUISITION_TREND,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
-    ),
-    title: 'Customer Acquisition',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 3, rowSpan: 6, columnSpan: 5 },
-    configuration: { graphType: 'LINE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_SEGMENTS_PIE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
-    ),
-    title: 'Customer Segments',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 8, rowSpan: 6, columnSpan: 4 },
-    configuration: { graphType: 'PIE' },
-    objectMetadataId: null,
-  },
+  const companyIdFieldId = getFieldId(companyObject, 'id');
+  const companyCreatedAtFieldId = getFieldId(companyObject, 'createdAt');
+  const companyEmployeesFieldId = getFieldId(companyObject, 'employees');
+  const companyArrFieldId = getFieldId(companyObject, 'annualRecurringRevenue');
+  const companyNameFieldId = getFieldId(companyObject, 'name');
+  const companyLinkedinLinkFieldId = getFieldId(companyObject, 'linkedinLink');
 
-  // Customer Analytics Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_SATISFACTION_GAUGE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS,
-    ),
-    title: 'Customer Satisfaction',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
-    configuration: { graphType: 'GAUGE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_RETENTION_RATE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS,
-    ),
-    title: 'Retention Rate',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 3 },
-    configuration: { graphType: 'NUMBER' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_LIFETIME_VALUE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS,
-    ),
-    title: 'Lifetime Value',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 7, rowSpan: 6, columnSpan: 5 },
-    configuration: { graphType: 'LINE' },
-    objectMetadataId: null,
-  },
+  const personIdFieldId = getFieldId(personObject, 'id');
+  const personCityFieldId = getFieldId(personObject, 'city');
+  const personJobTitleFieldId = getFieldId(personObject, 'jobTitle');
 
-  // Team Overview Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.TEAM_ACTIVITY_OVERVIEW,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.TEAM_OVERVIEW,
-    ),
-    title: 'Team Activity',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 6 },
-    configuration: { graphType: 'BAR' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.TEAM_PRODUCTIVITY_METRICS,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.TEAM_OVERVIEW,
-    ),
-    title: 'Productivity Metrics',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 6, rowSpan: 5, columnSpan: 6 },
-    configuration: { graphType: 'LINE' },
-    objectMetadataId: null,
-  },
+  const opportunityIdFieldId = getFieldId(opportunityObject, 'id');
 
-  // Team Metrics Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.TEAM_GOAL_PROGRESS,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.TEAM_METRICS,
-    ),
-    title: 'Goal Progress',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 6 },
-    configuration: { graphType: 'GAUGE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.TEAM_MEMBER_LEADERBOARD,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.TEAM_METRICS,
-    ),
-    title: 'Team Leaderboard',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
-    configuration: { graphType: 'BAR' },
-    objectMetadataId: null,
-  },
+  const taskIdFieldId = getFieldId(taskObject, 'id');
 
-  // Revenue Main Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.REVENUE_TOTAL_NUMBER,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.REVENUE_MAIN,
-    ),
-    title: 'Total Revenue',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
-    configuration: { graphType: 'NUMBER' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.REVENUE_GROWTH_TREND,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.REVENUE_MAIN,
-    ),
-    title: 'Revenue Growth',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 3, rowSpan: 6, columnSpan: 5 },
-    configuration: { graphType: 'LINE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.REVENUE_BY_PRODUCT,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.REVENUE_MAIN,
-    ),
-    title: 'Revenue by Product',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 8, rowSpan: 6, columnSpan: 4 },
-    configuration: { graphType: 'PIE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(workspaceId, PAGE_LAYOUT_WIDGET_SEEDS.REVENUE_BY_REGION),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.REVENUE_MAIN,
-    ),
-    title: 'Revenue by Region',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 6, column: 0, rowSpan: 4, columnSpan: 12 },
-    configuration: { graphType: 'BAR' },
-    objectMetadataId: null,
-  },
+  const rocketIdFieldId = getFieldId(rocketObject, 'id');
+  const rocketCreatedAtFieldId = getFieldId(rocketObject, 'createdAt');
 
-  // Marketing Main Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.MARKETING_LEADS_GENERATED,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.MARKETING_MAIN,
-    ),
-    title: 'Leads Generated',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
-    configuration: { graphType: 'NUMBER' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.MARKETING_CAMPAIGN_ROI,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.MARKETING_MAIN,
-    ),
-    title: 'Campaign ROI',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 3, rowSpan: 4, columnSpan: 4 },
-    configuration: { graphType: 'GAUGE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.MARKETING_CHANNEL_PERFORMANCE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.MARKETING_MAIN,
-    ),
-    title: 'Channel Performance',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 7, rowSpan: 6, columnSpan: 5 },
-    configuration: { graphType: 'BAR' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.MARKETING_CONVERSION_FUNNEL,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.MARKETING_MAIN,
-    ),
-    title: 'Conversion Funnel',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 4, column: 0, rowSpan: 4, columnSpan: 7 },
-    configuration: { graphType: 'FUNNEL' },
-    objectMetadataId: null,
-  },
+  return [
+    // Sales Overview Tab Widgets
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.SALES_PIPELINE_VALUE,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
+      ),
+      title: 'Total Pipeline Value',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
+      configuration: isDefined(opportunityAmountFieldId)
+        ? {
+            graphType: 'NUMBER',
+            aggregateFieldMetadataId: opportunityAmountFieldId,
+            aggregateOperation: AggregateOperations.SUM,
+            displayDataLabel: true,
+          }
+        : null,
+      objectMetadataId: opportunityObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.SALES_AVERAGE_DEAL_SIZE,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
+      ),
+      title: 'Rocket Count (Object Permission Test)',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 3, rowSpan: 4, columnSpan: 4 },
+      configuration: isDefined(rocketIdFieldId)
+        ? {
+            graphType: 'NUMBER',
+            aggregateFieldMetadataId: rocketIdFieldId,
+            aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
+          }
+        : null,
+      objectMetadataId: rocketObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.SALES_REVENUE_FORECAST,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
+      ),
+      title: 'Revenue Forecast',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 7, rowSpan: 8, columnSpan: 5 },
+      configuration:
+        isDefined(opportunityAmountFieldId) &&
+        isDefined(opportunityCloseDateFieldId)
+          ? {
+              graphType: 'LINE',
+              aggregateFieldMetadataId: opportunityAmountFieldId,
+              aggregateOperation: AggregateOperations.SUM,
+              groupByFieldMetadataIdX: opportunityCloseDateFieldId,
+              orderByX: 'FIELD_ASC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
+            }
+          : null,
+      objectMetadataId: opportunityObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.SALES_DEALS_BY_STAGE,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
+      ),
+      title: 'Deals by Stage',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 4, column: 0, rowSpan: 4, columnSpan: 6 },
+      configuration:
+        isDefined(opportunityAmountFieldId) &&
+        isDefined(opportunityStageFieldId)
+          ? {
+              graphType: 'BAR',
+              aggregateFieldMetadataId: opportunityAmountFieldId,
+              aggregateOperation: AggregateOperations.SUM,
+              groupByFieldMetadataIdX: opportunityStageFieldId,
+              orderByX: 'FIELD_DESC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
+            }
+          : null,
+      objectMetadataId: opportunityObject?.id ?? null,
+    },
 
-  // Support Main Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.SUPPORT_TICKET_COUNT,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.SUPPORT_MAIN,
-    ),
-    title: 'Open Tickets',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
-    configuration: { graphType: 'NUMBER' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.SUPPORT_RESOLUTION_TIME,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.SUPPORT_MAIN,
-    ),
-    title: 'Avg Resolution Time',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 3, rowSpan: 2, columnSpan: 3 },
-    configuration: { graphType: 'NUMBER' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.SUPPORT_SATISFACTION_SCORE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.SUPPORT_MAIN,
-    ),
-    title: 'Satisfaction Score',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 6, rowSpan: 4, columnSpan: 4 },
-    configuration: { graphType: 'GAUGE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.SUPPORT_TICKET_BY_PRIORITY,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.SUPPORT_MAIN,
-    ),
-    title: 'Tickets by Priority',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 2, column: 0, rowSpan: 4, columnSpan: 6 },
-    configuration: { graphType: 'PIE' },
-    objectMetadataId: null,
-  },
+    // Sales Details Tab Widgets
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.SALES_DEAL_DISTRIBUTION,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.SALES_DETAILS,
+      ),
+      title: 'Rockets by Created Date (Object Permission Test)',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 5 },
+      configuration:
+        isDefined(rocketIdFieldId) && isDefined(rocketCreatedAtFieldId)
+          ? {
+              graphType: 'BAR',
+              aggregateFieldMetadataId: rocketIdFieldId,
+              aggregateOperation: AggregateOperations.COUNT,
+              groupByFieldMetadataIdX: rocketCreatedAtFieldId,
+              orderByX: 'FIELD_ASC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
+            }
+          : null,
+      objectMetadataId: rocketObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.SALES_OPPORTUNITY_COUNT,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.SALES_DETAILS,
+      ),
+      title: 'Opportunity Count',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 5, rowSpan: 5, columnSpan: 7 },
+      configuration: isDefined(opportunityIdFieldId)
+        ? {
+            graphType: 'NUMBER',
+            aggregateFieldMetadataId: opportunityIdFieldId,
+            aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
+          }
+        : null,
+      objectMetadataId: opportunityObject?.id ?? null,
+    },
 
-  // Product Main Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.PRODUCT_ACTIVE_USERS,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.PRODUCT_MAIN,
-    ),
-    title: 'Active Users',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
-    configuration: { graphType: 'NUMBER' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.PRODUCT_FEATURE_ADOPTION,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.PRODUCT_MAIN,
-    ),
-    title: 'Feature Adoption',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 3, rowSpan: 6, columnSpan: 5 },
-    configuration: { graphType: 'BAR' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.PRODUCT_USAGE_HEATMAP,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.PRODUCT_MAIN,
-    ),
-    title: 'Usage Heatmap',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 8, rowSpan: 6, columnSpan: 4 },
-    configuration: { graphType: 'HEATMAP' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.PRODUCT_USER_ENGAGEMENT,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.PRODUCT_MAIN,
-    ),
-    title: 'User Engagement',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 6, column: 0, rowSpan: 4, columnSpan: 12 },
-    configuration: { graphType: 'LINE' },
-    objectMetadataId: null,
-  },
+    // Customer Overview Tab Widgets
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_TOTAL_COUNT,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
+      ),
+      title: 'Total Customers',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
+      configuration: isDefined(companyIdFieldId)
+        ? {
+            graphType: 'NUMBER',
+            aggregateFieldMetadataId: companyIdFieldId,
+            aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
+          }
+        : null,
+      objectMetadataId: companyObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_NEW_OVER_TIME,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
+      ),
+      title: 'New Customers Over Time',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 3, rowSpan: 6, columnSpan: 5 },
+      configuration:
+        isDefined(companyIdFieldId) && isDefined(companyCreatedAtFieldId)
+          ? {
+              graphType: 'LINE',
+              aggregateFieldMetadataId: companyIdFieldId,
+              aggregateOperation: AggregateOperations.COUNT,
+              groupByFieldMetadataIdX: companyCreatedAtFieldId,
+              orderByX: 'FIELD_ASC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
+            }
+          : null,
+      objectMetadataId: companyObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_COMPANIES_BY_SIZE,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
+      ),
+      title: 'Companies by Size',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 8, rowSpan: 6, columnSpan: 4 },
+      configuration:
+        isDefined(companyIdFieldId) && isDefined(companyEmployeesFieldId)
+          ? {
+              graphType: 'BAR',
+              aggregateFieldMetadataId: companyIdFieldId,
+              aggregateOperation: AggregateOperations.COUNT,
+              groupByFieldMetadataIdX: companyEmployeesFieldId,
+              orderByX: 'FIELD_ASC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
+            }
+          : null,
+      objectMetadataId: companyObject?.id ?? null,
+    },
 
-  // Operations Main Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.OPERATIONS_EFFICIENCY_GAUGE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.OPERATIONS_MAIN,
-    ),
-    title: 'Efficiency Score',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
-    configuration: { graphType: 'GAUGE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.OPERATIONS_COST_BREAKDOWN,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.OPERATIONS_MAIN,
-    ),
-    title: 'Cost Breakdown',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 4, rowSpan: 6, columnSpan: 4 },
-    configuration: { graphType: 'PIE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.OPERATIONS_PROCESS_TIME,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.OPERATIONS_MAIN,
-    ),
-    title: 'Process Time',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 8, rowSpan: 6, columnSpan: 4 },
-    configuration: { graphType: 'LINE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.OPERATIONS_ERROR_RATE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.OPERATIONS_MAIN,
-    ),
-    title: 'Error Rate',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 4, column: 0, rowSpan: 2, columnSpan: 4 },
-    configuration: { graphType: 'NUMBER' },
-    objectMetadataId: null,
-  },
+    // Customer Analytics Tab Widgets
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_ANNUAL_RECURRING_REVENUE,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS,
+      ),
+      title: 'Annual Recurring Revenue',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+      configuration: isDefined(companyArrFieldId)
+        ? {
+            graphType: 'NUMBER',
+            aggregateFieldMetadataId: companyArrFieldId,
+            aggregateOperation: AggregateOperations.SUM,
+            displayDataLabel: true,
+          }
+        : null,
+      objectMetadataId: companyObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_REVENUE_DISTRIBUTION,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS,
+      ),
+      title: 'Revenue Distribution',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 3 },
+      configuration:
+        isDefined(companyArrFieldId) && isDefined(companyNameFieldId)
+          ? {
+              graphType: 'PIE',
+              aggregateFieldMetadataId: companyArrFieldId,
+              aggregateOperation: AggregateOperations.SUM,
+              groupByFieldMetadataId: companyNameFieldId,
+              orderBy: 'VALUE_DESC',
+              displayDataLabel: true,
+            }
+          : null,
+      objectMetadataId: companyObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_AVERAGE_ARR,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS,
+      ),
+      title: 'Average ARR',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 7, rowSpan: 6, columnSpan: 5 },
+      configuration: isDefined(companyArrFieldId)
+        ? {
+            graphType: 'GAUGE',
+            aggregateFieldMetadataId: companyArrFieldId,
+            aggregateOperation: AggregateOperations.AVG,
+            displayDataLabel: true,
+          }
+        : null,
+      objectMetadataId: companyObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_LINKEDIN_COUNT,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
+      ),
+      title: 'LinkedIn Profiles Count (Field Permission Test)',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 2, column: 0, rowSpan: 4, columnSpan: 3 },
+      configuration: isDefined(companyLinkedinLinkFieldId)
+        ? {
+            graphType: 'NUMBER',
+            aggregateFieldMetadataId: companyLinkedinLinkFieldId,
+            aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
+          }
+        : null,
+      objectMetadataId: companyObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_LINKEDIN_DISTRIBUTION,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
+      ),
+      title: 'Companies by LinkedIn (Field Permission Test)',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 6, column: 0, rowSpan: 4, columnSpan: 6 },
+      configuration:
+        isDefined(companyIdFieldId) && isDefined(companyLinkedinLinkFieldId)
+          ? {
+              graphType: 'PIE',
+              aggregateFieldMetadataId: companyIdFieldId,
+              aggregateOperation: AggregateOperations.COUNT,
+              groupByFieldMetadataId: companyLinkedinLinkFieldId,
+              orderBy: 'VALUE_DESC',
+              displayDataLabel: true,
+            }
+          : null,
+      objectMetadataId: companyObject?.id ?? null,
+    },
 
-  // Finance Main Tab Widgets
-  {
-    id: generateSeedId(workspaceId, PAGE_LAYOUT_WIDGET_SEEDS.FINANCE_CASH_FLOW),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.FINANCE_MAIN,
-    ),
-    title: 'Cash Flow',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 6 },
-    configuration: { graphType: 'LINE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.FINANCE_EXPENSES_PIE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.FINANCE_MAIN,
-    ),
-    title: 'Expenses Distribution',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
-    configuration: { graphType: 'PIE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.FINANCE_PROFIT_MARGIN,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.FINANCE_MAIN,
-    ),
-    title: 'Profit Margin',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 6, column: 0, rowSpan: 2, columnSpan: 3 },
-    configuration: { graphType: 'NUMBER' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.FINANCE_BUDGET_VARIANCE,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.FINANCE_MAIN,
-    ),
-    title: 'Budget Variance',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 6, column: 3, rowSpan: 4, columnSpan: 9 },
-    configuration: { graphType: 'BAR' },
-    objectMetadataId: null,
-  },
+    // Team Overview Tab Widgets
+    {
+      id: generateSeedId(workspaceId, PAGE_LAYOUT_WIDGET_SEEDS.TEAM_SIZE),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.TEAM_OVERVIEW,
+      ),
+      title: 'Team Size',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 6 },
+      configuration: isDefined(personIdFieldId)
+        ? {
+            graphType: 'NUMBER',
+            aggregateFieldMetadataId: personIdFieldId,
+            aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
+          }
+        : null,
+      objectMetadataId: personObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.TEAM_GEOGRAPHIC_DISTRIBUTION,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.TEAM_OVERVIEW,
+      ),
+      title: 'Geographic Distribution',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 6, rowSpan: 5, columnSpan: 6 },
+      configuration:
+        isDefined(personIdFieldId) && isDefined(personCityFieldId)
+          ? {
+              graphType: 'BAR',
+              aggregateFieldMetadataId: personIdFieldId,
+              aggregateOperation: AggregateOperations.COUNT,
+              groupByFieldMetadataIdX: personCityFieldId,
+              orderByX: 'FIELD_DESC',
+              axisNameDisplay: AxisNameDisplay.NONE,
+              displayDataLabel: false,
+            }
+          : null,
+      objectMetadataId: personObject?.id ?? null,
+    },
 
-  // Executive Main Tab Widgets
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.EXECUTIVE_KEY_METRICS,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.EXECUTIVE_MAIN,
-    ),
-    title: 'Key Business Metrics',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 0, column: 0, rowSpan: 3, columnSpan: 12 },
-    configuration: { graphType: 'PIE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.EXECUTIVE_COMPANY_HEALTH,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.EXECUTIVE_MAIN,
-    ),
-    title: 'Company Health Score',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 3, column: 0, rowSpan: 4, columnSpan: 4 },
-    configuration: { graphType: 'GAUGE' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.EXECUTIVE_QUARTERLY_REVIEW,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.EXECUTIVE_MAIN,
-    ),
-    title: 'Quarterly Performance',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 3, column: 4, rowSpan: 4, columnSpan: 4 },
-    configuration: { graphType: 'BAR' },
-    objectMetadataId: null,
-  },
-  {
-    id: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_WIDGET_SEEDS.EXECUTIVE_STRATEGIC_GOALS,
-    ),
-    pageLayoutTabId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_TAB_SEEDS.EXECUTIVE_MAIN,
-    ),
-    title: 'Strategic Goals Progress',
-    type: WidgetType.GRAPH,
-    gridPosition: { row: 3, column: 8, rowSpan: 8, columnSpan: 4 },
-    configuration: { graphType: 'LINE' },
-    objectMetadataId: null,
-  },
-];
+    // Team Metrics Tab Widgets
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.TEAM_CONTACT_ROLES,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.TEAM_METRICS,
+      ),
+      title: 'Contact Roles',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 6 },
+      configuration:
+        isDefined(personIdFieldId) && isDefined(personJobTitleFieldId)
+          ? {
+              graphType: 'PIE',
+              aggregateFieldMetadataId: personIdFieldId,
+              aggregateOperation: AggregateOperations.COUNT,
+              groupByFieldMetadataId: personJobTitleFieldId,
+              orderBy: 'VALUE_DESC',
+              displayDataLabel: true,
+            }
+          : null,
+      objectMetadataId: personObject?.id ?? null,
+    },
+    {
+      id: generateSeedId(workspaceId, PAGE_LAYOUT_WIDGET_SEEDS.TEAM_OPEN_TASKS),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.TEAM_METRICS,
+      ),
+      title: 'Open Tasks',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
+      configuration: isDefined(taskIdFieldId)
+        ? {
+            graphType: 'NUMBER',
+            aggregateFieldMetadataId: taskIdFieldId,
+            aggregateOperation: AggregateOperations.COUNT,
+            displayDataLabel: true,
+          }
+        : null,
+      objectMetadataId: taskObject?.id ?? null,
+    },
+  ];
+};

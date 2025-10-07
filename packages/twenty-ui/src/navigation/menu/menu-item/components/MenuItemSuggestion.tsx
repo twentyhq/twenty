@@ -8,6 +8,7 @@ import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuIte
 
 export type MenuItemSuggestionProps = {
   LeftIcon?: IconComponent | null;
+  withIconContainer?: boolean;
   text: string;
   selected?: boolean;
   className?: string;
@@ -52,6 +53,7 @@ const StyledSuggestionMenuItem = styled.li<{
 
 export const MenuItemSuggestion = ({
   LeftIcon,
+  withIconContainer = false,
   text,
   className,
   selected,
@@ -72,7 +74,11 @@ export const MenuItemSuggestion = ({
       selected={selected}
     >
       <StyledMenuItemLeftContent>
-        <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
+        <MenuItemLeftContent
+          LeftIcon={LeftIcon ?? undefined}
+          text={text}
+          withIconContainer={withIconContainer}
+        />
       </StyledMenuItemLeftContent>
     </StyledSuggestionMenuItem>
   );
