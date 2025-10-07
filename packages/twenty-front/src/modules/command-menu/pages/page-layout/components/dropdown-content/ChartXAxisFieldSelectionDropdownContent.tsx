@@ -1,7 +1,7 @@
 import { ChartGroupByFieldSelectionDropdownContentBase } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase';
 import { Trans } from '@lingui/react/macro';
 
-export const ChartFieldSelectionDropdownContent = () => {
+export const ChartXAxisFieldSelectionDropdownContent = () => {
   return (
     <ChartGroupByFieldSelectionDropdownContentBase
       headerLabel={<Trans>X-Axis Field</Trans>}
