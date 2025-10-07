@@ -121,7 +121,7 @@ export const useDownloadFakeRecords = () => {
     return { headerRow, bodyRows };
   };
 
-  const formatToCsvContent = (rows: string[][]) => {
+  const formatToCsvContent = (rows: (string | JSON | string[])[][]) => {
     const escapedRows = rows.map((row) => {
       return row.map((value) => {
         const stringifiedValue =
@@ -130,7 +130,7 @@ export const useDownloadFakeRecords = () => {
       });
     });
 
-    const csvContent = [...escapedRows.map((row) => row.join(','))].join('\n');
+    const csvContent = escapedRows.map((row) => row.join(',')).join('\n');
     return [csvContent];
   };
 
