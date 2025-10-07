@@ -25,27 +25,27 @@ export const GRAPH_TYPE_INFORMATION: Record<
   }
 > = {
   [GraphType.BAR]: {
-    label: msg`Bar Chart`,
+    label: msg`Bar`,
     icon: IconChartBar,
     settings: BAR_CHART_SETTINGS,
   },
   [GraphType.PIE]: {
-    label: msg`Pie Chart`,
+    label: msg`Pie`,
     icon: IconChartPie,
     settings: PIE_CHART_SETTINGS,
   },
   [GraphType.LINE]: {
-    label: msg`Line Chart`,
+    label: msg`Line`,
     icon: IconChartLine,
     settings: LINE_CHART_SETTINGS,
   },
   [GraphType.NUMBER]: {
-    label: msg`Number Chart`,
+    label: msg`Number`,
     icon: IconNumber,
     settings: NUMBER_CHART_SETTINGS,
   },
   [GraphType.GAUGE]: {
-    label: msg`Gauge Chart`,
+    label: msg`Gauge`,
     icon: IconGauge,
     settings: GAUGE_CHART_SETTINGS,
   },
