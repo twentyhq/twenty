@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
@@ -9,13 +8,8 @@ import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/
 import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 
 import { CommonSelectedFieldsHandler } from 'src/engine/api/common/common-args-handlers/common-query-selected-fields/common-selected-fields.handler';
-import {
-  CommonQueryNames,
-  RawSelectedFields,
-} from 'src/engine/api/common/types/common-query-args.type';
-import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
@@ -85,8 +79,10 @@ export abstract class CommonBaseQueryRunnerService<
         workspaceId: workspace.id,
       });
 
-    const { roleId, objectsPermissions } =
-      await this.getRoleIdAndObjectsPermissions(authContext, workspace.id);
+    const { roleId } = await this.getRoleIdAndObjectsPermissions(
+      authContext,
+      workspace.id,
+    );
 
     const repository = workspaceDataSource.getRepository(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -101,41 +97,7 @@ export abstract class CommonBaseQueryRunnerService<
       isExecutedByApiKey: isDefined(authContext.apiKey),
       roleId,
       shouldBypassPermissionChecks: false,
-      objectsPermissions,
     };
-  }
-
-  public async computeSelectedFields({
-    rawSelectedFields,
-    objectMetadataItemWithFieldMaps,
-    objectMetadataMaps,
-    objectsPermissions,
-  }: {
-    rawSelectedFields: RawSelectedFields;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectsPermissions: ObjectsPermissions;
-  }): Promise<CommonSelectedFieldsResult> {
-    if (isDefined(rawSelectedFields.graphqlSelectedFields)) {
-      const graphqlQueryParser = new GraphqlQueryParser(
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-      );
-
-      //TODO : Refacto-common - QueryParser should be moved to selected fields handler
-      return graphqlQueryParser.parseSelectedFields(
-        objectMetadataItemWithFieldMaps,
-        rawSelectedFields.graphqlSelectedFields,
-        objectMetadataMaps,
-      );
-    }
-
-    return this.selectedFieldsHandler.computeFromDepth({
-      objectsPermissions,
-      objectMetadataMaps,
-      objectMetadataMapItem: objectMetadataItemWithFieldMaps,
-      depth: rawSelectedFields.depth,
-    });
   }
 
   public async enrichResultsWithGettersAndHooks({

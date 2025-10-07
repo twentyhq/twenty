@@ -9,7 +9,7 @@ interface QueryFailedErrorWithCode extends QueryFailedError {
 
 export const workspaceQueryRunnerRestApiExceptionHandler = (
   error: QueryFailedErrorWithCode,
-) => {
+): never => {
   switch (true) {
     case error instanceof CommonQueryRunnerException:
       return commonQueryRunnerToRestApiExceptionHandler(error);

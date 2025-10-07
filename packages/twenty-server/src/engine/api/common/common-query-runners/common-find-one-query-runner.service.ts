@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
@@ -17,7 +18,6 @@ import {
 import {
   CommonQueryNames,
   FindOneQueryArgs,
-  RawSelectedFields,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -30,13 +30,11 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<ObjectRecord> {
   async run({
-    rawSelectedFields,
     args,
     authContext: toValidateAuthContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
-    rawSelectedFields: RawSelectedFields;
     args: FindOneQueryArgs;
     authContext: AuthContext;
     objectMetadataMaps: ObjectMetadataMaps;
@@ -56,17 +54,9 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       repository,
       roleId,
       shouldBypassPermissionChecks,
-      objectsPermissions,
     } = await this.prepareQueryRunnerContext({
       authContext,
       objectMetadataItemWithFieldMaps,
-    });
-
-    const selectedFieldsResult = await this.computeSelectedFields({
-      rawSelectedFields,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-      objectsPermissions,
     });
 
     const processedArgs = await this.processQueryArgs({
@@ -107,8 +97,8 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     );
 
     const columnsToSelect = buildColumnsToSelect({
-      select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
+      select: args.selectedFieldsResult.select,
+      relations: args.selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     });
@@ -128,13 +118,13 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const objectRecords = [objectRecord] as ObjectRecord[];
 
-    if (selectedFieldsResult.relations) {
+    if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,
         //TODO : Refacto-common - To fix when switching processNestedRelationsHelper to Common
-        relations: selectedFieldsResult.relations as Record<
+        relations: args.selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
@@ -143,7 +133,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks,
-        selectedFields: selectedFieldsResult.select,
+        selectedFields: args.selectedFieldsResult.select,
       });
     }
 
@@ -176,14 +166,16 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     args: FindOneQueryArgs;
   }): Promise<FindOneQueryArgs> {
     const hookedArgs =
-      await this.workspaceQueryHookService.executePreQueryHooks(
+      (await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
         CommonQueryNames.findOne,
         args,
-      );
+        //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
+      )) as FindOneQueryArgs;
 
     return {
+      ...hookedArgs,
       filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
         hookedArgs.filter,
         objectMetadataItemWithFieldMaps,

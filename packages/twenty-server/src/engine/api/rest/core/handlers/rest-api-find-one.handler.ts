@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
-
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 
 @Injectable()
@@ -17,18 +16,24 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
     super();
   }
 
-  async handle(request: Request) {
+  async handle(request: AuthenticatedRequest) {
     try {
-      const { args, rawSelectedFields } = await this.parseCommonArgs(request);
+      const { filter, depth } = await this.parseRequestArgs(request);
       const {
         authContext,
         objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
+      const selectedFieldsResult = await this.computeSelectedFields({
+        depth,
+        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+        authContext,
+      });
+
       const record = await this.commonFindOneQueryRunnerService.run({
-        rawSelectedFields,
-        args,
+        args: { filter, selectedFieldsResult },
         authContext,
         objectMetadataMaps,
         objectMetadataItemWithFieldMaps,
@@ -39,7 +44,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
         objectMetadataItemWithFieldMaps.nameSingular,
       );
     } catch (error) {
-      workspaceQueryRunnerRestApiExceptionHandler(error);
+      return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
@@ -47,22 +52,18 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
     return { data: { [objectNameSingular]: record } };
   }
 
-  private async parseCommonArgs(request: Request) {
+  private async parseRequestArgs(request: AuthenticatedRequest) {
     const { id: recordId } = parseCorePath(request);
     const filter = { id: { eq: recordId } };
     const depth = this.depthInputFactory.create(request);
 
     return {
-      args: {
-        filter,
-      },
-      rawSelectedFields: {
-        depth,
-      },
+      filter,
+      depth,
     };
   }
 
-  private async buildCommonOptions(request: Request) {
+  private async buildCommonOptions(request: AuthenticatedRequest) {
     const { object: parsedObject } = parseCorePath(request);
 
     const { objectMetadataMaps, objectMetadataMapItem } =

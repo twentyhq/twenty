@@ -14,10 +14,9 @@ import {
 
 import { Response } from 'express';
 
-import { AuthenticatedRequest } from 'src/engine/api/rest/core/interfaces/authenticated-request.interface';
-
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -33,6 +32,9 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
+    this.logger.log(
+      `[REST API] Processing BATCH request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.createMany(request);
 
     res.status(200).send(result);
@@ -43,6 +45,9 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
+    this.logger.log(
+      `[REST API] Processing DUPLICATES request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.findDuplicates(request);
 
     res.status(200).send(result);
@@ -53,6 +58,9 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
+    this.logger.log(
+      `[REST API] Processing POST request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.createOne(request);
 
     res.status(201).send(result);
@@ -63,6 +71,9 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
+    this.logger.log(
+      `[REST API] Processing GET request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.get(request);
 
     res.status(200).send(result);
@@ -73,6 +84,9 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
+    this.logger.log(
+      `[REST API] Processing DELETE request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.delete(request);
 
     res.status(200).send(result);
@@ -83,6 +97,9 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
+    this.logger.log(
+      `[REST API] Processing PATCH request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.update(request);
 
     res.status(200).send(result);
@@ -96,6 +113,9 @@ export class RestApiCoreController {
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
   ) {
+    this.logger.log(
+      `[REST API] Processing PUT request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.update(request);
 
     res.status(200).send(result);
