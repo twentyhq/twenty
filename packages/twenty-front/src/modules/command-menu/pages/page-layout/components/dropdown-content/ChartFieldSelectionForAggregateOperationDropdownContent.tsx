@@ -2,6 +2,7 @@ import { ChartAggregateOperationSelectionDropdownContent } from '@/command-menu/
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -59,7 +60,8 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     items: sourceObjectMetadataItem?.fields || [],
     searchQuery,
     getSearchableValues: (item) => [item.label, item.name],
-  });
+    // TODO: remove this once group by is supported for relation fields
+  }).filter((field) => !isFieldRelation(field));
 
   const { getIcon } = useIcons();
 

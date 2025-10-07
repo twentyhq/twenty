@@ -6,6 +6,7 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -78,7 +79,8 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         items: sourceObjectMetadataItem?.fields || [],
         searchQuery,
         getSearchableValues: (item) => [item.label, item.name],
-      }),
+        // TODO: remove this once group by is supported for relation fields
+      }).filter((field) => !isFieldRelation(field)),
     [sourceObjectMetadataItem?.fields, searchQuery],
   );
 
