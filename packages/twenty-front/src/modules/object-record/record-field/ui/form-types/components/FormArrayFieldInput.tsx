@@ -341,7 +341,7 @@ export const FormArrayFieldInput = ({
                         <MenuItem
                           onClick={handleAddItemButtonClick}
                           LeftIcon={IconPlus}
-                          text={`Add item`}
+                          text={t`Add item`}
                         />
                       </DropdownMenuItemsContainer>
                     )}
