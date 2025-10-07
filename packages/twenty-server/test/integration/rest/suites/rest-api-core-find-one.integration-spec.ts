@@ -65,7 +65,7 @@ describe('Core REST API Find One endpoint', () => {
       .expect(400)
       .expect((res) => {
         expect(res.body.messages[0]).toContain('Record not found');
-        expect(res.body.error).toBe('BadRequestException');
+        expect(res.body.error).toBe('NotFoundException');
       });
   });
 

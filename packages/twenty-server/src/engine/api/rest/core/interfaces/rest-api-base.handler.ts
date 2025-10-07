@@ -104,7 +104,7 @@ export abstract class RestApiBaseHandler {
 
   protected abstract handle(
     request: Request,
-  ): Promise<FormatResult | { data: FormatResult[] } | undefined>;
+  ): Promise<FormatResult | { data: FormatResult[] }>;
 
   public async getRepositoryAndMetadataOrFail(request: Request) {
     const { workspace, apiKey, userWorkspaceId } = request;

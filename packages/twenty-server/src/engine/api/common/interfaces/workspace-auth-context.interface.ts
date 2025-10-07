@@ -5,15 +5,15 @@ interface AuthContextWithDefinedWorkspaceProperties {
   workspace: NonNullable<AuthContext['workspace']>;
   workspaceMetadataVersion?: string;
   workspaceMemberId: AuthContext['workspaceMemberId'];
+  userWorkspaceId: AuthContext['userWorkspaceId'];
+  apiKey: AuthContext['apiKey'];
 }
 
 interface ApiKeyAuthContext extends Request {
   apiKey: NonNullable<AuthContext['apiKey']>;
-  userWorkspaceId?: undefined;
 }
 
 interface UserWorkspaceAuthContext extends Request {
-  apiKey?: undefined;
   userWorkspaceId: NonNullable<AuthContext['userWorkspaceId']>;
 }
 

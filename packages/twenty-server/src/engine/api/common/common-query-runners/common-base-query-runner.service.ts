@@ -22,7 +22,6 @@ import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-r
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
@@ -244,14 +243,10 @@ export abstract class CommonBaseQueryRunnerService<
       await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
         {
           workspaceId: workspaceId,
-          roleIds: roleId ? [roleId] : undefined,
+          roleIds: [roleId],
         },
       );
 
-    if (!isDefined(objectMetadataPermissions?.[roleId])) {
-      throw new InternalServerError('Permissions not found for role');
-    }
-
-    return { roleId, objectsPermissions: objectMetadataPermissions?.[roleId] };
+    return { roleId, objectsPermissions: objectMetadataPermissions[roleId] };
   }
 }
