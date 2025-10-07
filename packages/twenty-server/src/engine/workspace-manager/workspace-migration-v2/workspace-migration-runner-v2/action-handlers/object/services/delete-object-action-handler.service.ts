@@ -8,7 +8,7 @@ import {
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findObjectFieldsInFlatFieldMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
+import { findObjectFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -90,11 +90,10 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       schemaName,
       tableName,
     });
-    const { objectFlatFieldMetadatas } =
-      findObjectFieldsInFlatFieldMetadataMapsOrThrow({
-        flatFieldMetadataMaps,
-        flatObjectMetadata,
-      });
+    const { objectFlatFieldMetadatas } = findObjectFlatFieldMetadatasOrThrow({
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    });
     const enumOrCompositeFlatFieldMetadatas = objectFlatFieldMetadatas.filter(
       (field) =>
         isEnumFlatFieldMetadata(field) || isCompositeFlatFieldMetadata(field),
