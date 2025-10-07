@@ -17,7 +17,7 @@ import { useStartChannelSyncMutation } from '~/generated-metadata/graphql';
 import {
   SETTINGS_ACCOUNTS_CONFIGURATION_STEPS,
   SettingsAccountsConfigurationStep,
-} from '~/pages/settings/accounts/SetttingsAccountsConfigurationSteps';
+} from '~/pages/settings/accounts/SettingsAccountsConfigurationSteps';
 
 export const SettingsAccountsConfiguration = () => {
   const { t } = useLingui();
