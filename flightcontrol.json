@@ -30,15 +30,14 @@
         {
           "id": "twenty-redis",
           "name": "Twenty Redis",
-          "type": "redis",
+          "type": "elasticache",
           "engineVersion": "7.0",
-          "instanceSize": "cache.t4g.micro",
-          "private": false
+          "instanceSize": "cache.t4g.micro"
         },
         {
           "id": "twenty-server",
           "name": "Twenty Server",
-          "type": "fargate",
+          "type": "web",
           "buildType": "docker",
           "dockerfilePath": "Dockerfile",
           "dockerContext": ".",
@@ -91,7 +90,7 @@
         {
           "id": "twenty-worker",
           "name": "Twenty Worker",
-          "type": "fargate",
+          "type": "web",
           "buildType": "docker",
           "dockerfilePath": "Dockerfile",
           "dockerContext": ".",
