@@ -10,6 +10,7 @@ import {
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import {
   CalendarChannelSyncStage,
+  CalendarChannelSyncStatus,
   type CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import {
@@ -97,6 +98,7 @@ export class ChannelSyncService {
     for (const calendarChannel of calendarChannels) {
       await calendarChannelRepository.update(calendarChannel.id, {
         syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        syncStatus: CalendarChannelSyncStatus.ONGOING,
       });
 
       await this.calendarQueueService.add<CalendarEventListFetchJobData>(
