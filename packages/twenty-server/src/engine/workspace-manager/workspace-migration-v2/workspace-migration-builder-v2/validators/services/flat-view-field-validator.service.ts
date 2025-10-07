@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/view-field-related-flat-entity-maps.type';
+import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/view-field-related-flat-entity-maps.type';
 
 type ViewFieldValidationArgs = {
   flatViewFieldToValidate: FlatViewField;
@@ -86,8 +86,8 @@ export class FlatViewFieldValidatorService {
     flatViewFieldToValidate,
     optimisticFlatViewFieldMaps,
     dependencyOptimisticFlatEntityMaps: {
-      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
       flatViewMaps: optimisticFlatViewMaps,
+      flatFieldMetadataMaps,
     },
   }: {
     flatViewFieldToValidate: FlatViewField;
@@ -96,9 +96,10 @@ export class FlatViewFieldValidatorService {
   }): Promise<FailedFlatEntityValidation<FlatViewField>> {
     const errors = [];
 
-    if (
-      isDefined(optimisticFlatViewFieldMaps.byId[flatViewFieldToValidate.id])
-    ) {
+    const existingFlatViewField =
+      optimisticFlatViewFieldMaps.byId[flatViewFieldToValidate.id];
+
+    if (isDefined(existingFlatViewField)) {
       const flatViewFieldId = flatViewFieldToValidate.id;
 
       errors.push({
@@ -108,28 +109,27 @@ export class FlatViewFieldValidatorService {
       });
     }
 
-    const relatedFlatFieldMetadata =
-      findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId({
-        fieldMetadataId: flatViewFieldToValidate.fieldMetadataId,
-        flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+    const relatedFlatView =
+      optimisticFlatViewMaps.byId[flatViewFieldToValidate.viewId];
+
+    if (!isDefined(relatedFlatView)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View not found`,
+        userFriendlyMessage: t`View not found`,
       });
+    }
+
+    const relatedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewFieldToValidate.fieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     if (!isDefined(relatedFlatFieldMetadata)) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`Field metadata not found`,
         userFriendlyMessage: t`Field metadata not found`,
-      });
-    }
-
-    const optimisticFlatView =
-      optimisticFlatViewMaps.byId[flatViewFieldToValidate.viewId];
-
-    if (!isDefined(optimisticFlatView)) {
-      errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View not found`,
-        userFriendlyMessage: t`View not found`,
       });
     }
 

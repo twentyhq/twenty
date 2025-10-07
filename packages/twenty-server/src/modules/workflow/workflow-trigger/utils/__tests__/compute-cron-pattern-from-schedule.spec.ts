@@ -1,8 +1,8 @@
+import { WorkflowTriggerException } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import {
   type WorkflowCronTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { WorkflowTriggerException } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 
 describe('computeCronPatternFromSchedule', () => {
@@ -20,7 +20,7 @@ describe('computeCronPatternFromSchedule', () => {
     expect(computeCronPatternFromSchedule(trigger)).toBe('12 * * * *');
   });
 
-  it('should throw an exception for unsupported pattern for CUSTOM type', () => {
+  it('should support 6-field cron patterns with seconds for CUSTOM type', () => {
     const trigger: WorkflowCronTrigger = {
       name: '',
       type: WorkflowTriggerType.CRON,
@@ -31,11 +31,25 @@ describe('computeCronPatternFromSchedule', () => {
       },
     };
 
+    expect(computeCronPatternFromSchedule(trigger)).toBe('0 12 * * * *');
+  });
+
+  it('should throw an exception for invalid pattern for CUSTOM type', () => {
+    const trigger: WorkflowCronTrigger = {
+      name: '',
+      type: WorkflowTriggerType.CRON,
+      settings: {
+        type: 'CUSTOM',
+        pattern: '60 25 32 13 8',
+        outputSchema: {},
+      },
+    };
+
     expect(() => computeCronPatternFromSchedule(trigger)).toThrow(
       WorkflowTriggerException,
     );
     expect(() => computeCronPatternFromSchedule(trigger)).toThrow(
-      "Cron pattern '0 12 * * * *' is invalid",
+      "Cron pattern '60 25 32 13 8' is invalid",
     );
   });
 

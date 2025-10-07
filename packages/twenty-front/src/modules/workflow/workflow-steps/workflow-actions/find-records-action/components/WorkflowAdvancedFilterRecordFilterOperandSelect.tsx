@@ -33,7 +33,7 @@ export const WorkflowAdvancedFilterRecordFilterOperandSelect = ({
     ? getRecordFilterOperands({
         filterType,
         subFieldName: filter?.subFieldName,
-      }).filter((operand) => operand !== RecordFilterOperand.IsRelative)
+      }).filter((operand) => operand !== RecordFilterOperand.IS_RELATIVE)
     : [];
 
   if (isDisabled === true) {

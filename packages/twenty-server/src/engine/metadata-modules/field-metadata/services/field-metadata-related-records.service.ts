@@ -116,6 +116,7 @@ export class FieldMetadataRelatedRecordsService {
 
       await this.syncNoValueViewGroup(newFieldMetadata, view);
     }
+    await this.viewService.flushGraphQLCache(newFieldMetadata.workspaceId);
   }
 
   public async resetViewKanbanAggregateOperation(
@@ -140,6 +141,7 @@ export class FieldMetadataRelatedRecordsService {
         kanbanAggregateOperation: null,
       });
     }
+    await this.viewService.flushGraphQLCache(fieldMetadata.workspaceId);
   }
 
   public async updateRelatedViewFilters(
@@ -247,6 +249,7 @@ export class FieldMetadataRelatedRecordsService {
         );
       }
     }
+    await this.viewService.flushGraphQLCache(newFieldMetadata.workspaceId);
   }
 
   async syncNoValueViewGroup(
@@ -274,6 +277,7 @@ export class FieldMetadataRelatedRecordsService {
         fieldMetadata.workspaceId,
       );
     }
+    await this.viewService.flushGraphQLCache(fieldMetadata.workspaceId);
   }
 
   public getOptionsDifferences(

@@ -4,12 +4,14 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
+import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-properties-to-compare.constant';
 import { type FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-properties-to-compare.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { recomputeIndexAfterFlatObjectMetadataSingularNameUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/recompute-index-after-flat-object-metadata-singular-name-update.util';
 import { renameRelatedMorphFieldOnObjectNamesUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/rename-related-morph-field-on-object-names-update.util';
 import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
 import { type UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -21,9 +23,11 @@ import { type ObjectMetadataStandardOverridesProperties } from 'src/engine/metad
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 type FromUpdateObjectInputToFlatObjectMetadataArgs = {
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   updateObjectInput: UpdateOneObjectInput;
-};
+} & Pick<
+  AllFlatEntityMaps,
+  'flatIndexMaps' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+>;
 
 const objectMetadataEditableProperties =
   FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE.filter(
@@ -37,12 +41,15 @@ const objectMetadataEditableProperties =
 
 type UpdatedFlatObjectAndOtherObjectFieldMetadatas = {
   flatObjectMetadata: FlatObjectMetadata;
-  otherObjectFlatFieldMetadatas: FlatFieldMetadata[];
+  otherObjectFlatFieldMetadataToUpdate: FlatFieldMetadata[];
+  flatIndexMetadataToUpdate: FlatIndexMetadata[];
 };
 
 export const fromUpdateObjectInputToFlatObjectMetadata = ({
-  existingFlatObjectMetadataMaps,
+  flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   updateObjectInput: rawUpdateObjectInput,
+  flatIndexMaps,
+  flatFieldMetadataMaps,
 }: FromUpdateObjectInputToFlatObjectMetadataArgs): UpdatedFlatObjectAndOtherObjectFieldMetadatas => {
   const { id: objectMetadataIdToUpdate } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -54,11 +61,10 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
     objectMetadataEditableProperties,
   );
 
-  const flatObjectMetadataToUpdate =
-    findFlatObjectMetadataInFlatObjectMetadataMaps({
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataId: objectMetadataIdToUpdate,
-    });
+  const flatObjectMetadataToUpdate = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityMaps: existingFlatObjectMetadataMaps,
+    flatEntityId: objectMetadataIdToUpdate,
+  });
 
   if (!isDefined(flatObjectMetadataToUpdate)) {
     throw new ObjectMetadataException(
@@ -102,17 +108,26 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
 
     return {
       flatObjectMetadata: updatedStandardFlatObjectdMetadata,
-      otherObjectFlatFieldMetadatas: [],
+      otherObjectFlatFieldMetadataToUpdate: [],
+      flatIndexMetadataToUpdate: [],
     };
   }
 
   const initialAccumulator: UpdatedFlatObjectAndOtherObjectFieldMetadatas = {
     flatObjectMetadata: flatObjectMetadataToUpdate,
-    otherObjectFlatFieldMetadatas: [],
+    otherObjectFlatFieldMetadataToUpdate: [],
+    flatIndexMetadataToUpdate: [],
   };
 
   return objectMetadataEditableProperties.reduce<UpdatedFlatObjectAndOtherObjectFieldMetadatas>(
-    ({ flatObjectMetadata, otherObjectFlatFieldMetadatas }, property) => {
+    (
+      {
+        flatObjectMetadata,
+        otherObjectFlatFieldMetadataToUpdate: otherObjectFlatFieldMetadatas,
+        flatIndexMetadataToUpdate,
+      },
+      property,
+    ) => {
       const updatedPropertyValue = updatedEditableObjectProperties[property];
       const isPropertyUpdated =
         updatedPropertyValue !== undefined &&
@@ -121,7 +136,8 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
       if (!isPropertyUpdated) {
         return {
           flatObjectMetadata,
-          otherObjectFlatFieldMetadatas,
+          otherObjectFlatFieldMetadataToUpdate: otherObjectFlatFieldMetadatas,
+          flatIndexMetadataToUpdate,
         };
       }
 
@@ -129,20 +145,35 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
         ...flatObjectMetadata,
         [property]: updatedPropertyValue,
       };
+
       const newUpdatedOtherObjectFlatFieldMetadatas =
         property === 'nameSingular' || property === 'namePlural'
           ? renameRelatedMorphFieldOnObjectNamesUpdate({
-              existingFlatObjectMetadataMaps,
+              flatFieldMetadataMaps,
               fromFlatObjectMetadata: updatedFlatObjectMetadata,
               toFlatObjectMetadata: updatedFlatObjectMetadata,
             })
           : [];
 
+      const newUpdatedFlatIndexMetadatas =
+        property === 'nameSingular'
+          ? recomputeIndexAfterFlatObjectMetadataSingularNameUpdate({
+              flatFieldMetadataMaps,
+              existingFlatObjectMetadata: flatObjectMetadataToUpdate,
+              flatIndexMaps,
+              updatedSingularName: updatedFlatObjectMetadata.nameSingular,
+            })
+          : [];
+
       return {
         flatObjectMetadata: updatedFlatObjectMetadata,
-        otherObjectFlatFieldMetadatas: [
+        otherObjectFlatFieldMetadataToUpdate: [
           ...otherObjectFlatFieldMetadatas,
           ...newUpdatedOtherObjectFlatFieldMetadatas,
+        ],
+        flatIndexMetadataToUpdate: [
+          ...flatIndexMetadataToUpdate,
+          ...newUpdatedFlatIndexMetadatas,
         ],
       };
     },

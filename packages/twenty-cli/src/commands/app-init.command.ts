@@ -2,26 +2,28 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
-import {
-  createAgentManifest,
-  createManifest,
-  createReadmeContent,
-} from '../utils/app-template';
-import { writeJsoncFile } from '../utils/jsonc-parser';
+import { copyBaseApplicationProject } from '../utils/app-template';
+import kebabCase from 'lodash.kebabcase';
 
 export class AppInitCommand {
-  async execute(options: { path?: string; name?: string }): Promise<void> {
+  async execute(directory?: string): Promise<void> {
     try {
-      const appName = await this.getAppName(options.name);
-      const appDir = this.determineAppDirectory(options.path, appName);
+      const { appName, appDirectory, appDescription } =
+        await this.getAppInfos(directory);
 
-      await this.validateDirectory(appDir);
+      await this.validateDirectory(appDirectory);
 
-      this.logCreationInfo(appDir, appName);
+      this.logCreationInfo({ appDirectory, appName });
 
-      await this.createAppStructure(appDir, appName);
+      await fs.ensureDir(appDirectory);
 
-      this.logSuccess(appDir);
+      await copyBaseApplicationProject({
+        appName,
+        appDescription,
+        appDirectory,
+      });
+
+      this.logSuccess(appDirectory);
     } catch (error) {
       console.error(
         chalk.red('Initialization failed:'),
@@ -31,88 +33,71 @@ export class AppInitCommand {
     }
   }
 
-  private async getAppName(providedName?: string): Promise<string> {
-    if (providedName) {
-      return providedName;
-    }
-
-    const nameAnswer = await inquirer.prompt([
+  private async getAppInfos(directory?: string): Promise<{
+    appName: string;
+    appDirectory: string;
+    appDescription: string;
+  }> {
+    const { name, description } = await inquirer.prompt([
       {
         type: 'input',
-        name: 'appName',
-        message: 'Application name:',
+        name: 'name',
+        message: 'Application name (eg: My awesome application):',
         validate: (input) => {
           if (input.length === 0) return 'Application name is required';
-          if (!/^[a-z0-9-]+$/.test(input))
-            return 'Name must contain only lowercase letters, numbers, and hyphens';
           return true;
         },
       },
+      {
+        type: 'input',
+        name: 'description',
+        message: 'Application description (optional):',
+        default: '',
+      },
     ]);
 
-    return nameAnswer.appName;
+    const appName = name.trim();
+
+    const appDescription = description.trim();
+
+    const appDirectory = directory
+      ? path.join(process.cwd(), kebabCase(directory))
+      : path.join(process.cwd(), kebabCase(appName));
+
+    return { appName, appDirectory, appDescription };
   }
 
-  private determineAppDirectory(
-    providedPath?: string,
-    appName?: string,
-  ): string {
-    if (providedPath) {
-      return path.resolve(providedPath);
-    }
-
-    return path.join(process.cwd(), appName!);
-  }
-
-  private async validateDirectory(appDir: string): Promise<void> {
-    if (!(await fs.pathExists(appDir))) {
+  private async validateDirectory(appDirectory: string): Promise<void> {
+    if (!(await fs.pathExists(appDirectory))) {
       return;
     }
 
-    const files = await fs.readdir(appDir);
+    const files = await fs.readdir(appDirectory);
     if (files.length > 0) {
-      throw new Error(`Directory ${appDir} already exists and is not empty`);
+      throw new Error(
+        `Directory ${appDirectory} already exists and is not empty`,
+      );
     }
   }
 
-  private logCreationInfo(appDir: string, appName: string): void {
+  private logCreationInfo({
+    appDirectory,
+    appName,
+  }: {
+    appDirectory: string;
+    appName: string;
+  }): void {
     console.log(chalk.blue('🎯 Creating Twenty Application'));
-    console.log(chalk.gray(`📁 Directory: ${appDir}`));
+    console.log(chalk.gray(`📁 Directory: ${appDirectory}`));
     console.log(chalk.gray(`📝 Name: ${appName}`));
     console.log('');
   }
 
-  private async createAppStructure(
-    appDir: string,
-    appName: string,
-  ): Promise<void> {
-    await fs.ensureDir(appDir);
-
-    // Create agents directory
-    const agentsDir = path.join(appDir, 'agents');
-    await fs.ensureDir(agentsDir);
-
-    // Create main manifest with agent references
-    const manifest = createManifest(appName);
-    const manifestPath = path.join(appDir, 'twenty-app.jsonc');
-    await writeJsoncFile(manifestPath, manifest);
-
-    // Create agent manifest file
-    const agentManifest = createAgentManifest(appName);
-    const agentFileName = `${appName}-agent`;
-    const agentPath = path.join(agentsDir, `${agentFileName}.jsonc`);
-    await writeJsoncFile(agentPath, agentManifest);
-
-    // Create README
-    const readmeContent = createReadmeContent(appName, appDir);
-    await fs.writeFile(path.join(appDir, 'README.md'), readmeContent);
-  }
-
-  private logSuccess(appDir: string): void {
+  private logSuccess(appDirectory: string): void {
     console.log(chalk.green('✅ Application created successfully!'));
     console.log('');
     console.log(chalk.blue('Next steps:'));
-    console.log(`  cd ${appDir}`);
+    console.log(`  cd ${appDirectory}`);
     console.log('  twenty app dev');
   }
 }

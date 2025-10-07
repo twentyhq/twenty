@@ -14,6 +14,8 @@
       ],
       "outputs": [
         "{projectRoot}/dist",
+        "{projectRoot}/ai/package.json",
+        "{projectRoot}/ai/dist",
         "{projectRoot}/constants/package.json",
         "{projectRoot}/constants/dist",
         "{projectRoot}/testing/package.json",

@@ -1,8 +1,11 @@
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
+import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,6 +29,14 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 export const PageLayoutRendererContent = () => {
   const { currentPageLayout } = useCurrentPageLayout();
 
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
+
+  const { createPageLayoutTab } = useCreatePageLayoutTab(currentPageLayout?.id);
+
+  const handleAddTab = isPageLayoutInEditMode ? createPageLayoutTab : undefined;
+
   if (!isDefined(currentPageLayout)) {
     return null;
   }
@@ -38,6 +49,7 @@ export const PageLayoutRendererContent = () => {
         componentInstanceId={getTabListInstanceIdFromPageLayoutId(
           currentPageLayout.id,
         )}
+        onAddTab={handleAddTab}
       />
       <StyledScrollWrapper
         componentInstanceId={`scroll-wrapper-page-layout-${currentPageLayout.id}`}

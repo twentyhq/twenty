@@ -1,4 +1,5 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { type PageLayoutWidget } from '~/generated-metadata/graphql';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
@@ -57,14 +58,21 @@ const StyledErrorUrl = styled.div`
 `;
 
 export type IframeWidgetProps = {
-  url: string;
-  title?: string;
+  widget: PageLayoutWidget;
 };
 
-export const IframeWidget = ({
-  url,
-  title = 'Embedded Content',
-}: IframeWidgetProps) => {
+export const IframeWidget = ({ widget }: IframeWidgetProps) => {
+  const configuration = widget.configuration;
+
+  if (!configuration || !('url' in configuration)) {
+    throw new Error(
+      `Invalid configuration for widget ${widget.id}: missing url`,
+    );
+  }
+
+  const url = configuration.url;
+  const title = widget.title;
+
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 

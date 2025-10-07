@@ -8,8 +8,7 @@ import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { isDefined } from 'twenty-shared/utils';
-import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const RecordTableCellsVisible = () => {
   const { isSelected, rowIndex } = useRecordTableRowContextOrThrow();

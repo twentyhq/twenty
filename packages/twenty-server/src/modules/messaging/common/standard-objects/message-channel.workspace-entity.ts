@@ -59,6 +59,11 @@ export enum MessageChannelContactAutoCreationPolicy {
   NONE = 'NONE',
 }
 
+export enum MessageFolderImportPolicy {
+  ALL_FOLDERS = 'ALL_FOLDERS',
+  SELECTED_FOLDERS = 'SELECTED_FOLDERS',
+}
+
 registerEnumType(MessageChannelVisibility, {
   name: 'MessageChannelVisibility',
 });
@@ -77,6 +82,10 @@ registerEnumType(MessageChannelType, {
 
 registerEnumType(MessageChannelContactAutoCreationPolicy, {
   name: 'MessageChannelContactAutoCreationPolicy',
+});
+
+registerEnumType(MessageFolderImportPolicy, {
+  name: 'MessageFolderImportPolicy',
 });
 
 @WorkspaceEntity({
@@ -194,6 +203,30 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: `'${MessageChannelContactAutoCreationPolicy.SENT}'`,
   })
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
+
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageFolderImportPolicy,
+    type: FieldMetadataType.SELECT,
+    label: msg`Message folder import policy`,
+    description: msg`Message folder import policy`,
+    icon: 'IconFolder',
+    options: [
+      {
+        value: MessageFolderImportPolicy.ALL_FOLDERS,
+        label: 'All folders',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        label: 'Selected folders',
+        position: 1,
+        color: 'blue',
+      },
+    ],
+    defaultValue: `'${MessageFolderImportPolicy.SELECTED_FOLDERS}'`,
+  })
+  messageFolderImportPolicy: MessageFolderImportPolicy;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeNonProfessionalEmails,

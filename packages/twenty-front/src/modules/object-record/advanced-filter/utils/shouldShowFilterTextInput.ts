@@ -1,10 +1,10 @@
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
-import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { type RecordFilter } from '../../record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isExpectedSubFieldName } from 'twenty-shared/utils';
 
 export const shouldShowFilterTextInput = ({
   recordFilter,

@@ -1,81 +1,80 @@
 import { randomUUID } from 'crypto';
-import { AgentManifest, AppManifest } from '../types/config.types';
-import { SchemaValidator } from './schema-validator';
+import { getSchemaUrls } from './schema-validator';
+import * as fs from 'fs-extra';
+import { BASE_APPLICATION_PROJECT_PATH } from '../constants/base-application-project-path';
+import { writeJsoncFile } from '../utils/jsonc-parser';
+import { join } from 'path';
+import path from 'path';
 
-export type AppManifestTemplate = Omit<AppManifest, 'agents'> & {
-  $schema?: string;
-  // agents will be discovered from the agents/ folder
+export const copyBaseApplicationProject = async ({
+  appName,
+  appDescription,
+  appDirectory,
+}: {
+  appName: string;
+  appDescription: string;
+  appDirectory: string;
+}) => {
+  await fs.copy(BASE_APPLICATION_PROJECT_PATH, appDirectory);
+
+  await createBasePackageJson({
+    appName,
+    appDescription,
+    appDirectory,
+  });
+
+  await createReadmeContent({
+    appName,
+    appDescription,
+    appDirectory,
+  });
 };
 
-export type AgentManifestTemplate = AgentManifest & {
-  $schema?: string;
+const createBasePackageJson = async ({
+  appName,
+  appDescription,
+  appDirectory,
+}: {
+  appName: string;
+  appDescription: string;
+  appDirectory: string;
+}) => {
+  const base = JSON.parse(await readBaseApplicationProjectFile('package.json'));
+
+  const schemas = getSchemaUrls();
+
+  base['$schema'] = schemas.appManifest;
+  base['universalIdentifier'] = randomUUID();
+  base['name'] = appName
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+  base['description'] = appDescription;
+
+  await writeJsoncFile(join(appDirectory, 'package.json'), base);
 };
 
-export const createManifest = (appName: string): AppManifestTemplate => {
-  const schemas = SchemaValidator.getSchemaUrls();
+const createReadmeContent = async ({
+  appName,
+  appDescription,
+  appDirectory,
+}: {
+  appName: string;
+  appDescription: string;
+  appDirectory: string;
+}) => {
+  let readmeContent = await readBaseApplicationProjectFile('README.md');
 
-  return {
-    $schema: schemas.appManifest,
-    standardId: randomUUID(),
-    label: appName
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' '),
-    description: `A Twenty application for ${appName}`,
-    version: '1.0.0',
-    // agents will be discovered from the agents/ folder
-  };
+  readmeContent = readmeContent.replace(/\{title}/g, appName);
+
+  readmeContent = readmeContent.replace(/\{description}/g, appDescription);
+
+  await fs.writeFile(path.join(appDirectory, 'README.md'), readmeContent);
 };
 
-export const createAgentManifest = (appName: string): AgentManifestTemplate => {
-  const schemas = SchemaValidator.getSchemaUrls();
-
-  return {
-    $schema: schemas.agent,
-    standardId: randomUUID(),
-    name: `${appName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())}Agent`,
-    label: `${appName
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')} Agent`,
-    description: `AI agent for ${appName}`,
-    prompt: `You are an AI agent for ${appName}. Help users with their tasks and provide assistance with Twenty CRM features.`,
-    modelId: 'auto',
-    responseFormat: {
-      type: 'text',
-    },
-  };
-};
-
-export const createReadmeContent = (
-  appName: string,
-  appDir: string,
-): string => {
-  return `# ${appName}
-
-A Twenty application.
-
-## Development
-
-To start development mode:
-
-\`\`\`bash
-twenty app dev --path ${appDir}
-\`\`\`
-
-Or from the app directory:
-
-\`\`\`bash
-cd ${appDir}
-twenty app dev
-\`\`\`
-
-## Deployment
-
-To deploy the application:
-
-\`\`\`bash
-twenty app deploy --path ${appDir}
-\`\`\`
-`;
+const readBaseApplicationProjectFile = async (fileName: string) => {
+  return await fs.readFile(
+    join(BASE_APPLICATION_PROJECT_PATH, fileName),
+    'utf-8',
+  );
 };

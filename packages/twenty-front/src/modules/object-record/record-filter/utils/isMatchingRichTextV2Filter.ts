@@ -1,5 +1,5 @@
-import { type RichTextV2Filter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import escapeRegExp from 'lodash.escaperegexp';
+import { type RichTextV2Filter } from 'twenty-shared/types';
 
 export const isMatchingRichTextV2Filter = ({
   richTextV2Filter,

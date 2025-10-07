@@ -33,7 +33,7 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 import {
   DASHBOARD_DATA_SEED_COLUMNS,
-  DASHBOARD_DATA_SEEDS,
+  getDashboardDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/dashboard-data-seeds.constant';
 import {
   MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
@@ -113,7 +113,7 @@ const getRecordSeedsConfigs = (
         {
           tableName: 'dashboard',
           pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
-          recordSeeds: DASHBOARD_DATA_SEEDS,
+          recordSeeds: getDashboardDataSeeds(workspaceId),
         },
       ]
     : []),
@@ -243,6 +243,7 @@ export class DevSeederDataService {
           );
 
           if (!objectMetadata) {
+            // TODO this continue is hacky, we should have a record seed config per workspace
             continue;
           }
 

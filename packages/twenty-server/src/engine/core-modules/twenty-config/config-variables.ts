@@ -359,6 +359,15 @@ export class ConfigVariables {
   EMAIL_SMTP_PASSWORD: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description:
+      'When enabled, only server admins can create new workspaces. Ignored during initial setup when no workspace exists.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
     description: 'Type of storage to use (local or S3)',
     type: ConfigVariableType.ENUM,
@@ -563,15 +572,6 @@ export class ConfigVariables {
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
-    description: 'Amount of money in cents to trigger a billing threshold',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT = 10000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
@@ -850,7 +850,22 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
-    description: 'URL for cache storage (e.g., Redis connection URL)',
+    description: 'Redis connection URL used for cache and queues by default',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsUrl({
+    protocols: ['redis', 'rediss'],
+    require_tld: false,
+    allow_underscores: true,
+  })
+  REDIS_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    isSensitive: true,
+    description:
+      'Optional separate Redis connection for queues with a different eviction policy (advanced production use case, most self-hosters do not need this)',
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
@@ -860,7 +875,7 @@ export class ConfigVariables {
     require_tld: false,
     allow_underscores: true,
   })
-  REDIS_URL: string;
+  REDIS_QUEUE_URL: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
@@ -1211,6 +1226,50 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
   GOOGLE_MAP_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    description: 'AWS region',
+    type: ConfigVariableType.STRING,
+  })
+  @IsAWSRegion()
+  @IsOptional()
+  AWS_SES_REGION: AwsRegion;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    isSensitive: true,
+    description: 'AWS access key ID',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_ACCESS_KEY_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    isSensitive: true,
+    description: 'AWS session token',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_SESSION_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    isSensitive: true,
+    description: 'AWS secret access key',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_SECRET_ACCESS_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    description: 'AWS Account ID for SES ARN construction',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_ACCOUNT_ID: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

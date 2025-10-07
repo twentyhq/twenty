@@ -1,9 +1,14 @@
-import { GraphType, WidgetType } from '../../mocks/mockWidgets';
-import { type PageLayoutWidgetWithData } from '../../types/pageLayoutTypes';
+import {
+  ExtendedAggregateOperations,
+  GraphOrderBy,
+  GraphType,
+  WidgetType,
+  type PageLayoutWidget,
+} from '~/generated-metadata/graphql';
 import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
 
 describe('convertLayoutsToWidgets', () => {
-  const mockWidgets: PageLayoutWidgetWithData[] = [
+  const mockWidgets: PageLayoutWidget[] = [
     {
       id: 'widget-1',
       pageLayoutTabId: 'tab-1',
@@ -18,8 +23,10 @@ describe('convertLayoutsToWidgets', () => {
       },
       configuration: {
         graphType: GraphType.NUMBER,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateFieldMetadataId: 'id',
+        displayDataLabel: false,
       },
-      data: { value: 100 },
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -38,8 +45,12 @@ describe('convertLayoutsToWidgets', () => {
       },
       configuration: {
         graphType: GraphType.PIE,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateFieldMetadataId: 'id',
+        groupByFieldMetadataId: 'status',
+        orderBy: GraphOrderBy.VALUE_DESC,
+        displayDataLabel: false,
       },
-      data: { items: [] },
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,

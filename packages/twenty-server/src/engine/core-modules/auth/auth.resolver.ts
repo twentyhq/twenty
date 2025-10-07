@@ -5,8 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import omit from 'lodash.omit';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -73,6 +73,7 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
@@ -100,6 +101,8 @@ export class AuthResolver {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(UserWorkspace)
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
@@ -120,6 +123,7 @@ export class AuthResolver {
     private emailVerificationTokenService: EmailVerificationTokenService,
     private sSOService: SSOService,
     private readonly auditService: AuditService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   @UseGuards(CaptchaGuard, PublicEndpointGuard)
@@ -486,6 +490,10 @@ export class AuthResolver {
     @AuthUser() currentUser: User,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpOutput> {
+    await this.signInUpService.checkWorkspaceCreationIsAllowedOrThrow(
+      currentUser,
+    );
+
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: currentUser },
     );
@@ -559,20 +567,36 @@ export class AuthResolver {
     );
 
     if (tokenPayload.authProvider === AuthProviderEnum.Impersonation) {
-      await this.validateAndLogImpersonation(
+      const {
+        workspaceId,
+        impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId,
+        impersonatorUserId,
+        impersonatedUserId,
+      } = await this.validateAndLogImpersonation(
         tokenPayload,
         workspace,
         user.email,
       );
+
+      return await this.authService.generateImpersonationAccessTokenAndRefreshToken(
+        {
+          workspaceId,
+          impersonatorUserWorkspaceId,
+          impersonatedUserWorkspaceId,
+          impersonatorUserId,
+          impersonatedUserId,
+        },
+      );
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
-    }
 
-    return await this.authService.verify(
-      user.email,
-      workspace.id,
-      tokenPayload.authProvider,
-    );
+      return await this.authService.verify(
+        user.email,
+        workspace.id,
+        tokenPayload.authProvider,
+      );
+    }
   }
 
   private async validateAndDecodeLoginToken(
@@ -639,79 +663,109 @@ export class AuthResolver {
     tokenPayload: LoginTokenJwtPayload,
     workspace: Workspace,
     targetUserEmail: string,
-  ): Promise<void> {
-    const { impersonatorUserId } = tokenPayload;
+  ) {
+    const { impersonatorUserWorkspaceId } = tokenPayload;
+
+    const impersonatorUserWorkspace =
+      await this.userWorkspaceRepository.findOne({
+        where: { id: impersonatorUserWorkspaceId },
+        relations: ['user', 'workspace'],
+      });
+
+    const toImpersonateUserWorkspace =
+      await this.userWorkspaceRepository.findOne({
+        where: {
+          user: { email: targetUserEmail },
+          workspaceId: workspace.id,
+        },
+        relations: ['user', 'workspace'],
+      });
+
+    if (
+      !isDefined(impersonatorUserWorkspace) ||
+      !isDefined(toImpersonateUserWorkspace)
+    ) {
+      throw new AuthException(
+        'Impersonator or target user workspace not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const isServerLevelImpersonation =
+      toImpersonateUserWorkspace.workspace.id !==
+      impersonatorUserWorkspace.workspace.id;
 
     const auditService = this.auditService.createContext({
       workspaceId: workspace.id,
-      userId: impersonatorUserId,
+      userId: impersonatorUserWorkspace.user.id,
     });
 
     await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: 'server.impersonation.token_exchange_attempt',
-      message: `Impersonation token exchange attempt for ${targetUserEmail} by ${impersonatorUserId}`,
+      eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.token_exchange_attempt`,
+      message: `Impersonation token exchange attempt for ${targetUserEmail} by ${impersonatorUserWorkspace.user.id}`,
     });
 
-    if (workspace.allowImpersonation !== true) {
-      throw new AuthException(
-        'Impersonation not allowed on this workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+    const hasServerLevelImpersonatePermission =
+      impersonatorUserWorkspace.user.canImpersonate === true &&
+      toImpersonateUserWorkspace.workspace.allowImpersonation === true;
+
+    if (isServerLevelImpersonation) {
+      if (!hasServerLevelImpersonatePermission) {
+        await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+          eventName: 'server.impersonation.token_exchange_failed',
+          message: `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
+        });
+
+        throw new AuthException(
+          'Server level impersonation not allowed on this workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: `server.impersonation.token_exchange_success`,
+        message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
+      });
+
+      return {
+        workspaceId: workspace.id,
+        impersonatorUserWorkspaceId: impersonatorUserWorkspace.id,
+        impersonatedUserWorkspaceId: toImpersonateUserWorkspace.id,
+        impersonatorUserId: impersonatorUserWorkspace.user.id,
+        impersonatedUserId: toImpersonateUserWorkspace.user.id,
+      };
     }
 
-    if (!impersonatorUserId) {
+    const hasWorkspaceLevelImpersonatePermission =
+      await this.permissionsService.userHasWorkspaceSettingPermission({
+        userWorkspaceId: impersonatorUserWorkspace.id,
+        setting: PermissionFlagType.IMPERSONATE,
+        workspaceId: workspace.id,
+      });
+
+    if (!hasWorkspaceLevelImpersonatePermission) {
       await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: 'server.impersonation.token_exchange_failed',
-        message: `Invalid impersonation token (missing impersonator user ID) for ${targetUserEmail}`,
+        eventName: 'workspace.impersonation.token_exchange_failed',
+        message: `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
       throw new AuthException(
-        'Invalid impersonation token (missing impersonator user ID)',
+        'Impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
-
-    const impersonatorUser = await this.userRepository.findOne({
-      where: { id: impersonatorUserId },
-    });
-
-    if (!impersonatorUser) {
-      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: 'server.impersonation.token_exchange_failed',
-        message: `Impersonator user not found: ${impersonatorUserId} for ${targetUserEmail}`,
-      });
-      throw new AuthException(
-        'Impersonator user not found',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    if (impersonatorUser.canImpersonate !== true) {
-      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: 'server.impersonation.token_exchange_failed',
-        message: `User not authorized to impersonate: ${impersonatorUserId} for ${targetUserEmail}`,
-      });
-      throw new AuthException(
-        'User not authorized to impersonate',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    await this.logImpersonationEvent(workspace.id, impersonatorUserId);
-  }
-
-  private async logImpersonationEvent(
-    workspaceId: string,
-    impersonatorUserId: string,
-  ): Promise<void> {
-    const auditService = this.auditService.createContext({
-      workspaceId,
-      userId: impersonatorUserId,
-    });
 
     await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: 'server.impersonation.login_token_exchanged',
-      message: 'Impersonation token exchanged',
+      eventName: 'workspace.impersonation.token_exchange_success',
+      message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
     });
+
+    return {
+      workspaceId: workspace.id,
+      impersonatorUserWorkspaceId: impersonatorUserWorkspace.id,
+      impersonatedUserWorkspaceId: toImpersonateUserWorkspace.id,
+      impersonatorUserId: impersonatorUserWorkspace.user.id,
+      impersonatedUserId: toImpersonateUserWorkspace.user.id,
+    };
   }
 
   @Mutation(() => AuthorizeApp)

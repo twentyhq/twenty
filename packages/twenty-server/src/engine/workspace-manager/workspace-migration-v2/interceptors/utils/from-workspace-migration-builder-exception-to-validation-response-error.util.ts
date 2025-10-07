@@ -10,13 +10,23 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       invalidView: 0,
       invalidViewField: 0,
       invalidIndex: 0,
+      invalidServerlessFunction: 0,
+      invalidDatabaseEventTrigger: 0,
+      invalidCronTrigger: 0,
+      invalidRouteTrigger: 0,
+      invalidFieldMetadata: 0,
       totalErrors: 0,
     },
     errors: {
+      fieldMetadata: [],
       index: [],
       objectMetadata: [],
       view: [],
       viewField: [],
+      serverlessFunction: [],
+      databaseEventTrigger: [],
+      cronTrigger: [],
+      routeTrigger: [],
     },
   };
 

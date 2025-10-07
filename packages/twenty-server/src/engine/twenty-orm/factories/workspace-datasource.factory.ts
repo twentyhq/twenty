@@ -25,7 +25,7 @@ import {
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { type CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
-import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
+import { GetDataFromCacheWithRecomputeService } from 'src/engine/workspace-cache-storage/services/get-data-from-cache-with-recompute.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -53,6 +53,10 @@ export class WorkspaceDatasourceFactory {
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly getFromCacheWithRecomputeService: GetDataFromCacheWithRecomputeService<
+      string,
+      ObjectsPermissionsByRoleIdDeprecated
+    >,
   ) {}
 
   private async safelyDestroyDataSource(
@@ -236,10 +240,7 @@ export class WorkspaceDatasourceFactory {
   }: {
     workspaceId: string;
   }): Promise<CacheResult<string, ObjectsPermissionsByRoleIdDeprecated>> {
-    return getFromCacheWithRecompute<
-      string,
-      ObjectsPermissionsByRoleIdDeprecated
-    >({
+    return this.getFromCacheWithRecomputeService.getFromCacheWithRecompute({
       workspaceId,
       getCacheData: () =>
         this.workspacePermissionsCacheStorageService.getRolesPermissions(
@@ -255,7 +256,6 @@ export class WorkspaceDatasourceFactory {
         }),
       cachedEntityName: ROLES_PERMISSIONS,
       exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
-      logger: this.logger,
     });
   }
 

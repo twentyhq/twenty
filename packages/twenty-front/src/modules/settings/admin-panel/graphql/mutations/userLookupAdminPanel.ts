@@ -15,6 +15,10 @@ export const USER_LOOKUP_ADMIN_PANEL = gql`
         logo
         totalUsers
         allowImpersonation
+        workspaceUrls {
+          customUrl
+          subdomainUrl
+        }
         users {
           id
           email

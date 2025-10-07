@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
@@ -52,6 +51,20 @@ export class AgentService {
       ...agent,
       roleId: agentRoleMap.get(agent.id) || null,
     }));
+  }
+
+  async findOneByApplicationAndStandardId({
+    applicationId,
+    standardId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    standardId: string;
+    workspaceId: string;
+  }) {
+    return await this.agentRepository.findOne({
+      where: { applicationId, standardId, workspaceId },
+    });
   }
 
   async findOneAgent(id: string, workspaceId: string) {
@@ -119,7 +132,7 @@ export class AgentService {
       name: updatedName,
     });
 
-    if (!isDefined(input.roleId)) {
+    if (!('roleId' in input)) {
       return updatedAgent;
     }
 

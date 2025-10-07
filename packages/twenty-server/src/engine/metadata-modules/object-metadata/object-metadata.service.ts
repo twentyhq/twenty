@@ -14,6 +14,7 @@ import {
   type QueryRunner,
 } from 'typeorm';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -62,6 +63,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
 
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
@@ -73,6 +76,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly objectMetadataRelatedRecordsService: ObjectMetadataRelatedRecordsService,
     private readonly indexMetadataService: IndexMetadataService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly featureFlagService: FeatureFlagService,
@@ -100,23 +104,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   override async createOne(
     createObjectInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
+    const { workspaceId } = createObjectInput;
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        createObjectInput.workspaceId,
+        workspaceId,
       );
 
     if (isWorkspaceMigrationV2Enabled) {
       const flatObjectMetadata = await this.objectMetadataServiceV2.createOne({
         createObjectInput,
-        workspaceId: createObjectInput.workspaceId,
+        workspaceId,
       });
 
       const createdObjectMetadata = await this.objectMetadataRepository.findOne(
         {
           where: {
             id: flatObjectMetadata.id,
-            workspaceId: createObjectInput.workspaceId,
+            workspaceId,
           },
         },
       );
@@ -143,13 +148,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       const { objectMetadataMaps } =
         await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
           {
-            workspaceId: createObjectInput.workspaceId,
+            workspaceId,
           },
         );
 
       const lastDataSourceMetadata =
         await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-          createObjectInput.workspaceId,
+          workspaceId,
         );
 
       createObjectInput.labelSingular = capitalize(
@@ -191,9 +196,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataMaps,
       });
 
-      const baseCustomFields = buildDefaultFieldsForCustomObject(
-        createObjectInput.workspaceId,
-      );
+      const baseCustomFields = buildDefaultFieldsForCustomObject(workspaceId);
 
       const labelIdentifierFieldMetadataId = baseCustomFields.find(
         (field) => field.standardId === CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
@@ -232,7 +235,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
         const createdRelatedObjectMetadataCollection =
           await this.objectMetadataFieldRelationService.createRelationsAndForeignKeysMetadata(
-            createObjectInput.workspaceId,
+            workspaceId,
             { ...createdObjectMetadata, fieldsById },
             objectMetadataMaps,
             queryRunner,
@@ -272,7 +275,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       // After commit, do non-transactional work
       await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
         {
-          workspaceId: createObjectInput.workspaceId,
+          workspaceId,
         },
       );
       await this.objectMetadataRelatedRecordsService.createObjectRelatedRecords(
@@ -280,8 +283,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
-        createObjectInput.workspaceId,
+        workspaceId,
       );
+
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+      });
 
       return createdObjectMetadata;
     } catch (error) {
@@ -465,6 +473,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId,
       );
 
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      });
+
       const formattedUpdatedObject = {
         ...updatedObject,
         createdAt: new Date(updatedObject.createdAt),
@@ -577,6 +590,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId,
       );
 
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      });
+
       await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
         {
           workspaceId,
@@ -644,7 +662,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   public async deleteObjectsMetadata(workspaceId: string) {
-    await this.objectMetadataRepository.delete({ workspaceId });
+    const objectsMetadata = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+      },
+    });
+
+    await this.fieldMetadataRepository.delete({
+      workspaceId,
+      type: In([FieldMetadataType.MORPH_RELATION, FieldMetadataType.RELATION]),
+    });
+
+    for (const objectMetadata of objectsMetadata) {
+      await this.objectMetadataRepository.delete({
+        id: objectMetadata.id,
+      });
+    }
   }
 
   private async handleObjectNameAndLabelUpdates({

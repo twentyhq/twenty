@@ -12,12 +12,14 @@ import {
   generateViewSortExceptionMessage,
   generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 @Injectable()
 export class ViewSortService {
   constructor(
     @InjectRepository(ViewSortEntity)
     private readonly viewSortRepository: Repository<ViewSortEntity>,
+    private readonly viewService: ViewService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewSortEntity[]> {
@@ -105,7 +107,11 @@ export class ViewSortService {
 
     const viewSort = this.viewSortRepository.create(viewSortData);
 
-    return this.viewSortRepository.save(viewSort);
+    const savedViewSort = await this.viewSortRepository.save(viewSort);
+
+    await this.viewService.flushGraphQLCache(viewSortData.workspaceId);
+
+    return savedViewSort;
   }
 
   async update(
@@ -130,6 +136,8 @@ export class ViewSortService {
       ...updateData,
     });
 
+    await this.viewService.flushGraphQLCache(workspaceId);
+
     return { ...existingViewSort, ...updatedViewSort };
   }
 
@@ -148,6 +156,8 @@ export class ViewSortService {
 
     await this.viewSortRepository.softDelete(id);
 
+    await this.viewService.flushGraphQLCache(workspaceId);
+
     return viewSort;
   }
 
@@ -165,6 +175,8 @@ export class ViewSortService {
     }
 
     await this.viewSortRepository.delete(id);
+
+    await this.viewService.flushGraphQLCache(workspaceId);
 
     return true;
   }

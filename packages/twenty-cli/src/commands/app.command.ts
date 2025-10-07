@@ -1,16 +1,21 @@
 import { Command } from 'commander';
-import { AppDeployCommand } from './app-deploy.command';
+import { AppSyncCommand } from './app-sync.command';
 import { AppDevCommand } from './app-dev.command';
 import { AppInitCommand } from './app-init.command';
-import { AppInstallCommand } from './app-install.command';
-import { AppListCommand } from './app-list.command';
+import { AppDeleteCommand } from './app-delete.command';
+import {
+  AppAddCommand,
+  isSyncableEntity,
+  SyncableEntity,
+} from './app-add.command';
+import chalk from 'chalk';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
-  private deployCommand = new AppDeployCommand();
-  private installCommand = new AppInstallCommand();
-  private listCommand = new AppListCommand();
+  private syncCommand = new AppSyncCommand();
+  private deleteCommand = new AppDeleteCommand();
   private initCommand = new AppInitCommand();
+  private addCommand = new AppAddCommand();
 
   getCommand(): Command {
     const appCommand = new Command('app');
@@ -19,57 +24,55 @@ export class AppCommand {
     appCommand
       .command('dev')
       .description('Watch and sync local application changes')
-      .option(
-        '-p, --path <path>',
-        'Application directory path (auto-detected if not specified)',
-      )
       .option('-d, --debounce <ms>', 'Debounce delay in milliseconds', '1000')
-      .option('--verbose', 'Enable verbose logging')
       .action(async (options) => {
         await this.devCommand.execute(options);
       });
 
     appCommand
-      .command('deploy')
-      .description('Deploy application to Twenty')
-      .option(
-        '-p, --path <path>',
-        'Application directory path (auto-detected if not specified)',
-      )
-      .action(async (options) => {
-        await this.deployCommand.execute(options);
-      });
-
-    appCommand
-      .command('install')
-      .description('Install application from source')
-      .option(
-        '-s, --source <source>',
-        'Application source (git URL, local path, or marketplace ID)',
-      )
-      .option(
-        '-t, --type <type>',
-        'Source type (git, local, marketplace)',
-        'local',
-      )
-      .action(async (options) => {
-        await this.installCommand.execute(options);
-      });
-
-    appCommand
-      .command('list')
-      .description('List installed applications')
+      .command('sync')
+      .description('Sync application to Twenty')
       .action(async () => {
-        await this.listCommand.execute();
+        await this.syncCommand.execute();
       });
 
     appCommand
-      .command('init')
+      .command('delete')
+      .description('Delete application from Twenty')
+      .action(async () => {
+        await this.deleteCommand.execute();
+      });
+
+    appCommand
+      .command('init [directory]')
       .description('Initialize a new Twenty application')
-      .option('-p, --path <path>', 'Directory to create the application in')
-      .option('-n, --name <name>', 'Application name')
-      .action(async (options) => {
-        await this.initCommand.execute(options);
+      .action(async (directory?: string) => {
+        if (directory && !/^[a-z0-9-]+$/.test(directory)) {
+          console.error(
+            chalk.red(
+              `Invalid directory "${directory}". Must contain only lowercase letters, numbers, and hyphens`,
+            ),
+          );
+          process.exit(1);
+        }
+        await this.initCommand.execute(directory);
+      });
+
+    appCommand
+      .command('add [entityType]')
+      .description(
+        `Add a new entity to your application (${Object.values(SyncableEntity).join('|')})`,
+      )
+      .action(async (entityType?: string) => {
+        if (entityType && !isSyncableEntity(entityType)) {
+          console.error(
+            chalk.red(
+              `Invalid entity type "${entityType}". Must be one of: ${Object.values(SyncableEntity).join('|')}`,
+            ),
+          );
+          process.exit(1);
+        }
+        await this.addCommand.execute(entityType as SyncableEntity);
       });
 
     return appCommand;

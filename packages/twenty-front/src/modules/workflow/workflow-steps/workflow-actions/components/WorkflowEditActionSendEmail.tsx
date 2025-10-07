@@ -2,6 +2,7 @@ import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
 import { MICROSOFT_SEND_SCOPE } from '@/accounts/constants/MicrosoftSendScope';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -13,7 +14,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { WorkflowSendEmailBody } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -220,10 +221,11 @@ export const WorkflowEditActionSendEmail = ({
   const navigate = useNavigateSettings();
 
   const { closeCommandMenu } = useCommandMenu();
+
   return (
     !loading && (
       <>
-        <WorkflowStepHeader
+        <SidePanelHeader
           onTitleChange={(newName: string) => {
             if (actionOptions.readonly === true) {
               return;
@@ -283,7 +285,8 @@ export const WorkflowEditActionSendEmail = ({
             }}
             VariablePicker={WorkflowVariablePicker}
           />
-          <FormTextFieldInput
+          <WorkflowSendEmailBody
+            action={action}
             label="Body"
             placeholder="Enter email body"
             readonly={actionOptions.readonly}
@@ -292,7 +295,6 @@ export const WorkflowEditActionSendEmail = ({
               handleFieldChange('body', body);
             }}
             VariablePicker={WorkflowVariablePicker}
-            multiline
           />
         </WorkflowStepBody>
         {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
