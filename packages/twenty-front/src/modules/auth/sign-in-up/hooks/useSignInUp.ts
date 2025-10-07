@@ -80,7 +80,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       enqueueErrorSnackBar({
         ...(error instanceof ApolloError
           ? { apolloError: error }
-          : { message: 'An error occurred while checking user existence' }),
+          : { message: t`An error occurred while checking user existence` }),
       });
     }
   }, [
