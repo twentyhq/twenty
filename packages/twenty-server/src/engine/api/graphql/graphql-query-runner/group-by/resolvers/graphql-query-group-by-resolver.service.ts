@@ -29,6 +29,7 @@ import { GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-b
 
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
+import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
 import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
 import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
@@ -100,7 +101,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       objectMetadataItemWithFieldMaps,
     );
 
-    const groupByExpressions = groupByFields.map((groupByField) => {
+    const groupByDefinitions = groupByFields.map((groupByField) => {
       const columnNameWithQuotes = `"${
         formatColumnNamesFromCompositeFieldAndSubfields(
           groupByField.fieldMetadata.name,
@@ -109,7 +110,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       }"`;
       const alias =
         removeQuotes(columnNameWithQuotes) +
-        (groupByField.dateGranularity
+        (isGroupByDateField(groupByField)
           ? `_${groupByField.dateGranularity}`
           : '');
 
@@ -120,10 +121,13 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
           columnNameWithQuotes,
         }),
         alias,
+        dateGranularity: isGroupByDateField(groupByField)
+          ? groupByField.dateGranularity
+          : undefined,
       };
     });
 
-    groupByExpressions.forEach((groupByColumn, index) => {
+    groupByDefinitions.forEach((groupByColumn, index) => {
       queryBuilder.addSelect(groupByColumn.expression, groupByColumn.alias);
 
       if (index === 0) {
@@ -146,7 +150,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
 
     const result = await queryBuilder.getRawMany();
 
-    return formatResultWithGroupByDimensionValues(result, groupByExpressions);
+    return formatResultWithGroupByDimensionValues(result, groupByDefinitions);
   }
 
   private async addFiltersFromView({

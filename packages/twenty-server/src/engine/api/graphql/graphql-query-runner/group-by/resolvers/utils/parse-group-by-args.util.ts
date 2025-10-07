@@ -1,5 +1,7 @@
+import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
@@ -7,8 +9,37 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
-import { shouldGroupByDateGranularity as shouldGroupByDateGranularityUtil } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/should-group-by-date-granularity.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+
+const isGroupByDateFieldDefinition = (
+  fieldGroupByDefinition:
+    | boolean
+    | Record<string, boolean>
+    | { granularity: ObjectRecordGroupByDateGranularity }
+    | undefined,
+): fieldGroupByDefinition is {
+  granularity: ObjectRecordGroupByDateGranularity;
+} => {
+  if (
+    typeof fieldGroupByDefinition !== 'object' ||
+    !isDefined(fieldGroupByDefinition)
+  ) {
+    return false;
+  }
+  if (!('granularity' in fieldGroupByDefinition)) {
+    return false;
+  }
+
+  const granularity = fieldGroupByDefinition.granularity;
+
+  return (
+    isDefined(granularity) &&
+    typeof granularity === 'string' &&
+    Object.values(ObjectRecordGroupByDateGranularity).includes(
+      granularity as ObjectRecordGroupByDateGranularity,
+    )
+  );
+};
 
 export const parseGroupByArgs = (
   args: GroupByResolverArgs,
@@ -37,7 +68,7 @@ export const parseGroupByArgs = (
       ) {
         const fieldGroupByDefinition = fieldNames[fieldName];
 
-        const shouldGroupByDateGranularity = shouldGroupByDateGranularityUtil(
+        const shouldGroupByDateGranularity = isGroupByDateFieldDefinition(
           fieldGroupByDefinition,
         );
 

@@ -1,8 +1,9 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
+import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
 
 export const getGroupByExpression = ({
   groupByField,
@@ -11,36 +12,24 @@ export const getGroupByExpression = ({
   groupByField: GroupByField;
   columnNameWithQuotes: string;
 }) => {
-  if (isDefined(groupByField.dateGranularity)) {
-    if (
-      groupByField.dateGranularity === ObjectRecordGroupByDateGranularity.NONE
-    ) {
-      return columnNameWithQuotes;
-    }
-
-    if (
-      groupByField.dateGranularity ===
-      ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK
-    ) {
-      return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'TMDay'))`;
-    }
-
-    if (
-      groupByField.dateGranularity ===
-      ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR
-    ) {
-      return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'TMMonth'))`;
-    }
-
-    if (
-      groupByField.dateGranularity ===
-      ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR
-    ) {
-      return `TO_CHAR(${columnNameWithQuotes}, '"Q"Q')`;
-    }
-
-    return `DATE_TRUNC('${groupByField.dateGranularity}', ${columnNameWithQuotes})`;
+  if (!isGroupByDateField(groupByField)) {
+    return columnNameWithQuotes;
   }
-
-  return columnNameWithQuotes;
+  switch (groupByField.dateGranularity) {
+    case ObjectRecordGroupByDateGranularity.NONE:
+      return columnNameWithQuotes;
+    case ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK:
+      return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'TMDay'))`;
+    case ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR:
+      return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'TMMonth'))`;
+    case ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR:
+      return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'Q'))`;
+    case ObjectRecordGroupByDateGranularity.DAY:
+    case ObjectRecordGroupByDateGranularity.MONTH:
+    case ObjectRecordGroupByDateGranularity.QUARTER:
+    case ObjectRecordGroupByDateGranularity.YEAR:
+      return `DATE_TRUNC('${groupByField.dateGranularity}', ${columnNameWithQuotes})`;
+    default:
+      assertUnreachable(groupByField.dateGranularity);
+  }
 };

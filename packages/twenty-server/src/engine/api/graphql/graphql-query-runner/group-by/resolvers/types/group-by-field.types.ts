@@ -2,8 +2,13 @@ import { type ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export type GroupByField = {
+export type GroupByRegularField = {
   fieldMetadata: FieldMetadataEntity;
   subFieldName?: string;
-  dateGranularity?: ObjectRecordGroupByDateGranularity;
 };
+export type GroupByDateField = {
+  fieldMetadata: FieldMetadataEntity;
+  subFieldName?: string;
+  dateGranularity: ObjectRecordGroupByDateGranularity;
+};
+export type GroupByField = GroupByRegularField | GroupByDateField;
