@@ -329,7 +329,7 @@ export class ObjectMetadataServiceV2 {
     const toFlatFieldMetadataMaps = [
       ...flatFieldMetadataToCreateOnObject,
       ...relationTargetFlatFieldMetadataToCreate,
-    ].reduce(
+    ].reduce<FlatEntityMaps<FlatFieldMetadata>>(
       (flatFieldMaps, flatField) =>
         addFlatEntityToFlatEntityMapsOrThrow({
           flatEntity: flatField,
@@ -353,10 +353,11 @@ export class ObjectMetadataServiceV2 {
       flatEntityMaps: existingFlatViewMaps,
     });
 
-    const { objectFlatFieldMetadatas } = findObjectFlatFieldMetadatasOrThrow({
-      flatFieldMetadataMaps: toFlatFieldMetadataMaps,
-      flatObjectMetadata: flatObjectMetadataToCreate,
-    });
+    const objectFlatFieldMetadatas =
+      findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: toFlatFieldMetadataMaps,
+        flatEntityIds: flatObjectMetadataToCreate.fieldMetadataIds,
+      });
     const flatDefaultViewFieldsToCreate =
       await this.createDefaultFlatViewFields({
         objectFlatFieldMetadatas,
