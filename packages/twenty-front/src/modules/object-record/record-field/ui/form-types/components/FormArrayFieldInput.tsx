@@ -129,6 +129,8 @@ export const FormArrayFieldInput = ({
     });
 
     onChange([...draftValue.value, newItemDraftValue]);
+
+    setNewItemDraftValue('');
   };
 
   const handleEditItem = (index: number) => {
@@ -149,6 +151,11 @@ export const FormArrayFieldInput = ({
       value: updatedItems,
     });
     onChange(updatedItems);
+
+    const isDropdownGoingToBeHiddenNext = updatedItems.length === 0;
+    if (isDropdownGoingToBeHiddenNext) {
+      closeDropdown(dropdownId);
+    }
   };
 
   const handleNewItemInputFocus = () => {
