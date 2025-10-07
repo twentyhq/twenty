@@ -167,6 +167,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
                 <MenuItemSelect
                   text={fieldMetadataItem.label}
                   selected={
+                    !isCompositeFieldType(fieldMetadataItem.type) &&
                     currentGroupByFieldMetadataId === fieldMetadataItem.id
                   }
                   focused={selectedItemId === fieldMetadataItem.id}
