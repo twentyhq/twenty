@@ -1,4 +1,3 @@
-import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldInputDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -13,6 +12,7 @@ import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
+import { CurrencyCode } from 'twenty-shared/constants';
 import { CustomError } from 'twenty-shared/utils';
 
 type computeDraftValueFromStringParams = {

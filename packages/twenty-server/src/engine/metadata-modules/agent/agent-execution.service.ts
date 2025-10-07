@@ -15,19 +15,22 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
+import { AgentExecutionContext } from './agent-handoff-executor.service';
+import { AgentModelConfigService } from './agent-model-config.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -38,7 +41,7 @@ export interface AgentExecutionResult {
 }
 
 @Injectable()
-export class AgentExecutionService {
+export class AgentExecutionService implements AgentExecutionContext {
   private readonly logger = new Logger(AgentExecutionService.name);
 
   constructor(
@@ -49,21 +52,22 @@ export class AgentExecutionService {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
+    private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiBillingService: AIBillingService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
   ) {}
 
   async prepareAIRequestConfig({
     messages,
     system,
     agent,
+    excludeHandoffTools = false,
   }: {
     system: string;
     agent: AgentEntity | null;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
+    excludeHandoffTools?: boolean;
   }) {
     try {
       if (agent) {
@@ -76,6 +80,7 @@ export class AgentExecutionService {
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       let tools: ToolSet = {};
+      let providerOptions;
 
       if (agent) {
         const baseTools =
@@ -84,13 +89,29 @@ export class AgentExecutionService {
             agent.workspaceId,
           );
 
-        const handoffTools =
-          await this.agentHandoffToolService.generateHandoffTools(
-            agent.id,
-            agent.workspaceId,
+        let handoffTools = {};
+
+        if (!excludeHandoffTools) {
+          handoffTools =
+            await this.agentHandoffToolService.generateHandoffTools(
+              agent.id,
+              agent.workspaceId,
+              this, // Pass execution context
+            );
+        }
+
+        const nativeModelTools =
+          this.agentModelConfigService.getNativeModelTools(
+            registeredModel,
+            agent,
           );
 
-        tools = { ...baseTools, ...handoffTools };
+        tools = { ...baseTools, ...handoffTools, ...nativeModelTools };
+
+        providerOptions = this.agentModelConfigService.getProviderOptions(
+          registeredModel,
+          agent,
+        );
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
@@ -101,16 +122,7 @@ export class AgentExecutionService {
         model: registeredModel.model,
         messages: convertToModelMessages(messages),
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
-        ...(registeredModel.doesSupportThinking && {
-          providerOptions: {
-            anthropic: {
-              thinking: {
-                type: 'enabled',
-                budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
-              },
-            },
-          },
-        }),
+        providerOptions,
       };
     } catch (error) {
       this.logger.error(
@@ -144,11 +156,29 @@ export class AgentExecutionService {
         workspaceId: workspace.id,
       });
 
+    const objectMetadataMaps =
+      workspaceDataSource.internalContext.objectMetadataMaps;
+    const objectMetadataPermissions = workspaceDataSource.permissionsPerRoleId;
+
     const contextObject = (
       await Promise.all(
         recordIdsByObjectMetadataNameSingular.map(
           async (recordsWithObjectMetadataNameSingular) => {
             if (recordsWithObjectMetadataNameSingular.recordIds.length === 0) {
+              return [];
+            }
+
+            const objectMetadataMapItem =
+              getObjectMetadataMapItemByNameSingular(
+                objectMetadataMaps,
+                recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
+              );
+
+            if (!objectMetadataMapItem) {
+              this.logger.warn(
+                `Object metadata not found for ${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}`,
+              );
+
               return [];
             }
 
@@ -158,8 +188,24 @@ export class AgentExecutionService {
               roleId,
             );
 
+            const restrictedFields =
+              objectMetadataPermissions?.[roleId]?.[objectMetadataMapItem.id]
+                ?.restrictedFields ?? {};
+
+            const hasRestrictedFields = Object.values(restrictedFields).some(
+              (field) => field.canRead === false,
+            );
+
+            const selectOptions = hasRestrictedFields
+              ? getAllSelectableFields({
+                  restrictedFields,
+                  objectMetadata: { objectMetadataMapItem },
+                })
+              : undefined;
+
             return (
               await repository.find({
+                ...(selectOptions && { select: selectOptions }),
                 where: {
                   id: In(recordsWithObjectMetadataNameSingular.recordIds),
                 },

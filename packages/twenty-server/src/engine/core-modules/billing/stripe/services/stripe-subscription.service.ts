@@ -6,7 +6,6 @@ import type Stripe from 'stripe';
 
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
 @Injectable()
 export class StripeSubscriptionService {
@@ -66,11 +65,9 @@ export class StripeSubscriptionService {
     return this.stripe.subscriptions.update(stripeSubscriptionId, updateData);
   }
 
-  getBillingThresholdsByInterval(interval: SubscriptionInterval) {
+  getBillingThresholds(meterPriceFlatAmount: number) {
     return {
-      amount_gte:
-        this.twentyConfigService.get('BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT') *
-        (interval === SubscriptionInterval.Year ? 12 : 1),
+      amount_gte: Math.max(meterPriceFlatAmount * 2, 10000),
       reset_billing_cycle_anchor: false,
     };
   }

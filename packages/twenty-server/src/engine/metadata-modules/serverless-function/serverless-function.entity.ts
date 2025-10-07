@@ -5,8 +5,11 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -14,9 +17,11 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 
 import { CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
-import { Route } from 'src/engine/metadata-modules/route/route.entity';
+import { RouteTrigger } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionEntityRelationProperties } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
@@ -28,7 +33,7 @@ export enum ServerlessFunctionRuntime {
 export const SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES = [
   'cronTriggers',
   'databaseEventTriggers',
-  'routes',
+  'routeTriggers',
 ] as const satisfies readonly ServerlessFunctionEntityRelationProperties[];
 
 @Entity('serverlessFunction')
@@ -74,6 +79,28 @@ export class ServerlessFunctionEntity
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;
 
+  @Column({ nullable: true, type: 'uuid' })
+  serverlessFunctionLayerId: string | null;
+
+  @ManyToOne(
+    () => ServerlessFunctionLayerEntity,
+    (serverlessFunctionLayer) => serverlessFunctionLayer.serverlessFunctions,
+    { nullable: true },
+  )
+  @JoinColumn({ name: 'serverlessFunctionLayerId' })
+  serverlessFunctionLayer: Relation<ServerlessFunctionLayerEntity> | null;
+
+  @ManyToOne(
+    () => ApplicationEntity,
+    (application) => application.serverlessFunctions,
+    {
+      onDelete: 'CASCADE',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'applicationId' })
+  application: Relation<ApplicationEntity> | null;
+
   @OneToMany(
     () => CronTrigger,
     (cronTrigger) => cronTrigger.serverlessFunction,
@@ -92,10 +119,14 @@ export class ServerlessFunctionEntity
   )
   databaseEventTriggers: DatabaseEventTrigger[];
 
-  @OneToMany(() => Route, (route) => route.serverlessFunction, {
-    cascade: true,
-  })
-  routes: Route[];
+  @OneToMany(
+    () => RouteTrigger,
+    (routeTrigger) => routeTrigger.serverlessFunction,
+    {
+      cascade: true,
+    },
+  )
+  routeTriggers: RouteTrigger[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -49,7 +49,10 @@ export const useRunWorkflowRecordActions = ({
     ({ snapshot }) =>
       async (
         selectedRecordIds: string[],
-        activeWorkflowVersion: WorkflowVersion,
+        activeWorkflowVersion: Pick<
+          WorkflowVersion,
+          'id' | 'workflowId' | 'trigger'
+        >,
       ) => {
         if (
           isIteratorEnabled &&

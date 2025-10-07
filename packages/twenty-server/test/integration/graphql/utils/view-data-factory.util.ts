@@ -1,3 +1,5 @@
+import { ViewFilterOperand } from 'twenty-shared/types';
+
 import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
@@ -6,7 +8,6 @@ import { type ViewGroupEntity } from 'src/engine/core-modules/view/entities/view
 import { type ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
-import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';

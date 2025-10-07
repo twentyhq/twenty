@@ -9,7 +9,7 @@ const MOCK_RECORD_FILTER_FIELDS: RecordFilter = {
   id: 'filter-1',
   recordFilterGroupId: 'root-group',
   fieldMetadataId: 'field-1',
-  operand: RecordFilterOperand.Contains,
+  operand: RecordFilterOperand.CONTAINS,
   value: 'value-1',
   displayValue: 'Display Value 1',
   label: 'Label 1',

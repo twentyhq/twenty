@@ -8,7 +8,9 @@ import { AppPath } from 'twenty-shared/types';
 export const SeeActiveVersionWorkflowSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const { workflowVersion, loading } = useActiveWorkflowVersion(recordId);
+  const { workflowVersion, loading } = useActiveWorkflowVersion({
+    workflowId: recordId,
+  });
 
   if (loading) {
     return <ActionDisplay />;

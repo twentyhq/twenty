@@ -13,9 +13,9 @@ import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 export const compareTwoFlatObjectMetadata = ({
-  from,
-  to,
-}: FromTo<FlatObjectMetadata>) => {
+  fromFlatObjectMetadata,
+  toFlatObjectMetadata,
+}: FromTo<FlatObjectMetadata, 'flatObjectMetadata'>) => {
   const transformMetadataForComparisonParameters = {
     propertiesToStringify: FLAT_OBJECT_METADATA_JSONB_PROPERTIES,
     shouldIgnoreProperty: (
@@ -41,11 +41,11 @@ export const compareTwoFlatObjectMetadata = ({
     },
   };
   const fromCompare = transformMetadataForComparison(
-    from,
+    fromFlatObjectMetadata,
     transformMetadataForComparisonParameters,
   );
   const toCompare = transformMetadataForComparison(
-    to,
+    toFlatObjectMetadata,
     transformMetadataForComparisonParameters,
   );
   const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));

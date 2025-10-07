@@ -1,5 +1,5 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { type WorkflowFilterAction } from '@/workflow/types/Workflow';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WorkflowEditActionFilterBody } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody';
 import { WorkflowEditActionFilterBodyEffect } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBodyEffect';
 import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/StepFilterGroupsComponentInstanceContext';
@@ -39,7 +39,7 @@ export const WorkflowEditActionFilter = ({
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
             return;
