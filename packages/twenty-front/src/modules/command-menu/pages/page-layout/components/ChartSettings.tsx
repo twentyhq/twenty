@@ -2,6 +2,7 @@ import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
@@ -19,6 +20,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -62,6 +64,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   const chartSettings = GRAPH_TYPE_INFORMATION[currentGraphType].settings;
 
+  const { setSelectedItemId } = useSelectableList(
+    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
+  );
+
   return (
     <CommandMenuList
       commandGroups={[]}
@@ -90,6 +96,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                       CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS
                     ]
                   : item.id;
+
+              setSelectedItemId(item.id);
 
               updateCurrentWidgetConfig({
                 configToUpdate: {
