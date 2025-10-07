@@ -1,10 +1,7 @@
 export type WorkflowDelayActionInput = {
-  delayType: 'RESUME_AT' | 'RESUME_AFTER';
-  scheduledDateTime?: string;
-  duration?: {
+  duration: {
     days?: number;
     hours?: number;
     minutes?: number;
   };
 };
-  

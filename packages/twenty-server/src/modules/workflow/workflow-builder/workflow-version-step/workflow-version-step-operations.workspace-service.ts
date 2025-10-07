@@ -353,6 +353,25 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           additionalCreatedSteps: [emptyNodeStep],
         };
       }
+      case WorkflowActionType.DELAY: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Delay',
+            type: WorkflowActionType.DELAY,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                duration: {
+                  days: 0,
+                  hours: 0,
+                  minutes: 0,
+                },
+              },
+            },
+          },
+        };
+      }
       default:
         throw new WorkflowVersionStepException(
           `WorkflowActionType '${type}' unknown`,

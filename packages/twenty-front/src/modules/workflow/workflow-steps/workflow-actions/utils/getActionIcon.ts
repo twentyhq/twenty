@@ -23,6 +23,8 @@ export const getActionIcon = (actionType: WorkflowActionType) => {
       return HUMAN_INPUT_ACTIONS.find((item) => item.type === actionType)?.icon;
     case 'ITERATOR':
       return 'IconRepeat';
+    case 'DELAY':
+      return 'IconPlayerPause';
     default:
       return 'IconDefault';
   }
