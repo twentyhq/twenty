@@ -37,7 +37,7 @@ export class RestApiCoreController {
     );
     const result = await this.restApiCoreService.createMany(request);
 
-    res.status(200).send(result);
+    res.status(201).send(result);
   }
 
   @Post('*/duplicates')
