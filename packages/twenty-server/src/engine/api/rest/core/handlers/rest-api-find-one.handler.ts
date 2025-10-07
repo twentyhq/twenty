@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
@@ -17,6 +19,44 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
   }
 
   async handle(request: AuthenticatedRequest) {
+    const { id: recordId } = parseCorePath(request);
+
+    if (!isDefined(recordId)) {
+      throw new BadRequestException(
+        'No recordId provided in rest api get one query',
+      );
+    }
+
+    const {
+      repository,
+      objectMetadata,
+      objectMetadataItemWithFieldsMaps,
+      restrictedFields,
+    } = await this.getRepositoryAndMetadataOrFail(request);
+
+    const { records } = await this.findRecords({
+      request,
+      recordId,
+      repository,
+      objectMetadata,
+      objectMetadataItemWithFieldsMaps,
+      restrictedFields,
+    });
+
+    const record = records?.[0];
+
+    if (!isDefined(record)) {
+      throw new BadRequestException('Record not found');
+    }
+
+    return this.formatResult({
+      operation: 'findOne',
+      objectNameSingular: objectMetadata.objectMetadataMapItem.nameSingular,
+      data: record,
+    });
+  }
+
+  async commonHandle(request: AuthenticatedRequest) {
     try {
       const { filter, depth } = await this.parseRequestArgs(request);
       const {

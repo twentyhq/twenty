@@ -11,6 +11,8 @@ import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-ap
 import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 @Injectable()
 export class RestApiCoreService {
@@ -22,6 +24,7 @@ export class RestApiCoreService {
     private readonly restApiFindOneHandler: RestApiFindOneHandler,
     private readonly restApiFindManyHandler: RestApiFindManyHandler,
     private readonly restApiFindDuplicatesHandler: RestApiFindDuplicatesHandler,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async delete(request: AuthenticatedRequest) {
@@ -48,6 +51,15 @@ export class RestApiCoreService {
     const { id: recordId } = parseCorePath(request);
 
     if (isDefined(recordId)) {
+      const isCommonApiEnabled = await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_COMMON_API_ENABLED,
+        request.workspace.id,
+      );
+
+      if (isCommonApiEnabled) {
+        return await this.restApiFindOneHandler.commonHandle(request);
+      }
+
       return await this.restApiFindOneHandler.handle(request);
     } else {
       return await this.restApiFindManyHandler.handle(request);
