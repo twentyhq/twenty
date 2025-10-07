@@ -87,6 +87,7 @@ describe('PageLayoutService', () => {
           deletedAt: IsNull(),
         },
         relations: ['tabs', 'tabs.widgets'],
+        order: { tabs: { position: 'ASC' } },
       });
       expect(result).toEqual(expectedPageLayouts);
     });
@@ -114,6 +115,7 @@ describe('PageLayoutService', () => {
           deletedAt: IsNull(),
         },
         relations: ['tabs', 'tabs.widgets'],
+        order: { tabs: { position: 'ASC' } },
       });
       expect(result).toEqual(expectedPageLayouts);
     });
@@ -137,6 +139,7 @@ describe('PageLayoutService', () => {
           deletedAt: IsNull(),
         },
         relations: ['tabs', 'tabs.widgets'],
+        order: { tabs: { position: 'ASC' } },
       });
       expect(result).toEqual(mockPageLayout);
     });
