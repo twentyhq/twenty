@@ -90,13 +90,18 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
       });
 
-      it('should throw error for missing required fields', () => {
-        expect(() =>
-          validateAndTransformWidgetConfiguration(
-            WidgetType.GRAPH,
-            INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
-          ),
-        ).toThrow(/aggregateFieldMetadataId should not be empty/);
+      it('should accept partial number graph configuration', () => {
+        const result = validateAndTransformWidgetConfiguration(
+          WidgetType.GRAPH,
+          INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
+        );
+
+        expect(result).toMatchObject(
+          INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
+        );
+        expect((result as any)?.configurationType).toBe(
+          WidgetConfigurationType.NUMBER_CHART_CONFIG,
+        );
       });
 
       it('should throw error for invalid UUID', () => {
@@ -134,13 +139,16 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
       });
 
-      it('should throw error for missing group by field', () => {
-        expect(() =>
-          validateAndTransformWidgetConfiguration(
-            WidgetType.GRAPH,
-            INVALID_BAR_CHART_CONFIG_MISSING_GROUP_BY,
-          ),
-        ).toThrow(/groupByFieldMetadataIdX should not be empty/);
+      it('should accept partial bar graph configuration', () => {
+        const result = validateAndTransformWidgetConfiguration(
+          WidgetType.GRAPH,
+          INVALID_BAR_CHART_CONFIG_MISSING_GROUP_BY,
+        );
+
+        expect(result).toMatchObject(INVALID_BAR_CHART_CONFIG_MISSING_GROUP_BY);
+        expect((result as any)?.configurationType).toBe(
+          WidgetConfigurationType.BAR_CHART_CONFIG,
+        );
       });
     });
 
