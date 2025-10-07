@@ -1,5 +1,5 @@
 import { ChartGroupByFieldSelectionDropdownContentBase } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase';
-import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import {
   type BarChartConfiguration,
   type LineChartConfiguration,
@@ -10,7 +10,7 @@ export const ChartXAxisFieldSelectionDropdownContent = () => {
     <ChartGroupByFieldSelectionDropdownContentBase<
       BarChartConfiguration | LineChartConfiguration
     >
-      headerLabel={<Trans>X-Axis Field</Trans>}
+      headerLabel={t`X-Axis Field`}
       fieldMetadataIdKey="groupByFieldMetadataIdX"
       subFieldNameKey="groupBySubFieldNameX"
     />

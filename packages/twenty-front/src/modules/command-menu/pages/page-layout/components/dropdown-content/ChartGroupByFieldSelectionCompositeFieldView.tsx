@@ -12,12 +12,11 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { type ReactNode } from 'react';
 import { IconChevronLeft, useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type ChartGroupByFieldSelectionCompositeFieldViewProps = {
-  headerLabel: ReactNode;
+  headerLabel: string;
   compositeField: FieldMetadataItem;
   currentSubFieldName: string | undefined;
   onBack: () => void;

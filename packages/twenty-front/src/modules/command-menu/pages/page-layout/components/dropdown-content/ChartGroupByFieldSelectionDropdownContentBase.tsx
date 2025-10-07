@@ -18,7 +18,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -27,7 +27,7 @@ import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 type ChartGroupByFieldSelectionDropdownContentBaseProps<
   T extends ChartConfiguration,
 > = {
-  headerLabel: ReactNode;
+  headerLabel: string;
   fieldMetadataIdKey: keyof T;
   subFieldNameKey: keyof T;
 };
