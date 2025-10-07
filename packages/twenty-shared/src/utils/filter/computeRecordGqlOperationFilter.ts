@@ -1,4 +1,3 @@
-
 import {
   type PartialFieldMetadataItem,
   type RecordFilterValueDependencies,
@@ -46,8 +45,7 @@ export const computeRecordGqlOperationFilter = ({
       fields,
       recordFilterGroups,
       currentRecordFilterGroupId: outermostFilterGroupId,
-    }
-    );
+    });
 
   const recordGqlOperationFilters = [
     ...regularRecordGqlOperationFilter,

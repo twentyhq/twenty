@@ -124,6 +124,11 @@ msgstr "{failedCount} tệp không tải lên được"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} trong tổng số {formattedRecordsToImportCount} bản ghi đã được nhập."
 
+#. js-lingui-id: 2EPGDl
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
+msgid "{graphTypeLabel} Chart"
+msgstr ""
+
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
@@ -377,6 +382,11 @@ msgstr "Kích hoạt"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "Các khóa API hoạt động đã được bạn hoặc đội ngũ của bạn tạo."
+
+#. js-lingui-id: QXX2VR
+#: src/modules/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem.tsx
+msgid "Add \"{trimmedName}\" to options"
+msgstr ""
 
 #. js-lingui-id: m3/V2n
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -1153,9 +1163,9 @@ msgstr "Quay lại"
 msgid "Back to content"
 msgstr "Quay lại nội dung"
 
-#. js-lingui-id: LiFJll
+#. js-lingui-id: GoBp8L
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Bar Chart"
+msgid "Bar"
 msgstr ""
 
 #. js-lingui-id: NgFKo1
@@ -3750,9 +3760,9 @@ msgstr "\\"
 msgid "Functions - Settings"
 msgstr "Cài đặt - Chức năng"
 
-#. js-lingui-id: vYj1cC
+#. js-lingui-id: IZUMtC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Gauge Chart"
+msgid "Gauge"
 msgstr ""
 
 #. js-lingui-id: Weq9zb
@@ -4617,9 +4627,9 @@ msgstr "Nhỏ hơn hoặc bằng"
 msgid "Light"
 msgstr "Giao diện sáng"
 
-#. js-lingui-id: pFkLY3
+#. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Line Chart"
+msgid "Line"
 msgstr ""
 
 #. js-lingui-id: pQjjYo
@@ -4651,6 +4661,11 @@ msgstr "Đang tải csv ... "
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
 msgstr "Đang tải dữ liệu chỉ số..."
+
+#. js-lingui-id: tVSmFT
+#: src/modules/ui/input/components/IconPicker.tsx
+msgid "Loading more..."
+msgstr ""
 
 #. js-lingui-id: Z3FXyt
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -5141,14 +5156,9 @@ msgid "No"
 msgstr "Không"
 
 #. js-lingui-id: xUXmJM
-#: src/modules/object-record/record-field/ui/meta-types/input/components/RelationToOneFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput.tsx
 msgid "No {fieldLabel}"
 msgstr "Không có {fieldLabel}"
-
-#. js-lingui-id: yWS1Mx
-#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
-msgid "No {objectNameSingular}"
-msgstr "Không có {objectNameSingular}"
 
 #. js-lingui-id: vhsJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -5347,6 +5357,7 @@ msgid "No records found"
 msgstr "Không tìm thấy bản ghi"
 
 #. js-lingui-id: Ev2r9A
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 msgid "No results"
@@ -5458,14 +5469,10 @@ msgstr "bây giờ"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
 msgstr "Số"
-
-#. js-lingui-id: oVhZzL
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Number Chart"
-msgstr ""
 
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -5836,9 +5843,9 @@ msgstr ""
 msgid "Picture"
 msgstr "Hình ảnh"
 
-#. js-lingui-id: 3ubdv5
+#. js-lingui-id: ZjVniv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Pie Chart"
+msgid "Pie"
 msgstr ""
 
 #. js-lingui-id: GdgCoi
@@ -7018,6 +7025,11 @@ msgstr "Một số"
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Some folders"
+msgstr ""
+
+#. js-lingui-id: yHwG3y
+#: src/modules/command-menu/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Soon"
 msgstr ""
 
 #. js-lingui-id: wTrpxV

@@ -16,13 +16,13 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useOpenMorphRelationFromManyFieldInput = () => {
+export const useOpenMorphRelationOneToManyFieldInput = () => {
   const { performSearch } = useMultipleRecordPickerPerformSearch();
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const openMorphRelationFromManyFieldInput = useRecoilCallback(
+  const openMorphRelationOneToManyFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
       ({
         recordId,
@@ -48,7 +48,6 @@ export const useOpenMorphRelationFromManyFieldInput = () => {
             recordStoreMorphOneToManyValueWithObjectNameFamilySelector({
               recordId,
               morphRelations: fieldDefinition.metadata.morphRelations,
-              fieldName: fieldDefinition.metadata.fieldName,
             }),
           )
           .getValue();
@@ -136,5 +135,7 @@ export const useOpenMorphRelationFromManyFieldInput = () => {
     [openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],
   );
 
-  return { openMorphRelationFromManyFieldInput };
+  return {
+    openMorphRelationOneToManyFieldInput,
+  };
 };

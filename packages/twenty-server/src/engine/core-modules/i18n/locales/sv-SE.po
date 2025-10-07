@@ -1343,6 +1343,11 @@ msgstr ""
 msgid "Field ID is already used in another index"
 msgstr ""
 
+#. js-lingui-id: AgbRjM
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+msgid "Field label identifier is required"
+msgstr ""
+
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -2133,8 +2138,8 @@ msgid "Name should be in camelCase"
 msgstr "Namn bör vara i camelCase"
 
 #. js-lingui-id: Dr0xtb
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Names are not synced with labels"
 msgstr "Namn är inte synkroniserade med etiketterna"
 
@@ -2277,8 +2282,8 @@ msgid "Number of employees in the company"
 msgstr "Antal anställda i företaget"
 
 #. js-lingui-id: ECRKYR
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Objektet finns redan"
 

@@ -19,5 +19,3 @@ export * from './utils/resolveDateViewFilterValue';
 export * from './utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export * from './utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 export * from './utils/validation-schemas/jsonRelationFilterValueSchema';
-
-

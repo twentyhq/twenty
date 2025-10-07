@@ -4,12 +4,15 @@ const operandMapping: Record<string, ViewFilterOperand> = {
   [ViewFilterOperandDeprecated.Is]: ViewFilterOperand.IS,
   [ViewFilterOperandDeprecated.IsNotNull]: ViewFilterOperand.IS_NOT_NULL,
   [ViewFilterOperandDeprecated.IsNot]: ViewFilterOperand.IS_NOT,
-  [ViewFilterOperandDeprecated.LessThanOrEqual]: ViewFilterOperand.LESS_THAN_OR_EQUAL,
-  [ViewFilterOperandDeprecated.GreaterThanOrEqual]: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+  [ViewFilterOperandDeprecated.LessThanOrEqual]:
+    ViewFilterOperand.LESS_THAN_OR_EQUAL,
+  [ViewFilterOperandDeprecated.GreaterThanOrEqual]:
+    ViewFilterOperand.GREATER_THAN_OR_EQUAL,
   [ViewFilterOperandDeprecated.IsBefore]: ViewFilterOperand.IS_BEFORE,
   [ViewFilterOperandDeprecated.IsAfter]: ViewFilterOperand.IS_AFTER,
   [ViewFilterOperandDeprecated.Contains]: ViewFilterOperand.CONTAINS,
-  [ViewFilterOperandDeprecated.DoesNotContain]: ViewFilterOperand.DOES_NOT_CONTAIN,
+  [ViewFilterOperandDeprecated.DoesNotContain]:
+    ViewFilterOperand.DOES_NOT_CONTAIN,
   [ViewFilterOperandDeprecated.IsEmpty]: ViewFilterOperand.IS_EMPTY,
   [ViewFilterOperandDeprecated.IsNotEmpty]: ViewFilterOperand.IS_NOT_EMPTY,
   [ViewFilterOperandDeprecated.IsRelative]: ViewFilterOperand.IS_RELATIVE,
