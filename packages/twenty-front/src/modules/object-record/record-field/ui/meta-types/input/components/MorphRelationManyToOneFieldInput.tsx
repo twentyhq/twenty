@@ -30,7 +30,7 @@ export const MorphRelationManyToOneFieldInput = () => {
       fieldDefinition.metadata.objectMetadataNameSingular ?? '',
   });
 
-  const handleMorphItemSelected = (
+  const handleMorphItemSelected = async (
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
   ) => {
     if (!isDefined(selectedMorphItem)) {
@@ -47,12 +47,13 @@ export const MorphRelationManyToOneFieldInput = () => {
       throw new Error('TargetObjectMetadataItem is required');
     }
 
-    persistMorphManyToOne({
+    await persistMorphManyToOne({
       recordId: recordId,
       fieldDefinition,
       valueToPersist: selectedMorphItem.recordId,
       targetObjectMetadataNameSingular: targetObjectMetadataItem.nameSingular,
     });
+    onCancel?.();
   };
 
   const layoutDirection = useRecoilComponentValue(

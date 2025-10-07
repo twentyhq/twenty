@@ -27,7 +27,7 @@ export const useMorphPersistManyToOne = ({
 
   const persistMorphManyToOne = useRecoilCallback(
     ({ set, snapshot }) =>
-      ({
+      async ({
         recordId,
         fieldDefinition,
         valueToPersist,
