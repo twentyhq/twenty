@@ -6,7 +6,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
+import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
@@ -105,12 +105,7 @@ export const useUpdateActivityTargetFromCell = ({
           }
         } else {
           const searchRecord = snapshot
-            .getLoadable(
-              searchRecordStoreComponentFamilyState.atomFamily({
-                instanceId: recordPickerInstanceId,
-                familyKey: morphItem.recordId,
-              }),
-            )
+            .getLoadable(searchRecordStoreFamilyState(morphItem.recordId))
             .getValue();
 
           if (!isDefined(searchRecord) || !isDefined(searchRecord?.record)) {

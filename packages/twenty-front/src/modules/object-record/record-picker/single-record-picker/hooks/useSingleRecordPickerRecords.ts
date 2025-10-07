@@ -17,12 +17,12 @@ export const useSingleRecordPickerRecords = ({
   const selectedRecordId = useRecoilComponentValue(
     singleRecordPickerSelectedIdComponentState,
   );
-  const records = useSingleRecordPickerPerformSearch({
+  const { pickableMorphItems, loading } = useSingleRecordPickerPerformSearch({
     searchFilter: recordPickerSearchFilter,
     selectedIds: selectedRecordId ? [selectedRecordId] : [],
     excludedRecordIds: excludedRecordIds,
     objectNameSingulars,
   });
 
-  return { records };
+  return { pickableMorphItems, loading };
 };

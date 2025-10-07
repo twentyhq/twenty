@@ -1,10 +1,8 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
-import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
-import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
+import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilCallback } from 'recoil';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { type SearchQuery } from '~/generated/graphql';
@@ -25,22 +23,16 @@ export const useSingleRecordPickerPerformSearch = ({
   pickableMorphItems: RecordPickerPickableMorphItem[];
   loading: boolean;
 } => {
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    SingleRecordPickerComponentInstanceContext,
-  );
   const onSearchRecordsCompleted = useRecoilCallback(
     ({ set }) =>
       (data: SearchQuery) => {
         const searchRecords = data.search.edges.map((edge) => edge.node);
 
         searchRecords.forEach((searchRecord) => {
-          set(
-            searchRecordStoreComponentFamilyState.atomFamily({
-              instanceId: instanceId,
-              familyKey: searchRecord.recordId,
-            }),
-            searchRecord,
-          );
+          set(searchRecordStoreFamilyState(searchRecord.recordId), {
+            ...searchRecord,
+            record: undefined,
+          });
         });
       },
     [],
@@ -104,9 +96,15 @@ export const useSingleRecordPickerPerformSearch = ({
         isSelected: selectedRecords.some(
           (selectedRecord) => selectedRecord.recordId === record.recordId,
         ),
-        isMatchingSearchFilter: filteredSelectedRecords.some(
-          (filteredRecord) => filteredRecord.recordId === record.recordId,
-        ),
+        isMatchingSearchFilter:
+          recordsToSelect.some(
+            (recordsToSelectRecord) =>
+              recordsToSelectRecord.recordId === record.recordId,
+          ) ||
+          filteredSelectedRecords.some(
+            (filteredSelectedRecord) =>
+              filteredSelectedRecord.recordId === record.recordId,
+          ),
       };
     },
   );

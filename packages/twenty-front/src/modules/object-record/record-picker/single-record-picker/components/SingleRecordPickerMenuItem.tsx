@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
-import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
+import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
@@ -9,6 +9,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
@@ -42,12 +43,11 @@ export const SingleRecordPickerMenuItem = ({
     selectableListComponentInstanceId,
   );
 
-  const record = useRecoilComponentFamilyValue(
-    searchRecordStoreComponentFamilyState,
-    morphItem.recordId,
+  const searchRecord = useRecoilValue(
+    searchRecordStoreFamilyState(morphItem.recordId),
   );
 
-  if (!isDefined(record)) {
+  if (!isDefined(searchRecord)) {
     return null;
   }
 
@@ -62,16 +62,16 @@ export const SingleRecordPickerMenuItem = ({
       <MenuItemSelectAvatar
         testId="menu-item"
         onClick={() => onMorphItemSelected(morphItem)}
-        text={record.label}
+        text={searchRecord.label}
         selected={isRecordSelected}
         focused={isSelectedByKeyboard}
         avatar={
           <Avatar
-            avatarUrl={record.imageUrl}
+            avatarUrl={searchRecord.imageUrl}
             placeholderColorSeed={morphItem.recordId}
-            placeholder={record.label}
+            placeholder={searchRecord.label}
             size="md"
-            type={getAvatarType(record.objectNameSingular) ?? 'rounded'}
+            type={getAvatarType(searchRecord.objectNameSingular) ?? 'rounded'}
           />
         }
       />

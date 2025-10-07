@@ -30,7 +30,12 @@ export const RelationManyToOneFieldInput = () => {
 
   const handleMorphItemSelected = (
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
-  ) => onSubmit?.({ newValue: selectedMorphItem?.recordId ?? null });
+  ) =>
+    onSubmit?.({
+      newValue: isDefined(selectedMorphItem)
+        ? { id: selectedMorphItem.recordId }
+        : null,
+    });
 
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({

@@ -53,7 +53,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     recordPickerInstanceId,
   );
 
-  const { records } = useSingleRecordPickerRecords({
+  const { pickableMorphItems, loading } = useSingleRecordPickerRecords({
     objectNameSingulars,
     excludedRecordIds,
   });
@@ -79,7 +79,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
 
   return (
     <>
-      <SingleRecordPickerLoadingEffect loading={records.loading} />
+      <SingleRecordPickerLoadingEffect loading={loading} />
       {layoutDirection === 'search-bar-on-bottom' && (
         <>
           {isDefined(onCreate) && hasUpdatePermissions && (
@@ -98,7 +98,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           <DropdownMenuItemsContainer hasMaxHeight>
             <SingleRecordPickerMenuItems
               focusId={focusId}
-              pickableMorphItems={records.pickableMorphItems}
+              pickableMorphItems={pickableMorphItems}
               onMorphItemSelected={onMorphItemSelected}
               {...{
                 EmptyIcon,
@@ -121,7 +121,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           <DropdownMenuItemsContainer hasMaxHeight>
             <SingleRecordPickerMenuItems
               focusId={focusId}
-              pickableMorphItems={records.pickableMorphItems}
+              pickableMorphItems={pickableMorphItems}
               onMorphItemSelected={onMorphItemSelected}
               {...{
                 EmptyIcon,
