@@ -1,3 +1,4 @@
+import { CustomError } from '@/utils/errors';
 import { capitalize } from '@/utils/strings';
 
 enum RelationType {
@@ -26,7 +27,8 @@ export const computeMorphRelationFieldName = ({
     return `${fieldName}${capitalize(namePlural)}`;
   }
 
-  throw new Error(
-    `Invalid relation direction: ${relationType} for field ${fieldName}`,
+  throw new CustomError(
+    `Invalid relation type (${relationType}) for field ${fieldName} on ${nameSingular}`,
+    'INVALID_RELATION_TYPE_FOR_COMPUTE_MORPH_RELATION_FIELD_NAME',
   );
 };
