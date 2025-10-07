@@ -6,7 +6,7 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
-import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -23,10 +23,10 @@ export const MorphRelationManyToOneFieldInput = () => {
     RecordFieldComponentInstanceContext,
   );
 
-  const handleRecordSelected = (
-    selectedRecord: SingleRecordPickerRecord | null | undefined,
+  const handleMorphItemSelected = (
+    selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
   ) => {
-    onSubmit?.({ newValue: selectedRecord?.record ?? null });
+    onSubmit?.({ newValue: selectedMorphItem?.recordId ?? null });
     onCloseTableCell();
   };
 
@@ -56,7 +56,7 @@ export const MorphRelationManyToOneFieldInput = () => {
       EmptyIcon={IconForbid}
       emptyLabel={'No ' + fieldDefinition.label}
       onCancel={onCancel}
-      onRecordSelected={handleRecordSelected}
+      onMorphItemSelected={handleMorphItemSelected}
       objectNameSingulars={objectNameSingulars}
       recordPickerInstanceId={instanceId}
       layoutDirection={

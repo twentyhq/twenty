@@ -1,19 +1,22 @@
 import styled from '@emotion/styled';
 
+import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
+import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
-import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 type SingleRecordPickerMenuItemProps = {
-  record: SingleRecordPickerRecord;
-  onRecordSelected: (recordSelected?: SingleRecordPickerRecord) => void;
-  selectedRecord?: SingleRecordPickerRecord;
+  morphItem: RecordPickerPickableMorphItem;
+  onMorphItemSelected: (morphItem?: RecordPickerPickableMorphItem) => void;
+  isRecordSelected: boolean;
 };
 
 const StyledSelectableItem = styled(SelectableListItem)`
@@ -21,9 +24,9 @@ const StyledSelectableItem = styled(SelectableListItem)`
 `;
 
 export const SingleRecordPickerMenuItem = ({
-  record,
-  onRecordSelected,
-  selectedRecord,
+  morphItem,
+  onMorphItemSelected,
+  isRecordSelected,
 }: SingleRecordPickerMenuItemProps) => {
   const recordPickerComponentInstanceId =
     useAvailableComponentInstanceIdOrThrow(
@@ -33,33 +36,42 @@ export const SingleRecordPickerMenuItem = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const isSelectedItemId = useRecoilComponentFamilyValue(
+  const isSelectedByKeyboard = useRecoilComponentFamilyValue(
     isSelectedItemIdComponentFamilySelector,
-    record.id,
+    morphItem.recordId,
     selectableListComponentInstanceId,
   );
 
+  const record = useRecoilComponentFamilyValue(
+    searchRecordStoreComponentFamilyState,
+    morphItem.recordId,
+  );
+
+  if (!isDefined(record)) {
+    return null;
+  }
+
   return (
     <StyledSelectableItem
-      itemId={record.id}
-      key={record.id}
+      itemId={morphItem.recordId}
+      key={morphItem.recordId}
       onEnter={() => {
-        onRecordSelected(record);
+        onMorphItemSelected(morphItem);
       }}
     >
       <MenuItemSelectAvatar
         testId="menu-item"
-        onClick={() => onRecordSelected(record)}
-        text={record.name}
-        selected={selectedRecord?.id === record.id}
-        focused={isSelectedItemId}
+        onClick={() => onMorphItemSelected(morphItem)}
+        text={record.label}
+        selected={isRecordSelected}
+        focused={isSelectedByKeyboard}
         avatar={
           <Avatar
-            avatarUrl={record.avatarUrl}
-            placeholderColorSeed={record.id}
-            placeholder={record.name}
+            avatarUrl={record.imageUrl}
+            placeholderColorSeed={morphItem.recordId}
+            placeholder={record.label}
             size="md"
-            type={record.avatarType ?? 'rounded'}
+            type={getAvatarType(record.objectNameSingular) ?? 'rounded'}
           />
         }
       />
