@@ -1,6 +1,6 @@
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
+import { useRef, useState, type FocusEvent, type KeyboardEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type TabInlineRenameInputProps = {
@@ -23,13 +23,13 @@ export const TabInlineRenameInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState(initialValue);
 
-  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
     if (isDefined(value)) {
       event.target.select();
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       event.preventDefault();
       const newTitle = value.trim() || initialValue;

@@ -40,7 +40,6 @@ const StyledInlineRenameWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(8)};
   width: 100%;
 `;
