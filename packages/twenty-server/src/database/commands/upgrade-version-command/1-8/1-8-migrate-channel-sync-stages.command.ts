@@ -118,7 +118,7 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
     } else {
       try {
         await this.coreDataSource.query(
-          `ALTER TYPE ${schemaName}."messageChannel_syncStage_enum" ADD VALUE 'PENDING_CONFIGURATION'`,
+          `ALTER TYPE ${schemaName}."messageChannel_syncStage_enum" ADD VALUE IF NOT EXISTS 'PENDING_CONFIGURATION'`,
         );
         this.logger.log(
           `Added PENDING_CONFIGURATION to messageChannel_syncStage_enum for workspace ${workspaceId}`,
@@ -137,7 +137,7 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
     } else {
       try {
         await this.coreDataSource.query(
-          `ALTER TYPE ${schemaName}."messageChannel_syncStage_enum" ADD VALUE 'MESSAGE_LIST_FETCH_SCHEDULED'`,
+          `ALTER TYPE ${schemaName}."messageChannel_syncStage_enum" ADD VALUE IF NOT EXISTS 'MESSAGE_LIST_FETCH_SCHEDULED'`,
         );
         this.logger.log(
           `Added MESSAGE_LIST_FETCH_SCHEDULED to messageChannel_syncStage_enum for workspace ${workspaceId}`,
@@ -215,7 +215,7 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
     } else {
       try {
         await this.coreDataSource.query(
-          `ALTER TYPE ${schemaName}."calendarChannel_syncStage_enum" ADD VALUE 'PENDING_CONFIGURATION'`,
+          `ALTER TYPE ${schemaName}."calendarChannel_syncStage_enum" ADD VALUE IF NOT EXISTS 'PENDING_CONFIGURATION'`,
         );
         this.logger.log(
           `Added PENDING_CONFIGURATION to calendarChannel_syncStage_enum for workspace ${workspaceId}`,
@@ -234,7 +234,7 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
     } else {
       try {
         await this.coreDataSource.query(
-          `ALTER TYPE ${schemaName}."calendarChannel_syncStage_enum" ADD VALUE 'CALENDAR_EVENT_LIST_FETCH_SCHEDULED'`,
+          `ALTER TYPE ${schemaName}."calendarChannel_syncStage_enum" ADD VALUE IF NOT EXISTS 'CALENDAR_EVENT_LIST_FETCH_SCHEDULED'`,
         );
         this.logger.log(
           `Added CALENDAR_EVENT_LIST_FETCH_SCHEDULED to calendarChannel_syncStage_enum for workspace ${workspaceId}`,
