@@ -6,9 +6,11 @@ import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFi
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type ReactNode } from 'react';
 import { IconChevronLeft, useIcons } from 'twenty-ui/display';
@@ -18,7 +20,6 @@ type ChartGroupByFieldSelectionCompositeFieldViewProps = {
   headerLabel: ReactNode;
   compositeField: FieldMetadataItem;
   currentSubFieldName: string | undefined;
-  dropdownId: string;
   onBack: () => void;
   onSelectSubField: (subFieldName: string) => void;
 };
@@ -27,11 +28,14 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
   headerLabel,
   compositeField,
   currentSubFieldName,
-  dropdownId,
   onBack,
   onSelectSubField,
 }: ChartGroupByFieldSelectionCompositeFieldViewProps) => {
   const { getIcon } = useIcons();
+
+  const dropdownId = useAvailableComponentInstanceIdOrThrow(
+    DropdownComponentInstanceContext,
+  );
 
   const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,

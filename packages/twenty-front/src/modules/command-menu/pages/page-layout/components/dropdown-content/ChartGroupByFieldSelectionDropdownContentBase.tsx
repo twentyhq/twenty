@@ -131,7 +131,6 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         headerLabel={headerLabel}
         compositeField={selectedCompositeField}
         currentSubFieldName={currentSubFieldName}
-        dropdownId={dropdownId}
         onBack={handleBack}
         onSelectSubField={handleSelectSubField}
       />
