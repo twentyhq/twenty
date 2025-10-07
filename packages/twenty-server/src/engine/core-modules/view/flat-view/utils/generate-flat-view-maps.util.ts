@@ -13,8 +13,9 @@ export const generateFlatViewMaps = (
   for (const view of viewCollection) {
     const processedFlatView: FlatView = {
       ...view,
-      viewFieldIds: view.viewFields?.map((viewField) => viewField.id) ?? [],
-      universalIdentifier: view.universalIdentifier ?? view.id, // TODO: should not fallback to id, to remove once we have universalIdentifier required
+      viewFieldIds: view.viewFields.map((viewField) => viewField.id),
+      // TODO: should not fallback to id, to remove once we have universalIdentifier required
+      universalIdentifier: view.universalIdentifier ?? view.id,
     };
 
     flatViewMaps.byId[view.id] = processedFlatView;
