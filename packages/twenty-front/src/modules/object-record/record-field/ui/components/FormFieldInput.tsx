@@ -213,7 +213,7 @@ export const FormFieldInput = ({
   ) : isFieldRelationManyToOne(field) ? (
     <FormRelationToOneFieldInput
       label={field.label}
-      objectNameSingular={field.metadata.objectMetadataNameSingular}
+      objectNameSingular={field.metadata.relationObjectMetadataNameSingular}
       defaultValue={
         defaultValue as FieldRelationValue<FieldRelationToOneValue> | string
       }
