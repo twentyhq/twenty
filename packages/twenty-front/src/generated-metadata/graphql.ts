@@ -279,18 +279,18 @@ export enum AxisNameDisplay {
 
 export type BarChartConfiguration = {
   __typename?: 'BarChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
-  axisNameDisplay: AxisNameDisplay;
+  aggregateFieldMetadataId?: Maybe<Scalars['UUID']>;
+  aggregateOperation?: Maybe<ExtendedAggregateOperations>;
+  axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  displayDataLabel: Scalars['Boolean'];
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
-  groupByFieldMetadataIdX: Scalars['UUID'];
+  groupByFieldMetadataIdX?: Maybe<Scalars['UUID']>;
   groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
-  orderByX: GraphOrderBy;
+  orderByX?: Maybe<GraphOrderBy>;
   orderByY?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
@@ -1361,11 +1361,11 @@ export type FullName = {
 
 export type GaugeChartConfiguration = {
   __typename?: 'GaugeChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateFieldMetadataId?: Maybe<Scalars['UUID']>;
+  aggregateOperation?: Maybe<ExtendedAggregateOperations>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  displayDataLabel: Scalars['Boolean'];
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
 };
@@ -1588,18 +1588,18 @@ export type InvalidatePassword = {
 
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
-  axisNameDisplay: AxisNameDisplay;
+  aggregateFieldMetadataId?: Maybe<Scalars['UUID']>;
+  aggregateOperation?: Maybe<ExtendedAggregateOperations>;
+  axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  displayDataLabel: Scalars['Boolean'];
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
-  groupByFieldMetadataIdX: Scalars['UUID'];
+  groupByFieldMetadataIdX?: Maybe<Scalars['UUID']>;
   groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
-  orderByX: GraphOrderBy;
+  orderByX?: Maybe<GraphOrderBy>;
   orderByY?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
@@ -2702,11 +2702,11 @@ export type NativeModelCapabilities = {
 
 export type NumberChartConfiguration = {
   __typename?: 'NumberChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateFieldMetadataId?: Maybe<Scalars['UUID']>;
+  aggregateOperation?: Maybe<ExtendedAggregateOperations>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  displayDataLabel: Scalars['Boolean'];
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   format?: Maybe<Scalars['String']>;
   graphType: GraphType;
@@ -2947,15 +2947,15 @@ export enum PermissionFlagType {
 
 export type PieChartConfiguration = {
   __typename?: 'PieChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateFieldMetadataId?: Maybe<Scalars['UUID']>;
+  aggregateOperation?: Maybe<ExtendedAggregateOperations>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  displayDataLabel: Scalars['Boolean'];
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
-  groupByFieldMetadataId: Scalars['UUID'];
-  orderBy: GraphOrderBy;
+  groupByFieldMetadataId?: Maybe<Scalars['UUID']>;
+  orderBy?: Maybe<GraphOrderBy>;
 };
 
 export type PlaceDetailsResultDto = {

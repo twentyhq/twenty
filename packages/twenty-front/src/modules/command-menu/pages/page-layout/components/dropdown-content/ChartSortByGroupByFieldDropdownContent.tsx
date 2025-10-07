@@ -18,7 +18,6 @@ import {
   type BarChartConfiguration,
   type GraphOrderBy,
   type LineChartConfiguration,
-  type NumberChartConfiguration,
 } from '~/generated/graphql';
 
 type ChartSortByGroupByFieldDropdownContentProps = {
@@ -33,15 +32,9 @@ export const ChartSortByGroupByFieldDropdownContent = ({
 
   const configuration = widgetInEditMode?.configuration as
     | BarChartConfiguration
-    | LineChartConfiguration
-    | NumberChartConfiguration;
+    | LineChartConfiguration;
 
-  const currentOrderBy =
-    'orderByY' in configuration
-      ? configuration.orderByY
-      : 'orderBy' in configuration
-        ? configuration.orderBy
-        : undefined;
+  const currentOrderBy = configuration.orderByY;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -57,12 +50,10 @@ export const ChartSortByGroupByFieldDropdownContent = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const orderByKey = 'orderByY' in configuration ? 'orderByY' : 'orderBy';
-
   const handleSelectSortOption = (orderBy: GraphOrderBy) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
-        [orderByKey]: orderBy,
+        orderByY: orderBy,
       },
     });
     closeDropdown();

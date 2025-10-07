@@ -67,7 +67,7 @@ export const useChartSettingsValues = ({
           graphOrderBy: xAxisOrderBy,
           groupByFieldMetadataIdX: configuration.groupByFieldMetadataIdX,
           aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
-          aggregateOperation: configuration.aggregateOperation,
+          aggregateOperation: configuration.aggregateOperation ?? undefined,
         })
       : undefined;
 
@@ -103,11 +103,12 @@ export const useChartSettingsValues = ({
           ? capitalize(configuration.color)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
-        return `${aggregateField?.label ?? ''}${aggregateField?.label ? ` (${getAggregateOperationLabel(yAxisAggregateOperation)})` : ''}`;
+        return `${aggregateField?.label ?? ''}${aggregateField?.label && yAxisAggregateOperation ? ` (${getAggregateOperationLabel(yAxisAggregateOperation)})` : ''}`;
       case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
         return groupByFieldY?.label;
       case CHART_CONFIGURATION_SETTING_IDS.AXIS_NAME:
-        return 'axisNameDisplay' in configuration
+        return 'axisNameDisplay' in configuration &&
+          isDefined(configuration.axisNameDisplay)
           ? getChartAxisNameDisplayOptions(configuration.axisNameDisplay)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X:
@@ -115,7 +116,7 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD:
         return groupByOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS:
-        return configuration.displayDataLabel;
+        return configuration.displayDataLabel ?? undefined;
       default:
         return '';
     }

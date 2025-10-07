@@ -1,6 +1,8 @@
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWidget';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { WidgetContainer } from '@/page-layout/widgets/components/WidgetContainer';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
@@ -25,30 +27,49 @@ const StyledContent = styled.div`
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
-  const { hasAccess, restriction } = useWidgetPermissions(widget);
+
+  const pageLayoutEditingWidgetId = useRecoilComponentValue(
+    pageLayoutEditingWidgetIdComponentState,
+  );
+
+  const pageLayoutDraft = useRecoilComponentValue(
+    pageLayoutDraftComponentState,
+  );
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
 
+  const isCurrentlyBeingEdited = widget.id === pageLayoutEditingWidgetId;
+  const widgetToRender = isCurrentlyBeingEdited
+    ? (pageLayoutDraft.tabs
+        .flatMap((tab) => tab.widgets)
+        .find((w) => w.id === widget.id) ?? widget)
+    : widget;
+
+  const { hasAccess, restriction } = useWidgetPermissions(widgetToRender);
+
   return (
     <WidgetContainer isRestricted={!hasAccess}>
       <WidgetHeader
         isInEditMode={isPageLayoutInEditMode}
-        title={widget.title}
+        title={widgetToRender.title}
         onEdit={() =>
-          handleEditWidget({ widgetId: widget.id, widgetType: widget.type })
+          handleEditWidget({
+            widgetId: widgetToRender.id,
+            widgetType: widgetToRender.type,
+          })
         }
-        onRemove={() => deletePageLayoutWidget(widget.id)}
+        onRemove={() => deletePageLayoutWidget(widgetToRender.id)}
       />
       <StyledContent>
         {!hasAccess ? (
           <PageLayoutWidgetForbiddenDisplay
-            widgetId={widget.id}
+            widgetId={widgetToRender.id}
             restriction={restriction}
           />
         ) : (
-          <WidgetContentRenderer widget={widget} />
+          <WidgetContentRenderer widget={widgetToRender} />
         )}
       </StyledContent>
     </WidgetContainer>

@@ -86,7 +86,8 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
                     configuration.groupByFieldMetadataIdX,
                   aggregateFieldMetadataId:
                     configuration.aggregateFieldMetadataId,
-                  aggregateOperation: configuration.aggregateOperation,
+                  aggregateOperation:
+                    configuration.aggregateOperation ?? undefined,
                 })}
                 selected={currentOrderByX === sortOption.value}
                 focused={selectedItemId === sortOption.value}

@@ -1,10 +1,7 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { v4 as uuidv4 } from 'uuid';
-import { GraphOrderBy, GraphType } from '~/generated-metadata/graphql';
+import { GraphType } from '~/generated-metadata/graphql';
 import {
-  AxisNameDisplay,
-  ExtendedAggregateOperations,
   type GridPosition,
   type PageLayoutWidget,
   type WidgetConfiguration,
@@ -14,16 +11,11 @@ import {
 const createDefaultGraphConfiguration = (
   graphType: GraphType,
 ): WidgetConfiguration => {
-  const placeholderFieldId1 = uuidv4();
-  const placeholderFieldId2 = uuidv4();
-
   switch (graphType) {
     case GraphType.NUMBER:
       return {
         __typename: 'NumberChartConfiguration',
         graphType: GraphType.NUMBER,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
         displayDataLabel: false,
       };
 
@@ -31,10 +23,6 @@ const createDefaultGraphConfiguration = (
       return {
         __typename: 'PieChartConfiguration',
         graphType: GraphType.PIE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        groupByFieldMetadataId: placeholderFieldId2,
-        orderBy: GraphOrderBy.VALUE_DESC,
         displayDataLabel: false,
         color: 'blue' satisfies ThemeColor,
       };
@@ -43,12 +31,7 @@ const createDefaultGraphConfiguration = (
       return {
         __typename: 'BarChartConfiguration',
         graphType: GraphType.BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        groupByFieldMetadataIdX: placeholderFieldId2,
-        orderByX: GraphOrderBy.FIELD_ASC,
         displayDataLabel: false,
-        axisNameDisplay: AxisNameDisplay.BOTH,
         color: 'blue' satisfies ThemeColor,
       };
 
@@ -56,12 +39,7 @@ const createDefaultGraphConfiguration = (
       return {
         __typename: 'LineChartConfiguration',
         graphType: GraphType.LINE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        groupByFieldMetadataIdX: placeholderFieldId2,
-        orderByX: GraphOrderBy.FIELD_ASC,
         displayDataLabel: false,
-        axisNameDisplay: AxisNameDisplay.BOTH,
         color: 'blue' satisfies ThemeColor,
       };
 
@@ -69,8 +47,6 @@ const createDefaultGraphConfiguration = (
       return {
         __typename: 'GaugeChartConfiguration',
         graphType: GraphType.GAUGE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
         displayDataLabel: false,
         color: 'blue' satisfies ThemeColor,
       };
