@@ -17,6 +17,7 @@ import {
   type FieldMetadataRelationSettings,
   type FieldMetadataTextSettings,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { type FieldMetadataMultipleValuesSettings } from 'twenty-shared/types';
 
 import {
   type FieldMetadataComplexOption,
@@ -133,10 +134,6 @@ type SettingsAssertions = [
   Expect<HasAllProperties<RawJsonFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<RichTextFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<ActorFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<ArrayFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<EmailsFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<LinksFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<BooleanFieldMetadata, NotDefinedSettings>>,
 
@@ -162,6 +159,30 @@ type SettingsAssertions = [
     HasAllProperties<
       DateTimeFieldMetadata,
       { settings: FieldMetadataDateTimeSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      ArrayFieldMetadata,
+      { settings: FieldMetadataMultipleValuesSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      PhonesFieldMetadata,
+      { settings: FieldMetadataMultipleValuesSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      EmailsFieldMetadata,
+      { settings: FieldMetadataMultipleValuesSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      LinksFieldMetadata,
+      { settings: FieldMetadataMultipleValuesSettings | null }
     >
   >,
 
