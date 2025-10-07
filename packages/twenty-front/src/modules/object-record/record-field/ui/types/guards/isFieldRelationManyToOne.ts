@@ -7,8 +7,8 @@ import {
   type FieldRelationMetadata,
 } from '../FieldMetadata';
 
-export const isFieldRelationFromManyObjects = (
+export const isFieldRelationManyToOne = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
 ): field is FieldDefinition<FieldRelationMetadata> =>
   isFieldRelation(field) &&
-  field.metadata.relationType === RelationType.ONE_TO_MANY;
+  field.metadata?.relationType === RelationType.MANY_TO_ONE;

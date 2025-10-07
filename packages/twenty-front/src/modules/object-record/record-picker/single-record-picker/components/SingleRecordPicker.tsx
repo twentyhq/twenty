@@ -25,7 +25,7 @@ export const SingleRecordPicker = ({
   onCancel,
   onCreate,
   onRecordSelected,
-  objectNameSingular,
+  objectNameSingulars,
   componentInstanceId,
   layoutDirection,
   dropdownWidth,
@@ -84,7 +84,7 @@ export const SingleRecordPicker = ({
             onCancel: handleCancel,
             onCreate,
             onRecordSelected: handleRecordSelected,
-            objectNameSingular,
+            objectNameSingulars,
             layoutDirection,
           }}
         />
