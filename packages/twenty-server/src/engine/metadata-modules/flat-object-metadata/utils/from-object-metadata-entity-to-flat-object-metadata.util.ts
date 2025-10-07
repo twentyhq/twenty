@@ -1,6 +1,5 @@
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
 import {
   type FlatObjectMetadata,
   objectMetadataEntityRelationProperties,
@@ -17,11 +16,14 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
 
   return {
     ...objectMetadataEntityWithoutRelations,
+    indexMetadataIds: objectMetadataEntity.indexMetadatas.map(
+      (indexEntity) => indexEntity.id,
+    ),
+    fieldMetadataIds: objectMetadataEntity.fields.map(
+      (fieldEntity) => fieldEntity.id,
+    ),
     universalIdentifier:
       objectMetadataEntityWithoutRelations.standardId ??
       objectMetadataEntityWithoutRelations.id,
-    flatFieldMetadatas: objectMetadataEntity.fields.map(
-      fromFieldMetadataEntityToFlatFieldMetadata,
-    ),
   };
 };

@@ -1,3 +1,5 @@
+import { CustomError } from 'twenty-shared/utils';
+
 const CommonExceptionCode = {
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
 } as const;
@@ -18,7 +20,7 @@ export abstract class CustomException<
   ForceFriendlyMessage = false,
   ExceptionMessage extends string = string,
   ExceptionFriendlyMessage extends string = string,
-> extends Error {
+> extends CustomError {
   code: ExceptionCode;
   userFriendlyMessage?: ExceptionFriendlyMessage;
 

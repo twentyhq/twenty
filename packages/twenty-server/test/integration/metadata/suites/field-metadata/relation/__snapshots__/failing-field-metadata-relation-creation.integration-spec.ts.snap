@@ -6,8 +6,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -22,17 +23,25 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
               "name": "fieldNameBisId",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -52,8 +61,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -68,17 +78,25 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
               "name": "fieldName",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -98,8 +116,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -120,17 +139,25 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
               "name": "",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -150,8 +177,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -166,17 +194,25 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
               "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -196,8 +232,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -218,17 +255,25 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
               "name": "",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -248,6 +293,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
@@ -268,14 +316,19 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             "type": "create_field",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -295,6 +348,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
@@ -315,14 +371,19 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             "type": "create_field",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -342,6 +403,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
@@ -361,14 +425,19 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             "type": "create_field",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -388,6 +457,43 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "value": "fieldNameBisId",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "fieldNameBisId",
+              "objectMetadataId": Any<String>,
+            },
+            "status": "fail",
+            "type": "create_field",
+          },
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_NOT_FOUND",
+                "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+                "userFriendlyMessage": "Relation field target metadata not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "defaulttargetfieldlabel",
+              "objectMetadataId": Any<String>,
+            },
+            "status": "fail",
+            "type": "create_field",
+          },
+        ],
         "index": [
           {
             "errors": [
@@ -405,32 +511,20 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             "type": "create_index",
           },
         ],
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "value": "fieldNameBisId",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "fieldNameBisId",
-              "objectMetadataId": Any<String>,
-            },
-            "type": "create_field",
-          },
-        ],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -450,6 +544,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
@@ -470,14 +567,19 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             "type": "create_field",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -497,6 +599,27 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "value": "fieldNameBisId",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "fieldNameBisId",
+              "objectMetadataId": Any<String>,
+            },
+            "status": "fail",
+            "type": "create_field",
+          },
+        ],
         "index": [
           {
             "errors": [
@@ -514,32 +637,20 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "type": "create_index",
           },
         ],
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "value": "fieldNameBisId",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "fieldNameBisId",
-              "objectMetadataId": Any<String>,
-            },
-            "type": "create_field",
-          },
-        ],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -559,6 +670,27 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldName" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
+                "value": "fieldName",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "fieldName",
+              "objectMetadataId": Any<String>,
+            },
+            "status": "fail",
+            "type": "create_field",
+          },
+        ],
         "index": [
           {
             "errors": [
@@ -576,32 +708,20 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "type": "create_index",
           },
         ],
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "fieldName" is not available as it is already used by another field",
-                "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
-                "value": "fieldName",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "fieldName",
-              "objectMetadataId": Any<String>,
-            },
-            "type": "create_field",
-          },
-        ],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -621,24 +741,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [
-          {
-            "errors": [
-              {
-                "code": "INDEX_FIELD_NOT_FOUND",
-                "message": "Could not find index field related field metadata",
-                "userFriendlyMessage": "Field referenced in index does not exist",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "IDX_78587d9d07f2ad40242e070725f",
-            },
-            "status": "fail",
-            "type": "create_index",
-          },
-        ],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -659,17 +764,41 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               "name": "",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "IDX_78587d9d07f2ad40242e070725f",
+            },
+            "status": "fail",
+            "type": "create_index",
+          },
+        ],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -689,6 +818,27 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is too long",
+                "userFriendlyMessage": "Name is too long",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "objectMetadataId": Any<String>,
+            },
+            "status": "fail",
+            "type": "create_field",
+          },
+        ],
         "index": [
           {
             "errors": [
@@ -706,32 +856,20 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "type": "create_index",
           },
         ],
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Name is too long",
-                "userFriendlyMessage": "Name is too long",
-                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-              "objectMetadataId": Any<String>,
-            },
-            "type": "create_field",
-          },
-        ],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -751,24 +889,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [
-          {
-            "errors": [
-              {
-                "code": "INDEX_FIELD_NOT_FOUND",
-                "message": "Could not find index field related field metadata",
-                "userFriendlyMessage": "Field referenced in index does not exist",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "IDX_78587d9d07f2ad40242e070725f",
-            },
-            "status": "fail",
-            "type": "create_index",
-          },
-        ],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -789,17 +912,41 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               "name": "",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "IDX_78587d9d07f2ad40242e070725f",
+            },
+            "status": "fail",
+            "type": "create_index",
+          },
+        ],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -819,6 +966,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
@@ -839,14 +989,19 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "type": "create_field",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -866,6 +1021,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
@@ -886,14 +1044,19 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "type": "create_field",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -913,6 +1076,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
@@ -932,14 +1098,19 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "type": "create_field",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -959,8 +1130,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "index": [],
-        "objectMetadata": [
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [
           {
             "errors": [
               {
@@ -975,17 +1147,57 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               "name": "fieldNameBisId",
               "objectMetadataId": Any<String>,
             },
+            "status": "fail",
+            "type": "create_field",
+          },
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_NOT_FOUND",
+                "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+                "userFriendlyMessage": "Relation field target metadata not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "defaulttargetfieldlabel",
+              "objectMetadataId": Any<String>,
+            },
+            "status": "fail",
             "type": "create_field",
           },
         ],
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "IDX_8f338db6589d97164642f3fe641",
+            },
+            "status": "fail",
+            "type": "create_index",
+          },
+        ],
+        "objectMetadata": [],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -1005,6 +1217,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
@@ -1025,14 +1240,19 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
             "type": "create_field",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,

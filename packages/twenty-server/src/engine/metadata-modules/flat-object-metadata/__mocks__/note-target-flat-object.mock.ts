@@ -1,4 +1,3 @@
-import { NOTETARGET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/notetarget-flat-fields.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 export const NOTE_TARGET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
@@ -24,6 +23,4 @@ export const NOTE_TARGET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   isLabelSyncedWithName: false,
   workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
   universalIdentifier: '20202020-fff0-4b44-be82-bda313884400',
-
-  flatFieldMetadatas: Object.values(NOTETARGET_FLAT_FIELDS_MOCK),
 });

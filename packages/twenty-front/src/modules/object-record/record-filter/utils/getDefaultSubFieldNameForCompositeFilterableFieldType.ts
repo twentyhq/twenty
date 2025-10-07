@@ -7,7 +7,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 export const getDefaultSubFieldNameForCompositeFilterableFieldType = (
   fieldType: FieldType,
 ): CompositeFieldSubFieldName | undefined => {
-  if (!isCompositeFilterableFieldType(fieldType as any)) {
+  if (!isCompositeFilterableFieldType(fieldType)) {
     return undefined;
   }
 

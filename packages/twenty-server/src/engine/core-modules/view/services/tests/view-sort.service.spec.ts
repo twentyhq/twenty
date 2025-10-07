@@ -13,6 +13,7 @@ import {
   generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 describe('ViewSortService', () => {
   let viewSortService: ViewSortService;
@@ -42,6 +43,12 @@ describe('ViewSortService', () => {
             save: jest.fn(),
             softDelete: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: ViewService,
+          useValue: {
+            flushGraphQLCache: jest.fn(),
           },
         },
       ],

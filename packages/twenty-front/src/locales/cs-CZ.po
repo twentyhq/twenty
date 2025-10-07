@@ -90,16 +90,16 @@ msgstr ""
 
 #. js-lingui-id: m6BGdm
 #. placeholder {0}: Math.abs(days)
-#. placeholder {1}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
-#. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#. placeholder {1}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { CustomError, isDefined } from 'twenty-shared/utils'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { CustomError, isDefined } from 'twenty-shared/utils'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} {1}} other {{days} {2}}}"
 msgstr "{0, plural, one {{dní} {1}} few {{dní} {2}} many {{dní} {2}} other {{dní} {2}}}"
 
 #. js-lingui-id: FYY5cK
 #. placeholder {0}: Math.abs(years)
-#. placeholder {1}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
-#. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#. placeholder {1}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { CustomError, isDefined } from 'twenty-shared/utils'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, differenceInDays, differenceInYears, format, formatDistance, formatDistanceToNow, isToday, isValid, parseISO, type Locale, } from 'date-fns'; import { DateFormat } from '@/localization/constants/DateFormat'; import { CustomError, isDefined } from 'twenty-shared/utils'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; export const parseDate = (dateToParse: Date | string | number): Date => { if (dateToParse === 'now') return new Date(); let formattedDate: Date | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = parseISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = dateToParse; } else if (isNumber(dateToParse)) { formattedDate = new Date(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!isValid(formattedDate)) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate; }; export const formatDate = ( dateToFormat: Date | string | number, formatString: string, ) => { try { const parsedDate = parseDate(dateToFormat); return format(parsedDate, formatString); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const parsedDate = parseDate(dateToBeautify); const isTodayDate = isToday(parsedDate); if (isTodayDate) { return t`Today`; } return formatDate(dateToBeautify, 'MMM d, yyyy'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate, { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return differenceInCalendarDays(new Date(), parsedDate) >= 1; } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const fromDate = parseISO(date); const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date(); const years = differenceInYears(fromDate, toDate); // Calculate remaining days after accounting for full years const startDateForDayCalculation = new Date(toDate); startDateForDayCalculation.setFullYear( startDateForDayCalculation.getFullYear() + years, ); const days = differenceInDays(fromDate, startDateForDayCalculation); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} {1}} other {{years} {2}}}"
 msgstr "{0, plural, one {{let} {1}} few {{let} {2}} many {{let} {2}} other {{let} {2}}}"
@@ -143,6 +143,11 @@ msgstr "{roleLabel} nemůže {humanReadableAction} záznamy {objectLabel}"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} bude přiřazen k roli \"{newRoleName}\"."
+
+#. js-lingui-id: riMLMq
+#: src/modules/workflow/workflow-steps/components/WorkflowIteratorSubStepSwitcher.tsx
+msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
+msgstr ""
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -372,6 +377,12 @@ msgstr "Aktivní"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "Aktivní API klíče vytvořené vámi nebo vaším týmem."
+
+#. js-lingui-id: m3/V2n
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Add a node"
+msgstr ""
 
 #. js-lingui-id: KKfos4
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
@@ -912,6 +923,9 @@ msgstr "Jste si jisti? Vaše aktuální informace nebudou uloženy."
 #. js-lingui-id: nYD/Cq
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
 msgid "Ascending"
 msgstr "Vzestupně"
 
@@ -1112,6 +1126,16 @@ msgstr "Dostupnost"
 msgid "Average"
 msgstr "Průměrně"
 
+#. js-lingui-id: li9In6
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Axis name"
+msgstr ""
+
+#. js-lingui-id: yzbH0K
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAxisNameSelectionDropdownContent.tsx
+msgid "Axis Name"
+msgstr ""
+
 #. js-lingui-id: iH8pgl
 #: src/pages/onboarding/BookCall.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
@@ -1123,6 +1147,11 @@ msgstr "Zpět"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "Zpět k obsahu"
+
+#. js-lingui-id: LiFJll
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Bar Chart"
+msgstr ""
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -1180,6 +1209,11 @@ msgstr "Rezervujte si úvodní schůzku"
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Boolean"
 msgstr "Booleovská hodnota"
+
+#. js-lingui-id: njBeMm
+#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+msgid "Both"
+msgstr ""
 
 #. js-lingui-id: qDsMss
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -1404,6 +1438,12 @@ msgstr "Změnit na roční?"
 msgid "Changelog"
 msgstr "Changelog"
 
+#. js-lingui-id: nuBbBr
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
+msgid "Chart"
+msgstr ""
+
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
@@ -1547,10 +1587,20 @@ msgstr "Editor kódu"
 msgid "Collapse"
 msgstr "Sbalit"
 
+#. js-lingui-id: jZlrte
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
+msgid "Color"
+msgstr ""
+
 #. js-lingui-id: Xose0w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
 msgstr "Barevný kód"
+
+#. js-lingui-id: 1HfW/F
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Colors"
+msgstr ""
 
 #. js-lingui-id: P8gRog
 #: src/modules/spreadsheet-import/utils/setColumn.ts
@@ -1635,6 +1685,11 @@ msgstr "Nakonfigurujte, jak by se měly zobrazovat vaše události ve vašem kal
 #. js-lingui-id: EZzl/g
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Configure iFrame"
+msgstr ""
+
+#. js-lingui-id: 3La0aM
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
+msgid "Configure iFrame Widget"
 msgstr ""
 
 #. js-lingui-id: jbuOOX
@@ -1776,11 +1831,6 @@ msgstr "Pokračovat s Google"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithMicrosoft.tsx
 msgid "Continue with Microsoft"
 msgstr "Pokračovat s Microsoftem"
-
-#. js-lingui-id: XgMEX4
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Control which folders are synced"
-msgstr "Řídit, které složky jsou synchronizovány"
 
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
@@ -2160,6 +2210,11 @@ msgstr "Data"
 msgid "Data deletion"
 msgstr "Smazání dat"
 
+#. js-lingui-id: xpZXLn
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Data labels"
+msgstr ""
+
 #. js-lingui-id: 5cNMFz
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2175,6 +2230,13 @@ msgstr "Datový model"
 #: src/utils/title-utils.ts
 msgid "Data model - Settings"
 msgstr "Datový model - Nastavení"
+
+#. js-lingui-id: fM466x
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Data on display"
+msgstr ""
 
 #. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -2480,6 +2542,9 @@ msgstr "Smazáním této metody ji trvale odeberete ze svého účtu."
 #. js-lingui-id: Cko536
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
 msgid "Descending"
 msgstr "Sestupně"
 
@@ -2670,10 +2735,20 @@ msgstr "Holandština"
 msgid "E.g. backoffice integration"
 msgstr "Např. integrace backoffice"
 
+#. js-lingui-id: BtKcxf
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
+msgid "e.g., Analytics Dashboard"
+msgstr ""
+
 #. js-lingui-id: GhTFTJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "e.g., summary, status, count"
 msgstr "např. souhrn, stav, počet"
+
+#. js-lingui-id: 79hamt
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Each slice represents"
+msgstr ""
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -2738,9 +2813,19 @@ msgstr "Upravit hodnoty polí"
 msgid "Edit Fields"
 msgstr "Upravit pole"
 
+#. js-lingui-id: JTcEch
+#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
+msgid "Edit Graph"
+msgstr ""
+
 #. js-lingui-id: WXPnsc
 #: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 msgid "Edit iFrame"
+msgstr ""
+
+#. js-lingui-id: mY8UAQ
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
+msgid "Edit iFrame Widget"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
@@ -2865,6 +2950,11 @@ msgstr ""
 msgid "Emails"
 msgstr "E-maily"
 
+#. js-lingui-id: Ft+sR1
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
+msgstr ""
+
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Emails settings"
@@ -2912,6 +3002,11 @@ msgstr ""
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "Prázdný objekt"
+
+#. js-lingui-id: gZo0V9
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Enable model-specific features"
+msgstr ""
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -3201,6 +3296,7 @@ msgstr ""
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Everything"
@@ -3397,11 +3493,6 @@ msgstr "Nepodařilo se vytvořit převod"
 msgid "Failed to load webhook"
 msgstr "Nepodařilo se načíst webhook"
 
-#. js-lingui-id: XMjWWv
-#: src/modules/ai/components/internal/AgentChatContextPreview.tsx
-msgid "Failed to remove file"
-msgstr "Nepodařilo se odstranit soubor"
-
 #. js-lingui-id: 99t8X7
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Failed to remove handoff"
@@ -3452,6 +3543,12 @@ msgstr "Příznak funkce"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Feature Flags & Impersonation"
 msgstr "Příznaky funkcí a Impersonace"
+
+#. js-lingui-id: AXjA78
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
+msgid "Field"
+msgstr ""
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -3510,6 +3607,7 @@ msgstr "Pátý"
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Filter"
 msgstr "Filtr"
 
@@ -3576,15 +3674,10 @@ msgstr "Jméno"
 msgid "Flow"
 msgstr ""
 
-#. js-lingui-id: kNqMMd
-#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
-msgid "Folder"
-msgstr "Složka"
-
-#. js-lingui-id: NRJn87
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Folder Management"
-msgstr "Správa složek"
+#. js-lingui-id: HSh8u/
+#: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
+msgid "Folders"
+msgstr ""
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
@@ -3646,6 +3739,11 @@ msgstr "Funkce"
 #: src/utils/title-utils.ts
 msgid "Functions - Settings"
 msgstr "Funkce - Nastavení"
+
+#. js-lingui-id: vYj1cC
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Gauge Chart"
+msgstr ""
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -3781,6 +3879,7 @@ msgstr "Skupina"
 #. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Group by"
 msgstr "Skupina podle"
 
@@ -3932,6 +4031,11 @@ msgstr "Pokud je to neočekávané, zkontrolujte prosím vaše nastavení."
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "Pokud jste ztratili tento klíč, můžete jej obnovit, ale mějte na paměti, že všechny skripty používající tento klíč bude potřeba aktualizovat. Prosím, napište \"<b>{confirmationValue}</b>\" pro potvrzení."
 
+#. js-lingui-id: YdCuhS
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "IframeConfiguration is not supported"
+msgstr ""
+
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Configuration"
@@ -3974,15 +4078,31 @@ msgstr "Impersonovat"
 msgid "Impersonate workspace users"
 msgstr ""
 
+#. js-lingui-id: yImXof
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Impersonation is disabled for this workspace"
+msgstr ""
+
 #. js-lingui-id: l3s5ri
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import"
 msgstr "Importovat"
+
+#. js-lingui-id: sqOGcv
+#: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
+msgid "Import all emails"
+msgstr ""
 
 #. js-lingui-id: 2CeOI3
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Import CSV"
 msgstr "Importovat CSV"
+
+#. js-lingui-id: D5QSQM
+#: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
+msgid "Import only selected folders/labels"
+msgstr ""
 
 #. js-lingui-id: eECp4f
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4487,6 +4607,11 @@ msgstr "Menší nebo rovno"
 msgid "Light"
 msgstr "Světlý"
 
+#. js-lingui-id: pFkLY3
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Line Chart"
+msgstr ""
+
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
@@ -4531,6 +4656,11 @@ msgstr "Načítání..."
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
 msgstr "Odhlásit se"
+
+#. js-lingui-id: hykMbH
+#: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
+msgid "Logged in as {impersonatedUser}"
+msgstr ""
 
 #. js-lingui-id: VLuNNu
 #: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
@@ -5035,6 +5165,11 @@ msgstr "Žádní agenti k dispozici pro převod"
 msgid "No agents match your search"
 msgstr "Žádní agenti neodpovídají vašemu vyhledávání"
 
+#. js-lingui-id: B85wFV
+#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
+msgid "No AI Agent found."
+msgstr ""
+
 #. js-lingui-id: 9mx36q
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "No API keys assigned"
@@ -5243,10 +5378,12 @@ msgid "No workflow versions yet"
 msgstr "Zatím žádné verze workflow"
 
 #. js-lingui-id: EdQY6l
+#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 msgid "None"
 msgstr "Žádný"
 
@@ -5314,6 +5451,11 @@ msgstr "nyní"
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
 msgstr "Číslo"
+
+#. js-lingui-id: oVhZzL
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Number Chart"
+msgstr ""
 
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -5683,6 +5825,11 @@ msgstr ""
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Picture"
 msgstr "Obrázek"
+
+#. js-lingui-id: 3ubdv5
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Pie Chart"
+msgstr ""
 
 #. js-lingui-id: GdgCoi
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -6314,6 +6461,11 @@ msgstr "Vyhledat v jakémkoli poli"
 msgid "Search API keys"
 msgstr "Hledat API klíče"
 
+#. js-lingui-id: yI4D/V
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
+msgid "Search colors"
+msgstr ""
+
 #. js-lingui-id: 3UPqHL
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableSearchInput.tsx
 msgid "Search config variables"
@@ -6336,8 +6488,16 @@ msgstr "Vyhledat měnu"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContent.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionDropdownContent.tsx
 msgid "Search fields"
 msgstr "Hledání ve sloupcích"
+
+#. js-lingui-id: rXrG+N
+#: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
+msgid "Search folders..."
+msgstr ""
 
 #. js-lingui-id: ofuw3g
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -6353,6 +6513,16 @@ msgstr "Hledat převody..."
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Search icon"
 msgstr "Hledat ikonu"
+
+#. js-lingui-id: two5rl
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+msgid "Search objects"
+msgstr ""
+
+#. js-lingui-id: pGn7U0
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
+msgid "Search operations"
+msgstr ""
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -6496,15 +6666,15 @@ msgstr "Zobrazit pracovní postupy"
 msgid "Select a field from a previous step"
 msgstr "Vyberte pole z předchozího kroku"
 
-#. js-lingui-id: h4pFju
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
-msgid "Select a role"
-msgstr "Vybrat roli"
-
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Select a target agent"
 msgstr "Vyberte cílového agenta"
+
+#. js-lingui-id: jL3gox
+#: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
+msgid "Select a value"
+msgstr ""
 
 #. js-lingui-id: YcJS1T
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -6835,6 +7005,11 @@ msgstr "smtp.example.com"
 msgid "Some"
 msgstr "Některé"
 
+#. js-lingui-id: RwCYVZ
+#: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
+msgid "Some folders"
+msgstr ""
+
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
@@ -6848,8 +7023,16 @@ msgstr "Omlouváme se, něco se pokazilo"
 msgid "Sort"
 msgstr "Seřadit"
 
+#. js-lingui-id: /HgF9q
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Sort by"
+msgstr ""
+
 #. js-lingui-id: wdxz7K
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 msgid "Source"
 msgstr "Zdroj"
 
@@ -6910,6 +7093,11 @@ msgstr "Stav"
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Stav"
+
+#. js-lingui-id: I8EmDx
+#: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
+msgid "Stop impersonating"
+msgstr ""
 
 #. js-lingui-id: qn1Xxf
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
@@ -7049,11 +7237,6 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Yearly"
 msgstr "Změnit na roční"
-
-#. js-lingui-id: Nu4DdT
-#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
-msgid "Sync"
-msgstr "Synchronizovat"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -7425,6 +7608,11 @@ msgstr "Časové razítko a účastníci budou sdíleni s vaším týmem."
 msgid "Today"
 msgstr "Dnes"
 
+#. js-lingui-id: GFxnQR
+#: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
+msgid "Toggle all folders"
+msgstr ""
+
 #. js-lingui-id: XArpJK
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
@@ -7514,6 +7702,11 @@ msgstr ""
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "Turečtina"
+
+#. js-lingui-id: YIjS4q
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Twitter/X Search"
+msgstr ""
 
 #. js-lingui-id: tuvLv1
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -7660,6 +7853,11 @@ msgstr "Nahrát soubor"
 msgid "Upload the XML file with your connection infos"
 msgstr "Nahrajte XML soubor s vašimi spojovacími údaji"
 
+#. js-lingui-id: IagCbF
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "URL"
+msgstr ""
+
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -7737,6 +7935,7 @@ msgstr "Ověřit data"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
 #: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
 msgid "Value"
 msgstr "Hodnota"
 
@@ -7885,6 +8084,11 @@ msgstr "Na tento koncový bod budeme zasílat POST požadavek při každé nové
 msgid "We will send your a link to verify domain ownership"
 msgstr "Pošleme vám odkaz pro ověření vlastnictví domény"
 
+#. js-lingui-id: LnnVIT
+#: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
+msgid "Web Search"
+msgstr ""
+
 #. js-lingui-id: Tvdycs
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
 msgid "Webhook {targetUrl} created successfully"
@@ -7945,6 +8149,16 @@ msgstr "Kdy bude API klíč expirovat."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "Kdy bude klíč deaktivován"
+
+#. js-lingui-id: Z4rkzJ
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
+msgid "Widget Title"
+msgstr ""
+
+#. js-lingui-id: fANaAS
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+msgid "Widget type"
+msgstr ""
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -8038,6 +8252,46 @@ msgstr "Napište popis"
 msgid "Write a description for this agent"
 msgstr "Napište popis tohoto agenta"
 
+#. js-lingui-id: SHqkdn
+#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+msgid "X axis"
+msgstr ""
+
+#. js-lingui-id: RcQhRY
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionDropdownContent.tsx
+msgid "X-Axis Field"
+msgstr ""
+
+#. js-lingui-id: zYqibM
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartXAxisSortBySelectionDropdownContent.tsx
+msgid "X-Axis Sort By"
+msgstr ""
+
+#. js-lingui-id: fplGg6
+#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+msgid "Y axis"
+msgstr ""
+
+#. js-lingui-id: uE3dsE
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
+msgid "Y-Axis Aggregate Operation"
+msgstr ""
+
+#. js-lingui-id: ceYpLC
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
+msgid "Y-Axis Field"
+msgstr ""
+
+#. js-lingui-id: mlqi7p
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContent.tsx
+msgid "Y-Axis Group By Field"
+msgstr ""
+
+#. js-lingui-id: Q+dSNn
+#: src/modules/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent.tsx
+msgid "Y-Axis Sort By"
+msgstr ""
+
 #. js-lingui-id: 7qI8sJ
 #: src/utils/date-utils.ts
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -8094,6 +8348,21 @@ msgid ""
 msgstr ""
 "Nelze upravit toto připojení, lze se sledovanými tabulkami.\n"
 "Pokud je třeba provést změny, vytvořte nové připojení nebo nejprve zrušte synchronizaci tabulek."
+
+#. js-lingui-id: CjCGSm
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
+msgid "You do not have permission to access the {fieldsList} {fieldWord}"
+msgstr ""
+
+#. js-lingui-id: eqUj2Z
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
+msgid "You do not have permission to access the {objectName} object"
+msgstr ""
+
+#. js-lingui-id: D0mU8n
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
+msgid "You do not have permission to view this widget"
+msgstr ""
 
 #. js-lingui-id: M2lYgq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

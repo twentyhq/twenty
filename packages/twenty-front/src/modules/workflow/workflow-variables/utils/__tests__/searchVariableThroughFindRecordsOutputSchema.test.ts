@@ -36,12 +36,18 @@ describe('searchVariableThroughFindRecordsOutputSchema', () => {
       label: 'First',
       value: mockRecordSchema,
     },
-    last: {
-      isLeaf: false,
-      label: 'Last',
-      value: mockRecordSchema,
+    all: {
+      isLeaf: true,
+      label: 'All',
+      value: 'Returns an array of records',
+      type: 'array',
     },
-    totalCount: 42,
+    totalCount: {
+      isLeaf: true,
+      label: 'Total Count',
+      value: 42,
+      type: 'number',
+    },
   };
 
   it('should handle totalCount variable correctly', () => {
@@ -76,20 +82,18 @@ describe('searchVariableThroughFindRecordsOutputSchema', () => {
     });
   });
 
-  it('should handle last record field access correctly', () => {
+  it('should handle all records access correctly', () => {
     const result = searchVariableThroughFindRecordsOutputSchema({
       stepName: 'Find Companies',
       searchRecordOutputSchema: mockSearchRecordSchema,
-      rawVariableName: '{{step1.last.revenue}}',
+      rawVariableName: '{{step1.all}}',
       isFullRecord: false,
     });
 
     expect(result).toEqual({
-      variableLabel: 'Revenue',
-      variablePathLabel: 'Find Companies > Last > Revenue',
-      variableType: FieldMetadataType.NUMBER,
-      fieldMetadataId: 'company-revenue-metadata-id',
-      compositeFieldSubFieldName: undefined,
+      variableLabel: 'All',
+      variablePathLabel: 'Find Companies > All',
+      variableType: FieldMetadataType.ARRAY,
     });
   });
 

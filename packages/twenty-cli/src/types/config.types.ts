@@ -6,9 +6,16 @@ export interface TwentyConfig {
 
 export type PackageJson = {
   $schema?: string;
-  standardId: string;
-  label: string;
+  universalIdentifier: string;
+  name: string;
+  license: string;
   description?: string;
+  engines: {
+    node: string;
+    npm: string;
+    yarn: string;
+  };
+  packageManager: string;
   icon?: string;
   version: string;
   dependencies?: object;
@@ -18,9 +25,55 @@ export type PackageJson = {
 export type AppManifest = PackageJson & {
   agents: AgentManifest[];
   objects: ObjectManifest[];
+  serverlessFunctions: ServerlessFunctionManifest[];
 };
 
-export type CoreEntityManifest = AgentManifest | ObjectManifest;
+export type CoreEntityManifest =
+  | AgentManifest
+  | ObjectManifest
+  | ServerlessFunctionManifest;
+
+export type ServerlessFunctionManifest = {
+  $schema?: string;
+  universalIdentifier: string;
+  name: string;
+  description?: string;
+  timeoutSeconds?: number;
+  triggers: ServerlessFunctionTriggerManifest[];
+  code: ServerlessFunctionCodeManifest;
+};
+
+export enum HTTPMethod {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  PATCH = 'PATCH',
+  DELETE = 'DELETE',
+}
+
+export type ServerlessFunctionTriggerManifest =
+  | {
+      type: 'cron';
+      schedule: string;
+    }
+  | {
+      type: 'databaseEvent';
+      eventName: string;
+    }
+  | {
+      type: 'route';
+      path: string;
+      httpMethod: HTTPMethod;
+      isAuthRequired: boolean;
+    };
+
+type Sources = { [key: string]: string | Sources };
+
+export type ServerlessFunctionCodeManifest = {
+  src: {
+    'index.ts': string;
+  } & Sources;
+};
 
 export type ObjectManifest = {
   $schema?: string;

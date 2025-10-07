@@ -80,7 +80,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
           <MenuItem
             withIconContainer={true}
             key={action.defaultLabel}
-            LeftIcon={() => <Icon color={theme.color.blue} />}
+            LeftIcon={() => <Icon color={theme.color.blue} size={16} />}
             text={action.defaultLabel}
             onClick={handleTriggerTypeClick(action)}
           />
@@ -96,7 +96,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
           <MenuItem
             withIconContainer={true}
             key={action.defaultLabel}
-            LeftIcon={() => <Icon color={theme.color.purple} />}
+            LeftIcon={() => <Icon color={theme.color.purple} size={16} />}
             text={action.defaultLabel}
             onClick={handleTriggerTypeClick(action)}
           />

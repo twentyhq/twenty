@@ -12,6 +12,8 @@ import {
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
@@ -38,6 +40,7 @@ import {
 export class WorkflowSchemaWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async computeStepOutputSchema({
@@ -59,19 +62,25 @@ export class WorkflowSchemaWorkspaceService {
         });
       }
       case WorkflowTriggerType.MANUAL: {
+        const isIteratorEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+            workspaceId,
+          );
+
         const { objectType, availability } = step.settings;
+
+        if (isDefined(availability) && isIteratorEnabled) {
+          return this.computeTriggerOutputSchemaFromAvailability({
+            availability,
+            workspaceId,
+          });
+        }
 
         // TODO: to be deprecated once all triggers are migrated to the new availability type
         if (isDefined(objectType)) {
           return this.computeRecordOutputSchema({
             objectType,
-            workspaceId,
-          });
-        }
-
-        if (isDefined(availability)) {
-          return this.computeTriggerOutputSchemaFromAvailability({
-            availability,
             workspaceId,
           });
         }
@@ -206,20 +215,37 @@ export class WorkflowSchemaWorkspaceService {
       maxDepth: 0,
     });
 
-    return {
-      first: {
-        isLeaf: false,
-        icon: 'IconAlpha',
-        value: recordOutputSchema,
-      },
-      last: { isLeaf: false, icon: 'IconOmega', value: recordOutputSchema },
-      totalCount: {
-        isLeaf: true,
-        icon: 'IconSum',
-        type: 'number',
-        value: generateFakeValue('number'),
-      },
+    const objectMetadataInfo =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        objectType,
+        workspaceId,
+      );
+
+    const first: Node = {
+      isLeaf: false,
+      label: `First ${objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular ?? 'Record'}`,
+      icon: 'IconAlpha',
+      type: 'object',
+      value: recordOutputSchema,
     };
+
+    const all: Leaf = {
+      isLeaf: true,
+      label: `All ${objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelPlural ?? 'Records'}`,
+      type: 'array',
+      icon: 'IconListDetails',
+      value: 'Returns an array of records',
+    };
+
+    const totalCount: Leaf = {
+      isLeaf: true,
+      label: 'Total Count',
+      icon: 'IconSum',
+      type: 'number',
+      value: 'Count of matching records',
+    };
+
+    return { first, all, totalCount } satisfies OutputSchema;
   }
 
   private async computeRecordOutputSchema({
@@ -291,7 +317,7 @@ export class WorkflowSchemaWorkspaceService {
         );
 
       return {
-        [availability.objectNameSingular]: {
+        [objectMetadataInfo.objectMetadataItemWithFieldsMaps.namePlural]: {
           label:
             objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelPlural,
           isLeaf: true,
@@ -394,8 +420,36 @@ export class WorkflowSchemaWorkspaceService {
       }
     }
 
-    // TODO(t.trompette): handle other step types
+    const step = workflowVersion.steps?.find((step) => step.id === stepId);
 
-    return DEFAULT_ITERATOR_CURRENT_ITEM;
+    if (!isDefined(step)) {
+      return DEFAULT_ITERATOR_CURRENT_ITEM;
+    }
+
+    switch (step.type) {
+      case WorkflowActionType.FIND_RECORDS: {
+        const objectMetadataInfo =
+          await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+            step.settings.input.objectName,
+            workspaceId,
+          );
+
+        return {
+          label:
+            'Current Item (' +
+            objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular +
+            ')',
+          isLeaf: false,
+          type: 'object',
+          value: await this.computeRecordOutputSchema({
+            objectType: step.settings.input.objectName,
+            workspaceId,
+          }),
+        };
+      }
+      default: {
+        return DEFAULT_ITERATOR_CURRENT_ITEM;
+      }
+    }
   }
 }
