@@ -58,7 +58,6 @@ export const useUpdateActivityTargetFromCell = ({
       async ({
         morphItem,
         activityTargetWithTargetRecords,
-        recordPickerInstanceId,
       }: UpdateActivityTargetFromCellProps) => {
         const targetObjectName =
           activityObjectNameSingular === CoreObjectNameSingular.Task

@@ -7,6 +7,7 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -24,7 +25,7 @@ type UpdateOneRecordArgs<UpdatedObjectRecord> = {
   updateOneRecordInput: Partial<Omit<UpdatedObjectRecord, 'id'>>;
   optimisticRecord?: Partial<ObjectRecord>;
   objectNameSingular: string;
-  recordGqlFields?: Record<string, any>;
+  recordGqlFields?: RecordGqlFields;
 };
 export const useUpdateOneRecordV2 = () => {
   const apolloCoreClient = useApolloCoreClient();
