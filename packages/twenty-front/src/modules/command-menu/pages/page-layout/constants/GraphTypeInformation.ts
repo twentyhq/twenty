@@ -7,12 +7,12 @@ import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
+  Icon123,
   IconChartBar,
   IconChartLine,
   IconChartPie,
   type IconComponent,
   IconGauge,
-  IconNumber,
 } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
 
@@ -41,7 +41,7 @@ export const GRAPH_TYPE_INFORMATION: Record<
   },
   [GraphType.NUMBER]: {
     label: msg`Number`,
-    icon: IconNumber,
+    icon: Icon123,
     settings: NUMBER_CHART_SETTINGS,
   },
   [GraphType.GAUGE]: {
