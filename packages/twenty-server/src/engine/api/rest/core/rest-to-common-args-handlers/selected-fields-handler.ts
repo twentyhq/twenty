@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import {
-    Depth,
-    MAX_DEPTH,
+  Depth,
+  MAX_DEPTH,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
