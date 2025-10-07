@@ -134,7 +134,7 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
           componentInstanceId={dropdownId}
           EmptyIcon={IconForbid}
           onRecordSelected={handleRelationPickerEntitySelected}
-          objectNameSingular={relationObjectMetadataNameSingular}
+          objectNameSingulars={[relationObjectMetadataNameSingular]}
           recordPickerInstanceId={dropdownId}
           onCancel={() => closeDropdown(dropdownId)}
           onCreate={shouldAllowCreateNew ? handleCreateNew : undefined}

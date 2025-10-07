@@ -18,7 +18,7 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
 
-export const RelationToOneFieldInput = () => {
+export const RelationManyToOneFieldInput = () => {
   const { t } = useLingui();
   const { fieldDefinition, recordId } = useRelationField<ObjectRecord>();
 
@@ -86,9 +86,9 @@ export const RelationToOneFieldInput = () => {
       onCancel={onCancel}
       onCreate={handleCreateNew}
       onRecordSelected={handleRecordSelected}
-      objectNameSingular={
-        fieldDefinition.metadata.relationObjectMetadataNameSingular
-      }
+      objectNameSingulars={[
+        fieldDefinition.metadata.relationObjectMetadataNameSingular,
+      ]}
       recordPickerInstanceId={instanceId}
       layoutDirection={
         layoutDirection === 'downward'

@@ -385,7 +385,7 @@ export const getEmptyRecordGqlOperationFilter = ({
       });
       break;
     default:
-      throw new CustomError( 
+      throw new CustomError(
         `Unsupported empty filter type ${filterType}`,
         'UNSUPPORTED_EMPTY_FILTER_TYPE',
       );
@@ -399,7 +399,7 @@ export const getEmptyRecordGqlOperationFilter = ({
         not: emptyRecordFilter,
       };
     default:
-      throw new CustomError( 
+      throw new CustomError(
         `Unknown operand ${operand} for ${filterType} filter`,
         'UNKNOWN_OPERAND_FOR_FILTER',
       );

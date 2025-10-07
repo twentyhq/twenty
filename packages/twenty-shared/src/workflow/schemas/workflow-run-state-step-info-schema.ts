@@ -6,12 +6,14 @@ export const workflowRunStateStepInfoSchema = z.object({
   error: z.any().optional(),
   status: workflowRunStepStatusSchema,
   get history() {
-    return z.array(
-      workflowRunStateStepInfoSchema.pick({
-        result: true,
-        status: true,
-        error: true,
-      })
-    ).optional();
-  }
+    return z
+      .array(
+        workflowRunStateStepInfoSchema.pick({
+          result: true,
+          status: true,
+          error: true,
+        }),
+      )
+      .optional();
+  },
 });

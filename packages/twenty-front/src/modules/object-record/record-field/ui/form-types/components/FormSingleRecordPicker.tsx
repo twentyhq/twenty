@@ -16,10 +16,9 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useId } from 'react';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
@@ -63,7 +62,7 @@ export type FormSingleRecordPickerProps = {
   label?: string;
   defaultValue?: RecordId | Variable;
   onChange: (value: RecordId | Variable | null) => void;
-  objectNameSingular: string;
+  objectNameSingulars: string[];
   disabled?: boolean;
   testId?: string;
   VariablePicker?: VariablePickerComponent;
@@ -72,14 +71,12 @@ export type FormSingleRecordPickerProps = {
 export const FormSingleRecordPicker = ({
   label,
   defaultValue,
-  objectNameSingular,
+  objectNameSingulars,
   onChange,
   disabled,
   testId,
   VariablePicker,
 }: FormSingleRecordPickerProps) => {
-  const { t } = useLingui();
-
   const theme = useTheme();
   const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
     defaultValue,
@@ -93,12 +90,19 @@ export const FormSingleRecordPicker = ({
         value: defaultValue || '',
       };
 
+  if (objectNameSingulars.length === 0) {
+    throw new CustomError(
+      'Object is missing while building form single record picker',
+      'FORM_SINGLE_RECORD_PICKER_OBJECT_NAME_SINGULAR_IS_MISSING',
+    );
+  }
+
   const { record: selectedRecord } = useFindOneRecord({
     objectRecordId:
       isDefined(defaultValue) && !isStandaloneVariableString(defaultValue)
         ? defaultValue
         : '',
-    objectNameSingular,
+    objectNameSingular: objectNameSingulars[0],
     withSoftDeleted: true,
     skip: !isDefined(defaultValue) || !isValidUuid(defaultValue),
   });
@@ -171,7 +175,7 @@ export const FormSingleRecordPicker = ({
             <FormSingleRecordFieldChip
               draftValue={draftValue}
               selectedRecord={selectedRecord}
-              objectNameSingular={objectNameSingular}
+              objectNameSingular={objectNameSingulars[0]}
               onRemove={handleUnlinkVariable}
               disabled={disabled}
             />
@@ -193,7 +197,7 @@ export const FormSingleRecordPicker = ({
                 <FormSingleRecordFieldChip
                   draftValue={draftValue}
                   selectedRecord={selectedRecord}
-                  objectNameSingular={objectNameSingular}
+                  objectNameSingular={objectNameSingulars[0]}
                   onRemove={handleUnlinkVariable}
                   disabled={disabled}
                 />
@@ -210,10 +214,10 @@ export const FormSingleRecordPicker = ({
                 focusId={dropdownId}
                 componentInstanceId={dropdownId}
                 EmptyIcon={IconForbid}
-                emptyLabel={t`No ${objectNameSingular}`}
+                emptyLabel={'No ' + objectNameSingulars.join(' or ')}
                 onCancel={() => closeDropdown(dropdownId)}
                 onRecordSelected={handleRecordSelected}
-                objectNameSingular={objectNameSingular}
+                objectNameSingulars={objectNameSingulars}
                 recordPickerInstanceId={dropdownId}
                 dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
               />
