@@ -7,7 +7,7 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
