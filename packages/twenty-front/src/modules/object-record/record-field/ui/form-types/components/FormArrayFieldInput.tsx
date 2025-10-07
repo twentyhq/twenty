@@ -133,7 +133,7 @@ export const FormArrayFieldInput = ({
 
   const handleDeleteItem = (index: number) => {
     if (draftValue.type !== 'static') {
-      return;
+      throw new Error('Cannot delete item when value is a variable.');
     }
 
     const updatedItems = toSpliced(draftValue.value, index, 1);
