@@ -98,6 +98,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
         viewField: flatViewFieldToValidate,
       },
       dependencyOptimisticFlatEntityMaps: {
+        ...dependencyOptimisticFlatEntityMaps,
         flatViewMaps: updatedFlatViewMaps,
         flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
       },
@@ -174,6 +175,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
         viewFieldId: flatViewFieldToValidate.id,
       },
       dependencyOptimisticFlatEntityMaps: {
+        ...dependencyOptimisticFlatEntityMaps,
         flatViewMaps: updatedFlatViewMaps,
         flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
       },
