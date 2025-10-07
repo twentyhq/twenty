@@ -112,24 +112,23 @@ export const FormArrayFieldInput = ({
   const [itemToEditIndex, setItemToEditIndex] = useState(-1);
   const isAddingNewItem = itemToEditIndex === -1;
 
-  const handleVariableTagInsert = (variableName: string) => {
-    setDraftValue({
-      type: 'variable',
-      value: variableName,
-    });
-
-    onChange(variableName);
+  const handleFirstItemInputChange = (value: string) => {
+    setNewItemDraftValue(value);
   };
 
-  const handleUnlinkVariable = () => {
+  const handleFirstItemInputEnter = () => {
     setDraftValue({
       type: 'static',
-      value: [],
+      value: [...draftValue.value, newItemDraftValue],
     });
 
-    setNewItemDraftValue('');
+    onChange([...draftValue.value, newItemDraftValue]);
+  };
 
-    onChange([]);
+  const handleEditItem = (index: number) => {
+    setInputValue(draftValue.value[index]);
+    setItemToEditIndex(index);
+    setIsInputDisplayed(true);
   };
 
   const handleDeleteItem = (index: number) => {
@@ -146,7 +145,41 @@ export const FormArrayFieldInput = ({
     onChange(updatedItems);
   };
 
-  const handleSubmitInput = () => {
+  const handleNewItemInputFocus = () => {
+    pushFocusItemToFocusStack({
+      focusId: newItemInputInstanceId,
+      component: {
+        type: FocusComponentType.FORM_FIELD_INPUT,
+        instanceId: newItemInputInstanceId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+  };
+
+  const handleNewItemInputBlur = () => {
+    removeFocusItemFromFocusStackById({
+      focusId: newItemInputInstanceId,
+    });
+  };
+
+  const handleNewItemInputEscape = () => {
+    closeDropdown(dropdownId);
+
+    setIsInputDisplayed(false);
+    setInputValue('');
+
+    removeFocusItemFromFocusStackById({
+      focusId: newItemInputInstanceId,
+    });
+  };
+
+  const handleNewItemInputChange = (value: string) => {
+    setInputValue(value);
+  };
+
+  const handleNewItemInputSubmit = () => {
     if (draftValue.type !== 'static') {
       throw new Error('Cannot submit input when value is a variable.');
     }
@@ -186,6 +219,31 @@ export const FormArrayFieldInput = ({
     removeFocusItemFromFocusStackById({
       focusId: newItemInputInstanceId,
     });
+  };
+
+  const handleAddItemButtonClick = () => {
+    setItemToEditIndex(-1);
+    setIsInputDisplayed(true);
+  };
+
+  const handleVariableTagInsert = (variableName: string) => {
+    setDraftValue({
+      type: 'variable',
+      value: variableName,
+    });
+
+    onChange(variableName);
+  };
+
+  const handleUnlinkVariable = () => {
+    setDraftValue({
+      type: 'static',
+      value: [],
+    });
+
+    setNewItemDraftValue('');
+
+    onChange([]);
   };
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -230,17 +288,8 @@ export const FormArrayFieldInput = ({
                 placeholder={t`Enter an item`}
                 value={newItemDraftValue}
                 copyButton={false}
-                onChange={(value) => {
-                  setNewItemDraftValue(value);
-                }}
-                onEnter={() => {
-                  setDraftValue({
-                    type: 'static',
-                    value: [...draftValue.value, newItemDraftValue],
-                  });
-
-                  onChange([...draftValue.value, newItemDraftValue]);
-                }}
+                onChange={handleFirstItemInputChange}
+                onEnter={handleFirstItemInputEnter}
                 shouldTrim={false}
               />
             ) : (
@@ -263,9 +312,7 @@ export const FormArrayFieldInput = ({
                             dropdownId={`array-field-input-${instanceId}-${index}`}
                             value={value}
                             onEdit={() => {
-                              setInputValue(draftValue.value[index]);
-                              setItemToEditIndex(index);
-                              setIsInputDisplayed(true);
+                              handleEditItem(index);
                             }}
                             onDelete={() => {
                               handleDeleteItem(index);
@@ -282,46 +329,17 @@ export const FormArrayFieldInput = ({
                         autoFocus
                         placeholder={placeholder}
                         value={inputValue}
-                        onFocus={() => {
-                          pushFocusItemToFocusStack({
-                            focusId: newItemInputInstanceId,
-                            component: {
-                              type: FocusComponentType.FORM_FIELD_INPUT,
-                              instanceId: newItemInputInstanceId,
-                            },
-                            globalHotkeysConfig: {
-                              enableGlobalHotkeysConflictingWithKeyboard: false,
-                            },
-                          });
-                        }}
-                        onBlur={() => {
-                          removeFocusItemFromFocusStackById({
-                            focusId: newItemInputInstanceId,
-                          });
-                        }}
-                        onEscape={() => {
-                          closeDropdown(dropdownId);
-
-                          setIsInputDisplayed(false);
-                          setInputValue('');
-
-                          removeFocusItemFromFocusStackById({
-                            focusId: newItemInputInstanceId,
-                          });
-                        }}
-                        onChange={(value) => {
-                          setInputValue(value);
-                        }}
-                        onEnter={handleSubmitInput}
+                        onFocus={handleNewItemInputFocus}
+                        onBlur={handleNewItemInputBlur}
+                        onEscape={handleNewItemInputEscape}
+                        onChange={handleNewItemInputChange}
+                        onEnter={handleNewItemInputSubmit}
                         hasItem
                       />
                     ) : (
                       <DropdownMenuItemsContainer>
                         <MenuItem
-                          onClick={() => {
-                            setItemToEditIndex(-1);
-                            setIsInputDisplayed(true);
-                          }}
+                          onClick={handleAddItemButtonClick}
                           LeftIcon={IconPlus}
                           text={`Add item`}
                         />
