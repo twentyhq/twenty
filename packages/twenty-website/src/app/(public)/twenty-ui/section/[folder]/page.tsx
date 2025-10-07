@@ -8,26 +8,24 @@ import { formatSlug } from '@/shared-utils/formatSlug';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { folder: string };
-}): Promise<Metadata> {
-  const formattedSlug = formatSlug(params.folder);
+export async function generateMetadata(
+  props: PageProps<'/twenty-ui/section/[folder]'>,
+): Promise<Metadata> {
+  const { folder } = await props.params;
+  const formattedSlug = formatSlug(folder);
   const basePath = '/src/content/twenty-ui';
-  const mainPost = await fetchArticleFromSlug(params.folder, basePath);
+  const mainPost = await fetchArticleFromSlug(folder, basePath);
   return {
     title: 'Twenty - ' + formattedSlug,
     description: mainPost?.itemInfo?.info,
   };
 }
 
-export default async function TwentyUISlug({
-  params,
-}: {
-  params: { folder: string };
-}) {
-  const filePath = `src/content/twenty-ui/${params.folder}/`;
+export default async function TwentyUISlug(
+  props: PageProps<'/twenty-ui/section/[folder]'>,
+) {
+  const { folder } = await props.params;
+  const filePath = `src/content/twenty-ui/${folder}/`;
   const docsArticleCards = getDocsArticles(filePath);
   const isSection = true;
   const hasOnlyEmptySections = docsArticleCards.every(
