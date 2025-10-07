@@ -121,7 +121,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
           newTableName,
         });
 
-        const objectFlatFieldMetadatas  =
+        const objectFlatFieldMetadatas =
           findManyFlatEntityByIdInFlatEntityMapsOrThrow({
             flatEntityMaps: flatFieldMetadataMaps,
             flatEntityIds: updatedObjectMetadata.fieldMetadataIds,
