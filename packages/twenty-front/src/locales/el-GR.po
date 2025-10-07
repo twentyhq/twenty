@@ -378,6 +378,12 @@ msgstr "Ενεργό"
 msgid "Active API keys created by you or your team."
 msgstr "Ενεργά API keys που έχουν δημιουργηθεί από εσάς ή την ομάδα σας."
 
+#. js-lingui-id: m3/V2n
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Add a node"
+msgstr ""
+
 #. js-lingui-id: KKfos4
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
