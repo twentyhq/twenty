@@ -5,12 +5,16 @@ import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { useServerInsertedHTML } from 'next/navigation';
 
-export default function RootStyleRegistry({ children }) {
+export default function RootStyleRegistry({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [{ cache, flush }] = useState(() => {
     const cache = createCache({ key: 'emotion-cache' });
     cache.compat = true;
     const prevInsert = cache.insert;
-    let inserted = [];
+    let inserted: Array<string> = [];
     cache.insert = (...args) => {
       const serialized = args[1];
       if (cache.inserted[serialized.name] === undefined) {

@@ -190,7 +190,7 @@ export class ApplicationSyncService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps'],
         },
       );
 
@@ -303,7 +303,7 @@ export class ApplicationSyncService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -456,7 +456,7 @@ export class ApplicationSyncService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatMapsKeys: ['flatDatabaseEventTriggerMaps'],
         },
       );
 
@@ -572,7 +572,7 @@ export class ApplicationSyncService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps'],
         },
       );
 
@@ -685,7 +685,7 @@ export class ApplicationSyncService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatRouteTriggerMaps'],
+          flatMapsKeys: ['flatRouteTriggerMaps'],
         },
       );
 

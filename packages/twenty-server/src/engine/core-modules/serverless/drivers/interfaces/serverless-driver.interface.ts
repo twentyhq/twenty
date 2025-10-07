@@ -4,7 +4,7 @@ import { type ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modu
 export type ServerlessExecuteError = {
   errorType: string;
   errorMessage: string;
-  stackTrace: string;
+  stackTrace: string | string[];
 };
 
 export type ServerlessExecuteResult = {

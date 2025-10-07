@@ -103,7 +103,7 @@ export class DataloaderService {
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
             {
               workspaceId,
-              flatEntities: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+              flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
 
@@ -195,7 +195,7 @@ export class DataloaderService {
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
             {
               workspaceId,
-              flatEntities: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+              flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
         const relationDtos: Array<RelationDTO[] | null> = [];
@@ -327,7 +327,7 @@ export class DataloaderService {
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
             {
               workspaceId,
-              flatEntities: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+              flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
 

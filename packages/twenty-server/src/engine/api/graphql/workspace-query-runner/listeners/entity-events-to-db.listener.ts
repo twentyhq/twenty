@@ -10,7 +10,6 @@ import { type ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/ty
 import { type ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
 import { type ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { type ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -81,12 +80,6 @@ export class EntityEventsToDbListener {
         },
       }));
 
-    const isDatabaseEventTriggerEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_DATABASE_EVENT_TRIGGER_ENABLED,
-        batchEvent.workspaceId,
-      );
-
     const promises = [
       this.subscriptionsService.publish(batchEvent),
       this.webhookQueueService.add<
@@ -100,15 +93,13 @@ export class EntityEventsToDbListener {
       ),
     ];
 
-    if (isDatabaseEventTriggerEnabled) {
-      promises.push(
-        this.triggerQueueService.add<WorkspaceEventBatch<T>>(
-          CallDatabaseEventTriggerJobsJob.name,
-          batchEvent,
-          { retryLimit: 3 },
-        ),
-      );
-    }
+    promises.push(
+      this.triggerQueueService.add<WorkspaceEventBatch<T>>(
+        CallDatabaseEventTriggerJobsJob.name,
+        batchEvent,
+        { retryLimit: 3 },
+      ),
+    );
 
     if (auditLogsEvents.length > 0) {
       promises.push(
