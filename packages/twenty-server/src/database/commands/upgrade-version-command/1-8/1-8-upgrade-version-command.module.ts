@@ -6,7 +6,10 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Workspace]), WorkspaceSchemaManagerModule],
+  imports: [
+    TypeOrmModule.forFeature([Workspace]),
+    WorkspaceSchemaManagerModule,
+  ],
   providers: [RegeneratePersonSearchVectorWithPhonesCommand],
   exports: [RegeneratePersonSearchVectorWithPhonesCommand],
 })
