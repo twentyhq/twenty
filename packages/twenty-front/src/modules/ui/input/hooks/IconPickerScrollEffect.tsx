@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { iconPickerVisibleCountState } from '../states/iconPickerVisibleCountState';
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { iconPickerVisibleCountState } from '../states/iconPickerVisibleCountState';
 
 type IconPickerScrollEffectProps = {
   sentinelId: string;
@@ -14,7 +14,7 @@ export const IconPickerScrollEffect = ({
 }: IconPickerScrollEffectProps) => {
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const setVisibleCount = useSetRecoilState(
+  const setIconPickerVisibleCount = useSetRecoilState(
     iconPickerVisibleCountState(dropdownId),
   );
 
@@ -29,7 +29,7 @@ export const IconPickerScrollEffect = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setVisibleCount((prev) => prev + 25);
+            setIconPickerVisibleCount((previousCount) => previousCount + 25);
           }
         });
       },
@@ -45,7 +45,7 @@ export const IconPickerScrollEffect = ({
     return () => {
       observer.disconnect();
     };
-  }, [sentinelId, scrollWrapperHTMLElement, setVisibleCount]);
+  }, [sentinelId, scrollWrapperHTMLElement, setIconPickerVisibleCount]);
 
   return null;
 };

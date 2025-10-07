@@ -14,8 +14,10 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/display';
 import {
   IconButton,
@@ -23,10 +25,8 @@ import {
   type IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { IconPickerScrollEffect } from '../hooks/IconPickerScrollEffect';
 import { iconPickerVisibleCountState } from '../states/iconPickerVisibleCountState';
-import { useRecoilValue, useResetRecoilState } from 'recoil';
 
 export type IconPickerProps = {
   disabled?: boolean;
@@ -68,9 +68,10 @@ const StyledLoadingMore = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 40px; /* enough to separate it from icons */
+  height: 40px;
   font-size: 14px;
 `;
+
 const StyledMatrixItem = styled.div`
   width: 32px;
   height: 32px;
@@ -155,10 +156,10 @@ export const IconPicker = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const visibleCountState =
+  const iconPickerVisibleCount =
     useRecoilValue(iconPickerVisibleCountState(dropdownId)) ?? maxIconsVisible;
 
-  const resetVisibleCount = useResetRecoilState(
+  const resetIconPickerVisibleCount = useResetRecoilState(
     iconPickerVisibleCountState(dropdownId),
   );
 
@@ -167,12 +168,15 @@ export const IconPicker = ({
 
   const totalMatchingIconsCount = useMemo(() => {
     if (!icons) return 0;
+
     return Object.keys(icons).filter((iconKey) => {
       const iconLabel = convertIconKeyToLabel(iconKey)
         .toLowerCase()
         .replace('icon ', '')
         .replace(/\s/g, '');
+
       const searchLower = searchString.toLowerCase().trim().replace(/\s/g, '');
+
       return (
         iconKey === searchLower ||
         iconLabel === searchLower ||
@@ -224,9 +228,9 @@ export const IconPicker = ({
           ...filteredAndSortedIconKeys.filter(
             (iconKey) => iconKey !== selectedIconKey,
           ),
-        ].slice(0, visibleCountState)
-      : filteredAndSortedIconKeys.slice(0, visibleCountState);
-  }, [icons, searchString, selectedIconKey, visibleCountState]);
+        ].slice(0, iconPickerVisibleCount)
+      : filteredAndSortedIconKeys.slice(0, iconPickerVisibleCount);
+  }, [icons, searchString, selectedIconKey, iconPickerVisibleCount]);
 
   const iconKeys2d = useMemo(
     () => arrayToChunks(matchingSearchIconKeys.slice(), 5),
@@ -244,8 +248,8 @@ export const IconPicker = ({
     ) ?? undefined;
 
   const isLoadingMore =
-    visibleCountState !== undefined &&
-    visibleCountState < totalMatchingIconsCount;
+    iconPickerVisibleCount !== undefined &&
+    iconPickerVisibleCount < totalMatchingIconsCount;
 
   return (
     <div className={className}>
@@ -324,7 +328,7 @@ export const IconPicker = ({
         onClose={() => {
           onClose?.();
           setSearchString('');
-          resetVisibleCount();
+          resetIconPickerVisibleCount();
         }}
         onOpen={onOpen}
       />
