@@ -1,33 +1,58 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useMorphPersistManyToOne } from '@/object-record/record-field/ui/meta-types/input/hooks/useMorphPersistManyToOne';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
 
 export const MorphRelationManyToOneFieldInput = () => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
 
-  const { onCancel, onSubmit } = useContext(FieldInputEventContext);
-  const { onCloseTableCell } = useRecordTableBodyContextOrThrow();
+  const { onCancel } = useContext(FieldInputEventContext);
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
+  const { persistMorphManyToOne } = useMorphPersistManyToOne({
+    objectMetadataNameSingular:
+      fieldDefinition.metadata.objectMetadataNameSingular ?? '',
+  });
+
   const handleMorphItemSelected = (
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
   ) => {
-    onSubmit?.({ newValue: selectedMorphItem?.recordId ?? null });
-    onCloseTableCell();
+    if (!isDefined(selectedMorphItem)) {
+      // Handle detach
+      return;
+    }
+
+    const targetObjectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.id === selectedMorphItem.objectMetadataId,
+    );
+
+    if (!isDefined(targetObjectMetadataItem)) {
+      throw new Error('TargetObjectMetadataItem is required');
+    }
+
+    persistMorphManyToOne({
+      recordId: recordId,
+      fieldDefinition,
+      valueToPersist: selectedMorphItem.recordId,
+      targetObjectMetadataNameSingular: targetObjectMetadataItem.nameSingular,
+    });
   };
 
   const layoutDirection = useRecoilComponentValue(
