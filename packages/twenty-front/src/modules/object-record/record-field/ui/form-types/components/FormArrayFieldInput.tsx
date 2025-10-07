@@ -89,7 +89,6 @@ export const FormArrayFieldInput = ({
     | {
         type: 'static';
         value: FieldArrayValue;
-        editingMode: 'view' | 'edit';
       }
     | {
         type: 'variable';
@@ -104,7 +103,6 @@ export const FormArrayFieldInput = ({
       : {
           type: 'static',
           value: isDefined(defaultValue) ? defaultValue : [],
-          editingMode: 'view',
         },
   );
 
@@ -127,7 +125,6 @@ export const FormArrayFieldInput = ({
     setDraftValue({
       type: 'static',
       value: [],
-      editingMode: 'view',
     });
 
     setNewItemDraftValue('');
@@ -144,13 +141,16 @@ export const FormArrayFieldInput = ({
 
     setDraftValue({
       type: 'static',
-      editingMode: 'view',
       value: updatedItems,
     });
     onChange(updatedItems);
   };
 
   const handleSubmitInput = () => {
+    if (draftValue.type !== 'static') {
+      throw new Error('Cannot submit input when value is a variable.');
+    }
+
     const sanitizedInput = inputValue.trim();
 
     if (sanitizedInput === '' && isAddingNewItem) {
@@ -162,8 +162,7 @@ export const FormArrayFieldInput = ({
       return;
     }
 
-    // FIXME
-    const items = draftValue.type === 'static' ? draftValue.value : [];
+    const items = draftValue.value;
 
     if (!isAddingNewItem && sanitizedInput === items[itemToEditIndex]) {
       setIsInputDisplayed(false);
@@ -177,7 +176,6 @@ export const FormArrayFieldInput = ({
 
     setDraftValue({
       type: 'static',
-      editingMode: 'view',
       value: updatedItems,
     });
     onChange(updatedItems);
@@ -238,7 +236,6 @@ export const FormArrayFieldInput = ({
                 onEnter={() => {
                   setDraftValue({
                     type: 'static',
-                    editingMode: 'view',
                     value: [...draftValue.value, newItemDraftValue],
                   });
 
