@@ -27,25 +27,25 @@ export class LineChartConfigurationDTO {
   @IsNotEmpty()
   graphType: GraphType.LINE;
 
-  @Field(() => UUIDScalarType)
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
-  @IsNotEmpty()
-  aggregateFieldMetadataId: string;
+  @IsOptional()
+  aggregateFieldMetadataId?: string;
 
-  @Field(() => ExtendedAggregateOperations)
+  @Field(() => ExtendedAggregateOperations, { nullable: true })
   @IsEnum(ExtendedAggregateOperations)
-  @IsNotEmpty()
-  aggregateOperation: ExtendedAggregateOperations;
+  @IsOptional()
+  aggregateOperation?: ExtendedAggregateOperations;
 
-  @Field(() => UUIDScalarType)
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
-  @IsNotEmpty()
-  groupByFieldMetadataIdX: string;
+  @IsOptional()
+  groupByFieldMetadataIdX?: string;
 
-  @Field(() => GraphOrderBy)
+  @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
-  @IsNotEmpty()
-  orderByX: GraphOrderBy;
+  @IsOptional()
+  orderByX?: GraphOrderBy;
 
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
@@ -62,15 +62,15 @@ export class LineChartConfigurationDTO {
   @IsOptional()
   omitNullValues?: boolean;
 
-  @Field(() => AxisNameDisplay)
+  @Field(() => AxisNameDisplay, { nullable: true })
   @IsEnum(AxisNameDisplay)
-  @IsNotEmpty()
-  axisNameDisplay: AxisNameDisplay;
+  @IsOptional()
+  axisNameDisplay?: AxisNameDisplay;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
-  @IsNotEmpty()
-  displayDataLabel: boolean;
+  @IsOptional()
+  displayDataLabel?: boolean;
 
   @Field(() => Number, { nullable: true })
   @IsNumber()

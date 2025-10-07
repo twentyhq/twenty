@@ -24,19 +24,20 @@ export class GaugeChartConfigurationDTO {
   @IsNotEmpty()
   graphType: GraphType.GAUGE;
 
-  @Field(() => UUIDScalarType)
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
-  @IsNotEmpty()
-  aggregateFieldMetadataId: string;
+  @IsOptional()
+  aggregateFieldMetadataId?: string;
 
-  @Field(() => ExtendedAggregateOperations)
+  @Field(() => ExtendedAggregateOperations, { nullable: true })
   @IsEnum(ExtendedAggregateOperations)
-  @IsNotEmpty()
-  aggregateOperation: ExtendedAggregateOperations;
+  @IsOptional()
+  aggregateOperation?: ExtendedAggregateOperations;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
-  displayDataLabel: boolean;
+  @IsOptional()
+  displayDataLabel?: boolean;
 
   @Field(() => String, { nullable: true })
   @IsString()

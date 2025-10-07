@@ -25,30 +25,30 @@ export class PieChartConfigurationDTO {
   @IsNotEmpty()
   graphType: GraphType.PIE;
 
-  @Field(() => UUIDScalarType)
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
-  @IsNotEmpty()
-  aggregateFieldMetadataId: string;
+  @IsOptional()
+  aggregateFieldMetadataId?: string;
 
-  @Field(() => ExtendedAggregateOperations)
+  @Field(() => ExtendedAggregateOperations, { nullable: true })
   @IsEnum(ExtendedAggregateOperations)
-  @IsNotEmpty()
-  aggregateOperation: ExtendedAggregateOperations;
+  @IsOptional()
+  aggregateOperation?: ExtendedAggregateOperations;
 
-  @Field(() => UUIDScalarType)
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
-  @IsNotEmpty()
-  groupByFieldMetadataId: string;
+  @IsOptional()
+  groupByFieldMetadataId?: string;
 
-  @Field(() => GraphOrderBy)
+  @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
-  @IsNotEmpty()
-  orderBy: GraphOrderBy;
+  @IsOptional()
+  orderBy?: GraphOrderBy;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
-  @IsNotEmpty()
-  displayDataLabel: boolean;
+  @IsOptional()
+  displayDataLabel?: boolean;
 
   @Field(() => String, { nullable: true })
   @IsString()
