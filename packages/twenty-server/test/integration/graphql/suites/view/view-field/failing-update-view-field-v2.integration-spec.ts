@@ -5,14 +5,13 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-
-import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
-
 import {
+  type ViewFieldTestSetup,
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
-  type ViewFieldTestSetup,
-} from '../utils/setup-view-field-test-v2.util';
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
+
+import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 
 describe('View Field Resolver - Failing Update Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;

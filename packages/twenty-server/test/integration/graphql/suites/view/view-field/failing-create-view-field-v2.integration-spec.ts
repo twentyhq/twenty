@@ -1,25 +1,25 @@
 import { faker } from '@faker-js/faker';
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
+import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
+import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
+import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/find-core-view-fields.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-
-import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
-
-import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
-import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
-import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/find-core-view-fields.util';
 import {
+  type ViewFieldTestSetup,
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
-  type ViewFieldTestSetup,
-} from '../utils/setup-view-field-test-v2.util';
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
+
+import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 
 describe('View Field Resolver - Failing Create Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;
   let createdFlatViewFieldIds: string[] = [];
+
   beforeAll(async () => {
     testSetup = await setupViewFieldTestV2();
   });
@@ -106,6 +106,7 @@ describe('View Field Resolver - Failing Create Operation - v2', () => {
       },
       expectToFail: false,
     });
+
     createdFlatViewFieldIds.push(createdFlatViewFieldId);
 
     const {

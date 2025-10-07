@@ -19,4 +19,3 @@ export const findCoreViewFieldsQueryFactory = ({
     viewId,
   },
 });
-

@@ -7,15 +7,14 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  type ViewFieldTestSetup,
+  cleanupViewFieldTestV2,
+  setupViewFieldTestV2,
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
 
 import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { type ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
-
-import {
-  cleanupViewFieldTestV2,
-  setupViewFieldTestV2,
-  type ViewFieldTestSetup,
-} from '../utils/setup-view-field-test-v2.util';
 
 type TestContext = {
   viewFieldInput: (testSetup: ViewFieldTestSetup) => CreateViewFieldInput;

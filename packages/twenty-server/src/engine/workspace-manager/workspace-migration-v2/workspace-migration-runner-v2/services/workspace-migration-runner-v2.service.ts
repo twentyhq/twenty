@@ -92,6 +92,7 @@ export class WorkspaceMigrationRunnerV2Service {
           ...(relatedFlatEntityMapsKeys ?? []),
         ]),
       ];
+
       this.logger.time(
         'Runner',
         `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,

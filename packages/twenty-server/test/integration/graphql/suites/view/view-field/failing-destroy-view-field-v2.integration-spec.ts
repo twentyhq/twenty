@@ -5,14 +5,13 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-
-import { type DestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view-field.input';
-
 import {
+  type ViewFieldTestSetup,
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
-  type ViewFieldTestSetup,
-} from '../utils/setup-view-field-test-v2.util';
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
+
+import { type DestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view-field.input';
 
 describe('View Field Resolver - Failing Destroy Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;
