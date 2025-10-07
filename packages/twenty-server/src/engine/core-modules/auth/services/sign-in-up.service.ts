@@ -7,6 +7,7 @@ import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { type AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -465,6 +466,20 @@ export class SignInUpService {
     newUserParams: SignInUpNewUserPayload,
     authParams: AuthProviderWithPasswordType['authParams'],
   ) {
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        email: newUserParams.email,
+      },
+    });
+
+    if (isDefined(existingUser)) {
+      throw new AuthException(
+        'User already exist',
+        AuthExceptionCode.USER_ALREADY_EXIST,
+        { userFriendlyMessage: t`User already exist` },
+      );
+    }
+
     return this.saveNewUser(
       await this.computePartialUserFromUserPayload(newUserParams, authParams),
       await this.setDefaultImpersonateAndAccessFullAdminPanel(),
