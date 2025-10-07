@@ -476,7 +476,7 @@ export class SignInUpService {
       throw new AuthException(
         'User already exist',
         AuthExceptionCode.USER_ALREADY_EXIST,
-        { userFriendlyMessage: t`User already exist` },
+        { userFriendlyMessage: t`User already exists` },
       );
     }
 
