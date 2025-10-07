@@ -475,7 +475,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
-        flatMapsKeys: ['flatObjectMetadataMaps'],
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
       });
 
       const formattedUpdatedObject = {
