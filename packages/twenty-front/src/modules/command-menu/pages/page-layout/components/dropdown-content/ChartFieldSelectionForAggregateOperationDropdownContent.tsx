@@ -79,7 +79,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   return (
     <>
       <DropdownMenuHeader>
-        <Trans>Y-Axis Field</Trans>
+        <Trans>Y-Axis</Trans>
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
