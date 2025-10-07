@@ -7,11 +7,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
@@ -34,10 +29,7 @@ export class JwtAuthGuard implements CanActivate {
         : undefined;
 
       if (!isDefined(data.apiKey) && !isDefined(data.userWorkspaceId)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
-          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
-        );
+        return false;
       }
 
       request.user = data.user;
