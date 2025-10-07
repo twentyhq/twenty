@@ -232,7 +232,6 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
       readonly={readonly}
       placeholder={placeholder}
-      testId={`form-array-field-input-${field.label}`}
     />
   ) : null;
 };
