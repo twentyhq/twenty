@@ -174,7 +174,7 @@ describe('group-by resolvers (integration)', () => {
         groupByOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
-          groupBy: [{ createdAt: { bucket: 'MONTH' } }],
+          groupBy: [{ createdAt: { granularity: 'MONTH' } }],
           filter: filter2025,
         }),
       );
@@ -244,7 +244,7 @@ describe('group-by resolvers (integration)', () => {
           groupByOperationFactory({
             objectMetadataSingularName: 'person',
             objectMetadataPluralName: 'people',
-            groupBy: [{ createdAt: { bucket: 'DAY_OF_THE_WEEK' } }],
+            groupBy: [{ createdAt: { granularity: 'DAY_OF_THE_WEEK' } }],
             // adding a filter for test not to fail when we are in january again
             filter: filter2024And2025,
           }),
@@ -279,7 +279,7 @@ describe('group-by resolvers (integration)', () => {
           groupByOperationFactory({
             objectMetadataSingularName: 'person',
             objectMetadataPluralName: 'people',
-            groupBy: [{ createdAt: { bucket: 'MONTH_OF_THE_YEAR' } }],
+            groupBy: [{ createdAt: { granularity: 'MONTH_OF_THE_YEAR' } }],
             filter: filter2024And2025,
           }),
         );
@@ -313,7 +313,7 @@ describe('group-by resolvers (integration)', () => {
           groupByOperationFactory({
             objectMetadataSingularName: 'person',
             objectMetadataPluralName: 'people',
-            groupBy: [{ createdAt: { bucket: 'QUARTER_OF_THE_YEAR' } }],
+            groupBy: [{ createdAt: { granularity: 'QUARTER_OF_THE_YEAR' } }],
             filter: filter2024And2025,
           }),
         );

@@ -2,25 +2,25 @@ import { Injectable } from '@nestjs/common';
 
 import { GraphQLEnumType, GraphQLInputObjectType } from 'graphql';
 
-import { ObjectRecordGroupByDateBucket } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 
-export const GROUP_BY_DATE_BUCKET_INPUT_KEY = 'GroupByDateInput';
+export const GROUP_BY_DATE_GRANULARITY_INPUT_KEY = 'GroupByDateInput';
 
 @Injectable()
-export class GroupByDateBucketInputTypeGenerator {
+export class GroupByDateGranularityInputTypeGenerator {
   constructor(private readonly gqlTypesStorage: GqlTypesStorage) {}
 
   public buildAndStore() {
-    const key = GROUP_BY_DATE_BUCKET_INPUT_KEY;
+    const key = GROUP_BY_DATE_GRANULARITY_INPUT_KEY;
     const type = new GraphQLInputObjectType({
-      name: GROUP_BY_DATE_BUCKET_INPUT_KEY,
+      name: GROUP_BY_DATE_GRANULARITY_INPUT_KEY,
       fields: {
-        bucket: {
+        granularity: {
           type: new GraphQLEnumType({
-            name: 'DateBucketEnum',
-            values: Object.entries(ObjectRecordGroupByDateBucket).reduce(
+            name: 'DateGranularityEnum',
+            values: Object.entries(ObjectRecordGroupByDateGranularity).reduce(
               (acc, [key, value]) => {
                 acc[key] = { value };
 
@@ -29,10 +29,10 @@ export class GroupByDateBucketInputTypeGenerator {
               {} as Record<string, { value: string }>,
             ),
             description:
-              'Date bucket (e.g. day, month, quarter, year, day of the week, quarter of the year, month of the year)',
+              'Date granularity (e.g. day, month, quarter, year, day of the week, quarter of the year, month of the year)',
           }),
           description:
-            'Date bucket (e.g. day, month, quarter, year, day of the week, quarter of the year, month of the year)',
+            'Date granularity (e.g. day, month, quarter, year, day of the week, quarter of the year, month of the year)',
         },
       },
     });

@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { ObjectRecordGroupByDateBucket } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 
@@ -11,28 +11,35 @@ export const getGroupByExpression = ({
   groupByField: GroupByField;
   columnNameWithQuotes: string;
 }) => {
-  if (isDefined(groupByField.dateBucket)) {
+  if (isDefined(groupByField.dateGranularity)) {
     if (
-      groupByField.dateBucket === ObjectRecordGroupByDateBucket.DAY_OF_THE_WEEK
+      groupByField.dateGranularity === ObjectRecordGroupByDateGranularity.NONE
+    ) {
+      return columnNameWithQuotes;
+    }
+
+    if (
+      groupByField.dateGranularity ===
+      ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK
     ) {
       return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'TMDay'))`;
     }
 
     if (
-      groupByField.dateBucket ===
-      ObjectRecordGroupByDateBucket.MONTH_OF_THE_YEAR
+      groupByField.dateGranularity ===
+      ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR
     ) {
       return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'TMMonth'))`;
     }
 
     if (
-      groupByField.dateBucket ===
-      ObjectRecordGroupByDateBucket.QUARTER_OF_THE_YEAR
+      groupByField.dateGranularity ===
+      ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR
     ) {
       return `TO_CHAR(${columnNameWithQuotes}, '"Q"Q')`;
     }
 
-    return `DATE_TRUNC('${groupByField.dateBucket}', ${columnNameWithQuotes})`;
+    return `DATE_TRUNC('${groupByField.dateGranularity}', ${columnNameWithQuotes})`;
   }
 
   return columnNameWithQuotes;

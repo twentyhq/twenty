@@ -107,6 +107,11 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
           groupByField.subFieldName ? [groupByField.subFieldName] : undefined,
         )[0]
       }"`;
+      const alias =
+        removeQuotes(columnNameWithQuotes) +
+        (groupByField.dateGranularity
+          ? `_${groupByField.dateGranularity}`
+          : '');
 
       return {
         columnNameWithQuotes,
@@ -114,14 +119,12 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
           groupByField,
           columnNameWithQuotes,
         }),
+        alias,
       };
     });
 
     groupByExpressions.forEach((groupByColumn, index) => {
-      queryBuilder.addSelect(
-        groupByColumn.expression,
-        removeQuotes(groupByColumn.columnNameWithQuotes),
-      );
+      queryBuilder.addSelect(groupByColumn.expression, groupByColumn.alias);
 
       if (index === 0) {
         queryBuilder.groupBy(groupByColumn.expression);
@@ -143,12 +146,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
 
     const result = await queryBuilder.getRawMany();
 
-    return formatResultWithGroupByDimensionValues(
-      result,
-      groupByExpressions.map(
-        (groupByColumn) => groupByColumn.columnNameWithQuotes,
-      ),
-    );
+    return formatResultWithGroupByDimensionValues(result, groupByExpressions);
   }
 
   private async addFiltersFromView({

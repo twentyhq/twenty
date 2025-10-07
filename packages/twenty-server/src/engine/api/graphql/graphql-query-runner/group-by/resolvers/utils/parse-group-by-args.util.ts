@@ -7,7 +7,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
-import { shouldGroupByDateBucket as shouldGroupByDateBucketUtil } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/should-group-by-date-bucket.util';
+import { shouldGroupByDateGranularity as shouldGroupByDateGranularityUtil } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/should-group-by-date-granularity.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const parseGroupByArgs = (
@@ -37,14 +37,14 @@ export const parseGroupByArgs = (
       ) {
         const fieldGroupByDefinition = fieldNames[fieldName];
 
-        const shouldGroupByDateBucket = shouldGroupByDateBucketUtil(
+        const shouldGroupByDateGranularity = shouldGroupByDateGranularityUtil(
           fieldGroupByDefinition,
         );
 
-        if (shouldGroupByDateBucket) {
+        if (shouldGroupByDateGranularity) {
           groupByFields.push({
             fieldMetadata,
-            dateBucket: fieldGroupByDefinition.bucket,
+            dateGranularity: fieldGroupByDefinition.granularity,
           });
           continue;
         }

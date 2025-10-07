@@ -7,7 +7,10 @@ import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-
 export const formatResultWithGroupByDimensionValues = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   result: any[],
-  groupByColumnsWithQuotes: string[],
+  groupByColumnsWithQuotes: {
+    columnNameWithQuotes: string;
+    alias: string;
+  }[],
 ): IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] => {
   let formattedResult: IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] =
     [];
@@ -16,13 +19,24 @@ export const formatResultWithGroupByDimensionValues = (
     let dimensionValues = [];
 
     for (const groupByColumn of groupByColumnsWithQuotes) {
-      const groupByColumnWithoutQuotes = removeQuotes(groupByColumn);
-
-      dimensionValues.push(group[groupByColumnWithoutQuotes]);
+      dimensionValues.push(group[groupByColumn.alias]);
     }
+    const groupWithValueMappedToUnaliasedColumn = {
+      ...group,
+      ...groupByColumnsWithQuotes.reduce<Record<string, unknown>>(
+        (acc, groupByColumn) => {
+          acc[removeQuotes(groupByColumn.columnNameWithQuotes)] =
+            group[groupByColumn.alias];
+
+          return acc;
+        },
+        {},
+      ),
+    };
+
     formattedResult.push({
       groupByDimensionValues: dimensionValues,
-      ...group,
+      ...groupWithValueMappedToUnaliasedColumn,
     });
   });
 

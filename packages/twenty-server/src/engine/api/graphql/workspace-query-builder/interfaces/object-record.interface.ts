@@ -28,7 +28,7 @@ export type ObjectRecordGroupByForCompositeField = Partial<{
 
 export type ObjectRecordGroupByForDateField = Partial<{
   [Property in keyof ObjectRecord]: {
-    bucket: ObjectRecordGroupByDateBucket;
+    granularity: ObjectRecordGroupByDateGranularity;
   };
 }>;
 
@@ -39,7 +39,7 @@ export enum OrderByDirection {
   DescNullsLast = 'DescNullsLast',
 }
 
-export enum ObjectRecordGroupByDateBucket {
+export enum ObjectRecordGroupByDateGranularity {
   DAY = 'DAY',
   MONTH = 'MONTH',
   QUARTER = 'QUARTER',
@@ -47,6 +47,7 @@ export enum ObjectRecordGroupByDateBucket {
   DAY_OF_THE_WEEK = 'DAY_OF_THE_WEEK',
   QUARTER_OF_THE_YEAR = 'QUARTER_OF_THE_YEAR',
   MONTH_OF_THE_YEAR = 'MONTH_OF_THE_YEAR',
+  NONE = 'NONE',
 }
 
 export type ObjectRecordOrderBy = Array<
