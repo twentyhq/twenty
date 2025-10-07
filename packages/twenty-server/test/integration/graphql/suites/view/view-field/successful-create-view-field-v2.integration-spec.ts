@@ -15,7 +15,7 @@ import {
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
   type ViewFieldTestSetup,
-} from './utils/setup-view-field-test-v2.util';
+} from '../utils/setup-view-field-test-v2.util';
 
 type TestContext = {
   viewFieldInput: (testSetup: ViewFieldTestSetup) => CreateViewFieldInput;

@@ -1,20 +1,20 @@
 import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
-import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
+import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
-import { type DestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view-field.input';
+import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 
 import {
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
   type ViewFieldTestSetup,
-} from './utils/setup-view-field-test-v2.util';
+} from '../utils/setup-view-field-test-v2.util';
 
-describe('View Field Resolver - Failing Destroy Operation - v2', () => {
+describe('View Field Resolver - Failing Update Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;
 
   beforeAll(async () => {
@@ -25,26 +25,29 @@ describe('View Field Resolver - Failing Destroy Operation - v2', () => {
     await cleanupViewFieldTestV2(testSetup.testObjectMetadataId);
   });
 
-  type DestroyViewFieldTestCase = {
-    input: DestroyViewFieldInput;
+  type UpdateViewFieldTestCase = {
+    input: UpdateViewFieldInput;
   };
 
-  const destroyViewFieldTestCases: EachTestingContext<DestroyViewFieldTestCase>[] =
+  const updateViewFieldTestCases: EachTestingContext<UpdateViewFieldTestCase>[] =
     [
       {
         title: 'non-existent view field',
         context: {
           input: {
             id: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+            update: {
+              position: 1,
+            },
           },
         },
       },
     ];
 
-  it.each(eachTestingContextFilter(destroyViewFieldTestCases))(
-    'should fail to destroy view field when $title',
+  it.each(eachTestingContextFilter(updateViewFieldTestCases))(
+    'should fail to update view field when $title',
     async ({ context }) => {
-      const response = await destroyOneCoreViewField({
+      const response = await updateOneCoreViewField({
         input: context.input,
         expectToFail: true,
       });
