@@ -123,9 +123,11 @@ export const useDownloadFakeRecords = () => {
 
   const formatToCsvContent = (rows: string[][]) => {
     const escapedRows = rows.map((row) => {
-      return row.map((value) =>
-        formatValueForCSV(sanitizeValueForCSVExport(value)),
-      );
+      return row.map((value) => {
+        const stringifiedValue =
+          typeof value === 'string' ? value : JSON.stringify(value);
+        return formatValueForCSV(sanitizeValueForCSVExport(stringifiedValue));
+      });
     });
 
     const csvContent = [...escapedRows.map((row) => row.join(','))].join('\n');
