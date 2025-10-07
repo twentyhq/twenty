@@ -17,7 +17,6 @@ import {
 } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartSettingsDropdownContent } from '@/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -139,9 +138,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                   dropdownId={item.id}
                   dropdownComponents={
                     <DropdownContent>
-                      <DropdownMenuItemsContainer>
-                        {getChartSettingsDropdownContent(item.id)}
-                      </DropdownMenuItemsContainer>
+                      {getChartSettingsDropdownContent(item.id)}
                     </DropdownContent>
                   }
                   dropdownPlacement="bottom-end"
