@@ -23,7 +23,7 @@ export const getGroupByExpression = ({
     case ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR:
       return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'TMMonth'))`;
     case ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR:
-      return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'Q'))`;
+      return `TRIM(TO_CHAR(${columnNameWithQuotes}, '"Q"Q'))`;
     case ObjectRecordGroupByDateGranularity.DAY:
     case ObjectRecordGroupByDateGranularity.MONTH:
     case ObjectRecordGroupByDateGranularity.QUARTER:
