@@ -16,5 +16,5 @@ export type FieldMetadataEntityRelationProperties =
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
   Omit<FieldMetadataEntity<T>, FieldMetadataEntityRelationProperties> & {
     universalIdentifier: string;
-    // Could add indexField metadatas and so on ?
+    viewFieldIds: string[];
   };
