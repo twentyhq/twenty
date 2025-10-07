@@ -12,6 +12,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { RecordCalendarContextProvider } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarMonth } from '@/object-record/record-calendar/month/components/RecordCalendarMonth';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -19,7 +20,7 @@ import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useSetRecoilState } from 'recoil';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -108,7 +109,24 @@ const meta: Meta<typeof RecordCalendarMonth> = {
                 }}
               >
                 <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-                  <Story />
+                  <RecordCalendarContextProvider
+                    value={{
+                      viewBarInstanceId: instanceId,
+                      objectNameSingular: CoreObjectNameSingular.Company,
+                      visibleRecordFields: [],
+                      objectMetadataItem: companyObjectMetadataItem,
+                      objectPermissions: {
+                        objectMetadataId: companyObjectMetadataItem.id,
+                        canReadObjectRecords: true,
+                        canUpdateObjectRecords: true,
+                        canSoftDeleteObjectRecords: true,
+                        canDestroyObjectRecords: true,
+                        restrictedFields: {},
+                      },
+                    }}
+                  >
+                    <Story />
+                  </RecordCalendarContextProvider>
                 </ViewComponentInstanceContext.Provider>
               </RecordTableComponentInstanceContext.Provider>
             </ObjectFilterDropdownComponentInstanceContext.Provider>
@@ -122,6 +140,7 @@ const meta: Meta<typeof RecordCalendarMonth> = {
     ComponentDecorator,
     IconsProviderDecorator,
     I18nFrontDecorator,
+    RouterDecorator,
   ],
 };
 
