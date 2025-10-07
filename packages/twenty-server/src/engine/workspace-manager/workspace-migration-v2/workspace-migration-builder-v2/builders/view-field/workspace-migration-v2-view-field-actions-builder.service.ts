@@ -66,7 +66,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
-    const updatedFlatViewFields = replaceFlatEntityInFlatEntityMapsOrThrow({
+    const updatedFlatViewMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
       flatEntity: {
         ...flatView,
         viewFieldIds: [...flatView.viewFieldIds, flatViewFieldToValidate.id],
@@ -82,7 +82,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       },
       dependencyOptimisticFlatEntityMaps: {
         ...dependencyOptimisticFlatEntityMaps,
-        flatViewMaps: updatedFlatViewFields,
+        flatViewMaps: updatedFlatViewMaps,
       },
     };
   }
@@ -120,7 +120,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
-    const updatedFlatViewFields = isDefined(flatView)
+    const updatedFlatViewMaps = isDefined(flatView)
       ? replaceFlatEntityInFlatEntityMapsOrThrow({
           flatEntity: {
             ...flatView,
@@ -140,7 +140,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       },
       dependencyOptimisticFlatEntityMaps: {
         ...dependencyOptimisticFlatEntityMaps,
-        flatViewMaps: updatedFlatViewFields,
+        flatViewMaps: updatedFlatViewMaps,
       },
     };
   }

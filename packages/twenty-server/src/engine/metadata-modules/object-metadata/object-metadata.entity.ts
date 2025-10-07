@@ -146,8 +146,7 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @OneToMany(
     () => ObjectPermissionEntity,
-    (objectPermission: ObjectPermissionEntity) =>
-      objectPermission.objectMetadata,
+    (objectPermission) => objectPermission.objectMetadata,
     {
       cascade: true,
     },
@@ -156,7 +155,7 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @OneToMany(
     () => FieldPermissionEntity,
-    (fieldPermission: FieldPermissionEntity) => fieldPermission.objectMetadata,
+    (fieldPermission) => fieldPermission.objectMetadata,
     {
       cascade: true,
     },
