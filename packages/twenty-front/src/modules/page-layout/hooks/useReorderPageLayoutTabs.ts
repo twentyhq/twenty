@@ -2,6 +2,7 @@ import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { adjustDestinationIndexForDrag } from '@/page-layout/utils/adjustDestinationIndexForDrag';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
@@ -48,13 +49,12 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
           (t) => t.id !== draggableId,
         );
 
-        const movingBetweenDroppables =
-          source.droppableId !== destination.droppableId;
-
-        const destinationIndexAdjusted =
-          movingBetweenDroppables && destination.index > source.index
-            ? destination.index - 1
-            : destination.index;
+        const destinationIndexAdjusted = adjustDestinationIndexForDrag({
+          sourceDroppableId: source.droppableId,
+          destinationDroppableId: destination.droppableId,
+          sourceIndex: source.index,
+          destinationIndex: destination.index,
+        });
 
         const newPosition = calculateNewPosition({
           destinationIndex: destinationIndexAdjusted,

@@ -2,6 +2,7 @@ import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftS
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { findNextActiveTabAfterDelete } from '@/page-layout/utils/findNextActiveTabAfterDelete';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -51,9 +52,6 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
         if (pageLayoutDraft.tabs.length <= 1) return;
 
-        const tabIndex = pageLayoutDraft.tabs.findIndex(
-          (tab) => tab.id === tabId,
-        );
         const currentActiveTabId = snapshot
           .getLoadable(activeTabIdState)
           .getValue();
@@ -69,13 +67,13 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         });
 
         if (currentActiveTabId === tabId) {
-          const newActiveIndex = tabIndex > 0 ? tabIndex - 1 : 0;
-          const remainingTabs = pageLayoutDraft.tabs.filter(
-            (tab) => tab.id !== tabId,
-          );
-          const newActiveTab = remainingTabs[newActiveIndex];
-          if (isDefined(newActiveTab)) {
-            setActiveTabId(newActiveTab.id);
+          const nextActiveTabId = findNextActiveTabAfterDelete({
+            tabs: pageLayoutDraft.tabs,
+            deletedTabId: tabId,
+          });
+
+          if (isDefined(nextActiveTabId)) {
+            setActiveTabId(nextActiveTabId);
           }
         }
       },

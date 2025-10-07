@@ -4,6 +4,7 @@ import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListC
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import styled from '@emotion/styled';
 import { Draggable } from '@hello-pangea/dnd';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { TabButton } from 'twenty-ui/input';
 
@@ -62,7 +63,7 @@ export const TabListDraggableTab = ({
 
   const handleRenameSave = (newTitle: string) => {
     onExitRenameMode();
-    if (newTitle !== tab.title && newTitle.length > 0) {
+    if (newTitle !== tab.title && isNonEmptyString(newTitle)) {
       tabActions?.onRename?.(tab.id, newTitle);
     }
   };
