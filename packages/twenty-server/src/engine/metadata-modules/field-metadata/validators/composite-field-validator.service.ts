@@ -42,66 +42,24 @@ export class CompositeFieldValidatorService {
         'attachment',
       );
 
-    const attachments = await attachmentRepository.findBy({
-      id: { in: attachmentIds } as any,
-    });
+// At the top of packages/twenty-server/src/engine/metadata-modules/field-metadata/validators/composite-field-validator.service.ts
+import { Injectable } from '@nestjs/common';
+import { In } from 'typeorm';
+…
 
-    // Validate all IDs exist
-    if (attachments.length !== attachmentIds.length) {
-      const foundIds = new Set(attachments.map((att) => att.id));
-      const missingIds = attachmentIds.filter((id) => !foundIds.has(id));
+// inside validateImageField (around line 45)
+const attachments = await attachmentRepository.findBy({
+  id: In(attachmentIds),
+});
 
-      throw new ValidationError(
-        `Attachment IDs not found: ${missingIds.join(', ')}`,
-      );
-    }
+…
 
-    // Validate MIME types (using type field as proxy for MIME)
-    attachments.forEach((attachment) => {
-      // Map attachment type to MIME-like validation
-      // Type is stored as 'Image', 'PDF', etc. from getFileType
-      if (attachment.type !== 'Image') {
-        throw new ValidationError(
-          `Attachment "${attachment.name}" is not an image file. Only image files are allowed for IMAGE fields.`,
-        );
-      }
-    });
+// inside validatePdfField (around line 90)
+const attachments = await attachmentRepository.findBy({
+  id: In(attachmentIds),
+});
 
-    // Note: We're NOT enforcing record ownership here to allow flexibility
-    // If strict scoping is needed, uncomment:
-    // this.validateAttachmentOwnership(attachments, recordId);
-  }
-
-  async validatePdfField(
-    attachmentIds: string[] | null | undefined,
-    recordId: string,
-    workspaceId: string,
-    isRequired: boolean,
-  ): Promise<void> {
-    // Handle null/empty
-    if (!attachmentIds || attachmentIds.length === 0) {
-      if (isRequired) {
-        throw new ValidationError(
-          'PDF field is required and must have at least one PDF attachment',
-        );
-      }
-
-      return;
-    }
-
-    // Validate count
-    this.attachmentLimitValidator.validate(attachmentIds);
-
-    // Fetch attachments
-    const attachmentRepository =
-      await this.twentyORMManager.getRepository<AttachmentWorkspaceEntity>(
-        'attachment',
-      );
-
-    const attachments = await attachmentRepository.findBy({
-      id: { in: attachmentIds } as any,
-    });
-
+…
     // Validate all IDs exist
     if (attachments.length !== attachmentIds.length) {
       const foundIds = new Set(attachments.map((att) => att.id));
