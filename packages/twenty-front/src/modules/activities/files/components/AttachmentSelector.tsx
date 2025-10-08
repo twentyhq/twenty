@@ -130,9 +130,16 @@ export const AttachmentSelector = ({
     targetableObject.targetObjectNameSingular &&
     targetableObject.targetObjectNameSingular.trim() !== '';
 
-  const { attachments, loading } = shouldFetchAttachments
-    ? useAttachments(targetableObject)
-    : { attachments: [], loading: false };
+  const attachmentsQuery = useAttachments(
+    shouldFetchAttachments ? targetableObject : undefined,
+  );
+
+  const attachments = shouldFetchAttachments
+    ? attachmentsQuery.attachments
+    : [];
+  const loading = shouldFetchAttachments
+    ? attachmentsQuery.loading
+    : false;
 
   const filteredAttachments = (attachments || []).filter((attachment) => {
     // Apply custom attachment filter if provided
