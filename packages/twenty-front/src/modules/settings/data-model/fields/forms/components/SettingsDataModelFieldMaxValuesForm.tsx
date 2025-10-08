@@ -68,7 +68,7 @@ export const SettingsDataModelFieldMaxValuesForm = ({
         ...existingSettings,
         maxNumberOfValues:
           existingSettings.maxNumberOfValues ??
-            MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES,
+          MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES,
       }}
       render={({ field: { value, onChange } }) => {
         const currentSettings =

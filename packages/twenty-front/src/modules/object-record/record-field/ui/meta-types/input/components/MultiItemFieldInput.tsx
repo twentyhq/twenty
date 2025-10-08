@@ -164,14 +164,6 @@ export const MultiItemFieldInput = <T,>({
 
   const handleSubmitInput = () => {
     const sanitizedInput = inputValue.trim();
-    if (validateInput !== undefined) {
-      const validationData = validateInput(sanitizedInput) ?? { isValid: true };
-      if (!validationData.isValid) {
-        onError?.(true, items);
-        setErrorData(validationData);
-        return;
-      }
-    }
 
     if (sanitizedInput === '' && isAddingNewItem) {
       return;
@@ -180,6 +172,15 @@ export const MultiItemFieldInput = <T,>({
     if (sanitizedInput === '' && !isAddingNewItem) {
       handleDeleteItem(itemToEditIndex);
       return;
+    }
+
+    if (validateInput !== undefined) {
+      const validationData = validateInput(sanitizedInput) ?? { isValid: true };
+      if (!validationData.isValid) {
+        onError?.(true, items);
+        setErrorData(validationData);
+        return;
+      }
     }
 
     const newItem = formatInput
@@ -209,6 +210,9 @@ export const MultiItemFieldInput = <T,>({
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
+    setIsInputDisplayed(false);
+    setInputValue('');
+    setItemToEditIndex(-1);
   };
 
   return (

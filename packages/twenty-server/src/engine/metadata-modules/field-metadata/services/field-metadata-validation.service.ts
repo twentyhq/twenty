@@ -12,12 +12,12 @@ import {
   type ValidationError,
   validateOrReject,
 } from 'class-validator';
+import { MULTI_ITEM_FIELD_MIN_MAX_VALUES } from 'twenty-shared/constants';
 import {
   ALLOWED_ADDRESS_SUBFIELDS,
   type AllowedAddressSubField,
   FieldMetadataType,
 } from 'twenty-shared/types';
-import { MULTI_ITEM_FIELD_MIN_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
