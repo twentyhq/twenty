@@ -7,18 +7,19 @@ import { IconButton } from 'twenty-ui/input';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
+import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
+import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
-import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
-import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -86,7 +87,7 @@ export const PageLayoutTabList = ({
     onAddButtonWidthChange,
   } = useTabListMeasurements({
     visibleTabs,
-    hasAddButton: Boolean(onAddTab),
+    hasAddButton: isDefined(onAddTab),
   });
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
@@ -142,7 +143,7 @@ export const PageLayoutTabList = ({
     return null;
   }
 
-  const canReorderTabs = Boolean(isReorderEnabled && onReorder);
+  const canReorderTabs = isReorderEnabled && isDefined(onReorder);
 
   const shouldRenderReorderableDropdown = hasHiddenTabs && canReorderTabs;
 
@@ -165,18 +166,12 @@ export const PageLayoutTabList = ({
           onTabWidthChange={onTabWidthChange}
           onMoreButtonWidthChange={onMoreButtonWidthChange}
           onAddButtonWidthChange={onAddTab ? onAddButtonWidthChange : undefined}
-          renderAddButton={
-            onAddTab
-              ? () => (
-                  <StyledAddButton>
-                    <IconButton
-                      Icon={IconPlus}
-                      size="small"
-                      variant="tertiary"
-                    />
-                  </StyledAddButton>
-                )
-              : undefined
+          addButtonMeasurement={
+            onAddTab ? (
+              <StyledAddButton>
+                <IconButton Icon={IconPlus} size="small" variant="tertiary" />
+              </StyledAddButton>
+            ) : undefined
           }
         />
       )}

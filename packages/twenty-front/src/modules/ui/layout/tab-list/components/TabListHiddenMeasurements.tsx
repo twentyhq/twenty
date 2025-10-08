@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
@@ -6,24 +6,22 @@ import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimensio
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui/display';
 import { TabButton } from 'twenty-ui/input';
+
 import { TabMoreButton } from './TabMoreButton';
+
+type TabListDimensions = {
+  width: number;
+  height: number;
+};
 
 type TabListHiddenMeasurementsProps = {
   visibleTabs: SingleTabProps[];
   activeTabId: string | null;
   loading?: boolean;
-  onTabWidthChange: (
-    tabId: string,
-  ) => (dimensions: { width: number; height: number }) => void;
-  onMoreButtonWidthChange: (dimensions: {
-    width: number;
-    height: number;
-  }) => void;
-  onAddButtonWidthChange?: (dimensions: {
-    width: number;
-    height: number;
-  }) => void;
-  renderAddButton?: () => ReactNode;
+  onTabWidthChange: (tabId: string) => (dimensions: TabListDimensions) => void;
+  onMoreButtonWidthChange: (dimensions: TabListDimensions) => void;
+  onAddButtonWidthChange?: (dimensions: TabListDimensions) => void;
+  addButtonMeasurement?: ReactNode;
 };
 
 const StyledHiddenMeasurement = styled.div`
@@ -42,7 +40,7 @@ export const TabListHiddenMeasurements = ({
   onTabWidthChange,
   onMoreButtonWidthChange,
   onAddButtonWidthChange,
-  renderAddButton,
+  addButtonMeasurement,
 }: TabListHiddenMeasurementsProps) => {
   return (
     <StyledHiddenMeasurement>
@@ -70,9 +68,7 @@ export const TabListHiddenMeasurements = ({
 
       {onAddButtonWidthChange && (
         <NodeDimension onDimensionChange={onAddButtonWidthChange}>
-          {renderAddButton ? (
-            renderAddButton()
-          ) : (
+          {addButtonMeasurement ?? (
             <TabButton
               id="tab-add-button"
               title="+"
