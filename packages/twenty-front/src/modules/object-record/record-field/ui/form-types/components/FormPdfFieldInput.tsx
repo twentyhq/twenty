@@ -37,12 +37,12 @@ const StyledIdList = styled.div`
 `;
 
 const StyledIdRow = styled.div`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(1)};
   background: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledIdText = styled.div`
@@ -63,11 +63,11 @@ const StyledRemoveButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   &:hover {
     color: ${({ theme }) => theme.color.red};
   }
-  
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
@@ -98,11 +98,11 @@ export const FormPdfFieldInput = ({
 }: FormPdfFieldInputProps) => {
   const { t } = useLingui();
   const [newId, setNewId] = useState('');
-  
+
   const attachmentIds = defaultValue?.attachmentIds || [];
 
   const handleAdd = () => {
-    if (newId.trim() && !attachmentIds.includes(newId.trim())) {
+    if (Boolean(newId.trim()) && !attachmentIds.includes(newId.trim())) {
       onChange({ attachmentIds: [...attachmentIds, newId.trim()] });
       setNewId('');
     }

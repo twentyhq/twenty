@@ -3,8 +3,8 @@ import { type ZodHelperLiteral } from '@/object-record/record-field/ui/types/Zod
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type CurrencyCode } from 'twenty-shared/constants';
 import {
-    ConnectedAccountProvider,
-    type AllowedAddressSubField,
+  ConnectedAccountProvider,
+  type AllowedAddressSubField,
 } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';

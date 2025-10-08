@@ -8,19 +8,19 @@ const StyledEmptyState = styled.div`
 `;
 
 const StyledThumbnailContainer = styled.div`
+  align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  align-items: center;
 `;
 
 const StyledThumbnail = styled.div<{ thumbnailUrl: string }>`
-  width: 24px;
-  height: 24px;
   background-image: url(${({ thumbnailUrl }) => thumbnailUrl});
-  background-size: cover;
   background-position: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-size: cover;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  height: 24px;
+  width: 24px;
 `;
 
 const StyledCountBadge = styled.div`
@@ -39,11 +39,19 @@ export const ImageFieldDisplay = () => {
   const { attachments, loading } = useAttachmentsByIds(attachmentIds);
 
   if (loading) {
-    return <StyledLoading><Trans>Loading...</Trans></StyledLoading>;
+    return (
+      <StyledLoading>
+        <Trans>Loading...</Trans>
+      </StyledLoading>
+    );
   }
 
   if (attachments.length === 0) {
-    return <StyledEmptyState><Trans>No images</Trans></StyledEmptyState>;
+    return (
+      <StyledEmptyState>
+        <Trans>No images</Trans>
+      </StyledEmptyState>
+    );
   }
 
   // Show first 3 thumbnails with count badge

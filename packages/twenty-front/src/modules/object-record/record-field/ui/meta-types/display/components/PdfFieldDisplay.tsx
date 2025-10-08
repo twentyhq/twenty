@@ -10,21 +10,22 @@ const StyledEmptyState = styled.div`
 `;
 
 const StyledPdfContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
   align-items: center;
+  display: flex;
   flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledPdfItem = styled.div`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(0.5)} ${({ theme }) => theme.spacing(1)};
   background: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
   max-width: 150px;
+  padding: ${({ theme }) => theme.spacing(0.5)}
+    ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledFileName = styled.div`
@@ -51,11 +52,19 @@ export const PdfFieldDisplay = () => {
   const { attachments, loading } = useAttachmentsByIds(attachmentIds);
 
   if (loading) {
-    return <StyledLoading><Trans>Loading...</Trans></StyledLoading>;
+    return (
+      <StyledLoading>
+        <Trans>Loading...</Trans>
+      </StyledLoading>
+    );
   }
 
   if (attachments.length === 0) {
-    return <StyledEmptyState><Trans>No PDFs</Trans></StyledEmptyState>;
+    return (
+      <StyledEmptyState>
+        <Trans>No PDFs</Trans>
+      </StyledEmptyState>
+    );
   }
 
   // Show first 2 PDF names with count badge

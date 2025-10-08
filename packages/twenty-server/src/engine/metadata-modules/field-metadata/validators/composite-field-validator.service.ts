@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { In } from 'typeorm';
 
 import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { AttachmentLimitValidatorService } from 'src/engine/metadata-modules/field-metadata/validators/attachment-limit-validator.service';
@@ -42,24 +43,65 @@ export class CompositeFieldValidatorService {
         'attachment',
       );
 
-// At the top of packages/twenty-server/src/engine/metadata-modules/field-metadata/validators/composite-field-validator.service.ts
-import { Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-…
+    const attachments = await attachmentRepository.findBy({
+      id: In(attachmentIds),
+    });
 
-// inside validateImageField (around line 45)
-const attachments = await attachmentRepository.findBy({
-  id: In(attachmentIds),
-});
+    // Validate all IDs exist
+    if (attachments.length !== attachmentIds.length) {
+      const foundIds = new Set(attachments.map((att) => att.id));
+      const missingIds = attachmentIds.filter((id) => !foundIds.has(id));
 
-…
+      throw new ValidationError(
+        `Attachment IDs not found: ${missingIds.join(', ')}`,
+      );
+    }
 
-// inside validatePdfField (around line 90)
-const attachments = await attachmentRepository.findBy({
-  id: In(attachmentIds),
-});
+    // Validate file types
+    attachments.forEach((attachment) => {
+      // Check if it's an image based on type or file extension
+      const isImage =
+        attachment.type === 'Image' ||
+        attachment.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp|svg)$/i);
 
-…
+      if (!isImage) {
+        throw new ValidationError(
+          `Attachment "${attachment.name}" is not an image file. Only image files are allowed for image fields.`,
+        );
+      }
+    });
+  }
+
+  async validatePdfField(
+    attachmentIds: string[] | null | undefined,
+    recordId: string,
+    workspaceId: string,
+    isRequired: boolean,
+  ): Promise<void> {
+    // Handle null/empty
+    if (!attachmentIds || attachmentIds.length === 0) {
+      if (isRequired) {
+        throw new ValidationError(
+          'PDF field is required and must have at least one PDF attachment',
+        );
+      }
+
+      return;
+    }
+
+    // Validate count
+    this.attachmentLimitValidator.validate(attachmentIds);
+
+    // Fetch attachments
+    const attachmentRepository =
+      await this.twentyORMManager.getRepository<AttachmentWorkspaceEntity>(
+        'attachment',
+      );
+
+    const attachments = await attachmentRepository.findBy({
+      id: In(attachmentIds),
+    });
+
     // Validate all IDs exist
     if (attachments.length !== attachmentIds.length) {
       const foundIds = new Set(attachments.map((att) => att.id));
