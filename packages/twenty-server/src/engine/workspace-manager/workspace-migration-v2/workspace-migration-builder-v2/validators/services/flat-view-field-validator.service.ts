@@ -8,6 +8,7 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-m
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
+import { isViewFieldInLowestPosition } from 'src/engine/core-modules/view/flat-view/utils/is-view-field-in-lowest-position.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/view-field-related-flat-entity-maps.type';
 import { validateLabelIdentifierFieldMetadataIdFlatViewField } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util';
@@ -233,18 +234,35 @@ export class FlatViewFieldValidatorService {
         message: t`View field related view object metadata not found`,
         userFriendlyMessage: t`View field related view object metadata not found`,
       });
-    } else {
-      if (
-        flatObjectMetadata.labelIdentifierFieldMetadataId ===
-        flatViewFieldToValidate.fieldMetadataId
-      ) {
-        validationResult.errors.push(
-          ...validateLabelIdentifierFieldMetadataIdFlatViewField({
-            flatViewFieldToValidate,
-            otherFlatViewFields,
-          }),
-        );
-      }
+      return validationResult;
+    }
+
+    if (
+      flatObjectMetadata.labelIdentifierFieldMetadataId ===
+      flatViewFieldToValidate.fieldMetadataId
+    ) {
+      validationResult.errors.push(
+        ...validateLabelIdentifierFieldMetadataIdFlatViewField({
+          flatViewFieldToValidate,
+          otherFlatViewFields,
+        }),
+      );
+    } else if (
+      otherFlatViewFields.some(
+        (flatViewField) =>
+          flatViewField.fieldMetadataId ===
+          flatObjectMetadata.labelIdentifierFieldMetadataId,
+      ) &&
+      isViewFieldInLowestPosition({
+        flatViewField: flatViewFieldToValidate,
+        otherFlatViewFields,
+      })
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View field position cannot be lower than label indetifier view field position`,
+        userFriendlyMessage: t`View field position cannot be lower than label identifier view field position`,
+      });
     }
 
     return validationResult;

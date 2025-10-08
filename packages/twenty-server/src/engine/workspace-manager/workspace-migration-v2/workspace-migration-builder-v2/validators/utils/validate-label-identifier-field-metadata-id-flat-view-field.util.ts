@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
+import { isViewFieldInLowestPosition } from 'src/engine/core-modules/view/flat-view/utils/is-view-field-in-lowest-position.util';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
 type ValidateLabelIdentifierFieldMetadataIdFlatViewFieldArgs = {
@@ -15,19 +16,18 @@ export const validateLabelIdentifierFieldMetadataIdFlatViewField = ({
 }: ValidateLabelIdentifierFieldMetadataIdFlatViewFieldArgs): FlatEntityValidationError[] => {
   const errors: FlatEntityValidationError[] = [];
 
-  if (otherFlatViewFields.length > 0) {
-    const ascSortedViewFieldPositions = otherFlatViewFields
-      .map(({ position }) => position)
-      .sort();
-    const lowestPosition = ascSortedViewFieldPositions[0];
-
-    if (lowestPosition < flatViewFieldToValidate.position) {
-      errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`Label identifier view field has to be in the lowest position`,
-        userFriendlyMessage: t`Label identifier view field has to be in the lowest position`,
-      });
-    }
+  if (
+    otherFlatViewFields.length > 0 &&
+    !isViewFieldInLowestPosition({
+      flatViewField: flatViewFieldToValidate,
+      otherFlatViewFields,
+    })
+  ) {
+    errors.push({
+      code: ViewExceptionCode.INVALID_VIEW_DATA,
+      message: t`Label identifier view field has to be in the lowest position`,
+      userFriendlyMessage: t`Label identifier view field has to be in the lowest position`,
+    });
   }
 
   if (flatViewFieldToValidate.isVisible === false) {
