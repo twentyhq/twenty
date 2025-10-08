@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { WorkspaceFlatViewFieldMapCacheService } from 'src/engine/core-modules/view-field/flat-view-field/services/workspace-flat-view-field-map-cache.service';
 
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { WorkspaceFlatViewFieldMapCacheService } from 'src/engine/core-modules/view/flat-view-field/services/workspace-flat-view-field-map-cache.service';
 import { WorkspaceFlatViewMapCacheService } from 'src/engine/core-modules/view/flat-view/services/workspace-flat-view-map-cache.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-flat-field-metadata-map-cache.service';

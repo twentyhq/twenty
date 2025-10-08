@@ -1,9 +1,9 @@
 import diff from 'microdiff';
 import { type FromTo } from 'twenty-shared/types';
 
-import { FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE } from 'src/engine/core-modules/view/flat-view-field/constants/flat-view-field-properties-to-compare.constant';
-import { type FlatViewFieldPropertiesToCompare } from 'src/engine/core-modules/view/flat-view-field/types/flat-view-field-properties-to-compare.type';
-import { type FlatViewField } from 'src/engine/core-modules/view/flat-view-field/types/flat-view-field.type';
+import { FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE } from 'src/engine/core-modules/view-field/flat-view-field/constants/flat-view-field-properties-to-compare.constant';
+import { FlatViewFieldPropertiesToCompare } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field-properties-to-compare.type';
+import { FlatViewField } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field.type';
 import { type UpdateViewFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-field-action-v2.type';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 

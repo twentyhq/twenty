@@ -5,14 +5,14 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
+import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/core-modules/view-field/flat-view-field/constants/flat-view-field-editable-properties.constant';
+import { FlatViewFieldMaps } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field-maps.type';
+import { FlatViewField } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field.type';
 import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
-import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/core-modules/view/flat-view-field/constants/flat-view-field-editable-properties.constant';
-import { type FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view-field/types/flat-view-field-maps.type';
-import { type FlatViewField } from 'src/engine/core-modules/view/flat-view-field/types/flat-view-field.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
