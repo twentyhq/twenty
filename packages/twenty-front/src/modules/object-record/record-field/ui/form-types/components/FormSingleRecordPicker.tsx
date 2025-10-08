@@ -7,7 +7,7 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -122,19 +122,16 @@ export const FormSingleRecordPicker = ({
     setRecordPickerSearchFilter('');
   }, [setRecordPickerSearchFilter]);
 
-  const handleRecordSelected = (
-    selectedEntity: SingleRecordPickerRecord | null | undefined,
+  const handleMorphItemSelected = (
+    selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
   ) => {
-    if (
-      !isDefined(selectedEntity?.record?.id) ||
-      !isNonEmptyString(selectedEntity.record?.id)
-    ) {
+    if (!isNonEmptyString(selectedMorphItem?.recordId)) {
       onChange(null);
 
       return;
     }
 
-    onChange(selectedEntity.record.id);
+    onChange(selectedMorphItem.recordId);
     closeDropdown(dropdownId);
   };
 
@@ -216,7 +213,7 @@ export const FormSingleRecordPicker = ({
                 EmptyIcon={IconForbid}
                 emptyLabel={'No ' + objectNameSingulars.join(' or ')}
                 onCancel={() => closeDropdown(dropdownId)}
-                onRecordSelected={handleRecordSelected}
+                onMorphItemSelected={handleMorphItemSelected}
                 objectNameSingulars={objectNameSingulars}
                 recordPickerInstanceId={dropdownId}
                 dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
