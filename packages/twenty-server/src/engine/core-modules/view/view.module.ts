@@ -3,12 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
-import { ViewFieldController } from 'src/engine/core-modules/view-field/controllers/view-field.controller';
-import { ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
-import { ViewFieldResolver } from 'src/engine/core-modules/view-field/resolvers/view-field.resolver';
-import { ViewFieldV2Service } from 'src/engine/core-modules/view-field/services/view-field-v2.service';
-import { ViewFieldService } from 'src/engine/core-modules/view-field/services/view-field.service';
+import { ViewFieldModule } from 'src/engine/core-modules/view-field/view-field.module';
 import { ViewFilterGroupController } from 'src/engine/core-modules/view/controllers/view-filter-group.controller';
 import { ViewFilterController } from 'src/engine/core-modules/view/controllers/view-filter.controller';
 import { ViewGroupController } from 'src/engine/core-modules/view/controllers/view-group.controller';
@@ -18,7 +13,6 @@ import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/vie
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { FlatViewModule } from 'src/engine/core-modules/view/flat-view/flat-view.module';
 import { ViewFilterGroupResolver } from 'src/engine/core-modules/view/resolvers/view-filter-group.resolver';
 import { ViewFilterResolver } from 'src/engine/core-modules/view/resolvers/view-filter.resolver';
@@ -30,24 +24,21 @@ import { ViewFilterService } from 'src/engine/core-modules/view/services/view-fi
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { ViewV2Service } from 'src/engine/core-modules/view/services/view-v2.service';
-import { ViewService } from 'src/engine/core-modules/view/services/view.service';
+import { ViewCoreModule } from 'src/engine/core-modules/view/view-core.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      ViewEntity,
-      ViewFieldEntity,
       ViewFilterEntity,
       ViewFilterGroupEntity,
       ViewGroupEntity,
       ViewSortEntity,
     ]),
-    I18nModule,
+    ViewCoreModule,
+    ViewFieldModule,
     FeatureFlagModule,
-    WorkspaceCacheStorageModule,
     WorkspaceMetadataCacheModule,
     WorkspaceMigrationV2Module,
     FlatViewModule,
@@ -55,37 +46,31 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
   ],
   controllers: [
     ViewController,
-    ViewFieldController,
     ViewFilterController,
     ViewFilterGroupController,
     ViewGroupController,
     ViewSortController,
   ],
   providers: [
-    ViewService,
-    ViewFieldService,
     ViewFilterService,
     ViewFilterGroupService,
     ViewGroupService,
     ViewSortService,
     ViewResolver,
-    ViewFieldResolver,
     ViewFilterResolver,
     ViewFilterGroupResolver,
     ViewGroupResolver,
     ViewSortResolver,
     ViewV2Service,
-    ViewFieldV2Service,
   ],
   exports: [
-    ViewService,
-    ViewFieldService,
+    ViewCoreModule,
+    ViewFieldModule,
     ViewFilterService,
     ViewFilterGroupService,
     ViewGroupService,
     ViewSortService,
     ViewV2Service,
-    ViewFieldV2Service,
   ],
 })
 export class CoreViewModule {}
