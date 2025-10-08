@@ -219,7 +219,12 @@ export const usePersistField = ({
           const updateInput = {
             [fieldName]: valueToPersist,
           };
-          console.log('[usePersistField] Persisting field:', fieldName, 'with value:', JSON.stringify(valueToPersist, null, 2));
+          console.group(
+            '[usePersistField] Persisting field:',
+            fieldName,
+            'with value:',
+            JSON.stringify(valueToPersist, null, 2),
+          );
           updateOneRecord?.({
             idToUpdate: recordId,
             updateOneRecordInput: updateInput,

@@ -3,8 +3,8 @@ import { useState } from 'react';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
-import { type Attachment } from '@/activities/files/types/Attachment';
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import type { Attachment } from '@/activities/files/types/Attachment';
+import type { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { FileIcon } from '@/file/components/FileIcon';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { IconX, OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -26,11 +26,11 @@ const StyledContainer = styled.div`
 `;
 
 const StyledHeader = styled.div`
+  align-items: center;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: ${({ theme }) => theme.spacing(2)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
 `;
 
 const StyledTitle = styled.h3`
@@ -48,7 +48,7 @@ const StyledCloseButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   &:hover {
     color: ${({ theme }) => theme.font.color.primary};
   }
@@ -67,11 +67,11 @@ const StyledAttachmentRowWrapper = styled.div<{ isSelected: boolean }>`
   padding: ${({ theme }) => theme.spacing(2)};
   cursor: pointer;
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  
+
   &:hover {
     background: ${({ theme }) => theme.background.transparent.light};
   }
-  
+
   ${({ isSelected, theme }) =>
     isSelected &&
     `
@@ -99,7 +99,7 @@ const StyledSearchInput = styled.input`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   font-size: ${({ theme }) => theme.font.size.sm};
   outline: none;
-  
+
   &:focus {
     border-color: ${({ theme }) => theme.border.color.strong};
   }
@@ -131,25 +131,25 @@ export const AttachmentSelector = ({
     targetableObject.targetObjectNameSingular.trim() !== '';
 
   const attachmentsQuery = useAttachments(
-    shouldFetchAttachments ? targetableObject : undefined,
+    shouldFetchAttachments
+      ? targetableObject
+      : { id: '', targetObjectNameSingular: '' },
   );
 
   const attachments = shouldFetchAttachments
     ? attachmentsQuery.attachments
     : [];
-  const loading = shouldFetchAttachments
-    ? attachmentsQuery.loading
-    : false;
+  const loading = shouldFetchAttachments ? attachmentsQuery.loading : false;
 
   const filteredAttachments = (attachments || []).filter((attachment) => {
     // Apply custom attachment filter if provided
-    if (filterAttachment && !filterAttachment(attachment)) {
+    if (filterAttachment !== undefined && !filterAttachment(attachment)) {
       return false;
     }
 
     // Apply search filter
     if (
-      searchQuery &&
+      searchQuery !== '' &&
       !attachment.name.toLowerCase().includes(searchQuery.toLowerCase())
     ) {
       return false;
@@ -228,4 +228,3 @@ export const AttachmentSelector = ({
     </StyledContainer>
   );
 };
-

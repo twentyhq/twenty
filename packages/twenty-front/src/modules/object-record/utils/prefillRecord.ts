@@ -30,10 +30,9 @@ export const prefillRecord = <T extends ObjectRecord>({
           const joinColumnValue = input[joinColumnName as string];
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
 
-          const pairs: Array<[string, unknown]> = [[
-            fieldMetadataItem.name,
-            fieldValue,
-          ]];
+          const pairs: Array<[string, unknown]> = [
+            [fieldMetadataItem.name, fieldValue],
+          ];
 
           // Only include the join column when a concrete value is provided.
           // This avoids writing undefined values into the cache (which Apollo treats as missing fields),

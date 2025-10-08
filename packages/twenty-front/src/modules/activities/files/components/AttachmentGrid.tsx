@@ -21,7 +21,7 @@ const StyledImageThumbnail = styled.div<{ thumbnailUrl: string }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   position: relative;
   cursor: pointer;
-  
+
   &:hover {
     opacity: 0.9;
   }
@@ -39,7 +39,7 @@ const StyledFileThumbnail = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   cursor: pointer;
   position: relative;
-  
+
   &:hover {
     background: ${({ theme }) => theme.background.tertiary};
   }
@@ -109,7 +109,7 @@ export const AttachmentGrid = ({
         if (isImage) {
           return (
             <div key={attachment.id}>
-            <StyledImageThumbnail
+              <StyledImageThumbnail
                 thumbnailUrl={attachment.fullPath}
                 onClick={() => handlePreview(attachment)}
               >
@@ -151,4 +151,3 @@ export const AttachmentGrid = ({
     </StyledGrid>
   );
 };
-
