@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
-import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
@@ -22,6 +21,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 
 export const RecordDetailRelationSectionDropdownToMany = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
@@ -83,7 +83,7 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
     setMultipleRecordPickerSearchFilter('');
   }, [setMultipleRecordPickerSearchFilter]);
 
-  const { updateRelation } = useUpdateRelationFromManyFieldInput();
+  const { updateRelation } = useUpdateRelationOneToManyFieldInput();
 
   const { createNewRecordAndOpenRightDrawer } =
     useAddNewRecordAndOpenRightDrawer({
