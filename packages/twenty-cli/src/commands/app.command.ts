@@ -2,11 +2,18 @@ import { Command } from 'commander';
 import { AppSyncCommand } from './app-sync.command';
 import { AppDevCommand } from './app-dev.command';
 import { AppInitCommand } from './app-init.command';
-import { AppAddCommand } from './app-add.command';
+import { AppDeleteCommand } from './app-delete.command';
+import {
+  AppAddCommand,
+  isSyncableEntity,
+  SyncableEntity,
+} from './app-add.command';
+import chalk from 'chalk';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
   private syncCommand = new AppSyncCommand();
+  private deleteCommand = new AppDeleteCommand();
   private initCommand = new AppInitCommand();
   private addCommand = new AppAddCommand();
 
@@ -17,10 +24,6 @@ export class AppCommand {
     appCommand
       .command('dev')
       .description('Watch and sync local application changes')
-      .option(
-        '-p, --path <path>',
-        'Application directory path (auto-detected if not specified)',
-      )
       .option('-d, --debounce <ms>', 'Debounce delay in milliseconds', '1000')
       .action(async (options) => {
         await this.devCommand.execute(options);
@@ -29,31 +32,47 @@ export class AppCommand {
     appCommand
       .command('sync')
       .description('Sync application to Twenty')
-      .option(
-        '-p, --path <path>',
-        'Application directory path (auto-detected if not specified)',
-      )
-      .action(async (options) => {
-        await this.syncCommand.execute(options);
+      .action(async () => {
+        await this.syncCommand.execute();
       });
 
     appCommand
-      .command('init')
+      .command('delete')
+      .description('Delete application from Twenty')
+      .action(async () => {
+        await this.deleteCommand.execute();
+      });
+
+    appCommand
+      .command('init [directory]')
       .description('Initialize a new Twenty application')
-      .option('-p, --path <path>', 'Directory to create the application in')
-      .action(async (options) => {
-        await this.initCommand.execute(options);
+      .action(async (directory?: string) => {
+        if (directory && !/^[a-z0-9-]+$/.test(directory)) {
+          console.error(
+            chalk.red(
+              `Invalid directory "${directory}". Must contain only lowercase letters, numbers, and hyphens`,
+            ),
+          );
+          process.exit(1);
+        }
+        await this.initCommand.execute(directory);
       });
 
     appCommand
-      .command('add')
-      .description('Add a new entity to your application')
-      .option(
-        '-p, --path <path>',
-        'Application directory path (auto-detected if not specified)',
+      .command('add [entityType]')
+      .description(
+        `Add a new entity to your application (${Object.values(SyncableEntity).join('|')})`,
       )
-      .action(async (options) => {
-        await this.addCommand.execute(options);
+      .action(async (entityType?: string) => {
+        if (entityType && !isSyncableEntity(entityType)) {
+          console.error(
+            chalk.red(
+              `Invalid entity type "${entityType}". Must be one of: ${Object.values(SyncableEntity).join('|')}`,
+            ),
+          );
+          process.exit(1);
+        }
+        await this.addCommand.execute(entityType as SyncableEntity);
       });
 
     return appCommand;

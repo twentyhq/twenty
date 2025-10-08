@@ -19,7 +19,6 @@ import {
 import { WorkspaceAgentComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-agent.comparator';
 import { StandardAgentFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-agent.factory';
 import { standardAgentDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents';
-import { WORKFLOW_CREATION_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/workflow-creation-agent';
 
 @Injectable()
 export class WorkspaceSyncAgentService {
@@ -110,14 +109,6 @@ export class WorkspaceSyncAgentService {
               throw error;
             }
           }
-
-          if (createdAgent.standardId === WORKFLOW_CREATION_AGENT.standardId) {
-            await this.createAgentHandoffToWorkflowCreationAgent(
-              createdAgent.id,
-              context.workspaceId,
-              manager,
-            );
-          }
           break;
         }
 
@@ -180,10 +171,12 @@ export class WorkspaceSyncAgentService {
         }
       }
     }
+
+    // Create handoffs for standard agents that require them
+    await this.createStandardAgentHandoffs(context.workspaceId, manager);
   }
 
-  private async createAgentHandoffToWorkflowCreationAgent(
-    workflowCreationAgentId: string,
+  private async createStandardAgentHandoffs(
     workspaceId: string,
     manager: EntityManager,
   ): Promise<void> {
@@ -216,43 +209,86 @@ export class WorkspaceSyncAgentService {
 
       if (!defaultAgent) {
         this.logger.warn(
-          `Default agent not found for workspace ${workspaceId}. Agent handoff will not be created.`,
+          `Default agent not found for workspace ${workspaceId}. Agent handoffs will not be created.`,
         );
 
         return;
       }
 
+      const agentsRequiringHandoffs = standardAgentDefinitions.filter(
+        (def) => def.createHandoffFromDefaultAgent,
+      );
+
+      for (const agentDefinition of agentsRequiringHandoffs) {
+        const targetAgent = await agentRepository.findOne({
+          where: {
+            standardId: agentDefinition.standardId,
+            workspaceId,
+          },
+        });
+
+        if (!targetAgent) {
+          this.logger.warn(
+            `Agent ${agentDefinition.name} not found for workspace ${workspaceId}. Skipping handoff creation.`,
+          );
+          continue;
+        }
+
+        await this.createAgentHandoff(
+          defaultAgent.id,
+          targetAgent.id,
+          agentDefinition.name,
+          agentDefinition.description,
+          workspaceId,
+          manager,
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to create standard agent handoffs: ${error.message}`,
+      );
+    }
+  }
+
+  private async createAgentHandoff(
+    fromAgentId: string,
+    toAgentId: string,
+    toAgentName: string,
+    toAgentDescription: string,
+    workspaceId: string,
+    manager: EntityManager,
+  ): Promise<void> {
+    try {
       const agentHandoffRepository = manager.getRepository('agentHandoff');
       const existingHandoff = await agentHandoffRepository.findOne({
         where: {
-          fromAgentId: defaultAgent.id,
-          toAgentId: workflowCreationAgentId,
+          fromAgentId,
+          toAgentId,
           workspaceId,
         },
       });
 
       if (existingHandoff) {
         this.logger.log(
-          `Agent handoff from default agent to workflow creation agent already exists for workspace ${workspaceId}`,
+          `Agent handoff from default agent to ${toAgentName} already exists for workspace ${workspaceId}`,
         );
 
         return;
       }
 
       await agentHandoffRepository.save({
-        fromAgentId: defaultAgent.id,
-        toAgentId: workflowCreationAgentId,
+        fromAgentId,
+        toAgentId,
         workspaceId,
-        description:
-          'Handoff from default agent to workflow creation agent for processing workflow creation requests',
+        description: `Handoff from default agent to ${toAgentName}: ${toAgentDescription}`,
       });
 
       this.logger.log(
-        `Successfully created agent handoff from default agent to workflow creation agent for workspace ${workspaceId}`,
+        `Successfully created agent handoff from default agent to ${toAgentName} for workspace ${workspaceId}`,
       );
     } catch (error) {
       this.logger.error(
-        `Failed to create agent handoff to workflow creation agent: ${error.message}`,
+        `Failed to create agent handoff to ${toAgentName}: ${error.message}`,
       );
     }
   }

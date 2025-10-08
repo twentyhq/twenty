@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async findById(id: string): Promise<ApplicationEntity | null> {
@@ -33,7 +36,7 @@ export class ApplicationService {
 
   async create(data: {
     universalIdentifier?: string;
-    label: string;
+    name: string;
     description?: string;
     version?: string;
     serverlessFunctionLayerId: string;
@@ -51,7 +54,7 @@ export class ApplicationService {
   async update(
     id: string,
     data: {
-      label?: string;
+      name?: string;
       description?: string;
       version?: string;
       sourcePath?: string;
@@ -69,5 +72,25 @@ export class ApplicationService {
     }
 
     return updatedApplication;
+  }
+
+  async delete(universalIdentifier: string, workspaceId: string) {
+    const application = await this.findByUniversalIdentifier(
+      universalIdentifier,
+      workspaceId,
+    );
+
+    if (!isDefined(application)) {
+      throw new Error(`Application does not exist`);
+    }
+
+    await this.applicationRepository.delete({
+      universalIdentifier,
+      workspaceId,
+    });
+
+    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+    });
   }
 }

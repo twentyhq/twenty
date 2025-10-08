@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -36,7 +36,10 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatMapsKeys: [
+            'flatDatabaseEventTriggerMaps',
+            'flatServerlessFunctionMaps',
+          ],
         },
       );
 
@@ -66,6 +69,10 @@ export class DatabaseEventTriggerV2Service {
               to: toFlatDatabaseEventTriggerMaps,
             },
           },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps:
+              flatEntityMaps.flatServerlessFunctionMaps,
+          },
           buildOptions: {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: false,
@@ -87,7 +94,7 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatMapsKeys: ['flatDatabaseEventTriggerMaps'],
         },
       );
 
@@ -105,7 +112,10 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatMapsKeys: [
+            'flatDatabaseEventTriggerMaps',
+            'flatServerlessFunctionMaps',
+          ],
         },
       );
 
@@ -140,6 +150,10 @@ export class DatabaseEventTriggerV2Service {
               to: toFlatDatabaseEventTriggerMaps,
             },
           },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps:
+              flatEntityMaps.flatServerlessFunctionMaps,
+          },
           buildOptions: {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: false,
@@ -161,7 +175,7 @@ export class DatabaseEventTriggerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatMapsKeys: ['flatDatabaseEventTriggerMaps'],
         },
       );
 
@@ -180,11 +194,15 @@ export class DatabaseEventTriggerV2Service {
   }): Promise<FlatDatabaseEventTrigger> {
     const {
       flatDatabaseEventTriggerMaps: existingFlatDatabaseEventTriggerMaps,
+      flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatMapsKeys: [
+            'flatDatabaseEventTriggerMaps',
+            'flatServerlessFunctionMaps',
+          ],
         },
       );
 
@@ -218,6 +236,9 @@ export class DatabaseEventTriggerV2Service {
               from: fromFlatDatabaseEventTriggerMaps,
               to: toFlatDatabaseEventTriggerMaps,
             },
+          },
+          dependencyAllFlatEntityMaps: {
+            flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
           },
           buildOptions: {
             isSystemBuild: false,

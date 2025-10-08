@@ -8,15 +8,15 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
             "errors": [
               {
                 "code": "INVALID_OBJECT_INPUT",
-                "message": "Label identifier field metadata must be a TEXT or FULL_NAME field type",
-                "userFriendlyMessage": "Label identifier field metadata must be a TEXT or FULL_NAME field type",
-                "value": "NUMBER",
+                "message": "labelIdentifierFieldMetadataId validation failed: field type not compatible",
+                "userFriendlyMessage": "Field cannot be used as label identifier",
               },
             ],
             "flatEntityMinimalInformation": {
@@ -24,9 +24,11 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
               "namePlural": "whatevers",
               "nameSingular": "whatever",
             },
+            "status": "fail",
             "type": "update_object",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -35,8 +37,10 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -58,15 +62,15 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
             "errors": [
               {
                 "code": "INVALID_OBJECT_INPUT",
-                "message": "Label identifier field metadata not found in field metadata list",
-                "userFriendlyMessage": "Label identifier field metadata not found in field metadata list",
-                "value": "42422020-f49c-4159-8751-76a24f47b360",
+                "message": "labelIdentifierFieldMetadataId validation failed: related field metadata not found",
+                "userFriendlyMessage": "Field declared as label identifier not found",
               },
             ],
             "flatEntityMinimalInformation": {
@@ -74,9 +78,11 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
               "namePlural": "whatevers",
               "nameSingular": "whatever",
             },
+            "status": "fail",
             "type": "update_object",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -85,8 +91,10 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
@@ -124,14 +132,15 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
+        "fieldMetadata": [],
         "index": [],
         "objectMetadata": [
           {
             "errors": [
               {
-                "code": "MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD",
-                "message": "Label identifier field metadata is required",
-                "userFriendlyMessage": "Label identifier field metadata is required",
+                "code": "INVALID_OBJECT_INPUT",
+                "message": "labelIdentifierFieldMetadataId cannot be null",
+                "userFriendlyMessage": "Field label identifier is required",
               },
             ],
             "flatEntityMinimalInformation": {
@@ -139,9 +148,11 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
               "namePlural": "whatevers",
               "nameSingular": "whatever",
             },
+            "status": "fail",
             "type": "update_object",
           },
         ],
+        "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
         "viewField": [],
@@ -150,8 +161,10 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
       "summary": {
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,

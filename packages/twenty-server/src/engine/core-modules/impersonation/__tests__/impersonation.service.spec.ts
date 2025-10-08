@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
@@ -9,6 +11,8 @@ import {
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -16,11 +20,19 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 const UserWorkspaceFindOneMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
 const PermissionsServiceUserHasWorkspaceSettingPermissionMock = jest.fn();
+const TwentyConfigServiceGetMock = jest.fn();
 
 describe('ImpersonationService', () => {
   let service: ImpersonationService;
 
   beforeEach(async () => {
+    TwentyConfigServiceGetMock.mockImplementation((key: string) => {
+      if (key === 'NODE_ENV') {
+        return NodeEnvironment.PRODUCTION;
+      }
+
+      return undefined;
+    });
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ImpersonationService,
@@ -40,6 +52,12 @@ describe('ImpersonationService', () => {
           provide: LoginTokenService,
           useValue: {
             generateLoginToken: LoginTokenServiceGenerateLoginTokenMock,
+          },
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: {
+            get: TwentyConfigServiceGetMock,
           },
         },
         {
@@ -108,6 +126,7 @@ describe('ImpersonationService', () => {
         allowImpersonation: true,
         subdomain: 'example-subdomain',
       },
+      twoFactorAuthenticationMethods: [],
     };
 
     // Mock first call for target user workspace
@@ -149,7 +168,7 @@ describe('ImpersonationService', () => {
       where: {
         id: 'impersonator-user-workspace-id',
       },
-      relations: ['user', 'workspace'],
+      relations: ['user', 'workspace', 'twoFactorAuthenticationMethods'],
     });
 
     expect(LoginTokenServiceGenerateLoginTokenMock).toHaveBeenCalledWith(
@@ -188,6 +207,7 @@ describe('ImpersonationService', () => {
       workspaceId: 'workspace-id', // Same workspace ID
       user: { id: 'impersonator-user-id', canImpersonate: false }, // Explicitly set to false
       workspace: { id: 'workspace-id', allowImpersonation: false }, // Same workspace ID
+      twoFactorAuthenticationMethods: [],
     };
 
     UserWorkspaceFindOneMock.mockResolvedValueOnce(
@@ -237,6 +257,7 @@ describe('ImpersonationService', () => {
       workspaceId: 'workspace-id',
       user: { id: 'impersonator-user-id' },
       workspace: { id: 'workspace-id' },
+      twoFactorAuthenticationMethods: [],
     });
 
     await expect(
@@ -290,6 +311,7 @@ describe('ImpersonationService', () => {
       workspaceId: 'other-workspace-id',
       user: { id: 'impersonator-user-id' },
       workspace: { id: 'other-workspace-id' },
+      twoFactorAuthenticationMethods: [],
     };
 
     UserWorkspaceFindOneMock.mockResolvedValueOnce(
@@ -327,6 +349,7 @@ describe('ImpersonationService', () => {
       workspaceId: 'impersonator-workspace-id',
       user: { id: 'impersonator-user-id', canImpersonate: false },
       workspace: { id: 'impersonator-workspace-id', allowImpersonation: true },
+      twoFactorAuthenticationMethods: [],
     };
 
     UserWorkspaceFindOneMock.mockResolvedValueOnce(
@@ -353,5 +376,239 @@ describe('ImpersonationService', () => {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
+  });
+
+  describe('2FA requirements for server-level impersonation', () => {
+    it('should allow server-level impersonation when 2FA is enabled and verified', async () => {
+      TwentyConfigServiceGetMock.mockImplementation((key: string) => {
+        if (key === 'NODE_ENV') {
+          return NodeEnvironment.PRODUCTION;
+        }
+
+        return undefined;
+      });
+
+      const mockToImpersonateUserWorkspace = {
+        userId: 'target-user-id',
+        workspaceId: 'target-workspace-id',
+        user: { id: 'target-user-id', email: 'target@example.com' },
+        workspace: { id: 'target-workspace-id', allowImpersonation: true },
+      };
+
+      const mockImpersonatorUserWorkspace = {
+        id: 'impersonator-user-workspace-id',
+        userId: 'impersonator-user-id',
+        workspaceId: 'impersonator-workspace-id',
+        user: { id: 'impersonator-user-id', canImpersonate: true },
+        workspace: {
+          id: 'impersonator-workspace-id',
+          allowImpersonation: true,
+        },
+        twoFactorAuthenticationMethods: [
+          {
+            id: '2fa-method-id',
+            status: OTPStatus.VERIFIED,
+            strategy: 'TOTP',
+          },
+        ],
+      };
+
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockToImpersonateUserWorkspace,
+      );
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockImpersonatorUserWorkspace,
+      );
+
+      LoginTokenServiceGenerateLoginTokenMock.mockResolvedValueOnce({
+        token: 'mock-login-token',
+        expiresAt: new Date(),
+      });
+
+      const result = await service.impersonate(
+        'target-user-id',
+        'target-workspace-id',
+        'impersonator-user-workspace-id',
+      );
+
+      expect(result).toEqual({
+        workspace: {
+          id: 'target-workspace-id',
+          workspaceUrls: {
+            customUrl: undefined,
+            subdomainUrl: 'https://twenty.twenty.com',
+          },
+        },
+        loginToken: {
+          token: 'mock-login-token',
+          expiresAt: expect.any(Date),
+        },
+      });
+    });
+
+    it('should throw an error when 2FA is not enabled for server-level impersonation in production', async () => {
+      TwentyConfigServiceGetMock.mockImplementation((key: string) => {
+        if (key === 'NODE_ENV') {
+          return NodeEnvironment.PRODUCTION;
+        }
+
+        return undefined;
+      });
+
+      const mockToImpersonateUserWorkspace = {
+        userId: 'target-user-id',
+        workspaceId: 'target-workspace-id',
+        user: { id: 'target-user-id', email: 'target@example.com' },
+        workspace: { id: 'target-workspace-id', allowImpersonation: true },
+      };
+
+      const mockImpersonatorUserWorkspace = {
+        id: 'impersonator-user-workspace-id',
+        userId: 'impersonator-user-id',
+        workspaceId: 'impersonator-workspace-id',
+        user: { id: 'impersonator-user-id', canImpersonate: true },
+        workspace: {
+          id: 'impersonator-workspace-id',
+          allowImpersonation: true,
+        },
+        twoFactorAuthenticationMethods: [], // No 2FA methods
+      };
+
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockToImpersonateUserWorkspace,
+      );
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockImpersonatorUserWorkspace,
+      );
+
+      await expect(
+        service.impersonate(
+          'target-user-id',
+          'target-workspace-id',
+          'impersonator-user-workspace-id',
+        ),
+      ).rejects.toThrow(
+        new AuthException(
+          'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        ),
+      );
+    });
+
+    it('should throw an error when 2FA is not verified for server-level impersonation in production', async () => {
+      TwentyConfigServiceGetMock.mockImplementation((key: string) => {
+        if (key === 'NODE_ENV') {
+          return NodeEnvironment.PRODUCTION;
+        }
+
+        return undefined;
+      });
+
+      const mockToImpersonateUserWorkspace = {
+        userId: 'target-user-id',
+        workspaceId: 'target-workspace-id',
+        user: { id: 'target-user-id', email: 'target@example.com' },
+        workspace: { id: 'target-workspace-id', allowImpersonation: true },
+      };
+
+      const mockImpersonatorUserWorkspace = {
+        id: 'impersonator-user-workspace-id',
+        userId: 'impersonator-user-id',
+        workspaceId: 'impersonator-workspace-id',
+        user: { id: 'impersonator-user-id', canImpersonate: true },
+        workspace: {
+          id: 'impersonator-workspace-id',
+          allowImpersonation: true,
+        },
+        twoFactorAuthenticationMethods: [
+          {
+            id: '2fa-method-id',
+            status: OTPStatus.PENDING, // Not verified
+            strategy: 'TOTP',
+          },
+        ],
+      };
+
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockToImpersonateUserWorkspace,
+      );
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockImpersonatorUserWorkspace,
+      );
+
+      await expect(
+        service.impersonate(
+          'target-user-id',
+          'target-workspace-id',
+          'impersonator-user-workspace-id',
+        ),
+      ).rejects.toThrow(
+        new AuthException(
+          'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        ),
+      );
+    });
+
+    it('should allow server-level impersonation without 2FA in development environment', async () => {
+      TwentyConfigServiceGetMock.mockImplementation((key: string) => {
+        if (key === 'NODE_ENV') {
+          return NodeEnvironment.DEVELOPMENT;
+        }
+
+        return undefined;
+      });
+
+      const mockToImpersonateUserWorkspace = {
+        userId: 'target-user-id',
+        workspaceId: 'target-workspace-id',
+        user: { id: 'target-user-id', email: 'target@example.com' },
+        workspace: { id: 'target-workspace-id', allowImpersonation: true },
+      };
+
+      const mockImpersonatorUserWorkspace = {
+        id: 'impersonator-user-workspace-id',
+        userId: 'impersonator-user-id',
+        workspaceId: 'impersonator-workspace-id',
+        user: { id: 'impersonator-user-id', canImpersonate: true },
+        workspace: {
+          id: 'impersonator-workspace-id',
+          allowImpersonation: true,
+        },
+        twoFactorAuthenticationMethods: [], // No 2FA methods, but should be allowed in dev
+      };
+
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockToImpersonateUserWorkspace,
+      );
+      UserWorkspaceFindOneMock.mockResolvedValueOnce(
+        mockImpersonatorUserWorkspace,
+      );
+
+      LoginTokenServiceGenerateLoginTokenMock.mockResolvedValueOnce({
+        token: 'mock-login-token',
+        expiresAt: new Date(),
+      });
+
+      const result = await service.impersonate(
+        'target-user-id',
+        'target-workspace-id',
+        'impersonator-user-workspace-id',
+      );
+
+      expect(result).toEqual({
+        workspace: {
+          id: 'target-workspace-id',
+          workspaceUrls: {
+            customUrl: undefined,
+            subdomainUrl: 'https://twenty.twenty.com',
+          },
+        },
+        loginToken: {
+          token: 'mock-login-token',
+          expiresAt: expect.any(Date),
+        },
+      });
+    });
   });
 });

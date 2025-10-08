@@ -2,6 +2,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Patch,
   Post,
   Put,
@@ -22,10 +23,14 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(RestApiExceptionFilter)
 export class RestApiCoreController {
+  private readonly logger = new Logger(RestApiCoreController.name);
   constructor(private readonly restApiCoreService: RestApiCoreService) {}
 
   @Post('batch/*')
   async handleApiPostBatch(@Req() request: Request, @Res() res: Response) {
+    this.logger.log(
+      `[REST API] Processing BATCH request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.createMany(request);
 
     res.status(201).send(result);
@@ -33,6 +38,9 @@ export class RestApiCoreController {
 
   @Post('*/duplicates')
   async handleApiFindDuplicates(@Req() request: Request, @Res() res: Response) {
+    this.logger.log(
+      `[REST API] Processing DUPLICATES request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.findDuplicates(request);
 
     res.status(200).send(result);
@@ -40,6 +48,9 @@ export class RestApiCoreController {
 
   @Post('*')
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
+    this.logger.log(
+      `[REST API] Processing POST request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.createOne(request);
 
     res.status(201).send(result);
@@ -47,6 +58,9 @@ export class RestApiCoreController {
 
   @Get('*')
   async handleApiGet(@Req() request: Request, @Res() res: Response) {
+    this.logger.log(
+      `[REST API] Processing GET request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.get(request);
 
     res.status(200).send(result);
@@ -54,6 +68,9 @@ export class RestApiCoreController {
 
   @Delete('*')
   async handleApiDelete(@Req() request: Request, @Res() res: Response) {
+    this.logger.log(
+      `[REST API] Processing DELETE request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.delete(request);
 
     res.status(200).send(result);
@@ -61,6 +78,9 @@ export class RestApiCoreController {
 
   @Patch('*')
   async handleApiPatch(@Req() request: Request, @Res() res: Response) {
+    this.logger.log(
+      `[REST API] Processing PATCH request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.update(request);
 
     res.status(200).send(result);
@@ -71,6 +91,9 @@ export class RestApiCoreController {
   // of PATCH, and because the PUT verb is often used as a PATCH.
   @Put('*')
   async handleApiPut(@Req() request: Request, @Res() res: Response) {
+    this.logger.log(
+      `[REST API] Processing PUT request to ${request.path} on workspace ${request.workspaceId}`,
+    );
     const result = await this.restApiCoreService.update(request);
 
     res.status(200).send(result);

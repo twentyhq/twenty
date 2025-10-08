@@ -15,7 +15,7 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { UserProviderEffect } from '@/users/components/UserProviderEffect';
+import { UserAndViewsProviderEffect } from '@/users/components/UserAndViewsProviderEffect';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
@@ -85,7 +85,7 @@ const Providers = () => {
             <ApolloStorybookDevLogEffect />
             <ClientConfigProviderEffect />
             <ClientConfigProvider>
-              <UserProviderEffect />
+              <UserAndViewsProviderEffect />
               <WorkspaceProviderEffect />
               <UserProvider>
                 <ApolloCoreClientMockedProvider>

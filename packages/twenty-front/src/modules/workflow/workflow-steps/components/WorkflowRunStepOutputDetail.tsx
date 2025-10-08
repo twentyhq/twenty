@@ -1,8 +1,8 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/components/WorkflowRunStepJsonContainer';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowRunStepInfo } from '@/workflow/workflow-steps/hooks/useWorkflowRunStepInfo';
 import { getWorkflowRunStepInfoToDisplayAsOutput } from '@/workflow/workflow-steps/utils/getWorkflowRunStepInfoToDisplayAsOutput';
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
@@ -74,7 +74,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
       : i18n._(getActionHeaderTypeOrThrow(stepDefinition.definition.type));
 
   const setRedHighlightingForEveryNode: GetJsonNodeHighlighting = (keyPath) => {
-    if (keyPath === 'error') {
+    if (keyPath.startsWith('error')) {
       return 'red';
     }
 
@@ -83,7 +83,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         disabled
         Icon={getIcon(headerIcon)}
         iconColor={headerIconColor}

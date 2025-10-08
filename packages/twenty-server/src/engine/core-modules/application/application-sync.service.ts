@@ -15,15 +15,16 @@ import {
   ServerlessFunctionManifest,
   ServerlessFunctionTriggerManifest,
 } from 'src/engine/core-modules/application/types/application.types';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
+import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
-import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
-import type { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
+import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
@@ -42,6 +43,7 @@ export class ApplicationSyncService {
     private readonly agentService: AgentService,
     private readonly databaseEventTriggerV2Service: DatabaseEventTriggerV2Service,
     private readonly cronTriggerV2Service: CronTriggerV2Service,
+    private readonly routeTriggerV2Service: RouteTriggerV2Service,
   ) {}
 
   public async synchronizeFromManifest({
@@ -106,7 +108,7 @@ export class ApplicationSyncService {
 
       return await this.applicationService.create({
         universalIdentifier: manifest.universalIdentifier,
-        label: manifest.label,
+        name: manifest.name,
         description: manifest.description,
         version: manifest.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
@@ -124,7 +126,7 @@ export class ApplicationSyncService {
     );
 
     await this.applicationService.update(application.id, {
-      label: manifest.label,
+      name: manifest.name,
       description: manifest.description,
       version: manifest.version,
     });
@@ -188,7 +190,7 @@ export class ApplicationSyncService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps'],
         },
       );
 
@@ -196,7 +198,9 @@ export class ApplicationSyncService {
       existingFlatObjectMetadataMaps.byId,
     ).filter(
       (obj) => isDefined(obj) && obj.applicationId === applicationId,
-    ) as FlatObjectMetadataWithFlatFieldMaps[];
+      // TODO handle when migrating to trinite usage
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ) as any[];
 
     const objectsToSyncStandardIds = objectsToSync.map((obj) => obj.standardId);
 
@@ -299,7 +303,7 @@ export class ApplicationSyncService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -368,9 +372,11 @@ export class ApplicationSyncService {
 
       const updateServerlessFunctionInput = {
         id: serverlessFunctionToUpdate.id,
-        name: serverlessFunctionToSync.name,
-        timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
-        code: serverlessFunctionToSync.code,
+        update: {
+          name: serverlessFunctionToSync.name,
+          timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
+          code: serverlessFunctionToSync.code,
+        },
       };
 
       await this.serverlessFunctionV2Service.updateOne(
@@ -385,6 +391,12 @@ export class ApplicationSyncService {
       });
 
       await this.syncCronTriggersForServerlessFunction({
+        serverlessFunctionId: serverlessFunctionToUpdate.id,
+        triggersToSync: serverlessFunctionToSync.triggers || [],
+        workspaceId,
+      });
+
+      await this.syncRouteTriggersForServerlessFunction({
         serverlessFunctionId: serverlessFunctionToUpdate.id,
         triggersToSync: serverlessFunctionToSync.triggers || [],
         workspaceId,
@@ -418,6 +430,12 @@ export class ApplicationSyncService {
         triggersToSync: serverlessFunctionToCreate.triggers || [],
         workspaceId,
       });
+
+      await this.syncRouteTriggersForServerlessFunction({
+        serverlessFunctionId: createdServerlessFunction.id,
+        triggersToSync: serverlessFunctionToCreate.triggers || [],
+        workspaceId,
+      });
     }
   }
 
@@ -438,7 +456,7 @@ export class ApplicationSyncService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatDatabaseEventTriggerMaps'],
+          flatMapsKeys: ['flatDatabaseEventTriggerMaps'],
         },
       );
 
@@ -498,14 +516,16 @@ export class ApplicationSyncService {
       if (!triggerToSync || triggerToSync.type !== 'databaseEvent') {
         throw new ApplicationException(
           `Failed to find database event trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+          ApplicationExceptionCode.ENTITY_NOT_FOUND,
         );
       }
 
       const updateDatabaseEventTriggerInput = {
         id: triggerToUpdate.id,
-        settings: {
-          eventName: triggerToSync.eventName,
+        update: {
+          settings: {
+            eventName: triggerToSync.eventName,
+          },
         },
       };
 
@@ -552,7 +572,7 @@ export class ApplicationSyncService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatCronTriggerMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps'],
         },
       );
 
@@ -609,14 +629,16 @@ export class ApplicationSyncService {
       if (!triggerToSync || triggerToSync.type !== 'cron') {
         throw new ApplicationException(
           `Failed to find cron trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+          ApplicationExceptionCode.ENTITY_NOT_FOUND,
         );
       }
 
       const updateCronTriggerInput = {
         id: triggerToUpdate.id,
-        settings: {
-          pattern: triggerToSync.schedule,
+        update: {
+          settings: {
+            pattern: triggerToSync.schedule,
+          },
         },
       };
 
@@ -641,6 +663,120 @@ export class ApplicationSyncService {
 
       await this.cronTriggerV2Service.createOne(
         createCronTriggerInput,
+        workspaceId,
+      );
+    }
+  }
+
+  private async syncRouteTriggersForServerlessFunction({
+    serverlessFunctionId,
+    triggersToSync,
+    workspaceId,
+  }: {
+    serverlessFunctionId: string;
+    triggersToSync: ServerlessFunctionTriggerManifest[];
+    workspaceId: string;
+  }) {
+    const routeTriggersToSync = triggersToSync.filter(
+      (trigger) => trigger.type === 'route',
+    );
+
+    const { flatRouteTriggerMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRouteTriggerMaps'],
+        },
+      );
+
+    const existingRouteTriggers = Object.values(
+      flatRouteTriggerMaps.byId,
+    ).filter(
+      (trigger) =>
+        isDefined(trigger) &&
+        trigger.serverlessFunctionId === serverlessFunctionId,
+    ) as FlatRouteTrigger[];
+
+    const triggersToSyncUniversalIdentifiers = routeTriggersToSync.map(
+      (trigger) => trigger.universalIdentifier,
+    );
+
+    const existingTriggersUniversalIdentifiers = existingRouteTriggers.map(
+      (trigger) => trigger.universalIdentifier,
+    );
+
+    const triggersToDelete = existingRouteTriggers.filter(
+      (trigger) =>
+        isDefined(trigger.universalIdentifier) &&
+        !triggersToSyncUniversalIdentifiers.includes(
+          trigger.universalIdentifier,
+        ),
+    );
+
+    const triggersToUpdate = existingRouteTriggers.filter(
+      (trigger) =>
+        isDefined(trigger.universalIdentifier) &&
+        triggersToSyncUniversalIdentifiers.includes(
+          trigger.universalIdentifier,
+        ),
+    );
+
+    const triggersToCreate = routeTriggersToSync.filter(
+      (triggerToSync) =>
+        !existingTriggersUniversalIdentifiers.includes(
+          triggerToSync.universalIdentifier,
+        ),
+    );
+
+    for (const triggerToDelete of triggersToDelete) {
+      await this.routeTriggerV2Service.destroyOne({
+        destroyRouteTriggerInput: { id: triggerToDelete.id },
+        workspaceId,
+      });
+    }
+
+    for (const triggerToUpdate of triggersToUpdate) {
+      const triggerToSync = routeTriggersToSync.find(
+        (trigger) =>
+          trigger.universalIdentifier === triggerToUpdate.universalIdentifier,
+      );
+
+      if (!triggerToSync || triggerToSync.type !== 'route') {
+        throw new ApplicationException(
+          `Failed to find route trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
+          ApplicationExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      const updateRouteTriggerInput = {
+        id: triggerToUpdate.id,
+        update: {
+          path: triggerToSync.path,
+          httpMethod: triggerToSync.httpMethod,
+          isAuthRequired: triggerToSync.isAuthRequired,
+        },
+      };
+
+      await this.routeTriggerV2Service.updateOne(
+        updateRouteTriggerInput,
+        workspaceId,
+      );
+    }
+
+    for (const triggerToCreate of triggersToCreate) {
+      if (triggerToCreate.type !== 'route') {
+        continue;
+      }
+
+      const createRouteTriggerInput = {
+        path: triggerToCreate.path,
+        httpMethod: triggerToCreate.httpMethod,
+        isAuthRequired: triggerToCreate.isAuthRequired,
+        serverlessFunctionId,
+      };
+
+      await this.routeTriggerV2Service.createOne(
+        createRouteTriggerInput,
         workspaceId,
       );
     }
