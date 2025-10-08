@@ -1,7 +1,7 @@
 import {
-    type WorkflowAction,
-    WorkflowActionType,
-    type WorkflowDelayAction,
+  type WorkflowAction,
+  WorkflowActionType,
+  type WorkflowDelayAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const isWorkflowDelayAction = (
@@ -9,4 +9,3 @@ export const isWorkflowDelayAction = (
 ): action is WorkflowDelayAction => {
   return action.type === WorkflowActionType.DELAY;
 };
-  
