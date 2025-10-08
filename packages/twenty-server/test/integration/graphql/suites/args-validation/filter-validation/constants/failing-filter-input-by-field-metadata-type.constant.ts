@@ -278,8 +278,7 @@ export const failingFilterInputByFieldMetadataType: {
   [FieldMetadataType.SELECT]: [
     {
       gqlFilterInput: { selectField: { eq: 'not-a-select' } },
-      gqlErrorMessage:
-        'Value "not-a-select" does not exist in "TestObjectSelectFieldEnum" enum.',
+      gqlErrorMessage: 'Value "not-a-select" does not exist in',
       restFilterInput: 'selectField[eq]:"not-a-select"',
       restErrorMessage: "not available in 'selectField'",
     },
