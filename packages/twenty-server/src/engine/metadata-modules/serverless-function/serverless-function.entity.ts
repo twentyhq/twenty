@@ -79,16 +79,16 @@ export class ServerlessFunctionEntity
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;
 
-  @Column({ nullable: true, type: 'uuid' })
-  serverlessFunctionLayerId: string | null;
+  @Column({ nullable: false, type: 'uuid' })
+  serverlessFunctionLayerId: string;
 
   @ManyToOne(
     () => ServerlessFunctionLayerEntity,
     (serverlessFunctionLayer) => serverlessFunctionLayer.serverlessFunctions,
-    { nullable: true },
+    { nullable: false },
   )
   @JoinColumn({ name: 'serverlessFunctionLayerId' })
-  serverlessFunctionLayer: Relation<ServerlessFunctionLayerEntity> | null;
+  serverlessFunctionLayer: Relation<ServerlessFunctionLayerEntity>;
 
   @ManyToOne(
     () => ApplicationEntity,
