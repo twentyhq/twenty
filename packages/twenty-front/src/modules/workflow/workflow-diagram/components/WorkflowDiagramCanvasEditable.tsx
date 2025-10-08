@@ -96,10 +96,7 @@ const WorkflowDiagramCanvasEditableInner = () => {
   };
 
   const handleConnectEnd = useCallback(
-    (
-      event: MouseEvent | TouchEvent,
-      connectionState: FinalConnectionState,
-    ) => {
+    (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
       if (
         isDefined(connectionState.toNode) ||
         isDefined(connectionState.toHandle)
@@ -148,7 +145,10 @@ const WorkflowDiagramCanvasEditableInner = () => {
           x: sourceNode.position.x,
           y: sourceNode.position.y + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
         };
-      } else if (!isDefined(dropPosition) && isDefined(dropPositionFromPointer)) {
+      } else if (
+        !isDefined(dropPosition) &&
+        isDefined(dropPositionFromPointer)
+      ) {
         dropPosition = dropPositionFromPointer;
       }
 

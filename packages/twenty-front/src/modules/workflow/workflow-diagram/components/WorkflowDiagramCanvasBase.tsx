@@ -326,7 +326,6 @@ export const WorkflowDiagramCanvasBase = ({
     setWorkflowSelectedNode(undefined);
   });
 
-
   const containerRef = useRef<HTMLDivElement>(null);
 
   const setFlowViewport = useRecoilCallback(

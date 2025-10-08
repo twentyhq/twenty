@@ -55,7 +55,9 @@ export const useUpdateWorkflowVersionCache = () => {
     );
     const updatedTrigger = updatedTriggerRaw ?? null;
 
-    const updatedStepsById = new Map(updatedSteps.map((step) => [step.id, step]));
+    const updatedStepsById = new Map(
+      updatedSteps.map((step) => [step.id, step]),
+    );
 
     const collectMissingNextStepIds = (
       nextStepIds: string[] | null | undefined,

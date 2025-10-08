@@ -87,19 +87,8 @@ export const generateNodesAndEdgesForIteratorNode = ({
 
   for (const initialLoopStepId of initialLoopStepIds) {
     if (!stepsById.has(initialLoopStepId)) {
-      if (process.env.NODE_ENV !== 'production') {
-        // eslint-disable-next-line no-console
-        console.warn(
-          'Workflow diagram: skipping iterator loop edge for missing step',
-          {
-            iteratorStepId: step.id,
-            missingInitialLoopStepId: initialLoopStepId,
-          },
-        );
-      }
       continue;
     }
-
     updatedEdges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       type: edgeTypeBetweenTwoNodes,
@@ -129,16 +118,6 @@ export const generateNodesAndEdgesForIteratorNode = ({
   if (isNonEmptyArray(step.nextStepIds)) {
     for (const nextStepId of step.nextStepIds) {
       if (!stepsById.has(nextStepId)) {
-        if (process.env.NODE_ENV !== 'production') {
-          // eslint-disable-next-line no-console
-          console.warn(
-            'Workflow diagram: skipping edge for missing iterator next step',
-            {
-              iteratorStepId: step.id,
-              missingNextStepId: nextStepId,
-            },
-          );
-        }
         continue;
       }
 

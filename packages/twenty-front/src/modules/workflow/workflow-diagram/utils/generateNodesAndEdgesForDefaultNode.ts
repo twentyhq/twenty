@@ -66,15 +66,6 @@ export const generateNodesAndEdgesForDefaultNode = ({
 
     for (const nextStepId of step.nextStepIds) {
       if (!nextStepsById.has(nextStepId)) {
-        if (process.env.NODE_ENV !== 'production') {
-          console.warn(
-            'Workflow diagram: skipping edge for missing next step',
-            {
-              currentStepId: step.id,
-              missingNextStepId: nextStepId,
-            },
-          );
-        }
         continue;
       }
 
