@@ -10,8 +10,8 @@ import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-fi
 import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/find-core-view-fields.util';
 import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 
 import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 
@@ -90,14 +90,9 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       expectToFail: true,
     });
 
-    // TODO create a util to expect a core engine v2 error
-    expect(errors.length).toBe(1);
-    const [firstError] = errors;
-
-    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+    });
   });
 
   it('Should not allow destroying a label identifier view field', async () => {
@@ -106,13 +101,9 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       expectToFail: true,
     });
 
-    expect(errors.length).toBe(1);
-    const [firstError] = errors;
-
-    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+    });
   });
 
   it('Should not allow updating a label identifier view field visibility to false', async () => {
@@ -124,13 +115,9 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       expectToFail: true,
     });
 
-    expect(errors.length).toBe(1);
-    const [firstError] = errors;
-
-    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+    });
   });
 
   it('Should not allow creating a view field with a position lower than the label idenfitier view field', async () => {
@@ -141,7 +128,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
     } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
-        name: 'nonLabelIdentifierField',
+        name: 'nonLabelIdentifierFieldFailing',
         label: 'Test Field',
         type: FieldMetadataType.TEXT,
         objectMetadataId: testSetup.testObjectMetadataId,
@@ -164,13 +151,9 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       expectToFail: true,
     });
 
-    expect(errors.length).toBe(1);
-    const [firstError] = errors;
-
-    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+    });
   });
 
   it('Should not allow updated labelIdentifier view field with a position higher than existing other view field', async () => {
@@ -181,7 +164,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
     } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
-        name: 'nonLabelIdentifierField',
+        name: 'nonLabelIdentifierFieldSuccessful',
         label: 'Test Field',
         type: FieldMetadataType.TEXT,
         objectMetadataId: testSetup.testObjectMetadataId,
@@ -214,13 +197,9 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       expectToFail: true,
     });
 
-    expect(errors.length).toBe(1);
-    const [firstError] = errors;
-
-    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+    });
   });
 
   it('Should allow updated labelIdentifier view field with a position higher than existing other view field', async () => {
@@ -231,7 +210,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
     } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
-        name: 'nonLabelIdentifierField',
+        name: 'justafield',
         label: 'Test Field',
         type: FieldMetadataType.TEXT,
         objectMetadataId: testSetup.testObjectMetadataId,
