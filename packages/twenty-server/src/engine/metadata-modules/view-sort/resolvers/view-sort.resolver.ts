@@ -6,10 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateViewSortInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view-sort.input';
-import { UpdateViewSortInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-sort.input';
-import { ViewSortDTO } from 'src/engine/metadata-modules/view/dtos/view-sort.dto';
-import { ViewSortService } from 'src/engine/metadata-modules/view/services/view-sort.service';
+import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
+import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
+import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
+import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewSortDTO)
@@ -82,3 +82,4 @@ export class ViewSortResolver {
     return isDefined(deletedViewSort);
   }
 }
+

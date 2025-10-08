@@ -6,10 +6,10 @@ import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-fil
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
-import { type ViewSortEntity } from 'src/engine/metadata-modules/view/entities/view-sort.entity';
+import { type ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
+import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 export const createViewData = (overrides: Partial<ViewEntity> = {}) => ({

@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
+import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 
 @InputType()
 export class CreateViewSortInput {
@@ -20,3 +20,4 @@ export class CreateViewSortInput {
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
 }
+

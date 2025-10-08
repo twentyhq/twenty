@@ -4,14 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ViewSortEntity } from 'src/engine/metadata-modules/view/entities/view-sort.entity';
+import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import {
-  ViewSortException,
-  ViewSortExceptionCode,
-  ViewSortExceptionMessageKey,
-  generateViewSortExceptionMessage,
-  generateViewSortUserFriendlyExceptionMessage,
-} from 'src/engine/metadata-modules/view/exceptions/view-sort.exception';
+    ViewSortException,
+    ViewSortExceptionCode,
+    ViewSortExceptionMessageKey,
+    generateViewSortExceptionMessage,
+    generateViewSortUserFriendlyExceptionMessage,
+} from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
 @Injectable()
@@ -181,3 +181,4 @@ export class ViewSortService {
     return true;
   }
 }
+

@@ -1,12 +1,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
+    Args,
+    Context,
+    Mutation,
+    Parent,
+    Query,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
@@ -29,11 +29,11 @@ import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
+import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
+import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
-import { ViewSortDTO } from 'src/engine/metadata-modules/view/dtos/view-sort.dto';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
-import { ViewSortService } from 'src/engine/metadata-modules/view/services/view-sort.service';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
