@@ -28,8 +28,7 @@ export const generateGroupByQuery = ({
         orderBy: $orderBy
         viewId: $viewId
       ) {
-        groupByDimensionValues
-        ${aggregateOperations.map((aggregateOperation) => `${aggregateOperation}`).join('\n')}
+        groupByDimensionValues${aggregateOperations.length > 0 ? `\n        ${aggregateOperations.join('\n        ')}` : ''}
       }
     }
   `;
