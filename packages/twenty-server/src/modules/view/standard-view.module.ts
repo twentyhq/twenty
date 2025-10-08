@@ -27,4 +27,4 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
   providers: [],
   exports: [],
 })
-export class ViewModule {}
+export class StandardViewModule {}
