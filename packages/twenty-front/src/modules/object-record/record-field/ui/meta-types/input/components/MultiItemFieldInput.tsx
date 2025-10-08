@@ -93,9 +93,40 @@ export const MultiItemFieldInput = <T,>({
     dependencies: [handleEscape],
   });
 
-  const [isInputDisplayed, setIsInputDisplayed] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [itemToEditIndex, setItemToEditIndex] = useState(-1);
+  const getItemValueAsString = (index: number): string => {
+    let item;
+    switch (fieldMetadataType) {
+      case FieldMetadataType.LINKS:
+        item = items[index] as { label: string; url: string };
+        return item.url || '';
+      case FieldMetadataType.PHONES:
+        item = items[index] as PhoneRecord;
+        return item.callingCode + item.number;
+      case FieldMetadataType.EMAILS:
+        item = items[index] as string;
+        return item;
+      case FieldMetadataType.ARRAY:
+        item = items[index] as string;
+        return item;
+      default:
+        throw new CustomError(
+          `Unsupported field type: ${fieldMetadataType}`,
+          'UNSUPPORTED_FIELD_TYPE',
+        );
+    }
+  };
+
+  const shouldAutoEditSingleItem = items.length === 1 && maxItemCount === 1;
+
+  const [isInputDisplayed, setIsInputDisplayed] = useState(
+    shouldAutoEditSingleItem,
+  );
+  const [inputValue, setInputValue] = useState(() =>
+    shouldAutoEditSingleItem ? getItemValueAsString(0) : '',
+  );
+  const [itemToEditIndex, setItemToEditIndex] = useState(
+    shouldAutoEditSingleItem ? 0 : -1,
+  );
   const [errorData, setErrorData] = useState({
     isValid: true,
     errorMessage: '',
@@ -126,31 +157,7 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleEditButtonClick = (index: number) => {
-    let item;
-    switch (fieldMetadataType) {
-      case FieldMetadataType.LINKS:
-        item = items[index] as { label: string; url: string };
-        setInputValue(item.url || '');
-        break;
-      case FieldMetadataType.PHONES:
-        item = items[index] as PhoneRecord;
-        setInputValue(item.callingCode + item.number);
-        break;
-      case FieldMetadataType.EMAILS:
-        item = items[index] as string;
-        setInputValue(item);
-        break;
-      case FieldMetadataType.ARRAY:
-        item = items[index] as string;
-        setInputValue(item);
-        break;
-      default:
-        throw new CustomError(
-          `Unsupported field type: ${fieldMetadataType}`,
-          'UNSUPPORTED_FIELD_TYPE',
-        );
-    }
-
+    setInputValue(getItemValueAsString(index));
     setItemToEditIndex(index);
     setIsInputDisplayed(true);
   };
@@ -206,7 +213,7 @@ export const MultiItemFieldInput = <T,>({
 
   return (
     <DropdownContent ref={containerRef}>
-      {!!items.length && (
+      {!!items.length && !shouldAutoEditSingleItem && (
         <>
           <DropdownMenuItemsContainer hasMaxHeight>
             {items.map((item, index) =>
