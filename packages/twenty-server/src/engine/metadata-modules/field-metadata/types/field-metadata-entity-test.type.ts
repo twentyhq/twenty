@@ -1,5 +1,6 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
+  type FieldMetadataMultiItemSettings,
   type FieldMetadataType,
   type NullablePartial,
 } from 'twenty-shared/types';
@@ -133,10 +134,6 @@ type SettingsAssertions = [
   Expect<HasAllProperties<RawJsonFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<RichTextFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<ActorFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<ArrayFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<EmailsFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<LinksFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<BooleanFieldMetadata, NotDefinedSettings>>,
 
@@ -162,6 +159,30 @@ type SettingsAssertions = [
     HasAllProperties<
       DateTimeFieldMetadata,
       { settings: FieldMetadataDateTimeSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      ArrayFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      PhonesFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      EmailsFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      LinksFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
     >
   >,
 
