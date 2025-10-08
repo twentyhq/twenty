@@ -1,13 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type TabListDimensions } from '@/ui/layout/tab-list/types/TabListDimension';
 import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 import { calculateVisibleTabCount } from '@/ui/layout/tab-list/utils/calculateVisibleTabCount';
-
-type Dimensions = {
-  width: number;
-  height: number;
-};
 
 type UseTabListMeasurementsOptions = {
   visibleTabs: SingleTabProps[];
@@ -19,10 +15,10 @@ type UseTabListMeasurementsResult = {
   hiddenTabs: SingleTabProps[];
   hiddenTabsCount: number;
   hasHiddenTabs: boolean;
-  onTabWidthChange: (tabId: string) => (dimensions: Dimensions) => void;
-  onContainerWidthChange: (dimensions: Dimensions) => void;
-  onMoreButtonWidthChange: (dimensions: Dimensions) => void;
-  onAddButtonWidthChange: (dimensions: Dimensions) => void;
+  onTabWidthChange: (tabId: string) => (dimensions: TabListDimensions) => void;
+  onContainerWidthChange: (dimensions: TabListDimensions) => void;
+  onMoreButtonWidthChange: (dimensions: TabListDimensions) => void;
+  onAddButtonWidthChange: (dimensions: TabListDimensions) => void;
 };
 
 export const useTabListMeasurements = ({
@@ -59,7 +55,7 @@ export const useTabListMeasurements = ({
   const hasHiddenTabs = hiddenTabsCount > 0;
 
   const onTabWidthChange = useCallback(
-    (tabId: string) => (dimensions: Dimensions) => {
+    (tabId: string) => (dimensions: TabListDimensions) => {
       setTabWidthsById((prev) => {
         if (prev[tabId] !== dimensions.width) {
           return {
@@ -74,23 +70,32 @@ export const useTabListMeasurements = ({
     [],
   );
 
-  const onContainerWidthChange = useCallback((dimensions: Dimensions) => {
-    setContainerWidth((prev) => {
-      return prev !== dimensions.width ? dimensions.width : prev;
-    });
-  }, []);
+  const onContainerWidthChange = useCallback(
+    (dimensions: TabListDimensions) => {
+      setContainerWidth((prev) => {
+        return prev !== dimensions.width ? dimensions.width : prev;
+      });
+    },
+    [],
+  );
 
-  const onMoreButtonWidthChange = useCallback((dimensions: Dimensions) => {
-    setMoreButtonWidth((prev) => {
-      return prev !== dimensions.width ? dimensions.width : prev;
-    });
-  }, []);
+  const onMoreButtonWidthChange = useCallback(
+    (dimensions: TabListDimensions) => {
+      setMoreButtonWidth((prev) => {
+        return prev !== dimensions.width ? dimensions.width : prev;
+      });
+    },
+    [],
+  );
 
-  const onAddButtonWidthChange = useCallback((dimensions: Dimensions) => {
-    setAddButtonWidth((prev) => {
-      return prev !== dimensions.width ? dimensions.width : prev;
-    });
-  }, []);
+  const onAddButtonWidthChange = useCallback(
+    (dimensions: TabListDimensions) => {
+      setAddButtonWidth((prev) => {
+        return prev !== dimensions.width ? dimensions.width : prev;
+      });
+    },
+    [],
+  );
 
   return {
     visibleTabCount,

@@ -7,12 +7,8 @@ import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui/display';
 import { TabButton } from 'twenty-ui/input';
 
+import { type TabListDimensions } from '@/ui/layout/tab-list/types/TabListDimension';
 import { TabMoreButton } from './TabMoreButton';
-
-type TabListDimensions = {
-  width: number;
-  height: number;
-};
 
 type TabListHiddenMeasurementsProps = {
   visibleTabs: SingleTabProps[];
