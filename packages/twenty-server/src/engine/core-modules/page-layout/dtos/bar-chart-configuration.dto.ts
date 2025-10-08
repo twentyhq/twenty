@@ -42,6 +42,11 @@ export class BarChartConfigurationDTO {
   @IsNotEmpty()
   groupByFieldMetadataIdX: string;
 
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  groupBySubFieldNameX?: string;
+
   @Field(() => GraphOrderBy)
   @IsEnum(GraphOrderBy)
   @IsNotEmpty()
@@ -51,6 +56,11 @@ export class BarChartConfigurationDTO {
   @IsUUID()
   @IsOptional()
   groupByFieldMetadataIdY?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  groupBySubFieldNameY?: string;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)

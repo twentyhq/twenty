@@ -9,24 +9,22 @@ type FindObjectFieldsInFlatFieldMetadataMapsArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadata: FlatObjectMetadata;
 };
-export const findObjectFieldsInFlatFieldMetadataMapsOrThrow = ({
+export const findObjectFlatFieldMetadatasOrThrow = ({
   flatFieldMetadataMaps,
   flatObjectMetadata,
 }: FindObjectFieldsInFlatFieldMetadataMapsArgs): {
-  objectFlatFieldMetadataById: FlatEntityMaps<FlatFieldMetadata>;
   objectFlatFieldMetadatas: FlatFieldMetadata[];
 } => {
-  const objectFlatFieldMetadataById = getSubFlatEntityMapsOrThrow({
+  const objectFlatFieldMetadataMaps = getSubFlatEntityMapsOrThrow({
     flatEntityIds: flatObjectMetadata.fieldMetadataIds,
     flatEntityMaps: flatFieldMetadataMaps,
   });
 
   const objectFlatFieldMetadatas = Object.values(
-    objectFlatFieldMetadataById.byId,
+    objectFlatFieldMetadataMaps.byId,
   ).filter(isDefined);
 
   return {
-    objectFlatFieldMetadataById,
     objectFlatFieldMetadatas,
   };
 };

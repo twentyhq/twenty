@@ -211,7 +211,7 @@ export const WorkflowEditActionUpdateRecord = ({
             onChange={(objectRecordId) =>
               handleFieldChange('objectRecordId', objectRecordId)
             }
-            objectNameSingular={objectNameSingular}
+            objectNameSingulars={[objectNameSingular]}
             defaultValue={formData.objectRecordId}
             disabled={isFormDisabled}
             VariablePicker={WorkflowVariablePicker}

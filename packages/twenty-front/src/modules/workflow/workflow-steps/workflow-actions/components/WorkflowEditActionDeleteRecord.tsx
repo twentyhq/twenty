@@ -172,7 +172,7 @@ export const WorkflowEditActionDeleteRecord = ({
             onChange={(objectRecordId) =>
               handleFieldChange('objectRecordId', objectRecordId)
             }
-            objectNameSingular={objectNameSingular}
+            objectNameSingulars={[objectNameSingular]}
             defaultValue={formData.objectRecordId}
             testId="workflow-edit-action-record-delete-object-record-id"
             disabled={isFormDisabled}

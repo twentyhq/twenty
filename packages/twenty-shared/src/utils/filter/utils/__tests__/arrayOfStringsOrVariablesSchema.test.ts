@@ -1,4 +1,4 @@
-import { arrayOfStringsOrVariablesSchema } from "@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema";
+import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 
 describe('arrayOfStringsOrVariablesSchema', () => {
   describe('Empty value handling', () => {
