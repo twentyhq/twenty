@@ -91,6 +91,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     enqueueErrorSnackBar,
     setSignInUpStep,
     setSignInUpMode,
+    errorMsgUserAlreadyExist,
   ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
