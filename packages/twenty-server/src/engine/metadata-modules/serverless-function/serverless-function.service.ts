@@ -14,7 +14,6 @@ import { AuditService } from 'src/engine/core-modules/audit/services/audit.servi
 import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
-import { getLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -291,8 +290,9 @@ export class ServerlessFunctionService {
         relations: ['serverlessFunctionLayer'],
       });
 
-    const { packageJson, yarnLock } =
-      await getLayerDependencies(serverlessFunction);
+    const packageJson = serverlessFunction.serverlessFunctionLayer.packageJson;
+
+    const yarnLock = serverlessFunction.serverlessFunctionLayer.yarnLock;
 
     const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
 
@@ -413,7 +413,7 @@ export class ServerlessFunctionService {
         timeoutSeconds: serverlessFunctionToDuplicate.timeoutSeconds,
         applicationId: serverlessFunctionToDuplicate.applicationId ?? undefined,
         serverlessFunctionLayerId:
-          serverlessFunctionToDuplicate.serverlessFunctionLayerId ?? undefined,
+          serverlessFunctionToDuplicate.serverlessFunctionLayerId,
       },
       workspaceId,
     );

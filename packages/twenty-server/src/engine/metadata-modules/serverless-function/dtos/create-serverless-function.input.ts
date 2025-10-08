@@ -39,7 +39,7 @@ export class CreateServerlessFunctionInput {
   universalIdentifier?: string;
 
   @HideField()
-  serverlessFunctionLayerId?: string;
+  serverlessFunctionLayerId: string;
 
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()

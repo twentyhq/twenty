@@ -67,9 +67,6 @@ export class ServerlessFunctionEntity
   @Check(`"timeoutSeconds" >= 1 AND "timeoutSeconds" <= 900`)
   timeoutSeconds: number;
 
-  @Column({ nullable: true, type: 'integer' })
-  layerVersion: number | null;
-
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
