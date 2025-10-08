@@ -36,7 +36,7 @@ index 1684394..32602b3 100644
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -61,7 +61,7 @@ index 1684394..32602b3 100644
 +                });
 +
 +                for (const key of this.schemaCache.keys()) {
-+                    if (key.startsWith(`${workspaceId}-`)) {
++                    if (key.startsWith(`${workspaceId}-${workspaceUserId}-${url}-`)) {
 +                        this.schemaCache.delete(key);
 +                    }
 +                }
@@ -89,7 +89,7 @@ index 1684394..32602b3 100644
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -114,7 +114,7 @@ index 1684394..32602b3 100644
 +                });
 +
 +                for (const key of this.schemaCache.keys()) {
-+                    if (key.startsWith(`${workspaceId}-`)) {
++                    if (key.startsWith(`${workspaceId}-${workspaceUserId}-${url}-`)) {
 +                        this.schemaCache.delete(key);
 +                    }
 +                }
@@ -166,7 +166,7 @@ index 7068c51..b8cbf9e 100644
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -191,7 +191,7 @@ index 7068c51..b8cbf9e 100644
 +                });
 +
 +                for (const key of this.schemaCache.keys()) {
-+                    if (key.startsWith(`${workspaceId}-`)) {
++                    if (key.startsWith(`${workspaceId}-${workspaceUserId}-${url}-`)) {
 +                        this.schemaCache.delete(key);
 +                    }
 +                }
@@ -219,7 +219,7 @@ index 7068c51..b8cbf9e 100644
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -244,7 +244,7 @@ index 7068c51..b8cbf9e 100644
 +                });
 +
 +                for (const key of this.schemaCache.keys()) {
-+                    if (key.startsWith(`${workspaceId}-`)) {
++                    if (key.startsWith(`${workspaceId}-${workspaceUserId}-${url}-`)) {
 +                        this.schemaCache.delete(key);
 +                    }
 +                }
@@ -419,7 +419,7 @@ index ce142f6..10e17d2 100644
 +        const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +        const url = request.req.baseUrl
 +
-+        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++        const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
@@ -480,7 +480,7 @@ index ce142f6..10e17d2 100644
 +        const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +        const url = request.req.baseUrl
 +
-+        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++        const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
