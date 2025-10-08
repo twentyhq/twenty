@@ -48,13 +48,13 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
     });
 
     return fieldMetadatas.reduce(
-      (flatFielMetadatadMaps, fieldMetadataEntity) => {
+      (flatFieldMetadataMaps, fieldMetadataEntity) => {
         const flatFieldMetadata =
           fromFieldMetadataEntityToFlatFieldMetadata(fieldMetadataEntity);
 
         return addFlatEntityToFlatEntityMapsOrThrow({
           flatEntity: flatFieldMetadata,
-          flatEntityMaps: flatFielMetadatadMaps,
+          flatEntityMaps: flatFieldMetadataMaps,
         });
       },
       EMPTY_FLAT_ENTITY_MAPS,
