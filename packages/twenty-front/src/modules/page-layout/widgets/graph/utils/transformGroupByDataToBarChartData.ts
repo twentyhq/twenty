@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
@@ -70,13 +71,21 @@ export const transformGroupByDataToBarChartData = ({
     return EMPTY_BAR_CHART_RESULT;
   }
 
+  const isGroupByFieldXComposite = isCompositeFieldType(groupByFieldX.type);
+  const groupBySubFieldNameX = configuration.groupBySubFieldNameX;
+
+  const indexByKey =
+    isGroupByFieldXComposite && isDefined(groupBySubFieldNameX)
+      ? `${groupByFieldX.name}.${groupBySubFieldNameX}`
+      : groupByFieldX.name;
+
   const queryName = getGroupByQueryName(objectMetadataItem);
   const queryResults = groupByData[queryName];
 
   if (!isDefined(queryResults) || !Array.isArray(queryResults)) {
     return {
       ...EMPTY_BAR_CHART_RESULT,
-      indexBy: groupByFieldX.name,
+      indexBy: indexByKey,
     };
   }
 

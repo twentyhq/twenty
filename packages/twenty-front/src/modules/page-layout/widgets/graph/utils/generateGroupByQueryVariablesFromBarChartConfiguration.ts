@@ -1,8 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration, GraphOrderBy } from '~/generated/graphql';
+import { buildGroupByFieldObject } from './buildGroupByFieldObject';
 
 const _mapOrderByToDirection = (orderByEnum: GraphOrderBy) => {
   switch (orderByEnum) {
@@ -42,23 +41,21 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
     );
   }
 
-  const isGroupByFieldXRelation =
-    isFieldRelation(groupByFieldX) || isFieldMorphRelation(groupByFieldX);
+  const groupBy: Array<Record<string, boolean | Record<string, boolean>>> = [];
 
-  const groupBy: Array<Record<string, boolean | Record<string, boolean>>> = [
-    isGroupByFieldXRelation
-      ? { [`${groupByFieldX.name}Id`]: true }
-      : { [groupByFieldX.name]: true },
-  ];
+  groupBy.push(
+    buildGroupByFieldObject({
+      field: groupByFieldX,
+      subFieldName: barChartConfiguration.groupBySubFieldNameX,
+    }),
+  );
 
   if (isDefined(groupByFieldY)) {
-    const isGroupByFieldYRelation =
-      isFieldRelation(groupByFieldY) || isFieldMorphRelation(groupByFieldY);
-
     groupBy.push(
-      isGroupByFieldYRelation
-        ? { [`${groupByFieldY.name}Id`]: true }
-        : { [groupByFieldY.name]: true },
+      buildGroupByFieldObject({
+        field: groupByFieldY,
+        subFieldName: barChartConfiguration.groupBySubFieldNameY,
+      }),
     );
   }
 

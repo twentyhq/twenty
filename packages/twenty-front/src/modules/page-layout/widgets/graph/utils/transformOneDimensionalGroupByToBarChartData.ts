@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_AGGREGATE_VALUE } from '@/page-layout/widgets/graph/constants/GraphDefaultAggregateValue.constant';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
@@ -36,6 +37,14 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   aggregateOperation,
   objectMetadataItem,
 }: TransformOneDimensionalGroupByToBarChartDataParams): TransformOneDimensionalGroupByToBarChartDataResult => {
+  const isGroupByFieldXComposite = isCompositeFieldType(groupByFieldX.type);
+  const groupBySubFieldNameX = configuration.groupBySubFieldNameX;
+
+  const indexByKey =
+    isGroupByFieldXComposite && isDefined(groupBySubFieldNameX)
+      ? `${groupByFieldX.name}.${groupBySubFieldNameX}`
+      : groupByFieldX.name;
+
   const data: BarChartDataItem[] = rawResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
 
@@ -56,7 +65,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     });
 
     return {
-      [groupByFieldX.name]: xValue,
+      [indexByKey]: xValue,
       [aggregateField.name]: aggregate.value ?? GRAPH_DEFAULT_AGGREGATE_VALUE,
     };
   });
@@ -71,7 +80,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
 
   return {
     data,
-    indexBy: groupByFieldX.name,
+    indexBy: indexByKey,
     keys: [aggregateField.name],
     series,
   };

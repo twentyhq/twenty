@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_AGGREGATE_VALUE } from '@/page-layout/widgets/graph/constants/GraphDefaultAggregateValue.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
@@ -36,6 +37,14 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   aggregateOperation,
   objectMetadataItem,
 }: TransformTwoDimensionalGroupByToBarChartDataParams): TransformTwoDimensionalGroupByToBarChartDataResult => {
+  const isGroupByFieldXComposite = isCompositeFieldType(groupByFieldX.type);
+  const groupBySubFieldNameX = configuration.groupBySubFieldNameX;
+
+  const indexByKey =
+    isGroupByFieldXComposite && isDefined(groupBySubFieldNameX)
+      ? `${groupByFieldX.name}.${groupBySubFieldNameX}`
+      : groupByFieldX.name;
+
   const dataMap = new Map<string, BarChartDataItem>();
   const yValues = new Set<string>();
 
@@ -65,7 +74,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
 
     if (!dataMap.has(xValue)) {
       dataMap.set(xValue, {
-        [groupByFieldX.name]: xValue,
+        [indexByKey]: xValue,
       });
     }
 
@@ -81,7 +90,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
 
   return {
     data: Array.from(dataMap.values()),
-    indexBy: groupByFieldX.name,
+    indexBy: indexByKey,
     keys,
     series,
   };
