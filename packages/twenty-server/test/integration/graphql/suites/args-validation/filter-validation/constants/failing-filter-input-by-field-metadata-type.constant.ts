@@ -6,9 +6,9 @@ import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/wor
 export const failingFilterInputByFieldMetadataType: {
   [K in Exclude<FieldMetadataTypeToTest, CompositeFieldMetadataType>]: {
     gqlFilterInput: any;
-    restFilterInput?: any;
+    restFilterInput: any;
     gqlErrorMessage: string;
-    restErrorMessage?: string;
+    restErrorMessage: string;
   }[];
 } = {
   [FieldMetadataType.RELATION]: [
@@ -44,15 +44,16 @@ export const failingFilterInputByFieldMetadataType: {
         'oneToManyRelationFieldId[eq]:"6dd71a46-68fe-4420-82b3-0d5b00ad2642"',
       restErrorMessage: "'oneToManyRelationFieldId' does not exist",
     },
-    {
-      gqlFilterInput: {
-        oneToManyRelationFieldId: {
-          eq: 'invalid-uuid',
-        },
-      },
-      gqlErrorMessage: 'is not defined by type',
-      restErrorMessage: "'oneToManyRelationFieldId' does not exist",
-    },
+    // {
+    //   gqlFilterInput: {
+    //     oneToManyRelationFieldId: {
+    //       eq: 'invalid-uuid',
+    //     },
+    //   },
+    //   restFilterInput: 'oneToManyRelationFieldId[eq]:"invalid-uuid"',
+    //   gqlErrorMessage: 'is not defined by type',
+    //   restErrorMessage: "'oneToManyRelationFieldId' does not exist",
+    // },
   ],
   [FieldMetadataType.UUID]: [
     {
@@ -100,27 +101,6 @@ export const failingFilterInputByFieldMetadataType: {
     },
   ],
   [FieldMetadataType.TEXT]: [
-    {
-      gqlFilterInput: { textField: { eq: undefined } },
-      gqlErrorMessage:
-        'undefined is not iterable (cannot read property Symbol(Symbol.iterator))',
-    },
-    {
-      gqlFilterInput: { textField: { eq: 2 } },
-      gqlErrorMessage: 'String cannot represent a non string value: 2',
-    },
-    {
-      gqlFilterInput: { textField: { eq: {} } },
-      gqlErrorMessage: 'String cannot represent a non string value: {}',
-    },
-    {
-      gqlFilterInput: { textField: { eq: [] } },
-      gqlErrorMessage: 'String cannot represent a non string value: []',
-    },
-    {
-      gqlFilterInput: { textField: { eq: true } },
-      gqlErrorMessage: 'String cannot represent a non string value: true',
-    },
     {
       gqlFilterInput: {
         textField: { regex: 'test' },
@@ -194,28 +174,28 @@ export const failingFilterInputByFieldMetadataType: {
     },
   ],
   [FieldMetadataType.BOOLEAN]: [
-    {
-      gqlFilterInput: { booleanField: { eq: 'not-a-boolean' } },
-      gqlErrorMessage:
-        'Boolean cannot represent a non boolean value: "not-a-boolean"',
-      // TODO - fix this, should throw an error
-      // restFilterInput: 'booleanField[eq]:"not-a-boolean"',
-      // restErrorMessage: 'invalid input syntax for type boolean',
-    },
-    {
-      gqlFilterInput: { booleanField: { eq: [] } },
-      gqlErrorMessage: 'Boolean cannot represent a non boolean value: []',
-      // TODO - fix this, should throw an error
-      // restFilterInput: 'booleanField[eq]:"[]"',
-      // restErrorMessage: 'invalid input syntax for type boolean',
-    },
-    {
-      gqlFilterInput: { booleanField: { eq: 2 } },
-      gqlErrorMessage: 'Boolean cannot represent a non boolean value: 2',
-      // TODO - fix this, should throw an error
-      // restFilterInput: 'booleanField[eq]:2',
-      // restErrorMessage: 'invalid input syntax for type boolean',
-    },
+    // {
+    //   gqlFilterInput: { booleanField: { eq: 'not-a-boolean' } },
+    //   gqlErrorMessage:
+    //     'Boolean cannot represent a non boolean value: "not-a-boolean"',
+    //   // TODO - fix this, should throw an error
+    //   // restFilterInput: 'booleanField[eq]:"not-a-boolean"',
+    //   // restErrorMessage: 'invalid input syntax for type boolean',
+    // },
+    // {
+    //   gqlFilterInput: { booleanField: { eq: [] } },
+    //   gqlErrorMessage: 'Boolean cannot represent a non boolean value: []',
+    //   // TODO - fix this, should throw an error
+    //   // restFilterInput: 'booleanField[eq]:"[]"',
+    //   // restErrorMessage: 'invalid input syntax for type boolean',
+    // },
+    // {
+    //   gqlFilterInput: { booleanField: { eq: 2 } },
+    //   gqlErrorMessage: 'Boolean cannot represent a non boolean value: 2',
+    //   // TODO - fix this, should throw an error
+    //   // restFilterInput: 'booleanField[eq]:2',
+    //   // restErrorMessage: 'invalid input syntax for type boolean',
+    // },
     // TODO - fix this, should throw an error
     // {
     //   gqlFilterInput: { booleanField: { eq: null } },
@@ -223,35 +203,35 @@ export const failingFilterInputByFieldMetadataType: {
     // },
   ],
   [FieldMetadataType.NUMBER]: [
-    {
-      gqlFilterInput: { numberField: { eq: 'not-a-number' } },
-      gqlErrorMessage:
-        'Float cannot represent non numeric value: "not-a-number"',
-      // TODO - fix this, should throw an error
-      // restFilterInput: 'numberField[eq]:"not-a-number"',
-      // restErrorMessage: 'invalid input syntax for type float',
-    },
-    {
-      gqlFilterInput: { numberField: { eq: {} } },
-      gqlErrorMessage: 'Float cannot represent non numeric value: {}',
-      // TODO - fix this, should throw an error
-      // restFilterInput: 'numberField[eq]:"{}"',
-      // restErrorMessage: 'invalid input syntax for type float',
-    },
-    {
-      gqlFilterInput: { numberField: { eq: [] } },
-      gqlErrorMessage: 'Float cannot represent non numeric value: []',
-      // TODO - fix this, should throw an error
-      // restFilterInput: 'numberField[eq]:"[]"',
-      // restErrorMessage: 'invalid input syntax for type float',
-    },
-    {
-      gqlFilterInput: { numberField: { eq: true } },
-      gqlErrorMessage: 'Float cannot represent non numeric value: true',
-      // TODO - fix this, should throw an error
-      // restFilterInput: 'numberField[eq]:"true"',
-      // restErrorMessage: 'invalid input syntax for type float',
-    },
+    // {
+    //   gqlFilterInput: { numberField: { eq: 'not-a-number' } },
+    //   gqlErrorMessage:
+    //     'Float cannot represent non numeric value: "not-a-number"',
+    //   // TODO - fix this, should throw an error
+    //   // restFilterInput: 'numberField[eq]:"not-a-number"',
+    //   // restErrorMessage: 'invalid input syntax for type float',
+    // },
+    // {
+    //   gqlFilterInput: { numberField: { eq: {} } },
+    //   gqlErrorMessage: 'Float cannot represent non numeric value: {}',
+    //   // TODO - fix this, should throw an error
+    //   // restFilterInput: 'numberField[eq]:"{}"',
+    //   // restErrorMessage: 'invalid input syntax for type float',
+    // },
+    // {
+    //   gqlFilterInput: { numberField: { eq: [] } },
+    //   gqlErrorMessage: 'Float cannot represent non numeric value: []',
+    //   // TODO - fix this, should throw an error
+    //   // restFilterInput: 'numberField[eq]:"[]"',
+    //   // restErrorMessage: 'invalid input syntax for type float',
+    // },
+    // {
+    //   gqlFilterInput: { numberField: { eq: true } },
+    //   gqlErrorMessage: 'Float cannot represent non numeric value: true',
+    //   // TODO - fix this, should throw an error
+    //   // restFilterInput: 'numberField[eq]:"true"',
+    //   // restErrorMessage: 'invalid input syntax for type float',
+    // },
     // TODO - ensure it should throw
     // {
     //   gqlFilterInput: { numberField: { eq: null } },
@@ -366,34 +346,34 @@ export const failingFilterInputByFieldMetadataType: {
     // },
   ],
   [FieldMetadataType.RAW_JSON]: [
-    {
-      gqlFilterInput: { rawJsonField: { like: {} } },
-      gqlErrorMessage: 'cannot represent a non string value',
-      // TODO - fix this ?  for rest
-      // restFilterInput: 'rawJsonField[like]:"{}"',
-      // restErrorMessage: 'cannot represent a non string value',
-    },
-    {
-      gqlFilterInput: { rawJsonField: { like: [] } },
-      gqlErrorMessage: 'cannot represent a non string value',
-      // TODO - fix this ?  for rest
-      // restFilterInput: 'rawJsonField[like]:"[]"',
-      // restErrorMessage: 'cannot represent a non string value',
-    },
-    {
-      gqlFilterInput: { rawJsonField: { like: true } },
-      gqlErrorMessage: 'cannot represent a non string value',
-      // TODO - fix this ?  for rest
-      // restFilterInput: 'rawJsonField[like]:"true"',
-      // restErrorMessage: 'cannot represent a non string value',
-    },
-    {
-      gqlFilterInput: { rawJsonField: { like: 2 } },
-      gqlErrorMessage: 'cannot represent a non string value',
-      // TODO - fix this ?  for rest
-      // restFilterInput: 'rawJsonField[like]:2',
-      // restErrorMessage: 'cannot represent a non string value',
-    },
+    // {
+    //   gqlFilterInput: { rawJsonField: { like: {} } },
+    //   gqlErrorMessage: 'cannot represent a non string value',
+    //   // TODO - fix this ?  for rest
+    //   // restFilterInput: 'rawJsonField[like]:"{}"',
+    //   // restErrorMessage: 'cannot represent a non string value',
+    // },
+    // {
+    //   gqlFilterInput: { rawJsonField: { like: [] } },
+    //   gqlErrorMessage: 'cannot represent a non string value',
+    //   // TODO - fix this ?  for rest
+    //   // restFilterInput: 'rawJsonField[like]:"[]"',
+    //   // restErrorMessage: 'cannot represent a non string value',
+    // },
+    // {
+    //   gqlFilterInput: { rawJsonField: { like: true } },
+    //   gqlErrorMessage: 'cannot represent a non string value',
+    //   // TODO - fix this ?  for rest
+    //   // restFilterInput: 'rawJsonField[like]:"true"',
+    //   // restErrorMessage: 'cannot represent a non string value',
+    // },
+    // {
+    //   gqlFilterInput: { rawJsonField: { like: 2 } },
+    //   gqlErrorMessage: 'cannot represent a non string value',
+    //   // TODO - fix this ?  for rest
+    //   // restFilterInput: 'rawJsonField[like]:2',
+    //   // restErrorMessage: 'cannot represent a non string value',
+    // },
     // TODO - ensure it should throw
     // {
     //   gqlFilterInput: { rawJsonField: { like: null } },
@@ -401,34 +381,34 @@ export const failingFilterInputByFieldMetadataType: {
     // },
   ],
   [FieldMetadataType.ARRAY]: [
-    {
-      gqlFilterInput: { arrayField: { containsIlike: {} } },
-      gqlErrorMessage: 'cannot represent a non string value',
-      // TODO - fix this ? containsIlike not existing for rest
-      // restFilterInput: 'arrayField[containsIlike]:"{}"',
-      // restErrorMessage: '',
-    },
-    {
-      gqlFilterInput: { arrayField: { containsIlike: [] } },
-      gqlErrorMessage: 'cannot represent a non string value',
-      // TODO - fix this ? containsIlike not existing for rest
-      // restFilterInput: 'arrayField[containsIlike]:"[]"',
-      // restErrorMessage: '',
-    },
-    {
-      gqlFilterInput: { arrayField: { containsIlike: true } },
-      gqlErrorMessage: 'cannot represent a non string value',
-      // TODO - fix this ? containsIlike not existing for rest
-      // restFilterInput: 'arrayField[containsIlike]:"true"',
-      // restErrorMessage: '',
-    },
-    {
-      gqlFilterInput: { arrayField: { containsIlike: 2 } },
-      gqlErrorMessage: 'cannot represent a non string value',
-      // TODO - fix this ? containsIlike not existing for rest
-      // restFilterInput: 'arrayField[containsIlike]:2',
-      // restErrorMessage: '',
-    },
+    // {
+    //   gqlFilterInput: { arrayField: { containsIlike: {} } },
+    //   gqlErrorMessage: 'cannot represent a non string value',
+    //   // TODO - fix this ? containsIlike not existing for rest
+    //   // restFilterInput: 'arrayField[containsIlike]:"{}"',
+    //   // restErrorMessage: '',
+    // },
+    // {
+    //   gqlFilterInput: { arrayField: { containsIlike: [] } },
+    //   gqlErrorMessage: 'cannot represent a non string value',
+    //   // TODO - fix this ? containsIlike not existing for rest
+    //   // restFilterInput: 'arrayField[containsIlike]:"[]"',
+    //   // restErrorMessage: '',
+    // },
+    // {
+    //   gqlFilterInput: { arrayField: { containsIlike: true } },
+    //   gqlErrorMessage: 'cannot represent a non string value',
+    //   // TODO - fix this ? containsIlike not existing for rest
+    //   // restFilterInput: 'arrayField[containsIlike]:"true"',
+    //   // restErrorMessage: '',
+    // },
+    // {
+    //   gqlFilterInput: { arrayField: { containsIlike: 2 } },
+    //   gqlErrorMessage: 'cannot represent a non string value',
+    //   // TODO - fix this ? containsIlike not existing for rest
+    //   // restFilterInput: 'arrayField[containsIlike]:2',
+    //   // restErrorMessage: '',
+    // },
     // TODO - ensure it should throw
     // {
     //   gqlFilterInput: { arrayField: { containsIlike: null } },

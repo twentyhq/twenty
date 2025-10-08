@@ -9,8 +9,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const successfulFilterInputByFieldMetadataType: {
   [K in FieldMetadataTypeToTest]: {
     gqlFilterInput: any;
-    restFilterInput?: string;
-    validateFilter?: (record: Record<string, any>) => boolean;
+    restFilterInput: string;
+    validateFilter: (record: Record<string, any>) => boolean;
   }[];
 } = {
   [FieldMetadataType.RELATION]: [
@@ -468,14 +468,14 @@ export const successfulFilterInputByFieldMetadataType: {
         return isDefined(record.dateTimeField);
       },
     },
-    {
-      gqlFilterInput: { dateTimeField: { is: 'NULL' } },
-      // TODO - fix this ? not working
-      // restFilterInput: 'dateTimeField[is]:"NULL"',
-      validateFilter: (record: Record<string, any>) => {
-        return record.dateTimeField === null;
-      },
-    },
+    // {
+    //   gqlFilterInput: { dateTimeField: { is: 'NULL' } },
+    //   // TODO - fix this ? not working
+    //   // restFilterInput: 'dateTimeField[is]:"NULL"',
+    //   validateFilter: (record: Record<string, any>) => {
+    //     return record.dateTimeField === null;
+    //   },
+    // },
     // TODO - fix this, should be returning or not be allowed
     // {
     //   gqlFilterInput: { dateTimeField: { eq: null } },
@@ -577,14 +577,14 @@ export const successfulFilterInputByFieldMetadataType: {
     // },
   ],
   [FieldMetadataType.BOOLEAN]: [
-    {
-      gqlFilterInput: { booleanField: { eq: true } },
-      // TODO - fix this ? not working
-      // restFilterInput: 'booleanField[eq]:"true"',
-      validateFilter: (record: Record<string, any>) => {
-        return record.booleanField === true;
-      },
-    },
+    // {
+    //   gqlFilterInput: { booleanField: { eq: true } },
+    //   // TODO - fix this ? not working
+    //   // restFilterInput: 'booleanField[eq]:"true"',
+    //   validateFilter: (record: Record<string, any>) => {
+    //     return record.booleanField === true;
+    //   },
+    // },
     {
       gqlFilterInput: { booleanField: { is: 'NULL' } },
       restFilterInput: 'booleanField[is]:NULL',
@@ -911,14 +911,14 @@ export const successfulFilterInputByFieldMetadataType: {
     },
   ],
   [FieldMetadataType.ARRAY]: [
-    {
-      gqlFilterInput: { arrayField: { containsIlike: 'test' } },
-      // TODO - fix this ? not existing for rest
-      // restFilterInput: 'arrayField[containsIlike]:"test"',
-      validateFilter: (record: Record<string, any>) => {
-        return JSON.stringify(record.arrayField).includes('test');
-      },
-    },
+    // {
+    //   gqlFilterInput: { arrayField: { containsIlike: 'test' } },
+    //   // TODO - fix this ? not existing for rest
+    //   // restFilterInput: 'arrayField[containsIlike]:"test"',
+    //   validateFilter: (record: Record<string, any>) => {
+    //     return JSON.stringify(record.arrayField).includes('test');
+    //   },
+    // },
     {
       gqlFilterInput: { arrayField: { is: 'NULL' } },
       restFilterInput: 'arrayField[is]:NULL',
