@@ -17,8 +17,9 @@ export const testGqlSuccessfulScenario = async (
 
   const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
-  const records: Record<string, any>[] =
-    response.body.data.testObjects.edges.map((edge: any) => edge.node);
+  const records: Record<string, any>[] = response.body.data[
+    objectMetadataPluralName
+  ].edges.map((edge: any) => edge.node);
 
   expect(response.body.errors).toBeUndefined();
 

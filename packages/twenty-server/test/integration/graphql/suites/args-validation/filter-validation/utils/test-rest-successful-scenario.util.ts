@@ -11,7 +11,7 @@ export const testRestSuccessfulScenario = async (
     path: `/${objectMetadataPluralName}?filter=${encodedFilter}`,
   });
 
-  const records = response.body.data.testObjects;
+  const records = response.body.data[objectMetadataPluralName];
 
   expect(response.body.errors).toBeUndefined();
 

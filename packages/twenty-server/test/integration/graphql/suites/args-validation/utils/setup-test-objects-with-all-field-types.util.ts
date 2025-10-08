@@ -7,10 +7,12 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
-const TEST_OBJECT_METADATA_NAME_SINGULAR = 'testObject';
-const TEST_OBJECT_METADATA_NAME_PLURAL = 'testObjects';
-const TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR = 'targetTestObject';
-const TEST_TARGET_OBJECT_METADATA_NAME_PLURAL = 'targetTestObjects';
+const TEST_OBJECT_METADATA_NAME_SINGULAR = 'apiFilterValidationTestObject';
+const TEST_OBJECT_METADATA_NAME_PLURAL = 'apiFilterValidationTestObjects';
+const TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR =
+  'apiFilterValidationTargetTestObject';
+const TEST_TARGET_OBJECT_METADATA_NAME_PLURAL =
+  'apiFilterValidationTargetTestObjects';
 
 export const TEST_TARGET_OBJECT_RECORD_ID =
   '20202020-a21e-4ec2-873b-de4264d89025';
