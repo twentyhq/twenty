@@ -81,7 +81,7 @@ export class MigrateWorkflowStepFilterOperandValueCommand extends ActiveOrSuspen
       for (const step of steps ?? []) {
         if (isWorkflowFilterAction(step)) {
           for (const filter of step.settings.input.stepFilters ?? []) {
-            if (isString(filter.operand)) {
+            if (isDefined(filter.operand) && isString(filter.operand)) {
               const newOperand = convertViewFilterOperandToCoreOperand(
                 filter.operand,
               );
@@ -163,9 +163,9 @@ export class MigrateWorkflowStepFilterOperandValueCommand extends ActiveOrSuspen
 
       let hasChanged = false;
 
-      for (const stateDetails of state.flow.steps) {
-        if (isWorkflowFindRecordsAction(stateDetails)) {
-          const filter = stateDetails.settings.input.filter;
+      for (const step of state.flow.steps) {
+        if (isWorkflowFindRecordsAction(step)) {
+          const filter = step.settings.input.filter;
 
           for (const recordFilter of filter?.recordFilters ?? []) {
             if (isString(recordFilter.operand)) {
@@ -180,8 +180,8 @@ export class MigrateWorkflowStepFilterOperandValueCommand extends ActiveOrSuspen
             }
           }
         }
-        if (isWorkflowFilterAction(stateDetails)) {
-          for (const filter of stateDetails.settings.input.stepFilters ?? []) {
+        if (isWorkflowFilterAction(step)) {
+          for (const filter of step.settings.input.stepFilters ?? []) {
             if (isString(filter.operand)) {
               const newOperand = convertViewFilterOperandToCoreOperand(
                 filter.operand,
