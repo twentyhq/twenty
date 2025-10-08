@@ -23,4 +23,3 @@ export class CreateViewFilterGroupInput {
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
 }
-

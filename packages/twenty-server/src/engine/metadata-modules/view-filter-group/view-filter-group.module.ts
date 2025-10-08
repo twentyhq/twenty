@@ -8,13 +8,9 @@ import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-
 import { ViewCoreModule } from 'src/engine/metadata-modules/view/view-core.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ViewFilterGroupEntity]),
-    ViewCoreModule,
-  ],
+  imports: [TypeOrmModule.forFeature([ViewFilterGroupEntity]), ViewCoreModule],
   controllers: [ViewFilterGroupController],
   providers: [ViewFilterGroupService, ViewFilterGroupResolver],
   exports: [ViewFilterGroupService],
 })
 export class ViewFilterGroupModule {}
-

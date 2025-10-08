@@ -6,11 +6,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import {
-    ViewFilterGroupException,
-    ViewFilterGroupExceptionCode,
-    ViewFilterGroupExceptionMessageKey,
-    generateViewFilterGroupExceptionMessage,
-    generateViewFilterGroupUserFriendlyExceptionMessage,
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
+  ViewFilterGroupExceptionMessageKey,
+  generateViewFilterGroupExceptionMessage,
+  generateViewFilterGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
@@ -198,4 +198,3 @@ export class ViewFilterGroupService {
     return true;
   }
 }
-

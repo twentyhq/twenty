@@ -87,4 +87,3 @@ export class ViewFilterGroupResolver {
     return isDefined(deletedViewFilterGroup);
   }
 }
-

@@ -1,7 +1,7 @@
 import {
-    TEST_FIELD_METADATA_1_ID,
-    TEST_OBJECT_METADATA_1_ID,
-    TEST_VIEW_1_ID,
+  TEST_FIELD_METADATA_1_ID,
+  TEST_OBJECT_METADATA_1_ID,
+  TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';

@@ -1,14 +1,14 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Patch,
-    Post,
-    Query,
-    UseFilters,
-    UseGuards,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -20,11 +20,11 @@ import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-fil
 import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
 import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import {
-    generateViewFilterGroupExceptionMessage,
-    generateViewFilterGroupUserFriendlyExceptionMessage,
-    ViewFilterGroupException,
-    ViewFilterGroupExceptionCode,
-    ViewFilterGroupExceptionMessageKey,
+  generateViewFilterGroupExceptionMessage,
+  generateViewFilterGroupUserFriendlyExceptionMessage,
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
+  ViewFilterGroupExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
@@ -119,4 +119,3 @@ export class ViewFilterGroupController {
 
   // TODO: the destroy endpoint will be implemented when we settle on a strategy
 }
-
