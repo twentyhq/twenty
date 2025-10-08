@@ -1,9 +1,7 @@
-import { DateFormat } from '@/localization/constants/DateFormat';
-import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { computeAggregateNumericValueForGraph } from '@/page-layout/widgets/graph/utils/computeAggregateNumericValueForGraph';
 
 type GroupByRawResult = {
   groupByDimensionValues: unknown[];
@@ -18,28 +16,23 @@ type ComputeAggregateFromGroupByResultParams = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
-export const computeAggregateFromGroupByResult = ({
+export const computeAggregateValueFromGroupByResult = ({
   rawResult,
   aggregateField,
   aggregateOperation,
   aggregateOperationFromRawResult,
   objectMetadataItem,
-}: ComputeAggregateFromGroupByResultParams) => {
+}: ComputeAggregateFromGroupByResultParams): number => {
   const transformedData = {
     [aggregateField.name]: {
       [aggregateOperation]: rawResult[aggregateOperationFromRawResult],
     },
   };
 
-  return computeAggregateValueAndLabel({
+  return computeAggregateNumericValueForGraph({
     data: transformedData,
     objectMetadataItem,
     fieldMetadataId: aggregateField.id,
     aggregateOperation: aggregateOperation,
-    dateFormat: DateFormat.DAY_FIRST,
-    timeFormat: TimeFormat.HOUR_24,
-    timeZone: 'UTC',
-    localeCatalog: {},
-    formatShortNumberFn: (value: number) => value / 1_000_000,
   });
 };

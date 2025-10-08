@@ -6,7 +6,7 @@ import { GRAPH_DEFAULT_AGGREGATE_VALUE } from '@/page-layout/widgets/graph/const
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
-import { computeAggregateFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateFromGroupByResult';
+import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -62,7 +62,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       fieldMetadata: groupByFieldY,
     });
 
-    const aggregate = computeAggregateFromGroupByResult({
+    const aggregate = computeAggregateValueFromGroupByResult({
       rawResult: result,
       aggregateField,
       aggregateOperation:

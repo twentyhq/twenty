@@ -2,15 +2,13 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { GRAPH_DEFAULT_AGGREGATE_VALUE } from '@/page-layout/widgets/graph/constants/GraphDefaultAggregateValue.constant';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
-import { computeAggregateFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateFromGroupByResult';
+import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
-import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -56,7 +54,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
         })
       : '';
 
-    const aggregate = computeAggregateFromGroupByResult({
+    const aggregateValue = computeAggregateValueFromGroupByResult({
       rawResult: result,
       aggregateField,
       aggregateOperation:
@@ -64,10 +62,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       aggregateOperationFromRawResult: aggregateOperation,
       objectMetadataItem,
     });
-
-    const aggregateValue = isNumber(aggregate.value)
-      ? aggregate.value
-      : GRAPH_DEFAULT_AGGREGATE_VALUE;
 
     return {
       [indexByKey]: xValue,
