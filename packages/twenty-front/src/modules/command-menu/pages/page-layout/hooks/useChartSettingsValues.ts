@@ -118,8 +118,8 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X:
         return groupBySubFieldNameXLabel ?? groupByFieldX?.label;
       case CHART_CONFIGURATION_SETTING_IDS.COLORS:
-        return isDefined(configuration.color) && 'color' in configuration
-          ? capitalize(configuration.color)
+        return 'color' in configuration && isDefined(configuration.color)
+          ? capitalize(configuration.color as string)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y: {
         const hasAggregateLabel = isDefined(aggregateField?.label);

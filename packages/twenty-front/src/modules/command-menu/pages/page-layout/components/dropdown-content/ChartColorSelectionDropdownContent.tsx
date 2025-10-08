@@ -48,6 +48,10 @@ export const ChartColorSelectionDropdownContent = () => {
 
   const configuration = widgetInEditMode.configuration as ChartConfiguration;
 
+  if (!('color' in configuration)) {
+    return null;
+  }
+
   const currentColor = configuration.color;
 
   const colorOptions = MAIN_COLOR_NAMES.map((colorName) => ({
