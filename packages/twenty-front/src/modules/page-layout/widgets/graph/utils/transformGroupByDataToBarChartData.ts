@@ -1,11 +1,11 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToBarChartData';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToBarChartData';
 import { isDefined } from 'twenty-shared/utils';
@@ -71,13 +71,10 @@ export const transformGroupByDataToBarChartData = ({
     return EMPTY_BAR_CHART_RESULT;
   }
 
-  const isGroupByFieldXComposite = isCompositeFieldType(groupByFieldX.type);
-  const groupBySubFieldNameX = configuration.groupBySubFieldNameX;
-
-  const indexByKey =
-    isGroupByFieldXComposite && isDefined(groupBySubFieldNameX)
-      ? `${groupByFieldX.name}.${groupBySubFieldNameX}`
-      : groupByFieldX.name;
+  const indexByKey = getFieldKey({
+    field: groupByFieldX,
+    subFieldName: configuration.groupBySubFieldNameX,
+  });
 
   const queryName = getGroupByQueryName(objectMetadataItem);
   const queryResults = groupByData[queryName];

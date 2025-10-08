@@ -1,6 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
@@ -9,6 +8,7 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
+import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -36,13 +36,10 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   aggregateOperation,
   objectMetadataItem,
 }: TransformOneDimensionalGroupByToBarChartDataParams): TransformOneDimensionalGroupByToBarChartDataResult => {
-  const isGroupByFieldXComposite = isCompositeFieldType(groupByFieldX.type);
-  const groupBySubFieldNameX = configuration.groupBySubFieldNameX;
-
-  const indexByKey =
-    isGroupByFieldXComposite && isDefined(groupBySubFieldNameX)
-      ? `${groupByFieldX.name}.${groupBySubFieldNameX}`
-      : groupByFieldX.name;
+  const indexByKey = getFieldKey({
+    field: groupByFieldX,
+    subFieldName: configuration.groupBySubFieldNameX,
+  });
 
   const data: BarChartDataItem[] = rawResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
