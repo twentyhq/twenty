@@ -21,11 +21,9 @@ const _mapOrderByToDirection = (orderByEnum: GraphOrderBy) => {
 export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
   objectMetadataItem,
   barChartConfiguration,
-  viewId,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   barChartConfiguration: BarChartConfiguration;
-  viewId?: string;
 }) => {
   const groupByFieldX = objectMetadataItem.fields.find(
     (field) => field.id === barChartConfiguration.groupByFieldMetadataIdX,
@@ -82,10 +80,7 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
 
   return {
     groupBy,
-    ...(barChartConfiguration.filter && {
-      filter: barChartConfiguration.filter,
-    }),
+    // TODO: Add filters
     ...(orderBy.length > 0 && { orderBy }),
-    ...(isDefined(viewId) && { viewId }),
   };
 };
