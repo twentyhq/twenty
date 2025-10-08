@@ -1,8 +1,9 @@
-import { v4 } from 'uuid';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
+import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
 
 export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
   createViewFieldInput: rawCreateViewFieldInput,
@@ -30,7 +31,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     deletedAt: null,
     universalIdentifier: viewFieldId,
     isVisible: createViewFieldInput.isVisible ?? true,
-    size: createViewFieldInput.size ?? 0,
+    size: createViewFieldInput.size ?? DEFAULT_VIEW_FIELD_SIZE,
     position: createViewFieldInput.position ?? 0,
     aggregateOperation: createViewFieldInput.aggregateOperation ?? null,
   };
