@@ -41,7 +41,9 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
     );
   }
 
-  const groupBy: Array<Record<string, boolean | Record<string, boolean>>> = [];
+  const groupBy: Array<
+    Record<string, boolean | Record<string, boolean | string>>
+  > = [];
 
   groupBy.push(
     buildGroupByFieldObject({

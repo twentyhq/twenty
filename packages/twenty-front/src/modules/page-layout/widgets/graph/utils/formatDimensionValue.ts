@@ -1,15 +1,20 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
+import { type ObjectRecordGroupByDateGranularity } from '@/page-layout/widgets/graph/types/ObjectRecordGroupByDateGranularity';
+import { formatDateByGranularity } from '@/page-layout/widgets/graph/utils/formatDateByGranularity';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type FormatDimensionValueParams = {
   value: unknown;
   fieldMetadata: FieldMetadataItem;
+  dateGranularity?: ObjectRecordGroupByDateGranularity;
 };
 
 export const formatDimensionValue = ({
   value,
   fieldMetadata,
+  dateGranularity = GRAPH_DEFAULT_DATE_GRANULARITY as ObjectRecordGroupByDateGranularity,
 }: FormatDimensionValueParams): string => {
   if (!isDefined(value)) {
     return '';
@@ -43,7 +48,8 @@ export const formatDimensionValue = ({
 
     case FieldMetadataType.DATE:
     case FieldMetadataType.DATE_TIME: {
-      return new Date(String(value)).toLocaleString();
+      // TODO: granularity will be passed from the graph configuration when implemented
+      return formatDateByGranularity(new Date(String(value)), dateGranularity);
     }
 
     default:

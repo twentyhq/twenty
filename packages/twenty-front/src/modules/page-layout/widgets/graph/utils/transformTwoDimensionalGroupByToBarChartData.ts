@@ -8,7 +8,6 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
-import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -71,9 +70,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       objectMetadataItem,
     });
 
-    const aggregateValue = isNumber(aggregate.value)
-      ? aggregate.value
-      : GRAPH_DEFAULT_AGGREGATE_VALUE;
+    const aggregateValue = aggregate ?? GRAPH_DEFAULT_AGGREGATE_VALUE;
 
     yValues.add(yValue);
 
