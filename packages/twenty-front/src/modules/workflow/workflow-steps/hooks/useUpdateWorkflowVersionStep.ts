@@ -6,14 +6,16 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { UPDATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/updateWorkflowVersionStep';
-import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import {
+  type WorkflowVersion,
+  type WorkflowStep,
+} from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type UpdateWorkflowVersionStepInput,
   type UpdateWorkflowVersionStepMutation,
   type UpdateWorkflowVersionStepMutationVariables,
-  type WorkflowAction,
 } from '~/generated-metadata/graphql';
 
 export const useUpdateWorkflowVersionStep = () => {
@@ -52,7 +54,7 @@ export const useUpdateWorkflowVersionStep = () => {
 
     const newCachedRecord = {
       ...cachedRecord,
-      steps: (cachedRecord.steps || []).map((step: WorkflowAction) => {
+      steps: (cachedRecord.steps || []).map((step: WorkflowStep) => {
         if (step.id === updatedStep.id) {
           return updatedStep;
         }
