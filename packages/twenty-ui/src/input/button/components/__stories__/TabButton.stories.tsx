@@ -8,13 +8,13 @@ import {
   IconSettings,
   IconUser,
 } from '@ui/display';
+import { TabButton } from '@ui/input/button/components/TabButton/TabButton';
 import {
   CatalogDecorator,
   type CatalogStory,
   ComponentWithRouterDecorator,
   RecoilRootDecorator,
 } from '@ui/testing';
-import { TabButton } from '../TabButton';
 
 // Mimic the TabList container styling for proper positioning
 const StyledTabContainer = styled.div`
