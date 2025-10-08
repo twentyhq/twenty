@@ -16,7 +16,7 @@ import { phonesSchema } from '@/object-record/record-field/ui/types/guards/isFie
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { css } from '@emotion/react';
 import { useContext } from 'react';
-import { DEFAULT_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
+import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -85,7 +85,7 @@ export const PhonesFieldInput = () => {
 
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
-    DEFAULT_MAX_NUMBER_OF_VALUES;
+    MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
   const handlePhonesChange = (
     updatedPhones: {

@@ -7,7 +7,7 @@ import { emailSchema } from '@/object-record/record-field/ui/validation-schemas/
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
-import { DEFAULT_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
+import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -81,7 +81,7 @@ export const EmailsFieldInput = () => {
 
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
-    DEFAULT_MAX_NUMBER_OF_VALUES;
+    MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
   return (
     <MultiItemFieldInput

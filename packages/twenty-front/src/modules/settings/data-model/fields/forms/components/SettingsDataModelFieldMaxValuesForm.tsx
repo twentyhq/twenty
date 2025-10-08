@@ -5,8 +5,8 @@ import { SettingsOptionCardContentCounter } from '@/settings/components/Settings
 import { type SettingsDataModelFieldMaxValuesFormValues } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
 import { useLingui } from '@lingui/react/macro';
 import {
-  DEFAULT_MAX_NUMBER_OF_VALUES,
-  MIN_MAX_NUMBER_OF_VALUES,
+  MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES,
+  MULTI_ITEM_FIELD_MIN_MAX_VALUES,
 } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
@@ -67,14 +67,16 @@ export const SettingsDataModelFieldMaxValuesForm = ({
       defaultValue={{
         ...existingSettings,
         maxNumberOfValues:
-          existingSettings.maxNumberOfValues ?? DEFAULT_MAX_NUMBER_OF_VALUES,
+          existingSettings.maxNumberOfValues ??
+            MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES,
       }}
       render={({ field: { value, onChange } }) => {
         const currentSettings =
           (value as FieldMetadataMultiItemSettings | undefined) ?? {};
 
         const maxNumberOfValues =
-          currentSettings.maxNumberOfValues ?? DEFAULT_MAX_NUMBER_OF_VALUES;
+          currentSettings.maxNumberOfValues ??
+          MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
         return (
           <SettingsOptionCardContentCounter
@@ -82,7 +84,7 @@ export const SettingsDataModelFieldMaxValuesForm = ({
             title={title}
             description={description}
             disabled={disabled}
-            minValue={MIN_MAX_NUMBER_OF_VALUES}
+            minValue={MULTI_ITEM_FIELD_MIN_MAX_VALUES}
             value={maxNumberOfValues}
             onChange={(newValue) =>
               onChange({

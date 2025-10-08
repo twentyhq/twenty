@@ -17,7 +17,7 @@ import {
   type AllowedAddressSubField,
   FieldMetadataType,
 } from 'twenty-shared/types';
-import { MIN_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
+import { MULTI_ITEM_FIELD_MIN_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
@@ -77,7 +77,7 @@ class AddressSettingsValidation {
 class MultipleValuesSettingsValidation {
   @IsOptional()
   @IsInt()
-  @Min(MIN_MAX_NUMBER_OF_VALUES)
+  @Min(MULTI_ITEM_FIELD_MIN_MAX_VALUES)
   maxNumberOfValues?: number;
 }
 @Injectable()

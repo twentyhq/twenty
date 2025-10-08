@@ -6,7 +6,7 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { linksSchema } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useContext, useMemo } from 'react';
-import { DEFAULT_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
+import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { absoluteUrlSchema } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
@@ -64,7 +64,7 @@ export const LinksFieldInput = () => {
 
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
-    DEFAULT_MAX_NUMBER_OF_VALUES;
+    MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
   return (
     <MultiItemFieldInput
