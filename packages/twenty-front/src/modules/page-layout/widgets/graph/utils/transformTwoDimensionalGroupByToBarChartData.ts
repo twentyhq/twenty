@@ -1,7 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { GRAPH_DEFAULT_AGGREGATE_VALUE } from '@/page-layout/widgets/graph/constants/GraphDefaultAggregateValue.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
@@ -58,7 +57,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       fieldMetadata: groupByFieldY,
     });
 
-    const aggregate = computeAggregateValueFromGroupByResult({
+    const aggregateValue = computeAggregateValueFromGroupByResult({
       rawResult: result,
       aggregateField,
       aggregateOperation:
@@ -66,8 +65,6 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       aggregateOperationFromRawResult: aggregateOperation,
       objectMetadataItem,
     });
-
-    const aggregateValue = aggregate ?? GRAPH_DEFAULT_AGGREGATE_VALUE;
 
     yValues.add(yValue);
 
