@@ -1,8 +1,8 @@
 import { type FromTo } from 'twenty-shared/types';
 
+import { type FlatViewPropertiesToCompare } from 'src/engine/metadata-modules/flat-view/types/flat-view-properties-to-compare.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { type FlatViewPropertiesToCompare } from 'src/engine/metadata-modules/view/flat-view/types/flat-view-properties-to-compare.type';
-import { type FlatView } from 'src/engine/metadata-modules/view/flat-view/types/flat-view.type';
 
 export type FlatViewPropertyUpdate<P extends FlatViewPropertiesToCompare> = {
   property: P;

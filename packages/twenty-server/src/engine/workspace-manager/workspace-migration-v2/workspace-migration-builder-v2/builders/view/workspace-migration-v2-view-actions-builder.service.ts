@@ -6,8 +6,8 @@ import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { FlatView } from 'src/engine/metadata-modules/view/flat-view/types/flat-view.type';
-import { compareTwoFlatView } from 'src/engine/metadata-modules/view/flat-view/utils/compare-two-flat-view.util';
+import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { compareTwoFlatView } from 'src/engine/metadata-modules/flat-view/utils/compare-two-flat-view.util';
 import {
   FlatEntityUpdateValidationArgs,
   FlatEntityValidationArgs,

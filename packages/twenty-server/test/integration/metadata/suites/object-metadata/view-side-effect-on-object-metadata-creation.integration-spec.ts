@@ -7,7 +7,7 @@ import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/
 import { findCoreViews } from 'test/integration/metadata/suites/view/utils/find-core-views.util';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatView } from 'src/engine/metadata-modules/view/flat-view/types/flat-view.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
 describe('View side effect on object creation', () => {
   let createdObjectMetadataId: string | undefined = undefined;
