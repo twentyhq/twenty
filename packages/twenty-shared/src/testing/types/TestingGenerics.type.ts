@@ -51,7 +51,9 @@ type BasicTests = [
 
   Expect<HasAllProperties<{ a: string; b: number }, { a: string }>>,
   Expect<HasAllProperties<{ a: string; b: number }, { a: string; b: number }>>,
-  Expect<HasAllProperties<{ a?: string; b: number }, { a?: string; b: number }>>,
+  Expect<
+    HasAllProperties<{ a?: string; b: number }, { a?: string; b: number }>
+  >,
 
   Expect<HasAllProperties<{ a: never; b: never }, { a: never }>>,
 

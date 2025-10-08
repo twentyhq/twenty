@@ -8,7 +8,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
-import { GraphqlQueryGroupByResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-group-by-resolver.service';
+import { GraphqlQueryGroupByResolverService } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/graphql-query-group-by-resolver.service';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()

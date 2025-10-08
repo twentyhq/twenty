@@ -99,14 +99,9 @@ export abstract class WorkspaceFlatMapCacheService<
   }: {
     workspaceId: string;
   }): Promise<void> {
-    const { flatMapKey, hashKey } = this.buildRemoteCacheKeys({ workspaceId });
-
-    await this.cacheStorageService.del(flatMapKey);
-    await this.cacheStorageService.del(hashKey);
-
-    this.localCacheFlatMaps.delete(workspaceId);
-    this.localCacheHashes.delete(workspaceId);
-
+    await this.flushCache({
+      workspaceId,
+    });
     await this.recomputeAndStoreInCache({ workspaceId });
   }
 
@@ -184,5 +179,15 @@ export abstract class WorkspaceFlatMapCacheService<
     const { flatMapKey } = this.buildRemoteCacheKeys({ workspaceId });
 
     await this.cacheStorageService.set(flatMapKey, flatMap);
+  }
+
+  async flushCache({ workspaceId }: { workspaceId: string }): Promise<void> {
+    const { flatMapKey, hashKey } = this.buildRemoteCacheKeys({ workspaceId });
+
+    await this.cacheStorageService.del(flatMapKey);
+    await this.cacheStorageService.del(hashKey);
+
+    this.localCacheFlatMaps.delete(workspaceId);
+    this.localCacheHashes.delete(workspaceId);
   }
 }

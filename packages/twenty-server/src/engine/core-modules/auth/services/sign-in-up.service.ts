@@ -30,7 +30,6 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -38,6 +37,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -355,6 +355,36 @@ export class SignInUpService {
     return { canImpersonate: false, canAccessFullAdminPanel: false };
   }
 
+  private isWorkspaceCreationLimitedToServerAdmins(): boolean {
+    return this.twentyConfigService.get(
+      'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
+    );
+  }
+
+  private async isFirstWorkspaceForUser(userId: string): Promise<boolean> {
+    const count = await this.userWorkspaceService.countUserWorkspaces(userId);
+
+    return count === 0;
+  }
+
+  async checkWorkspaceCreationIsAllowedOrThrow(
+    currentUser: User,
+  ): Promise<void> {
+    if (!this.isWorkspaceCreationLimitedToServerAdmins()) return;
+
+    if (await this.isFirstWorkspaceForUser(currentUser.id)) return;
+
+    if (!currentUser.canAccessFullAdminPanel) {
+      throw new AuthException(
+        'Workspace creation is restricted to admins',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`Workspace creation is restricted to admins`,
+        },
+      );
+    }
+  }
+
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
   ) {
@@ -435,6 +465,15 @@ export class SignInUpService {
     newUserParams: SignInUpNewUserPayload,
     authParams: AuthProviderWithPasswordType['authParams'],
   ) {
+    await this.userService.findUserByEmailOrThrow(
+      newUserParams.email,
+      new AuthException(
+        'User already exist',
+        AuthExceptionCode.USER_ALREADY_EXIST,
+        { userFriendlyMessage: t`User already exists` },
+      ),
+    );
+
     return this.saveNewUser(
       await this.computePartialUserFromUserPayload(newUserParams, authParams),
       await this.setDefaultImpersonateAndAccessFullAdminPanel(),

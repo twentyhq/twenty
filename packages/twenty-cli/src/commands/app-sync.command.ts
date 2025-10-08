@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { ApiService } from '../services/api.service';
-import { syncApp } from '../utils/app-sync';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
+import { loadManifest } from '../utils/app-manifest-loader';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
@@ -14,7 +14,13 @@ export class AppSyncCommand {
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
 
-      const result = await syncApp(appPath, this.apiService);
+      const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
+
+      const result = await this.apiService.syncApplication({
+        manifest,
+        packageJson,
+        yarnLock,
+      });
 
       if (!result.success) {
         console.error(chalk.red('❌ Sync failed:'), result.error);

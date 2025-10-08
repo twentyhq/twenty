@@ -1,5 +1,6 @@
 import {
   type AllowedAddressSubField,
+  type FieldMetadataMultiItemSettings,
   type FieldMetadataType,
   type IsExactly,
 } from 'twenty-shared/types';
@@ -62,6 +63,10 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
   [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
+  [FieldMetadataType.PHONES]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.EMAILS]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.LINKS]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.ARRAY]: FieldMetadataMultiItemSettings | null;
 };
 
 export type AllFieldMetadataSettings =

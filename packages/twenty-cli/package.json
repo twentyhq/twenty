@@ -1,6 +1,6 @@
 {
   "name": "twenty-cli",
-  "version": "0.1.0",
+  "version": "0.1.2-alpha",
   "description": "Command-line interface for Twenty application development",
   "main": "dist/cli.js",
   "bin": {
@@ -43,6 +43,7 @@
     "typescript": "^5.3.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": "^24.5.0",
+    "yarn": "^4.0.2"
   }
 }

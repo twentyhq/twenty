@@ -264,7 +264,7 @@ export class WorkspaceSyncMetadataService {
       );
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId: context.workspaceId,
-        flatEntities: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
       });
     }
 

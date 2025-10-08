@@ -1,8 +1,13 @@
 name: CD deploy main
+
+permissions:
+  contents: read
+
 on:
   push:
     branches:
       - main
+
 jobs:
   deploy-main:
     timeout-minutes: 3

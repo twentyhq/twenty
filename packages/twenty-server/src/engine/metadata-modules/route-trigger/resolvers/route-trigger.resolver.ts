@@ -63,7 +63,7 @@ export class RouteTriggerResolver {
   ) {
     try {
       return await this.routeV2Service.destroyOne({
-        destroyRouteInput: input,
+        destroyRouteTriggerInput: input,
         workspaceId,
       });
     } catch (error) {

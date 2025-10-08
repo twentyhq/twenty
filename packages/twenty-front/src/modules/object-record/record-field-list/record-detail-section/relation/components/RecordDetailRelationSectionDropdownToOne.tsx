@@ -11,7 +11,7 @@ import { SingleRecordPicker } from '@/object-record/record-picker/single-record-
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -77,13 +77,14 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
   const { onSubmit } = useContext(FieldInputEventContext);
 
   const handleRelationPickerEntitySelected = (
-    selectedRelationEntity?: SingleRecordPickerRecord,
+    selectedMorphItem?: RecordPickerPickableMorphItem,
   ) => {
     closeDropdown(dropdownId);
 
-    if (!selectedRelationEntity?.id || !relationFieldMetadataItem?.name) return;
+    if (!selectedMorphItem?.recordId || !relationFieldMetadataItem?.name)
+      return;
 
-    onSubmit?.({ newValue: selectedRelationEntity.record });
+    onSubmit?.({ newValue: { id: selectedMorphItem.recordId } });
   };
 
   const { createNewRecordAndOpenRightDrawer } =
@@ -133,8 +134,8 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
           focusId={dropdownId}
           componentInstanceId={dropdownId}
           EmptyIcon={IconForbid}
-          onRecordSelected={handleRelationPickerEntitySelected}
-          objectNameSingular={relationObjectMetadataNameSingular}
+          onMorphItemSelected={handleRelationPickerEntitySelected}
+          objectNameSingulars={[relationObjectMetadataNameSingular]}
           recordPickerInstanceId={dropdownId}
           onCancel={() => closeDropdown(dropdownId)}
           onCreate={shouldAllowCreateNew ? handleCreateNew : undefined}

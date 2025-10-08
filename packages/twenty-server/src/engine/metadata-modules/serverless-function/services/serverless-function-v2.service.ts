@@ -36,7 +36,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -84,7 +84,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -102,7 +102,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -155,7 +155,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -178,7 +178,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -233,7 +233,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 
@@ -256,7 +256,7 @@ export class ServerlessFunctionV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
       );
 

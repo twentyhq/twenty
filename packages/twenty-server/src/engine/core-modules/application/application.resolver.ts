@@ -6,12 +6,15 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-sync.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
+import { DeleteApplicationInput } from 'src/engine/core-modules/application/dtos/deleteApplication.input';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
 export class ApplicationResolver {
   constructor(
     private readonly applicationSyncService: ApplicationSyncService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @Mutation(() => Boolean)
@@ -25,6 +28,19 @@ export class ApplicationResolver {
       yarnLock,
       packageJson,
     });
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async deleteApplication(
+    @Args() { packageJson }: DeleteApplicationInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    await this.applicationService.delete(
+      packageJson.universalIdentifier,
+      workspaceId,
+    );
 
     return true;
   }

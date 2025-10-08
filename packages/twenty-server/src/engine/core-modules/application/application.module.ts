@@ -15,6 +15,7 @@ import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serve
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database-event-trigger/database-event-trigger.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
+import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron
     ServerlessFunctionModule,
     DatabaseEventTriggerModule,
     CronTriggerModule,
+    RouteTriggerModule,
   ],
   providers: [ApplicationResolver, ApplicationService, ApplicationSyncService],
 })
