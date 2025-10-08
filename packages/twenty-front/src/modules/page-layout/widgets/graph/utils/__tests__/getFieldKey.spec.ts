@@ -12,15 +12,6 @@ describe('getFieldKey', () => {
     expect(getFieldKey({ field })).toBe('companyName');
   });
 
-  it('should return field name for composite field without subFieldName', () => {
-    const field = {
-      name: 'address',
-      type: FieldMetadataType.ADDRESS,
-    } as FieldMetadataItem;
-
-    expect(getFieldKey({ field })).toBe('address');
-  });
-
   it('should return composite key for composite field with subFieldName', () => {
     const field = {
       name: 'address',

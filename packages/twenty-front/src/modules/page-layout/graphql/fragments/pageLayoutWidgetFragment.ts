@@ -59,7 +59,6 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         groupByFieldMetadataId
         aggregateFieldMetadataId
         aggregateOperation
-        groupByFieldMetadataId
         groupBySubFieldName
         orderBy
         displayDataLabel

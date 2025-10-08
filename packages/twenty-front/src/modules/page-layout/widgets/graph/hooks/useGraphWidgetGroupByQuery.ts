@@ -38,7 +38,7 @@ export const useGraphWidgetGroupByQuery = ({
   }
 
   const aggregateOperation =
-    availableAggregations[aggregateField?.name]?.[
+    availableAggregations[aggregateField.name]?.[
       configuration.aggregateOperation
     ];
 
