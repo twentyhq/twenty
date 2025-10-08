@@ -390,14 +390,16 @@ export class ObjectMetadataServiceV2 {
       flatEntityMaps: existingFlatViewMaps,
     });
 
-    const objectFlatFieldMetadatas =
-      findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: toFlatFieldMetadataMaps,
-        flatEntityIds: flatObjectMetadataToCreate.fieldMetadataIds,
-      });
     const flatDefaultViewFieldsToCreate =
       await this.createDefaultFlatViewFields({
-        objectFlatFieldMetadatas,
+        objectFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMapsOrThrow(
+          {
+            flatEntityMaps: toFlatFieldMetadataMaps,
+            flatEntityIds: flatFieldMetadataToCreateOnObject.map(
+              ({ id }) => id,
+            ),
+          },
+        ),
         viewId: flatDefaultViewToCreate.id,
         workspaceId,
       });
