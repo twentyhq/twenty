@@ -5,6 +5,7 @@ import { useUpdateMorphRelationOneToManyFieldInput } from '@/object-record/recor
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
@@ -41,7 +42,7 @@ export const MorphRelationOneToManyFieldInput = () => {
           : 'search-bar-on-bottom'
       }
       showObjectName={true}
-      dropdownWidth={320}
+      dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
     />
   );
 };
