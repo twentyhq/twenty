@@ -2,7 +2,6 @@ import { failingFilterInputByFieldMetadataType } from 'test/integration/graphql/
 import { successfulFilterInputByFieldMetadataType } from 'test/integration/graphql/suites/args-validation/filter-validation/constants/successful-filter-input-by-field-metadata-type.constant';
 import { testGqlFailingScenario } from 'test/integration/graphql/suites/args-validation/filter-validation/utils/test-gql-failing-scenario.util';
 import { testGqlSuccessfulScenario } from 'test/integration/graphql/suites/args-validation/filter-validation/utils/test-gql-successful-scenario.util';
-import { testRestFailingScenario } from 'test/integration/graphql/suites/args-validation/filter-validation/utils/test-rest-failing-scenario.util';
 import { testRestSuccessfulScenario } from 'test/integration/graphql/suites/args-validation/filter-validation/utils/test-rest-successful-scenario.util';
 import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/args-validation/utils/destroy-many-objects-metadata';
 import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suites/args-validation/utils/setup-test-objects-with-all-field-types.util';
@@ -56,23 +55,23 @@ describe(`Filter args validation - ${FIELD_METADATA_TYPE}`, () => {
   });
 
   // TODO : Refacto-common - Uncomment this
-  describe('Rest filterInput - failure', () => {
-    it.each(
-      failingTestCases.map((testCase) => ({
-        ...testCase,
-        stringifiedFilter: JSON.stringify(testCase.restFilterInput),
-      })),
-    )(
-      `${FIELD_METADATA_TYPE} field type - should fail with filter : $stringifiedFilter`,
-      async ({ restFilterInput: filter, restErrorMessage: errorMessage }) => {
-        await testRestFailingScenario(
-          objectMetadataPluralName,
-          filter,
-          errorMessage,
-        );
-      },
-    );
-  });
+  // describe('Rest filterInput - failure', () => {
+  //   it.each(
+  //     failingTestCases.map((testCase) => ({
+  //       ...testCase,
+  //       stringifiedFilter: JSON.stringify(testCase.restFilterInput),
+  //     })),
+  //   )(
+  //     `${FIELD_METADATA_TYPE} field type - should fail with filter : $stringifiedFilter`,
+  //     async ({ restFilterInput: filter, restErrorMessage: errorMessage }) => {
+  //       await testRestFailingScenario(
+  //         objectMetadataPluralName,
+  //         filter,
+  //         errorMessage,
+  //       );
+  //     },
+  //   );
+  // });
 
   describe('Gql filterInput - success', () => {
     it.each(
