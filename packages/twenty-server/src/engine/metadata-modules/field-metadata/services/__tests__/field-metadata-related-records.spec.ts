@@ -4,7 +4,7 @@ import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/fie
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { type ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { type ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
-import { type ViewGroupService } from 'src/engine/metadata-modules/view/services/view-group.service';
+import { type ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { type ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
 type GetOptionsDifferencesTestContext = EachTestingContext<{

@@ -6,10 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateViewGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view-group.input';
-import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-group.input';
-import { ViewGroupDTO } from 'src/engine/metadata-modules/view/dtos/view-group.dto';
-import { ViewGroupService } from 'src/engine/metadata-modules/view/services/view-group.service';
+import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
+import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
+import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
+import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewGroupDTO)
@@ -85,3 +85,4 @@ export class ViewGroupResolver {
     return isDefined(deletedViewGroup);
   }
 }
+

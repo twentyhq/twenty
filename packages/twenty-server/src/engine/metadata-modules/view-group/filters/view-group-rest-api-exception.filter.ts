@@ -1,16 +1,16 @@
 import {
-  type ArgumentsHost,
-  Catch,
-  type ExceptionFilter,
+    type ArgumentsHost,
+    Catch,
+    type ExceptionFilter,
 } from '@nestjs/common';
 
 import { type Response } from 'express';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import {
-  ViewGroupException,
-  ViewGroupExceptionCode,
-} from 'src/engine/metadata-modules/view/exceptions/view-group.exception';
+    ViewGroupException,
+    ViewGroupExceptionCode,
+} from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { type CustomException } from 'src/utils/custom-exception';
 
 @Catch(ViewGroupException)
@@ -46,3 +46,4 @@ export class ViewGroupRestApiExceptionFilter implements ExceptionFilter {
     }
   }
 }
+

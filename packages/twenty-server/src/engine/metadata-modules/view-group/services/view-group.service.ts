@@ -4,14 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ViewGroupEntity } from 'src/engine/metadata-modules/view/entities/view-group.entity';
+import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import {
-  ViewGroupException,
-  ViewGroupExceptionCode,
-  ViewGroupExceptionMessageKey,
-  generateViewGroupExceptionMessage,
-  generateViewGroupUserFriendlyExceptionMessage,
-} from 'src/engine/metadata-modules/view/exceptions/view-group.exception';
+    ViewGroupException,
+    ViewGroupExceptionCode,
+    ViewGroupExceptionMessageKey,
+    generateViewGroupExceptionMessage,
+    generateViewGroupUserFriendlyExceptionMessage,
+} from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
 @Injectable()
@@ -187,3 +187,4 @@ export class ViewGroupService {
     return true;
   }
 }
+

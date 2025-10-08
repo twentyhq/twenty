@@ -22,3 +22,4 @@ export class CreateViewGroupInput {
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
 }
+
