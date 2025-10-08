@@ -102,7 +102,7 @@ export class ImpersonationService {
       if (!has2FAEnabled) {
         throw new AuthException(
           'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
         );
       }
 

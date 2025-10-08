@@ -42,6 +42,11 @@ export class LineChartConfigurationDTO {
   @IsOptional()
   groupByFieldMetadataIdX?: string;
 
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  groupBySubFieldNameX?: string;
+
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
   @IsOptional()
@@ -51,6 +56,11 @@ export class LineChartConfigurationDTO {
   @IsUUID()
   @IsOptional()
   groupByFieldMetadataIdY?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  groupBySubFieldNameY?: string;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)

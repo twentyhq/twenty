@@ -40,6 +40,11 @@ export class PieChartConfigurationDTO {
   @IsOptional()
   groupByFieldMetadataId?: string;
 
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  groupBySubFieldName?: string;
+
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
   @IsOptional()
