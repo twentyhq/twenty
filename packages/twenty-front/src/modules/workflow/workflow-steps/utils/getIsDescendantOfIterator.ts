@@ -1,5 +1,6 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { isLastStepOfLoop } from '@/workflow/workflow-diagram/utils/isLastStepOfLoop';
+import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 const isParentStep = ({
@@ -36,9 +37,11 @@ const isParentStep = ({
 export const getIsDescendantOfIterator = ({
   stepId,
   steps,
+  iteratorId,
 }: {
   stepId: string;
   steps: WorkflowStep[];
+  iteratorId?: string;
 }): boolean => {
   const hasIteratorAncestor = (
     currentStepId: string,
@@ -67,6 +70,10 @@ export const getIsDescendantOfIterator = ({
       visited.add(currentStepId);
 
       if (parent.type === 'ITERATOR') {
+        if (isDefined(iteratorId)) {
+          return parent.id === iteratorId;
+        }
+
         return true;
       }
 
