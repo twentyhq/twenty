@@ -19,5 +19,5 @@ export const FLOW_ACTIONS: Array<{
     label: 'Delay',
     type: 'DELAY',
     icon: 'IconPlayerPause',
-  }
+  },
 ];

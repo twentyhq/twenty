@@ -105,7 +105,7 @@ export type WorkflowEmptyAction = BaseWorkflowAction & {
 export type WorkflowDelayAction = BaseWorkflowAction & {
   type: WorkflowActionType.DELAY;
   settings: WorkflowDelayActionSettings;
-}
+};
 
 export type WorkflowAction =
   | WorkflowCodeAction
