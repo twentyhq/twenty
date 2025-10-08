@@ -3,7 +3,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
+import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 
 registerEnumType(ViewFilterGroupLogicalOperator, {
   name: 'ViewFilterGroupLogicalOperator',
@@ -41,3 +41,4 @@ export class ViewFilterGroupDTO {
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;
 }
+

@@ -1,23 +1,23 @@
 import { ViewFilterOperand } from 'twenty-shared/types';
 import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    Relation,
+    UpdateDateColumn,
 } from 'typeorm';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
-import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view/entities/view-filter-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 @Entity({ name: 'viewFilter', schema: 'core' })

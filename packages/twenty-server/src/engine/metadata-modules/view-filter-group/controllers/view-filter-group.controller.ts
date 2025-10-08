@@ -1,14 +1,14 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-  UseFilters,
-  UseGuards,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseFilters,
+    UseGuards,
 } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -16,18 +16,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view-filter-group.input';
-import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-filter-group.input';
-import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view/dtos/view-filter-group.dto';
+import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
+import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
+import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import {
-  generateViewFilterGroupExceptionMessage,
-  generateViewFilterGroupUserFriendlyExceptionMessage,
-  ViewFilterGroupException,
-  ViewFilterGroupExceptionCode,
-  ViewFilterGroupExceptionMessageKey,
-} from 'src/engine/metadata-modules/view/exceptions/view-filter-group.exception';
-import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-filter-group-rest-api-exception.filter';
-import { ViewFilterGroupService } from 'src/engine/metadata-modules/view/services/view-filter-group.service';
+    generateViewFilterGroupExceptionMessage,
+    generateViewFilterGroupUserFriendlyExceptionMessage,
+    ViewFilterGroupException,
+    ViewFilterGroupExceptionCode,
+    ViewFilterGroupExceptionMessageKey,
+} from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
+import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter';
+import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 
 @Controller('rest/metadata/viewFilterGroups')
 @UseGuards(WorkspaceAuthGuard)
@@ -119,3 +119,4 @@ export class ViewFilterGroupController {
 
   // TODO: the destroy endpoint will be implemented when we settle on a strategy
 }
+

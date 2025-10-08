@@ -3,3 +3,4 @@ export enum ViewFilterGroupLogicalOperator {
   OR = 'OR',
   NOT = 'NOT',
 }
+

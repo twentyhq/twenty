@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  CompositeFieldSubFieldName,
-  PartialFieldMetadataItemOption,
-  RecordFilterGroupLogicalOperator,
+    CompositeFieldSubFieldName,
+    PartialFieldMetadataItemOption,
+    RecordFilterGroupLogicalOperator,
 } from 'twenty-shared/types';
 import {
-  assertIsDefinedOrThrow,
-  combineFilters,
-  computeRecordGqlOperationFilter,
-  convertViewFilterValueToString,
-  getFilterTypeFromFieldType,
-  turnAnyFieldFilterIntoRecordGqlFilter,
+    assertIsDefinedOrThrow,
+    combineFilters,
+    computeRecordGqlOperationFilter,
+    convertViewFilterValueToString,
+    getFilterTypeFromFieldType,
+    turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
 import {
-  GraphqlQueryBaseResolverService,
-  GraphqlQueryResolverExecutionArgs,
+    GraphqlQueryBaseResolverService,
+    GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
-  ObjectRecord,
-  ObjectRecordFilter,
+    ObjectRecord,
+    ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
@@ -36,9 +36,9 @@ import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-run
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewFilterGroupService } from 'src/engine/metadata-modules/view/services/view-filter-group.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 @Injectable()

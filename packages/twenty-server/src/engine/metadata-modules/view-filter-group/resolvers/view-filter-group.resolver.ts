@@ -6,10 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view-filter-group.input';
-import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-filter-group.input';
-import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view/dtos/view-filter-group.dto';
-import { ViewFilterGroupService } from 'src/engine/metadata-modules/view/services/view-filter-group.service';
+import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
+import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
+import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
+import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFilterGroupDTO)
@@ -87,3 +87,4 @@ export class ViewFilterGroupResolver {
     return isDefined(deletedViewFilterGroup);
   }
 }
+

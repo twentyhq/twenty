@@ -6,3 +6,4 @@ import { CreateViewFilterGroupInput } from './create-view-filter-group.input';
 export class UpdateViewFilterGroupInput extends PartialType(
   CreateViewFilterGroupInput,
 ) {}
+
