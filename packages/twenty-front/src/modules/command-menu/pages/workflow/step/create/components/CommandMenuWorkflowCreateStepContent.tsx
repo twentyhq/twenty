@@ -56,6 +56,8 @@ export const CommandMenuWorkflowCreateStepContent = () => {
       parentStepId: undefined,
       nextStepId: undefined,
       position: undefined,
+      connectionOptions: undefined,
+      sourceHandleId: undefined,
     });
 
     closeRightClickMenu();

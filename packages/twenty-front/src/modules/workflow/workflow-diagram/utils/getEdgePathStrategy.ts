@@ -13,7 +13,17 @@ export const getEdgePathStrategy = ({
 }) => {
   const nextStep = steps.find((s) => s.id === nextStepId);
   if (!isDefined(nextStep)) {
-    throw new Error('Expected to find step defined in nextStepIds');
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.warn(
+        'Workflow diagram: expected to find step defined in nextStepIds. Falling back to default edge path.',
+        {
+          currentStepId: step.id,
+          missingNextStepId: nextStepId,
+        },
+      );
+    }
+    return undefined;
   }
 
   const useLoopBackToIteratorStyle =

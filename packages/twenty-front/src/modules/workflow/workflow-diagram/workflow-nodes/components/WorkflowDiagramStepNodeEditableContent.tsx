@@ -126,7 +126,10 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           shouldDisplay={
             isHovered ||
             selected ||
-            isNodeCreationStarted({ parentStepId: data.stepId })
+            isNodeCreationStarted({
+              parentStepId: data.stepId,
+              sourceHandleId: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+            })
           }
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
