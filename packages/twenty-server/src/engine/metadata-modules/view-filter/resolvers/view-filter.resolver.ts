@@ -85,4 +85,3 @@ export class ViewFilterResolver {
     return isDefined(deletedViewFilter);
   }
 }
-

@@ -24,7 +24,7 @@ import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
+import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;

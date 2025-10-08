@@ -12,4 +12,3 @@ export type ViewFilterValue =
   | Record<string, unknown>
   | null
   | undefined;
-

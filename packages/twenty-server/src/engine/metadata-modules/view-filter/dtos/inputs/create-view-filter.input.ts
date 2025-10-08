@@ -32,4 +32,3 @@ export class CreateViewFilterInput {
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
 }
-

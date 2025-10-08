@@ -22,7 +22,10 @@ import {
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { generateViewFilterExceptionMessage, ViewFilterExceptionMessageKey } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
+import {
+  generateViewFilterExceptionMessage,
+  ViewFilterExceptionMessageKey,
+} from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 
 describe('View Filter Resolver', () => {
   let testViewId: string;
