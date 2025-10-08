@@ -4,7 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
-export const formatResponse = (result?: ServerlessExecuteResult | null) => {
+export const formatServerlessControllerResponse = (
+  result?: ServerlessExecuteResult | null,
+) => {
   if (!isDefined(result)) {
     return result;
   }

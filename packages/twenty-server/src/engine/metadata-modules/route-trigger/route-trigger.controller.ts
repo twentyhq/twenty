@@ -14,7 +14,7 @@ import { Request } from 'express';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { RouteTriggerService } from 'src/engine/metadata-modules/route-trigger/route-trigger.service';
-import { formatResponse } from 'src/engine/metadata-modules/route-trigger/utils/format-response';
+import { formatServerlessControllerResponse } from 'src/engine/metadata-modules/route-trigger/utils/format-serverless-controller-response';
 
 @Controller('s')
 @UseGuards(PublicEndpointGuard)
@@ -28,7 +28,7 @@ export class RouteTriggerController {
       httpMethod: HTTPMethod.GET,
     });
 
-    return formatResponse(result);
+    return formatServerlessControllerResponse(result);
   }
 
   @Post('*')
@@ -38,7 +38,7 @@ export class RouteTriggerController {
       httpMethod: HTTPMethod.POST,
     });
 
-    return formatResponse(result);
+    return formatServerlessControllerResponse(result);
   }
 
   @Put('*')
@@ -48,7 +48,7 @@ export class RouteTriggerController {
       httpMethod: HTTPMethod.PUT,
     });
 
-    return formatResponse(result);
+    return formatServerlessControllerResponse(result);
   }
 
   @Patch('*')
@@ -58,7 +58,7 @@ export class RouteTriggerController {
       httpMethod: HTTPMethod.PATCH,
     });
 
-    return formatResponse(result);
+    return formatServerlessControllerResponse(result);
   }
 
   @Delete('*')
@@ -68,6 +68,6 @@ export class RouteTriggerController {
       httpMethod: HTTPMethod.DELETE,
     });
 
-    return formatResponse(result);
+    return formatServerlessControllerResponse(result);
   }
 }
