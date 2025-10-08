@@ -29,39 +29,32 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 export class ResetPasswordService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
+    private readonly userService: UserService,
   ) {}
 
   async generatePasswordResetToken(
     email: string,
     workspaceId: string,
   ): Promise<PasswordResetToken> {
-    const user = await this.userRepository.findOneBy({
+    const user = await this.userService.findUserByEmailOrThrow(
       email,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+    );
 
     const expiresIn = this.twentyConfigService.get(
       'PASSWORD_RESET_TOKEN_EXPIRES_IN',
@@ -123,16 +116,10 @@ export class ResetPasswordService {
     email: string,
     locale: keyof typeof APP_LOCALES,
   ): Promise<EmailPasswordResetLink> {
-    const user = await this.userRepository.findOneBy({
+    const user = await this.userService.findUserByEmailOrThrow(
       email,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+    );
 
     const workspace = await this.workspaceRepository.findOneBy({
       id: resetToken.workspaceId,
@@ -170,11 +157,11 @@ export class ResetPasswordService {
     const i18n = this.i18nService.getI18nInstance(locale);
     const subject = i18n._(resetPasswordMsg);
 
-    this.emailService.send({
+    await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
-      to: email,
+      to: user.email,
       subject,
       text,
       html,
@@ -207,16 +194,10 @@ export class ResetPasswordService {
       );
     }
 
-    const user = await this.userRepository.findOneBy({
-      id: token.userId,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+    const user = await this.userService.findUserByIdOrThrow(
+      token.userId,
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+    );
 
     return {
       id: user.id,
@@ -227,20 +208,14 @@ export class ResetPasswordService {
   async invalidatePasswordResetToken(
     userId: string,
   ): Promise<InvalidatePassword> {
-    const user = await this.userRepository.findOneBy({
-      id: userId,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+    const user = await this.userService.findUserByIdOrThrow(
+      userId,
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+    );
 
     await this.appTokenRepository.update(
       {
-        userId,
+        userId: user.id,
         type: AppTokenType.PasswordResetToken,
       },
       {
