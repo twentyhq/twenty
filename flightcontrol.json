@@ -17,15 +17,7 @@
           "engineVersion": "16",
           "instanceSize": "db.t4g.micro",
           "storage": 20,
-          "private": false,
-          "envVariables": {
-            "POSTGRES_USER": {
-              "fromParameterStore": "PG_DATABASE_USER"
-            },
-            "POSTGRES_PASSWORD": {
-              "fromParameterStore": "PG_DATABASE_PASSWORD"
-            }
-          }
+          "private": false
         },
         {
           "id": "twenty-redis",
@@ -61,12 +53,6 @@
                 "id": "twenty-redis",
                 "value": "connectionString"
               }
-            },
-            "SERVER_URL": {
-              "fromParameterStore": "SERVER_URL"
-            },
-            "APP_SECRET": {
-              "fromParameterStore": "APP_SECRET"
             }
           }
         },
@@ -94,12 +80,6 @@
                 "id": "twenty-redis",
                 "value": "connectionString"
               }
-            },
-            "SERVER_URL": {
-              "fromParameterStore": "SERVER_URL"
-            },
-            "APP_SECRET": {
-              "fromParameterStore": "APP_SECRET"
             },
             "DISABLE_DB_MIGRATIONS": "true",
             "DISABLE_CRON_JOBS_REGISTRATION": "true"
