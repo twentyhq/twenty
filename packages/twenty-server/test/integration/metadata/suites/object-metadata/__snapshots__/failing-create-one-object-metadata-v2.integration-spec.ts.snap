@@ -355,7 +355,239 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -732,7 +964,239 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -1109,7 +1573,239 @@ exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] =
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -1486,7 +2182,239 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -1863,7 +2791,239 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -2240,7 +3400,239 @@ exports[`Object metadata creation should fail v2 when labelSingular is empty 1`]
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -2618,7 +4010,239 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -2996,7 +4620,239 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -3403,7 +5259,239 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -3780,7 +5868,239 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -4157,7 +6477,239 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -4539,7 +7091,239 @@ exports[`Object metadata creation should fail v2 when namePlural is an empty str
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -4921,7 +7705,239 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -5363,7 +8379,239 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -5805,7 +9053,239 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -6212,7 +9692,239 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -6619,7 +10331,239 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -7061,7 +11005,239 @@ exports[`Object metadata creation should fail v2 when nameSingular is an empty s
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -7503,7 +11679,239 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -7881,7 +12289,239 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -8259,7 +12899,239 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           "type": "create_view",
         },
       ],
-      "viewField": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
