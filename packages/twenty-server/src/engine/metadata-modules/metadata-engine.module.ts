@@ -9,13 +9,13 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RemoteServerModule } from 'src/engine/metadata-modules/remote-server/remote-server.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
+import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
-import { ViewAggregateModule } from 'src/engine/metadata-modules/view/view-aggregate.module';
+import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
-import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
-import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 
 @Module({
   imports: [
@@ -26,7 +26,7 @@ import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serve
     ServerlessFunctionModule,
     ServerlessFunctionLayerModule,
     AgentModule,
-    ViewAggregateModule,
+    ViewModule,
     WorkspaceMetadataVersionModule,
     WorkspaceMigrationModule,
     RemoteServerModule,
@@ -44,7 +44,7 @@ import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serve
     SearchFieldMetadataModule,
     ServerlessFunctionModule,
     AgentModule,
-    ViewAggregateModule,
+    ViewModule,
     RemoteServerModule,
     RoleModule,
     PermissionsModule,
