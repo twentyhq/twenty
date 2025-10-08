@@ -54,12 +54,12 @@ export const GraphWidget = ({
     objectId: objectMetadataId,
   });
 
-  const { isValid } = areChartConfigurationFieldsValidForQuery(
+  const hasValidConfiguration = areChartConfigurationFieldsValidForQuery(
     widget.configuration,
     objectMetadataItem,
   );
 
-  if (!isValid) {
+  if (!hasValidConfiguration) {
     return <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />;
   }
 
