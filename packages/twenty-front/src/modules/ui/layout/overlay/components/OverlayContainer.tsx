@@ -7,13 +7,13 @@ export const OverlayContainer = styled.div<{
 }>`
   align-items: center;
   display: flex;
-
+  background: rgba(0,0,0,0.8);
   backdrop-filter: ${({ theme }) => theme.blur.medium};
 
   border-radius: ${({ theme, borderRadius }) =>
     theme.border.radius[borderRadius ?? 'md']};
 
-  background: ${({ theme }) => theme.background.transparent.primary};
+ //background: ${({ theme }) => theme.background.transparent.primary};
   border: 1px solid
     ${({ theme, hasDangerBorder }) =>
       theme.border.color[hasDangerBorder ? 'danger' : 'medium']};
