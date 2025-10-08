@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 const StyledWorkflowStepBody = styled.div`
   background: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.font.color.light};
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;

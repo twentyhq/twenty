@@ -34,6 +34,7 @@ const StyledSelectDropdown = styled(Select)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 const StyledNoBodyMessage = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.md};
   padding: ${({ theme }) => theme.spacing(2)};
   text-align: left;
