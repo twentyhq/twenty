@@ -9,7 +9,6 @@ import { NumberChartConfigurationDTO } from 'src/engine/core-modules/page-layout
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
 import { type WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
-import { WidgetConfigurationType } from 'src/engine/core-modules/page-layout/enums/widget-configuration-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 
 const formatValidationErrors = (errors: ValidationError[]): string => {
@@ -37,16 +36,16 @@ const validateGraphConfiguration = (
     case GraphType.BAR: {
       const instance = plainToInstance(BarChartConfigurationDTO, configuration);
 
-      const errors = validateSync(instance);
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
 
       if (errors.length > 0) {
         throw errors;
       }
 
-      return {
-        ...instance,
-        configurationType: WidgetConfigurationType.BAR_CHART_CONFIG,
-      } as WidgetConfigurationInterface;
+      return instance;
     }
     case GraphType.LINE: {
       const instance = plainToInstance(
@@ -54,30 +53,30 @@ const validateGraphConfiguration = (
         configuration,
       );
 
-      const errors = validateSync(instance);
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
 
       if (errors.length > 0) {
         throw errors;
       }
 
-      return {
-        ...instance,
-        configurationType: WidgetConfigurationType.LINE_CHART_CONFIG,
-      } as WidgetConfigurationInterface;
+      return instance;
     }
     case GraphType.PIE: {
       const instance = plainToInstance(PieChartConfigurationDTO, configuration);
 
-      const errors = validateSync(instance);
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
 
       if (errors.length > 0) {
         throw errors;
       }
 
-      return {
-        ...instance,
-        configurationType: WidgetConfigurationType.PIE_CHART_CONFIG,
-      } as WidgetConfigurationInterface;
+      return instance;
     }
     case GraphType.NUMBER: {
       const instance = plainToInstance(
@@ -85,16 +84,16 @@ const validateGraphConfiguration = (
         configuration,
       );
 
-      const errors = validateSync(instance);
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
 
       if (errors.length > 0) {
         throw errors;
       }
 
-      return {
-        ...instance,
-        configurationType: WidgetConfigurationType.NUMBER_CHART_CONFIG,
-      } as WidgetConfigurationInterface;
+      return instance;
     }
     case GraphType.GAUGE: {
       const instance = plainToInstance(
@@ -102,16 +101,16 @@ const validateGraphConfiguration = (
         configuration,
       );
 
-      const errors = validateSync(instance);
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
 
       if (errors.length > 0) {
         throw errors;
       }
 
-      return {
-        ...instance,
-        configurationType: WidgetConfigurationType.GAUGE_CHART_CONFIG,
-      } as WidgetConfigurationInterface;
+      return instance;
     }
     default:
       return null;
@@ -123,16 +122,16 @@ const validateIframeConfiguration = (
 ): WidgetConfigurationInterface | null => {
   const instance = plainToInstance(IframeConfigurationDTO, configuration);
 
-  const errors = validateSync(instance);
+  const errors = validateSync(instance, {
+    whitelist: true,
+    forbidUnknownValues: true,
+  });
 
   if (errors.length > 0) {
     throw errors;
   }
 
-  return {
-    ...instance,
-    configurationType: WidgetConfigurationType.IFRAME_CONFIG,
-  } as WidgetConfigurationInterface;
+  return instance;
 };
 
 export const validateAndTransformWidgetConfiguration = (
