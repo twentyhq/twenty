@@ -1,7 +1,7 @@
 import diff from 'microdiff';
 import { type FromTo } from 'twenty-shared/types';
 
-import { FLAT_VIEW_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-view/constants/flat-view-properies-to-compare.constant';
+import { FLAT_VIEW_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-view/constants/flat-view-properties-to-compare.constant';
 import { type FlatViewPropertiesToCompare } from 'src/engine/metadata-modules/flat-view/types/flat-view-properties-to-compare.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type UpdateViewAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2.type';

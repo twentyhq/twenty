@@ -15,6 +15,6 @@ export const fromViewEntityToFlatView = (viewEntity: ViewEntity): FlatView => {
     universalIdentifier:
       viewEntityWithoutRelations.universalIdentifier ??
       viewEntityWithoutRelations.id,
-    viewFieldIds: viewEntity.viewFields.map((viewField) => viewField.id) ?? [],
+    viewFieldIds: viewEntity.viewFields.map((viewField) => viewField.id),
   };
 };

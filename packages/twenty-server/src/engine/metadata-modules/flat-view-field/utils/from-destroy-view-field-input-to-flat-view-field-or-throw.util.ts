@@ -13,14 +13,14 @@ import {
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 
 export const fromDestroyViewFieldInputToFlatViewFieldOrThrow = ({
-  destroyViewFieldInput: rawDeleteDestroyViewInput,
+  destroyViewFieldInput,
   flatViewFieldMaps,
 }: {
   destroyViewFieldInput: DestroyViewFieldInput;
   flatViewFieldMaps: FlatViewFieldMaps;
 }): FlatViewField => {
   const { id: viewFieldId } = extractAndSanitizeObjectStringFields(
-    rawDeleteDestroyViewInput,
+    destroyViewFieldInput,
     ['id'],
   );
 
