@@ -116,8 +116,6 @@ export const WorkflowEditActionDelay = ({
         />
       </WorkflowStepBody>
 
-      <HorizontalSeparator noMargin />
-
       <WorkflowActionFooter stepId={action.id} />
     </>
   );

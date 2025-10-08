@@ -79,7 +79,7 @@ describe('getActionIconColorOrThrow', () => {
   });
 
   describe('FILTER action type', () => {
-    it('should throw an error for FILTER action type', () => {
+    it('should return tertiary font color for FILTER action type', () => {
       const result = getActionIconColorOrThrow({
         theme: mockTheme,
         actionType: 'FILTER',
