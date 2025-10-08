@@ -1,9 +1,9 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { UserContext } from '@/users/contexts/UserContext';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
+import { DateDisplayFormat } from 'twenty-shared/types';
 import { DateDisplay } from '../DateDisplay';
 
 const meta: Meta<typeof DateDisplay> = {
@@ -31,7 +31,7 @@ export const Default: Story = {
   args: {
     value: '2025-05-01T00:00:00.000Z',
     dateFieldSettings: {
-      displayFormat: FieldDateDisplayFormat.USER_SETTINGS,
+      displayFormat: DateDisplayFormat.USER_SETTINGS,
     },
   },
   play: async ({ canvasElement }) => {

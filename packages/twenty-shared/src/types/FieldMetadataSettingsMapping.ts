@@ -1,0 +1,42 @@
+import { type FieldMetadataAddressSettings } from './FieldMetadataAddressSettings';
+import { type FieldMetadataArraySettings } from './FieldMetadataArraySettings';
+import { type FieldMetadataCurrencySettings } from './FieldMetadataCurrencySettings';
+import { type FieldMetadataDateSettings } from './FieldMetadataDateSettings';
+import { type FieldMetadataDateTimeSettings } from './FieldMetadataDateTimeSettings';
+import { type FieldMetadataEmailsSettings } from './FieldMetadataEmailsSettings';
+import { type FieldMetadataLinksSettings } from './FieldMetadataLinksSettings';
+import { type FieldMetadataNumberSettings } from './FieldMetadataNumberSettings';
+import { type FieldMetadataPhonesSettings } from './FieldMetadataPhonesSettings';
+import { type FieldMetadataRelationSettings } from './FieldMetadataRelationSettings';
+import { type FieldMetadataTextSettings } from './FieldMetadataTextSettings';
+import { type FieldMetadataTsVectorSettings } from './FieldMetadataTsVectorSettings';
+import { type FieldMetadataType } from './FieldMetadataType';
+
+export type FieldMetadataSettingsMapping = {
+  [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;
+  [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
+  [FieldMetadataType.NUMERIC]: FieldMetadataNumberSettings | null;
+  [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
+  [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings | null;
+  [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
+  [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
+  [FieldMetadataType.PHONES]: FieldMetadataPhonesSettings | null;
+  [FieldMetadataType.EMAILS]: FieldMetadataEmailsSettings | null;
+  [FieldMetadataType.LINKS]: FieldMetadataLinksSettings | null;
+  [FieldMetadataType.ARRAY]: FieldMetadataArraySettings | null;
+  [FieldMetadataType.UUID]: null;
+  [FieldMetadataType.BOOLEAN]: null;
+  [FieldMetadataType.CURRENCY]: FieldMetadataCurrencySettings | null;
+  [FieldMetadataType.FULL_NAME]: null;
+  [FieldMetadataType.RATING]: null;
+  [FieldMetadataType.SELECT]: null;
+  [FieldMetadataType.MULTI_SELECT]: null;
+  [FieldMetadataType.POSITION]: null;
+  [FieldMetadataType.RAW_JSON]: null;
+  [FieldMetadataType.RICH_TEXT]: null;
+  [FieldMetadataType.RICH_TEXT_V2]: null;
+  [FieldMetadataType.ACTOR]: null;
+};
+

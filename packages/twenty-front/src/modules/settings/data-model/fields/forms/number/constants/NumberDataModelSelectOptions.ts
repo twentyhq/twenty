@@ -1,4 +1,4 @@
-import { type FieldNumberVariant } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldNumberVariant } from 'twenty-shared/types';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { type ForwardRefExoticComponent, type RefAttributes } from 'react';

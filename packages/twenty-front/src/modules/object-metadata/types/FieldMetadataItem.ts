@@ -1,8 +1,6 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
-
 import {
-  type FieldMetadataMultipleValuesSettings,
+  type AllFieldMetadataSettings,
   type PartialFieldMetadataItemOption,
 } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -21,9 +19,6 @@ export type FieldMetadataItem = Omit<
   options?: FieldMetadataItemOption[] | null;
   relation?: FieldMetadataItemRelation | null;
   morphRelations?: FieldMetadataItemRelation[] | null;
-  settings?:
-    | FieldDateMetadataSettings
-    | FieldMetadataMultipleValuesSettings
-    | null;
+  settings?: AllFieldMetadataSettings;
   isLabelSyncedWithName?: boolean | null;
 };

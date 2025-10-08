@@ -1,7 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { type FieldCurrencyFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldDefaultValueSchema';
 import { currencyFieldSettingsSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldSettingsSchema';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
@@ -85,7 +84,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
             title={t`Format`}
             description={t`Choose between Short and Full`}
           >
-            <Select<FieldCurrencyFormat>
+            <Select<'short' | 'full'>
               dropdownWidth={140}
               value={value}
               onChange={onChange}

@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { DateDisplayFormat } from 'twenty-shared/types';
 import { type SettingsDataModelFieldDateFormValues } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 
 type UseDateSettingsFormInitialValuesProps = {
@@ -14,8 +14,8 @@ export const useDateSettingsFormInitialValues = ({
   const { fieldMetadataItem } = useFieldMetadataItemById(fieldMetadataId);
 
   const initialDisplayFormat =
-    (fieldMetadataItem?.settings?.displayFormat as FieldDateDisplayFormat) ??
-    FieldDateDisplayFormat.USER_SETTINGS;
+    (fieldMetadataItem?.settings?.displayFormat as DateDisplayFormat) ??
+    DateDisplayFormat.USER_SETTINGS;
   const initialCustomUnicodeDateFormat =
     (fieldMetadataItem?.settings?.customUnicodeDateFormat as string) ?? '';
 

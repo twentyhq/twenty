@@ -1,7 +1,14 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
-  type FieldMetadataType,
+  type AllFieldMetadataSettings,
+  type FieldMetadataCurrencySettings,
+  type FieldMetadataDateSettings,
+  type FieldMetadataDateTimeSettings,
   type FieldMetadataMultipleValuesSettings,
+  type FieldMetadataNumberSettings,
+  type FieldMetadataRelationSettings,
+  type FieldMetadataTextSettings,
+  type FieldMetadataType,
   type NullablePartial,
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
@@ -10,14 +17,6 @@ import {
   type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataDefaultValueForType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-import {
-  type AllFieldMetadataSettings,
-  type FieldMetadataDateSettings,
-  type FieldMetadataDateTimeSettings,
-  type FieldMetadataNumberSettings,
-  type FieldMetadataRelationSettings,
-  type FieldMetadataTextSettings,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
   type FieldMetadataComplexOption,
@@ -125,7 +124,12 @@ type NotDefinedSettings = {
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 type SettingsAssertions = [
-  Expect<HasAllProperties<CurrencyFieldMetadata, NotDefinedSettings>>,
+  Expect<
+    HasAllProperties<
+      CurrencyFieldMetadata,
+      { settings: FieldMetadataCurrencySettings | null }
+    >
+  >,
   Expect<HasAllProperties<FullNameFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<RatingFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<SelectFieldMetadata, NotDefinedSettings>>,

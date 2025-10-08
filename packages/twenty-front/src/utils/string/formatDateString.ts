@@ -3,9 +3,9 @@ import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/f
 import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
 import {
-  FieldDateDisplayFormat,
-  type FieldDateMetadataSettings,
-} from '@/object-record/record-field/ui/types/FieldMetadata';
+  DateDisplayFormat,
+  type FieldMetadataDateSettings,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const formatDateString = ({
@@ -18,7 +18,7 @@ export const formatDateString = ({
   timeZone: string;
   dateFormat: DateFormat;
   value?: string | null;
-  dateFieldSettings?: FieldDateMetadataSettings;
+  dateFieldSettings?: FieldMetadataDateSettings;
   localeCatalog: Locale;
 }): string => {
   if (!isDefined(value)) {
@@ -26,20 +26,20 @@ export const formatDateString = ({
   }
 
   switch (dateFieldSettings?.displayFormat) {
-    case FieldDateDisplayFormat.RELATIVE:
+    case DateDisplayFormat.RELATIVE:
       return formatDateISOStringToRelativeDate({
         isoDate: value,
         isDayMaximumPrecision: true,
         localeCatalog,
       });
-    case FieldDateDisplayFormat.USER_SETTINGS:
+    case DateDisplayFormat.USER_SETTINGS:
       return formatDateISOStringToDate({
         date: value,
         timeZone,
         dateFormat,
         localeCatalog,
       });
-    case FieldDateDisplayFormat.CUSTOM:
+    case DateDisplayFormat.CUSTOM:
       return formatDateISOStringToCustomUnicodeFormat({
         date: value,
         timeZone,

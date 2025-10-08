@@ -4,8 +4,16 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type CurrencyCode } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
-  type AllowedAddressSubField,
-  type FieldMetadataMultipleValuesSettings,
+  type FieldMetadataAddressSettings,
+  type FieldMetadataArraySettings,
+  type FieldMetadataCurrencySettings,
+  type FieldMetadataDateSettings,
+  type FieldMetadataDateTimeSettings,
+  type FieldMetadataEmailsSettings,
+  type FieldMetadataLinksSettings,
+  type FieldMetadataNumberSettings,
+  type FieldMetadataPhonesSettings,
+  type FieldMetadataTextSettings,
 } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
@@ -28,53 +36,23 @@ export type FieldBooleanMetadata = BaseFieldMetadata & {
 
 export type FieldTextMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  settings?: {
-    displayedMaxRows?: number;
-  };
+  settings?: FieldMetadataTextSettings;
 };
-
-export enum FieldDateDisplayFormat {
-  RELATIVE = 'RELATIVE',
-  USER_SETTINGS = 'USER_SETTINGS',
-  CUSTOM = 'CUSTOM',
-}
-
-export type FieldDateMetadataSettings =
-  | {
-      displayFormat?: FieldDateDisplayFormat.CUSTOM;
-      customUnicodeDateFormat: string;
-    }
-  | {
-      displayFormat?: Exclude<
-        FieldDateDisplayFormat,
-        FieldDateDisplayFormat.CUSTOM
-      >;
-    };
 
 export type FieldDateTimeMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  settings?: FieldDateMetadataSettings;
+  settings?: FieldMetadataDateTimeSettings;
 };
 
 export type FieldDateMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  settings?: FieldDateMetadataSettings;
+  settings?: FieldMetadataDateSettings;
 };
-
-export const FIELD_NUMBER_VARIANT = [
-  'number',
-  'percentage',
-  'shortNumber',
-] as const;
-export type FieldNumberVariant = (typeof FIELD_NUMBER_VARIANT)[number];
 
 export type FieldNumberMetadata = BaseFieldMetadata & {
   placeHolder: string;
   isPositive?: boolean;
-  settings?: {
-    decimals?: number;
-    type?: FieldNumberVariant;
-  };
+  settings?: FieldMetadataNumberSettings;
 };
 
 export type FieldLinkMetadata = BaseFieldMetadata & {
@@ -83,15 +61,13 @@ export type FieldLinkMetadata = BaseFieldMetadata & {
 };
 
 export type FieldLinksMetadata = BaseFieldMetadata & {
-  settings?: FieldMetadataMultipleValuesSettings | null;
+  settings?: FieldMetadataLinksSettings | null;
 };
 
 export type FieldCurrencyMetadata = BaseFieldMetadata & {
   placeHolder: string;
   isPositive?: boolean;
-  settings?: {
-    format: FieldCurrencyFormat | null;
-  };
+  settings?: FieldMetadataCurrencySettings;
 };
 
 export type FieldFullNameMetadata = BaseFieldMetadata & {
@@ -105,7 +81,7 @@ export type FieldEmailMetadata = BaseFieldMetadata & {
 };
 
 export type FieldEmailsMetadata = BaseFieldMetadata & {
-  settings?: FieldMetadataMultipleValuesSettings | null;
+  settings?: FieldMetadataEmailsSettings | null;
 };
 
 export type FieldPhoneMetadata = BaseFieldMetadata & {
@@ -119,9 +95,7 @@ export type FieldRatingMetadata = BaseFieldMetadata & {
 
 export type FieldAddressMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  settings?: {
-    subFields?: AllowedAddressSubField[] | null;
-  };
+  settings?: FieldMetadataAddressSettings;
 };
 
 export type FieldRawJsonMetadata = BaseFieldMetadata & {
@@ -141,7 +115,7 @@ export type FieldPositionMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-// for later: refactor this in order to directly use relation without mapping
+// TODO for later: refactor this in order to directly use relation without mapping
 export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
@@ -177,11 +151,11 @@ export type FieldActorMetadata = BaseFieldMetadata & {
 
 export type FieldArrayMetadata = BaseFieldMetadata & {
   values: { label: string; value: string }[];
-  settings?: FieldMetadataMultipleValuesSettings | null;
+  settings?: FieldMetadataArraySettings | null;
 };
 
 export type FieldPhonesMetadata = BaseFieldMetadata & {
-  settings?: FieldMetadataMultipleValuesSettings | null;
+  settings?: FieldMetadataPhonesSettings | null;
 };
 
 export type FieldTsVectorMetadata = BaseFieldMetadata & {
@@ -232,8 +206,6 @@ export type FieldLinksValue = {
   secondaryLinks?: { label: string | null; url: string | null }[] | null;
 };
 
-export const fieldMetadataCurrencyFormat = ['short', 'full'] as const;
-export type FieldCurrencyFormat = (typeof fieldMetadataCurrencyFormat)[number];
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
   amountMicros: number | null;
