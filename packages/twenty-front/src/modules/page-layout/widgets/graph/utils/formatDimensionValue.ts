@@ -12,6 +12,27 @@ type FormatDimensionValueParams = {
   dateGranularity?: ObjectRecordGroupByDateGranularity;
 };
 
+const normalizeMultiSelectValue = (value: unknown): unknown[] => {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (typeof value !== 'string') {
+    return [value];
+  }
+
+  const trimmed = value.trim();
+  const isPostgresArrayFormat =
+    trimmed.startsWith('{') && trimmed.endsWith('}');
+
+  if (!isPostgresArrayFormat) {
+    return [value];
+  }
+
+  const content = trimmed.slice(1, -1);
+  return content ? content.split(',') : [];
+};
+
 export const formatDimensionValue = ({
   value,
   fieldMetadata,
@@ -30,17 +51,16 @@ export const formatDimensionValue = ({
     }
 
     case FieldMetadataType.MULTI_SELECT: {
-      if (Array.isArray(value)) {
-        return value
-          .map((val) => {
-            const option = fieldMetadata.options?.find(
-              (opt) => opt.value === val,
-            );
-            return option?.label ?? String(val);
-          })
-          .join(', ');
-      }
-      return String(value);
+      const values = normalizeMultiSelectValue(value);
+
+      return values
+        .map((value) => {
+          const option = fieldMetadata.options?.find(
+            (option) => option.value === value,
+          );
+          return option?.label ?? String(value);
+        })
+        .join(', ');
     }
 
     case FieldMetadataType.BOOLEAN: {
