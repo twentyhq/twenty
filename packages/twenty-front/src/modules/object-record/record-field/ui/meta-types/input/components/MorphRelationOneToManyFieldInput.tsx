@@ -41,6 +41,7 @@ export const MorphRelationOneToManyFieldInput = () => {
           : 'search-bar-on-bottom'
       }
       showObjectName={true}
+      dropdownWidth={320}
     />
   );
 };

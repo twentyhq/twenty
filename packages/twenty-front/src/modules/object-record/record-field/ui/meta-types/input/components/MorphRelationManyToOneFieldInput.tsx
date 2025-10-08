@@ -90,6 +90,7 @@ export const MorphRelationManyToOneFieldInput = () => {
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }
+      dropdownWidth={320}
       showObjectName={true}
     />
   );
