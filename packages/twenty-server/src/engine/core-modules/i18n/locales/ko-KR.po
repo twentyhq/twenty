@@ -3389,6 +3389,11 @@ msgstr "업데이트 날짜/시간"
 msgid "Updated field name is not synced with label"
 msgstr "업데이트된 필드 이름이 레이블과 동기화되지 않았습니다"
 
+#. js-lingui-id: GkcfmO
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "User already exists"
+msgstr ""
+
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
