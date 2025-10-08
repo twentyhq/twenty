@@ -57,6 +57,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     setSignInUpStep(SignInUpStep.Email);
   }, [setSignInUpStep]);
 
+  const errorMsgUserAlreadyExist = t`An error occurred while checking user existence`;
   const continueWithCredentials = useCallback(async () => {
     const token = await readCaptchaToken();
     if (!form.getValues('email')) {
@@ -80,7 +81,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       enqueueErrorSnackBar({
         ...(error instanceof ApolloError
           ? { apolloError: error }
-          : { message: t`An error occurred while checking user existence` }),
+          : { message: errorMsgUserAlreadyExist }),
       });
     }
   }, [
