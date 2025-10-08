@@ -1,55 +1,57 @@
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { GraphType } from '~/generated-metadata/graphql';
 import {
+  ExtendedAggregateOperations,
+  GraphOrderBy,
+  GraphType,
+} from '~/generated-metadata/graphql';
+import {
+  AxisNameDisplay,
   type GridPosition,
   type PageLayoutWidget,
   type WidgetConfiguration,
   WidgetType,
 } from '~/generated/graphql';
 
+type DefaultBarChartConfig = {
+  groupByFieldMetadataIdX: string;
+  aggregateFieldMetadataId: string;
+};
+
 const createDefaultGraphConfiguration = (
   graphType: GraphType,
-): WidgetConfiguration => {
+  defaultBarChartConfig?: DefaultBarChartConfig,
+): WidgetConfiguration | null => {
   switch (graphType) {
     case GraphType.NUMBER:
-      return {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
-        displayDataLabel: false,
-      };
+      //TODO: implement default number chart config
+      return null;
 
     case GraphType.PIE:
-      return {
-        __typename: 'PieChartConfiguration',
-        graphType: GraphType.PIE,
-        displayDataLabel: false,
-        color: 'blue' satisfies ThemeColor,
-      };
+      return null;
 
     case GraphType.BAR:
+      if (!isDefined(defaultBarChartConfig)) {
+        return null;
+      }
       return {
         __typename: 'BarChartConfiguration',
         graphType: GraphType.BAR,
         displayDataLabel: false,
-        color: 'blue' satisfies ThemeColor,
+        color: 'purple' satisfies ThemeColor,
+        groupByFieldMetadataIdX: defaultBarChartConfig.groupByFieldMetadataIdX,
+        aggregateFieldMetadataId:
+          defaultBarChartConfig.aggregateFieldMetadataId,
+        aggregateOperation: ExtendedAggregateOperations.SUM,
+        orderByX: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
       };
 
     case GraphType.LINE:
-      return {
-        __typename: 'LineChartConfiguration',
-        graphType: GraphType.LINE,
-        displayDataLabel: false,
-        color: 'blue' satisfies ThemeColor,
-      };
+      return null;
 
     case GraphType.GAUGE:
-      return {
-        __typename: 'GaugeChartConfiguration',
-        graphType: GraphType.GAUGE,
-        displayDataLabel: false,
-        color: 'blue' satisfies ThemeColor,
-      };
+      return null;
 
     default:
       assertUnreachable(graphType);
@@ -63,6 +65,7 @@ export const createDefaultGraphWidget = ({
   graphType,
   gridPosition,
   objectMetadataId,
+  defaultConfig,
 }: {
   id: string;
   pageLayoutTabId: string;
@@ -70,6 +73,11 @@ export const createDefaultGraphWidget = ({
   graphType: GraphType;
   gridPosition: GridPosition;
   objectMetadataId?: string | null;
+  defaultConfig?: {
+    objectMetadataId: string;
+    groupByFieldMetadataIdX: string;
+    aggregateFieldMetadataId: string;
+  };
 }): PageLayoutWidget => {
   return {
     __typename: 'PageLayoutWidget',
@@ -77,9 +85,18 @@ export const createDefaultGraphWidget = ({
     pageLayoutTabId,
     title,
     type: WidgetType.GRAPH,
-    configuration: createDefaultGraphConfiguration(graphType),
+    configuration: createDefaultGraphConfiguration(
+      graphType,
+      isDefined(defaultConfig)
+        ? {
+            groupByFieldMetadataIdX: defaultConfig.groupByFieldMetadataIdX,
+            aggregateFieldMetadataId: defaultConfig.aggregateFieldMetadataId,
+          }
+        : undefined,
+    ),
     gridPosition,
-    objectMetadataId: objectMetadataId ?? null,
+    objectMetadataId:
+      defaultConfig?.objectMetadataId ?? objectMetadataId ?? null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

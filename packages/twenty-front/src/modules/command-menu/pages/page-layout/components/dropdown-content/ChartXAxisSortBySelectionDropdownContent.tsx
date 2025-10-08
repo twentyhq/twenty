@@ -76,8 +76,9 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
                 graphOrderBy: sortOption.value,
                 groupByFieldMetadataIdX: configuration.groupByFieldMetadataIdX,
                 aggregateFieldMetadataId:
-                  configuration.aggregateFieldMetadataId,
-                aggregateOperation: configuration.aggregateOperation,
+                  configuration.aggregateFieldMetadataId ?? undefined,
+                aggregateOperation:
+                  configuration.aggregateOperation ?? undefined,
               })}
               selected={currentOrderByX === sortOption.value}
               focused={selectedItemId === sortOption.value}

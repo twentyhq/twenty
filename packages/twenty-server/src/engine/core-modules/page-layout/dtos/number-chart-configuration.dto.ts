@@ -24,15 +24,15 @@ export class NumberChartConfigurationDTO {
   @IsNotEmpty()
   graphType: GraphType.NUMBER;
 
-  @Field(() => UUIDScalarType, { nullable: true })
+  @Field(() => UUIDScalarType)
   @IsUUID()
-  @IsOptional()
-  aggregateFieldMetadataId?: string;
+  @IsNotEmpty()
+  aggregateFieldMetadataId: string;
 
-  @Field(() => ExtendedAggregateOperations, { nullable: true })
+  @Field(() => ExtendedAggregateOperations)
   @IsEnum(ExtendedAggregateOperations)
-  @IsOptional()
-  aggregateOperation?: ExtendedAggregateOperations;
+  @IsNotEmpty()
+  aggregateOperation: ExtendedAggregateOperations;
 
   @Field(() => String, { nullable: true })
   @IsString()

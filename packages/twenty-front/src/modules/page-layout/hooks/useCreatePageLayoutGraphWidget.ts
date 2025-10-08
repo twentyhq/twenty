@@ -1,3 +1,4 @@
+import { type DefaultChartConfig } from '@/page-layout/hooks/useCompanyDefaultChartConfig';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -52,7 +53,10 @@ export const useCreatePageLayoutGraphWidget = (
 
   const createPageLayoutGraphWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (graphType: GraphType): PageLayoutWidget => {
+      (
+        graphType: GraphType,
+        defaultConfig?: DefaultChartConfig,
+      ): PageLayoutWidget => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 
         if (!isDefined(activeTabId)) {
@@ -101,6 +105,7 @@ export const useCreatePageLayoutGraphWidget = (
             rowSpan: position.h,
             columnSpan: position.w,
           },
+          defaultConfig,
         });
 
         const newLayout = {

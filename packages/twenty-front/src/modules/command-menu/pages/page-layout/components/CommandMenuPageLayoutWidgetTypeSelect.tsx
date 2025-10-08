@@ -4,6 +4,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useCompanyDefaultChartConfig } from '@/page-layout/hooks/useCompanyDefaultChartConfig';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -18,6 +19,8 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
+  const { buildDefaultBarChartConfig } = useCompanyDefaultChartConfig();
+
   const { createPageLayoutGraphWidget } =
     useCreatePageLayoutGraphWidget(pageLayoutId);
 
@@ -29,7 +32,11 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const handleNavigateToGraphTypeSelect = () => {
     if (!isDefined(pageLayoutEditingWidgetId)) {
-      const newWidget = createPageLayoutGraphWidget(GraphType.BAR);
+      const defaultConfig = buildDefaultBarChartConfig();
+      const newWidget = createPageLayoutGraphWidget(
+        GraphType.BAR,
+        defaultConfig,
+      );
 
       setPageLayoutEditingWidgetId(newWidget.id);
     }

@@ -279,15 +279,15 @@ export enum AxisNameDisplay {
 
 export type BarChartConfiguration = {
   __typename?: 'BarChartConfiguration';
-  aggregateFieldMetadataId?: Maybe<Scalars['UUID']>;
-  aggregateOperation?: Maybe<ExtendedAggregateOperations>;
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: ExtendedAggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
-  groupByFieldMetadataIdX?: Maybe<Scalars['UUID']>;
+  groupByFieldMetadataIdX: Scalars['UUID'];
   groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
   groupBySubFieldNameX?: Maybe<Scalars['String']>;
   groupBySubFieldNameY?: Maybe<Scalars['String']>;
@@ -1320,8 +1320,8 @@ export type FullName = {
 
 export type GaugeChartConfiguration = {
   __typename?: 'GaugeChartConfiguration';
-  aggregateFieldMetadataId?: Maybe<Scalars['UUID']>;
-  aggregateOperation?: Maybe<ExtendedAggregateOperations>;
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
@@ -1547,15 +1547,15 @@ export type InvalidatePassword = {
 
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
-  aggregateFieldMetadataId?: Maybe<Scalars['UUID']>;
-  aggregateOperation?: Maybe<ExtendedAggregateOperations>;
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: ExtendedAggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
-  groupByFieldMetadataIdX?: Maybe<Scalars['UUID']>;
+  groupByFieldMetadataIdX: Scalars['UUID'];
   groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
   groupBySubFieldNameX?: Maybe<Scalars['String']>;
   groupBySubFieldNameY?: Maybe<Scalars['String']>;
@@ -2617,8 +2617,8 @@ export type NativeModelCapabilities = {
 
 export type NumberChartConfiguration = {
   __typename?: 'NumberChartConfiguration';
-  aggregateFieldMetadataId?: Maybe<Scalars['UUID']>;
-  aggregateOperation?: Maybe<ExtendedAggregateOperations>;
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
@@ -2862,14 +2862,14 @@ export enum PermissionFlagType {
 
 export type PieChartConfiguration = {
   __typename?: 'PieChartConfiguration';
-  aggregateFieldMetadataId?: Maybe<Scalars['UUID']>;
-  aggregateOperation?: Maybe<ExtendedAggregateOperations>;
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
-  groupByFieldMetadataId?: Maybe<Scalars['UUID']>;
+  groupByFieldMetadataId: Scalars['UUID'];
   groupBySubFieldName?: Maybe<Scalars['String']>;
   orderBy?: Maybe<GraphOrderBy>;
 };
@@ -4432,7 +4432,7 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
-export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId?: any | null, aggregateOperation?: ExtendedAggregateOperations | null, groupByFieldMetadataIdX?: any | null, orderByX?: GraphOrderBy | null, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId?: any | null, aggregateOperation?: ExtendedAggregateOperations | null, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId?: any | null, aggregateOperation?: ExtendedAggregateOperations | null, groupByFieldMetadataIdX?: any | null, orderByX?: GraphOrderBy | null, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId?: any | null, aggregateOperation?: ExtendedAggregateOperations | null, displayDataLabel?: boolean | null, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId?: any | null, aggregateFieldMetadataId?: any | null, aggregateOperation?: ExtendedAggregateOperations | null, orderBy?: GraphOrderBy | null, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | null };
+export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, groupByFieldMetadataIdX: any, orderByX?: GraphOrderBy | null, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, groupByFieldMetadataIdX: any, orderByX?: GraphOrderBy | null, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel?: boolean | null, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, orderBy?: GraphOrderBy | null, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | null };
 
 export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
   id: Scalars['String'];
@@ -4440,7 +4440,7 @@ export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId?: any | null, aggregateOperation?: ExtendedAggregateOperations | null, groupByFieldMetadataIdX?: any | null, orderByX?: GraphOrderBy | null, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId?: any | null, aggregateOperation?: ExtendedAggregateOperations | null, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId?: any | null, aggregateOperation?: ExtendedAggregateOperations | null, groupByFieldMetadataIdX?: any | null, orderByX?: GraphOrderBy | null, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId?: any | null, aggregateOperation?: ExtendedAggregateOperations | null, displayDataLabel?: boolean | null, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId?: any | null, aggregateFieldMetadataId?: any | null, aggregateOperation?: ExtendedAggregateOperations | null, orderBy?: GraphOrderBy | null, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | null }> | null }> | null } };
+export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, groupByFieldMetadataIdX: any, orderByX?: GraphOrderBy | null, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, groupByFieldMetadataIdX: any, orderByX?: GraphOrderBy | null, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel?: boolean | null, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, orderBy?: GraphOrderBy | null, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | null }> | null }> | null } };
 
 export type OnDbEventSubscriptionVariables = Exact<{
   input: OnDbEventInput;

@@ -25,15 +25,6 @@ export const isChartConfigurationReadyForQuery = (
   switch (configuration.__typename) {
     case 'BarChartConfiguration':
     case 'LineChartConfiguration': {
-      const hasRequiredFields =
-        isDefined(configuration.aggregateFieldMetadataId) &&
-        isDefined(configuration.aggregateOperation) &&
-        isDefined(configuration.groupByFieldMetadataIdX);
-
-      if (!hasRequiredFields) {
-        return { isReady: false };
-      }
-
       const hasValidFields =
         fieldExists(
           configuration.aggregateFieldMetadataId,
@@ -49,15 +40,6 @@ export const isChartConfigurationReadyForQuery = (
     }
 
     case 'PieChartConfiguration': {
-      const hasRequiredFields =
-        isDefined(configuration.aggregateFieldMetadataId) &&
-        isDefined(configuration.aggregateOperation) &&
-        isDefined(configuration.groupByFieldMetadataId);
-
-      if (!hasRequiredFields) {
-        return { isReady: false };
-      }
-
       const hasValidFields =
         fieldExists(
           configuration.aggregateFieldMetadataId,
@@ -70,14 +52,6 @@ export const isChartConfigurationReadyForQuery = (
 
     case 'NumberChartConfiguration':
     case 'GaugeChartConfiguration': {
-      const hasRequiredFields =
-        isDefined(configuration.aggregateFieldMetadataId) &&
-        isDefined(configuration.aggregateOperation);
-
-      if (!hasRequiredFields) {
-        return { isReady: false };
-      }
-
       const hasValidField = fieldExists(
         configuration.aggregateFieldMetadataId,
         objectMetadataItem,
