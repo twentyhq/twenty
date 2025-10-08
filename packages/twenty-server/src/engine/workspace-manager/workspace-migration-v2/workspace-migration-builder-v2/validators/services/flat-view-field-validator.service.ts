@@ -93,7 +93,9 @@ export class FlatViewFieldValidatorService {
     ) {
       const otherFlatViewFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow(
         {
-          flatEntityIds: flatView.viewFieldIds,
+          flatEntityIds: flatView.viewFieldIds.filter(
+            (flatViewId) => flatViewId !== updatedFlatViewField.id,
+          ),
           flatEntityMaps: optimisticFlatViewFieldMaps,
         },
       );
@@ -260,7 +262,7 @@ export class FlatViewFieldValidatorService {
     ) {
       validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View field position cannot be lower than label indetifier view field position`,
+        message: t`View field position cannot be lower than label identifier view field position`,
         userFriendlyMessage: t`View field position cannot be lower than label identifier view field position`,
       });
     }
