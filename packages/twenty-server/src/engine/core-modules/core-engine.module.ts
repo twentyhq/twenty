@@ -55,7 +55,6 @@ import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
-import { CoreViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
@@ -131,7 +130,6 @@ import { FileModule } from './file/file.module';
     SearchModule,
     ApiKeyModule,
     WebhookModule,
-    CoreViewModule,
     PageLayoutModule,
     ImpersonationModule,
   ],

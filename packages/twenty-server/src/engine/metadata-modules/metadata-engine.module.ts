@@ -11,6 +11,7 @@ import { RemoteServerModule } from 'src/engine/metadata-modules/remote-server/re
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { ViewAggregateModule } from 'src/engine/metadata-modules/view/view-aggregate.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
@@ -25,6 +26,7 @@ import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serve
     ServerlessFunctionModule,
     ServerlessFunctionLayerModule,
     AgentModule,
+    ViewAggregateModule,
     WorkspaceMetadataVersionModule,
     WorkspaceMigrationModule,
     RemoteServerModule,
@@ -42,6 +44,7 @@ import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serve
     SearchFieldMetadataModule,
     ServerlessFunctionModule,
     AgentModule,
+    ViewAggregateModule,
     RemoteServerModule,
     RoleModule,
     PermissionsModule,

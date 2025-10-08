@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 
 import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
-  NestjsQueryGraphQLModule,
-  PagingStrategies,
+    NestjsQueryGraphQLModule,
+    PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
@@ -30,7 +30,10 @@ import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { CoreViewModule } from 'src/engine/metadata-modules/view/view.module';
+import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
+import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
+import { ViewGroupModule } from 'src/engine/metadata-modules/view-group/view-group.module';
+import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
@@ -61,7 +64,10 @@ import { FieldMetadataService } from './services/field-metadata.service';
         TypeORMModule,
         ActorModule,
         FeatureFlagModule,
-        CoreViewModule,
+        ViewModule,
+        ViewFieldModule,
+        ViewFilterModule,
+        ViewGroupModule,
         PermissionsModule,
         WorkspaceMetadataCacheModule,
         WorkspaceMigrationV2Module,
