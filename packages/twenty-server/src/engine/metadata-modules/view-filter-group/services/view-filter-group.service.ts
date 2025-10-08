@@ -6,20 +6,20 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import {
-  ViewFilterGroupException,
-  ViewFilterGroupExceptionCode,
-  ViewFilterGroupExceptionMessageKey,
-  generateViewFilterGroupExceptionMessage,
-  generateViewFilterGroupUserFriendlyExceptionMessage,
+    ViewFilterGroupException,
+    ViewFilterGroupExceptionCode,
+    ViewFilterGroupExceptionMessageKey,
+    generateViewFilterGroupExceptionMessage,
+    generateViewFilterGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class ViewFilterGroupService {
   constructor(
     @InjectRepository(ViewFilterGroupEntity)
     private readonly viewFilterGroupRepository: Repository<ViewFilterGroupEntity>,
-    private readonly viewService: ViewService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async findByWorkspaceId(
@@ -120,12 +120,12 @@ export class ViewFilterGroupService {
     const viewFilterGroup =
       this.viewFilterGroupRepository.create(viewFilterGroupData);
 
-    await this.viewService.flushGraphQLCache(viewFilterGroupData.workspaceId);
+    await this.flushGraphQLCache(viewFilterGroupData.workspaceId);
 
     const savedViewFilterGroup =
       await this.viewFilterGroupRepository.save(viewFilterGroup);
 
-    await this.viewService.flushGraphQLCache(viewFilterGroupData.workspaceId);
+    await this.flushGraphQLCache(viewFilterGroupData.workspaceId);
 
     return savedViewFilterGroup;
   }
@@ -152,7 +152,7 @@ export class ViewFilterGroupService {
       ...updateData,
     });
 
-    await this.viewService.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(workspaceId);
 
     return { ...existingViewFilterGroup, ...updatedViewFilterGroup };
   }
@@ -193,8 +193,15 @@ export class ViewFilterGroupService {
 
     await this.viewFilterGroupRepository.delete(id);
 
-    await this.viewService.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(workspaceId);
 
     return true;
+  }
+
+  private async flushGraphQLCache(workspaceId: string): Promise<void> {
+    await this.workspaceCacheStorageService.flushGraphQLOperation({
+      operationName: 'FindAllCoreViews',
+      workspaceId,
+    });
   }
 }

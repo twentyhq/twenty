@@ -5,10 +5,13 @@ import { ViewGroupController } from 'src/engine/metadata-modules/view-group/cont
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewGroupResolver } from 'src/engine/metadata-modules/view-group/resolvers/view-group.resolver';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
-import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ViewGroupEntity]), ViewModule],
+  imports: [
+    TypeOrmModule.forFeature([ViewGroupEntity]),
+    WorkspaceCacheStorageModule,
+  ],
   controllers: [ViewGroupController],
   providers: [ViewGroupService, ViewGroupResolver],
   exports: [ViewGroupService],

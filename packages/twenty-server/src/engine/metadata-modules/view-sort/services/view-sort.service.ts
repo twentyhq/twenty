@@ -6,20 +6,20 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import {
-  ViewSortException,
-  ViewSortExceptionCode,
-  ViewSortExceptionMessageKey,
-  generateViewSortExceptionMessage,
-  generateViewSortUserFriendlyExceptionMessage,
+    ViewSortException,
+    ViewSortExceptionCode,
+    ViewSortExceptionMessageKey,
+    generateViewSortExceptionMessage,
+    generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class ViewSortService {
   constructor(
     @InjectRepository(ViewSortEntity)
     private readonly viewSortRepository: Repository<ViewSortEntity>,
-    private readonly viewService: ViewService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewSortEntity[]> {
@@ -109,7 +109,7 @@ export class ViewSortService {
 
     const savedViewSort = await this.viewSortRepository.save(viewSort);
 
-    await this.viewService.flushGraphQLCache(viewSortData.workspaceId);
+    await this.flushGraphQLCache(viewSortData.workspaceId);
 
     return savedViewSort;
   }
@@ -136,7 +136,7 @@ export class ViewSortService {
       ...updateData,
     });
 
-    await this.viewService.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(workspaceId);
 
     return { ...existingViewSort, ...updatedViewSort };
   }
@@ -156,7 +156,7 @@ export class ViewSortService {
 
     await this.viewSortRepository.softDelete(id);
 
-    await this.viewService.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(workspaceId);
 
     return viewSort;
   }
@@ -176,8 +176,15 @@ export class ViewSortService {
 
     await this.viewSortRepository.delete(id);
 
-    await this.viewService.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(workspaceId);
 
     return true;
+  }
+
+  private async flushGraphQLCache(workspaceId: string): Promise<void> {
+    await this.workspaceCacheStorageService.flushGraphQLOperation({
+      operationName: 'FindAllCoreViews',
+      workspaceId,
+    });
   }
 }
