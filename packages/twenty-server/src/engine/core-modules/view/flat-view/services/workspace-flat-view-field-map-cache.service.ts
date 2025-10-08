@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { fromViewFieldEntityToFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/from-view-field-entity-to-flat-view-field.util';
@@ -36,20 +38,12 @@ export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceFlatMapCache
       withDeleted: true,
     });
 
-    const flatViewFieldMaps: FlatViewFieldMaps = {
-      byId: {},
-      idByUniversalIdentifier: {},
-    };
-
-    for (const viewFieldEntity of existingViewFields) {
+    return existingViewFields.reduce((flatViewFieldMaps, viewFieldEntity) => {
       const flatViewField = fromViewFieldEntityToFlatViewField(viewFieldEntity);
-
-      flatViewFieldMaps.byId[flatViewField.id] = flatViewField;
-      flatViewFieldMaps.idByUniversalIdentifier[
-        flatViewField.universalIdentifier
-      ] = flatViewField.id;
-    }
-
-    return flatViewFieldMaps;
+      return addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: flatViewField,
+        flatEntityMaps: flatViewFieldMaps,
+      });
+    }, EMPTY_FLAT_ENTITY_MAPS);
   }
 }
