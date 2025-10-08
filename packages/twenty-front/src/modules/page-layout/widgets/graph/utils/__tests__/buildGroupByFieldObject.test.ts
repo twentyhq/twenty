@@ -26,7 +26,7 @@ describe('buildGroupByFieldObject', () => {
     });
 
     expect(result).toEqual({
-      fullName: {
+      name: {
         firstName: true,
       },
     });
@@ -39,7 +39,7 @@ describe('buildGroupByFieldObject', () => {
     } as any;
 
     expect(() => buildGroupByFieldObject({ field })).toThrow(
-      'Composite field fullName requires a subfield to be specified',
+      'Composite field name requires a subfield to be specified',
     );
   });
 
