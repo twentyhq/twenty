@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { FlatViewField } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field.type';
-import { compareTwoFlatViewField } from 'src/engine/core-modules/view-field/flat-view-field/utils/compare-two-flat-view-field.util';
+import { FlatViewField } from 'src/engine/core-modules/flat-view-field/types/flat-view-field.type';
+import { compareTwoFlatViewField } from 'src/engine/core-modules/flat-view-field/utils/compare-two-flat-view-field.util';
 import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/view-field-related-flat-entity-maps.type';
 import {
   FlatEntityUpdateValidationArgs,
