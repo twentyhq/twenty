@@ -85,4 +85,3 @@ export class ViewGroupResolver {
     return isDefined(deletedViewGroup);
   }
 }
-

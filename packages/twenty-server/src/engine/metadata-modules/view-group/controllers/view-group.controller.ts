@@ -1,14 +1,14 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Patch,
-    Post,
-    Query,
-    UseFilters,
-    UseGuards,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -20,11 +20,11 @@ import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dto
 import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import { type ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import {
-    generateViewGroupExceptionMessage,
-    generateViewGroupUserFriendlyExceptionMessage,
-    ViewGroupException,
-    ViewGroupExceptionCode,
-    ViewGroupExceptionMessageKey,
+  generateViewGroupExceptionMessage,
+  generateViewGroupUserFriendlyExceptionMessage,
+  ViewGroupException,
+  ViewGroupExceptionCode,
+  ViewGroupExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { ViewGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
@@ -113,4 +113,3 @@ export class ViewGroupController {
 
   // TODO: the destroy endpoint will be implemented when we settle on a strategy
 }
-

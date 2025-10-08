@@ -36,4 +36,3 @@ export class ViewGroupDTO {
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;
 }
-
