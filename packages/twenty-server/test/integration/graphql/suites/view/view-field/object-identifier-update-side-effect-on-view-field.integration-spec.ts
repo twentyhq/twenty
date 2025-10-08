@@ -173,7 +173,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
     );
   });
 
-  it.only('Should not allow updated labelIdentifier view field with a position higher than existing other view field', async () => {
+  it('Should not allow updated labelIdentifier view field with a position higher than existing other view field', async () => {
     const {
       data: {
         createOneField: { id: fieldMetadataId },
