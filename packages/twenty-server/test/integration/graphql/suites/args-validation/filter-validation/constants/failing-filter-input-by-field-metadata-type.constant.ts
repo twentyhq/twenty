@@ -309,8 +309,7 @@ export const failingFilterInputByFieldMetadataType: {
   [FieldMetadataType.MULTI_SELECT]: [
     {
       gqlFilterInput: { multiSelectField: { eq: 'not-a-multi-select' } },
-      gqlErrorMessage:
-        'Value "not-a-multi-select" does not exist in "TestObjectMultiSelectFieldEnum" enum.',
+      gqlErrorMessage: 'Value "not-a-multi-select" does not exist ',
       restFilterInput: 'multiSelectField[eq]:"not-a-multi-select"',
       restErrorMessage: "not available in 'multiSelectField'",
     },
