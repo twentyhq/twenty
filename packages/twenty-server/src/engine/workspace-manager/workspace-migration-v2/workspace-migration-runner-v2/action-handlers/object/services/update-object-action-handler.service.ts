@@ -7,8 +7,8 @@ import {
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { findObjectFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -121,10 +121,10 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
           newTableName,
         });
 
-        const { objectFlatFieldMetadatas } =
-          findObjectFlatFieldMetadatasOrThrow({
-            flatFieldMetadataMaps,
-            flatObjectMetadata: updatedObjectMetadata,
+        const objectFlatFieldMetadatas =
+          findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityMaps: flatFieldMetadataMaps,
+            flatEntityIds: updatedObjectMetadata.fieldMetadataIds,
           });
         const enumOrCompositeFlatFieldMetadatas =
           objectFlatFieldMetadatas.filter(

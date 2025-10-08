@@ -49,7 +49,6 @@ import { UserService } from './services/user.service';
     UserRoleModule,
     FeatureFlagModule,
     PermissionsModule,
-    UserWorkspaceModule,
   ],
   exports: [UserService, WorkspaceMemberTranspiler],
   providers: [UserService, UserResolver, WorkspaceMemberTranspiler],

@@ -15,14 +15,16 @@ export type CreateViewFieldAction = {
   viewField: FlatViewField;
 };
 
+export type FlatViewFieldPropertiesUpdates = Array<
+  {
+    [P in FlatViewFieldPropertiesToCompare]: FlatViewFieldPropertyUpdate<P>;
+  }[FlatViewFieldPropertiesToCompare]
+>;
+
 export type UpdateViewFieldAction = {
   type: 'update_view_field';
   viewFieldId: string;
-  updates: Array<
-    {
-      [P in FlatViewFieldPropertiesToCompare]: FlatViewFieldPropertyUpdate<P>;
-    }[FlatViewFieldPropertiesToCompare]
-  >;
+  updates: FlatViewFieldPropertiesUpdates;
 };
 
 export type DeleteViewFieldAction = {
