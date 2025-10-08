@@ -13,31 +13,21 @@ import {
   WidgetType,
 } from '~/generated/graphql';
 
-type DefaultBarChartConfig = {
-  groupByFieldMetadataIdX: string;
-  aggregateFieldMetadataId: string;
-};
-
-type DefaultNumberChartConfig = {
-  aggregateFieldMetadataId: string;
-};
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
 const createDefaultGraphConfiguration = (
   graphType: GraphType,
-  defaultConfig?: DefaultBarChartConfig | DefaultNumberChartConfig,
+  fieldSelection?: GraphWidgetFieldSelection,
 ): WidgetConfiguration | null => {
   switch (graphType) {
     case GraphType.NUMBER:
-      if (
-        !isDefined(defaultConfig) ||
-        !('aggregateFieldMetadataId' in defaultConfig)
-      ) {
+      if (!isDefined(fieldSelection?.aggregateFieldMetadataId)) {
         return null;
       }
       return {
         __typename: 'NumberChartConfiguration',
         graphType: GraphType.NUMBER,
-        aggregateFieldMetadataId: defaultConfig.aggregateFieldMetadataId,
+        aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: ExtendedAggregateOperations.COUNT,
         displayDataLabel: true,
       };
@@ -47,8 +37,8 @@ const createDefaultGraphConfiguration = (
 
     case GraphType.BAR:
       if (
-        !isDefined(defaultConfig) ||
-        !('groupByFieldMetadataIdX' in defaultConfig)
+        !isDefined(fieldSelection?.aggregateFieldMetadataId) ||
+        !isDefined(fieldSelection?.groupByFieldMetadataIdX)
       ) {
         return null;
       }
@@ -57,8 +47,8 @@ const createDefaultGraphConfiguration = (
         graphType: GraphType.BAR,
         displayDataLabel: false,
         color: 'blue' satisfies ThemeColor,
-        groupByFieldMetadataIdX: defaultConfig.groupByFieldMetadataIdX,
-        aggregateFieldMetadataId: defaultConfig.aggregateFieldMetadataId,
+        groupByFieldMetadataIdX: fieldSelection.groupByFieldMetadataIdX,
+        aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: ExtendedAggregateOperations.SUM,
         orderByX: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
@@ -82,16 +72,7 @@ type CreateDefaultGraphWidgetParams = {
   graphType: GraphType;
   gridPosition: GridPosition;
   objectMetadataId?: string | null;
-  defaultConfig?:
-    | {
-        objectMetadataId: string;
-        groupByFieldMetadataIdX: string;
-        aggregateFieldMetadataId: string;
-      }
-    | {
-        objectMetadataId: string;
-        aggregateFieldMetadataId: string;
-      };
+  fieldSelection?: GraphWidgetFieldSelection;
 };
 
 export const createDefaultGraphWidget = ({
@@ -101,17 +82,25 @@ export const createDefaultGraphWidget = ({
   graphType,
   gridPosition,
   objectMetadataId,
-  defaultConfig,
+  fieldSelection,
 }: CreateDefaultGraphWidgetParams): PageLayoutWidget => {
+  const resolvedObjectMetadataId =
+    fieldSelection?.objectMetadataId ?? objectMetadataId ?? null;
+
+  const configuration = createDefaultGraphConfiguration(
+    graphType,
+    fieldSelection,
+  );
+
   return {
     __typename: 'PageLayoutWidget',
     id,
     pageLayoutTabId,
     title,
     type: WidgetType.GRAPH,
-    configuration: createDefaultGraphConfiguration(graphType, defaultConfig),
+    configuration,
     gridPosition,
-    objectMetadataId: defaultConfig?.objectMetadataId ?? objectMetadataId,
+    objectMetadataId: resolvedObjectMetadataId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

@@ -2,16 +2,7 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export type DefaultChartConfig = {
-  objectMetadataId: string;
-  groupByFieldMetadataIdX: string;
-  aggregateFieldMetadataId: string;
-};
-
-export type DefaultNumberChartConfig = {
-  objectMetadataId: string;
-  aggregateFieldMetadataId: string;
-};
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
 export const useCompanyDefaultChartConfig = () => {
   const companyObjectMetadata = useRecoilValue(
@@ -21,7 +12,9 @@ export const useCompanyDefaultChartConfig = () => {
     }),
   );
 
-  const buildDefaultBarChartConfig = (): DefaultChartConfig | undefined => {
+  const buildBarChartFieldSelection = ():
+    | GraphWidgetFieldSelection
+    | undefined => {
     if (!isDefined(companyObjectMetadata)) {
       return undefined;
     }
@@ -52,8 +45,8 @@ export const useCompanyDefaultChartConfig = () => {
     };
   };
 
-  const buildDefaultNumberChartConfig = ():
-    | DefaultNumberChartConfig
+  const buildNumberChartFieldSelection = ():
+    | GraphWidgetFieldSelection
     | undefined => {
     if (!isDefined(companyObjectMetadata)) {
       return undefined;
@@ -79,5 +72,5 @@ export const useCompanyDefaultChartConfig = () => {
     };
   };
 
-  return { buildDefaultBarChartConfig, buildDefaultNumberChartConfig };
+  return { buildBarChartFieldSelection, buildNumberChartFieldSelection };
 };

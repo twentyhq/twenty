@@ -13,6 +13,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mock-uuid'),
@@ -165,7 +166,9 @@ describe('useCreatePageLayoutGraphWidget', () => {
       GraphType.BAR,
     ];
 
-    const mockDefaultConfigs = {
+    const mockFieldSelections: Partial<
+      Record<GraphType, GraphWidgetFieldSelection>
+    > = {
       [GraphType.NUMBER]: {
         objectMetadataId: 'test-object-id',
         aggregateFieldMetadataId: 'test-aggregate-field-id',
@@ -179,11 +182,11 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     graphTypes.forEach((graphType) => {
       act(() => {
-        const defaultConfig =
-          mockDefaultConfigs[graphType as keyof typeof mockDefaultConfigs];
+        const fieldSelection =
+          mockFieldSelections[graphType as keyof typeof mockFieldSelections];
         result.current.createWidget.createPageLayoutGraphWidget({
           graphType,
-          defaultConfig,
+          fieldSelection,
         });
       });
     });

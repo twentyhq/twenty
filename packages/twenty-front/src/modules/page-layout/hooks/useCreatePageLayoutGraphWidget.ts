@@ -1,11 +1,8 @@
-import {
-  type DefaultChartConfig,
-  type DefaultNumberChartConfig,
-} from '@/page-layout/hooks/useCompanyDefaultChartConfig';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 import {
@@ -21,7 +18,7 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { type GraphType } from '~/generated-metadata/graphql';
+import { GraphType } from '~/generated-metadata/graphql';
 import { WidgetType, type PageLayoutWidget } from '~/generated/graphql';
 
 export const useCreatePageLayoutGraphWidget = (
@@ -58,10 +55,10 @@ export const useCreatePageLayoutGraphWidget = (
     ({ snapshot, set }) =>
       ({
         graphType,
-        defaultConfig,
+        fieldSelection,
       }: {
         graphType: GraphType;
-        defaultConfig?: DefaultChartConfig | DefaultNumberChartConfig;
+        fieldSelection?: GraphWidgetFieldSelection;
       }): PageLayoutWidget => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 
@@ -111,7 +108,7 @@ export const useCreatePageLayoutGraphWidget = (
             rowSpan: position.h,
             columnSpan: position.w,
           },
-          defaultConfig,
+          fieldSelection,
         });
 
         const newLayout = {

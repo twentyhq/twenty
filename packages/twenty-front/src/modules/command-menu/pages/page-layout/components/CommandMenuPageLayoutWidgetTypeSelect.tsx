@@ -19,7 +19,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
-  const { buildDefaultBarChartConfig } = useCompanyDefaultChartConfig();
+  const { buildBarChartFieldSelection } = useCompanyDefaultChartConfig();
 
   const { createPageLayoutGraphWidget } =
     useCreatePageLayoutGraphWidget(pageLayoutId);
@@ -32,10 +32,10 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const handleNavigateToGraphTypeSelect = () => {
     if (!isDefined(pageLayoutEditingWidgetId)) {
-      const defaultConfig = buildDefaultBarChartConfig();
+      const fieldSelection = buildBarChartFieldSelection();
       const newWidget = createPageLayoutGraphWidget({
         graphType: GraphType.BAR,
-        defaultConfig,
+        fieldSelection,
       });
 
       setPageLayoutEditingWidgetId(newWidget.id);
