@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -17,16 +15,14 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 export class WorkspaceAgnosticTokenService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userService: UserService,
   ) {}
 
   async generateWorkspaceAgnosticToken({
@@ -42,12 +38,8 @@ export class WorkspaceAgnosticTokenService {
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-
-    userValidator.assertIsDefinedOrThrow(
-      user,
+    const user = await this.userService.findUserByIdOrThrow(
+      userId,
       new AuthException('User is not found', AuthExceptionCode.INVALID_INPUT),
     );
 
@@ -82,11 +74,7 @@ export class WorkspaceAgnosticTokenService {
         ),
       });
 
-      const user = await this.userRepository.findOne({
-        where: { id: decoded.sub },
-      });
-
-      userValidator.assertIsDefinedOrThrow(user);
+      const user = await this.userService.findUserByIdOrThrow(decoded.sub);
 
       return { user };
     } catch (error) {

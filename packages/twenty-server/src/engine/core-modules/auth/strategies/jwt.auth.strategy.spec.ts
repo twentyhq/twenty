@@ -9,20 +9,11 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
 
-jest.mock('twenty-shared/utils', () => ({
-  ...jest.requireActual('twenty-shared/utils'),
-  assertIsDefinedOrThrow: jest.fn((value, error) => {
-    if (value === null || value === undefined) {
-      throw error;
-    }
-  }),
-}));
-
 describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
   let workspaceRepository: any;
   let userWorkspaceRepository: any;
-  let userRepository: any;
+  let userService: any;
   let apiKeyRepository: any;
   let jwtWrapperService: any;
   let permissionsService: any;
@@ -37,8 +28,8 @@ describe('JwtAuthStrategy', () => {
       findOneBy: jest.fn(),
     };
 
-    userRepository = {
-      findOne: jest.fn(),
+    userService = {
+      findUserById: jest.fn(),
     };
 
     userWorkspaceRepository = {
@@ -74,7 +65,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -104,7 +95,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -137,7 +128,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -170,7 +161,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -205,12 +196,12 @@ describe('JwtAuthStrategy', () => {
 
       workspaceRepository.findOneBy.mockResolvedValue(new Workspace());
 
-      userRepository.findOne.mockResolvedValue(null);
+      userService.findUserById.mockResolvedValue(null);
 
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -241,14 +232,16 @@ describe('JwtAuthStrategy', () => {
 
       workspaceRepository.findOneBy.mockResolvedValue(new Workspace());
 
-      userRepository.findOne.mockResolvedValue({ lastName: 'lastNameDefault' });
+      userService.findUserById.mockResolvedValue({
+        lastName: 'lastNameDefault',
+      });
 
       userWorkspaceRepository.findOne.mockResolvedValue(null);
 
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -279,7 +272,9 @@ describe('JwtAuthStrategy', () => {
 
       workspaceRepository.findOneBy.mockResolvedValue(new Workspace());
 
-      userRepository.findOne.mockResolvedValue({ lastName: 'lastNameDefault' });
+      userService.findUserById.mockResolvedValue({
+        lastName: 'lastNameDefault',
+      });
 
       userWorkspaceRepository.findOne.mockResolvedValue({
         id: validUserWorkspaceId,
@@ -290,7 +285,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -335,7 +330,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -380,7 +375,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -427,7 +422,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -471,7 +466,7 @@ describe('JwtAuthStrategy', () => {
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+      userService.findUserById.mockResolvedValue(mockUser);
       userWorkspaceRepository.findOne
         .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
         .mockResolvedValueOnce(null) // For impersonatorUserWorkspace lookup
@@ -485,7 +480,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -529,7 +524,7 @@ describe('JwtAuthStrategy', () => {
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+      userService.findUserById.mockResolvedValue(mockUser);
       userWorkspaceRepository.findOne
         .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
         .mockResolvedValueOnce(null); // For impersonatedUserWorkspace lookup
@@ -537,7 +532,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -594,7 +589,7 @@ describe('JwtAuthStrategy', () => {
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+      userService.findUserById.mockResolvedValue(mockUser);
       userWorkspaceRepository.findOne
         .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
         .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
@@ -607,7 +602,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -663,7 +658,7 @@ describe('JwtAuthStrategy', () => {
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+      userService.findUserById.mockResolvedValue(mockUser);
       userWorkspaceRepository.findOne
         .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
         .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
@@ -676,7 +671,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -733,7 +728,7 @@ describe('JwtAuthStrategy', () => {
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+      userService.findUserById.mockResolvedValue(mockUser);
       userWorkspaceRepository.findOne
         .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
         .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
@@ -746,7 +741,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -796,7 +791,7 @@ describe('JwtAuthStrategy', () => {
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+      userService.findUserById.mockResolvedValue(mockUser);
       userWorkspaceRepository.findOne
         .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
         .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
@@ -809,7 +804,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
@@ -865,7 +860,7 @@ describe('JwtAuthStrategy', () => {
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+      userService.findUserById.mockResolvedValue(mockUser);
       userWorkspaceRepository.findOne
         .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
         .mockResolvedValueOnce(mockImpersonatedUserWorkspace) // For impersonatedUserWorkspace lookup
@@ -874,7 +869,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
-        userRepository,
+        userService,
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,

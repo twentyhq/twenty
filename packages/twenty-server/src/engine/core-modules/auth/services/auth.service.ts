@@ -280,9 +280,7 @@ export class AuthService {
       );
     }
 
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
+    const user = await this.userService.findUserByEmail(email);
 
     assertIsDefinedOrThrow(
       user,
@@ -378,9 +376,7 @@ export class AuthService {
   }
 
   async checkUserExists(email: string): Promise<CheckUserExistOutput> {
-    const user = await this.userRepository.findOneBy({
-      email,
-    });
+    const user = await this.userService.findUserByEmail(email);
 
     const isUserExist = isDefined(user);
 
@@ -777,9 +773,7 @@ export class AuthService {
         ? await this.countAvailableWorkspacesByEmail(email)
         : 0;
 
-    const existingUser = await this.userRepository.findOne({
-      where: { email },
-    });
+    const existingUser = await this.userService.findUserByEmail(email);
 
     if (
       !workspaceId &&

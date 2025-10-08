@@ -76,7 +76,7 @@ export class TwoFactorAuthenticationResolver {
       );
     }
 
-    const user = await this.userService.getUserByEmail(userEmail);
+    const user = await this.userService.findUserByEmailOrThrow(userEmail);
 
     const uri =
       await this.twoFactorAuthenticationService.initiateStrategyConfiguration(

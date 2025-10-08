@@ -345,7 +345,7 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.findUserByEmailOrThrow(email);
 
     await this.twoFactorAuthenticationService.validateStrategy(
       user.id,
@@ -430,11 +430,9 @@ export class AuthResolver {
           })
         : undefined;
 
-    const existingUser = await this.userRepository.findOne({
-      where: {
-        email: signUpInput.email,
-      },
-    });
+    const existingUser = await this.userService.findUserByEmail(
+      signUpInput.email,
+    );
 
     const { userData } = this.authService.formatUserDataPayload(
       {
@@ -636,7 +634,7 @@ export class AuthResolver {
     email: string,
     workspaceId: string,
   ): Promise<{ user: User; userWorkspace: UserWorkspace }> {
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.findUserByEmailOrThrow(email);
 
     await this.authService.checkIsEmailVerified(user.isEmailVerified);
 
