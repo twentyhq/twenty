@@ -16,37 +16,7 @@ export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
-export type { FieldMetadataAddressSettings } from './FieldMetadataAddressSettings';
-export type { FieldMetadataArraySettings } from './FieldMetadataArraySettings';
-export type {
-  CurrencyFormat,
-  FieldMetadataCurrencySettings,
-} from './FieldMetadataCurrencySettings';
-export { CURRENCY_FORMAT } from './FieldMetadataCurrencySettings';
-export type { FieldMetadataDateSettings } from './FieldMetadataDateSettings';
-export { DateDisplayFormat } from './FieldMetadataDateSettings';
-export type { FieldMetadataDateTimeSettings } from './FieldMetadataDateTimeSettings';
-export type { FieldMetadataEmailsSettings } from './FieldMetadataEmailsSettings';
-export type { FieldMetadataLinksSettings } from './FieldMetadataLinksSettings';
 export type { FieldMetadataMultipleValuesSettings } from './FieldMetadataMultipleValuesSettings';
-export type {
-  FieldNumberVariant,
-  FieldMetadataNumberSettings,
-} from './FieldMetadataNumberSettings';
-export {
-  NumberDataType,
-  FIELD_NUMBER_VARIANT,
-} from './FieldMetadataNumberSettings';
-export type { FieldMetadataPhonesSettings } from './FieldMetadataPhonesSettings';
-export type { FieldMetadataRelationSettings } from './FieldMetadataRelationSettings';
-export { RelationOnDeleteAction } from './FieldMetadataRelationSettings';
-export type {
-  AllFieldMetadataSettings,
-  FieldMetadataSettings,
-} from './FieldMetadataSettings';
-export type { FieldMetadataSettingsMapping } from './FieldMetadataSettingsMapping';
-export type { FieldMetadataTextSettings } from './FieldMetadataTextSettings';
-export type { FieldMetadataTsVectorSettings } from './FieldMetadataTsVectorSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldRatingValue } from './FieldRatingValue';
 export type {

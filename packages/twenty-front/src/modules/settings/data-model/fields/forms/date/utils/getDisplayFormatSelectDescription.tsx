@@ -1,10 +1,10 @@
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { Trans } from '@lingui/react/macro';
-import { DateDisplayFormat } from 'twenty-shared/types';
 
 export const getDisplayFormatSelectDescription = (
-  selectedDisplayFormat: DateDisplayFormat,
+  selectedDisplayFormat: FieldDateDisplayFormat,
 ) => {
-  if (selectedDisplayFormat === DateDisplayFormat.CUSTOM) {
+  if (selectedDisplayFormat === FieldDateDisplayFormat.CUSTOM) {
     return (
       <Trans>
         Enter in{' '}

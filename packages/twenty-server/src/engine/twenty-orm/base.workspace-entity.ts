@@ -1,5 +1,7 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, DateDisplayFormat } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';

@@ -1,4 +1,4 @@
-import { type FieldMetadataDateSettings } from 'twenty-shared/types';
+import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -8,7 +8,7 @@ import { EllipsisDisplay } from './EllipsisDisplay';
 
 type DateDisplayProps = {
   value: string | null | undefined;
-  dateFieldSettings?: FieldMetadataDateSettings;
+  dateFieldSettings?: FieldDateMetadataSettings;
 };
 export const DateDisplay = ({ value, dateFieldSettings }: DateDisplayProps) => {
   const { dateFormat } = useContext(UserContext);

@@ -1,6 +1,6 @@
-import { DateDisplayFormat } from 'twenty-shared/types';
+import { FieldDateDisplayFormat } from '../FieldMetadata';
 
 export const isDateFieldCustomDisplayFormat = (
-  displayFormat: DateDisplayFormat,
-): displayFormat is DateDisplayFormat =>
-  displayFormat === DateDisplayFormat.CUSTOM;
+  displayFormat: FieldDateDisplayFormat,
+): displayFormat is FieldDateDisplayFormat =>
+  displayFormat === FieldDateDisplayFormat.CUSTOM;

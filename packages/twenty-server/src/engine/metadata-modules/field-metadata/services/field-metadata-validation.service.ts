@@ -12,19 +12,15 @@ import {
   type ValidationError,
   validateOrReject,
 } from 'class-validator';
-import { MIN_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import {
   ALLOWED_ADDRESS_SUBFIELDS,
   type AllowedAddressSubField,
-  CURRENCY_FORMAT,
-  type CurrencyFormat,
-  DateDisplayFormat,
-  FIELD_NUMBER_VARIANT,
-  type FieldMetadataSettings,
   FieldMetadataType,
-  type FieldNumberVariant,
 } from 'twenty-shared/types';
+import { MIN_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -47,6 +43,12 @@ type ValidateFieldMetadataArgs = {
   existingFieldMetadata?: FieldMetadataEntity;
 };
 
+enum ValueType {
+  PERCENTAGE = 'percentage',
+  NUMBER = 'number',
+  SHORT_NUMBER = 'shortNumber',
+}
+
 class NumberSettingsValidation {
   @IsOptional()
   @IsInt()
@@ -54,8 +56,8 @@ class NumberSettingsValidation {
   decimals?: number;
 
   @IsOptional()
-  @IsEnum(FIELD_NUMBER_VARIANT)
-  type?: FieldNumberVariant;
+  @IsEnum(ValueType)
+  type?: 'percentage' | 'number' | 'shortNumber';
 }
 
 class TextSettingsValidation {
@@ -65,31 +67,6 @@ class TextSettingsValidation {
   @Max(100)
   displayedMaxRows?: number;
 }
-
-class CurrencySettingsValidation {
-  @IsOptional()
-  @IsEnum(CURRENCY_FORMAT)
-  format?: CurrencyFormat;
-}
-
-class DateSettingsValidation {
-  @IsOptional()
-  @IsEnum(DateDisplayFormat)
-  displayFormat?: DateDisplayFormat;
-
-  @IsOptional()
-  customUnicodeDateFormat?: string;
-}
-
-class DateTimeSettingsValidation {
-  @IsOptional()
-  @IsEnum(DateDisplayFormat)
-  displayFormat?: DateDisplayFormat;
-
-  @IsOptional()
-  customUnicodeDateFormat?: string;
-}
-
 class AddressSettingsValidation {
   @IsOptional()
   @IsArray()
@@ -128,27 +105,6 @@ export class FieldMetadataValidationService {
         await this.validateSettings({
           type: FieldMetadataType.TEXT,
           validator: TextSettingsValidation,
-          settings,
-        });
-        break;
-      case FieldMetadataType.CURRENCY:
-        await this.validateSettings({
-          type: FieldMetadataType.CURRENCY,
-          validator: CurrencySettingsValidation,
-          settings,
-        });
-        break;
-      case FieldMetadataType.DATE:
-        await this.validateSettings({
-          type: FieldMetadataType.DATE,
-          validator: DateSettingsValidation,
-          settings,
-        });
-        break;
-      case FieldMetadataType.DATE_TIME:
-        await this.validateSettings({
-          type: FieldMetadataType.DATE_TIME,
-          validator: DateTimeSettingsValidation,
           settings,
         });
         break;

@@ -1,13 +1,15 @@
-import { DateDisplayFormat } from 'twenty-shared/types';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { t } from '@lingui/core/macro';
 
-export const getDisplayFormatLabel = (displayFormat: DateDisplayFormat) => {
+export const getDisplayFormatLabel = (
+  displayFormat: FieldDateDisplayFormat,
+) => {
   switch (displayFormat) {
-    case DateDisplayFormat.CUSTOM:
+    case FieldDateDisplayFormat.CUSTOM:
       return t`Custom`;
-    case DateDisplayFormat.RELATIVE:
+    case FieldDateDisplayFormat.RELATIVE:
       return t`Relative`;
-    case DateDisplayFormat.USER_SETTINGS:
+    case FieldDateDisplayFormat.USER_SETTINGS:
       return t`Default`;
     default:
       return '';

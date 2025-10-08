@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { validateCustomDateFormat } from '@/localization/utils/validateCustomDateFormat';
-import { DateDisplayFormat } from 'twenty-shared/types';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/ui/types/guards/isDateFIeldCustomDisplayFormat';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
@@ -19,12 +19,12 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 const fieldDateSettings = z.discriminatedUnion('displayFormat', [
   z.object({
     displayFormat: z.enum([
-      DateDisplayFormat.RELATIVE,
-      DateDisplayFormat.USER_SETTINGS,
+      FieldDateDisplayFormat.RELATIVE,
+      FieldDateDisplayFormat.USER_SETTINGS,
     ]),
   }),
   z.object({
-    displayFormat: z.literal(DateDisplayFormat.CUSTOM),
+    displayFormat: z.literal(FieldDateDisplayFormat.CUSTOM),
     customUnicodeDateFormat: z.string().refine(validateCustomDateFormat),
   }),
 ]);
@@ -86,17 +86,17 @@ export const SettingsDataModelFieldDateForm = ({
             disabled={disabled}
             description={displayFormatSelectDescription}
           >
-            <Select<DateDisplayFormat>
+            <Select<FieldDateDisplayFormat>
               disabled={disabled}
               selectSizeVariant="small"
               dropdownWidth={120}
               dropdownId="selectFieldDateDisplayFormat"
               value={value}
               onChange={onChange}
-              options={Object.keys(DateDisplayFormat).map((key) => {
+              options={Object.keys(FieldDateDisplayFormat).map((key) => {
                 return {
-                  label: getDisplayFormatLabel(key as DateDisplayFormat),
-                  value: key as DateDisplayFormat,
+                  label: getDisplayFormatLabel(key as FieldDateDisplayFormat),
+                  value: key as FieldDateDisplayFormat,
                 };
               })}
             />

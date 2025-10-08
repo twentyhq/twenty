@@ -1,4 +1,6 @@
-import { FieldMetadataType, NumberDataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';

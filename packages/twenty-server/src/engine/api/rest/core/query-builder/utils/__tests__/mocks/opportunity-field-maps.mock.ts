@@ -1,5 +1,6 @@
-import { FieldMetadataType, DateDisplayFormat } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
+import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 

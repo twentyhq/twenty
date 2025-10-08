@@ -1,6 +1,6 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { DateDisplayFormat } from 'twenty-shared/types';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { subDays } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
@@ -40,7 +40,7 @@ describe('formatDateTimeString', () => {
       ...defaultParams,
       value: mockDate,
       dateFieldSettings: {
-        displayFormat: DateDisplayFormat.RELATIVE,
+        displayFormat: FieldDateDisplayFormat.RELATIVE,
       },
       localeCatalog: enUS,
     });
@@ -62,7 +62,7 @@ describe('formatDateTimeString', () => {
       ...defaultParams,
       value: mockDate,
       dateFieldSettings: {
-        displayFormat: DateDisplayFormat.USER_SETTINGS,
+        displayFormat: FieldDateDisplayFormat.USER_SETTINGS,
       },
       localeCatalog: enUS,
     });
@@ -87,7 +87,7 @@ describe('formatDateTimeString', () => {
       ...defaultParams,
       value: mockDate,
       dateFieldSettings: {
-        displayFormat: DateDisplayFormat.CUSTOM,
+        displayFormat: FieldDateDisplayFormat.CUSTOM,
         customUnicodeDateFormat: 'yyyy',
       },
       localeCatalog: enUS,

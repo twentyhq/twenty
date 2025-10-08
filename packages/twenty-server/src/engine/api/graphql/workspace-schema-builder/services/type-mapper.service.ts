@@ -14,13 +14,13 @@ import {
   type GraphQLType,
 } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
-import {
-  type FieldMetadataSettings,
-  FieldMetadataType,
-  NumberDataType,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import {
+  type FieldMetadataSettings,
+  NumberDataType,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
