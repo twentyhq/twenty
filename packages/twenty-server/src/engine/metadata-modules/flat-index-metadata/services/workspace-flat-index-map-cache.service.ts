@@ -49,6 +49,7 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceFlatMapCacheServ
 
     return indexes.reduce((flatIndexMaps, indexEntity) => {
       const flatIndex = fromIndexMetadataEntityToFlatIndexMetadata(indexEntity);
+
       return addFlatEntityToFlatEntityMapsOrThrow({
         flatEntity: flatIndex,
         flatEntityMaps: flatIndexMaps,

@@ -51,6 +51,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
       (flatFielMetadatadMaps, fieldMetadataEntity) => {
         const flatFieldMetadata =
           fromFieldMetadataEntityToFlatFieldMetadata(fieldMetadataEntity);
+
         return addFlatEntityToFlatEntityMapsOrThrow({
           flatEntity: flatFieldMetadata,
           flatEntityMaps: flatFielMetadatadMaps,

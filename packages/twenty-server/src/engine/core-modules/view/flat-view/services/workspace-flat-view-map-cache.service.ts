@@ -46,6 +46,7 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheServi
 
     return views.reduce((flatViewMaps, viewEntity) => {
       const flatView = fromViewEntityToFlatView(viewEntity);
+
       return addFlatEntityToFlatEntityMapsOrThrow({
         flatEntity: flatView,
         flatEntityMaps: flatViewMaps,

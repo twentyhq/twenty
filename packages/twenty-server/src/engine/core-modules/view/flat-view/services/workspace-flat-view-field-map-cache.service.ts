@@ -40,6 +40,7 @@ export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceFlatMapCache
 
     return existingViewFields.reduce((flatViewFieldMaps, viewFieldEntity) => {
       const flatViewField = fromViewFieldEntityToFlatViewField(viewFieldEntity);
+
       return addFlatEntityToFlatEntityMapsOrThrow({
         flatEntity: flatViewField,
         flatEntityMaps: flatViewFieldMaps,
