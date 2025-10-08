@@ -16,7 +16,10 @@ export const computeGqlOperationFilterForEmails = ({
   subFieldName,
 }: {
   recordFilter: RecordFilter;
-  correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name' | 'type'>;
+  correspondingFieldMetadataItem: Pick<
+    PartialFieldMetadataItem,
+    'name' | 'type'
+  >;
   subFieldName: CompositeFieldSubFieldName | null | undefined;
 }): RecordGqlOperationFilter => {
   const isSubFieldFilter = isNonEmptyString(subFieldName);

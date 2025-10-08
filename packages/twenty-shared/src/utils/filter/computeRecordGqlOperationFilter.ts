@@ -1,16 +1,15 @@
-
 import {
   type PartialFieldMetadataItem,
   type RecordFilterValueDependencies,
   type RecordGqlOperationFilter,
 } from '@/types';
 import {
-  isDefined,
   turnRecordFilterGroupsIntoGqlOperationFilter,
-  turnRecordFilterIntoRecordGqlOperationFilter,
   type RecordFilter,
   type RecordFilterGroup,
-} from '@/utils';
+} from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
+import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export const computeRecordGqlOperationFilter = ({
   fields,
@@ -46,8 +45,7 @@ export const computeRecordGqlOperationFilter = ({
       fields,
       recordFilterGroups,
       currentRecordFilterGroupId: outermostFilterGroupId,
-    }
-    );
+    });
 
   const recordGqlOperationFilters = [
     ...regularRecordGqlOperationFilter,

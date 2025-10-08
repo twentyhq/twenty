@@ -121,14 +121,16 @@ export const useDownloadFakeRecords = () => {
     return { headerRow, bodyRows };
   };
 
-  const formatToCsvContent = (rows: string[][]) => {
+  const formatToCsvContent = (rows: (string | JSON | string[])[][]) => {
     const escapedRows = rows.map((row) => {
-      return row.map((value) =>
-        formatValueForCSV(sanitizeValueForCSVExport(value)),
-      );
+      return row.map((value) => {
+        const stringifiedValue =
+          typeof value === 'string' ? value : JSON.stringify(value);
+        return formatValueForCSV(sanitizeValueForCSVExport(stringifiedValue));
+      });
     });
 
-    const csvContent = [...escapedRows.map((row) => row.join(','))].join('\n');
+    const csvContent = escapedRows.map((row) => row.join(',')).join('\n');
     return [csvContent];
   };
 

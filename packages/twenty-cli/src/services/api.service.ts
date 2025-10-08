@@ -57,7 +57,8 @@ export class ApiService {
       const query = `
         query CurrentWorkspace {
           currentWorkspace {
-          id
+            id
+          }
         }
       `;
 

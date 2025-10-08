@@ -69,7 +69,7 @@ export const computeEmptyGqlOperationFilterForLinks = ({
         };
       }
       default: {
-        throw new CustomError( 
+        throw new CustomError(
           `Unknown subfield name ${subFieldName}`,
           'UNKNOWN_SUBFIELD_NAME',
         );

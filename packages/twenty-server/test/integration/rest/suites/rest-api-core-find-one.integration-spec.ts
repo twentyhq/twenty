@@ -62,9 +62,11 @@ describe('Core REST API Find One endpoint', () => {
       method: 'get',
       path: `/people/${NOT_EXISTING_TEST_PERSON_ID}`,
     })
+      //TODO : Refacto-common - This should be a 404
       .expect(400)
       .expect((res) => {
         expect(res.body.messages[0]).toContain('Record not found');
+        //TODO : Refacto-common - This should be a NotFoundException
         expect(res.body.error).toBe('BadRequestException');
       });
   });

@@ -4,7 +4,9 @@ export const baseTriggerSchema = z.object({
   name: z
     .string()
     .optional()
-    .describe('Human-readable name for the trigger. Optional but recommended for clarity.'),
+    .describe(
+      'Human-readable name for the trigger. Optional but recommended for clarity.',
+    ),
   type: z
     .enum(['DATABASE_EVENT', 'MANUAL', 'CRON', 'WEBHOOK'])
     .describe(
@@ -14,10 +16,14 @@ export const baseTriggerSchema = z.object({
     .object({ x: z.number(), y: z.number() })
     .optional()
     .nullable()
-    .describe('Position coordinates for the trigger in the workflow diagram. Use (0, 0) for the trigger step.'),
+    .describe(
+      'Position coordinates for the trigger in the workflow diagram. Use (0, 0) for the trigger step.',
+    ),
   nextStepIds: z
     .array(z.string())
     .optional()
     .nullable()
-    .describe('Array of step IDs that the trigger connects to. These are the first steps in the workflow.'),
+    .describe(
+      'Array of step IDs that the trigger connects to. These are the first steps in the workflow.',
+    ),
 });

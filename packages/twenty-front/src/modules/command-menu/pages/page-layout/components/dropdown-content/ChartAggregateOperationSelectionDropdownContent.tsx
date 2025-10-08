@@ -19,7 +19,6 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
@@ -116,7 +115,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
           />
         }
       >
-        <Trans>Y-Axis Aggregate Operation</Trans>
+        {`${selectedField.label}`}
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus

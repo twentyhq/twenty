@@ -1,5 +1,9 @@
 name: 'Preview Environment Keep Alive'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 on:
   repository_dispatch:
     types: [preview-environment]

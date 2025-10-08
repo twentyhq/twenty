@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectPermissions } from 'twenty-shared/types';
@@ -21,7 +22,7 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   cache: ApolloCache<object>;
-  recordGqlFields: Record<string, boolean>;
+  recordGqlFields: RecordGqlFields;
   record: T;
   objectPermissionsByObjectMetadataId: Record<
     string,

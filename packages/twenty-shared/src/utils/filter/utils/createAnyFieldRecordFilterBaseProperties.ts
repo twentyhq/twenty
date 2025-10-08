@@ -8,10 +8,7 @@ export const createAnyFieldRecordFilterBaseProperties = ({
 }: {
   filterValue: string;
   fieldMetadataItem: PartialFieldMetadataItem;
-}): Pick<
-  RecordFilter,
-  'id' | 'value' | 'fieldMetadataId'
-> => {
+}): Pick<RecordFilter, 'id' | 'value' | 'fieldMetadataId'> => {
   return {
     id: v4(),
     value: filterValue,

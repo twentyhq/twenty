@@ -16,7 +16,9 @@ export const baseWorkflowActionSettingsSchema = z.object({
       value: z.boolean().describe('Whether to retry the action if it fails.'),
     }),
     continueOnFailure: z.object({
-      value: z.boolean().describe('Whether to continue to the next step if this action fails.'),
+      value: z
+        .boolean()
+        .describe('Whether to continue to the next step if this action fails.'),
     }),
   }),
 });

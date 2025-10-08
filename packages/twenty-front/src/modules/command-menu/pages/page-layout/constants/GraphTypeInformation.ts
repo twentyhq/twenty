@@ -7,12 +7,12 @@ import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
+  Icon123,
   IconChartBar,
   IconChartLine,
   IconChartPie,
   type IconComponent,
   IconGauge,
-  IconNumber,
 } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
 
@@ -25,27 +25,27 @@ export const GRAPH_TYPE_INFORMATION: Record<
   }
 > = {
   [GraphType.BAR]: {
-    label: msg`Bar Chart`,
+    label: msg`Bar`,
     icon: IconChartBar,
     settings: BAR_CHART_SETTINGS,
   },
   [GraphType.PIE]: {
-    label: msg`Pie Chart`,
+    label: msg`Pie`,
     icon: IconChartPie,
     settings: PIE_CHART_SETTINGS,
   },
   [GraphType.LINE]: {
-    label: msg`Line Chart`,
+    label: msg`Line`,
     icon: IconChartLine,
     settings: LINE_CHART_SETTINGS,
   },
   [GraphType.NUMBER]: {
-    label: msg`Number Chart`,
-    icon: IconNumber,
+    label: msg`Number`,
+    icon: Icon123,
     settings: NUMBER_CHART_SETTINGS,
   },
   [GraphType.GAUGE]: {
-    label: msg`Gauge Chart`,
+    label: msg`Gauge`,
     icon: IconGauge,
     settings: GAUGE_CHART_SETTINGS,
   },

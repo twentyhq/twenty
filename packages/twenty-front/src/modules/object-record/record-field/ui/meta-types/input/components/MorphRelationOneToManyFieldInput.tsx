@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { useUpdateMorphRelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateMorphRelationManyToOneFieldInput';
+import { useUpdateMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateMorphRelationOneToManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
@@ -15,8 +15,8 @@ export const MorphRelationOneToManyFieldInput = () => {
 
   const { onSubmit } = useContext(FieldInputEventContext);
 
-  const { updateMorphRelationManyToOne } =
-    useUpdateMorphRelationManyToOneFieldInput();
+  const { updateMorphRelationOneToMany } =
+    useUpdateMorphRelationOneToManyFieldInput();
 
   const handleSubmit = () => {
     onSubmit?.({ skipPersist: true });
@@ -32,7 +32,7 @@ export const MorphRelationOneToManyFieldInput = () => {
       componentInstanceId={instanceId}
       onSubmit={handleSubmit}
       onChange={(morphItem) => {
-        updateMorphRelationManyToOne(morphItem);
+        updateMorphRelationOneToMany(morphItem);
       }}
       onClickOutside={handleSubmit}
       layoutDirection={

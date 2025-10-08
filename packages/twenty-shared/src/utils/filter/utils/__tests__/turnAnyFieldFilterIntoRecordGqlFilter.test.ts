@@ -1,7 +1,6 @@
-import { FieldMetadataType, type PartialFieldMetadataItem } from "@/types";
-import { turnAnyFieldFilterIntoRecordGqlFilter } from "@/utils/filter/turnAnyFieldFilterIntoRecordGqlFilter";
-import { filterSelectOptionsOfFieldMetadataItem } from "@/utils/filter/utils/filterSelectOptionsOfFieldMetadataItem";
-
+import { FieldMetadataType, type PartialFieldMetadataItem } from '@/types';
+import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/utils/filter/turnAnyFieldFilterIntoRecordGqlFilter';
+import { filterSelectOptionsOfFieldMetadataItem } from '@/utils/filter/utils/filterSelectOptionsOfFieldMetadataItem';
 
 const baseFieldMetadataItem: PartialFieldMetadataItem = {
   id: 'base-field-metadata-item-id',
@@ -303,7 +302,6 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         fields: [arrayFieldMetadataItem],
-        
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -351,7 +349,6 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         fields: [phonesFieldMetadataItem],
-        
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -388,7 +385,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-          fields: [numberFieldMetadataItem],
+        fields: [numberFieldMetadataItem],
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -417,7 +414,6 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         fields: [currencyFieldMetadataItem],
-        
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({

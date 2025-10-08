@@ -16,7 +16,9 @@ describe('assertIsDefinedOrThrow', () => {
   });
 
   it('throws the default error when value is undefined', () => {
-    expect(() => assertIsDefinedOrThrow(undefined)).toThrow('Value not defined');
+    expect(() => assertIsDefinedOrThrow(undefined)).toThrow(
+      'Value not defined',
+    );
   });
 
   it('throws the default error when value is null', () => {

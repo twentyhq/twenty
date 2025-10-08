@@ -4,6 +4,8 @@ import {
   Injectable,
 } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -25,6 +27,10 @@ export class JwtAuthGuard implements CanActivate {
             data.workspace.id,
           )
         : undefined;
+
+      if (!isDefined(data.apiKey) && !isDefined(data.userWorkspaceId)) {
+        return false;
+      }
 
       request.user = data.user;
       request.apiKey = data.apiKey;

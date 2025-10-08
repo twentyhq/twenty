@@ -3,8 +3,8 @@ import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifie
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/types/guards/isFieldRelationFromManyObjects';
-import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
+import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -39,8 +39,8 @@ export const RecordTableCellFieldContextGeneric = ({
 
   // todo @guillim : adjust this to handle morph relations permissions display
   if (
-    isFieldRelationToOneObject(fieldDefinition) ||
-    isFieldRelationFromManyObjects(fieldDefinition)
+    isFieldRelationManyToOne(fieldDefinition) ||
+    isFieldRelationOneToMany(fieldDefinition)
   ) {
     const relationObjectMetadataId =
       fieldDefinition.metadata.relationObjectMetadataId;

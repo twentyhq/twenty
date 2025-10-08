@@ -71,7 +71,10 @@ const StyledErrorDiv = styled.div`
 
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
 
-export type MultiItemBaseInputProps = Omit<HTMLInputProps, 'onChange'> & {
+export type MultiItemBaseInputProps = Pick<
+  HTMLInputProps,
+  'autoFocus' | 'className' | 'value' | 'placeholder' | 'onFocus' | 'onBlur'
+> & {
   onClickOutside?: () => void;
   onEnter?: () => void;
   onEscape?: () => void;
@@ -108,6 +111,8 @@ export const MultiItemBaseInput = forwardRef<
       onEscape = () => {},
       onShiftTab,
       onTab,
+      onFocus,
+      onBlur,
       rightComponent,
       renderInput,
       error = '',
@@ -152,6 +157,8 @@ export const MultiItemBaseInput = forwardRef<
               ref={combinedRef}
               withRightComponent={!!rightComponent}
               hasItem={hasItem}
+              onFocus={onFocus}
+              onBlur={onBlur}
             />
           )}
           {!!rightComponent && (

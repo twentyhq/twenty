@@ -3,7 +3,6 @@ import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/h
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -15,7 +14,6 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -74,9 +72,6 @@ export const ChartDataSourceDropdownContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader>
-        <Trans>Source</Trans>
-      </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
         type="text"

@@ -1,4 +1,4 @@
-import { type PartialFieldMetadataItem } from "@/types";
+import { type PartialFieldMetadataItem } from '@/types';
 
 export const filterSelectOptionsOfFieldMetadataItem = ({
   fieldMetadataItem,

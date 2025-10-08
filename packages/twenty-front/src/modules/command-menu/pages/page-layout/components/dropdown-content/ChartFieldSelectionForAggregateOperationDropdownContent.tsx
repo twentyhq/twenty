@@ -2,7 +2,7 @@ import { ChartAggregateOperationSelectionDropdownContent } from '@/command-menu/
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -13,7 +13,6 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -59,7 +58,8 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     items: sourceObjectMetadataItem?.fields || [],
     searchQuery,
     getSearchableValues: (item) => [item.label, item.name],
-  });
+    // TODO: remove this once group by is supported for relation fields
+  }).filter((field) => !isFieldRelation(field));
 
   const { getIcon } = useIcons();
 
@@ -78,9 +78,6 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader>
-        <Trans>Y-Axis Field</Trans>
-      </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
         type="text"

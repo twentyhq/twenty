@@ -1,4 +1,5 @@
 name: CI E2E Playwright Tests
+
 on:
   push:
     branches:

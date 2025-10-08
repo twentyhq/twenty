@@ -1,3 +1,4 @@
+import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -11,11 +12,13 @@ export const CommandMenuDefaultSelectionEffect = ({
 }: {
   selectableItemIds: string[];
 }) => {
-  const { setSelectedItemId } = useSelectableList('command-menu-list');
+  const { setSelectedItemId } = useSelectableList(
+    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
+  );
 
   const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
-    'command-menu-list',
+    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
   );
 
   const hasUserSelectedCommand = useRecoilValue(hasUserSelectedCommandState);

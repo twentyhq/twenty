@@ -36,6 +36,7 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
   }
 
   const currentGraphType = widgetInEditMode.configuration.graphType;
+  const graphTypeLabel = t(GRAPH_TYPE_INFORMATION[currentGraphType].label);
 
   return (
     <>
@@ -43,7 +44,7 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
         Icon={GRAPH_TYPE_INFORMATION[currentGraphType].icon}
         iconColor={theme.font.color.tertiary}
         initialTitle={t`Chart`}
-        headerType={t(GRAPH_TYPE_INFORMATION[currentGraphType].label)}
+        headerType={t`${graphTypeLabel} Chart`}
         onTitleChange={() => {}}
       />
 

@@ -19,6 +19,7 @@ export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { deepMerge } from './deepMerge';
 export { CustomError } from './errors/CustomError';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
+export { computeMorphRelationFieldName } from './fieldMetadata/compute-morph-relation-field-name';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { checkIfShouldComputeEmptinessFilter } from './filter/checkIfShouldComputeEmptinessFilter';
 export { checkIfShouldSkipFiltering } from './filter/checkIfShouldSkipFiltering';

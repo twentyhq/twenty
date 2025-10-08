@@ -13,7 +13,10 @@ export const computeEmptyGqlOperationFilterForEmails = ({
   correspondingFieldMetadataItem,
 }: {
   recordFilter: RecordFilter;
-  correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name' | 'type'>;
+  correspondingFieldMetadataItem: Pick<
+    PartialFieldMetadataItem,
+    'name' | 'type'
+  >;
 }): RecordGqlOperationFilter => {
   const subFieldName = recordFilter.subFieldName;
   const isSubFieldFilter = isNonEmptyString(subFieldName);
@@ -53,7 +56,7 @@ export const computeEmptyGqlOperationFilterForEmails = ({
         };
       }
       default: {
-       throw new CustomError( 
+        throw new CustomError(
           `Unknown subfield name ${subFieldName}`,
           'UNKNOWN_SUBFIELD_NAME',
         );

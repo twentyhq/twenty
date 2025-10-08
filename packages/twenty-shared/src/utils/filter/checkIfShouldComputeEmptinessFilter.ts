@@ -1,4 +1,8 @@
-import { type FieldMetadataType, type FilterableAndTSVectorFieldType, type ViewFilterOperand } from '@/types';
+import {
+  type FieldMetadataType,
+  type FilterableAndTSVectorFieldType,
+  type ViewFilterOperand,
+} from '@/types';
 import { isEmptinessOperand } from '@/utils/filter/isEmptinessOperand';
 import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
 
@@ -7,7 +11,7 @@ export const checkIfShouldComputeEmptinessFilter = ({
   correspondingFieldMetadataItem,
 }: {
   recordFilterOperand: ViewFilterOperand;
-  correspondingFieldMetadataItem: {type: FieldMetadataType};
+  correspondingFieldMetadataItem: { type: FieldMetadataType };
 }) => {
   const isAnEmptinessOperand = isEmptinessOperand(recordFilterOperand);
 

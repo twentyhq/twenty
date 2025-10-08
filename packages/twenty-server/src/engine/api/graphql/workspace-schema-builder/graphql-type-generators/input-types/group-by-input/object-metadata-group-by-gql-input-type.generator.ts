@@ -4,11 +4,15 @@ import {
   GraphQLBoolean,
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
+  GraphQLInputType,
+  GraphQLUnionType,
   isInputObjectType,
 } from 'graphql';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
+import { GROUP_BY_DATE_GRANULARITY_INPUT_KEY } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/group-by-input/group-by-date-granularity-gql-input-type.generator';
 import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
@@ -70,7 +74,30 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
     if (isCompositeFieldMetadataType(fieldMetadata.type))
       return this.generateCompositeFieldGroupByInputType(fieldMetadata);
 
-    const type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
+    let type: GraphQLInputType | GraphQLUnionType;
+
+    if (
+      fieldMetadata.type === FieldMetadataType.DATE ||
+      fieldMetadata.type === FieldMetadataType.DATE_TIME
+    ) {
+      const groupByDateGranularityInputType =
+        this.gqlTypesStorage.getGqlTypeByKey(
+          GROUP_BY_DATE_GRANULARITY_INPUT_KEY,
+        );
+
+      if (
+        !isDefined(groupByDateGranularityInputType) ||
+        !isInputObjectType(groupByDateGranularityInputType)
+      ) {
+        throw new Error(
+          'Could not find a GraphQL input type for GroupByDateGranularityInput',
+        );
+      }
+
+      type = groupByDateGranularityInputType;
+    } else {
+      type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
+    }
 
     return {
       [fieldMetadata.name]: {

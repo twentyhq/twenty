@@ -10,9 +10,6 @@ export const workflowCreateRecordActionSettingsSchema =
         .describe(
           'The name of the object to create a record in. Must be lowercase (e.g., "person", "company", "task").',
         ),
-      objectRecord: objectRecordSchema
-        .describe(
-          'The record data to create.',
-        )
+      objectRecord: objectRecordSchema.describe('The record data to create.'),
     }),
   });

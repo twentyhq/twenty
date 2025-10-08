@@ -2,7 +2,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type IconComponent } from '@ui/display';
 
-const StyledMenuItemPicker = styled.button<{
+const StyledMenuPicker = styled.button<{
   selected: boolean;
   disabled: boolean;
 }>`
@@ -28,14 +28,10 @@ const StyledMenuItemPicker = styled.button<{
   ${({ theme, selected, disabled }) => {
     if (disabled) {
       return css`
-        background: inherit;
+        background: ${theme.background.secondary};
         border-color: ${theme.border.color.medium};
-        color: ${theme.font.color.tertiary};
+        color: ${theme.font.color.extraLight};
         cursor: default;
-
-        &:hover {
-          background: inherit;
-        }
       `;
     }
 
@@ -89,7 +85,7 @@ const StyledLabel = styled.div<{
   ${({ theme, selected, disabled }) => {
     if (disabled) {
       return css`
-        color: ${theme.font.color.tertiary};
+        color: ${theme.font.color.extraLight};
       `;
     }
 
@@ -129,7 +125,7 @@ export const MenuPicker = ({
   const theme = useTheme();
 
   return (
-    <StyledMenuItemPicker
+    <StyledMenuPicker
       selected={selected}
       disabled={disabled}
       onClick={onClick}
@@ -148,6 +144,6 @@ export const MenuPicker = ({
           {label}
         </StyledLabel>
       )}
-    </StyledMenuItemPicker>
+    </StyledMenuPicker>
   );
 };

@@ -1,7 +1,15 @@
 import { CURRENCY_CODE_LABELS } from '@/constants';
 import { type CurrencyCode } from '@/constants/CurrencyCode';
-import { FieldMetadataType, ViewFilterOperand, type PartialFieldMetadataItem, type RecordGqlOperationFilter } from '@/types';
-import { filterSelectOptionsOfFieldMetadataItem, type RecordFilter } from '@/utils';
+import {
+  FieldMetadataType,
+  ViewFilterOperand,
+  type PartialFieldMetadataItem,
+  type RecordGqlOperationFilter,
+} from '@/types';
+import {
+  filterSelectOptionsOfFieldMetadataItem,
+  type RecordFilter,
+} from '@/utils';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { createAnyFieldRecordFilterBaseProperties } from '@/utils/filter/utils/createAnyFieldRecordFilterBaseProperties';
@@ -24,7 +32,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
   filterValue: string;
   fields: PartialFieldMetadataItem[];
 }) => {
-
   const anyFieldRecordFilters: RecordFilter[] = [];
 
   const isFilterValueANumber = z.coerce.number().safeParse(filterValue).success;

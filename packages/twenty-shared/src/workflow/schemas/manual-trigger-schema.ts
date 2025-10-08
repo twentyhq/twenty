@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { baseTriggerSchema } from './base-trigger-schema';
 
-  export const workflowManualTriggerSchema = baseTriggerSchema
+export const workflowManualTriggerSchema = baseTriggerSchema
   .extend({
     type: z.literal('MANUAL'),
     settings: z.object({

@@ -9,6 +9,7 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type ObjectRecordFilterInput,
+  type SearchQuery,
   useSearchQuery,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
@@ -18,6 +19,7 @@ export type UseSearchRecordsParams = {
   objectNameSingulars: string[];
   limit?: number;
   onError?: (error?: Error) => void;
+  onCompleted?: (data: SearchQuery) => void;
   skip?: boolean;
   fetchPolicy?: WatchQueryFetchPolicy;
   searchInput?: string;
@@ -28,6 +30,7 @@ export const useObjectRecordSearchRecords = ({
   objectNameSingulars,
   searchInput,
   limit,
+  onCompleted,
   skip,
   filter,
   fetchPolicy,
@@ -49,6 +52,7 @@ export const useObjectRecordSearchRecords = ({
     },
     fetchPolicy: fetchPolicy,
     client: apolloCoreClient,
+    onCompleted: onCompleted,
     onError: (error) => {
       logError(
         `useSearchRecords for "${objectNameSingulars.join(', ')}" error : ` +
