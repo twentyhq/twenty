@@ -5,10 +5,15 @@ import { type Repository } from 'typeorm';
 
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
-import { ViewSortException, ViewSortExceptionCode, ViewSortExceptionMessageKey, generateViewSortExceptionMessage, generateViewSortUserFriendlyExceptionMessage } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
+import {
+  ViewSortException,
+  ViewSortExceptionCode,
+  ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage,
+} from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-
 
 describe('ViewSortService', () => {
   let viewSortService: ViewSortService;

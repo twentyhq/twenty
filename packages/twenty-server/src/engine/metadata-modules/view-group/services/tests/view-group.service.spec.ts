@@ -5,11 +5,11 @@ import { type Repository } from 'typeorm';
 
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import {
-    ViewGroupException,
-    ViewGroupExceptionCode,
-    ViewGroupExceptionMessageKey,
-    generateViewGroupExceptionMessage,
-    generateViewGroupUserFriendlyExceptionMessage,
+  ViewGroupException,
+  ViewGroupExceptionCode,
+  ViewGroupExceptionMessageKey,
+  generateViewGroupExceptionMessage,
+  generateViewGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';

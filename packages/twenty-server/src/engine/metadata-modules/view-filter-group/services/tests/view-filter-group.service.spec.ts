@@ -6,11 +6,11 @@ import { type Repository } from 'typeorm';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import {
-    ViewFilterGroupException,
-    ViewFilterGroupExceptionCode,
-    ViewFilterGroupExceptionMessageKey,
-    generateViewFilterGroupExceptionMessage,
-    generateViewFilterGroupUserFriendlyExceptionMessage,
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
+  ViewFilterGroupExceptionMessageKey,
+  generateViewFilterGroupExceptionMessage,
+  generateViewFilterGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
