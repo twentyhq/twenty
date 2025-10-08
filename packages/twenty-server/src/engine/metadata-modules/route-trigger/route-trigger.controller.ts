@@ -6,20 +6,17 @@ import {
   Post,
   Put,
   Req,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { Request } from 'express';
 
-import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { RouteTriggerService } from 'src/engine/metadata-modules/route-trigger/route-trigger.service';
 
 @Controller('s')
 @UseGuards(PublicEndpointGuard)
-@UseFilters(RestApiExceptionFilter)
 export class RouteTriggerController {
   constructor(private readonly routeTriggerService: RouteTriggerService) {}
 
