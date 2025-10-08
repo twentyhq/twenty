@@ -8,6 +8,11 @@ export type DefaultChartConfig = {
   aggregateFieldMetadataId: string;
 };
 
+export type DefaultNumberChartConfig = {
+  objectMetadataId: string;
+  aggregateFieldMetadataId: string;
+};
+
 export const useCompanyDefaultChartConfig = () => {
   const companyObjectMetadata = useRecoilValue(
     objectMetadataItemFamilySelector({
@@ -47,5 +52,32 @@ export const useCompanyDefaultChartConfig = () => {
     };
   };
 
-  return { buildDefaultBarChartConfig };
+  const buildDefaultNumberChartConfig = ():
+    | DefaultNumberChartConfig
+    | undefined => {
+    if (!isDefined(companyObjectMetadata)) {
+      return undefined;
+    }
+
+    const employeesField = companyObjectMetadata.fields.find(
+      (field) => field.name === 'employees',
+    );
+
+    const arrField = companyObjectMetadata.fields.find(
+      (field) => field.name === 'annualRecurringRevenue',
+    );
+
+    const aggregateField = employeesField ?? arrField;
+
+    if (!isDefined(aggregateField)) {
+      return undefined;
+    }
+
+    return {
+      objectMetadataId: companyObjectMetadata.id,
+      aggregateFieldMetadataId: aggregateField.id,
+    };
+  };
+
+  return { buildDefaultBarChartConfig, buildDefaultNumberChartConfig };
 };

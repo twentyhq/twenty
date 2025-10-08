@@ -1,4 +1,7 @@
-import { type DefaultChartConfig } from '@/page-layout/hooks/useCompanyDefaultChartConfig';
+import {
+  type DefaultChartConfig,
+  type DefaultNumberChartConfig,
+} from '@/page-layout/hooks/useCompanyDefaultChartConfig';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -55,7 +58,7 @@ export const useCreatePageLayoutGraphWidget = (
     ({ snapshot, set }) =>
       (
         graphType: GraphType,
-        defaultConfig?: DefaultChartConfig,
+        defaultConfig?: DefaultChartConfig | DefaultNumberChartConfig,
       ): PageLayoutWidget => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 

@@ -2,8 +2,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutWidget } from '~/generated/graphql';
 
-type ChartConfigurationReadyForQueryResult = {
-  isReady: boolean;
+type ChartConfigurationFieldsValidForQueryResult = {
+  isValid: boolean;
 };
 
 const fieldExists = (
@@ -14,12 +14,12 @@ const fieldExists = (
   return objectMetadataItem.fields.some((field) => field.id === fieldId);
 };
 
-export const isChartConfigurationReadyForQuery = (
+export const areChartConfigurationFieldsValidForQuery = (
   configuration: PageLayoutWidget['configuration'],
   objectMetadataItem: ObjectMetadataItem,
-): ChartConfigurationReadyForQueryResult => {
+): ChartConfigurationFieldsValidForQueryResult => {
   if (!isDefined(configuration)) {
-    return { isReady: false };
+    return { isValid: false };
   }
 
   switch (configuration.__typename) {
@@ -36,7 +36,7 @@ export const isChartConfigurationReadyForQuery = (
         ? fieldExists(configuration.groupByFieldMetadataIdY, objectMetadataItem)
         : true;
 
-      return { isReady: hasValidFields && hasValidYField };
+      return { isValid: hasValidFields && hasValidYField };
     }
 
     case 'PieChartConfiguration': {
@@ -47,7 +47,7 @@ export const isChartConfigurationReadyForQuery = (
         ) &&
         fieldExists(configuration.groupByFieldMetadataId, objectMetadataItem);
 
-      return { isReady: hasValidFields };
+      return { isValid: hasValidFields };
     }
 
     case 'NumberChartConfiguration':
@@ -57,14 +57,14 @@ export const isChartConfigurationReadyForQuery = (
         objectMetadataItem,
       );
 
-      return { isReady: hasValidField };
+      return { isValid: hasValidField };
     }
 
     case 'IframeConfiguration': {
-      return { isReady: isDefined(configuration.url) };
+      return { isValid: isDefined(configuration.url) };
     }
 
     default:
-      return { isReady: false };
+      return { isValid: false };
   }
 };

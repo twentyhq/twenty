@@ -3,7 +3,7 @@ import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
-import { isChartConfigurationReadyForQuery } from '@/page-layout/widgets/graph/utils/isChartConfigurationReadyForQuery';
+import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
 import { GraphType, type PageLayoutWidget } from '~/generated-metadata/graphql';
 
@@ -54,12 +54,12 @@ export const GraphWidget = ({
     objectId: objectMetadataId,
   });
 
-  const { isReady } = isChartConfigurationReadyForQuery(
+  const { isValid } = areChartConfigurationFieldsValidForQuery(
     widget.configuration,
     objectMetadataItem,
   );
 
-  if (!isReady) {
+  if (!isValid) {
     return <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />;
   }
 

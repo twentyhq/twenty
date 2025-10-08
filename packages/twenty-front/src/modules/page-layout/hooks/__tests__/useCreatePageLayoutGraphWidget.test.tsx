@@ -6,6 +6,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { GraphType, WidgetType } from '~/generated-metadata/graphql';
 import { PageLayoutType } from '~/generated/graphql';
 import {
@@ -162,9 +163,26 @@ describe('useCreatePageLayoutGraphWidget', () => {
       GraphType.BAR,
     ];
 
+    const mockDefaultConfigs = {
+      [GraphType.NUMBER]: {
+        objectMetadataId: 'test-object-id',
+        aggregateFieldMetadataId: 'test-aggregate-field-id',
+      },
+      [GraphType.BAR]: {
+        objectMetadataId: 'test-object-id',
+        groupByFieldMetadataIdX: 'test-groupby-field-id',
+        aggregateFieldMetadataId: 'test-aggregate-field-id',
+      },
+    };
+
     graphTypes.forEach((graphType) => {
       act(() => {
-        result.current.createWidget.createPageLayoutGraphWidget(graphType);
+        const defaultConfig =
+          mockDefaultConfigs[graphType as keyof typeof mockDefaultConfigs];
+        result.current.createWidget.createPageLayoutGraphWidget(
+          graphType,
+          defaultConfig,
+        );
       });
     });
 
@@ -174,11 +192,14 @@ describe('useCreatePageLayoutGraphWidget', () => {
       const widget = result.current.allWidgets[index];
       expect(widget.type).toBe(WidgetType.GRAPH);
       expect(widget.pageLayoutTabId).toBe('tab-1');
-      expect(
-        widget.configuration && 'graphType' in widget.configuration
-          ? widget.configuration.graphType
-          : null,
-      ).toBe(graphType);
+
+      if (
+        isDefined(widget.configuration) &&
+        'graphType' in widget.configuration
+      ) {
+        expect(widget.configuration.graphType).toBe(graphType);
+      }
+
       expect(widget.id).toBe('mock-uuid');
     });
 
