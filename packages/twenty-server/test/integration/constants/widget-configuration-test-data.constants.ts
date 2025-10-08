@@ -22,7 +22,6 @@ export const TEST_NUMBER_CHART_CONFIG = {
   aggregateOperation: AggregateOperations.COUNT,
   label: 'Total Records',
   description: 'Count of all records',
-  color: 'blue',
   format: '0,0',
   displayDataLabel: true,
 };
