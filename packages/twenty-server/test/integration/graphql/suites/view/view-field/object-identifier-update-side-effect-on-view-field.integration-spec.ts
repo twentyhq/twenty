@@ -1,7 +1,7 @@
 import {
-    type ViewFieldTestSetup,
-    cleanupViewFieldTestV2,
-    setupViewFieldTestV2,
+  type ViewFieldTestSetup,
+  cleanupViewFieldTestV2,
+  setupViewFieldTestV2,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -13,7 +13,7 @@ import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/
 import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FlatViewField } from "src/engine/core-modules/view/flat-view-field/types/flat-view-field.type";
+import { type FlatViewField } from 'src/engine/core-modules/view/flat-view-field/types/flat-view-field.type';
 
 describe('View Field Resolver - Successful object metadata identifier update side effect on view field', () => {
   let testSetup: ViewFieldTestSetup & {
