@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
 import { type ObjectRecordGroupByDateGranularity } from '@/page-layout/widgets/graph/types/ObjectRecordGroupByDateGranularity';
 import { formatDateByGranularity } from '@/page-layout/widgets/graph/utils/formatDateByGranularity';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -43,7 +44,7 @@ export const formatDimensionValue = ({
     }
 
     case FieldMetadataType.BOOLEAN: {
-      return value === true ? 'Yes' : 'No';
+      return value === true ? t`Yes` : t`No`;
     }
 
     case FieldMetadataType.DATE:
