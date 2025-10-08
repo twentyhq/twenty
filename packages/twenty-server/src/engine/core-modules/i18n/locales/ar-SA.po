@@ -1429,32 +1429,32 @@ msgid "Field Value"
 msgstr "قيمة الحقل"
 
 #. js-lingui-id: s3HtdT
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required"
 msgstr "معرف بيانات الحقل مطلوب"
 
 #. js-lingui-id: Sof2+k
-#: src/engine/metadata-modules/view/exceptions/view-field.exception.ts
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
 msgstr "معرف البيانات الوصفية للحقل مطلوب لإنشاء حقل عرض."
 
 #. js-lingui-id: NTyTR5
-#: src/engine/metadata-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
 msgstr "معرف البيانات الوصفية للحقل مطلوب لإنشاء مجموعة عوامل تصفية العرض."
 
 #. js-lingui-id: Ya6oU7
-#: src/engine/metadata-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
 msgstr "معرف البيانات الوصفية للحقل مطلوب لإنشاء فلتر عرض."
 
 #. js-lingui-id: DU4jcg
-#: src/engine/metadata-modules/view/exceptions/view-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
 msgstr "أيّدمجانتاتاديتااهلياذغايبضرورتلإنشاءمجموععرض."
 
 #. js-lingui-id: snEXuU
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "أيّدمجانتاتاديتااهلياذغايبضرورتلإنشاءقمترتيب."
 
@@ -1695,12 +1695,12 @@ msgid "Invalid verification code. Please try again."
 msgstr "رمز التحقق غير صالح. يرجى المحاولة مرة أخرى."
 
 #. js-lingui-id: 8xkULN
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data"
 msgstr "بيانات ترتيب العرض غير صالحة"
 
 #. js-lingui-id: I0OzaR
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data for view sort id: {id}"
 msgstr "بيانات ترتيب العرض غير صالحة لمعرف ترتيب العرض: {id}"
 
@@ -2407,7 +2407,7 @@ msgid "Object with same id already exists"
 msgstr "العنصر بنفس المعرف موجود بالفعل"
 
 #. js-lingui-id: 53pIyA
-#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+#: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
 msgstr "أيّدجازاتاتاديتااهلياذغايبضرورتلإنشاءعرض."
 
@@ -3507,7 +3507,7 @@ msgid "View field already exists"
 msgstr ""
 
 #. js-lingui-id: Xm6R6B
-#: src/engine/metadata-modules/view/exceptions/view-field.exception.ts
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "View field already exists."
 msgstr "حقل العرض موجود بالفعل."
 
@@ -3551,19 +3551,19 @@ msgstr ""
 #. js-lingui-id: XJlyZS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/metadata-modules/view/flat-view/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to delete not found"
 msgstr ""
 
 #. js-lingui-id: DXyYuh
-#: src/engine/metadata-modules/view/flat-view/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to destroy not found"
 msgstr ""
 
 #. js-lingui-id: Fpy/K1
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/metadata-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
 msgid "View field to update not found"
 msgstr ""
 
@@ -3707,7 +3707,7 @@ msgid "View Sort"
 msgstr "فرز العرض"
 
 #. js-lingui-id: znNExx
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort (id: {id}) not found"
 msgstr "ترتيب العرض (معرف: {id}) غير موجود"
 
@@ -3717,7 +3717,7 @@ msgid "View Sort direction"
 msgstr "اتجاه فرز العرض"
 
 #. js-lingui-id: 3zMs+f
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort not found"
 msgstr "ترتيب العرض غير موجود"
 
@@ -3750,17 +3750,17 @@ msgid "View to delete has not been soft deleted"
 msgstr ""
 
 #. js-lingui-id: toB/08
-#: src/engine/metadata-modules/view/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
 msgstr ""
 
 #. js-lingui-id: NnD3Ti
-#: src/engine/metadata-modules/view/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
 msgid "View to destroy not found"
 msgstr ""
 
 #. js-lingui-id: 3+GbNY
-#: src/engine/metadata-modules/view/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "View to update not found"
 msgstr ""
 
@@ -3781,32 +3781,32 @@ msgid "ViewId"
 msgstr "معرف العرض"
 
 #. js-lingui-id: kpQRY2
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required"
 msgstr "معرف العرض مطلوب"
 
 #. js-lingui-id: l88nXn
-#: src/engine/metadata-modules/view/exceptions/view-field.exception.ts
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
 msgstr "أيّدجزويذغايبضرورتلإنشاءمجالعرض."
 
 #. js-lingui-id: 9XMTpT
-#: src/engine/metadata-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
 msgstr "أيّدجزويذغايبضرورتلإنشاءمجموعفلترة."
 
 #. js-lingui-id: pCCxli
-#: src/engine/metadata-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
 msgstr "أيّدجزويذغايبضرورتلإنشاءفلترة."
 
 #. js-lingui-id: 1X1RW5
-#: src/engine/metadata-modules/view/exceptions/view-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
 msgstr "أيّدجزويذغايبضرورتلإنشاءمجموععرض."
 
 #. js-lingui-id: uGUFcy
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
 msgstr "أيّدجزويذغايبضرورتلإنشاءقمترتيب."
 
@@ -4044,37 +4044,37 @@ msgid "Workspace Members"
 msgstr "أعضاء مساحة العمل"
 
 #. js-lingui-id: bBr+RW
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required"
 msgstr "معرف مساحة العمل مطلوب"
 
 #. js-lingui-id: kjLpTn
-#: src/engine/metadata-modules/view/exceptions/view-field.exception.ts
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
 msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءمجالعرض."
 
 #. js-lingui-id: zWj6VZ
-#: src/engine/metadata-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
 msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءمجموعفلترة."
 
 #. js-lingui-id: jQMXtD
-#: src/engine/metadata-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
 msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءفلترة."
 
 #. js-lingui-id: NAoJAX
-#: src/engine/metadata-modules/view/exceptions/view-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
 msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءمجموععرض."
 
 #. js-lingui-id: hU1QaN
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
 msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءقمترتيب."
 
 #. js-lingui-id: jtb/lI
-#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+#: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
 msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءعرض."
 

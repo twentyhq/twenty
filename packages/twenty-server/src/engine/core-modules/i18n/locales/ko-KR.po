@@ -1429,32 +1429,32 @@ msgid "Field Value"
 msgstr "필드 값"
 
 #. js-lingui-id: s3HtdT
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required"
 msgstr "FieldMetadataId는 필수입니다."
 
 #. js-lingui-id: Sof2+k
-#: src/engine/metadata-modules/view/exceptions/view-field.exception.ts
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
 msgstr "뷰 필드를 생성하려면 FieldMetadataId가 필요합니다."
 
 #. js-lingui-id: NTyTR5
-#: src/engine/metadata-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
 msgstr "뷰 필터 그룹을 생성하려면 FieldMetadataId가 필요합니다."
 
 #. js-lingui-id: Ya6oU7
-#: src/engine/metadata-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
 msgstr "뷰 필터를 생성하려면 FieldMetadataId가 필요합니다."
 
 #. js-lingui-id: DU4jcg
-#: src/engine/metadata-modules/view/exceptions/view-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
 msgstr "뷰 그룹을 생성하려면 FieldMetadataId가 필요합니다."
 
 #. js-lingui-id: snEXuU
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "뷰 정렬을 생성하려면 FieldMetadataId가 필요합니다."
 
@@ -1695,12 +1695,12 @@ msgid "Invalid verification code. Please try again."
 msgstr "유효하지 않은 인증 코드입니다. 다시 시도해 주세요."
 
 #. js-lingui-id: 8xkULN
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data"
 msgstr "잘못된 뷰 정렬 데이터입니다."
 
 #. js-lingui-id: I0OzaR
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data for view sort id: {id}"
 msgstr "뷰 정렬 ID: {id}에 대한 잘못된 뷰 정렬 데이터입니다."
 
@@ -2407,7 +2407,7 @@ msgid "Object with same id already exists"
 msgstr "같은 ID를 가진 객체가 이미 존재합니다"
 
 #. js-lingui-id: 53pIyA
-#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+#: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
 msgstr "뷰를 생성하려면 ObjectMetadataId가 필요합니다."
 
@@ -3507,7 +3507,7 @@ msgid "View field already exists"
 msgstr ""
 
 #. js-lingui-id: Xm6R6B
-#: src/engine/metadata-modules/view/exceptions/view-field.exception.ts
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "View field already exists."
 msgstr "뷰 필드가 이미 존재합니다."
 
@@ -3551,19 +3551,19 @@ msgstr ""
 #. js-lingui-id: XJlyZS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/metadata-modules/view/flat-view/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to delete not found"
 msgstr ""
 
 #. js-lingui-id: DXyYuh
-#: src/engine/metadata-modules/view/flat-view/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to destroy not found"
 msgstr ""
 
 #. js-lingui-id: Fpy/K1
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/metadata-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
 msgid "View field to update not found"
 msgstr ""
 
@@ -3707,7 +3707,7 @@ msgid "View Sort"
 msgstr "보기 정렬"
 
 #. js-lingui-id: znNExx
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort (id: {id}) not found"
 msgstr "뷰 정렬 (ID: {id})을 찾을 수 없습니다."
 
@@ -3717,7 +3717,7 @@ msgid "View Sort direction"
 msgstr "보기 정렬 방향"
 
 #. js-lingui-id: 3zMs+f
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort not found"
 msgstr "뷰 정렬을 찾을 수 없습니다."
 
@@ -3750,17 +3750,17 @@ msgid "View to delete has not been soft deleted"
 msgstr ""
 
 #. js-lingui-id: toB/08
-#: src/engine/metadata-modules/view/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
 msgstr ""
 
 #. js-lingui-id: NnD3Ti
-#: src/engine/metadata-modules/view/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
 msgid "View to destroy not found"
 msgstr ""
 
 #. js-lingui-id: 3+GbNY
-#: src/engine/metadata-modules/view/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+#: src/engine/core-modules/view/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "View to update not found"
 msgstr ""
 
@@ -3781,32 +3781,32 @@ msgid "ViewId"
 msgstr "뷰 아이디"
 
 #. js-lingui-id: kpQRY2
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required"
 msgstr "뷰 ID가 필요합니다."
 
 #. js-lingui-id: l88nXn
-#: src/engine/metadata-modules/view/exceptions/view-field.exception.ts
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
 msgstr "뷰 필드를 생성하려면 ViewId가 필요합니다."
 
 #. js-lingui-id: 9XMTpT
-#: src/engine/metadata-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
 msgstr "뷰 필터 그룹을 생성하려면 ViewId가 필요합니다."
 
 #. js-lingui-id: pCCxli
-#: src/engine/metadata-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
 msgstr "뷰 필터를 생성하려면 ViewId가 필요합니다."
 
 #. js-lingui-id: 1X1RW5
-#: src/engine/metadata-modules/view/exceptions/view-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
 msgstr "뷰 그룹을 생성하려면 ViewId가 필요합니다."
 
 #. js-lingui-id: uGUFcy
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
 msgstr "뷰 정렬을 생성하려면 ViewId가 필요합니다."
 
@@ -4044,37 +4044,37 @@ msgid "Workspace Members"
 msgstr "워크스페이스 멤버들"
 
 #. js-lingui-id: bBr+RW
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required"
 msgstr "작업실 ID가 필요합니다."
 
 #. js-lingui-id: kjLpTn
-#: src/engine/metadata-modules/view/exceptions/view-field.exception.ts
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
 msgstr "뷰 필드를 생성하려면 WorkspaceId가 필요합니다."
 
 #. js-lingui-id: zWj6VZ
-#: src/engine/metadata-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
 msgstr "뷰 필터 그룹을 생성하려면 WorkspaceId가 필요합니다."
 
 #. js-lingui-id: jQMXtD
-#: src/engine/metadata-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
 msgstr "뷰 필터를 생성하려면 WorkspaceId가 필요합니다."
 
 #. js-lingui-id: NAoJAX
-#: src/engine/metadata-modules/view/exceptions/view-group.exception.ts
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
 msgstr "뷰 그룹을 생성하려면 WorkspaceId가 필요합니다."
 
 #. js-lingui-id: hU1QaN
-#: src/engine/metadata-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
 msgstr "뷰 정렬을 생성하려면 WorkspaceId가 필요합니다."
 
 #. js-lingui-id: jtb/lI
-#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+#: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
 msgstr "뷰를 생성하려면 WorkspaceId가 필요합니다."
 
