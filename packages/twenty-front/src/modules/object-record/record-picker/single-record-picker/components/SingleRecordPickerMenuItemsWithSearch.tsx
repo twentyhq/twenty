@@ -28,11 +28,7 @@ export type SingleRecordPickerMenuItemsWithSearchProps = {
   focusId: string;
 } & Pick<
   SingleRecordPickerMenuItemsProps,
-  | 'EmptyIcon'
-  | 'emptyLabel'
-  | 'onCancel'
-  | 'onRecordSelected'
-  | 'selectedRecord'
+  'EmptyIcon' | 'emptyLabel' | 'onCancel' | 'onMorphItemSelected'
 >;
 
 export const SingleRecordPickerMenuItemsWithSearch = ({
@@ -41,7 +37,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   excludedRecordIds,
   onCancel,
   onCreate,
-  onRecordSelected,
+  onMorphItemSelected,
   objectNameSingulars,
   layoutDirection = 'search-bar-on-top',
   focusId,
@@ -57,7 +53,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     recordPickerInstanceId,
   );
 
-  const { records } = useSingleRecordPickerRecords({
+  const { pickableMorphItems, loading } = useSingleRecordPickerRecords({
     objectNameSingulars,
     excludedRecordIds,
   });
@@ -83,7 +79,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
 
   return (
     <>
-      <SingleRecordPickerLoadingEffect loading={records.loading} />
+      <SingleRecordPickerLoadingEffect loading={loading} />
       {layoutDirection === 'search-bar-on-bottom' && (
         <>
           {isDefined(onCreate) && hasUpdatePermissions && (
@@ -102,14 +98,12 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           <DropdownMenuItemsContainer hasMaxHeight>
             <SingleRecordPickerMenuItems
               focusId={focusId}
-              recordsToSelect={records.recordsToSelect}
-              selectedRecord={records.selectedRecords?.[0]}
-              filteredSelectedRecords={records.filteredSelectedRecords}
+              pickableMorphItems={pickableMorphItems}
+              onMorphItemSelected={onMorphItemSelected}
               {...{
                 EmptyIcon,
                 emptyLabel,
                 onCancel,
-                onRecordSelected,
               }}
             />
           </DropdownMenuItemsContainer>
@@ -127,14 +121,12 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           <DropdownMenuItemsContainer hasMaxHeight>
             <SingleRecordPickerMenuItems
               focusId={focusId}
-              recordsToSelect={records.recordsToSelect}
-              selectedRecord={records.selectedRecords?.[0]}
-              filteredSelectedRecords={records.filteredSelectedRecords}
+              pickableMorphItems={pickableMorphItems}
+              onMorphItemSelected={onMorphItemSelected}
               {...{
                 EmptyIcon,
                 emptyLabel,
                 onCancel,
-                onRecordSelected,
               }}
             />
           </DropdownMenuItemsContainer>

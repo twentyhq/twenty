@@ -289,6 +289,8 @@ export type BarChartConfiguration = {
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
   groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
+  groupBySubFieldNameX?: Maybe<Scalars['String']>;
+  groupBySubFieldNameY?: Maybe<Scalars['String']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
   orderByX: GraphOrderBy;
   orderByY?: Maybe<GraphOrderBy>;
@@ -1555,6 +1557,8 @@ export type LineChartConfiguration = {
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
   groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
+  groupBySubFieldNameX?: Maybe<Scalars['String']>;
+  groupBySubFieldNameY?: Maybe<Scalars['String']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
   orderByX: GraphOrderBy;
   orderByY?: Maybe<GraphOrderBy>;
@@ -2866,6 +2870,7 @@ export type PieChartConfiguration = {
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataId: Scalars['UUID'];
+  groupBySubFieldName?: Maybe<Scalars['String']>;
   orderBy: GraphOrderBy;
 };
 

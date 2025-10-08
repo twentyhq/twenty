@@ -4,13 +4,13 @@ import {
   type LineChartConfiguration,
 } from '~/generated/graphql';
 
-export const ChartGroupByFieldSelectionDropdownContent = () => {
+export const ChartXAxisFieldSelectionDropdownContent = () => {
   return (
     <ChartGroupByFieldSelectionDropdownContentBase<
       BarChartConfiguration | LineChartConfiguration
     >
-      fieldMetadataIdKey="groupByFieldMetadataIdY"
-      subFieldNameKey="groupBySubFieldNameY"
+      fieldMetadataIdKey="groupByFieldMetadataIdX"
+      subFieldNameKey="groupBySubFieldNameX"
     />
   );
 };
