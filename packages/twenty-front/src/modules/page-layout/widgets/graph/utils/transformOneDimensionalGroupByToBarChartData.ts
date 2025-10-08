@@ -10,6 +10,7 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { computeAggregateFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -64,9 +65,13 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       objectMetadataItem,
     });
 
+    const aggregateValue = isNumber(aggregate.value)
+      ? aggregate.value
+      : GRAPH_DEFAULT_AGGREGATE_VALUE;
+
     return {
       [indexByKey]: xValue,
-      [aggregateField.name]: aggregate.value ?? GRAPH_DEFAULT_AGGREGATE_VALUE,
+      [aggregateField.name]: aggregateValue,
     };
   });
 
