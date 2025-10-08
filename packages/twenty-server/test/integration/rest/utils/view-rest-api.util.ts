@@ -1,12 +1,12 @@
 import {
-    TEST_FIELD_METADATA_1_ID,
-    TEST_OBJECT_METADATA_1_ID,
-    TEST_VIEW_1_ID,
+  TEST_FIELD_METADATA_1_ID,
+  TEST_OBJECT_METADATA_1_ID,
+  TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view/entities/view-filter-group.entity';
 import { type ViewFilterEntity } from 'src/engine/metadata-modules/view/entities/view-filter.entity';
 import { type ViewGroupEntity } from 'src/engine/metadata-modules/view/entities/view-group.entity';

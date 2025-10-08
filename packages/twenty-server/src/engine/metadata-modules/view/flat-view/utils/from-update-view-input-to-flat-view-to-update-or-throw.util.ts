@@ -1,14 +1,14 @@
 import { t } from '@lingui/core/macro';
 import {
-    extractAndSanitizeObjectStringFields,
-    isDefined,
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+  extractAndSanitizeObjectStringFields,
+  isDefined,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
 import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import {
-    ViewException,
-    ViewExceptionCode,
+  ViewException,
+  ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/view/flat-view/constants/flat-view-editable-properties.constant';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/view/flat-view/types/flat-view-maps.type';

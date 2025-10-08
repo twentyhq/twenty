@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 import {
-    extractAndSanitizeObjectStringFields,
-    isDefined,
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+  extractAndSanitizeObjectStringFields,
+  isDefined,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
 import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field/constants/flat-view-field-editable-properties.constant';
@@ -10,8 +10,8 @@ import { type FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-fi
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
 import {
-    ViewFieldException,
-    ViewFieldExceptionCode,
+  ViewFieldException,
+  ViewFieldExceptionCode,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 

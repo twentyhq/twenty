@@ -1,14 +1,14 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Patch,
-    Post,
-    Query,
-    UseFilters,
-    UseGuards,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -20,11 +20,11 @@ import { CreateViewGroupInput } from 'src/engine/metadata-modules/view/dtos/inpu
 import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-group.input';
 import { type ViewGroupDTO } from 'src/engine/metadata-modules/view/dtos/view-group.dto';
 import {
-    generateViewGroupExceptionMessage,
-    generateViewGroupUserFriendlyExceptionMessage,
-    ViewGroupException,
-    ViewGroupExceptionCode,
-    ViewGroupExceptionMessageKey,
+  generateViewGroupExceptionMessage,
+  generateViewGroupUserFriendlyExceptionMessage,
+  ViewGroupException,
+  ViewGroupExceptionCode,
+  ViewGroupExceptionMessageKey,
 } from 'src/engine/metadata-modules/view/exceptions/view-group.exception';
 import { ViewGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-group-rest-api-exception.filter';
 import { ViewGroupService } from 'src/engine/metadata-modules/view/services/view-group.service';

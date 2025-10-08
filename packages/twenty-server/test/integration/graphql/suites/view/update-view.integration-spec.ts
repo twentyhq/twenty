@@ -1,7 +1,7 @@
 import { TEST_NOT_EXISTING_VIEW_ID } from 'test/integration/constants/test-view-ids.constants';
 import {
-    assertGraphQLErrorResponseWithSnapshot,
-    assertGraphQLSuccessfulResponse,
+  assertGraphQLErrorResponseWithSnapshot,
+  assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewOperationFactory } from 'test/integration/graphql/utils/update-view-operation-factory.util';

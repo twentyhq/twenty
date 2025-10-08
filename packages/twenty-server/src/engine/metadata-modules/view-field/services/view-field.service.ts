@@ -7,11 +7,11 @@ import { IsNull, Repository } from 'typeorm';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import {
-    ViewFieldException,
-    ViewFieldExceptionCode,
-    ViewFieldExceptionMessageKey,
-    generateViewFieldExceptionMessage,
-    generateViewFieldUserFriendlyExceptionMessage,
+  ViewFieldException,
+  ViewFieldExceptionCode,
+  ViewFieldExceptionMessageKey,
+  generateViewFieldExceptionMessage,
+  generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 

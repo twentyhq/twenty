@@ -2,7 +2,7 @@ import { type FromTo } from 'twenty-shared/types';
 
 import { type FlatViewFieldPropertiesToCompare } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-properties-to-compare.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 
 export type FlatViewFieldPropertyUpdate<
   P extends FlatViewFieldPropertiesToCompare,

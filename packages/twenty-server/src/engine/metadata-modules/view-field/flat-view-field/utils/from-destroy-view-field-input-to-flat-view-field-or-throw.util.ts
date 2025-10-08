@@ -1,15 +1,15 @@
 import { t } from '@lingui/core/macro';
 import {
-    extractAndSanitizeObjectStringFields,
-    isDefined,
+  extractAndSanitizeObjectStringFields,
+  isDefined,
 } from 'twenty-shared/utils';
 
 import { type FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
 import {
-    ViewFieldException,
-    ViewFieldExceptionCode,
+  ViewFieldException,
+  ViewFieldExceptionCode,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 
 export const fromDestroyViewFieldInputToFlatViewFieldOrThrow = ({

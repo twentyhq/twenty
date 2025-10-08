@@ -1,15 +1,15 @@
 import {
-    type ArgumentsHost,
-    Catch,
-    type ExceptionFilter,
+  type ArgumentsHost,
+  Catch,
+  type ExceptionFilter,
 } from '@nestjs/common';
 
 import { type Response } from 'express';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import {
-    ViewFilterGroupException,
-    ViewFilterGroupExceptionCode,
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view-filter-group.exception';
 import { type CustomException } from 'src/utils/custom-exception';
 

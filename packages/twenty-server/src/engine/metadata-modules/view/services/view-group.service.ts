@@ -6,11 +6,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view/entities/view-group.entity';
 import {
-    ViewGroupException,
-    ViewGroupExceptionCode,
-    ViewGroupExceptionMessageKey,
-    generateViewGroupExceptionMessage,
-    generateViewGroupUserFriendlyExceptionMessage,
+  ViewGroupException,
+  ViewGroupExceptionCode,
+  ViewGroupExceptionMessageKey,
+  generateViewGroupExceptionMessage,
+  generateViewGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view-group.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 

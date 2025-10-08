@@ -7,22 +7,22 @@ import { getMockCreateObjectInput } from 'test/integration/metadata/suites/objec
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
-    createTestViewFilterWithRestApi,
-    createTestViewWithRestApi,
-    findViewFilterWithRestApi,
+  createTestViewFilterWithRestApi,
+  createTestViewWithRestApi,
+  findViewFilterWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import {
-    type EnumFieldMetadataType,
-    FieldMetadataType,
-    ViewFilterOperand,
+  type EnumFieldMetadataType,
+  FieldMetadataType,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
-    type FieldMetadataComplexOption,
-    type FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';

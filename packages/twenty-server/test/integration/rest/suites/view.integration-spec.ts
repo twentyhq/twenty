@@ -4,17 +4,17 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
-    assertRestApiErrorNotFoundResponse,
-    assertRestApiSuccessfulResponse,
+  assertRestApiErrorNotFoundResponse,
+  assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
-    createTestViewWithRestApi,
-    deleteTestViewWithRestApi,
+  createTestViewWithRestApi,
+  deleteTestViewWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import {
-    assertViewStructure,
-    cleanupViewRecords,
+  assertViewStructure,
+  cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';

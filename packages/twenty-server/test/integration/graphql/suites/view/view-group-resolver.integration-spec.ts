@@ -4,14 +4,14 @@ import { deleteViewGroupOperationFactory } from 'test/integration/graphql/utils/
 import { destroyViewGroupOperationFactory } from 'test/integration/graphql/utils/destroy-view-group-operation-factory.util';
 import { findViewGroupsOperationFactory } from 'test/integration/graphql/utils/find-view-groups-operation-factory.util';
 import {
-    assertGraphQLErrorResponse,
-    assertGraphQLSuccessfulResponse,
+  assertGraphQLErrorResponse,
+  assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewGroupOperationFactory } from 'test/integration/graphql/utils/update-view-group-operation-factory.util';
 import {
-    createViewGroupData,
-    updateViewGroupData,
+  createViewGroupData,
+  updateViewGroupData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -19,15 +19,15 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-    assertViewGroupStructure,
-    cleanupViewRecords,
+  assertViewGroupStructure,
+  cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    generateViewGroupExceptionMessage,
-    ViewGroupExceptionMessageKey,
+  generateViewGroupExceptionMessage,
+  ViewGroupExceptionMessageKey,
 } from 'src/engine/metadata-modules/view/exceptions/view-group.exception';
 
 describe('View Group Resolver', () => {

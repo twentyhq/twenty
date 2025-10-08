@@ -1,17 +1,17 @@
 import {
-    type ExecutionContext,
-    UseFilters,
-    UseGuards,
-    UsePipes,
-    createParamDecorator,
+  type ExecutionContext,
+  UseFilters,
+  UseGuards,
+  UsePipes,
+  createParamDecorator,
 } from '@nestjs/common';
 import {
-    Args,
-    Mutation,
-    Parent,
-    Query,
-    ResolveField,
-    Resolver,
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 
 import assert from 'assert';
@@ -39,8 +39,8 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
-    type AuthProviders,
-    PublicWorkspaceDataOutput,
+  type AuthProviders,
+  PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
@@ -49,9 +49,9 @@ import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/u
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-    WorkspaceException,
-    WorkspaceExceptionCode,
-    WorkspaceNotFoundDefaultError,
+  WorkspaceException,
+  WorkspaceExceptionCode,
+  WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';

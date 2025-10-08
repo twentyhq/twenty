@@ -2,7 +2,7 @@ import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { VIEW_FIELD_ENTITY_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field/constants/view-field-entity-relation-properties.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 
 export const fromViewFieldEntityToFlatViewField = (
   viewFieldEntity: ViewFieldEntity,

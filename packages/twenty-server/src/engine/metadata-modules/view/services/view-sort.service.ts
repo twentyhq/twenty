@@ -6,11 +6,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewSortEntity } from 'src/engine/metadata-modules/view/entities/view-sort.entity';
 import {
-    ViewSortException,
-    ViewSortExceptionCode,
-    ViewSortExceptionMessageKey,
-    generateViewSortExceptionMessage,
-    generateViewSortUserFriendlyExceptionMessage,
+  ViewSortException,
+  ViewSortExceptionCode,
+  ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view-sort.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 

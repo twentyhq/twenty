@@ -1,6 +1,6 @@
 import {
-    TEST_NOT_EXISTING_VIEW_FIELD_ID,
-    TEST_VIEW_1_ID,
+  TEST_NOT_EXISTING_VIEW_FIELD_ID,
+  TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -8,24 +8,24 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
-    assertRestApiErrorNotFoundResponse,
-    assertRestApiErrorResponse,
-    assertRestApiSuccessfulResponse,
+  assertRestApiErrorNotFoundResponse,
+  assertRestApiErrorResponse,
+  assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
-    createTestViewFieldWithRestApi,
-    createTestViewWithRestApi,
-    deleteTestViewFieldWithRestApi,
+  createTestViewFieldWithRestApi,
+  createTestViewWithRestApi,
+  deleteTestViewFieldWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
 import {
-    assertViewFieldStructure,
-    cleanupViewRecords,
+  assertViewFieldStructure,
+  cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
-    generateViewFieldExceptionMessage,
-    ViewFieldExceptionMessageKey,
+  generateViewFieldExceptionMessage,
+  ViewFieldExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 
 describe('View Field REST API', () => {

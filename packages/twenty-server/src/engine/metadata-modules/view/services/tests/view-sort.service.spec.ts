@@ -6,11 +6,11 @@ import { type Repository } from 'typeorm';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view/entities/view-sort.entity';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
 import {
-    ViewSortException,
-    ViewSortExceptionCode,
-    ViewSortExceptionMessageKey,
-    generateViewSortExceptionMessage,
-    generateViewSortUserFriendlyExceptionMessage,
+  ViewSortException,
+  ViewSortExceptionCode,
+  ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view-sort.exception';
 import { ViewSortService } from 'src/engine/metadata-modules/view/services/view-sort.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';

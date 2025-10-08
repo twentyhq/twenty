@@ -9,14 +9,14 @@ import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-module
 import { FlatView } from 'src/engine/metadata-modules/view/flat-view/types/flat-view.type';
 import { compareTwoFlatView } from 'src/engine/metadata-modules/view/flat-view/utils/compare-two-flat-view.util';
 import {
-    FlatEntityUpdateValidationArgs,
-    FlatEntityValidationArgs,
-    FlatEntityValidationReturnType,
-    WorkspaceEntityMigrationBuilderV2Service,
+  FlatEntityUpdateValidationArgs,
+  FlatEntityValidationArgs,
+  FlatEntityValidationReturnType,
+  WorkspaceEntityMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import {
-    UpdateViewAction,
-    WorkspaceMigrationViewActionV2,
+  UpdateViewAction,
+  WorkspaceMigrationViewActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2.type';
 import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service';
 
