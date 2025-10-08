@@ -1,7 +1,7 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
+  type FieldMetadataMultiItemSettings,
   type FieldMetadataType,
-  type FieldMetadataMultipleValuesSettings,
   type NullablePartial,
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
@@ -164,25 +164,25 @@ type SettingsAssertions = [
   Expect<
     HasAllProperties<
       ArrayFieldMetadata,
-      { settings: FieldMetadataMultipleValuesSettings | null }
+      { settings: FieldMetadataMultiItemSettings | null }
     >
   >,
   Expect<
     HasAllProperties<
       PhonesFieldMetadata,
-      { settings: FieldMetadataMultipleValuesSettings | null }
+      { settings: FieldMetadataMultiItemSettings | null }
     >
   >,
   Expect<
     HasAllProperties<
       EmailsFieldMetadata,
-      { settings: FieldMetadataMultipleValuesSettings | null }
+      { settings: FieldMetadataMultiItemSettings | null }
     >
   >,
   Expect<
     HasAllProperties<
       LinksFieldMetadata,
-      { settings: FieldMetadataMultipleValuesSettings | null }
+      { settings: FieldMetadataMultiItemSettings | null }
     >
   >,
 

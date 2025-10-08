@@ -16,7 +16,7 @@ export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
-export type { FieldMetadataMultipleValuesSettings } from './FieldMetadataMultipleValuesSettings';
+export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldRatingValue } from './FieldRatingValue';
 export type {

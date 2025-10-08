@@ -1,8 +1,8 @@
 import {
-  type AllowedAddressSubField,
-  type FieldMetadataMultipleValuesSettings,
-  type FieldMetadataType,
-  type IsExactly,
+    type AllowedAddressSubField,
+    type FieldMetadataMultiItemSettings,
+    type FieldMetadataType,
+    type IsExactly,
 } from 'twenty-shared/types';
 
 import { type RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
@@ -63,10 +63,10 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
   [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
-  [FieldMetadataType.PHONES]: FieldMetadataMultipleValuesSettings | null;
-  [FieldMetadataType.EMAILS]: FieldMetadataMultipleValuesSettings | null;
-  [FieldMetadataType.LINKS]: FieldMetadataMultipleValuesSettings | null;
-  [FieldMetadataType.ARRAY]: FieldMetadataMultipleValuesSettings | null;
+  [FieldMetadataType.PHONES]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.EMAILS]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.LINKS]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.ARRAY]: FieldMetadataMultiItemSettings | null;
 };
 
 export type AllFieldMetadataSettings =

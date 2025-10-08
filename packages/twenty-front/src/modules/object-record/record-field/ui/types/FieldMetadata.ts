@@ -5,7 +5,7 @@ import { type CurrencyCode } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   type AllowedAddressSubField,
-  type FieldMetadataMultipleValuesSettings,
+  type FieldMetadataMultiItemSettings,
 } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
@@ -83,7 +83,7 @@ export type FieldLinkMetadata = BaseFieldMetadata & {
 };
 
 export type FieldLinksMetadata = BaseFieldMetadata & {
-  settings?: FieldMetadataMultipleValuesSettings | null;
+  settings?: FieldMetadataMultiItemSettings | null;
 };
 
 export type FieldCurrencyMetadata = BaseFieldMetadata & {
@@ -105,7 +105,7 @@ export type FieldEmailMetadata = BaseFieldMetadata & {
 };
 
 export type FieldEmailsMetadata = BaseFieldMetadata & {
-  settings?: FieldMetadataMultipleValuesSettings | null;
+  settings?: FieldMetadataMultiItemSettings | null;
 };
 
 export type FieldPhoneMetadata = BaseFieldMetadata & {
@@ -177,11 +177,11 @@ export type FieldActorMetadata = BaseFieldMetadata & {
 
 export type FieldArrayMetadata = BaseFieldMetadata & {
   values: { label: string; value: string }[];
-  settings?: FieldMetadataMultipleValuesSettings | null;
+  settings?: FieldMetadataMultiItemSettings | null;
 };
 
 export type FieldPhonesMetadata = BaseFieldMetadata & {
-  settings?: FieldMetadataMultipleValuesSettings | null;
+  settings?: FieldMetadataMultiItemSettings | null;
 };
 
 export type FieldTsVectorMetadata = BaseFieldMetadata & {

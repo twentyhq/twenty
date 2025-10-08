@@ -10,7 +10,7 @@ import {
 } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
-  type FieldMetadataMultipleValuesSettings,
+  type FieldMetadataMultiItemSettings,
 } from 'twenty-shared/types';
 import { IconNumber } from 'twenty-ui/display';
 
@@ -58,7 +58,7 @@ export const SettingsDataModelFieldMaxValuesForm = ({
   }
 
   const existingSettings =
-    (fieldMetadataItem?.settings as FieldMetadataMultipleValuesSettings) ?? {};
+    (fieldMetadataItem?.settings as FieldMetadataMultiItemSettings) ?? {};
 
   return (
     <Controller
@@ -71,7 +71,7 @@ export const SettingsDataModelFieldMaxValuesForm = ({
       }}
       render={({ field: { value, onChange } }) => {
         const currentSettings =
-          (value as FieldMetadataMultipleValuesSettings | undefined) ?? {};
+          (value as FieldMetadataMultiItemSettings | undefined) ?? {};
 
         const maxNumberOfValues =
           currentSettings.maxNumberOfValues ?? DEFAULT_MAX_NUMBER_OF_VALUES;
