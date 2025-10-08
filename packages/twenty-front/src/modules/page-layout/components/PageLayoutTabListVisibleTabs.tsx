@@ -21,10 +21,17 @@ type PageLayoutTabListVisibleTabsProps = {
 
 const StyledTabContainer = styled.div`
   display: flex;
-  gap: ${TAB_LIST_GAP}px;
   position: relative;
   overflow: hidden;
   max-width: 100%;
+
+  > *:not(:last-child) {
+    margin-right: ${TAB_LIST_GAP}px;
+  }
+
+  > div[data-rbd-placeholder-context-id] {
+    margin-right: ${TAB_LIST_GAP}px;
+  }
 `;
 
 export const PageLayoutTabListVisibleTabs = ({
