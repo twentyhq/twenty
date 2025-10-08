@@ -9,8 +9,8 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
-import { fromViewFieldEntityToFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/from-view-field-entity-to-flat-view-field.util';
+import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view-field/types/flat-view-field-maps.type';
+import { fromViewFieldEntityToFlatViewField } from 'src/engine/core-modules/view/flat-view-field/utils/from-view-field-entity-to-flat-view-field.util';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
