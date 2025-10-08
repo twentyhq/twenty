@@ -43,7 +43,9 @@ export type WorkflowDeleteRecordAction = z.infer<
 export type WorkflowFindRecordsAction = z.infer<
   typeof workflowFindRecordsActionSchema
 >;
-export type WorkflowDelayAction = z.infer<typeof workflowDelayActionSchema>;
+export type WorkflowDelayAction = z.infer<
+ typeof workflowDelayActionSchema
+>;
 export type WorkflowFilterAction = z.infer<typeof workflowFilterActionSchema>;
 export type WorkflowFormAction = z.infer<typeof workflowFormActionSchema>;
 export type WorkflowHttpRequestAction = z.infer<
