@@ -4,18 +4,18 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 
-import { type Request } from 'express';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
 export class RestApiUpdateOneHandler extends RestApiBaseHandler {
-  async handle(request: Request) {
+  async handle(request: AuthenticatedRequest) {
     const { id: recordId } = parseCorePath(request);
 
     if (!recordId) {
