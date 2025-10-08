@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { VIEW_FILTER_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 
-import { type ViewFilterEntity } from 'src/engine/metadata-modules/view/entities/view-filter.entity';
+import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 
 type CreateViewFilterOperationFactoryParams = {
   gqlFields?: string;

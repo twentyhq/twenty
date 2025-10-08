@@ -3,7 +3,7 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { type ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { type ViewFilterService } from 'src/engine/metadata-modules/view/services/view-filter.service';
+import { type ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { type ViewGroupService } from 'src/engine/metadata-modules/view/services/view-group.service';
 import { type ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 

@@ -4,14 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ViewFilterEntity } from 'src/engine/metadata-modules/view/entities/view-filter.entity';
+import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import {
-  ViewFilterException,
-  ViewFilterExceptionCode,
-  ViewFilterExceptionMessageKey,
-  generateViewFilterExceptionMessage,
-  generateViewFilterUserFriendlyExceptionMessage,
-} from 'src/engine/metadata-modules/view/exceptions/view-filter.exception';
+    ViewFilterException,
+    ViewFilterExceptionCode,
+    ViewFilterExceptionMessageKey,
+    generateViewFilterExceptionMessage,
+    generateViewFilterUserFriendlyExceptionMessage,
+} from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
 @Injectable()
@@ -187,3 +187,4 @@ export class ViewFilterService {
     return true;
   }
 }
+

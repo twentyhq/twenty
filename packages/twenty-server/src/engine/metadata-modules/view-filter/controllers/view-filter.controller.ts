@@ -1,14 +1,14 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-  UseFilters,
-  UseGuards,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseFilters,
+    UseGuards,
 } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -16,18 +16,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateViewFilterInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view-filter.input';
-import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-filter.input';
-import { ViewFilterDTO } from 'src/engine/metadata-modules/view/dtos/view-filter.dto';
+import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
+import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
+import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import {
-  generateViewFilterExceptionMessage,
-  generateViewFilterUserFriendlyExceptionMessage,
-  ViewFilterException,
-  ViewFilterExceptionCode,
-  ViewFilterExceptionMessageKey,
-} from 'src/engine/metadata-modules/view/exceptions/view-filter.exception';
-import { ViewFilterRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-filter-rest-api-exception.filter';
-import { ViewFilterService } from 'src/engine/metadata-modules/view/services/view-filter.service';
+    generateViewFilterExceptionMessage,
+    generateViewFilterUserFriendlyExceptionMessage,
+    ViewFilterException,
+    ViewFilterExceptionCode,
+    ViewFilterExceptionMessageKey,
+} from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
+import { ViewFilterRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter';
+import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 
 @Controller('rest/metadata/viewFilters')
 @UseGuards(WorkspaceAuthGuard)
@@ -113,3 +113,4 @@ export class ViewFilterController {
 
   // TODO: the destroy endpoint will be implemented when we settle on a strategy
 }
+

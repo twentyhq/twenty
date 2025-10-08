@@ -4,7 +4,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ViewFilterValue } from 'src/engine/metadata-modules/view/types/view-filter-value.type';
+import { ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 
 @InputType()
 export class CreateViewFilterInput {
@@ -32,3 +32,4 @@ export class CreateViewFilterInput {
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
 }
+

@@ -1,12 +1,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
+    Args,
+    Context,
+    Mutation,
+    Parent,
+    Query,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
@@ -23,15 +23,15 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
+import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view/dtos/view-filter-group.dto';
-import { ViewFilterDTO } from 'src/engine/metadata-modules/view/dtos/view-filter.dto';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view/dtos/view-group.dto';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view/dtos/view-sort.dto';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view/services/view-filter-group.service';
-import { ViewFilterService } from 'src/engine/metadata-modules/view/services/view-filter.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view/services/view-group.service';
 import { ViewSortService } from 'src/engine/metadata-modules/view/services/view-sort.service';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';

@@ -6,10 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateViewFilterInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view-filter.input';
-import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view-filter.input';
-import { ViewFilterDTO } from 'src/engine/metadata-modules/view/dtos/view-filter.dto';
-import { ViewFilterService } from 'src/engine/metadata-modules/view/services/view-filter.service';
+import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
+import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
+import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
+import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFilterDTO)
@@ -85,3 +85,4 @@ export class ViewFilterResolver {
     return isDefined(deletedViewFilter);
   }
 }
+
