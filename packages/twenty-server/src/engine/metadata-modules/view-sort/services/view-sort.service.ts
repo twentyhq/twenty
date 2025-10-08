@@ -6,12 +6,13 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import {
-    ViewSortException,
-    ViewSortExceptionCode,
-    ViewSortExceptionMessageKey,
-    generateViewSortExceptionMessage,
-    generateViewSortUserFriendlyExceptionMessage,
+  ViewSortException,
+  ViewSortExceptionCode,
+  ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
+import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
@@ -183,7 +184,7 @@ export class ViewSortService {
 
   private async flushGraphQLCache(workspaceId: string): Promise<void> {
     await this.workspaceCacheStorageService.flushGraphQLOperation({
-      operationName: 'FindAllCoreViews',
+      operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
       workspaceId,
     });
   }

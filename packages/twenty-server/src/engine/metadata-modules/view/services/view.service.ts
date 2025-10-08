@@ -7,13 +7,14 @@ import { IsNull, Repository } from 'typeorm';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
-    ViewException,
-    ViewExceptionCode,
-    ViewExceptionMessageKey,
-    generateViewExceptionMessage,
-    generateViewUserFriendlyExceptionMessage,
+  ViewException,
+  ViewExceptionCode,
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -233,7 +234,7 @@ export class ViewService {
 
   async flushGraphQLCache(workspaceId: string): Promise<void> {
     await this.workspaceCacheStorageService.flushGraphQLOperation({
-      operationName: 'FindAllCoreViews',
+      operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
       workspaceId,
     });
   }

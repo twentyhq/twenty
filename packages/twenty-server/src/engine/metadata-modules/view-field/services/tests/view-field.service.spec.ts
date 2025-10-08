@@ -14,12 +14,10 @@ import {
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
 describe('ViewFieldService', () => {
   let viewFieldService: ViewFieldService;
   let viewFieldRepository: Repository<ViewFieldEntity>;
-  let viewService: ViewService;
 
   const mockViewField = {
     id: 'view-field-id',
@@ -56,7 +54,6 @@ describe('ViewFieldService', () => {
     viewFieldRepository = module.get<Repository<ViewFieldEntity>>(
       getRepositoryToken(ViewFieldEntity),
     );
-    viewService = module.get<ViewService>(ViewService);
   });
 
   it('should be defined', () => {

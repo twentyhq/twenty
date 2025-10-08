@@ -13,6 +13,7 @@ import {
   generateViewFieldExceptionMessage,
   generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
+import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -454,7 +455,7 @@ export class ViewFieldService {
 
   private async flushGraphQLCache(workspaceId: string): Promise<void> {
     await this.workspaceCacheStorageService.flushGraphQLOperation({
-      operationName: 'FindAllCoreViews',
+      operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
       workspaceId,
     });
   }
