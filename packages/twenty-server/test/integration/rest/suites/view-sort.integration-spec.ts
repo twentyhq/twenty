@@ -1,6 +1,6 @@
 import {
-    TEST_NOT_EXISTING_VIEW_SORT_ID,
-    TEST_VIEW_1_ID,
+  TEST_NOT_EXISTING_VIEW_SORT_ID,
+  TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -8,25 +8,25 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
-    assertRestApiErrorNotFoundResponse,
-    assertRestApiErrorResponse,
-    assertRestApiSuccessfulResponse,
+  assertRestApiErrorNotFoundResponse,
+  assertRestApiErrorResponse,
+  assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
-    createTestViewSortWithRestApi,
-    createTestViewWithRestApi,
+  createTestViewSortWithRestApi,
+  createTestViewWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import {
-    assertViewSortStructure,
-    cleanupViewRecords,
+  assertViewSortStructure,
+  cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import {
-    generateViewSortExceptionMessage,
-    ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+  ViewSortExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 
 describe('View Sort REST API', () => {

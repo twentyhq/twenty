@@ -20,4 +20,3 @@ export class CreateViewSortInput {
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
 }
-

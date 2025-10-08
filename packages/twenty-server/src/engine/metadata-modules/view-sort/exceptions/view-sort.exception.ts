@@ -72,4 +72,3 @@ export const generateViewSortUserFriendlyExceptionMessage = (
       return t`FieldMetadataId is required to create a view sort.`;
   }
 };
-

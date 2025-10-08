@@ -14,4 +14,3 @@ import { ViewCoreModule } from 'src/engine/metadata-modules/view/view-core.modul
   exports: [ViewSortService],
 })
 export class ViewSortModule {}
-

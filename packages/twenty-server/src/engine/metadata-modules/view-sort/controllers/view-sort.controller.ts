@@ -1,14 +1,14 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Patch,
-    Post,
-    Query,
-    UseFilters,
-    UseGuards,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -20,11 +20,11 @@ import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/
 import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
 import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import {
-    ViewSortException,
-    ViewSortExceptionCode,
-    ViewSortExceptionMessageKey,
-    generateViewSortExceptionMessage,
-    generateViewSortUserFriendlyExceptionMessage,
+  ViewSortException,
+  ViewSortExceptionCode,
+  ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewSortRestApiExceptionFilter } from 'src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
@@ -110,4 +110,3 @@ export class ViewSortController {
 
   // TODO: the destroy endpoint will be implemented when we settle on a strategy
 }
-
