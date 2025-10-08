@@ -16,4 +16,3 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
   exports: [ViewService, TypeOrmModule.forFeature([ViewEntity])],
 })
 export class ViewCoreModule {}
-

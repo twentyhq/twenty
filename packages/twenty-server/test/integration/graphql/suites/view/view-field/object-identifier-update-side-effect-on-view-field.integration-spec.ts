@@ -13,7 +13,7 @@ import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/
 import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FlatViewField } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field.type';
+import { type FlatViewField } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field.type';
 
 describe('View Field Resolver - Successful object metadata identifier update side effect on view field', () => {
   let testSetup: ViewFieldTestSetup & {

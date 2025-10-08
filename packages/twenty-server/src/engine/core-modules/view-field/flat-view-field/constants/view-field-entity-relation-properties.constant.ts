@@ -1,4 +1,4 @@
-import { ViewFieldEntityRelationProperties } from "src/engine/core-modules/view-field/flat-view-field/types/flat-view-field.type";
+import { type ViewFieldEntityRelationProperties } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field.type';
 
 export const VIEW_FIELD_ENTITY_RELATION_PROPERTIES = [
   'fieldMetadata',
