@@ -5,10 +5,10 @@ export const testRestFailingScenario = async (
   filter: any,
   errorMessage: string,
 ) => {
+  const encodedFilter = new URLSearchParams(filter);
   const response = await makeRestAPIRequest({
     method: 'get',
-    path: `/${objectMetadataPluralName}`,
-    queryParams: `filter=${filter}`,
+    path: `/${objectMetadataPluralName}?filter=${encodedFilter}`,
   });
 
   expect(response.body.error).toBeDefined();

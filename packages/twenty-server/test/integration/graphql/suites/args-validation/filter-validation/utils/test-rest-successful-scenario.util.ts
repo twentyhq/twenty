@@ -5,10 +5,10 @@ export const testRestSuccessfulScenario = async (
   filter: any,
   validateFilter: (record: Record<string, any>) => boolean,
 ) => {
+  const encodedFilter = new URLSearchParams(filter);
   const response = await makeRestAPIRequest({
     method: 'get',
-    path: `/${objectMetadataPluralName}`,
-    queryParams: `filter=${filter}`,
+    path: `/${objectMetadataPluralName}?filter=${encodedFilter}`,
   });
 
   const records = response.body.data.testObjects;

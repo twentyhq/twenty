@@ -7,7 +7,6 @@ interface RestAPIRequestParams {
   path: string;
   bearer?: string;
   body?: any;
-  queryParams?: string;
 }
 
 export const makeRestAPIRequest = ({
@@ -15,13 +14,10 @@ export const makeRestAPIRequest = ({
   path,
   bearer = API_KEY_ACCESS_TOKEN,
   body = {},
-  queryParams,
 }: RestAPIRequestParams) => {
   const client = request(`http://localhost:${APP_PORT}`);
 
-  const encodedQueryParams = new URLSearchParams(queryParams);
-
-  const req = client[method](`/rest${path}?${encodedQueryParams}`).set(
+  const req = client[method](`/rest${path}`).set(
     'Authorization',
     `Bearer ${bearer}`,
   );

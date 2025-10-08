@@ -136,9 +136,8 @@ describe('Core REST API Create Many endpoint', () => {
 
     await makeRestAPIRequest({
       method: 'post',
-      path: `/batch/people`,
+      path: `/batch/people?depth=0`,
       body: requestBody,
-      queryParams: 'depth=0',
     })
       .expect(201)
       .expect((res) => {
@@ -165,8 +164,7 @@ describe('Core REST API Create Many endpoint', () => {
 
     await makeRestAPIRequest({
       method: 'post',
-      path: `/batch/people`,
-      queryParams: 'depth=1',
+      path: `/batch/people?depth=1`,
       body: requestBody,
     })
       .expect(201)
