@@ -76,6 +76,7 @@
     "cron-parser": "5.1.1",
     "date-fns": "^2.30.0",
     "docx": "^9.1.0",
+    "elkjs": "^0.11.0",
     "file-saver": "^2.0.5",
     "graphiql": "^3.1.1",
     "graphql": "^16.8.0",

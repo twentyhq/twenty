@@ -31146,6 +31146,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"elkjs@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "elkjs@npm:0.11.0"
+  checksum: 10c0/e3515eab869facd8c7acbb1d7d8a0f61686ec7ec4b42fd5c86b864216ee48a47f85376565d06f3f18d73b5a2c5de47aec7a4126ff059235d2a90099aee481b21
+  languageName: node
+  linkType: hard
+
 "elliptic@npm:^6.5.3, elliptic@npm:^6.5.5":
   version: 6.5.6
   resolution: "elliptic@npm:6.5.6"
@@ -52911,6 +52918,7 @@ __metadata:
     cron-parser: "npm:5.1.1"
     date-fns: "npm:^2.30.0"
     docx: "npm:^9.1.0"
+    elkjs: "npm:^0.11.0"
     eslint: "npm:^9.32.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.31.0"

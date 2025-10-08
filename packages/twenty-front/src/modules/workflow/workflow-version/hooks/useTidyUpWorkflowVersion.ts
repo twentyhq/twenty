@@ -105,7 +105,7 @@ export const useTidyUpWorkflowVersion = () => {
       return;
     }
 
-    const tidiedUpDiagram = getOrganizedDiagram(workflowDiagram);
+    const tidiedUpDiagram = await getOrganizedDiagram(workflowDiagram);
 
     const positions = tidiedUpDiagram.nodes.map((node) => ({
       id: node.id,
