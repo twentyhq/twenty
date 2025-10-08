@@ -1,9 +1,9 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatViewField } from 'src/engine/core-modules/flat-view-field/types/flat-view-field.type';
-import { isViewFieldInLowestPosition } from 'src/engine/core-modules/flat-view-field/utils/is-view-field-in-lowest-position.util';
-import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { isViewFieldInLowestPosition } from 'src/engine/metadata-modules/flat-view-field/utils/is-view-field-in-lowest-position.util';
+import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
 type ValidateLabelIdentifierFieldMetadataIdFlatViewFieldArgs = {

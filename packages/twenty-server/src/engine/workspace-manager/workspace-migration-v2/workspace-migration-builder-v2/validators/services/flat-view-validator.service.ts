@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
-import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
+import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { FlatViewMaps } from 'src/engine/metadata-modules/view/flat-view/types/flat-view-maps.type';
+import { FlatView } from 'src/engine/metadata-modules/view/flat-view/types/flat-view.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { ViewRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 

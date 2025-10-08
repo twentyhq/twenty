@@ -1,17 +1,17 @@
 import {
-  type ExecutionContext,
-  UseFilters,
-  UseGuards,
-  UsePipes,
-  createParamDecorator,
+    type ExecutionContext,
+    UseFilters,
+    UseGuards,
+    UsePipes,
+    createParamDecorator,
 } from '@nestjs/common';
 import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
+    Args,
+    Mutation,
+    Parent,
+    Query,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql';
 
 import assert from 'assert';
@@ -23,6 +23,8 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -35,17 +37,22 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
-import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
-  type AuthProviders,
-  PublicWorkspaceDataOutput,
+    type AuthProviders,
+    PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+    WorkspaceException,
+    WorkspaceExceptionCode,
+    WorkspaceNotFoundDefaultError,
+} from 'src/engine/core-modules/workspace/workspace.exception';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -60,17 +67,10 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-  WorkspaceNotFoundDefaultError,
-} from 'src/engine/core-modules/workspace/workspace.exception';
-import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 
 const OriginHeader = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {

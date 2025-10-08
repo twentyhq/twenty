@@ -1,19 +1,19 @@
 import {
-  TEST_FIELD_METADATA_1_ID,
-  TEST_OBJECT_METADATA_1_ID,
-  TEST_VIEW_1_ID,
+    TEST_FIELD_METADATA_1_ID,
+    TEST_OBJECT_METADATA_1_ID,
+    TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-import { type ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
-import { type ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { type ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { type ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { type ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
-import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
+import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view/entities/view-filter-group.entity';
+import { type ViewFilterEntity } from 'src/engine/metadata-modules/view/entities/view-filter.entity';
+import { type ViewGroupEntity } from 'src/engine/metadata-modules/view/entities/view-group.entity';
+import { type ViewSortEntity } from 'src/engine/metadata-modules/view/entities/view-sort.entity';
+import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 export const findViewByIdWithRestApi = async (
   viewId: string,

@@ -1,17 +1,17 @@
 import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
 import {
-  cleanupViewFieldTestV2,
-  setupViewFieldTestV2,
-  type ViewFieldTestSetup,
+    cleanupViewFieldTestV2,
+    setupViewFieldTestV2,
+    type ViewFieldTestSetup,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
 import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
-  eachTestingContextFilter,
-  type EachTestingContext,
+    eachTestingContextFilter,
+    type EachTestingContext,
 } from 'twenty-shared/testing';
 
-import { type DestroyViewFieldInput } from 'src/engine/core-modules/view-field/dtos/inputs/destroy-view-field.input';
+import { type DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
 
 describe('View Field Resolver - Failing Destroy Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;

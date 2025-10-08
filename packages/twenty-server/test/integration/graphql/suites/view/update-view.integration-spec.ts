@@ -1,18 +1,18 @@
 import { TEST_NOT_EXISTING_VIEW_ID } from 'test/integration/constants/test-view-ids.constants';
 import {
-  assertGraphQLErrorResponseWithSnapshot,
-  assertGraphQLSuccessfulResponse,
+    assertGraphQLErrorResponseWithSnapshot,
+    assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateViewOperationFactory } from 'test/integration/graphql/utils/update-view-operation-factory.util';
+import { updateViewData } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
-import { updateViewOperationFactory } from 'test/integration/graphql/utils/update-view-operation-factory.util';
-import { updateViewData } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 
-import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 describe('Update core view', () => {
   let testObjectMetadataId: string;

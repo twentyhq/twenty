@@ -4,8 +4,8 @@ import { deleteViewFilterOperationFactory } from 'test/integration/graphql/utils
 import { destroyViewFilterOperationFactory } from 'test/integration/graphql/utils/destroy-view-filter-operation-factory.util';
 import { findViewFiltersOperationFactory } from 'test/integration/graphql/utils/find-view-filters-operation-factory.util';
 import {
-  assertGraphQLErrorResponse,
-  assertGraphQLSuccessfulResponse,
+    assertGraphQLErrorResponse,
+    assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewFilterOperationFactory } from 'test/integration/graphql/utils/update-view-filter-operation-factory.util';
@@ -16,16 +16,16 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-  assertViewFilterStructure,
-  cleanupViewRecords,
+    assertViewFilterStructure,
+    cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  ViewFilterExceptionMessageKey,
-  generateViewFilterExceptionMessage,
-} from 'src/engine/core-modules/view/exceptions/view-filter.exception';
+    ViewFilterExceptionMessageKey,
+    generateViewFilterExceptionMessage,
+} from 'src/engine/metadata-modules/view/exceptions/view-filter.exception';
 
 describe('View Filter Resolver', () => {
   let testViewId: string;

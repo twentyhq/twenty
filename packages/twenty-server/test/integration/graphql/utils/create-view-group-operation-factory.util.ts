@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { VIEW_GROUP_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 
-import { type ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { type ViewGroupEntity } from 'src/engine/metadata-modules/view/entities/view-group.entity';
 
 type CreateViewGroupOperationFactoryParams = {
   gqlFields?: string;

@@ -5,8 +5,8 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type DeleteViewFieldInput } from 'src/engine/core-modules/view-field/dtos/inputs/delete-view-field.input';
-import { type ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
+import { type DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
+import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 
 export const deleteOneCoreViewField = async ({
   input,

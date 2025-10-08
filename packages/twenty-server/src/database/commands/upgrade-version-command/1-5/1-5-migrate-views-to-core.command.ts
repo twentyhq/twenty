@@ -7,23 +7,23 @@ import { DataSource, In, Repository, type QueryRunner } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  type RunOnWorkspaceArgs,
+    ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+    type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
-import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { type ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
-import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
-import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
-import { type ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
-import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view/entities/view-filter-group.entity';
+import { ViewFilterEntity } from 'src/engine/metadata-modules/view/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/metadata-modules/view/entities/view-group.entity';
+import { ViewSortEntity } from 'src/engine/metadata-modules/view/entities/view-sort.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { type ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
+import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
+import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
+import { type ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { type ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';

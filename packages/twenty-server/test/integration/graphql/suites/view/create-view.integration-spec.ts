@@ -1,16 +1,16 @@
+import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-  assertViewStructure,
-  cleanupViewRecords,
+    assertViewStructure,
+    cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
-import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
 
-import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
-import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
+import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 describe('Create core view', () => {
   let testObjectMetadataId: string;

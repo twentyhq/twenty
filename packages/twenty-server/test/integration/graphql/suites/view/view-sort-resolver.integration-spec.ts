@@ -4,14 +4,14 @@ import { deleteViewSortOperationFactory } from 'test/integration/graphql/utils/d
 import { destroyViewSortOperationFactory } from 'test/integration/graphql/utils/destroy-view-sort-operation-factory.util';
 import { findViewSortsOperationFactory } from 'test/integration/graphql/utils/find-view-sorts-operation-factory.util';
 import {
-  assertGraphQLErrorResponse,
-  assertGraphQLSuccessfulResponse,
+    assertGraphQLErrorResponse,
+    assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateViewSortOperationFactory } from 'test/integration/graphql/utils/update-view-sort-operation-factory.util';
 import {
-  createViewSortData,
-  updateViewSortData,
+    createViewSortData,
+    updateViewSortData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -19,17 +19,17 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-  assertViewSortStructure,
-  cleanupViewRecords,
+    assertViewSortStructure,
+    cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
+import { ViewSortDirection } from 'src/engine/metadata-modules/view/enums/view-sort-direction';
 import {
-  generateViewSortExceptionMessage,
-  ViewSortExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-sort.exception';
+    generateViewSortExceptionMessage,
+    ViewSortExceptionMessageKey,
+} from 'src/engine/metadata-modules/view/exceptions/view-sort.exception';
 
 describe('View Sort Resolver', () => {
   let testViewId: string;
