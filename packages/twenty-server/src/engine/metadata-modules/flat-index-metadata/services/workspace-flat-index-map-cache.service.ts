@@ -40,9 +40,8 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceFlatMapCacheServ
       },
       withDeleted: true,
       select: {
-        indexFieldMetadatas: {
-          id: true,
-        },
+        // Note: We need all IndexFieldMetadataEntity in order to build a FlatIndex
+        indexFieldMetadatas: true,
       },
       relations: ['indexFieldMetadatas'],
     });
