@@ -263,6 +263,21 @@ msgstr "Eine gemeinsame Umgebung, in der Sie Ihre Kundenbeziehungen zusammen mit
 msgid "A verification email has been sent to"
 msgstr "Eine Bestätigungs-E-Mail wurde an gesendet"
 
+#. js-lingui-id: DqlQy+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Ability to add more than one email address"
+msgstr ""
+
+#. js-lingui-id: XkK/Vw
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Ability to add more than one phone number"
+msgstr ""
+
+#. js-lingui-id: ICtlXD
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Ability to add more than one URL"
+msgstr ""
+
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
@@ -773,6 +788,11 @@ msgstr "Einladung neuer Benutzer durch Teilen eines Einladungslinks zulassen."
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow users to sign in with an email and password."
 msgstr "Benutzern erlauben, sich mit E-Mail und Passwort anzumelden."
+
+#. js-lingui-id: VD5bNu
+#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
+msgid "An error occurred while checking user existence"
+msgstr ""
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -4616,6 +4636,11 @@ msgstr "Kleiner als oder gleich"
 msgid "Light"
 msgstr "Hell"
 
+#. js-lingui-id: Qds9fe
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Limit how many values can be added to this field"
+msgstr ""
+
 #. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line"
@@ -4767,6 +4792,26 @@ msgstr "Max"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
 msgstr "Maximale Importkapazität: {formatSpreadsheetMaxRecordImportCapacity} Datensätze. Andernfalls ziehen Sie in Betracht, Ihre Datei zu teilen oder die API zu verwenden."
+
+#. js-lingui-id: DBiUDH
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum email addresses"
+msgstr ""
+
+#. js-lingui-id: iwCoSG
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum phone numbers"
+msgstr ""
+
+#. js-lingui-id: aiuTYK
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum URLs"
+msgstr ""
+
+#. js-lingui-id: ZEH/cb
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum values"
+msgstr ""
 
 #. js-lingui-id: nA8kxD
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
@@ -8217,6 +8262,11 @@ msgstr "Workflows"
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "Arbeitsbereich"
+
+#. js-lingui-id: fQ8teq
+#: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
+msgid "Workspace creation failed"
+msgstr ""
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx

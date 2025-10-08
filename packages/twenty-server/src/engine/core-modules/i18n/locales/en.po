@@ -1800,6 +1800,24 @@ msgstr "kanbanfieldMetadataId"
 msgid "Key"
 msgstr "Key"
 
+#. js-lingui-id: ACUSmL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+msgid "Label identifier view field cannot be deleted"
+msgstr "Label identifier view field cannot be deleted"
+
+#. js-lingui-id: rI+dAx
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+msgid "Label identifier view field has to be in the lowest position"
+msgstr "Label identifier view field has to be in the lowest position"
+
+#. js-lingui-id: PqTWJf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+msgid "Label identifier view field has to be visible"
+msgstr "Label identifier view field has to be visible"
+
 #. js-lingui-id: w8Rv8T
 #: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
 msgid "Label is required"
@@ -3384,6 +3402,11 @@ msgstr "Update DateTime"
 msgid "Updated field name is not synced with label"
 msgstr "Updated field name is not synced with label"
 
+#. js-lingui-id: GkcfmO
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "User already exists"
+msgstr "User already exists"
+
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -3517,10 +3540,22 @@ msgstr "View field metadata with id {flatViewFieldId} already exists"
 msgid "View Field position"
 msgstr "View Field position"
 
+#. js-lingui-id: 7LMaUn
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field position cannot be lower than label identifier view field position"
+msgstr "View field position cannot be lower than label identifier view field position"
+
 #. js-lingui-id: Ju6gri
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field related view"
 msgstr "View Field related view"
+
+#. js-lingui-id: WZzm3R
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field related view object metadata not found"
+msgstr "View field related view object metadata not found"
 
 #. js-lingui-id: tvTr2y
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -3556,6 +3591,18 @@ msgstr "View field to destroy not found"
 #: src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
 msgid "View field to update not found"
 msgstr "View field to update not found"
+
+#. js-lingui-id: AprfQL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field to update parent view not found"
+msgstr "View field to update parent view not found"
+
+#. js-lingui-id: sqzMKR
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field to update parent view object not found"
+msgstr "View field to update parent view object not found"
 
 #. js-lingui-id: Gd/LzL
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts

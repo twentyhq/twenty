@@ -6,9 +6,9 @@ import {
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findObjectFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-object-metadata-many-to-one-target-morph-relation-flat-field-metadatas-or-throw.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
@@ -24,10 +24,11 @@ export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
   toFlatObjectMetadata,
   flatFieldMetadataMaps,
 }: RenameRelatedMorphFieldOnObjectNamesUpdateArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
-  const { objectFlatFieldMetadatas } = findObjectFlatFieldMetadatasOrThrow({
-    flatFieldMetadataMaps,
-    flatObjectMetadata: fromFlatObjectMetadata,
-  });
+  const objectFlatFieldMetadatas =
+    findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityIds: fromFlatObjectMetadata.fieldMetadataIds,
+    });
   const manyToOneMorphRelationFlatFieldMetadatas =
     getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow({
       flatFieldMetadataMaps,

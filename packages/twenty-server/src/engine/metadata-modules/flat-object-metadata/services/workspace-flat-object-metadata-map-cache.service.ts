@@ -39,7 +39,18 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
         workspaceId,
       },
       withDeleted: true,
-      relations: ['fields', 'indexMetadatas'],
+      select: {
+        fields: {
+          id: true,
+        },
+        indexMetadatas: {
+          id: true,
+        },
+        views: {
+          id: true,
+        },
+      },
+      relations: ['fields', 'indexMetadatas', 'views'],
     });
 
     const flatObjectMetadataMaps = objectMetadatas.reduce<

@@ -19,6 +19,7 @@ import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-met
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
 import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-morph-or-relation-field-metadata-type.type';
@@ -133,8 +134,7 @@ export class FieldMetadataEntity<
 
   @OneToOne(
     () => FieldMetadataEntity,
-    (fieldMetadata: FieldMetadataEntity) =>
-      fieldMetadata.relationTargetFieldMetadataId,
+    (fieldMetadata) => fieldMetadata.relationTargetFieldMetadataId,
     { nullable: true },
   )
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
@@ -151,8 +151,7 @@ export class FieldMetadataEntity<
 
   @ManyToOne(
     () => ObjectMetadataEntity,
-    (objectMetadata: ObjectMetadataEntity) =>
-      objectMetadata.targetRelationFields,
+    (objectMetadata) => objectMetadata.targetRelationFields,
     { onDelete: 'CASCADE', nullable: true },
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
@@ -170,8 +169,7 @@ export class FieldMetadataEntity<
 
   @OneToMany(
     () => IndexFieldMetadataEntity,
-    (indexFieldMetadata: IndexFieldMetadataEntity) =>
-      indexFieldMetadata.indexMetadata,
+    (indexFieldMetadata) => indexFieldMetadata.indexMetadata,
     {
       cascade: true,
     },
@@ -186,7 +184,10 @@ export class FieldMetadataEntity<
 
   @OneToMany(
     () => FieldPermissionEntity,
-    (fieldPermission: FieldPermissionEntity) => fieldPermission.fieldMetadata,
+    (fieldPermission) => fieldPermission.fieldMetadata,
   )
   fieldPermissions: Relation<FieldPermissionEntity[]>;
+
+  @OneToMany(() => ViewFieldEntity, (viewField) => viewField.fieldMetadata)
+  viewFields: Relation<ViewFieldEntity[]>;
 }
