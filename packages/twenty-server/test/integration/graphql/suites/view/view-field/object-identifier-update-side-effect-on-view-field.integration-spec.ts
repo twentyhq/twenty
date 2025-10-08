@@ -222,4 +222,46 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       extractRecordIdsAndDatesAsExpectAny(firstError),
     );
   });
+
+  it('Should allow updated labelIdentifier view field with a position higher than existing other view field', async () => {
+    const {
+      data: {
+        createOneField: { id: fieldMetadataId },
+      },
+    } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        name: 'nonLabelIdentifierField',
+        label: 'Test Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: testSetup.testObjectMetadataId,
+        isLabelSyncedWithName: false,
+      },
+      gqlFields: `
+          id
+          name
+          label
+          isLabelSyncedWithName
+        `,
+    });
+
+    await createOneCoreViewField({
+      input: {
+        fieldMetadataId: fieldMetadataId,
+        viewId: testSetup.testViewId,
+        position: 42,
+      },
+      expectToFail: false,
+    });
+
+    await updateOneCoreViewField({
+      input: {
+        id: testSetup.testLabelIdentifierViewFieldId,
+        update: {
+          position: 41,
+        },
+      },
+      expectToFail: false,
+    });
+  });
 });
