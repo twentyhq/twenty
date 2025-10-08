@@ -1,4 +1,4 @@
-import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
+import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 
 export const isViewFieldInLowestPosition = ({
   flatViewField,
@@ -14,5 +14,6 @@ export const isViewFieldInLowestPosition = ({
     .map(({ position }) => position)
     .sort();
   const lowestPosition = ascSortedViewFieldPositions[0];
+
   return flatViewField.position < lowestPosition;
 };

@@ -1,4 +1,3 @@
-import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import {
   type ViewFieldTestSetup,
   cleanupViewFieldTestV2,
@@ -14,10 +13,13 @@ import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-fi
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
+
 describe('View Field Resolver - Successful object metadata identifier update side effect on view field', () => {
   let testSetup: ViewFieldTestSetup & {
     testLabelIdentifierViewFieldId: string;
   };
+
   beforeAll(async () => {
     const { testFieldMetadataId, testObjectMetadataId, testViewId } =
       await setupViewFieldTestV2();
@@ -44,6 +46,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       `,
     });
     const testLabelIdentifierViewFieldId = getCoreViewFields[0].id;
+
     testSetup = {
       testFieldMetadataId,
       testObjectMetadataId,
@@ -90,6 +93,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
     // TODO create a util to expect a core engine v2 error
     expect(errors.length).toBe(1);
     const [firstError] = errors;
+
     expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     expect(firstError).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny(firstError),
@@ -104,6 +108,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
 
     expect(errors.length).toBe(1);
     const [firstError] = errors;
+
     expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     expect(firstError).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny(firstError),
@@ -121,6 +126,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
 
     expect(errors.length).toBe(1);
     const [firstError] = errors;
+
     expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     expect(firstError).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny(firstError),
@@ -160,6 +166,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
 
     expect(errors.length).toBe(1);
     const [firstError] = errors;
+
     expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     expect(firstError).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny(firstError),
@@ -206,8 +213,10 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       },
       expectToFail: true,
     });
+
     expect(errors.length).toBe(1);
     const [firstError] = errors;
+
     expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     expect(firstError).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny(firstError),

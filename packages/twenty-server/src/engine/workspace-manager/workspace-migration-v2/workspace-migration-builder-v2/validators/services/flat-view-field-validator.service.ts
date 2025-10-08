@@ -236,6 +236,7 @@ export class FlatViewFieldValidatorService {
         message: t`View field related view object metadata not found`,
         userFriendlyMessage: t`View field related view object metadata not found`,
       });
+
       return validationResult;
     }
 
