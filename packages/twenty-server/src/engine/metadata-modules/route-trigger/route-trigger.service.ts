@@ -1,5 +1,7 @@
 import {
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -133,11 +135,18 @@ export class RouteTriggerService {
       ...routeTriggerWithPathParams.pathParams,
     };
 
-    return await this.serverlessFunctionService.executeOneServerlessFunction(
-      routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
-      routeTriggerWithPathParams.routeTrigger.workspaceId,
-      executionParams,
-      'draft',
-    );
+    const result =
+      await this.serverlessFunctionService.executeOneServerlessFunction(
+        routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
+        routeTriggerWithPathParams.routeTrigger.workspaceId,
+        executionParams,
+        'draft',
+      );
+
+    if (result.error) {
+      throw new HttpException(result.error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return result.data;
   }
 }
