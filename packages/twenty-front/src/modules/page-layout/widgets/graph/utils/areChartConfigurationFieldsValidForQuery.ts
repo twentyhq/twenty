@@ -32,9 +32,9 @@ export const areChartConfigurationFieldsValidForQuery = (
         ) &&
         fieldExists(configuration.groupByFieldMetadataIdX, objectMetadataItem);
 
-      const hasValidYField = isDefined(configuration.groupByFieldMetadataIdY)
-        ? fieldExists(configuration.groupByFieldMetadataIdY, objectMetadataItem)
-        : true;
+      const hasValidYField =
+        !isDefined(configuration.groupByFieldMetadataIdY) ||
+        fieldExists(configuration.groupByFieldMetadataIdY, objectMetadataItem);
 
       return { isValid: hasValidFields && hasValidYField };
     }
@@ -61,7 +61,11 @@ export const areChartConfigurationFieldsValidForQuery = (
     }
 
     case 'IframeConfiguration': {
-      return { isValid: isDefined(configuration.url) };
+      const hasValidUrl =
+        typeof configuration.url === 'string' &&
+        configuration.url.trim().length > 0;
+
+      return { isValid: hasValidUrl };
     }
 
     default:

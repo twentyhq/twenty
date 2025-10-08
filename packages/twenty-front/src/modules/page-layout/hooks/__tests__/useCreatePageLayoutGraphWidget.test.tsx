@@ -83,7 +83,9 @@ describe('useCreatePageLayoutGraphWidget', () => {
     });
 
     act(() => {
-      result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
+      result.current.createWidget.createPageLayoutGraphWidget({
+        graphType: GraphType.BAR,
+      });
     });
 
     expect(result.current.allWidgets).toHaveLength(1);
@@ -179,10 +181,10 @@ describe('useCreatePageLayoutGraphWidget', () => {
       act(() => {
         const defaultConfig =
           mockDefaultConfigs[graphType as keyof typeof mockDefaultConfigs];
-        result.current.createWidget.createPageLayoutGraphWidget(
+        result.current.createWidget.createPageLayoutGraphWidget({
           graphType,
           defaultConfig,
-        );
+        });
       });
     });
 
@@ -228,7 +230,9 @@ describe('useCreatePageLayoutGraphWidget', () => {
     );
 
     expect(() => {
-      result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
+      result.current.createWidget.createPageLayoutGraphWidget({
+        graphType: GraphType.BAR,
+      });
     }).toThrow('A tab must be selected to create a new graph widget');
   });
 });

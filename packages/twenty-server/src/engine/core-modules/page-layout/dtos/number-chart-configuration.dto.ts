@@ -42,7 +42,7 @@ export class NumberChartConfigurationDTO {
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
-  displayDataLabel?: boolean;
+  displayDataLabel?: boolean = false;
 
   @Field(() => String, { nullable: true })
   @IsString()
@@ -53,11 +53,6 @@ export class NumberChartConfigurationDTO {
   @IsString()
   @IsOptional()
   description?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  color?: string;
 
   @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()

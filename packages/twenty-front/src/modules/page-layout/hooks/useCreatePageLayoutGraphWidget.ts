@@ -56,10 +56,13 @@ export const useCreatePageLayoutGraphWidget = (
 
   const createPageLayoutGraphWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (
-        graphType: GraphType,
-        defaultConfig?: DefaultChartConfig | DefaultNumberChartConfig,
-      ): PageLayoutWidget => {
+      ({
+        graphType,
+        defaultConfig,
+      }: {
+        graphType: GraphType;
+        defaultConfig?: DefaultChartConfig | DefaultNumberChartConfig;
+      }): PageLayoutWidget => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 
         if (!isDefined(activeTabId)) {

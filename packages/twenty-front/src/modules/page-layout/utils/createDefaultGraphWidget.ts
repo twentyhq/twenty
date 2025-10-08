@@ -56,7 +56,7 @@ const createDefaultGraphConfiguration = (
         __typename: 'BarChartConfiguration',
         graphType: GraphType.BAR,
         displayDataLabel: false,
-        color: 'purple' satisfies ThemeColor,
+        color: 'blue' satisfies ThemeColor,
         groupByFieldMetadataIdX: defaultConfig.groupByFieldMetadataIdX,
         aggregateFieldMetadataId: defaultConfig.aggregateFieldMetadataId,
         aggregateOperation: ExtendedAggregateOperations.SUM,
@@ -75,15 +75,7 @@ const createDefaultGraphConfiguration = (
   }
 };
 
-export const createDefaultGraphWidget = ({
-  id,
-  pageLayoutTabId,
-  title,
-  graphType,
-  gridPosition,
-  objectMetadataId,
-  defaultConfig,
-}: {
+type CreateDefaultGraphWidgetParams = {
   id: string;
   pageLayoutTabId: string;
   title: string;
@@ -100,7 +92,17 @@ export const createDefaultGraphWidget = ({
         objectMetadataId: string;
         aggregateFieldMetadataId: string;
       };
-}): PageLayoutWidget => {
+};
+
+export const createDefaultGraphWidget = ({
+  id,
+  pageLayoutTabId,
+  title,
+  graphType,
+  gridPosition,
+  objectMetadataId,
+  defaultConfig,
+}: CreateDefaultGraphWidgetParams): PageLayoutWidget => {
   return {
     __typename: 'PageLayoutWidget',
     id,
@@ -109,8 +111,7 @@ export const createDefaultGraphWidget = ({
     type: WidgetType.GRAPH,
     configuration: createDefaultGraphConfiguration(graphType, defaultConfig),
     gridPosition,
-    objectMetadataId:
-      defaultConfig?.objectMetadataId ?? objectMetadataId ?? null,
+    objectMetadataId: defaultConfig?.objectMetadataId ?? objectMetadataId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

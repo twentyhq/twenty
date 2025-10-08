@@ -48,7 +48,7 @@ export class PieChartConfigurationDTO {
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
   @IsOptional()
-  orderBy?: GraphOrderBy;
+  orderBy?: GraphOrderBy = GraphOrderBy.VALUE_DESC;
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()

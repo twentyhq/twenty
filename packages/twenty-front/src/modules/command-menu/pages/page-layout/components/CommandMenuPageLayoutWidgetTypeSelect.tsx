@@ -33,10 +33,10 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const handleNavigateToGraphTypeSelect = () => {
     if (!isDefined(pageLayoutEditingWidgetId)) {
       const defaultConfig = buildDefaultBarChartConfig();
-      const newWidget = createPageLayoutGraphWidget(
-        GraphType.BAR,
+      const newWidget = createPageLayoutGraphWidget({
+        graphType: GraphType.BAR,
         defaultConfig,
-      );
+      });
 
       setPageLayoutEditingWidgetId(newWidget.id);
     }

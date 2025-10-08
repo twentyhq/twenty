@@ -121,8 +121,16 @@ export const useChartSettingsValues = ({
         return isDefined(configuration.color) && 'color' in configuration
           ? capitalize(configuration.color)
           : undefined;
-      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
-        return `${aggregateField?.label ?? ''}${aggregateField?.label && yAxisAggregateOperation ? ` (${getAggregateOperationLabel(yAxisAggregateOperation)})` : ''}`;
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y: {
+        const hasAggregateLabel = isDefined(aggregateField?.label);
+        const hasAggregateOperation = isDefined(yAxisAggregateOperation);
+
+        return `${aggregateField?.label ?? ''}${
+          hasAggregateLabel && hasAggregateOperation
+            ? ` (${getAggregateOperationLabel(yAxisAggregateOperation)})`
+            : ''
+        }`;
+      }
       case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
         return groupByFieldY?.label;
       case CHART_CONFIGURATION_SETTING_IDS.AXIS_NAME:

@@ -37,7 +37,7 @@ export class GaugeChartConfigurationDTO {
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
-  displayDataLabel?: boolean;
+  displayDataLabel?: boolean = false;
 
   @Field(() => String, { nullable: true })
   @IsString()
