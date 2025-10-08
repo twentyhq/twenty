@@ -1,20 +1,20 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
+import { type Repository } from 'typeorm';
+
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 describe('WorkspaceAgnosticToken', () => {
   let service: WorkspaceAgnosticTokenService;
   let jwtWrapperService: JwtWrapperService;
   let twentyConfigService: TwentyConfigService;
-  let userService: UserService;
+  let userRepository: Repository<User>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,9 +36,9 @@ describe('WorkspaceAgnosticToken', () => {
           },
         },
         {
-          provide: UserService,
+          provide: getRepositoryToken(User),
           useValue: {
-            findUserByIdOrThrow: jest.fn(),
+            findOne: jest.fn(),
           },
         },
       ],
@@ -49,7 +49,7 @@ describe('WorkspaceAgnosticToken', () => {
     );
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    userService = module.get<UserService>(UserService);
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   it('should be defined', () => {
@@ -69,9 +69,7 @@ describe('WorkspaceAgnosticToken', () => {
         return undefined;
       });
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
-      jest
-        .spyOn(userService, 'findUserByIdOrThrow')
-        .mockResolvedValue(mockUser as any);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
 
       const result = await service.generateWorkspaceAgnosticToken({
         userId,
@@ -85,10 +83,9 @@ describe('WorkspaceAgnosticToken', () => {
       expect(twentyConfigService.get).toHaveBeenCalledWith(
         'WORKSPACE_AGNOSTIC_TOKEN_EXPIRES_IN',
       );
-      expect(userService.findUserByIdOrThrow).toHaveBeenCalledWith(
-        userId,
-        expect.any(AuthException),
-      );
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
         {
           authProvider: AuthProviderEnum.Password,
@@ -113,14 +110,7 @@ describe('WorkspaceAgnosticToken', () => {
         return undefined;
       });
 
-      jest
-        .spyOn(userService, 'findUserByIdOrThrow')
-        .mockRejectedValue(
-          new AuthException(
-            'User is not found',
-            AuthExceptionCode.INVALID_INPUT,
-          ),
-        );
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
         service.generateWorkspaceAgnosticToken({
@@ -144,9 +134,7 @@ describe('WorkspaceAgnosticToken', () => {
 
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockPayload);
       jest.spyOn(jwtWrapperService, 'verify').mockReturnValue({});
-      jest
-        .spyOn(userService, 'findUserByIdOrThrow')
-        .mockResolvedValue(mockUser as any);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
 
       const result = await service.validateToken(mockToken);
 
@@ -160,7 +148,9 @@ describe('WorkspaceAgnosticToken', () => {
           secret: 'mocked-secret',
         }),
       );
-      expect(userService.findUserByIdOrThrow).toHaveBeenCalledWith(userId);
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
     });
 
     it('should throw an error if token verification fails', async () => {
@@ -186,14 +176,7 @@ describe('WorkspaceAgnosticToken', () => {
 
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockPayload);
       jest.spyOn(jwtWrapperService, 'verify').mockReturnValue({});
-      jest
-        .spyOn(userService, 'findUserByIdOrThrow')
-        .mockRejectedValue(
-          new AuthException(
-            'User is not found',
-            AuthExceptionCode.INVALID_INPUT,
-          ),
-        );
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(service.validateToken(mockToken)).rejects.toThrow(
         AuthException,

@@ -50,7 +50,6 @@ export class SSOAuthController {
     private readonly guardRedirectService: GuardRedirectService,
     private readonly domainManagerService: DomainManagerService,
     private readonly userService: UserService,
-
     private readonly sSOService: SSOService,
     @InjectRepository(WorkspaceSSOIdentityProvider)
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,

@@ -7,18 +7,14 @@ import { type Request } from 'express';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type User } from 'src/engine/core-modules/user/user.entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -29,7 +25,7 @@ describe('AccessTokenService', () => {
   let service: AccessTokenService;
   let jwtWrapperService: JwtWrapperService;
   let twentyConfigService: TwentyConfigService;
-  let userService: UserService;
+  let userRepository: Repository<User>;
   let workspaceRepository: Repository<Workspace>;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
   let userWorkspaceRepository: Repository<UserWorkspace>;
@@ -61,10 +57,8 @@ describe('AccessTokenService', () => {
           },
         },
         {
-          provide: UserService,
-          useValue: {
-            findUserByIdOrThrow: jest.fn(),
-          },
+          provide: getRepositoryToken(User),
+          useClass: Repository,
         },
         {
           provide: getRepositoryToken(AppToken),
@@ -94,7 +88,7 @@ describe('AccessTokenService', () => {
     service = module.get<AccessTokenService>(AccessTokenService);
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    userService = module.get<UserService>(UserService);
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace),
     );
@@ -126,9 +120,7 @@ describe('AccessTokenService', () => {
       const mockToken = 'mock-token';
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
-      jest
-        .spyOn(userService, 'findUserByIdOrThrow')
-        .mockResolvedValue(mockUser as User);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
       jest
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace as Workspace);
@@ -179,9 +171,7 @@ describe('AccessTokenService', () => {
       const mockToken = 'mock-token';
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
-      jest
-        .spyOn(userService, 'findUserByIdOrThrow')
-        .mockResolvedValue(mockUser as User);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
       jest
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace as Workspace);
@@ -226,14 +216,7 @@ describe('AccessTokenService', () => {
 
     it('should throw an error if user is not found', async () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
-      jest
-        .spyOn(userService, 'findUserByIdOrThrow')
-        .mockRejectedValue(
-          new AuthException(
-            'User is not found',
-            AuthExceptionCode.USER_NOT_FOUND,
-          ),
-        );
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
         service.generateAccessToken({

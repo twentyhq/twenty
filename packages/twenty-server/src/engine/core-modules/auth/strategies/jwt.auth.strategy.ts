@@ -20,20 +20,21 @@ import {
   type JwtPayload,
   type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly userService: UserService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(ApiKey)
@@ -135,7 +136,9 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    user = await this.userService.findUserById(userId);
+    user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
 
     if (!payload.userWorkspaceId) {
       throw new AuthException(
@@ -268,8 +271,12 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   private async validateWorkspaceAgnosticToken(
     payload: WorkspaceAgnosticTokenJwtPayload,
   ) {
-    const user = await this.userService.findUserByIdOrThrow(
-      payload.sub,
+    const user = await this.userRepository.findOne({
+      where: { id: payload.sub },
+    });
+
+    userValidator.assertIsDefinedOrThrow(
+      user,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
