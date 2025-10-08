@@ -3389,6 +3389,11 @@ msgstr "Data și ora actualizării"
 msgid "Updated field name is not synced with label"
 msgstr "Numele actualizat al câmpului nu este sincronizat cu eticheta"
 
+#. js-lingui-id: GkcfmO
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "User already exists"
+msgstr ""
+
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts

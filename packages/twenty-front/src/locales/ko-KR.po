@@ -789,6 +789,11 @@ msgstr "초대 링크 공유를 통한 새 사용자 초대 허용."
 msgid "Allow users to sign in with an email and password."
 msgstr "이메일과 비밀번호로 로그인 허용."
 
+#. js-lingui-id: VD5bNu
+#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
+msgid "An error occurred while checking user existence"
+msgstr ""
+
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -8257,6 +8262,11 @@ msgstr "Workflows"
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "워크스페이스"
+
+#. js-lingui-id: fQ8teq
+#: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
+msgid "Workspace creation failed"
+msgstr ""
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
