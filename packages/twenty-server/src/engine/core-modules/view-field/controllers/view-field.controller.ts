@@ -13,18 +13,18 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
-import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
-import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { CreateViewFieldInput } from 'src/engine/core-modules/view-field/dtos/inputs/create-view-field.input';
+import { UpdateViewFieldInput } from 'src/engine/core-modules/view-field/dtos/inputs/update-view-field.input';
+import { type ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
 import {
   generateViewFieldExceptionMessage,
   generateViewFieldUserFriendlyExceptionMessage,
   ViewFieldException,
   ViewFieldExceptionCode,
   ViewFieldExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-field.exception';
-import { ViewFieldRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-field-rest-api-exception.filter';
-import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
+} from 'src/engine/core-modules/view-field/exceptions/view-field.exception';
+import { ViewFieldRestApiExceptionFilter } from 'src/engine/core-modules/view-field/filters/view-field-rest-api-exception.filter';
+import { ViewFieldService } from 'src/engine/core-modules/view-field/services/view-field.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';

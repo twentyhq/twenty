@@ -27,11 +27,11 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+import { type CreateViewFieldInput } from 'src/engine/core-modules/view-field/dtos/inputs/create-view-field.input';
 import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-field.exception';
+} from 'src/engine/core-modules/view-field/exceptions/view-field.exception';
 
 describe('View Field Resolver', () => {
   let testViewId: string;

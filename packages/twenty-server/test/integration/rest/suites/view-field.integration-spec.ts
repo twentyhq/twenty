@@ -26,7 +26,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-field.exception';
+} from 'src/engine/core-modules/view-field/exceptions/view-field.exception';
 
 describe('View Field REST API', () => {
   let testObjectMetadataId: string;

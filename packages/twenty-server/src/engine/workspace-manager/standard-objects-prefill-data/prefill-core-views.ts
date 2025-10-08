@@ -3,7 +3,7 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';

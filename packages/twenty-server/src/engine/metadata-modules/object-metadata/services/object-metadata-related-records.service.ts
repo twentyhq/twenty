@@ -4,12 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
+import { ViewFieldService } from 'src/engine/core-modules/view-field/services/view-field.service';
 import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
-import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';

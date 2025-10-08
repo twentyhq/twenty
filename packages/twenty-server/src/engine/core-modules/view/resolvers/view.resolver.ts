@@ -16,15 +16,15 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { ViewFieldDTO } from 'src/engine/core-modules/view-field/dtos/view-field.dto';
+import { ViewFieldService } from 'src/engine/core-modules/view-field/services/view-field.service';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
-import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
 import { ViewFilterGroupDTO } from 'src/engine/core-modules/view/dtos/view-filter-group.dto';
 import { ViewFilterDTO } from 'src/engine/core-modules/view/dtos/view-filter.dto';
 import { ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';
 import { ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
 import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
-import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';

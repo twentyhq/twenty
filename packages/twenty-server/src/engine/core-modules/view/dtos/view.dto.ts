@@ -4,7 +4,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
+import { ViewFieldDTO } from 'src/engine/core-modules/view-field/dtos/view-field.dto';
 import { ViewFilterGroupDTO } from 'src/engine/core-modules/view/dtos/view-filter-group.dto';
 import { ViewFilterDTO } from 'src/engine/core-modules/view/dtos/view-filter.dto';
 import { ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';

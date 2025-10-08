@@ -1,6 +1,6 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 
-import { type ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
+import { type ViewFieldService } from 'src/engine/core-modules/view-field/services/view-field.service';
 import { type ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { type ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { type ViewService } from 'src/engine/core-modules/view/services/view.service';

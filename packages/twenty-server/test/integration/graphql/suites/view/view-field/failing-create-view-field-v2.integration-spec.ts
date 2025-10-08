@@ -1,4 +1,9 @@
 import { faker } from '@faker-js/faker';
+import {
+  cleanupViewFieldTestV2,
+  setupViewFieldTestV2,
+  type ViewFieldTestSetup,
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
 import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
 import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
@@ -8,13 +13,8 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import {
-  type ViewFieldTestSetup,
-  cleanupViewFieldTestV2,
-  setupViewFieldTestV2,
-} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
 
-import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+import { type CreateViewFieldInput } from 'src/engine/core-modules/view-field/dtos/inputs/create-view-field.input';
 
 describe('View Field Resolver - Failing Create Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;

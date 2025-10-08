@@ -4,10 +4,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import { settings } from 'src/engine/constants/settings';
+import { ViewFieldService } from 'src/engine/core-modules/view-field/services/view-field.service';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
-import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';

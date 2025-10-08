@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';

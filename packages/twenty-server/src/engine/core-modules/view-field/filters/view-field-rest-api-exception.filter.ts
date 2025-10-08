@@ -10,7 +10,7 @@ import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-h
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
-} from 'src/engine/core-modules/view/exceptions/view-field.exception';
+} from 'src/engine/core-modules/view-field/exceptions/view-field.exception';
 import { type CustomException } from 'src/utils/custom-exception';
 
 @Catch(ViewFieldException)

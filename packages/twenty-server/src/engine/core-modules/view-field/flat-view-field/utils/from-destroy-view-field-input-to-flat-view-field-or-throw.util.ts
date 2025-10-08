@@ -4,13 +4,13 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { FlatViewFieldMaps } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field-maps.type';
-import { FlatViewField } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field.type';
-import { type DestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view-field.input';
+import { type DestroyViewFieldInput } from 'src/engine/core-modules/view-field/dtos/inputs/destroy-view-field.input';
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
-} from 'src/engine/core-modules/view/exceptions/view-field.exception';
+} from 'src/engine/core-modules/view-field/exceptions/view-field.exception';
+import { FlatViewFieldMaps } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field-maps.type';
+import { FlatViewField } from 'src/engine/core-modules/view-field/flat-view-field/types/flat-view-field.type';
 
 export const fromDestroyViewFieldInputToFlatViewFieldOrThrow = ({
   destroyViewFieldInput: rawDeleteDestroyViewInput,

@@ -7,7 +7,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';

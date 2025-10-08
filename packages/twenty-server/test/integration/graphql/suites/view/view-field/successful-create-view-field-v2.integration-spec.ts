@@ -1,3 +1,8 @@
+import {
+  type ViewFieldTestSetup,
+  cleanupViewFieldTestV2,
+  setupViewFieldTestV2,
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
 import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
 import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
@@ -7,14 +12,9 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type ViewFieldTestSetup,
-  cleanupViewFieldTestV2,
-  setupViewFieldTestV2,
-} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
 
-import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
-import { type ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
+import { type CreateViewFieldInput } from 'src/engine/core-modules/view-field/dtos/inputs/create-view-field.input';
+import { type ViewFieldDTO } from 'src/engine/core-modules/view-field/dtos/view-field.dto';
 
 type TestContext = {
   viewFieldInput: (testSetup: ViewFieldTestSetup) => CreateViewFieldInput;

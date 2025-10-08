@@ -1,4 +1,4 @@
-import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { type ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { type ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { type ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';

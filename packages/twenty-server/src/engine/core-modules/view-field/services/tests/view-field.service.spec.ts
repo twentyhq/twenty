@@ -4,16 +4,16 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserInputError } from 'apollo-server-core';
 import { type Repository } from 'typeorm';
 
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
   ViewFieldExceptionMessageKey,
   generateViewFieldExceptionMessage,
   generateViewFieldUserFriendlyExceptionMessage,
-} from 'src/engine/core-modules/view/exceptions/view-field.exception';
-import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
+} from 'src/engine/core-modules/view-field/exceptions/view-field.exception';
+import { ViewFieldService } from 'src/engine/core-modules/view-field/services/view-field.service';
+import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 describe('ViewFieldService', () => {

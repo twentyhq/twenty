@@ -1,17 +1,17 @@
 import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
+import {
+  cleanupViewFieldTestV2,
+  setupViewFieldTestV2,
+  type ViewFieldTestSetup,
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
 import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import {
-  type ViewFieldTestSetup,
-  cleanupViewFieldTestV2,
-  setupViewFieldTestV2,
-} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
 
-import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
+import { type UpdateViewFieldInput } from 'src/engine/core-modules/view-field/dtos/inputs/update-view-field.input';
 
 describe('View Field Resolver - Failing Update Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;

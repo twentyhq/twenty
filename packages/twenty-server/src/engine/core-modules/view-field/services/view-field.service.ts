@@ -5,14 +5,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view-field/entities/view-field.entity';
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
   ViewFieldExceptionMessageKey,
   generateViewFieldExceptionMessage,
   generateViewFieldUserFriendlyExceptionMessage,
-} from 'src/engine/core-modules/view/exceptions/view-field.exception';
+} from 'src/engine/core-modules/view-field/exceptions/view-field.exception';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 @Injectable()
