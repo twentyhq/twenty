@@ -18,7 +18,6 @@ import {
   TEST_PIE_CHART_CONFIG_MINIMAL,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
 
-import { WidgetConfigurationType } from 'src/engine/core-modules/page-layout/enums/widget-configuration-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import { validateAndTransformWidgetConfiguration } from 'src/engine/core-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 
@@ -31,9 +30,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
       );
 
       expect(result).toMatchObject(TEST_IFRAME_CONFIG);
-      expect((result as any)?.configurationType).toBe(
-        WidgetConfigurationType.IFRAME_CONFIG,
-      );
     });
 
     it('should throw error for invalid URL', () => {
@@ -73,9 +69,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_NUMBER_CHART_CONFIG);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.NUMBER_CHART_CONFIG,
-        );
       });
 
       it('should validate minimal number graph configuration', () => {
@@ -85,23 +78,15 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_NUMBER_CHART_CONFIG_MINIMAL);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.NUMBER_CHART_CONFIG,
-        );
       });
 
-      it('should accept partial number graph configuration', () => {
-        const result = validateAndTransformWidgetConfiguration(
-          WidgetType.GRAPH,
-          INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
-        );
-
-        expect(result).toMatchObject(
-          INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
-        );
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.NUMBER_CHART_CONFIG,
-        );
+      it('should throw error for partial number graph configuration with missing required fields', () => {
+        expect(() =>
+          validateAndTransformWidgetConfiguration(
+            WidgetType.GRAPH,
+            INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
+          ),
+        ).toThrow(/aggregateFieldMetadataId.*aggregateOperation/);
       });
 
       it('should throw error for invalid UUID', () => {
@@ -122,9 +107,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_BAR_CHART_CONFIG);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.BAR_CHART_CONFIG,
-        );
       });
 
       it('should validate minimal bar graph configuration', () => {
@@ -134,21 +116,15 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_BAR_CHART_CONFIG_MINIMAL);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.BAR_CHART_CONFIG,
-        );
       });
 
-      it('should accept partial bar graph configuration', () => {
-        const result = validateAndTransformWidgetConfiguration(
-          WidgetType.GRAPH,
-          INVALID_BAR_CHART_CONFIG_MISSING_GROUP_BY,
-        );
-
-        expect(result).toMatchObject(INVALID_BAR_CHART_CONFIG_MISSING_GROUP_BY);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.BAR_CHART_CONFIG,
-        );
+      it('should throw error for partial bar graph configuration with missing required fields', () => {
+        expect(() =>
+          validateAndTransformWidgetConfiguration(
+            WidgetType.GRAPH,
+            INVALID_BAR_CHART_CONFIG_MISSING_GROUP_BY,
+          ),
+        ).toThrow(/groupByFieldMetadataIdX/);
       });
     });
 
@@ -160,9 +136,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_LINE_CHART_CONFIG);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.LINE_CHART_CONFIG,
-        );
       });
 
       it('should validate minimal line graph configuration', () => {
@@ -172,9 +145,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_LINE_CHART_CONFIG_MINIMAL);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.LINE_CHART_CONFIG,
-        );
       });
     });
 
@@ -186,9 +156,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_PIE_CHART_CONFIG);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.PIE_CHART_CONFIG,
-        );
       });
 
       it('should validate minimal pie graph configuration', () => {
@@ -198,9 +165,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_PIE_CHART_CONFIG_MINIMAL);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.PIE_CHART_CONFIG,
-        );
       });
     });
 
@@ -212,9 +176,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_GAUGE_CHART_CONFIG);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.GAUGE_CHART_CONFIG,
-        );
       });
 
       it('should validate minimal gauge graph configuration', () => {
@@ -224,9 +185,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_GAUGE_CHART_CONFIG_MINIMAL);
-        expect((result as any)?.configurationType).toBe(
-          WidgetConfigurationType.GAUGE_CHART_CONFIG,
-        );
       });
     });
 
