@@ -44,7 +44,7 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
 
     const ascSortedViewFieldPositions = flatViewFields
       .map(({ position }) => position)
-      .sort();
+      .sort((a, b) => a - b);
     const lowestViewFieldPosition =
       ascSortedViewFieldPositions.length > 0
         ? ascSortedViewFieldPositions[0]

@@ -10,10 +10,8 @@ export const isViewFieldInLowestPosition = ({
   if (otherFlatViewFields.length === 0) {
     return true;
   }
-  const ascSortedViewFieldPositions = otherFlatViewFields
-    .map(({ position }) => position)
-    .sort();
-  const lowestPosition = ascSortedViewFieldPositions[0];
+  const positions = otherFlatViewFields.map(({ position }) => position);
+  const lowestPosition = Math.min(...positions);
 
   return flatViewField.position < lowestPosition;
 };

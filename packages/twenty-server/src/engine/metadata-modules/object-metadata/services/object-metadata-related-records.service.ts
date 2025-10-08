@@ -37,7 +37,6 @@ export class ObjectMetadataRelatedRecordsService {
     await this.viewService.flushGraphQLCache(objectMetadata.workspaceId);
   }
 
-  /// Migrate this
   public async updateLabelMetadataIdentifierInObjectViews({
     newLabelMetadataIdentifierFieldMetadata,
   }: {
@@ -81,7 +80,6 @@ export class ObjectMetadataRelatedRecordsService {
       );
     }
   }
-  ///
 
   private getViewFieldsMinPosition(viewFields: ViewFieldEntity[]): number {
     if (viewFields.length === 0) {

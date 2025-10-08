@@ -34,7 +34,7 @@ export const validateLabelIdentifierFieldMetadataIdFlatViewField = ({
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Label identifier view field has to be visible`,
-      userFriendlyMessage: t`Label identifier view field has to bev visible`,
+      userFriendlyMessage: t`Label identifier view field has to be visible`,
     });
   }
 

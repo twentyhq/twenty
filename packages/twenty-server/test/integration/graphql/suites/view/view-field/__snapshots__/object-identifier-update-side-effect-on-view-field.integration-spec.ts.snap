@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow creating a view field with a position lower than the label idenfitier view field 1`] = `
+exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow creating a view field with a position lower than the label identifier view field 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -154,7 +154,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
 }
 `;
 
-exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow updated labelIdentifier view field with a position higher than existing other view field 1`] = `
+exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow updating a label identifier view field visibility to false 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -172,8 +172,8 @@ exports[`View Field Resolver - Successful object metadata identifier update side
           "errors": [
             {
               "code": "INVALID_VIEW_DATA",
-              "message": "Label identifier view field has to be in the lowest position",
-              "userFriendlyMessage": "Label identifier view field has to be in the lowest position",
+              "message": "Label identifier view field has to be visible",
+              "userFriendlyMessage": "Label identifier view field has to be visible",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -206,7 +206,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
 }
 `;
 
-exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow updating a label identifier view field visibility to false 1`] = `
+exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow updating labelIdentifier view field with a position higher than existing other view field 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -224,8 +224,8 @@ exports[`View Field Resolver - Successful object metadata identifier update side
           "errors": [
             {
               "code": "INVALID_VIEW_DATA",
-              "message": "Label identifier view field has to be visible",
-              "userFriendlyMessage": "Label identifier view field has to bev visible",
+              "message": "Label identifier view field has to be in the lowest position",
+              "userFriendlyMessage": "Label identifier view field has to be in the lowest position",
             },
           ],
           "flatEntityMinimalInformation": {

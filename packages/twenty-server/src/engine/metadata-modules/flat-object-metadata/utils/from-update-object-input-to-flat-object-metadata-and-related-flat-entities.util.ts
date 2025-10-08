@@ -102,7 +102,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
         );
       }
 
-      const updatedStandardFlatObjectdMetadata =
+      const updatedStandardFlatObjectMetadata =
         OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
           (acc, property) => {
             const isPropertyUpdated =
@@ -122,7 +122,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
         );
 
       return {
-        flatObjectMetadata: updatedStandardFlatObjectdMetadata,
+        flatObjectMetadata: updatedStandardFlatObjectMetadata,
         otherObjectFlatFieldMetadataToUpdate: [],
         flatIndexMetadataToUpdate: [],
         flatViewFieldToUpdate: [],

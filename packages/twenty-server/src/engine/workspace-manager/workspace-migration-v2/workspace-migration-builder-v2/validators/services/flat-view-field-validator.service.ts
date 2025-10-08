@@ -145,7 +145,7 @@ export class FlatViewFieldValidatorService {
     return validationResult;
   }
 
-  public async validateFlatViewFieldCreation({
+  public validateFlatViewFieldCreation({
     flatViewFieldToValidate,
     optimisticFlatViewFieldMaps,
     dependencyOptimisticFlatEntityMaps: {
@@ -157,7 +157,7 @@ export class FlatViewFieldValidatorService {
     flatViewFieldToValidate: FlatViewField;
     optimisticFlatViewFieldMaps: FlatViewFieldMaps;
     dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
-  }): Promise<FailedFlatEntityValidation<FlatViewField>> {
+  }): FailedFlatEntityValidation<FlatViewField> {
     const validationResult: FailedFlatEntityValidation<FlatViewField> = {
       type: 'create_view_field',
       errors: [],

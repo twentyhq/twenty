@@ -3,6 +3,7 @@ import {
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
@@ -11,7 +12,6 @@ import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-f
 import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/find-core-view-fields.util';
 import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 
 import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 
@@ -120,7 +120,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
     });
   });
 
-  it('Should not allow creating a view field with a position lower than the label idenfitier view field', async () => {
+  it('Should not allow creating a view field with a position lower than the label identifier view field', async () => {
     const {
       data: {
         createOneField: { id: fieldMetadataId },
@@ -156,7 +156,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
     });
   });
 
-  it('Should not allow updated labelIdentifier view field with a position higher than existing other view field', async () => {
+  it('Should not allow updating labelIdentifier view field with a position higher than existing other view field', async () => {
     const {
       data: {
         createOneField: { id: fieldMetadataId },
@@ -202,7 +202,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
     });
   });
 
-  it('Should allow updated labelIdentifier view field with a position higher than existing other view field', async () => {
+  it('Should update labelIdentifier view field with a position higher than existing other view field', async () => {
     const {
       data: {
         createOneField: { id: fieldMetadataId },
