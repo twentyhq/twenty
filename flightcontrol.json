@@ -65,26 +65,8 @@
             "SERVER_URL": {
               "fromParameterStore": "SERVER_URL"
             },
-            "STORAGE_TYPE": {
-              "fromParameterStore": "STORAGE_TYPE"
-            },
-            "STORAGE_S3_REGION": {
-              "fromParameterStore": "STORAGE_S3_REGION"
-            },
-            "STORAGE_S3_NAME": {
-              "fromParameterStore": "STORAGE_S3_NAME"
-            },
-            "STORAGE_S3_ENDPOINT": {
-              "fromParameterStore": "STORAGE_S3_ENDPOINT"
-            },
             "APP_SECRET": {
               "fromParameterStore": "APP_SECRET"
-            },
-            "DISABLE_DB_MIGRATIONS": {
-              "fromParameterStore": "DISABLE_DB_MIGRATIONS"
-            },
-            "DISABLE_CRON_JOBS_REGISTRATION": {
-              "fromParameterStore": "DISABLE_CRON_JOBS_REGISTRATION"
             }
           }
         },
@@ -115,18 +97,6 @@
             },
             "SERVER_URL": {
               "fromParameterStore": "SERVER_URL"
-            },
-            "STORAGE_TYPE": {
-              "fromParameterStore": "STORAGE_TYPE"
-            },
-            "STORAGE_S3_REGION": {
-              "fromParameterStore": "STORAGE_S3_REGION"
-            },
-            "STORAGE_S3_NAME": {
-              "fromParameterStore": "STORAGE_S3_NAME"
-            },
-            "STORAGE_S3_ENDPOINT": {
-              "fromParameterStore": "STORAGE_S3_ENDPOINT"
             },
             "APP_SECRET": {
               "fromParameterStore": "APP_SECRET"
