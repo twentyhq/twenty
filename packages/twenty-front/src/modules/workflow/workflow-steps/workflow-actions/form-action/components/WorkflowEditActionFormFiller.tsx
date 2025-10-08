@@ -137,7 +137,7 @@ export const WorkflowEditActionFormFiller = ({
                     },
                   });
                 }}
-                objectNameSingular={objectNameSingular}
+                objectNameSingulars={[objectNameSingular]}
                 disabled={actionOptions.readonly}
               />
             );

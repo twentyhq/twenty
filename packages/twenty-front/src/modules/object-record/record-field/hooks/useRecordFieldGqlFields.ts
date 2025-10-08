@@ -9,7 +9,7 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export const useRecordFieldGqlFields = ({
   objectMetadataItem,
@@ -73,10 +73,18 @@ export const useRecordFieldGqlFields = ({
           );
         }
 
-        return fieldMetadataItem.morphRelations.map((morphRelation) => [
-          morphRelation.sourceFieldMetadata.name,
-          true,
-        ]);
+        return fieldMetadataItem.morphRelations.map((morphRelation) => {
+          const computedFieldName = computeMorphRelationFieldName({
+            fieldName: fieldMetadataItem.name,
+            relationType: fieldMetadataItem.settings?.relationType,
+            targetObjectMetadataNameSingular:
+              morphRelation.targetObjectMetadata.nameSingular,
+            targetObjectMetadataNamePlural:
+              morphRelation.targetObjectMetadata.namePlural,
+          });
+
+          return [computedFieldName, true];
+        });
       },
     ),
   );
