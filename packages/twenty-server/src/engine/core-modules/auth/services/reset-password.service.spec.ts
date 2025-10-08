@@ -8,11 +8,14 @@ import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { type User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -21,7 +24,7 @@ import { ResetPasswordService } from './reset-password.service';
 
 // To avoid dynamic import issues in Jest
 jest.mock('@react-email/render', () => ({
-  render: jest.fn().mockImplementation(async (template, options) => {
+  render: jest.fn().mockImplementation(async (_, options) => {
     if (options?.plainText) {
       return 'Plain Text Email';
     }
@@ -141,7 +144,9 @@ describe('ResetPasswordService', () => {
     it('should throw an error if user is not found', async () => {
       jest
         .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockRejectedValue(new AuthException('User not found'));
+        .mockRejectedValue(
+          new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+        );
 
       await expect(
         service.generatePasswordResetToken(
@@ -212,7 +217,9 @@ describe('ResetPasswordService', () => {
     it('should throw an error if user is not found', async () => {
       jest
         .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockRejectedValue(new AuthException('User not found'));
+        .mockRejectedValue(
+          new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+        );
 
       await expect(
         service.sendEmailPasswordResetLink(
@@ -275,7 +282,9 @@ describe('ResetPasswordService', () => {
     it('should throw an error if user is not found', async () => {
       jest
         .spyOn(userService, 'findUserByIdOrThrow')
-        .mockRejectedValue(new AuthException('User not found'));
+        .mockRejectedValue(
+          new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+        );
 
       await expect(
         service.invalidatePasswordResetToken('nonexistent'),
