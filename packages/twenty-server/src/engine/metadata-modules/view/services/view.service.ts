@@ -9,11 +9,11 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
+    ViewException,
+    ViewExceptionCode,
+    ViewExceptionMessageKey,
+    generateViewExceptionMessage,
+    generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -81,22 +81,6 @@ export class ViewService {
         'viewGroups',
         'viewFilterGroups',
       ],
-    });
-
-    return view || null;
-  }
-
-  async findByIdWithRelatedObjectMetadata(
-    id: string,
-    workspaceId: string,
-  ): Promise<ViewEntity | null> {
-    const view = await this.viewRepository.findOne({
-      where: {
-        id,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-      relations: ['workspace', 'objectMetadata', 'viewFields'],
     });
 
     return view || null;

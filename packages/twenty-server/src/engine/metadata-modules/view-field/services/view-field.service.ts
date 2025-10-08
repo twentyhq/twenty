@@ -13,14 +13,17 @@ import {
   generateViewFieldExceptionMessage,
   generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class ViewFieldService {
   constructor(
     @InjectRepository(ViewFieldEntity)
     private readonly viewFieldRepository: Repository<ViewFieldEntity>,
-    private readonly viewService: ViewService,
+    @InjectRepository(ViewEntity)
+    private readonly viewRepository: Repository<ViewEntity>,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFieldEntity[]> {
@@ -96,7 +99,7 @@ export class ViewFieldService {
 
         const savedViewField = await this.viewFieldRepository.save(viewField);
 
-        await this.viewService.flushGraphQLCache(viewFieldData.workspaceId);
+        await this.flushGraphQLCache(viewFieldData.workspaceId);
 
         const createdViewField = await this.findById(
           savedViewField.id,
@@ -226,7 +229,7 @@ export class ViewFieldService {
       ...updateData,
     });
 
-    await this.viewService.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(workspaceId);
 
     return { ...existingViewField, ...updatedViewField };
   }
@@ -246,7 +249,7 @@ export class ViewFieldService {
 
     await this.viewFieldRepository.softDelete(id);
 
-    await this.viewService.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(workspaceId);
 
     return viewField;
   }
@@ -266,7 +269,7 @@ export class ViewFieldService {
 
     await this.viewFieldRepository.delete(id);
 
-    await this.viewService.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(workspaceId);
 
     return viewField;
   }
@@ -289,7 +292,7 @@ export class ViewFieldService {
     },
     workspaceId: string,
   ) {
-    const view = await this.viewService.findByIdWithRelatedObjectMetadata(
+    const view = await this.findViewByIdWithRelations(
       newOrUpdatedViewField.viewId,
       workspaceId,
     );
@@ -326,7 +329,7 @@ export class ViewFieldService {
     },
     workspaceId: string,
   ) {
-    const view = await this.viewService.findByIdWithRelatedObjectMetadata(
+    const view = await this.findViewByIdWithRelations(
       newOrUpdatedViewField.viewId,
       workspaceId,
     );
@@ -398,7 +401,7 @@ export class ViewFieldService {
     workspaceId: string,
   ): Promise<Partial<ViewFieldEntity>> {
     if (!isDefined(viewFieldData.position)) {
-      const view = await this.viewService.findByIdWithRelatedObjectMetadata(
+      const view = await this.findViewByIdWithRelations(
         viewFieldData.viewId,
         workspaceId,
       );
@@ -431,5 +434,28 @@ export class ViewFieldService {
       isDefined(data.fieldMetadataId) &&
       isDefined(data.workspaceId)
     );
+  }
+
+  public async findViewByIdWithRelations(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewEntity | null> {
+    const view = await this.viewRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+      relations: ['workspace', 'objectMetadata', 'viewFields'],
+    });
+
+    return view || null;
+  }
+
+  private async flushGraphQLCache(workspaceId: string): Promise<void> {
+    await this.workspaceCacheStorageService.flushGraphQLOperation({
+      operationName: 'FindAllCoreViews',
+      workspaceId,
+    });
   }
 }

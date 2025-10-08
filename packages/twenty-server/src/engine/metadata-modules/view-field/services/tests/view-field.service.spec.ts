@@ -49,13 +49,6 @@ describe('ViewFieldService', () => {
             delete: jest.fn(),
           },
         },
-        {
-          provide: ViewService,
-          useValue: {
-            findByIdWithRelatedObjectMetadata: jest.fn(),
-            flushGraphQLCache: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
@@ -248,7 +241,7 @@ describe('ViewFieldService', () => {
         return Promise.resolve(null);
       });
       jest
-        .spyOn(viewService, 'findByIdWithRelatedObjectMetadata')
+        .spyOn(viewFieldService, 'findViewByIdWithRelations')
         .mockResolvedValue(mockView);
 
       const invalidData = { ...validViewFieldData, position: -1 };
@@ -285,7 +278,7 @@ describe('ViewFieldService', () => {
         .spyOn(viewFieldRepository, 'save')
         .mockResolvedValue(updatedViewField);
       jest
-        .spyOn(viewService, 'findByIdWithRelatedObjectMetadata')
+        .spyOn(viewFieldService, 'findViewByIdWithRelations')
         .mockResolvedValue(mockView);
 
       const result = await viewFieldService.update(id, workspaceId, updateData);
@@ -352,7 +345,7 @@ describe('ViewFieldService', () => {
         return Promise.resolve(null);
       });
       jest
-        .spyOn(viewService, 'findByIdWithRelatedObjectMetadata')
+        .spyOn(viewFieldService, 'findViewByIdWithRelations')
         .mockResolvedValue(mockView);
 
       await expect(
@@ -406,7 +399,7 @@ describe('ViewFieldService', () => {
         return Promise.resolve(null);
       });
       jest
-        .spyOn(viewService, 'findByIdWithRelatedObjectMetadata')
+        .spyOn(viewFieldService, 'findViewByIdWithRelations')
         .mockResolvedValue(mockView);
 
       await expect(
@@ -453,10 +446,7 @@ describe('ViewFieldService', () => {
         return Promise.resolve(null);
       });
       jest
-        .spyOn(
-          viewFieldService['viewService'],
-          'findByIdWithRelatedObjectMetadata',
-        )
+        .spyOn(viewFieldService, 'findViewByIdWithRelations')
         .mockResolvedValue(mockView);
 
       await expect(
