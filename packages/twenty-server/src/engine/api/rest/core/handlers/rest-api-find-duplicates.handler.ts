@@ -10,11 +10,12 @@ import {
   RestApiBaseHandler,
 } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
+import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 
 @Injectable()
 export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
-  async handle(request: Request) {
+  async handle(request: AuthenticatedRequest) {
     this.validate(request);
 
     const {

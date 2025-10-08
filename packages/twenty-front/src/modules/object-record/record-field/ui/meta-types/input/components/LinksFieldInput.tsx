@@ -6,6 +6,7 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { linksSchema } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useContext, useMemo } from 'react';
+import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { absoluteUrlSchema } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
@@ -61,6 +62,10 @@ export const LinksFieldInput = () => {
     onEscape?.({ newValue: draftValue });
   };
 
+  const maxNumberOfValues =
+    fieldDefinition.metadata.settings?.maxNumberOfValues ??
+    MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
+
   return (
     <MultiItemFieldInput
       items={links}
@@ -94,6 +99,7 @@ export const LinksFieldInput = () => {
           url={link.url}
         />
       )}
+      maxItemCount={maxNumberOfValues}
     />
   );
 };
