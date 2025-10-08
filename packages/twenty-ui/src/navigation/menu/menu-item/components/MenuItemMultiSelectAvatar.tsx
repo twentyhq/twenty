@@ -23,6 +23,9 @@ const StyledTextContainer = styled.div`
   align-items: center;
   flex: 1 0 0;
   gap: ${({ theme }) => theme.spacing(1)};
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 type MenuItemMultiSelectAvatarProps = {

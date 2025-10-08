@@ -28,7 +28,11 @@ export type SingleRecordPickerMenuItemsWithSearchProps = {
   focusId: string;
 } & Pick<
   SingleRecordPickerMenuItemsProps,
-  'EmptyIcon' | 'emptyLabel' | 'onCancel' | 'onMorphItemSelected'
+  | 'EmptyIcon'
+  | 'emptyLabel'
+  | 'onCancel'
+  | 'onMorphItemSelected'
+  | 'showObjectName'
 >;
 
 export const SingleRecordPickerMenuItemsWithSearch = ({
@@ -41,6 +45,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   objectNameSingulars,
   layoutDirection = 'search-bar-on-top',
   focusId,
+  showObjectName,
 }: SingleRecordPickerMenuItemsWithSearchProps) => {
   const { handleSearchFilterChange } = useSingleRecordPickerSearch();
 
@@ -104,6 +109,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
                 EmptyIcon,
                 emptyLabel,
                 onCancel,
+                showObjectName,
               }}
             />
           </DropdownMenuItemsContainer>
@@ -127,6 +133,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
                 EmptyIcon,
                 emptyLabel,
                 onCancel,
+                showObjectName,
               }}
             />
           </DropdownMenuItemsContainer>

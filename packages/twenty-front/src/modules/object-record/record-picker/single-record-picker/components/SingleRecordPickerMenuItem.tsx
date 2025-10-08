@@ -10,7 +10,7 @@ import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
@@ -18,6 +18,7 @@ type SingleRecordPickerMenuItemProps = {
   morphItem: RecordPickerPickableMorphItem;
   onMorphItemSelected: (morphItem?: RecordPickerPickableMorphItem) => void;
   isRecordSelected: boolean;
+  showObjectName?: boolean;
 };
 
 const StyledSelectableItem = styled(SelectableListItem)`
@@ -28,6 +29,7 @@ export const SingleRecordPickerMenuItem = ({
   morphItem,
   onMorphItemSelected,
   isRecordSelected,
+  showObjectName,
 }: SingleRecordPickerMenuItemProps) => {
   const recordPickerComponentInstanceId =
     useAvailableComponentInstanceIdOrThrow(
@@ -73,6 +75,11 @@ export const SingleRecordPickerMenuItem = ({
             size="md"
             type={getAvatarType(searchRecord.objectNameSingular) ?? 'rounded'}
           />
+        }
+        contextualText={
+          showObjectName
+            ? capitalize(searchRecord.objectNameSingular)
+            : undefined
         }
       />
     </StyledSelectableItem>

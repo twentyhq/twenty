@@ -30,6 +30,7 @@ export const SingleRecordPicker = ({
   layoutDirection,
   dropdownWidth,
   focusId,
+  showObjectName,
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -87,6 +88,7 @@ export const SingleRecordPicker = ({
             objectNameSingulars,
             layoutDirection,
           }}
+          showObjectName={showObjectName}
         />
       </DropdownContent>
     </SingleRecordPickerComponentInstanceContext.Provider>

@@ -6,15 +6,21 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 export const MultipleRecordPickerItemsDisplay = ({
   onChange,
   focusId,
+  showObjectName,
 }: {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
   focusId: string;
+  showObjectName?: boolean;
 }) => {
   return (
     <>
       <MultipleRecordPickerLoadingEffect />
       <DropdownMenuSeparator />
-      <MultipleRecordPickerMenuItems onChange={onChange} focusId={focusId} />
+      <MultipleRecordPickerMenuItems
+        onChange={onChange}
+        focusId={focusId}
+        showObjectName={showObjectName}
+      />
       <DropdownMenuSeparator />
     </>
   );

@@ -31,6 +31,7 @@ export type SingleRecordPickerMenuItemsProps = {
   onCancel?: () => void;
   onMorphItemSelected: (morphItem?: RecordPickerPickableMorphItem) => void;
   focusId: string;
+  showObjectName?: boolean;
 };
 
 export const SingleRecordPickerMenuItems = ({
@@ -40,6 +41,7 @@ export const SingleRecordPickerMenuItems = ({
   onCancel,
   onMorphItemSelected,
   focusId,
+  showObjectName,
 }: SingleRecordPickerMenuItemsProps) => {
   const recordPickerComponentInstanceId =
     useAvailableComponentInstanceIdOrThrow(
@@ -128,6 +130,7 @@ export const SingleRecordPickerMenuItems = ({
             morphItem={morphItem}
             onMorphItemSelected={onMorphItemSelected}
             isRecordSelected={selectedRecordId === morphItem.recordId}
+            showObjectName={showObjectName}
           />
         ))
       )}

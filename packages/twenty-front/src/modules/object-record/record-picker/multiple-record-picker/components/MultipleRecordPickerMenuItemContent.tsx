@@ -10,8 +10,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
+
 import { type SearchRecord } from '~/generated-metadata/graphql';
 
 export const StyledSelectableItem = styled(SelectableListItem)`
@@ -23,12 +25,14 @@ type MultipleRecordPickerMenuItemContentProps = {
   searchRecord: SearchRecord;
   objectMetadataItem: ObjectMetadataItem;
   onChange: (morphItem: RecordPickerPickableMorphItem) => void;
+  showObjectName?: boolean;
 };
 
 export const MultipleRecordPickerMenuItemContent = ({
   searchRecord,
   objectMetadataItem,
   onChange,
+  showObjectName = false,
 }: MultipleRecordPickerMenuItemContentProps) => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
@@ -82,6 +86,11 @@ export const MultipleRecordPickerMenuItemContent = ({
           />
         }
         text={displayText}
+        contextualText={
+          showObjectName
+            ? capitalize(searchRecord.objectNameSingular)
+            : undefined
+        }
       />
     </StyledSelectableItem>
   );
