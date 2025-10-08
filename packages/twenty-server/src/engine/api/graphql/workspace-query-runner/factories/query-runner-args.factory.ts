@@ -7,7 +7,7 @@ import {
   type ObjectRecord,
   type ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
   type CreateManyResolverArgs,
   type CreateOneResolverArgs,
@@ -23,9 +23,9 @@ import {
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class QueryRunnerArgsFactory {
@@ -214,7 +214,7 @@ export class QueryRunnerArgsFactory {
     return allOverriddenRecords;
   }
 
-  private overrideFilterByFieldMetadata(
+  public overrideFilterByFieldMetadata(
     filter: ObjectRecordFilter | undefined,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ) {

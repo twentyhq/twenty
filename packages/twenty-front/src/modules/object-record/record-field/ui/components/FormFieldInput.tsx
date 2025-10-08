@@ -1,4 +1,5 @@
 import { FormAddressFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAddressFieldInput';
+import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
 import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
 import { FormCurrencyFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput';
 import { FormDateFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateFieldInput';
@@ -19,6 +20,7 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldAddressValue,
+  type FieldArrayValue,
   type FieldEmailsValue,
   type FieldFullNameValue,
   type FieldLinksValue,
@@ -31,6 +33,7 @@ import {
   type FormFieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
+import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { isFieldDate } from '@/object-record/record-field/ui/types/guards/isFieldDate';
@@ -42,7 +45,7 @@ import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
-import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
@@ -210,7 +213,7 @@ export const FormFieldInput = ({
       readonly={readonly}
       placeholder={placeholder}
     />
-  ) : isFieldRelationToOneObject(field) ? (
+  ) : isFieldRelationManyToOne(field) ? (
     <FormRelationToOneFieldInput
       label={field.label}
       objectNameSingular={field.metadata.relationObjectMetadataNameSingular}
@@ -220,6 +223,15 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+    />
+  ) : isFieldArray(field) ? (
+    <FormArrayFieldInput
+      label={field.label}
+      defaultValue={defaultValue as FieldArrayValue | string | undefined}
+      onChange={onChange}
+      VariablePicker={VariablePicker}
+      readonly={readonly}
+      placeholder={placeholder}
     />
   ) : null;
 };
