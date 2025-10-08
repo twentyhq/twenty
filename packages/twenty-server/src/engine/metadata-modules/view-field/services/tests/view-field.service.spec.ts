@@ -13,7 +13,8 @@ import {
   generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('ViewFieldService', () => {
   let viewFieldService: ViewFieldService;
@@ -45,6 +46,18 @@ describe('ViewFieldService', () => {
             save: jest.fn(),
             softDelete: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(ViewEntity),
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
+        {
+          provide: WorkspaceCacheStorageService,
+          useValue: {
+            flushGraphQLOperation: jest.fn(),
           },
         },
       ],

@@ -6,13 +6,13 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import {
-  ViewGroupException,
-  ViewGroupExceptionCode,
-  ViewGroupExceptionMessageKey,
-  generateViewGroupExceptionMessage,
-  generateViewGroupUserFriendlyExceptionMessage,
+    ViewGroupException,
+    ViewGroupExceptionCode,
+    ViewGroupExceptionMessageKey,
+    generateViewGroupExceptionMessage,
+    generateViewGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
-import { VIEW_GRAPHQL_OPERATION_NAME } from 'src/engine/metadata-modules/view/view.constants';
+import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
@@ -190,7 +190,7 @@ export class ViewGroupService {
 
   private async flushGraphQLCache(workspaceId: string): Promise<void> {
     await this.workspaceCacheStorageService.flushGraphQLOperation({
-      operationName: VIEW_GRAPHQL_OPERATION_NAME,
+      operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
       workspaceId,
     });
   }
