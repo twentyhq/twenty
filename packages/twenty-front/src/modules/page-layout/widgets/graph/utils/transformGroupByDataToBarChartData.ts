@@ -103,7 +103,7 @@ export const transformGroupByDataToBarChartData = ({
     ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
     : undefined;
 
-  const showDataLabels = configuration.displayDataLabel;
+  const showDataLabels = configuration.displayDataLabel ?? false;
 
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToBarChartData({
