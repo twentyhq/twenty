@@ -19,4 +19,3 @@ export const fromViewFilterEntityToFlatViewFilter = (
       viewFilterEntityWithoutRelations.id,
   };
 };
-

@@ -6,4 +6,3 @@ export const VIEW_FILTER_ENTITY_RELATION_PROPERTIES = [
   'viewFilterGroup',
   'workspace',
 ] as const satisfies ViewFilterEntityRelationProperties[];
-

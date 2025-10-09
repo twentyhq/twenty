@@ -1,5 +1,6 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+
 import { isDefined } from 'class-validator';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -135,6 +136,7 @@ export class ViewFilterResolver {
         destroyViewFilterInput: { id },
         workspaceId,
       });
+
       return isDefined(deletedViewFilter);
     }
 

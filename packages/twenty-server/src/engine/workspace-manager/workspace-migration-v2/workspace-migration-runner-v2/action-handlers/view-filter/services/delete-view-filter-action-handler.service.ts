@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-    OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-    WorkspaceMigrationRunnerActionHandler,
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
@@ -26,10 +26,12 @@ export class DeleteViewFilterActionHandlerService extends WorkspaceMigrationRunn
     const { flatViewFilterMaps } = allFlatEntityMaps;
     const { viewFilterId } = action;
 
-    const updatedFlatViewFilterMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      entityToDeleteId: viewFilterId,
-      flatEntityMaps: flatViewFilterMaps,
-    });
+    const updatedFlatViewFilterMaps = deleteFlatEntityFromFlatEntityMapsOrThrow(
+      {
+        entityToDeleteId: viewFilterId,
+        flatEntityMaps: flatViewFilterMaps,
+      },
+    );
 
     return {
       flatViewFilterMaps: updatedFlatViewFilterMaps,
@@ -57,4 +59,3 @@ export class DeleteViewFilterActionHandlerService extends WorkspaceMigrationRunn
     return;
   }
 }
-

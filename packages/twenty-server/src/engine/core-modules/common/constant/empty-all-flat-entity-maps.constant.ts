@@ -11,5 +11,5 @@ export const EMPTY_ALL_FLAT_ENTITY_MAPS = {
   flatCronTriggerMaps: EMPTY_FLAT_ENTITY_MAPS,
   flatDatabaseEventTriggerMaps: EMPTY_FLAT_ENTITY_MAPS,
   flatRouteTriggerMaps: EMPTY_FLAT_ENTITY_MAPS,
-  flatViewFilterMaps: EMPTY_FLAT_ENTITY_MAPS
+  flatViewFilterMaps: EMPTY_FLAT_ENTITY_MAPS,
 } as const satisfies AllFlatEntityMaps;

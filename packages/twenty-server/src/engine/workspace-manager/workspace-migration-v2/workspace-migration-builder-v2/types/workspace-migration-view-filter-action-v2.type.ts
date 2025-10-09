@@ -32,4 +32,3 @@ export type WorkspaceMigrationViewFilterActionV2 =
 
 export type WorkspaceMigrationViewFilterActionTypeV2 =
   WorkspaceMigrationViewFilterActionV2['type'];
-

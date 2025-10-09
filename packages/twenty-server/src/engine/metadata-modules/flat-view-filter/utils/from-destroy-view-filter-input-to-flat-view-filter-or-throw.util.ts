@@ -1,15 +1,15 @@
 import { t } from '@lingui/core/macro';
 import {
-    extractAndSanitizeObjectStringFields,
-    isDefined,
+  extractAndSanitizeObjectStringFields,
+  isDefined,
 } from 'twenty-shared/utils';
 
 import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
 import {
-    ViewFilterException,
-    ViewFilterExceptionCode,
+  ViewFilterException,
+  ViewFilterExceptionCode,
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 
 export const fromDestroyViewFilterInputToFlatViewFilterOrThrow = ({
@@ -24,8 +24,7 @@ export const fromDestroyViewFilterInputToFlatViewFilterOrThrow = ({
     ['id'],
   );
 
-  const existingFlatViewFilterToDestroy =
-    flatViewFilterMaps.byId[viewFilterId];
+  const existingFlatViewFilterToDestroy = flatViewFilterMaps.byId[viewFilterId];
 
   if (!isDefined(existingFlatViewFilterToDestroy)) {
     throw new ViewFilterException(
@@ -36,4 +35,3 @@ export const fromDestroyViewFilterInputToFlatViewFilterOrThrow = ({
 
   return existingFlatViewFilterToDestroy;
 };
-

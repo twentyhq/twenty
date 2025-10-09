@@ -28,7 +28,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       databaseEventTrigger: [],
       cronTrigger: [],
       routeTrigger: [],
-      viewFilter: []
+      viewFilter: [],
     },
   };
 

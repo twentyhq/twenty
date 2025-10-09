@@ -1,15 +1,15 @@
 import { t } from '@lingui/core/macro';
 import {
-    extractAndSanitizeObjectStringFields,
-    isDefined,
+  extractAndSanitizeObjectStringFields,
+  isDefined,
 } from 'twenty-shared/utils';
 
 import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
 import {
-    ViewFilterException,
-    ViewFilterExceptionCode,
+  ViewFilterException,
+  ViewFilterExceptionCode,
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 
 export const fromDeleteViewFilterInputToFlatViewFilterOrThrow = ({
@@ -38,4 +38,3 @@ export const fromDeleteViewFilterInputToFlatViewFilterOrThrow = ({
     deletedAt: new Date(),
   };
 };
-
