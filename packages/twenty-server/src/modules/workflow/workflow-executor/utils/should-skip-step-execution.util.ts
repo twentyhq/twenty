@@ -27,6 +27,10 @@ export const shouldSkipStepExecution = ({
       isDefined(parentStep) && parentStep.nextStepIds?.includes(step.id),
   );
 
+  if (parentSteps.length === 0) {
+    return false;
+  }
+
   return parentSteps.every(
     (step) =>
       stepInfos[step.id]?.status === StepStatus.SKIPPED ||

@@ -36,7 +36,7 @@ export const shouldSkipIteratorStepExecution = ({
     (step) => !stepIdsInLoop.includes(step.id),
   );
 
-  if (stepHasBeenStarted(step.id, stepInfos)) {
+  if (stepHasBeenStarted(step.id, stepInfos) || parentSteps.length === 0) {
     return false;
   }
 

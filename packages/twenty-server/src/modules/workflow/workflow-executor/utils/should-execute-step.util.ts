@@ -47,11 +47,12 @@ export const shouldExecuteStep = ({
     (parentStep) => stepInfos[parentStep.id]?.status === StepStatus.SUCCESS,
   );
 
-  const hasFailedNorNotStartedParentStep = parentSteps.some(
+  const areAllParentsCompleted = parentSteps.every(
     (parentStep) =>
-      stepInfos[parentStep.id]?.status === StepStatus.FAILED ||
-      stepInfos[parentStep.id]?.status === StepStatus.NOT_STARTED,
+      stepInfos[parentStep.id]?.status === StepStatus.SUCCESS ||
+      stepInfos[parentStep.id]?.status === StepStatus.STOPPED ||
+      stepInfos[parentStep.id]?.status === StepStatus.SKIPPED,
   );
 
-  return hasSuccessfulParentStep && !hasFailedNorNotStartedParentStep;
+  return hasSuccessfulParentStep && areAllParentsCompleted;
 };

@@ -372,5 +372,150 @@ describe('shouldExecuteIteratorStep', () => {
 
       expect(result).toBe(true);
     });
+
+    it('should return false when loop step has NOT_STARTED status and iterator has been started', () => {
+      const iteratorStep = createMockIteratorStep('iterator-1', ['step-1']);
+      const steps = [
+        createMockStep('step-1', ['iterator-1']), // In loop
+        createMockStep('step-2', ['iterator-1']), // Not in loop
+        iteratorStep,
+      ];
+      const stepInfos = {
+        'iterator-1': { status: StepStatus.RUNNING }, // Iterator has been started
+        'step-1': { status: StepStatus.NOT_STARTED }, // Loop step not started
+        'step-2': { status: StepStatus.SUCCESS },
+      };
+
+      getAllStepIdsInLoop.mockReturnValue(['step-1']);
+
+      const result = shouldExecuteIteratorStep({
+        step: iteratorStep,
+        steps,
+        stepInfos,
+      });
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle empty step info for parent steps', () => {
+      const iteratorStep = createMockIteratorStep('iterator-1', ['step-1']);
+      const steps = [
+        createMockStep('step-1', ['iterator-1']),
+        createMockStep('step-2', ['iterator-1']),
+        iteratorStep,
+      ];
+      const stepInfos = {
+        'step-1': { status: StepStatus.SUCCESS },
+        // step-2 doesn't have info
+      };
+
+      getAllStepIdsInLoop.mockReturnValue(['step-1']);
+
+      const result = shouldExecuteIteratorStep({
+        step: iteratorStep,
+        steps,
+        stepInfos,
+      });
+
+      // Should return false because step-2 info is undefined
+      expect(result).toBe(false);
+    });
+
+    it('should work with complex loop structures', () => {
+      const iteratorStep = createMockIteratorStep('iterator-1', [
+        'step-1',
+        'step-2',
+        'step-3',
+      ]);
+      const steps = [
+        createMockStep('step-1', ['iterator-1']), // In loop
+        createMockStep('step-2', ['iterator-1']), // In loop
+        createMockStep('step-3', ['iterator-1']), // In loop
+        createMockStep('step-4', ['iterator-1']), // Not in loop
+        createMockStep('step-5', ['iterator-1']), // Not in loop
+        iteratorStep,
+      ];
+      const stepInfos = {
+        'step-1': { status: StepStatus.SUCCESS }, // Loop steps can be any status
+        'step-2': { status: StepStatus.FAILED },
+        'step-3': { status: StepStatus.NOT_STARTED },
+        'step-4': { status: StepStatus.SUCCESS }, // Non-loop steps must be successful
+        'step-5': { status: StepStatus.SUCCESS },
+      };
+
+      getAllStepIdsInLoop.mockReturnValue(['step-1', 'step-2', 'step-3']);
+
+      const result = shouldExecuteIteratorStep({
+        step: iteratorStep,
+        steps,
+        stepInfos,
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false with complex loop when one non-loop parent is not successful', () => {
+      const iteratorStep = createMockIteratorStep('iterator-1', [
+        'step-1',
+        'step-2',
+      ]);
+      const steps = [
+        createMockStep('step-1', ['iterator-1']), // In loop
+        createMockStep('step-2', ['iterator-1']), // In loop
+        createMockStep('step-3', ['iterator-1']), // Not in loop
+        createMockStep('step-4', ['iterator-1']), // Not in loop
+        iteratorStep,
+      ];
+      const stepInfos = {
+        'step-1': { status: StepStatus.SUCCESS },
+        'step-2': { status: StepStatus.SUCCESS },
+        'step-3': { status: StepStatus.SUCCESS },
+        'step-4': { status: StepStatus.FAILED }, // This should prevent execution
+      };
+
+      getAllStepIdsInLoop.mockReturnValue(['step-1', 'step-2']);
+
+      const result = shouldExecuteIteratorStep({
+        step: iteratorStep,
+        steps,
+        stepInfos,
+      });
+
+      expect(result).toBe(false);
+    });
+
+    it('should handle when iterator has no initialLoopStepIds defined', () => {
+      const iteratorStep = {
+        ...createMockIteratorStep('iterator-1'),
+        settings: {
+          input: {
+            initialLoopStepIds: undefined,
+            items: [],
+          },
+          errorHandlingOptions: {
+            continueOnFailure: { value: false },
+            retryOnFailure: { value: false },
+          },
+          outputSchema: {},
+        },
+      } as WorkflowIteratorAction;
+
+      const steps = [createMockStep('step-1', ['iterator-1']), iteratorStep];
+      const stepInfos = {
+        'step-1': { status: StepStatus.SUCCESS },
+      };
+
+      const result = shouldExecuteIteratorStep({
+        step: iteratorStep,
+        steps,
+        stepInfos,
+      });
+
+      // getAllStepIdsInLoop should not be called if initialLoopStepIds is undefined
+      expect(getAllStepIdsInLoop).not.toHaveBeenCalled();
+      expect(result).toBe(true);
+    });
   });
 });
