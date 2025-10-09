@@ -107,7 +107,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
       }
 
       if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
-        if (gqlField === fieldMetadata.settings?.joinColumnName) {
+        if (gqlField === `${relationFieldName}Id`) {
           gqlMorphField += `${gqlField}
     `;
           continue;
