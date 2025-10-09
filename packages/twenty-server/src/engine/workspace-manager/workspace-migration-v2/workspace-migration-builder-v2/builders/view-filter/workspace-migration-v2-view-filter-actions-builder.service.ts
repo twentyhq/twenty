@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-
 import { FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { compareTwoFlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/utils/compare-two-flat-view-filter.util';
 import { ViewFilterRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/types/view-filter-related-flat-entity-maps.type';
@@ -17,7 +19,6 @@ import {
   WorkspaceMigrationViewFilterActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-filter-action-v2.type';
 import { FlatViewFilterValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<

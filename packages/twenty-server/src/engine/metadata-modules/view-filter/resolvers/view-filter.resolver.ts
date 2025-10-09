@@ -137,6 +137,7 @@ export class ViewFilterResolver {
         destroyViewFilterInput,
         workspaceId,
       });
+
       return destroyedViewFilter;
     }
 

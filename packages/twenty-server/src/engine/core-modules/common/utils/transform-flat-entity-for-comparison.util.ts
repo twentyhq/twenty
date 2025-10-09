@@ -1,5 +1,5 @@
-import { AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
-import { orderObjectProperties } from '../../../workspace-manager/workspace-sync-metadata/comparators/utils/order-object-properties.util';
+import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
+import { orderObjectProperties } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/order-object-properties.util';
 
 export function transformFlatEntityForComparison<
   TFlatEntity extends AllFlatEntities,
