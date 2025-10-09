@@ -1,15 +1,12 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   type ServerlessDriver,
   type ServerlessExecuteResult,
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
@@ -34,17 +31,9 @@ export class LocalDriver implements ServerlessDriver {
   private getInMemoryLayerFolderPath = (
     serverlessFunction: ServerlessFunctionEntity,
   ) => {
-    if (!isDefined(serverlessFunction?.serverlessFunctionLayer?.checksum)) {
-      return join(
-        SERVERLESS_TMPDIR_FOLDER,
-        COMMON_LAYER_NAME,
-        `${serverlessFunction.layerVersion}`,
-      );
-    }
-
     return join(
       SERVERLESS_TMPDIR_FOLDER,
-      serverlessFunction.serverlessFunctionLayer?.checksum,
+      serverlessFunction.serverlessFunctionLayer.checksum,
     );
   };
 
