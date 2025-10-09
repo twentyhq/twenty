@@ -16,7 +16,7 @@ export const useCompanyDefaultChartConfig = () => {
     | GraphWidgetFieldSelection
     | undefined => {
     if (!isDefined(companyObjectMetadata)) {
-      return undefined;
+      return;
     }
 
     const labelIdentifierField = companyObjectMetadata.fields.find(
@@ -35,7 +35,7 @@ export const useCompanyDefaultChartConfig = () => {
     const aggregateField = employeesField ?? arrField;
 
     if (!isDefined(labelIdentifierField) || !isDefined(aggregateField)) {
-      return undefined;
+      return;
     }
 
     return {
@@ -49,7 +49,7 @@ export const useCompanyDefaultChartConfig = () => {
     | GraphWidgetFieldSelection
     | undefined => {
     if (!isDefined(companyObjectMetadata)) {
-      return undefined;
+      return;
     }
 
     const employeesField = companyObjectMetadata.fields.find(
@@ -63,7 +63,7 @@ export const useCompanyDefaultChartConfig = () => {
     const aggregateField = employeesField ?? arrField;
 
     if (!isDefined(aggregateField)) {
-      return undefined;
+      return;
     }
 
     return {

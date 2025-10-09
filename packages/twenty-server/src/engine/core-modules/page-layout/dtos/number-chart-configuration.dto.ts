@@ -39,10 +39,10 @@ export class NumberChartConfigurationDTO {
   @IsOptional()
   label?: string;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
   @IsOptional()
-  displayDataLabel?: boolean = false;
+  displayDataLabel?: boolean;
 
   @Field(() => String, { nullable: true })
   @IsString()

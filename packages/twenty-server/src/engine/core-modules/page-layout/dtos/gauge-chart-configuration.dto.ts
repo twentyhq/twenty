@@ -34,10 +34,10 @@ export class GaugeChartConfigurationDTO {
   @IsNotEmpty()
   aggregateOperation: ExtendedAggregateOperations;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
   @IsOptional()
-  displayDataLabel?: boolean = false;
+  displayDataLabel?: boolean;
 
   @Field(() => String, { nullable: true })
   @IsString()

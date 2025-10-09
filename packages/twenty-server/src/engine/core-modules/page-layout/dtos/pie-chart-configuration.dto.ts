@@ -45,12 +45,15 @@ export class PieChartConfigurationDTO {
   @IsOptional()
   groupBySubFieldName?: string;
 
-  @Field(() => GraphOrderBy, { nullable: true })
+  @Field(() => GraphOrderBy, {
+    nullable: true,
+    defaultValue: GraphOrderBy.VALUE_DESC,
+  })
   @IsEnum(GraphOrderBy)
   @IsOptional()
-  orderBy?: GraphOrderBy = GraphOrderBy.VALUE_DESC;
+  orderBy?: GraphOrderBy;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
   @IsOptional()
   displayDataLabel?: boolean;

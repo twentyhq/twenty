@@ -72,12 +72,15 @@ export class BarChartConfigurationDTO {
   @IsOptional()
   omitNullValues?: boolean;
 
-  @Field(() => AxisNameDisplay, { nullable: true })
+  @Field(() => AxisNameDisplay, {
+    nullable: true,
+    defaultValue: AxisNameDisplay.BOTH,
+  })
   @IsEnum(AxisNameDisplay)
   @IsOptional()
   axisNameDisplay?: AxisNameDisplay;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
   @IsOptional()
   displayDataLabel?: boolean;
