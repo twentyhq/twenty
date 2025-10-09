@@ -6,13 +6,9 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import {
-  computeMorphRelationFieldName,
-  CustomError,
-  isDefined,
-} from 'twenty-shared/utils';
+import updateRecordRelationInCache from '@/object-record/utils/updateRecordRelationInCache';
+import { type FieldMetadataType } from 'twenty-shared/types';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const useRecordOneToManyFieldAttachTargetRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -120,59 +116,17 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
       },
     });
 
-    const previousRecord = getRecordFromCache({
-      objectMetadataItem: sourceObjectMetadataItem,
-      recordId: sourceRecordId,
-      cache: apolloCoreClient.cache,
+    updateRecordRelationInCache({
+      sourceObjectMetadataItem,
+      sourceRecordId,
+      apolloCoreClient,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
-    });
-
-    if (!previousRecord) {
-      throw new Error('Could not find cached source record');
-    }
-    // getRecordFromCache acts diffferently for a morph relation and for a relation field
-    // so we need to deduplicate
-    const sourceFieldMetadataNameComputed =
-      sourceFieldMetadataType === FieldMetadataType.RELATION
-        ? sourceFieldMetadataName
-        : computeMorphRelationFieldName({
-            fieldName: sourceFieldMetadataName,
-            relationType: RelationType.ONE_TO_MANY,
-            targetObjectMetadataNameSingular: targetObjectNameSingular,
-            targetObjectMetadataNamePlural: targetObjectNamePlural,
-          });
-    const deduplicatedRecords = [
-      ...previousRecord[sourceFieldMetadataNameComputed],
+      sourceFieldMetadataType,
+      sourceFieldMetadataName,
+      targetObjectNameSingular,
+      targetObjectNamePlural,
       cachedTargetRecord,
-    ].reduce<ObjectRecord[]>((deduplicatedArray, record) => {
-      if (
-        !deduplicatedArray.some(
-          (deduplicatedRecord) => deduplicatedRecord.id === record.id,
-        )
-      ) {
-        deduplicatedArray.push(record);
-      }
-      return deduplicatedArray;
-    }, []);
-
-    const previousRecordWithUpdatedRelation = {
-      ...previousRecord,
-      [sourceFieldMetadataNameComputed]: deduplicatedRecords,
-    };
-
-    const gqlFields = computeDepthOneRecordGqlFieldsFromRecord({
-      objectMetadataItem: sourceObjectMetadataItem,
-      record: previousRecord,
-    });
-
-    updateRecordFromCache({
-      objectMetadataItems,
-      objectMetadataItem: sourceObjectMetadataItem,
-      cache: apolloCoreClient.cache,
-      record: previousRecordWithUpdatedRelation,
-      recordGqlFields: gqlFields,
-      objectPermissionsByObjectMetadataId,
     });
   };
 
