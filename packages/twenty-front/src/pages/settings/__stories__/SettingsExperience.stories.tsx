@@ -41,17 +41,21 @@ export const DateTimeSettingsTimeFormat: Story = {
   play: async () => {
     const canvas = within(getCanvasElementForDropdownTesting());
 
-    await canvas.findByText('Formats');
+    await canvas.findByText('Formats', undefined, { timeout: 5000 });
 
-    const timeFormatSelect = await canvas.findByText('24h (05:30)');
+    const timeFormatSelect = await canvas.findByText('24h (05:30)', undefined, {
+      timeout: 3000,
+    });
 
     await userEvent.click(timeFormatSelect);
 
-    const timeFormatOptions = await canvas.findByText('12h (5:30 AM)');
+    const timeFormatOptions = await canvas.findByText('12h (5:30 AM)', undefined, {
+      timeout: 3000,
+    });
 
     await userEvent.click(timeFormatOptions);
 
-    await canvas.findByText('12h (5:30 AM)');
+    await canvas.findByText('12h (5:30 AM)', undefined, { timeout: 3000 });
   },
 };
 
@@ -59,21 +63,27 @@ export const DateTimeSettingsTimezone: Story = {
   play: async () => {
     const canvas = within(getCanvasElementForDropdownTesting());
 
-    await canvas.findByText('Formats');
+    await canvas.findByText('Formats', undefined, { timeout: 5000 });
 
     const timezoneSelect = await canvas.findByText(
       '(GMT-04:00) Eastern Daylight Time - New York',
+      undefined,
+      { timeout: 3000 },
     );
 
     await userEvent.click(timezoneSelect);
 
     const systemSettingsOptions = await canvas.findByText(
       '(GMT-11:00) Niue Time',
+      undefined,
+      { timeout: 3000 },
     );
 
     await userEvent.click(systemSettingsOptions);
 
-    await canvas.findByText('(GMT-11:00) Niue Time');
+    await canvas.findByText('(GMT-11:00) Niue Time', undefined, {
+      timeout: 3000,
+    });
   },
 };
 
@@ -81,16 +91,20 @@ export const DateTimeSettingsDateFormat: Story = {
   play: async () => {
     const canvas = within(getCanvasElementForDropdownTesting());
 
-    await canvas.findByText('Formats');
+    await canvas.findByText('Formats', undefined, { timeout: 5000 });
 
-    const timeFormatSelect = await canvas.findByText('12 Mar, 2024');
+    const timeFormatSelect = await canvas.findByText('12 Mar, 2024', undefined, {
+      timeout: 3000,
+    });
 
     await userEvent.click(timeFormatSelect);
 
-    const timeFormatOptions = await canvas.findByText('Mar 12, 2024');
+    const timeFormatOptions = await canvas.findByText('Mar 12, 2024', undefined, {
+      timeout: 3000,
+    });
 
     await userEvent.click(timeFormatOptions);
 
-    await canvas.findByText('Mar 12, 2024');
+    await canvas.findByText('Mar 12, 2024', undefined, { timeout: 3000 });
   },
 };

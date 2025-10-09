@@ -32,7 +32,7 @@ export type Story = StoryObj<typeof SettingsIntegrationDatabase>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    sleep(1000);
+    await sleep(1000);
 
     expect(await canvas.findByText('PostgreSQL database')).toBeInTheDocument();
   },
