@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
-import { isValidUuid, resolveInput } from 'twenty-shared/utils';
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
+import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -26,8 +23,7 @@ import { type WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workf
 @Injectable()
 export class DeleteRecordWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly deleteRecordService: DeleteRecordService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
@@ -59,12 +55,12 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       !isDefined(workflowActionInput.objectName)
     ) {
       throw new RecordCRUDActionException(
-        'Failed to update: Object record ID and name are required',
+        'Failed to delete: Object record ID and name are required',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
 
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
       throw new RecordCRUDActionException(
@@ -73,54 +69,22 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        workflowActionInput.objectName,
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const { objectMetadataItemWithFieldsMaps } =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        workflowActionInput.objectName,
-        workspaceId,
-      );
-
-    if (
-      !canObjectBeManagedByWorkflow({
-        nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
-        isSystem: objectMetadataItemWithFieldsMaps.isSystem,
-      })
-    ) {
-      throw new RecordCRUDActionException(
-        'Failed to delete: Object cannot be deleted by workflow',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
-    const objectRecord = await repository.findOne({
-      where: {
-        id: workflowActionInput.objectRecordId,
-      },
+    const toolOutput = await this.deleteRecordService.execute({
+      objectName: workflowActionInput.objectName,
+      objectRecordId: workflowActionInput.objectRecordId,
+      workspaceId,
+      soft: true,
     });
 
-    if (!objectRecord) {
+    if (!toolOutput.success) {
       throw new RecordCRUDActionException(
-        `Failed to delete: Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
-        RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
+        toolOutput.error || toolOutput.message,
+        RecordCRUDActionExceptionCode.RECORD_DELETION_FAILED,
       );
     }
 
-    const columnsToReturnForSoftDelete: string[] = [];
-
-    await repository.softDelete(
-      workflowActionInput.objectRecordId,
-      undefined,
-      columnsToReturnForSoftDelete,
-    );
-
     return {
-      result: objectRecord,
+      result: toolOutput.result as object,
     };
   }
 }

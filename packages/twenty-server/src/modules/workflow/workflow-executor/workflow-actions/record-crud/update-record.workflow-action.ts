@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import deepEqual from 'deep-equal';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -27,10 +23,8 @@ import { type WorkflowUpdateRecordActionInput } from 'src/modules/workflow/workf
 @Injectable()
 export class UpdateRecordWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly updateRecordService: UpdateRecordService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly recordInputTransformerService: RecordInputTransformerService,
   ) {}
 
   async execute({
@@ -66,7 +60,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
       throw new RecordCRUDActionException(
@@ -75,82 +69,23 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        workflowActionInput.objectName,
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const previousObjectRecord = await repository.findOne({
-      where: {
-        id: workflowActionInput.objectRecordId,
-      },
+    const toolOutput = await this.updateRecordService.execute({
+      objectName: workflowActionInput.objectName,
+      objectRecordId: workflowActionInput.objectRecordId,
+      objectRecord: workflowActionInput.objectRecord,
+      fieldsToUpdate: workflowActionInput.fieldsToUpdate,
+      workspaceId,
     });
 
-    if (!previousObjectRecord) {
+    if (!toolOutput.success) {
       throw new RecordCRUDActionException(
-        `Failed to update: Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
-        RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
+        toolOutput.error || toolOutput.message,
+        RecordCRUDActionExceptionCode.RECORD_UPDATE_FAILED,
       );
-    }
-
-    if (workflowActionInput.fieldsToUpdate.length === 0) {
-      return {
-        result: previousObjectRecord,
-      };
-    }
-
-    const { objectMetadataItemWithFieldsMaps } =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        workflowActionInput.objectName,
-        workspaceId,
-      );
-
-    if (
-      !canObjectBeManagedByWorkflow({
-        nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
-        isSystem: objectMetadataItemWithFieldsMaps.isSystem,
-      })
-    ) {
-      throw new RecordCRUDActionException(
-        'Failed to update: Object cannot be updated by workflow',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
-    const objectRecordWithFilteredFields = Object.keys(
-      workflowActionInput.objectRecord,
-    ).reduce((acc, key) => {
-      if (workflowActionInput.fieldsToUpdate.includes(key)) {
-        return {
-          ...acc,
-          [key]: workflowActionInput.objectRecord[key],
-        };
-      }
-
-      return acc;
-    }, {});
-
-    const transformedObjectRecord =
-      await this.recordInputTransformerService.process({
-        recordInput: objectRecordWithFilteredFields,
-        objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
-      });
-
-    const updatedObjectRecord = {
-      ...previousObjectRecord,
-      ...objectRecordWithFilteredFields,
-    };
-
-    if (!deepEqual(updatedObjectRecord, previousObjectRecord)) {
-      await repository.update(workflowActionInput.objectRecordId, {
-        ...transformedObjectRecord,
-      });
     }
 
     return {
-      result: updatedObjectRecord,
+      result: toolOutput.result as object,
     };
   }
 }
