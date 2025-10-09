@@ -57,6 +57,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -132,6 +133,7 @@ import { FileModule } from './file/file.module';
     WebhookModule,
     PageLayoutModule,
     ImpersonationModule,
+    TrashCleanupModule,
   ],
   exports: [
     AuditModule,

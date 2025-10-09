@@ -3,28 +3,26 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { WorkspaceTrashCleanupService } from 'src/engine/workspace-manager/workspace-trash-cleanup/services/workspace-trash-cleanup.service';
+import { TrashCleanupService } from 'src/engine/trash-cleanup/services/trash-cleanup.service';
 
-export type WorkspaceTrashCleanupJobData = {
+export type TrashCleanupJobData = {
   workspaceId: string;
   trashRetentionDays: number;
 };
 
 @Injectable()
 @Processor(MessageQueue.workspaceQueue)
-export class WorkspaceTrashCleanupJob {
-  private readonly logger = new Logger(WorkspaceTrashCleanupJob.name);
+export class TrashCleanupJob {
+  private readonly logger = new Logger(TrashCleanupJob.name);
 
-  constructor(
-    private readonly workspaceTrashCleanupService: WorkspaceTrashCleanupService,
-  ) {}
+  constructor(private readonly trashCleanupService: TrashCleanupService) {}
 
-  @Process(WorkspaceTrashCleanupJob.name)
-  async handle(data: WorkspaceTrashCleanupJobData): Promise<void> {
+  @Process(TrashCleanupJob.name)
+  async handle(data: TrashCleanupJobData): Promise<void> {
     const { workspaceId, trashRetentionDays } = data;
 
     try {
-      await this.workspaceTrashCleanupService.cleanupWorkspaceTrash({
+      await this.trashCleanupService.cleanupWorkspaceTrash({
         workspaceId,
         trashRetentionDays,
       });

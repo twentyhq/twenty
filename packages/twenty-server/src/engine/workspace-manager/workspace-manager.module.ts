@@ -22,8 +22,6 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
 
 import { WorkspaceManagerService } from './workspace-manager.service';
 
-import { WorkspaceTrashCleanupModule } from './workspace-trash-cleanup/workspace-trash-cleanup.module';
-
 @Module({
   imports: [
     WorkspaceDataSourceModule,
@@ -34,7 +32,6 @@ import { WorkspaceTrashCleanupModule } from './workspace-trash-cleanup/workspace
     DataSourceModule,
     WorkspaceSyncMetadataModule,
     WorkspaceHealthModule,
-    WorkspaceTrashCleanupModule,
     FeatureFlagModule,
     PermissionsModule,
     AgentModule,

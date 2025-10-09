@@ -12,16 +12,16 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WORKSPACE_TRASH_CLEANUP_CRON_PATTERN } from 'src/engine/workspace-manager/workspace-trash-cleanup/constants/workspace-trash-cleanup.constants';
+import { TRASH_CLEANUP_CRON_PATTERN } from 'src/engine/trash-cleanup/constants/trash-cleanup.constants';
 import {
-  WorkspaceTrashCleanupJob,
-  type WorkspaceTrashCleanupJobData,
-} from 'src/engine/workspace-manager/workspace-trash-cleanup/jobs/workspace-trash-cleanup.job';
+  TrashCleanupJob,
+  type TrashCleanupJobData,
+} from 'src/engine/trash-cleanup/jobs/trash-cleanup.job';
 
 @Injectable()
 @Processor(MessageQueue.cronQueue)
-export class WorkspaceTrashCleanupCronJob {
-  private readonly logger = new Logger(WorkspaceTrashCleanupCronJob.name);
+export class TrashCleanupCronJob {
+  private readonly logger = new Logger(TrashCleanupCronJob.name);
 
   constructor(
     @InjectRepository(Workspace)
@@ -31,11 +31,8 @@ export class WorkspaceTrashCleanupCronJob {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
-  @Process(WorkspaceTrashCleanupCronJob.name)
-  @SentryCronMonitor(
-    WorkspaceTrashCleanupCronJob.name,
-    WORKSPACE_TRASH_CLEANUP_CRON_PATTERN,
-  )
+  @Process(TrashCleanupCronJob.name)
+  @SentryCronMonitor(TrashCleanupCronJob.name, TRASH_CLEANUP_CRON_PATTERN)
   async handle(): Promise<void> {
     const workspaces = await this.getActiveWorkspaces();
 
@@ -51,8 +48,8 @@ export class WorkspaceTrashCleanupCronJob {
 
     for (const workspace of workspaces) {
       try {
-        await this.messageQueueService.add<WorkspaceTrashCleanupJobData>(
-          WorkspaceTrashCleanupJob.name,
+        await this.messageQueueService.add<TrashCleanupJobData>(
+          TrashCleanupJob.name,
           {
             workspaceId: workspace.id,
             trashRetentionDays: workspace.trashRetentionDays,

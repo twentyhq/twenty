@@ -3,10 +3,10 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceTrashCleanupService } from 'src/engine/workspace-manager/workspace-trash-cleanup/services/workspace-trash-cleanup.service';
+import { TrashCleanupService } from 'src/engine/trash-cleanup/services/trash-cleanup.service';
 
-describe('WorkspaceTrashCleanupService', () => {
-  let service: WorkspaceTrashCleanupService;
+describe('TrashCleanupService', () => {
+  let service: TrashCleanupService;
   let mockFlatEntityMapsCacheService: any;
   let mockTwentyORMGlobalManager: any;
   let mockConfigService: { get: jest.Mock };
@@ -26,7 +26,7 @@ describe('WorkspaceTrashCleanupService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        WorkspaceTrashCleanupService,
+        TrashCleanupService,
         {
           provide: TwentyConfigService,
           useValue: mockConfigService,
@@ -42,9 +42,7 @@ describe('WorkspaceTrashCleanupService', () => {
       ],
     }).compile();
 
-    service = module.get<WorkspaceTrashCleanupService>(
-      WorkspaceTrashCleanupService,
-    );
+    service = module.get<TrashCleanupService>(TrashCleanupService);
 
     // Suppress logger output in tests
     jest.spyOn(service['logger'], 'log').mockImplementation();
@@ -197,9 +195,7 @@ describe('WorkspaceTrashCleanupService', () => {
     });
 
     it('should delete records across multiple batches', async () => {
-      setObjectMetadataCache([
-        { id: 'obj-company', nameSingular: 'company' },
-      ]);
+      setObjectMetadataCache([{ id: 'obj-company', nameSingular: 'company' }]);
 
       const companyRepository = createRepositoryMock('company', 5);
 
@@ -219,6 +215,5 @@ describe('WorkspaceTrashCleanupService', () => {
       expect(companyRepository.find).toHaveBeenCalledTimes(4);
       expect(companyRepository.delete).toHaveBeenCalledTimes(3);
     });
-
   });
 });

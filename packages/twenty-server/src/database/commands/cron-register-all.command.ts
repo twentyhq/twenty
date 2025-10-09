@@ -7,7 +7,7 @@ import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-module
 import { CronTriggerCronCommand } from 'src/engine/metadata-modules/cron-trigger/crons/commands/cron-trigger.cron.command';
 import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
 import { CleanSuspendedWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.cron.command';
-import { WorkspaceTrashCleanupCronCommand } from 'src/engine/workspace-manager/workspace-trash-cleanup/commands/workspace-trash-cleanup.cron.command';
+import { TrashCleanupCronCommand } from 'src/engine/trash-cleanup/commands/trash-cleanup.cron.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
 import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
 import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-ongoing-stale.cron.command';
@@ -43,7 +43,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
     private readonly cleanSuspendedWorkspacesCronCommand: CleanSuspendedWorkspacesCronCommand,
     private readonly cleanOnboardingWorkspacesCronCommand: CleanOnboardingWorkspacesCronCommand,
-    private readonly workspaceTrashCleanupCronCommand: WorkspaceTrashCleanupCronCommand,
+    private readonly trashCleanupCronCommand: TrashCleanupCronCommand,
   ) {
     super();
   }
@@ -113,8 +113,8 @@ export class CronRegisterAllCommand extends CommandRunner {
         command: this.cleanOnboardingWorkspacesCronCommand,
       },
       {
-        name: 'WorkspaceTrashCleanup',
-        command: this.workspaceTrashCleanupCronCommand,
+        name: 'TrashCleanup',
+        command: this.trashCleanupCronCommand,
       },
     ];
 

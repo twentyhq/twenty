@@ -7,14 +7,14 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-mo
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-export type WorkspaceTrashCleanupInput = {
+export type TrashCleanupInput = {
   workspaceId: string;
   trashRetentionDays: number;
 };
 
 @Injectable()
-export class WorkspaceTrashCleanupService {
-  private readonly logger = new Logger(WorkspaceTrashCleanupService.name);
+export class TrashCleanupService {
+  private readonly logger = new Logger(TrashCleanupService.name);
   private readonly maxRecordsPerWorkspace: number;
   private readonly batchSize: number;
 
@@ -29,9 +29,7 @@ export class WorkspaceTrashCleanupService {
     this.batchSize = this.twentyConfigService.get('TRASH_CLEANUP_BATCH_SIZE');
   }
 
-  async cleanupWorkspaceTrash(
-    input: WorkspaceTrashCleanupInput,
-  ): Promise<number> {
+  async cleanupWorkspaceTrash(input: TrashCleanupInput): Promise<number> {
     const { workspaceId, trashRetentionDays } = input;
 
     const { flatObjectMetadataMaps } =
