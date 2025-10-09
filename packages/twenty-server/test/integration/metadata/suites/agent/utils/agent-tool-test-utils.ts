@@ -5,10 +5,6 @@ import { type Repository } from 'typeorm';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
-import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
-import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
@@ -88,30 +84,6 @@ export const createAgentToolTestModule =
         {
           provide: ToolService,
           useClass: ToolService,
-        },
-        {
-          provide: CreateRecordService,
-          useValue: {
-            execute: jest.fn(),
-          },
-        },
-        {
-          provide: UpdateRecordService,
-          useValue: {
-            execute: jest.fn(),
-          },
-        },
-        {
-          provide: DeleteRecordService,
-          useValue: {
-            execute: jest.fn(),
-          },
-        },
-        {
-          provide: FindRecordsService,
-          useValue: {
-            execute: jest.fn(),
-          },
         },
         {
           provide: RecordInputTransformerService,
