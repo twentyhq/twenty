@@ -1,6 +1,6 @@
-import { AllFlatEntities } from "src/engine/core-modules/common/types/all-flat-entities.type";
-import { AllFlatEntityMaps } from "src/engine/core-modules/common/types/all-flat-entity-maps.type";
-import { FlatEntityMaps } from "src/engine/core-modules/common/types/flat-entity-maps.type";
+import { AllFlatEntities } from "src/engine/metadata-modules/flat-entity/types/all-flat-entities.type";
+import { AllFlatEntityMaps } from "src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type";
+import { FlatEntityMaps } from "src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type";
 import { FlatEntityValidationArgs } from "src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type";
 import { FromTo } from "twenty-shared/types";
 

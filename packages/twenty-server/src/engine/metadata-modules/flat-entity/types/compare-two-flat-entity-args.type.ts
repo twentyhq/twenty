@@ -1,4 +1,4 @@
-import { AllFlatEntities } from "src/engine/core-modules/common/types/all-flat-entities.type";
+import { AllFlatEntities } from "src/engine/metadata-modules/flat-entity/types/all-flat-entities.type";
 import { FromTo } from "twenty-shared/types";
 
 export type CompareTwoFlatEntityArgs<

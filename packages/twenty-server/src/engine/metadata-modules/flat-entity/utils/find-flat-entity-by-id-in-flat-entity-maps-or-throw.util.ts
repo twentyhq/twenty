@@ -4,9 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
-} from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
 export type FindFlatEntityByIdInFlatEntityMapsOrThrowArgs<
   T extends FlatEntity,

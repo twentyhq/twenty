@@ -1,4 +1,4 @@
-import { FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
+import { FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { orderObjectProperties } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/order-object-properties.util';
 
 export function transformFlatEntityForComparison<
