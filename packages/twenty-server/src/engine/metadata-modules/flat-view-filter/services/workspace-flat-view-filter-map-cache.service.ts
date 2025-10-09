@@ -49,4 +49,3 @@ export class WorkspaceFlatViewFilterMapCacheService extends WorkspaceFlatMapCach
     }, EMPTY_FLAT_ENTITY_MAPS);
   }
 }
-

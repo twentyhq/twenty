@@ -45,4 +45,3 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
     subFieldName: createViewFilterInput.subFieldName ?? null,
   };
 };
-

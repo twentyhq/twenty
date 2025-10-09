@@ -2,4 +2,3 @@ import { type FLAT_VIEW_FILTER_PROPERTIES_TO_COMPARE } from 'src/engine/metadata
 
 export type FlatViewFilterPropertiesToCompare =
   (typeof FLAT_VIEW_FILTER_PROPERTIES_TO_COMPARE)[number];
-

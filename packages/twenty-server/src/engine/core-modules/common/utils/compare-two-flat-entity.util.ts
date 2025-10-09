@@ -1,9 +1,10 @@
 import diff from 'microdiff';
-import { AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
-import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
-import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
-import { FromTo } from 'twenty-shared/types';
+import { type FromTo } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
+
+import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
+import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
+import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 export const compareTwoFlatEntity = <
   TFlatEntity extends AllFlatEntities,

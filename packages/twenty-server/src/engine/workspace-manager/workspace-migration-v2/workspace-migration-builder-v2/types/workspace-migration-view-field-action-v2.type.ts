@@ -12,10 +12,7 @@ export type UpdateViewFieldAction = {
   viewFieldId: string;
   updates: Array<
     {
-      [P in FlatViewFieldPropertiesToCompare]: PropertyUpdate<
-        FlatViewField,
-        P
-      >;
+      [P in FlatViewFieldPropertiesToCompare]: PropertyUpdate<FlatViewField, P>;
     }[FlatViewFieldPropertiesToCompare]
   >;
 };

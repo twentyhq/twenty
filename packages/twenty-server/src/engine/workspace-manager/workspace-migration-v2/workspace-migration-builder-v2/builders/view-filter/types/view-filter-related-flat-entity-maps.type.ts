@@ -4,4 +4,3 @@ export type ViewFilterRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
   'flatViewMaps' | 'flatFieldMetadataMaps'
 >;
-
