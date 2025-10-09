@@ -140,6 +140,7 @@ export const GraphWidgetBarChart = ({
       <GraphWidgetTooltip
         items={[tooltipData.tooltipItem]}
         showClickHint={tooltipData.showClickHint}
+        title={tooltipData.title}
       />
     );
   };

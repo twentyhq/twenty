@@ -1,13 +1,13 @@
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import {
-  formatGraphValue,
-  type GraphValueFormatOptions,
+    formatGraphValue,
+    type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import {
-  type LineSeries,
-  type Point,
-  type SliceTooltipProps,
+    type LineSeries,
+    type Point,
+    type SliceTooltipProps,
 } from '@nivo/line';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -54,9 +54,12 @@ export const useLineChartTooltip = ({
       return false;
     });
 
+    const xValue = slice.points[0]?.data?.x;
+
     return {
       items: tooltipItems,
       showClickHint: hasClickablePoint,
+      title: isDefined(xValue) ? String(xValue) : undefined,
     };
   };
 
@@ -79,6 +82,7 @@ export const useLineChartTooltip = ({
         },
       ],
       showClickHint: isDefined(dataPoint?.to),
+      title: isDefined(point.data.x) ? String(point.data.x) : undefined,
     };
   };
 
