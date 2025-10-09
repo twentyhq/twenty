@@ -53,7 +53,8 @@
                 "id": "twenty-redis",
                 "value": "connectionString"
               }
-            }
+            },
+            "PGSSLMODE": "require"
           }
         },
         {
@@ -81,6 +82,7 @@
                 "value": "connectionString"
               }
             },
+            "PGSSLMODE": "require",
             "DISABLE_DB_MIGRATIONS": "true",
             "DISABLE_CRON_JOBS_REGISTRATION": "true"
           }
