@@ -28,7 +28,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-@Controller('rest/metadata/page-layout-tabs')
+@Controller('rest/metadata/pageLayoutTabs')
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(PageLayoutTabRestApiExceptionFilter)
 export class PageLayoutTabController {
