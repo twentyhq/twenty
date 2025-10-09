@@ -111,15 +111,11 @@ export class MigrateWorkflowStepFilterOperandValueCommand extends ActiveOrSuspen
       }
 
       if (hasChanged) {
-        if (options.dryRun) {
-          this.logger.log(
-            `DRY RUN - Would update workflowVersion ${workflowVersion.id} in workspace ${workspaceId}.`,
-          );
-        } else {
-          this.logger.log(
-            `Updating workflowVersion ${workflowVersion.id} in workspace ${workspaceId}`,
-          );
+        this.logger.log(
+          `${options.dryRun ? 'DRY RUN - Would be' : ''}Updating workflowVersion ${workflowVersion.id} in workspace ${workspaceId}`,
+        );
 
+        if (!options.dryRun) {
           await workflowVersionRepository.update(
             { id: workflowVersion.id },
             { steps },
@@ -197,20 +193,16 @@ export class MigrateWorkflowStepFilterOperandValueCommand extends ActiveOrSuspen
       }
 
       if (hasChanged) {
-        if (options.dryRun) {
-          this.logger.log(
-            `Would update workflowRun ${workflowRun.id} in workspace ${workspaceId}.`,
-          );
-        } else {
-          this.logger.log(
-            `Updating workflowRun ${workflowRun.id} in workspace ${workspaceId}`,
-          );
+        this.logger.log(
+          `${options.dryRun ? 'DRY RUN - Would be' : ''}Updating workflowRun ${workflowRun.id} in workspace ${workspaceId}`,
+        );
 
+        if (!options.dryRun) {
           await workflowRunRepository.update({ id: workflowRun.id }, { state });
         }
 
         this.logger.log(
-          `Updated workflowRun ${workflowRun.id} in workspace ${workspaceId}`,
+          `${options.dryRun ? 'DRY RUN - Would have' : ''}Updated workflowRun ${workflowRun.id} in workspace ${workspaceId}`,
         );
       }
     }
