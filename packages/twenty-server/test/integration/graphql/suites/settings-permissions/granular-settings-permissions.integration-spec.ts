@@ -1,9 +1,7 @@
-import { print } from 'graphql';
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
-import { createOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
@@ -11,6 +9,7 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -148,34 +147,27 @@ describe('Granular settings permissions', () => {
 
   describe('Data Model Permissions', () => {
     it('should allow access to data model operations when user has DATA_MODEL setting permission', async () => {
-      // Test creating an object metadata (requires DATA_MODEL permission)
-      const { query: createObjectQuery, variables } =
-        createOneObjectMetadataQueryFactory({
-          input: {
-            labelSingular: 'House',
-            labelPlural: 'Houses',
-            nameSingular: 'house',
-            namePlural: 'houses',
-            description: 'a house',
-            icon: 'IconHome',
-          },
-          gqlFields: `
+      const { data, errors } = await createOneObjectMetadata({
+        input: {
+          labelSingular: 'House',
+          labelPlural: 'Houses',
+          nameSingular: 'house',
+          namePlural: 'houses',
+          description: 'a house',
+          icon: 'IconHome',
+        },
+        gqlFields: `
           id
           labelSingular
           labelPlural
         `,
-        });
+        expectToFail: false,
+      });
 
-      const response = await client
-        .post('/metadata')
-        .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-        .send({ query: print(createObjectQuery), variables });
-
-      createdObjectMetadataIds.push(response.body.createOneObject.id);
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.createOneObject).toBeDefined();
-      expect(response.body.data.createOneObject.labelSingular).toBe('House');
+      createdObjectMetadataIds.push(data.createOneObject.id);
+      expect(errors).toBeUndefined();
+      expect(data.createOneObject).toBeDefined();
+      expect(data.createOneObject.labelSingular).toBe('House');
     });
   });
 
