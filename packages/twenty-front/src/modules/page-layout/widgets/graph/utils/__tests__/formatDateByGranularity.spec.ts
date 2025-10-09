@@ -1,4 +1,4 @@
-import { ObjectRecordGroupByDateGranularity } from '@/page-layout/widgets/graph/types/ObjectRecordGroupByDateGranularity';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { formatDateByGranularity } from '../formatDateByGranularity';
 

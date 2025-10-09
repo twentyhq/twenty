@@ -72,6 +72,6 @@ export const computeAggregateNumericValueForGraph = ({
     }
 
     default:
-      return GRAPH_DEFAULT_AGGREGATE_VALUE;
+      throw new Error(`Unsupported field type ${field.type}`);
   }
 };

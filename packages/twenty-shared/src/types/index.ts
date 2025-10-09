@@ -31,6 +31,7 @@ export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
 export type { ObjectPermissions } from './ObjectPermissions';
 export type { ObjectPermissionsDeprecated } from './ObjectPermissionsDeprecated';
+export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { ObjectsPermissionsByRoleIdDeprecated } from './ObjectsPermissionsByRoleIdDeprecated';

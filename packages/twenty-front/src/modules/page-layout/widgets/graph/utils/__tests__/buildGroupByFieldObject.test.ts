@@ -1,6 +1,6 @@
-import { ObjectRecordGroupByDateGranularity } from '@/page-layout/widgets/graph/types/ObjectRecordGroupByDateGranularity';
+import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { buildGroupByFieldObject } from '../buildGroupByFieldObject';
 
 describe('buildGroupByFieldObject', () => {
   it('should return field with Id suffix for relation fields', () => {

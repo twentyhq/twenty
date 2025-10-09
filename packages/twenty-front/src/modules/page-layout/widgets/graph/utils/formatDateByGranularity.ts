@@ -1,11 +1,8 @@
-import {
-  ObjectRecordGroupByDateGranularity,
-  type ObjectRecordGroupByDateGranularity as ObjectRecordGroupByDateGranularityType,
-} from '@/page-layout/widgets/graph/types/ObjectRecordGroupByDateGranularity';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
 export const formatDateByGranularity = (
   date: Date,
-  granularity: ObjectRecordGroupByDateGranularityType,
+  granularity: ObjectRecordGroupByDateGranularity,
 ): string => {
   switch (granularity) {
     case ObjectRecordGroupByDateGranularity.DAY:

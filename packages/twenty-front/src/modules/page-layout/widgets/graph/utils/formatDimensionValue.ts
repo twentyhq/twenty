@@ -1,10 +1,12 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
-import { type ObjectRecordGroupByDateGranularity } from '@/page-layout/widgets/graph/types/ObjectRecordGroupByDateGranularity';
 import { formatDateByGranularity } from '@/page-layout/widgets/graph/utils/formatDateByGranularity';
 import { t } from '@lingui/core/macro';
+import {
+  FieldMetadataType,
+  type ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type FormatDimensionValueParams = {
   value: unknown;

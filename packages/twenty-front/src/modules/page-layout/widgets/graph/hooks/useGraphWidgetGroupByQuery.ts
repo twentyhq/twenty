@@ -29,7 +29,7 @@ export const useGraphWidgetGroupByQuery = ({
 
   const aggregateFieldId = configuration.aggregateFieldMetadataId;
 
-  const aggregateField = objectMetadataItem.fields.find(
+  const aggregateField = objectMetadataItem.readableFields.find(
     (field) => field.id === aggregateFieldId,
   );
 

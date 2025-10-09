@@ -1,4 +1,4 @@
-import { ObjectRecordGroupByDateGranularity } from '@/page-layout/widgets/graph/types/ObjectRecordGroupByDateGranularity';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
 // Default date granularity for grouping date fields in graphs
 // TODO: This will be configurable in the graph editor in the future

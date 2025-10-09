@@ -1,4 +1,4 @@
-import { type ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
