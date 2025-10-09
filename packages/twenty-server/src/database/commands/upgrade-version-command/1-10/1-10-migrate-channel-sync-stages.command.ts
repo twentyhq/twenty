@@ -23,7 +23,7 @@ import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-o
 import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Command({
-  name: 'upgrade:1-8:migrate-channel-sync-stages',
+  name: 'upgrade:1-10:migrate-channel-sync-stages',
   description:
     'Migrate message and calendar channel sync stages: add PENDING_CONFIGURATION, add MESSAGE_LIST_FETCH_SCHEDULED, migrate deprecated stages',
 })
