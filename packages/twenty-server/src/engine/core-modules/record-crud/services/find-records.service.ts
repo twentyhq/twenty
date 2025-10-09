@@ -11,15 +11,11 @@ import {
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
+import { FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-
-type FindRecordsResult = {
-  records: unknown[];
-  count: number;
-};
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
