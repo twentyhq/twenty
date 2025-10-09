@@ -1,30 +1,23 @@
-import { type FromTo } from 'twenty-shared/types';
-
 import { type FlatViewFieldPropertiesToCompare } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-properties-to-compare.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
-import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-
-export type FlatViewFieldPropertyUpdate<
-  P extends FlatViewFieldPropertiesToCompare,
-> = {
-  property: P;
-} & FromTo<ViewFieldEntity[P]>;
+import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 
 export type CreateViewFieldAction = {
   type: 'create_view_field';
   viewField: FlatViewField;
 };
 
-export type FlatViewFieldPropertiesUpdates = Array<
-  {
-    [P in FlatViewFieldPropertiesToCompare]: FlatViewFieldPropertyUpdate<P>;
-  }[FlatViewFieldPropertiesToCompare]
->;
-
 export type UpdateViewFieldAction = {
   type: 'update_view_field';
   viewFieldId: string;
-  updates: FlatViewFieldPropertiesUpdates;
+  updates: Array<
+    {
+      [P in FlatViewFieldPropertiesToCompare]: PropertyUpdate<
+        FlatViewField,
+        P
+      >;
+    }[FlatViewFieldPropertiesToCompare]
+  >;
 };
 
 export type DeleteViewFieldAction = {

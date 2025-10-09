@@ -1,14 +1,5 @@
-import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { type FLAT_VIEW_FILTER_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-properties-to-compare.constant';
 
-export type FlatViewFilterPropertiesToCompare = Pick<
-  FlatViewFilter,
-  | 'fieldMetadataId'
-  | 'operand'
-  | 'value'
-  | 'viewFilterGroupId'
-  | 'positionInViewFilterGroup'
-  | 'subFieldName'
-  | 'viewId'
-  | 'deletedAt'
->;
+export type FlatViewFilterPropertiesToCompare =
+  (typeof FLAT_VIEW_FILTER_PROPERTIES_TO_COMPARE)[number];
 
