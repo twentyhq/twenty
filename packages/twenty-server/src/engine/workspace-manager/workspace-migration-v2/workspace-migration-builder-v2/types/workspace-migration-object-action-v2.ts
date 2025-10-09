@@ -9,17 +9,19 @@ export type CreateObjectAction = {
   flatFieldMetadatas: FlatFieldMetadata[];
 };
 
+export type FlatObjectPropertiesUpdates = Array<
+  {
+    [P in FlatObjectMetadataPropertiesToCompare]: PropertyUpdate<
+      FlatObjectMetadata,
+      P
+    >;
+  }[FlatObjectMetadataPropertiesToCompare]
+>;
+
 export type UpdateObjectAction = {
   type: 'update_object';
   objectMetadataId: string;
-  updates: Array<
-    {
-      [P in FlatObjectMetadataPropertiesToCompare]: PropertyUpdate<
-        FlatObjectMetadata,
-        P
-      >;
-    }[FlatObjectMetadataPropertiesToCompare]
-  >;
+  updates: FlatObjectPropertiesUpdates;
 };
 
 export type DeleteObjectAction = {

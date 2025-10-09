@@ -5,7 +5,7 @@ import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueri
 import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
@@ -71,7 +71,14 @@ export const mapObjectMetadataToGraphQLQuery = ({
       }
 
       return fieldMetadata.morphRelations.map((morphRelation) => ({
-        gqlField: morphRelation.sourceFieldMetadata.name,
+        gqlField: computeMorphRelationFieldName({
+          fieldName: fieldMetadata.name,
+          relationType: morphRelation.type,
+          targetObjectMetadataNameSingular:
+            morphRelation.targetObjectMetadata.nameSingular,
+          targetObjectMetadataNamePlural:
+            morphRelation.targetObjectMetadata.namePlural,
+        }),
         fieldMetadata: fieldMetadata,
       }));
     });
@@ -99,19 +106,30 @@ export const mapObjectMetadataToGraphQLQuery = ({
     }
 
     return fieldMetadata.morphRelations.map((morphRelation) => ({
-      gqlField: morphRelation.sourceFieldMetadata.name,
+      gqlField: computeMorphRelationFieldName({
+        fieldName: fieldMetadata.name,
+        relationType: morphRelation.type,
+        targetObjectMetadataNameSingular:
+          morphRelation.targetObjectMetadata.nameSingular,
+        targetObjectMetadataNamePlural:
+          morphRelation.targetObjectMetadata.namePlural,
+      }),
       fieldMetadata,
     }));
   });
 
-  const gqlFieldWithFieldMetadataThatCouldBeQueried = [
+  const gqlFieldsWithFieldMetadata = [
     ...activeReadableFields,
     ...manyToOneRelationGqlFieldWithFieldMetadata,
-  ].sort((gqlFieldWithFieldMetadataA, gqlFieldWithFieldMetadataB) =>
-    gqlFieldWithFieldMetadataA.gqlField.localeCompare(
-      gqlFieldWithFieldMetadataB.gqlField,
-    ),
-  );
+  ];
+
+  const gqlFieldWithFieldMetadataThatCouldBeQueried =
+    gqlFieldsWithFieldMetadata.sort(
+      (gqlFieldWithFieldMetadataA, gqlFieldWithFieldMetadataB) =>
+        gqlFieldWithFieldMetadataA.gqlField.localeCompare(
+          gqlFieldWithFieldMetadataB.gqlField,
+        ),
+    );
 
   const gqlFieldWithFieldMetadataThatSouldBeQueried =
     gqlFieldWithFieldMetadataThatCouldBeQueried.filter(
@@ -128,7 +146,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
       __ref
     }`;
   }
-
   const mappedFields = gqlFieldWithFieldMetadataThatSouldBeQueried
     .map((gqlFieldWithFieldMetadata) => {
       const currentRecordGqlFields =

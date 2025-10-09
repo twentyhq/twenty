@@ -1,4 +1,4 @@
-import { parseJson } from "@/utils/parseJson";
+import { parseJson } from '@/utils/parseJson';
 
 describe('parseJson', () => {
   it('if value is null', () => {

@@ -1,13 +1,11 @@
-import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 import { type SearchRecord } from '~/generated-metadata/graphql';
 
-export const searchRecordStoreComponentFamilyState = createComponentFamilyState<
+export const searchRecordStoreFamilyState = createFamilyState<
   (SearchRecord & { record?: ObjectRecord }) | undefined,
   string
 >({
-  key: 'searchRecordStoreComponentFamilyState',
+  key: 'searchRecordStoreFamilyState',
   defaultValue: undefined,
-  componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
 });

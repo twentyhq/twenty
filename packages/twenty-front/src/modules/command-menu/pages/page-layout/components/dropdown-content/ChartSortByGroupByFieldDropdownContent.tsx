@@ -3,7 +3,6 @@ import { useGraphGroupBySortOptionLabels } from '@/command-menu/pages/page-layou
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -21,13 +20,7 @@ import {
   type NumberChartConfiguration,
 } from '~/generated/graphql';
 
-type ChartSortByGroupByFieldDropdownContentProps = {
-  title: string;
-};
-
-export const ChartSortByGroupByFieldDropdownContent = ({
-  title,
-}: ChartSortByGroupByFieldDropdownContentProps) => {
+export const ChartSortByGroupByFieldDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
@@ -74,7 +67,6 @@ export const ChartSortByGroupByFieldDropdownContent = ({
 
   return (
     <>
-      <DropdownMenuHeader>{title}</DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}

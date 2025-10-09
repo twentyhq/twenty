@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import {
   type GenerateDepthOneRecordGqlFields,
   generateDepthOneRecordGqlFields,
@@ -11,13 +12,13 @@ type ComputeDepthOneRecordGqlFieldsFromRecordArgs =
 export const computeDepthOneRecordGqlFieldsFromRecord = ({
   objectMetadataItem,
   record,
-}: ComputeDepthOneRecordGqlFieldsFromRecordArgs) => {
+}: ComputeDepthOneRecordGqlFieldsFromRecordArgs): RecordGqlFields => {
   const depthOneRecordGqlFields = generateDepthOneRecordGqlFields({
     objectMetadataItem,
   });
   const recordKeys = Object.keys(record);
 
-  return Object.keys(depthOneRecordGqlFields).reduce<Record<string, boolean>>(
+  return Object.keys(depthOneRecordGqlFields).reduce<RecordGqlFields>(
     (acc, key) => {
       return {
         ...acc,

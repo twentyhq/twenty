@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -150,7 +150,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       error: {
         code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
         message: 'Field metadata to update not found',
-        userFriendlyMessage: t`Field metadata to update not found`,
+        userFriendlyMessage: msg`Field metadata to update not found`,
       },
     };
   }
@@ -172,7 +172,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
         error: {
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message: `Cannot update standard field metadata properties: ${invalidProperties}`,
-          userFriendlyMessage: t`Cannot update standard field properties: ${invalidProperties}`,
+          userFriendlyMessage: msg`Cannot update standard field properties: ${invalidProperties}`,
         },
       };
     }

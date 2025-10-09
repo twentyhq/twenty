@@ -51,12 +51,7 @@
     "typecheck": {},
     "test": {},
     "lint": {
-      "options": {
-        "lintFilePatterns": [
-          "{projectRoot}/src/**/*.{ts,tsx,json}",
-          "{projectRoot}/package.json"
-        ]
-      },
+      "options": {},
       "configurations": {
         "fix": {}
       }

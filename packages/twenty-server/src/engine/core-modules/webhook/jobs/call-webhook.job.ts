@@ -74,7 +74,10 @@ export class CallWebhookJob {
       const response = await this.httpService.axiosRef.post(
         getAbsoluteUrl(data.targetUrl),
         payloadWithoutSecret,
-        { headers },
+        {
+          headers,
+          timeout: 5_000,
+        },
       );
 
       const success = response.status >= 200 && response.status < 300;
