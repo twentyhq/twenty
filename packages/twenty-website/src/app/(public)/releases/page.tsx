@@ -35,7 +35,7 @@ const Home = async () => {
     latestGithubRelease?.tagName || 'v0.0.0',
   );
 
-  const mdxReleasesContent = await getMdxReleasesContent(releaseNotes);
+  const mdxReleasesContent = await getMdxReleasesContent(visibleReleasesNotes);
 
   return (
     <ContentContainer>
