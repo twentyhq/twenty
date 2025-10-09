@@ -5,6 +5,7 @@ import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceh
 import { type Meta, type StoryObj } from '@storybook/react';
 import { type MutableSnapshot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const meta: Meta<typeof WidgetPlaceholder> = {
@@ -27,6 +28,7 @@ const meta: Meta<typeof WidgetPlaceholder> = {
       );
     },
     ComponentDecorator,
+    I18nFrontDecorator,
   ],
   parameters: {
     layout: 'centered',

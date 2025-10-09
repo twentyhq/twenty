@@ -7,6 +7,8 @@ import { WidgetContainer } from '@/page-layout/widgets/components/WidgetContaine
 import { WidgetHeader } from '@/page-layout/widgets/components/WidgetHeader';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -43,7 +45,7 @@ export const WidgetPlaceholder = () => {
     <WidgetContainer onClick={handleClick}>
       <WidgetHeader
         isInEditMode={isPageLayoutInEditMode}
-        title="Add Widget"
+        title={t`Add Widget`}
         isEmpty
       />
       <AnimatedPlaceholderEmptyContainer
@@ -53,10 +55,10 @@ export const WidgetPlaceholder = () => {
         <AnimatedPlaceholder type="noWidgets" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No widgets yet
+            <Trans>No widgets yet</Trans>
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            Click to add your first widget
+            <Trans>Click to add your first widget</Trans>
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
