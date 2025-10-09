@@ -116,15 +116,15 @@ export class ViewFilterV2Service {
   }): Promise<ViewFilterDTO> {
     const {
       flatViewFilterMaps: existingFlatViewFilterMaps,
-      flatObjectMetadataMaps,
       flatViewMaps,
+      flatFieldMetadataMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
         flatMapsKeys: [
           'flatViewFilterMaps',
-          'flatObjectMetadataMaps',
           'flatViewMaps',
+          'flatFieldMetadataMaps',
         ],
       },
     );
@@ -150,8 +150,8 @@ export class ViewFilterV2Service {
             },
           },
           dependencyAllFlatEntityMaps: {
-            flatObjectMetadataMaps,
             flatViewMaps,
+            flatFieldMetadataMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -191,15 +191,15 @@ export class ViewFilterV2Service {
   }): Promise<ViewFilterDTO> {
     const {
       flatViewFilterMaps: existingFlatViewFilterMaps,
-      flatObjectMetadataMaps,
       flatViewMaps,
+      flatFieldMetadataMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
         flatMapsKeys: [
           'flatViewFilterMaps',
-          'flatObjectMetadataMaps',
           'flatViewMaps',
+          'flatFieldMetadataMaps',
         ],
       },
     );
@@ -225,7 +225,7 @@ export class ViewFilterV2Service {
             },
           },
           dependencyAllFlatEntityMaps: {
-            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
             flatViewMaps,
           },
           buildOptions: {
@@ -267,13 +267,17 @@ export class ViewFilterV2Service {
     const {
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatViewMaps: existingFlatViewMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFilterMaps', 'flatViewMaps'],
-        },
-      );
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatViewFilterMaps',
+          'flatViewMaps',
+          'flatFieldMetadataMaps',
+        ],
+      },
+    );
 
     const existingViewFilterToDelete =
       fromDestroyViewFilterInputToFlatViewFilterOrThrow({
@@ -301,6 +305,7 @@ export class ViewFilterV2Service {
           },
           dependencyAllFlatEntityMaps: {
             flatViewMaps: existingFlatViewMaps,
+            flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
           },
           buildOptions: {
             isSystemBuild: false,
