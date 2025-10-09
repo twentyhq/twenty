@@ -46,4 +46,9 @@ export const TEST_OBJECT_GQL_FIELDS = `
     }
     rawJsonField
     arrayField
+    richTextField
+    richTextV2Field {
+        blocknote
+        markdown
+    }
 `;

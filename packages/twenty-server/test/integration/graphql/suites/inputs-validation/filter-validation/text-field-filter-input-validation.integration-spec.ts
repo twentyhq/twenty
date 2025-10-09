@@ -55,7 +55,6 @@ describe(`Filter input validation - ${FIELD_METADATA_TYPE}`, () => {
     );
   });
 
-  // TODO : Refacto-common - Uncomment this
   describe('Rest filter input - failure', () => {
     it.each(
       failingTestCases.map((testCase) => ({

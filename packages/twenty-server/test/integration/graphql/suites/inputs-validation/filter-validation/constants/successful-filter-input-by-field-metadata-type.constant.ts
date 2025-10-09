@@ -1,4 +1,4 @@
-import { type FieldMetadataTypeToTest } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
+import { type FieldMetadataTypesToTestForFilterInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import {
   TEST_TARGET_OBJECT_RECORD_ID,
   TEST_UUID_FIELD_VALUE,
@@ -7,7 +7,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const successfulFilterInputByFieldMetadataType: {
-  [K in FieldMetadataTypeToTest]: {
+  [K in FieldMetadataTypesToTestForFilterInputValidation]: {
     gqlFilterInput: any;
     restFilterInput: string;
     validateFilter: (record: Record<string, any>) => boolean;

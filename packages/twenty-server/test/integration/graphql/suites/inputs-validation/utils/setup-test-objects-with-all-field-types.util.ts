@@ -1,18 +1,18 @@
 import { randomUUID } from 'crypto';
 
-import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/inputs-validation/filter-validation/constants/test-object-gql-fields.constant';
+import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/inputs-validation/constants/test-object-gql-fields.constant';
 import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/inputs-validation/utils/get-field-metadata-creation-inputs.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
-const TEST_OBJECT_METADATA_NAME_SINGULAR = 'apiFilterValidationTestObject';
-const TEST_OBJECT_METADATA_NAME_PLURAL = 'apiFilterValidationTestObjects';
+const TEST_OBJECT_METADATA_NAME_SINGULAR = 'apiInputValidationTestObject';
+const TEST_OBJECT_METADATA_NAME_PLURAL = 'apiInputValidationTestObjects';
 const TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR =
-  'apiFilterValidationTargetTestObject';
+  'apiInputValidationTargetTestObject';
 const TEST_TARGET_OBJECT_METADATA_NAME_PLURAL =
-  'apiFilterValidationTargetTestObjects';
+  'apiInputValidationTargetTestObjects';
 
 export const TEST_TARGET_OBJECT_RECORD_ID =
   '20202020-a21e-4ec2-873b-de4264d89025';

@@ -1,4 +1,7 @@
-import { type FieldMetadataTypeToTest } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
+import {
+  type FieldMetadataTypesToTestForCreateInputValidation,
+  type FieldMetadataTypesToTestForFilterInputValidation,
+} from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import {
   FieldMetadataType,
   RelationType,
@@ -21,10 +24,24 @@ export const getFieldMetadataCreationInputs = (
   targetObjectMetadataId: string,
 ) => {
   const fieldInputsMap: {
-    [K in FieldMetadataTypeToTest]:
-      | FieldMetadataCreationInput
-      | FieldMetadataCreationInput[];
+    [K in Exclude<
+      | FieldMetadataTypesToTestForCreateInputValidation
+      | FieldMetadataTypesToTestForFilterInputValidation,
+      'ACTOR'
+    >]: FieldMetadataCreationInput | FieldMetadataCreationInput[];
   } = {
+    [FieldMetadataType.RICH_TEXT]: {
+      name: 'richTextField',
+      label: 'richTextField',
+      type: FieldMetadataType.RICH_TEXT,
+      objectMetadataId,
+    },
+    [FieldMetadataType.RICH_TEXT_V2]: {
+      name: 'richTextV2Field',
+      label: 'richTextV2Field',
+      type: FieldMetadataType.RICH_TEXT_V2,
+      objectMetadataId,
+    },
     [FieldMetadataType.TEXT]: {
       name: 'textField',
       label: 'textField',

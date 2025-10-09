@@ -1,4 +1,4 @@
-import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/args-validation/filter-validation/constants/test-object-gql-fields.constant';
+import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/inputs-validation/constants/test-object-gql-fields.constant';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 
