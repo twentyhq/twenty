@@ -10,7 +10,7 @@ import 'react-resizable/css/styles.css';
 
 type PageLayoutRendererProps = {
   pageLayoutId: string;
-  onInitialized: (pageLayout: PageLayout) => void;
+  onInitialized?: (pageLayout: PageLayout) => void;
 };
 
 export const PageLayoutRenderer = ({

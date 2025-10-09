@@ -2,18 +2,11 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartRenderer';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
-import { GraphType, type PageLayoutWidget } from '~/generated-metadata/graphql';
-
-const GraphWidgetBarChart = lazy(() =>
-  import(
-    '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart'
-  ).then((module) => ({
-    default: module.GraphWidgetBarChart,
-  })),
-);
+import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
 
 const GraphWidgetLineChart = lazy(() =>
   import(
@@ -108,21 +101,7 @@ export const GraphWidget = ({
       );
 
     case GraphType.BAR:
-      return (
-        <Suspense fallback={<ChartSkeletonLoader />}>
-          <GraphWidgetBarChart
-            data={data.items}
-            indexBy={data.indexBy}
-            keys={data.keys}
-            seriesLabels={data.seriesLabels}
-            layout={data.layout}
-            showLegend
-            showGrid
-            displayType="number"
-            id={`bar-chart-${widget.id}`}
-          />
-        </Suspense>
-      );
+      return <GraphWidgetBarChartRenderer widget={widget} />;
 
     case GraphType.LINE:
       return (

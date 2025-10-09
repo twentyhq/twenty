@@ -1,7 +1,7 @@
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { GraphWidget } from '@/page-layout/widgets/graph/components/GraphWidget';
 import { isDefined } from 'twenty-shared/utils';
-import { GraphType, type PageLayoutWidget } from '~/generated-metadata/graphql';
+import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
 
 type GraphWidgetRendererProps = {
   widget: PageLayoutWidget;
