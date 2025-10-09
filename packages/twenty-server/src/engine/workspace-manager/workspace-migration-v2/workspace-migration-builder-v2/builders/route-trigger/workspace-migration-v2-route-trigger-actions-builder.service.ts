@@ -4,15 +4,15 @@ import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/type
 import { compareTwoFlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/utils/compare-two-flat-route-trigger.util';
 import { RouteTriggerRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/types/route-trigger-related-flat-entity-maps.type';
 import {
+  UpdateRouteTriggerAction,
+  WorkspaceMigrationRouteTriggerActionV2,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/types/workspace-migration-route-trigger-action-v2.type';
+import {
   FlatEntityUpdateValidationArgs,
   FlatEntityValidationArgs,
   FlatEntityValidationReturnType,
   WorkspaceEntityMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import {
-  UpdateRouteTriggerAction,
-  WorkspaceMigrationRouteTriggerActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-route-trigger-action-v2.type';
 import { FlatRouteTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service';
 
 @Injectable()

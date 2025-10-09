@@ -4,7 +4,7 @@ import { type FromTo } from 'twenty-shared/types';
 import { FLAT_ROUTE_TRIGGER_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/route-trigger/constants/flat-route-trigger-properties-to-compare.constant';
 import { type FlatRouteTriggerPropertiesToCompare } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger-properties-to-compare.type';
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
-import { type UpdateRouteTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-route-trigger-action-v2.type';
+import { type UpdateRouteTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/types/workspace-migration-route-trigger-action-v2.type';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 type GetWorkspaceMigrationUpdateRouteTriggerActionArgs = FromTo<
