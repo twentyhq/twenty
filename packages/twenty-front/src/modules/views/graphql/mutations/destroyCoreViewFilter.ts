@@ -1,7 +1,11 @@
+import { VIEW_FILTER_FRAGMENT } from '@/views/graphql/fragments/viewFilterFragment';
 import { gql } from '@apollo/client';
 
 export const DESTROY_CORE_VIEW_FILTER = gql`
-  mutation DestroyCoreViewFilter($id: String!) {
-    destroyCoreViewFilter(id: $id)
+  ${VIEW_FILTER_FRAGMENT}
+  mutation DestroyCoreViewFilter($input: DestroyViewFilterInput!) {
+    destroyCoreViewFilter(input: $input) {
+      ...ViewFilterFragment
+    }
   }
 `;

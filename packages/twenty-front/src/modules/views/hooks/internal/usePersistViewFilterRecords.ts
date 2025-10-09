@@ -83,14 +83,17 @@ export const usePersistViewFilterRecords = () => {
           apolloClient.mutate({
             mutation: UPDATE_CORE_VIEW_FILTER,
             variables: {
-              id: viewFilter.id,
               input: {
-                value: viewFilter.value,
-                operand: viewFilter.operand,
-                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-                viewFilterGroupId: viewFilter.viewFilterGroupId,
-                subFieldName: viewFilter.subFieldName ?? null,
-              } satisfies Partial<CoreViewFilter>,
+                id: viewFilter.id,
+                update: {
+                  value: viewFilter.value,
+                  operand: viewFilter.operand,
+                  positionInViewFilterGroup:
+                    viewFilter.positionInViewFilterGroup,
+                  viewFilterGroupId: viewFilter.viewFilterGroupId,
+                  subFieldName: viewFilter.subFieldName ?? null,
+                },
+              },
             },
             update: (cache, { data }) => {
               const record = data?.['updateCoreViewFilter'];
@@ -125,7 +128,9 @@ export const usePersistViewFilterRecords = () => {
           apolloClient.mutate({
             mutation: DESTROY_CORE_VIEW_FILTER,
             variables: {
-              id: viewFilterId,
+              input: {
+                id: viewFilterId,
+              },
             },
             update: (cache, { data }) => {
               const record = data?.['destroyCoreViewFilter'];
