@@ -128,13 +128,13 @@ export class FindRecordsService {
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectName,
-      filter ?? ({} as ObjectRecordFilter),
+      filter ?? {},
     );
 
-    const orderByWithIdCondition = [
-      ...(orderBy ?? []),
+    const orderByWithIdCondition: ObjectRecordOrderBy = [
+      ...(orderBy ?? []).filter((item) => item !== undefined),
       { id: OrderByDirection.AscNullsFirst },
-    ] as ObjectRecordOrderBy;
+    ];
 
     const withOrderByQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
       withFilterQueryBuilder,
@@ -168,13 +168,13 @@ export class FindRecordsService {
     const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       countQueryBuilder,
       objectName,
-      filter ?? ({} as ObjectRecordFilter),
+      filter ?? {},
     );
 
     const withDeletedCountQueryBuilder =
       graphqlQueryParser.applyDeletedAtToBuilder(
         withFilterCountQueryBuilder,
-        filter ?? ({} as ObjectRecordFilter),
+        filter ?? {},
       );
 
     return withDeletedCountQueryBuilder.getCount();
