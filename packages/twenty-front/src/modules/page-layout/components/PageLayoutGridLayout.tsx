@@ -1,5 +1,6 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useSetIsDashboardInEditMode } from '@/dashboards/hooks/useSetDashboardInEditMode';
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
@@ -9,12 +10,14 @@ import {
 } from '@/page-layout/constants/PageLayoutBreakpoints';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
@@ -57,6 +60,10 @@ const ResponsiveGridLayout = WidthProvider(
 ) as React.ComponentType<ExtendedResponsiveProps>;
 
 export const PageLayoutGridLayout = () => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+  );
+
   const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
     pageLayoutCurrentBreakpointComponentState,
   );
@@ -68,6 +75,12 @@ export const PageLayoutGridLayout = () => {
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
+
+  // TODO: When RECORD_PAGE and RECORD_INDEX page layouts are implemented,
+  // refactor this to use a context-based edit mode handler or map PageLayoutType
+  // to appropriate action keys. For now, only dashboards use page layouts.
+  const { setIsDashboardInEditMode } =
+    useSetIsDashboardInEditMode(pageLayoutId);
 
   const pageLayoutCurrentLayouts = useRecoilComponentValue(
     pageLayoutCurrentLayoutsComponentState,
@@ -130,6 +143,9 @@ export const PageLayoutGridLayout = () => {
             <div key="empty-placeholder" data-select-disable="true">
               <WidgetPlaceholder
                 onClick={() => {
+                  if (!isPageLayoutInEditMode) {
+                    setIsDashboardInEditMode(true);
+                  }
                   navigatePageLayoutCommandMenu({
                     commandMenuPage:
                       CommandMenuPages.PageLayoutWidgetTypeSelect,
