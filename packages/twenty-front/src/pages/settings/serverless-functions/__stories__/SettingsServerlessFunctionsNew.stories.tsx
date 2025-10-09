@@ -1,4 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react';
+import { userEvent, within } from '@storybook/test';
+import { sleep } from '~/utils/sleep';
 import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
 import {
   PageDecorator,
@@ -19,18 +21,17 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsServerlessFunctionsNew>;
 
-// TEMP_DISABLED_TEST: Temporarily commented out due to test failure
-// export const Default: Story = {
-//   play: async ({ canvasElement }) => {
-//     const canvas = within(canvasElement);
-//     await sleep(100);
-//     await canvas.findByText('Functions');
-//     await canvas.findByText('New');
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await sleep(100);
+    await canvas.findByText('Functions');
+    await canvas.findByText('New');
 
-//     const input = await canvas.findByPlaceholderText('Name');
-//     await userEvent.type(input, 'Function Name');
-//     const saveButton = await canvas.findByText('Save');
+    const input = await canvas.findByPlaceholderText('Name');
+    await userEvent.type(input, 'Function Name');
+    const saveButton = await canvas.findByText('Save');
 
-//     await userEvent.click(saveButton);
-//   },
-// };
+    await userEvent.click(saveButton);
+  },
+};

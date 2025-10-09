@@ -1,5 +1,5 @@
-// TEMP_DISABLED_TEST: Removed unused imports due to commented test
 import { type Meta, type StoryObj } from '@storybook/react';
+import { expect, within } from '@storybook/test';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -10,8 +10,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-// TEMP_DISABLED_TEST: Removed unused import due to commented test
-// import { sleep } from '~/utils/sleep';
+import { sleep } from '~/utils/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Integrations/SettingsIntegrationDatabase',
@@ -30,12 +29,11 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsIntegrationDatabase>;
 
-// TEMP_DISABLED_TEST: Temporarily commented out due to test failure
-// export const Default: Story = {
-//   play: async ({ canvasElement }) => {
-//     const canvas = within(canvasElement);
-//     sleep(1000);
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    sleep(1000);
 
-//     expect(await canvas.findByText('PostgreSQL database')).toBeInTheDocument();
-//   },
-// };
+    expect(await canvas.findByText('PostgreSQL database')).toBeInTheDocument();
+  },
+};
