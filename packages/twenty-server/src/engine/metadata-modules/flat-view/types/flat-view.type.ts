@@ -23,4 +23,5 @@ export type ViewEntityRelationProperties =
 export type FlatView = Omit<ViewEntity, ViewEntityRelationProperties> & {
   universalIdentifier: string;
   viewFieldIds: string[];
+  viewFilterIds: string[];
 };
