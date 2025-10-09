@@ -17,7 +17,7 @@ export const compareTwoFlatViewFilter = ({
   return compareTwoFlatEntity({
     fromFlatEntity: fromFlatViewFilter,
     toFlatEntity: toFlatViewFilter,
-    jsonbProperties: FLAT_VIEW_FILTER_JSONB_PROPERTIES,
+    propertiesToStringify: FLAT_VIEW_FILTER_JSONB_PROPERTIES,
     propertiesToCompare: FLAT_VIEW_FILTER_PROPERTIES_TO_COMPARE,
   });
 };
