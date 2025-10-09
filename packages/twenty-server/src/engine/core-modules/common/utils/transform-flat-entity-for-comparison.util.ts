@@ -1,8 +1,8 @@
-import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
+import { FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 import { orderObjectProperties } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/order-object-properties.util';
 
 export function transformFlatEntityForComparison<
-  TFlatEntity extends AllFlatEntities,
+  TFlatEntity extends FlatEntity,
   PToCompare extends keyof TFlatEntity,
   PJsonB extends keyof TFlatEntity,
 >({
