@@ -92,6 +92,10 @@ export type WorkflowDiagramEmptyTriggerNodeData = {
 
 export type WorkflowDiagramPlaceholderNodeData = {
   nodeType: 'placeholder';
+  position: {
+    x: number;
+    y: number;
+  };
 };
 
 export type WorkflowDiagramNodeData =

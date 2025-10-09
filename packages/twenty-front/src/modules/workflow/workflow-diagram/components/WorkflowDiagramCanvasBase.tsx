@@ -223,11 +223,12 @@ export const WorkflowDiagramCanvasBase = ({
     }
 
     return {
-      id: WORKFLOW_PLACEHOLDER_NODE_ID,
+      id: 'placeholder',
       type: 'placeholder',
       position: workflowInsertStepIds.position,
       data: {
         nodeType: 'placeholder',
+        position: workflowInsertStepIds.position,
       },
       draggable: false,
       selectable: false,

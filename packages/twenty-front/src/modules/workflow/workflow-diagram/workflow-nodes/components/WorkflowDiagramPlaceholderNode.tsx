@@ -1,44 +1,30 @@
-import { useTheme } from '@emotion/react';
+import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
+import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
+import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
+import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabel';
+import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
+import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
+import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
-import { IconPlus } from 'twenty-ui/display';
 
-const StyledPlaceholderContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px dashed ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1.5)};
-  justify-content: center;
-  min-width: 160px;
-  padding: ${({ theme }) => theme.spacing(2)};
-  position: relative;
-  white-space: nowrap;
-`;
+const StyledPlaceholderLabel = styled(WorkflowNodeLabel)``;
 
-const StyledPlaceholderText = styled.span`
-  font-weight: 500;
-`;
-
-const StyledIconWrapper = styled.span`
-  align-items: center;
-  display: inline-flex;
-`;
+const StyledPlaceholderTitle = styled(WorkflowNodeTitle)``;
 
 export const WorkflowDiagramPlaceholderNode = () => {
   const { t } = useLingui();
-  const theme = useTheme();
 
   return (
-    <StyledPlaceholderContainer>
+    <WorkflowNodeContainer isConnectable={false}>
       <WorkflowDiagramHandleTarget />
-      <StyledIconWrapper>
-        <IconPlus size={theme.icon.size.md} />
-      </StyledIconWrapper>
-      <StyledPlaceholderText>{t`Select an action`}</StyledPlaceholderText>
-    </StyledPlaceholderContainer>
+      <WorkflowNodeIconContainer />
+      <WorkflowNodeRightPart>
+        <WorkflowNodeLabelWithCounterPart>
+          <StyledPlaceholderLabel>{t`Action`}</StyledPlaceholderLabel>
+        </WorkflowNodeLabelWithCounterPart>
+        <StyledPlaceholderTitle>{t`Add an action`}</StyledPlaceholderTitle>
+      </WorkflowNodeRightPart>
+    </WorkflowNodeContainer>
   );
 };

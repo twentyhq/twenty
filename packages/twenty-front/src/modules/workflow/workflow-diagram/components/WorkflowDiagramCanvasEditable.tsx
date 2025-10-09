@@ -4,6 +4,7 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect';
+import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
@@ -21,9 +22,7 @@ import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
 import { WorkflowDiagramPlaceholderNode } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramPlaceholderNode';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditable';
-import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
-import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
@@ -41,10 +40,6 @@ import { isDefined } from 'twenty-shared/utils';
 const WorkflowDiagramCanvasEditableInner = () => {
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
-  );
-
-  const workflowDiagram = useRecoilComponentValue(
-    workflowDiagramComponentState,
   );
 
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
@@ -113,8 +108,6 @@ const WorkflowDiagramCanvasEditableInner = () => {
       const sourceHandleId =
         fromHandle.id ?? WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID;
 
-      let dropPosition = connectionState.to;
-
       const pointerPosition = (() => {
         if ('clientX' in event) {
           return { x: event.clientX, y: event.clientY };
@@ -129,38 +122,27 @@ const WorkflowDiagramCanvasEditableInner = () => {
         return undefined;
       })();
 
-      const dropPositionFromPointer = isDefined(pointerPosition)
+      const dropPosition = isDefined(pointerPosition)
         ? workflowDiagramScreenToFlowPosition(pointerPosition)
-        : undefined;
-
-      const sourceNode = workflowDiagram?.nodes.find(
-        (node) => node.id === fromNode.id,
-      );
-
-      if (
-        sourceHandleId === WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID &&
-        isDefined(sourceNode)
-      ) {
-        dropPosition = {
-          x: sourceNode.position.x,
-          y: sourceNode.position.y + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
-        };
-      } else if (
-        !isDefined(dropPosition) &&
-        isDefined(dropPositionFromPointer)
-      ) {
-        dropPosition = dropPositionFromPointer;
-      }
+        : connectionState.to;
 
       if (!isDefined(dropPosition)) {
         return;
       }
 
+      const nodeWidth = fromNode.measured?.width ?? 150;
+      const nodeHeight = fromNode.measured?.height ?? 32;
+
+      const centeredPosition = {
+        x: dropPosition.x - nodeWidth / 2,
+        y: dropPosition.y - nodeHeight / 2,
+      };
+
       setTimeout(() => {
         startNodeCreation({
           parentStepId: fromNode.id,
           nextStepId: undefined,
-          position: dropPosition,
+          position: centeredPosition,
           sourceHandleId,
           connectionOptions: getConnectionOptionsForSourceHandle({
             sourceHandleId,
@@ -168,7 +150,7 @@ const WorkflowDiagramCanvasEditableInner = () => {
         });
       }, 0);
     },
-    [startNodeCreation, workflowDiagram, workflowDiagramScreenToFlowPosition],
+    [startNodeCreation, workflowDiagramScreenToFlowPosition],
   );
 
   const handleReconnect = useCallback(
