@@ -28,7 +28,7 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import {
   generateViewGroupExceptionMessage,
   ViewGroupExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-group.exception';
+} from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 
 describe('View Group Resolver', () => {
   let testViewId: string;

@@ -5192,6 +5192,7 @@ msgstr "Neunte"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+#: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
 msgid "No"
 msgstr "Nein"
 
@@ -8359,6 +8360,11 @@ msgstr "Jahre"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
 msgstr "ja"
+
+#. js-lingui-id: l75CjT
+#: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
+msgid "Yes"
+msgstr ""
 
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
