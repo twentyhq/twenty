@@ -5261,10 +5261,20 @@ msgstr "No config variables match your current filters. Try adjusting your filte
 msgid "No country"
 msgstr "No country"
 
+#. js-lingui-id: B6C0XJ
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
+msgid "No Data"
+msgstr "No Data"
+
 #. js-lingui-id: 7tCnBa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "No Data Available for Remote Table"
 msgstr "No Data Available for Remote Table"
+
+#. js-lingui-id: VwYM0e
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
+msgid "No data available. Click edit to configure this widget."
+msgstr "No data available. Click edit to configure this widget."
 
 #. js-lingui-id: pxvJ9B
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx

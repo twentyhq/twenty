@@ -5266,10 +5266,20 @@ msgstr "Žádné konfigurační proměnné neodpovídají vašim současným fil
 msgid "No country"
 msgstr "Žádná země"
 
+#. js-lingui-id: B6C0XJ
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
+msgid "No Data"
+msgstr ""
+
 #. js-lingui-id: 7tCnBa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "No Data Available for Remote Table"
 msgstr "Žádná data nejsou dostupná pro vzdálenou tabulku"
+
+#. js-lingui-id: VwYM0e
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
+msgid "No data available. Click edit to configure this widget."
+msgstr ""
 
 #. js-lingui-id: pxvJ9B
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx

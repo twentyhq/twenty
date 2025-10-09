@@ -5268,10 +5268,20 @@ msgstr "Inga konfigurationsvariabler matchar dina nuvarande filter. Försök att
 msgid "No country"
 msgstr "Inget land"
 
+#. js-lingui-id: B6C0XJ
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
+msgid "No Data"
+msgstr ""
+
 #. js-lingui-id: 7tCnBa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "No Data Available for Remote Table"
 msgstr "Inga data tillgängliga för fjärrtabell"
+
+#. js-lingui-id: VwYM0e
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
+msgid "No data available. Click edit to configure this widget."
+msgstr ""
 
 #. js-lingui-id: pxvJ9B
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
