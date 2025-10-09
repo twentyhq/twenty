@@ -1,8 +1,8 @@
-import { type ObjectRecord } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import { type ObjectRecordProperties } from 'src/engine/core-modules/record-crud/types/object-record-properties.type';
 
 export type CreateRecordParams = {
   objectName: string;
-  objectRecord: ObjectRecord;
+  objectRecord: ObjectRecordProperties;
   workspaceId: string;
   roleId?: string;
 };

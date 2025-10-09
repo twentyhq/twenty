@@ -3,17 +3,16 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ObjectRecord = Record<string, any>;
+import { type ObjectRecordProperties } from 'src/engine/core-modules/record-crud/types/object-record-properties.type';
 
 export type WorkflowCreateRecordActionInput = {
   objectName: string;
-  objectRecord: ObjectRecord;
+  objectRecord: ObjectRecordProperties;
 };
 
 export type WorkflowUpdateRecordActionInput = {
   objectName: string;
-  objectRecord: ObjectRecord;
+  objectRecord: ObjectRecordProperties;
   objectRecordId: string;
   fieldsToUpdate: string[];
 };
