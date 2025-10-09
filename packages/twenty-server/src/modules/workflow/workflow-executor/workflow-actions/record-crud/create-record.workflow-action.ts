@@ -4,15 +4,15 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import {
+  RecordCrudException,
+  RecordCrudExceptionCode,
+} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import {
-  RecordCRUDActionException,
-  RecordCRUDActionExceptionCode,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
 import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
 @Injectable()
@@ -35,9 +35,9 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
-      throw new RecordCRUDActionException(
+      throw new RecordCrudException(
         'Failed to create: Workspace ID is required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+        RecordCrudExceptionCode.INVALID_REQUEST,
       );
     }
 
@@ -53,9 +53,9 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     });
 
     if (!toolOutput.success) {
-      throw new RecordCRUDActionException(
+      throw new RecordCrudException(
         toolOutput.error || toolOutput.message,
-        RecordCRUDActionExceptionCode.RECORD_CREATION_FAILED,
+        RecordCrudExceptionCode.RECORD_CREATION_FAILED,
       );
     }
 

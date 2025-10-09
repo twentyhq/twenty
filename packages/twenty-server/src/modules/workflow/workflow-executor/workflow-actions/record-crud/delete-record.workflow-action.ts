@@ -4,6 +4,10 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import {
+  RecordCrudException,
+  RecordCrudExceptionCode,
+} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import {
@@ -13,10 +17,6 @@ import {
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import {
-  RecordCRUDActionException,
-  RecordCRUDActionExceptionCode,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
 import { isWorkflowDeleteRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-delete-record-action.guard';
 import { type WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
@@ -54,18 +54,18 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       !isValidUuid(workflowActionInput.objectRecordId) ||
       !isDefined(workflowActionInput.objectName)
     ) {
-      throw new RecordCRUDActionException(
+      throw new RecordCrudException(
         'Failed to delete: Object record ID and name are required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+        RecordCrudExceptionCode.INVALID_REQUEST,
       );
     }
 
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
-      throw new RecordCRUDActionException(
+      throw new RecordCrudException(
         'Failed to delete: Workspace ID is required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+        RecordCrudExceptionCode.INVALID_REQUEST,
       );
     }
 
@@ -77,9 +77,9 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
     });
 
     if (!toolOutput.success) {
-      throw new RecordCRUDActionException(
+      throw new RecordCrudException(
         toolOutput.error || toolOutput.message,
-        RecordCRUDActionExceptionCode.RECORD_DELETION_FAILED,
+        RecordCrudExceptionCode.RECORD_DELETION_FAILED,
       );
     }
 

@@ -4,6 +4,10 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import {
+  RecordCrudException,
+  RecordCrudExceptionCode,
+} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import {
@@ -13,10 +17,6 @@ import {
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import {
-  RecordCRUDActionException,
-  RecordCRUDActionExceptionCode,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
@@ -52,9 +52,9 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
-      throw new RecordCRUDActionException(
+      throw new RecordCrudException(
         'Failed to read: Workspace ID is required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+        RecordCrudExceptionCode.INVALID_REQUEST,
       );
     }
 
@@ -67,9 +67,9 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     });
 
     if (!toolOutput.success) {
-      throw new RecordCRUDActionException(
+      throw new RecordCrudException(
         toolOutput.error || toolOutput.message,
-        RecordCRUDActionExceptionCode.QUERY_FAILED,
+        RecordCrudExceptionCode.QUERY_FAILED,
       );
     }
 
