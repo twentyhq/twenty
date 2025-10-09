@@ -24,14 +24,18 @@ describe('formatDateByGranularity', () => {
     jest.restoreAllMocks();
   });
 
-  const testCases = [
+  const testCases: {
+    granularity:
+      | ObjectRecordGroupByDateGranularity.DAY
+      | ObjectRecordGroupByDateGranularity.MONTH
+      | ObjectRecordGroupByDateGranularity.QUARTER
+      | ObjectRecordGroupByDateGranularity.YEAR
+      | ObjectRecordGroupByDateGranularity.NONE;
+  }[] = [
     { granularity: ObjectRecordGroupByDateGranularity.DAY },
     { granularity: ObjectRecordGroupByDateGranularity.MONTH },
     { granularity: ObjectRecordGroupByDateGranularity.QUARTER },
     { granularity: ObjectRecordGroupByDateGranularity.YEAR },
-    { granularity: ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK },
-    { granularity: ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR },
-    { granularity: ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR },
     { granularity: ObjectRecordGroupByDateGranularity.NONE },
   ];
 
@@ -43,7 +47,10 @@ describe('formatDateByGranularity', () => {
   );
 
   describe('quarter calculations', () => {
-    const quarterTestCases = [
+    const quarterTestCases: {
+      date: Date;
+      granularity: ObjectRecordGroupByDateGranularity.QUARTER;
+    }[] = [
       {
         date: new Date('2024-01-15'),
         granularity: ObjectRecordGroupByDateGranularity.QUARTER,
@@ -59,22 +66,6 @@ describe('formatDateByGranularity', () => {
       {
         date: new Date('2024-10-15'),
         granularity: ObjectRecordGroupByDateGranularity.QUARTER,
-      },
-      {
-        date: new Date('2024-01-15'),
-        granularity: ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR,
-      },
-      {
-        date: new Date('2024-04-15'),
-        granularity: ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR,
-      },
-      {
-        date: new Date('2024-07-15'),
-        granularity: ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR,
-      },
-      {
-        date: new Date('2024-10-15'),
-        granularity: ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR,
       },
     ];
 

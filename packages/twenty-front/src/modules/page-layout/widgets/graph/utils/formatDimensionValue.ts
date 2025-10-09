@@ -4,7 +4,7 @@ import { formatDateByGranularity } from '@/page-layout/widgets/graph/utils/forma
 import { t } from '@lingui/core/macro';
 import {
   FieldMetadataType,
-  type ObjectRecordGroupByDateGranularity,
+  ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -72,6 +72,16 @@ export const formatDimensionValue = ({
     case FieldMetadataType.DATE:
     case FieldMetadataType.DATE_TIME: {
       // TODO: granularity will be passed from the graph configuration when implemented
+      if (
+        dateGranularity ===
+          ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||
+        dateGranularity ===
+          ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR ||
+        dateGranularity ===
+          ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR
+      ) {
+        return String(value);
+      }
       return formatDateByGranularity(new Date(String(value)), dateGranularity);
     }
 
