@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 
-import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/args-validation/filter-validation/constants/test-object-gql-fields.constant';
-import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/args-validation/utils/get-field-metadata-creation-inputs.util';
+import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/inputs-validation/filter-validation/constants/test-object-gql-fields.constant';
+import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/inputs-validation/utils/get-field-metadata-creation-inputs.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';

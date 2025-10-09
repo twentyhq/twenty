@@ -1,4 +1,4 @@
-import { type FieldMetadataTypeToTest } from 'test/integration/graphql/suites/args-validation/types/field-metadata-type-to-test';
+import { type FieldMetadataTypeToTest } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import {
   FieldMetadataType,
   RelationType,

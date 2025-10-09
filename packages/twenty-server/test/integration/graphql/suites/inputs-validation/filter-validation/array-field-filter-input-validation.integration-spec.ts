@@ -1,11 +1,11 @@
-import { successfulFilterInputByFieldMetadataType } from 'test/integration/graphql/suites/args-validation/filter-validation/constants/successful-filter-input-by-field-metadata-type.constant';
-import { testGqlSuccessfulScenario } from 'test/integration/graphql/suites/args-validation/filter-validation/utils/test-gql-successful-scenario.util';
-import { testRestSuccessfulScenario } from 'test/integration/graphql/suites/args-validation/filter-validation/utils/test-rest-successful-scenario.util';
-import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/args-validation/utils/destroy-many-objects-metadata';
-import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suites/args-validation/utils/setup-test-objects-with-all-field-types.util';
+import { successfulFilterInputByFieldMetadataType } from 'test/integration/graphql/suites/inputs-validation/filter-validation/constants/successful-filter-input-by-field-metadata-type.constant';
+import { testGqlSuccessfulScenario } from 'test/integration/graphql/suites/inputs-validation/filter-validation/utils/test-gql-successful-scenario.util';
+import { testRestSuccessfulScenario } from 'test/integration/graphql/suites/inputs-validation/filter-validation/utils/test-rest-successful-scenario.util';
+import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/inputs-validation/utils/destroy-many-objects-metadata';
+import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-const FIELD_METADATA_TYPE = FieldMetadataType.RAW_JSON;
+const FIELD_METADATA_TYPE = FieldMetadataType.ARRAY;
 // const failingTestCases =
 //   failingFilterInputByFieldMetadataType[FIELD_METADATA_TYPE];
 const successfulTestCases =
@@ -33,7 +33,7 @@ describe(`Filter args validation - ${FIELD_METADATA_TYPE}`, () => {
     ]);
   });
 
-  // describe('Gql filterInput - failure', () => {
+  // describe('Gql filter input - failure', () => {
   //   it.each(
   //     failingTestCases.map((testCase) => ({
   //       ...testCase,
@@ -53,7 +53,7 @@ describe(`Filter args validation - ${FIELD_METADATA_TYPE}`, () => {
   // });
 
   // // TODO : Refacto-common - Uncomment this
-  // describe('Rest filterInput - failure', () => {
+  // describe('Rest filter input - failure', () => {
   //   it.each(
   //     failingTestCases.map((testCase) => ({
   //       ...testCase,
@@ -71,7 +71,7 @@ describe(`Filter args validation - ${FIELD_METADATA_TYPE}`, () => {
   //   );
   // });
 
-  describe('Gql filterInput - success', () => {
+  describe('Gql filter input - success', () => {
     it.each(
       successfulTestCases.map((testCase) => ({
         ...testCase,
@@ -90,7 +90,7 @@ describe(`Filter args validation - ${FIELD_METADATA_TYPE}`, () => {
     );
   });
 
-  describe('Rest filterInput - success', () => {
+  describe('Rest filter input - success', () => {
     it.each(
       successfulTestCases.map((testCase) => ({
         ...testCase,

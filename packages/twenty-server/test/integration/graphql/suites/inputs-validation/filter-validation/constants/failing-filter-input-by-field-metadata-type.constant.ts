@@ -1,4 +1,4 @@
-import { type FieldMetadataTypeToTest } from 'test/integration/graphql/suites/args-validation/types/field-metadata-type-to-test';
+import { type FieldMetadataTypeToTest } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
