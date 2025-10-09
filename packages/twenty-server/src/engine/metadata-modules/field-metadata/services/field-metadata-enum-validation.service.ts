@@ -60,7 +60,7 @@ export class FieldMetadataEnumValidationService {
 
     if (shouldThrow) {
       throw new FieldMetadataException(
-        'Invalid field input',
+        message.message ?? 'Invalid field input',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         {
           userFriendlyMessage: message,

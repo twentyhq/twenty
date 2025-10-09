@@ -11,7 +11,7 @@ export const validateFlatFieldMetadataName = (
     if (isInvalid) {
       return {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: message.id ?? '',
+        message: message.message ?? '',
         userFriendlyMessage: message,
         value: name,
       };
