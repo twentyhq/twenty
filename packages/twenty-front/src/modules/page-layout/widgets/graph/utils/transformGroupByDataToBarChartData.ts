@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { getGroupByQueryName } from '@/page-layout/utils/getGroupByQueryName';
 import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
@@ -13,7 +14,6 @@ import {
   AxisNameDisplay,
   type BarChartConfiguration,
 } from '~/generated/graphql';
-import { getGroupByQueryName } from '../../../utils/getGroupByQueryName';
 
 type TransformGroupByDataToBarChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;
