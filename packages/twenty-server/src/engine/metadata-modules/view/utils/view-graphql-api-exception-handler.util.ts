@@ -1,3 +1,4 @@
+import { type I18n } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
@@ -31,9 +32,9 @@ import {
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { workspaceMigrationBuilderExceptionV2Formatter } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter';
 
-export const viewGraphqlApiExceptionHandler = (error: Error) => {
+export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
   if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
-    return workspaceMigrationBuilderExceptionV2Formatter(error);
+    return workspaceMigrationBuilderExceptionV2Formatter(error, i18n);
   }
 
   if (error instanceof ViewException) {

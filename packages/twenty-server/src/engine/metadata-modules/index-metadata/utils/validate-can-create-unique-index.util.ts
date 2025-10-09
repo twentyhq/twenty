@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -30,7 +30,7 @@ export const validateCanCreateUniqueIndex = (
       `Unique index cannot be created for field ${field.name} of type ${fieldType}`,
       FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       {
-        userFriendlyMessage: t`${fieldType} fields cannot be unique.`,
+        userFriendlyMessage: msg`${fieldType} fields cannot be unique.`,
       },
     );
   }
