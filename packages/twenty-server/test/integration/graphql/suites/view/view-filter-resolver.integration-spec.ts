@@ -12,7 +12,7 @@ import { updateOneCoreViewFilter } from 'test/integration/metadata/suites/view-f
 import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
-const TEST_NOT_EXISTING_VIEW_FILTER_ID = '20202020-0000-0000-0000-000000000000';
+const TEST_NOT_EXISTING_VIEW_FILTER_ID = '20202020-52c5-4152-8c09-76a845fb8ece';
 
 describe('View Filter Resolver', () => {
   let testViewId: string;
