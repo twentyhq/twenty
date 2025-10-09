@@ -367,8 +367,7 @@ export class ViewFieldService {
         throw new UserInputError(
           'Label metadata identifier must keep the minimal position in the view.',
           {
-            userFriendlyMessage:
-              'Record text must be in first position of the view.',
+            userFriendlyMessage: msg`Record text must be in first position of the view.`,
           },
         );
       }
@@ -386,8 +385,7 @@ export class ViewFieldService {
         throw new UserInputError(
           'Label metadata identifier must keep the minimal position in the view.',
           {
-            userFriendlyMessage:
-              'Record text must be in first position of the view.',
+            userFriendlyMessage: msg`Record text must be in first position of the view.`,
           },
         );
       }

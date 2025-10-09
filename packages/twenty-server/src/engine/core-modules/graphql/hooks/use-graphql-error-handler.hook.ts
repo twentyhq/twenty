@@ -205,7 +205,6 @@ export const useGraphQLErrorHandlerHook = <
             }
 
             // Step 3: Transform errors for GraphQL response (clean GraphQL errors)
-            // Get user locale for translation
             const userLocale =
               args.contextValue.req.user?.locale ?? SOURCE_LOCALE;
             const i18n = options.i18nService.getI18nInstance(
@@ -220,14 +219,10 @@ export const useGraphQLErrorHandlerHook = <
                       ...error,
                       extensions: {
                         ...error.extensions,
-                        userFriendlyMessage:
-                          typeof error.extensions.userFriendlyMessage ===
-                          'string'
-                            ? error.extensions.userFriendlyMessage
-                            : i18n._(
-                                error.extensions.userFriendlyMessage ??
-                                  defaultErrorMessage,
-                              ),
+                        userFriendlyMessage: i18n._(
+                          error.extensions.userFriendlyMessage ??
+                            defaultErrorMessage,
+                        ),
                       },
                     }
                   : generateGraphQLErrorFromError(error, i18n);

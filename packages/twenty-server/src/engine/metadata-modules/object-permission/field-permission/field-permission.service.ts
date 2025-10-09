@@ -430,10 +430,12 @@ export class FieldPermissionService {
                   firstFieldPermission.canUpdateFieldValue;
 
               if (hasConflictingPermissions) {
+                const fieldName = fieldMetadata.name;
+
                 throw new UserInputError(
                   'Conflicting field permissions found for relation target field',
                   {
-                    userFriendlyMessage: `Contradicting field permissions have been detected on a relation field (${fieldMetadata.name}).`,
+                    userFriendlyMessage: msg`Contradicting field permissions have been detected on a relation field (${fieldName}).`,
                   },
                 );
               }

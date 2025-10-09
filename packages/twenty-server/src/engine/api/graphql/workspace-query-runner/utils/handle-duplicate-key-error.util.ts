@@ -51,22 +51,27 @@ export const handleDuplicateKeyError = (
     const columnNames = affectedColumns.join(', ');
 
     if (affectedColumns?.length === 1) {
+      const fieldName = columnNames.toLowerCase();
+      const valueInfo = duplicatedValues
+        ? `with value ${duplicatedValues}`
+        : '';
+
       throw new UserInputError(
         `Duplicate ${columnNames} ${duplicatedValues ? `with value ${duplicatedValues}` : ''}. Please set a unique one.`,
         {
-          // eslint-disable-next-line lingui/no-expression-in-message
-          userFriendlyMessage: msg`This ${columnNames.toLowerCase()} ${duplicatedValues ? `with value ${duplicatedValues}` : ''} is already taken. Please choose a different value.`,
+          userFriendlyMessage: msg`This ${fieldName} ${valueInfo} is already taken. Please choose a different value.`,
           isExpected: true,
         },
       );
     }
 
+    const fieldNames = columnNames.toLowerCase();
+
     throw new TwentyORMException(
       `A duplicate entry was detected. The combination of ${columnNames} must be unique.`,
       TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED,
       {
-        // eslint-disable-next-line lingui/no-expression-in-message
-        userFriendlyMessage: msg`This combination of ${columnNames.toLowerCase()} already exists. Please use different values.`,
+        userFriendlyMessage: msg`This combination of ${fieldNames} already exists. Please use different values.`,
       },
     );
   }

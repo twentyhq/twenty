@@ -34,7 +34,7 @@ export enum ErrorCode {
 }
 
 type RestrictedGraphQLErrorExtensions = {
-  userFriendlyMessage?: string | MessageDescriptor;
+  userFriendlyMessage?: MessageDescriptor;
   subCode?: string;
 };
 

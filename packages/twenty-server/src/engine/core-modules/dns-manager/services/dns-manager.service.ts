@@ -219,12 +219,14 @@ export class DnsManagerService {
     }
 
     // should never happen. error 5xx
+    const hostnameCount = customHostnames.result.length;
+    const domainName = hostname;
+
     throw new DnsManagerException(
       'More than one custom hostname found in cloudflare',
       DnsManagerExceptionCode.MULTIPLE_HOSTNAMES_FOUND,
       {
-        // eslint-disable-next-line lingui/no-expression-in-message
-        userFriendlyMessage: msg`${customHostnames.result.length} hostnames found for domain '${hostname}'. Expect 1`,
+        userFriendlyMessage: msg`${hostnameCount} hostnames found for domain '${domainName}'. Expect 1`,
       },
     );
   }
