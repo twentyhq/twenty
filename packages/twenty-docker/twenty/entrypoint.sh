@@ -42,4 +42,5 @@ setup_and_migrate_db
 register_background_jobs
 
 # Continue with the original Docker command
-exec "$@"
+# Use sh -c to handle commands passed as a single string
+exec sh -c "$*"
