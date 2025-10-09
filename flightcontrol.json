@@ -65,10 +65,9 @@
           "id": "twenty-background",
           "name": "Twenty Worker",
           "type": "worker",
-          "buildType": "fromService",
-          "fromService": {
-            "id": "twenty-server"
-          },
+          "buildType": "docker",
+          "dockerfilePath": "packages/twenty-docker/twenty/Dockerfile",
+          "dockerContext": ".",
           "cpu": 0.5,
           "memory": 1,
           "startCommand": "node dist/src/queue-worker/queue-worker",
