@@ -82,7 +82,7 @@ export class FindManyResolverFactory
             hasPreviousPage: pageInfo.hasPreviousPage,
           });
         } catch (error) {
-          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

@@ -94,7 +94,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
 
   async commonHandle(request: AuthenticatedRequest) {
     try {
-      const parsedArgs = await this.parseRequestArgs(request);
+      const parsedArgs = this.parseRequestArgs(request);
       const {
         authContext,
         objectMetadataItemWithFieldMaps,
@@ -127,7 +127,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
     }
   }
 
-  private async formatRestResponse(
+  private formatRestResponse(
     records: ObjectRecord[],
     aggregatedValues: Record<string, number>,
     objectNamePlural: string,
@@ -142,7 +142,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
     };
   }
 
-  private async parseRequestArgs(request: AuthenticatedRequest) {
+  private parseRequestArgs(request: AuthenticatedRequest) {
     const depth = parseDepthRestRequest(request);
     const limit = parseLimitRestRequest(request);
     const orderBy = parseOrderByRestRequest(request);

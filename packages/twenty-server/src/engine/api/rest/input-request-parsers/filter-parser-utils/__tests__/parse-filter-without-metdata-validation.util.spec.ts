@@ -71,7 +71,7 @@ describe('parseFilterWithoutMetadataValidation', () => {
     });
   });
 
-  it('should handler not', () => {
+  it('should handle not', () => {
     expect(
       parseFilterWithoutMetadataValidation(
         'and(fieldNumber[eq]:1,not(fieldNumber[eq]:2))',

@@ -618,7 +618,7 @@ export abstract class RestApiBaseHandler {
     const authContext = this.getAuthContextFromRequest(request);
 
     return {
-      authContext: authContext,
+      authContext,
       objectMetadataItemWithFieldMaps: objectMetadataMapItem,
       objectMetadataMaps: objectMetadataMaps,
     };

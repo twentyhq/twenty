@@ -146,8 +146,7 @@ export class CommonResultGettersService {
       );
     } else {
       this.logger.warn(
-        `Query result field is not a record or record array. 
-            This is an undetected case in query result getter that should be implemented !!`,
+        `Query result field is not a record array. This is an undetected case in query result getter that should be implemented !!`,
       );
 
       return queryResultField;
