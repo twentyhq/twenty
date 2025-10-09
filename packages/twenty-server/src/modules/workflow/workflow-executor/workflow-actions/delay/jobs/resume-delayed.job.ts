@@ -14,10 +14,10 @@ import {
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
-@Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
+@Processor({ queueName: MessageQueue.workflowDelayedJobsQueue, scope: Scope.REQUEST })
 export class ResumeDelayedJob {
   constructor(
-    @InjectMessageQueue(MessageQueue.workflowQueue)
+    @InjectMessageQueue(MessageQueue.workflowDelayedJobsQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
