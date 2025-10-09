@@ -64,6 +64,10 @@ export const CommandMenuItemDropdown = ({
       onOpen={() => {
         setSelectedItemId(id);
       }}
+      middlewareBoundaryPadding={{
+        right: 0,
+        left: 0,
+      }}
     />
   );
 };
