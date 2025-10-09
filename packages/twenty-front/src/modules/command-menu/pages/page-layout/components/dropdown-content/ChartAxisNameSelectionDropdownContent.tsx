@@ -2,7 +2,6 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -11,7 +10,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { Trans } from '@lingui/react/macro';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { AxisNameDisplay } from '~/generated/graphql';
 
@@ -60,9 +58,6 @@ export const ChartAxisNameSelectionDropdownContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader>
-        <Trans>Axis Name</Trans>
-      </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}

@@ -289,6 +289,8 @@ export type BarChartConfiguration = {
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
   groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
+  groupBySubFieldNameX?: Maybe<Scalars['String']>;
+  groupBySubFieldNameY?: Maybe<Scalars['String']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
   orderByX: GraphOrderBy;
   orderByY?: Maybe<GraphOrderBy>;
@@ -1162,6 +1164,7 @@ export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_CALENDAR_VIEW_ENABLED = 'IS_CALENDAR_VIEW_ENABLED',
+  IS_COMMON_API_ENABLED = 'IS_COMMON_API_ENABLED',
   IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DYNAMIC_SEARCH_FIELDS_ENABLED = 'IS_DYNAMIC_SEARCH_FIELDS_ENABLED',
@@ -1561,6 +1564,8 @@ export type LineChartConfiguration = {
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
   groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
+  groupBySubFieldNameX?: Maybe<Scalars['String']>;
+  groupBySubFieldNameY?: Maybe<Scalars['String']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
   orderByX: GraphOrderBy;
   orderByY?: Maybe<GraphOrderBy>;
@@ -2878,6 +2883,7 @@ export type PieChartConfiguration = {
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataId: Scalars['UUID'];
+  groupBySubFieldName?: Maybe<Scalars['String']>;
   orderBy: GraphOrderBy;
 };
 
@@ -3502,7 +3508,6 @@ export type ServerlessFunction = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   latestVersion?: Maybe<Scalars['String']>;
-  latestVersionInputSchema?: Maybe<Scalars['JSON']>;
   name: Scalars['String'];
   publishedVersions: Array<Scalars['String']>;
   runtime: Scalars['String'];

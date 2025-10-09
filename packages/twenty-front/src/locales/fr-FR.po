@@ -124,6 +124,11 @@ msgstr "{failedCount} fichier a échoué lors du téléchargement"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} enregistrements sur {formattedRecordsToImportCount} importés."
 
+#. js-lingui-id: 2EPGDl
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
+msgid "{graphTypeLabel} Chart"
+msgstr ""
+
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
@@ -258,6 +263,21 @@ msgstr "Un environnement partagé où vous pourrez gérer vos relations clients 
 msgid "A verification email has been sent to"
 msgstr "Un e-mail de vérification a été envoyé à"
 
+#. js-lingui-id: DqlQy+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Ability to add more than one email address"
+msgstr ""
+
+#. js-lingui-id: XkK/Vw
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Ability to add more than one phone number"
+msgstr ""
+
+#. js-lingui-id: ICtlXD
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Ability to add more than one URL"
+msgstr ""
+
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
@@ -378,6 +398,11 @@ msgstr "Actif"
 msgid "Active API keys created by you or your team."
 msgstr "Clés API actives créées par vous ou votre équipe."
 
+#. js-lingui-id: QXX2VR
+#: src/modules/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem.tsx
+msgid "Add \"{trimmedName}\" to options"
+msgstr ""
+
 #. js-lingui-id: m3/V2n
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -444,6 +469,11 @@ msgstr "Ajouter le transfert"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Add inputs to your form"
 msgstr "Ajoutez des entrées à votre formulaire"
+
+#. js-lingui-id: NQ8llq
+#: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
+msgid "Add item"
+msgstr ""
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
@@ -530,6 +560,7 @@ msgid "Add view"
 msgstr "Ajouter une vue"
 
 #. js-lingui-id: iRpDWj
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr "Ajouter un widget"
@@ -758,6 +789,11 @@ msgstr "Permettre l'invitation de nouveaux utilisateurs en partageant un lien d'
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow users to sign in with an email and password."
 msgstr "Permettre aux utilisateurs de se connecter avec un courriel et un mot de passe."
+
+#. js-lingui-id: VD5bNu
+#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
+msgid "An error occurred while checking user existence"
+msgstr ""
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -1131,11 +1167,6 @@ msgstr "Moyenne"
 msgid "Axis name"
 msgstr ""
 
-#. js-lingui-id: yzbH0K
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAxisNameSelectionDropdownContent.tsx
-msgid "Axis Name"
-msgstr ""
-
 #. js-lingui-id: iH8pgl
 #: src/pages/onboarding/BookCall.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
@@ -1148,9 +1179,9 @@ msgstr "Retour"
 msgid "Back to content"
 msgstr "Retour au contenu"
 
-#. js-lingui-id: LiFJll
+#. js-lingui-id: GoBp8L
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Bar Chart"
+msgid "Bar"
 msgstr ""
 
 #. js-lingui-id: NgFKo1
@@ -1539,6 +1570,11 @@ msgstr "Cliquez sur \"Ajouter un champ de sortie\" ci-dessous pour définir la s
 msgid "Click on the checkmark to apply your changes."
 msgstr "Cliquez sur la coche pour appliquer vos modifications."
 
+#. js-lingui-id: WTlZnA
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+msgid "Click to add your first widget"
+msgstr ""
+
 #. js-lingui-id: d0rtA5
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "Click to see data"
@@ -1586,11 +1622,6 @@ msgstr "Éditeur de code"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Collapse"
 msgstr "Réduire"
-
-#. js-lingui-id: jZlrte
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
-msgid "Color"
-msgstr ""
 
 #. js-lingui-id: Xose0w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -3048,6 +3079,11 @@ msgstr "Entrez une valeur à stocker dans la base de données"
 msgid "Enter agent name*"
 msgstr "Entrer le nom de l'agent*"
 
+#. js-lingui-id: wgNkIh
+#: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
+msgid "Enter an item"
+msgstr ""
+
 #. js-lingui-id: kOybqX
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Enter array of items or variable expression"
@@ -3545,8 +3581,7 @@ msgid "Feature Flags & Impersonation"
 msgstr "Drapeaux de fonctionnalité & Usurpation d'identité"
 
 #. js-lingui-id: AXjA78
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/utils/getFieldLabelWithSubField.ts
 msgid "Field"
 msgstr ""
 
@@ -3740,9 +3775,9 @@ msgstr "Fonctions"
 msgid "Functions - Settings"
 msgstr "Fonctions - Paramètres"
 
-#. js-lingui-id: vYj1cC
+#. js-lingui-id: IZUMtC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Gauge Chart"
+msgid "Gauge"
 msgstr ""
 
 #. js-lingui-id: Weq9zb
@@ -4607,9 +4642,14 @@ msgstr "Inférieur ou égal à"
 msgid "Light"
 msgstr "Clair"
 
-#. js-lingui-id: pFkLY3
+#. js-lingui-id: Qds9fe
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Limit how many values can be added to this field"
+msgstr ""
+
+#. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Line Chart"
+msgid "Line"
 msgstr ""
 
 #. js-lingui-id: pQjjYo
@@ -4641,6 +4681,11 @@ msgstr "Chargement du csv ... "
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
 msgstr "Chargement des données de métriques..."
+
+#. js-lingui-id: tVSmFT
+#: src/modules/ui/input/components/IconPicker.tsx
+msgid "Loading more..."
+msgstr ""
 
 #. js-lingui-id: Z3FXyt
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -4753,6 +4798,26 @@ msgstr "Max"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
 msgstr "Capacité d'importation maximale : {formatSpreadsheetMaxRecordImportCapacity} enregistrements. Sinon, envisagez de diviser votre fichier ou d'utiliser l'API."
+
+#. js-lingui-id: DBiUDH
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum email addresses"
+msgstr ""
+
+#. js-lingui-id: iwCoSG
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum phone numbers"
+msgstr ""
+
+#. js-lingui-id: aiuTYK
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum URLs"
+msgstr ""
+
+#. js-lingui-id: ZEH/cb
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum values"
+msgstr ""
 
 #. js-lingui-id: nA8kxD
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
@@ -5131,14 +5196,9 @@ msgid "No"
 msgstr "Non"
 
 #. js-lingui-id: xUXmJM
-#: src/modules/object-record/record-field/ui/meta-types/input/components/RelationToOneFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput.tsx
 msgid "No {fieldLabel}"
 msgstr "Pas de {fieldLabel}"
-
-#. js-lingui-id: yWS1Mx
-#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
-msgid "No {objectNameSingular}"
-msgstr "Pas de {objectNameSingular}"
 
 #. js-lingui-id: vhsJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -5245,6 +5305,11 @@ msgstr "Aucune description"
 msgid "No email exchange has occurred with this record yet."
 msgstr "Aucun échange d'e-mails n'a encore eu lieu avec cet enregistrement."
 
+#. js-lingui-id: VEYHd4
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
+msgid "No fields found"
+msgstr ""
+
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/Attachments.tsx
 msgid "No Files"
@@ -5337,6 +5402,7 @@ msgid "No records found"
 msgstr "Aucun enregistrement trouvé"
 
 #. js-lingui-id: Ev2r9A
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 msgid "No results"
@@ -5366,6 +5432,11 @@ msgstr "Aucun champ de sélection"
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "No variables found"
 msgstr "Aucune variable trouvée"
+
+#. js-lingui-id: xyEjfo
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+msgid "No widgets yet"
+msgstr ""
 
 #. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -5448,14 +5519,10 @@ msgstr "maintenant"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
 msgstr "Nombre"
-
-#. js-lingui-id: oVhZzL
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Number Chart"
-msgstr ""
 
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -5826,9 +5893,9 @@ msgstr ""
 msgid "Picture"
 msgstr "Photo"
 
-#. js-lingui-id: 3ubdv5
+#. js-lingui-id: ZjVniv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Pie Chart"
+msgid "Pie"
 msgstr ""
 
 #. js-lingui-id: GdgCoi
@@ -6488,9 +6555,8 @@ msgstr "Rechercher la devise"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContent.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionDropdownContent.tsx
 msgid "Search fields"
 msgstr "Champs de recherche"
 
@@ -7010,6 +7076,11 @@ msgstr "Certains"
 msgid "Some folders"
 msgstr ""
 
+#. js-lingui-id: yHwG3y
+#: src/modules/command-menu/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Soon"
+msgstr ""
+
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
@@ -7032,7 +7103,6 @@ msgstr ""
 #. js-lingui-id: wdxz7K
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 msgid "Source"
 msgstr "Source"
 
@@ -8204,6 +8274,11 @@ msgstr "Workflows"
 msgid "Workspace"
 msgstr "Espace de travail"
 
+#. js-lingui-id: fQ8teq
+#: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
+msgid "Workspace creation failed"
+msgstr ""
+
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
@@ -8257,39 +8332,9 @@ msgstr "Rédigez une description pour cet agent"
 msgid "X axis"
 msgstr ""
 
-#. js-lingui-id: RcQhRY
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionDropdownContent.tsx
-msgid "X-Axis Field"
-msgstr ""
-
-#. js-lingui-id: zYqibM
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartXAxisSortBySelectionDropdownContent.tsx
-msgid "X-Axis Sort By"
-msgstr ""
-
 #. js-lingui-id: fplGg6
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 msgid "Y axis"
-msgstr ""
-
-#. js-lingui-id: uE3dsE
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
-msgid "Y-Axis Aggregate Operation"
-msgstr ""
-
-#. js-lingui-id: ceYpLC
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
-msgid "Y-Axis Field"
-msgstr ""
-
-#. js-lingui-id: mlqi7p
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContent.tsx
-msgid "Y-Axis Group By Field"
-msgstr ""
-
-#. js-lingui-id: Q+dSNn
-#: src/modules/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent.tsx
-msgid "Y-Axis Sort By"
 msgstr ""
 
 #. js-lingui-id: 7qI8sJ

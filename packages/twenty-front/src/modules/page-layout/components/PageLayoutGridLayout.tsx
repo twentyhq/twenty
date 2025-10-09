@@ -1,5 +1,3 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
@@ -75,8 +73,6 @@ export const PageLayoutGridLayout = () => {
 
   const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
-
   const { currentPageLayout } = useCurrentPageLayout();
 
   if (!isDefined(activeTabId) || !isDefined(currentPageLayout)) {
@@ -128,14 +124,7 @@ export const PageLayoutGridLayout = () => {
         >
           {isLayoutEmpty ? (
             <div key="empty-placeholder" data-select-disable="true">
-              <WidgetPlaceholder
-                onClick={() => {
-                  navigatePageLayoutCommandMenu({
-                    commandMenuPage:
-                      CommandMenuPages.PageLayoutWidgetTypeSelect,
-                  });
-                }}
-              />
+              <WidgetPlaceholder />
             </div>
           ) : (
             activeTabWidgets?.map((widget) => (
