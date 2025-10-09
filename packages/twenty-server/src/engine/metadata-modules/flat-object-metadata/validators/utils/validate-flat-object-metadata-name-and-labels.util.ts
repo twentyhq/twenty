@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
@@ -39,7 +39,7 @@ export const validateFlatObjectMetadataNameAndLabels = ({
     errors.push({
       code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
       message: t`Names are not synced with labels`,
-      userFriendlyMessage: t`Names are not synced with labels`,
+      userFriendlyMessage: msg`Names are not synced with labels`,
     });
   }
 
@@ -54,7 +54,7 @@ export const validateFlatObjectMetadataNameAndLabels = ({
     errors.push({
       code: ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
       message: 'Object already exists',
-      userFriendlyMessage: t`Object already exists`,
+      userFriendlyMessage: msg`Object already exists`,
     });
   }
 

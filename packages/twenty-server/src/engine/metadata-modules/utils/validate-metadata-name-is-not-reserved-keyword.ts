@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 
 import {
   InvalidMetadataException,
@@ -74,7 +74,7 @@ export const validateMetadataNameIsNotReservedKeywordOrThrow = (
       `The name "${name}" is not available`,
       InvalidMetadataExceptionCode.RESERVED_KEYWORD,
       {
-        userFriendlyMessage: t`This name is not available.`,
+        userFriendlyMessage: msg`This name is not available.`,
       },
     );
   }

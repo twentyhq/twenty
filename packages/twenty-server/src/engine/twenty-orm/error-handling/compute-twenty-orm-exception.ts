@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { QueryFailedError } from 'typeorm';
 
@@ -25,7 +25,7 @@ export const computeTwentyORMException = (
         'Query read timeout',
         TwentyORMExceptionCode.QUERY_READ_TIMEOUT,
         {
-          userFriendlyMessage: t`We are experiencing a temporary issue with our database. Please try again later.`,
+          userFriendlyMessage: msg`We are experiencing a temporary issue with our database. Please try again later.`,
         },
       );
     }

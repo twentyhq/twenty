@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
@@ -26,7 +26,7 @@ export const validateLabelIdentifierFieldMetadataIdFlatViewField = ({
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Label identifier view field has to be in the lowest position`,
-      userFriendlyMessage: t`Label identifier view field has to be in the lowest position`,
+      userFriendlyMessage: msg`Label identifier view field has to be in the lowest position`,
     });
   }
 
@@ -34,7 +34,7 @@ export const validateLabelIdentifierFieldMetadataIdFlatViewField = ({
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Label identifier view field has to be visible`,
-      userFriendlyMessage: t`Label identifier view field has to be visible`,
+      userFriendlyMessage: msg`Label identifier view field has to be visible`,
     });
   }
 
@@ -42,7 +42,7 @@ export const validateLabelIdentifierFieldMetadataIdFlatViewField = ({
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Label identifier view field cannot be deleted`,
-      userFriendlyMessage: t`Label identifier view field cannot be deleted`,
+      userFriendlyMessage: msg`Label identifier view field cannot be deleted`,
     });
   }
 

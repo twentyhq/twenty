@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -315,7 +316,7 @@ export class ViewFieldService {
 
     if (newOrUpdatedViewField.isVisible === false) {
       throw new UserInputError('Label metadata identifier must stay visible.', {
-        userFriendlyMessage: 'Record text must stay visible.',
+        userFriendlyMessage: msg`Record text must stay visible.`,
       });
     }
   }

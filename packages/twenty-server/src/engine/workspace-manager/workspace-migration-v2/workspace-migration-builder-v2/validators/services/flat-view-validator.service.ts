@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
@@ -30,7 +30,7 @@ export class FlatViewValidatorService {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View not found`,
-        userFriendlyMessage: t`View not found`,
+        userFriendlyMessage: msg`View not found`,
       });
     }
 
@@ -55,14 +55,14 @@ export class FlatViewValidatorService {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View not found`,
-        userFriendlyMessage: t`View not found`,
+        userFriendlyMessage: msg`View not found`,
       });
     } else {
       if (!isDefined(existingFlatView.deletedAt)) {
         errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
           message: t`View to delete has not been soft deleted`,
-          userFriendlyMessage: t`View to delete has not been soft deleted`,
+          userFriendlyMessage: msg`View to delete has not been soft deleted`,
         });
       }
     }
@@ -90,7 +90,7 @@ export class FlatViewValidatorService {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`Object metadata not found`,
-        userFriendlyMessage: t`Object metadata not found`,
+        userFriendlyMessage: msg`Object metadata not found`,
       });
     }
 
@@ -98,7 +98,7 @@ export class FlatViewValidatorService {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View with same id is already exists`,
-        userFriendlyMessage: t`View already exists`,
+        userFriendlyMessage: msg`View already exists`,
       });
     }
 

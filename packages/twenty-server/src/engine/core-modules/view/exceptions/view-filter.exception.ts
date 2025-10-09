@@ -1,4 +1,5 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -8,7 +9,7 @@ export class ViewFilterException extends CustomException {
   constructor(
     message: string,
     code: ViewFilterExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, { userFriendlyMessage });
   }
@@ -49,13 +50,13 @@ export const generateViewFilterExceptionMessage = (
 
 export const generateViewFilterUserFriendlyExceptionMessage = (
   key: ViewFilterExceptionMessageKey,
-) => {
+): MessageDescriptor | undefined => {
   switch (key) {
     case ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED:
-      return t`WorkspaceId is required to create a view filter.`;
+      return msg`WorkspaceId is required to create a view filter.`;
     case ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED:
-      return t`ViewId is required to create a view filter.`;
+      return msg`ViewId is required to create a view filter.`;
     case ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
-      return t`FieldMetadataId is required to create a view filter.`;
+      return msg`FieldMetadataId is required to create a view filter.`;
   }
 };

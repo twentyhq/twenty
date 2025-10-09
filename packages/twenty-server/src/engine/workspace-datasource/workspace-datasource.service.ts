@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { type DataSource, type EntityManager } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -75,8 +76,7 @@ export class WorkspaceDataSourceService {
       'Method not allowed as permissions are not handled at datasource level.',
       PermissionsExceptionCode.METHOD_NOT_ALLOWED,
       {
-        userFriendlyMessage:
-          'This operation is not allowed. Please try a different approach or contact support if you need assistance.',
+        userFriendlyMessage: msg`This operation is not allowed. Please try a different approach or contact support if you need assistance.`,
       },
     );
   }

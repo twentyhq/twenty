@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { type ClassConstructor, plainToInstance } from 'class-transformer';
 import {
   IsArray,
@@ -196,7 +196,7 @@ export class FieldMetadataValidationService {
             `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
             {
-              userFriendlyMessage: t`Name is not available, it may be duplicating another field's name.`,
+              userFriendlyMessage: msg`Name is not available, it may be duplicating another field's name.`,
             },
           );
         }

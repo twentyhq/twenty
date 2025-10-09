@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
@@ -33,7 +33,7 @@ export class FlatCronTriggerValidatorService {
       errors.push({
         code: CronTriggerExceptionCode.CRON_TRIGGER_NOT_FOUND,
         message: t`Cron trigger not found`,
-        userFriendlyMessage: t`Cron trigger not found`,
+        userFriendlyMessage: msg`Cron trigger not found`,
       });
     }
 
@@ -46,7 +46,7 @@ export class FlatCronTriggerValidatorService {
       errors.push({
         code: CronTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
-        userFriendlyMessage: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 
@@ -72,7 +72,7 @@ export class FlatCronTriggerValidatorService {
       errors.push({
         code: CronTriggerExceptionCode.CRON_TRIGGER_NOT_FOUND,
         message: t`Cron trigger not found`,
-        userFriendlyMessage: t`Cron trigger not found`,
+        userFriendlyMessage: msg`Cron trigger not found`,
       });
     }
 
@@ -102,7 +102,7 @@ export class FlatCronTriggerValidatorService {
       errors.push({
         code: CronTriggerExceptionCode.CRON_TRIGGER_ALREADY_EXIST,
         message: t`Cron trigger with same id already exists`,
-        userFriendlyMessage: t`Cron trigger already exists`,
+        userFriendlyMessage: msg`Cron trigger already exists`,
       });
     }
 
@@ -115,7 +115,7 @@ export class FlatCronTriggerValidatorService {
       errors.push({
         code: CronTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
-        userFriendlyMessage: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 

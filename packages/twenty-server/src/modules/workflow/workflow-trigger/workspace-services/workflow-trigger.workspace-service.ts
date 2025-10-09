@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -214,7 +214,7 @@ export class WorkflowTriggerWorkspaceService {
         'Cannot have more than one active workflow version',
         WorkflowTriggerExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: t`Cannot have more than one active workflow version`,
+          userFriendlyMessage: msg`Cannot have more than one active workflow version`,
         },
       );
     }
@@ -240,7 +240,7 @@ export class WorkflowTriggerWorkspaceService {
         'Cannot disable non-active workflow version',
         WorkflowTriggerExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: t`Cannot disable non-active workflow version`,
+          userFriendlyMessage: msg`Cannot disable non-active workflow version`,
         },
       );
     }

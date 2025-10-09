@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -101,7 +101,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
       code: FieldMetadataExceptionCode.NOT_AVAILABLE,
       value: flatFieldMetadataName,
       message: `Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
-      userFriendlyMessage: t`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
+      userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
     });
   }
 
@@ -110,7 +110,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
       code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
       message: `Name "${flatFieldMetadataName}" is reserved composite field name`,
       value: flatFieldMetadataName,
-      userFriendlyMessage: t`Name "${flatFieldMetadataName}" is not available`,
+      userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available`,
     });
   }
 

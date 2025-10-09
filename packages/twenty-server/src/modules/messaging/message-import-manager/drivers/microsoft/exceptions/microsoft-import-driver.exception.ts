@@ -1,3 +1,6 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
 import { CustomException } from 'src/utils/custom-exception';
 
 export class MicrosoftImportDriverException extends CustomException<string> {
@@ -6,10 +9,11 @@ export class MicrosoftImportDriverException extends CustomException<string> {
     message: string,
     code: string,
     statusCode: number,
-    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
-      userFriendlyMessage: userFriendlyMessage ?? message,
+      userFriendlyMessage:
+        userFriendlyMessage ?? msg`An error occurred during message import`,
     });
     this.statusCode = statusCode;
   }

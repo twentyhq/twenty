@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
@@ -20,7 +20,7 @@ export function assertWorkflowVersionTriggerIsDefined(
       'Workflow version does not contain trigger',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
       {
-        userFriendlyMessage: t`Workflow version does not contain trigger`,
+        userFriendlyMessage: msg`Workflow version does not contain trigger`,
       },
     );
   }

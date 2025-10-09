@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -62,7 +62,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: 'field metadata to update object metadata not found',
-        userFriendlyMessage: t`Object related to field to update not found`,
+        userFriendlyMessage: msg`Object related to field to update not found`,
       });
 
       return validationResult;
@@ -72,7 +72,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
         message: 'Label identifier field metadata id does not exist',
-        userFriendlyMessage: t`Object related to updated field does not have a label identifier`,
+        userFriendlyMessage: msg`Object related to updated field does not have a label identifier`,
       });
     }
 
@@ -83,7 +83,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
         message: 'field metadata to update not found',
-        userFriendlyMessage: t`Field to update not found`,
+        userFriendlyMessage: msg`Field to update not found`,
       });
 
       return validationResult;
@@ -108,7 +108,7 @@ export class FlatFieldMetadataValidatorService {
         validationResult.errors.push({
           code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
           message: `Forbidden updated properties for relation field metadata: ${relationNonEditableUpdatedProperties.join(', ')}`,
-          userFriendlyMessage: t`Forbidden updated properties for relation field metadata`,
+          userFriendlyMessage: msg`Forbidden updated properties for relation field metadata`,
         });
       }
     }
@@ -131,7 +131,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         message: `Name is not synced with label.`,
-        userFriendlyMessage: t`Updated field name is not synced with label`,
+        userFriendlyMessage: msg`Updated field name is not synced with label`,
       });
     }
 
@@ -172,7 +172,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
         message: 'Field metadata to delete not found',
-        userFriendlyMessage: t`Field metadata to delete not found`,
+        userFriendlyMessage: msg`Field metadata to delete not found`,
       });
 
       return validationResult;
@@ -195,7 +195,7 @@ export class FlatFieldMetadataValidatorService {
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         message:
           'Cannot delete, please update the label identifier field first',
-        userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
+        userFriendlyMessage: msg`Cannot delete, please update the label identifier field first`,
       });
     }
 
@@ -218,7 +218,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: "Standard Fields can't be deleted",
-        userFriendlyMessage: t`Standard fields cannot be deleted`,
+        userFriendlyMessage: msg`Standard fields cannot be deleted`,
       });
     }
 
@@ -230,7 +230,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: "Active fields can't be deleted",
-        userFriendlyMessage: t`Active fields cannot be deleted`,
+        userFriendlyMessage: msg`Active fields cannot be deleted`,
       });
     }
 
@@ -265,7 +265,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: 'Object metadata not found',
-        userFriendlyMessage: t`Field to create related object not found`,
+        userFriendlyMessage: msg`Field to create related object not found`,
       });
     } else {
       if (
@@ -276,7 +276,7 @@ export class FlatFieldMetadataValidatorService {
         validationResult.errors.push({
           code: FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS,
           message: 'Field with same id already exists in object',
-          userFriendlyMessage: t`Field already exists`,
+          userFriendlyMessage: msg`Field already exists`,
         });
       }
 
@@ -284,7 +284,7 @@ export class FlatFieldMetadataValidatorService {
         validationResult.errors.push({
           code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
           message: 'Remote objects are read-only',
-          userFriendlyMessage: t`Remote objects are not production ready yet`,
+          userFriendlyMessage: msg`Remote objects are not production ready yet`,
         });
       }
 
@@ -305,7 +305,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
         message: `Name is not synced with label`,
-        userFriendlyMessage: t`Field name is not synced with field label`,
+        userFriendlyMessage: msg`Field name is not synced with field label`,
         value: flatFieldMetadataToValidate.label,
       });
     }

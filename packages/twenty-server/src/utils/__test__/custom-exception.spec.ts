@@ -44,7 +44,10 @@ describe('CustomException', () => {
   it('should set userFriendlyMessage when provided', () => {
     const message = 'Test error message';
     const code = 'TEST_ERROR';
-    const userFriendlyMessage = 'User friendly error message';
+    const userFriendlyMessage = {
+      id: 'test.message',
+      message: 'User friendly error message',
+    };
     const exception = new TestException(message, code, {
       userFriendlyMessage,
     });
@@ -81,7 +84,10 @@ describe('UnknownException', () => {
   it('should set userFriendlyMessage when provided', () => {
     const message = 'Test error message';
     const code = 'TEST_ERROR';
-    const userFriendlyMessage = 'User friendly error message';
+    const userFriendlyMessage = {
+      id: 'test.message',
+      message: 'User friendly error message',
+    };
     const exception = new UnknownException(message, code, {
       userFriendlyMessage,
     });

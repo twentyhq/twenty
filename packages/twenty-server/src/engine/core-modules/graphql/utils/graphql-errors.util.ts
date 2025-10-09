@@ -1,3 +1,4 @@
+import { type MessageDescriptor } from '@lingui/core';
 import {
   type ASTNode,
   GraphQLError,
@@ -33,7 +34,7 @@ export enum ErrorCode {
 }
 
 type RestrictedGraphQLErrorExtensions = {
-  userFriendlyMessage?: string;
+  userFriendlyMessage?: string | MessageDescriptor;
   subCode?: string;
 };
 

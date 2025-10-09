@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import deepEqual from 'deep-equal';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getUniqueConstraintsFields, isDefined } from 'twenty-shared/utils';
@@ -142,7 +142,7 @@ const computeRecordToConnectCondition = (
       `Connect is not allowed for ${connectFieldName} on ${objectMetadata.nameSingular}`,
       TwentyORMExceptionCode.CONNECT_NOT_ALLOWED,
       {
-        userFriendlyMessage: t`Connect is not allowed for ${connectFieldName} on ${objectMetadataNameSingular}`,
+        userFriendlyMessage: msg`Connect is not allowed for ${connectFieldName} on ${objectMetadataNameSingular}`,
       },
     );
   }
@@ -156,7 +156,7 @@ const computeRecordToConnectCondition = (
       `Target object metadata not found for ${connectFieldName}`,
       TwentyORMExceptionCode.MALFORMED_METADATA,
       {
-        userFriendlyMessage: t`Target object metadata not found for ${connectFieldName}`,
+        userFriendlyMessage: msg`Target object metadata not found for ${connectFieldName}`,
       },
     );
   }
@@ -202,7 +202,7 @@ const checkUniqueConstraintFullyPopulated = (
       `Missing required fields: at least one unique constraint have to be fully populated for '${connectFieldName}'.`,
       TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
       {
-        userFriendlyMessage: t`Missing required fields: at least one unique constraint have to be fully populated for '${connectFieldName}'.`,
+        userFriendlyMessage: msg`Missing required fields: at least one unique constraint have to be fully populated for '${connectFieldName}'.`,
       },
     );
   }
@@ -235,7 +235,7 @@ const checkNoRelationFieldConflictOrThrow = (
       `${fieldName} and ${fieldName}Id cannot be both provided.`,
       TwentyORMExceptionCode.CONNECT_NOT_ALLOWED,
       {
-        userFriendlyMessage: t`${fieldName} and ${fieldName}Id cannot be both provided.`,
+        userFriendlyMessage: msg`${fieldName} and ${fieldName}Id cannot be both provided.`,
       },
     );
   }
@@ -284,7 +284,7 @@ const checkUniqueConstraintsAreSameOrThrow = (
       `Expected the same constraint fields to be used consistently across all operations for ${relationConnectQueryConfig.connectFieldName}.`,
       TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
       {
-        userFriendlyMessage: t`Expected the same constraint fields to be used consistently across all operations for ${connectFieldName}.`,
+        userFriendlyMessage: msg`Expected the same constraint fields to be used consistently across all operations for ${connectFieldName}.`,
       },
     );
   }

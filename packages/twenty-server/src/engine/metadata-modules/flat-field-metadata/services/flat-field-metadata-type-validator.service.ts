@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -66,7 +66,7 @@ export class FlatFieldMetadataTypeValidatorService {
             {
               code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
               message: 'Morph relation feature flag is disabled',
-              userFriendlyMessage: t`Morph relation fields are disabled for your workspace`,
+              userFriendlyMessage: msg`Morph relation fields are disabled for your workspace`,
             },
           ];
         }
@@ -192,7 +192,7 @@ export class FlatFieldMetadataTypeValidatorService {
           code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
           message: `Unsupported field metadata type ${fieldType}`,
           value: fieldType,
-          userFriendlyMessage: t`Unsupported field metadata type ${fieldType}`,
+          userFriendlyMessage: msg`Unsupported field metadata type ${fieldType}`,
         },
       ];
     }

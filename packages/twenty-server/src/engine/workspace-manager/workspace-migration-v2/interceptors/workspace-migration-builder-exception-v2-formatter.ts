@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 
 import {
   BaseGraphQLError,
@@ -18,6 +18,6 @@ export const workspaceMigrationBuilderExceptionV2Formatter = (
     errors,
     summary,
     message: `Validation failed for 0 object(s) and 0 field(s)`,
-    userFriendlyMessage: t`Validation failed for 0 object(s) and 0 field(s)`,
+    userFriendlyMessage: msg`Validation failed for 0 object(s) and 0 field(s)`,
   });
 };

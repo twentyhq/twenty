@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -136,7 +136,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         'Domain is already registered as public domain',
         WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
         {
-          userFriendlyMessage: t`Domain is already registered as public domain`,
+          userFriendlyMessage: msg`Domain is already registered as public domain`,
         },
       );
     }
@@ -452,8 +452,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
           {
-            userFriendlyMessage:
-              'You do not have permission to manage security settings. Please contact your workspace administrator.',
+            userFriendlyMessage: msg`You do not have permission to manage security settings. Please contact your workspace administrator.`,
           },
         );
       }
@@ -502,8 +501,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
           {
-            userFriendlyMessage:
-              'You do not have permission to manage workspace settings. Please contact your workspace administrator.',
+            userFriendlyMessage: msg`You do not have permission to manage workspace settings. Please contact your workspace administrator.`,
           },
         );
       }

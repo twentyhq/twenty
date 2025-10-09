@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   type EnumFieldMetadataType,
@@ -31,7 +32,7 @@ import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
 type Validator<T> = {
   validator: (str: T) => boolean;
-  message: string;
+  message: MessageDescriptor;
 };
 
 type FieldMetadataUpdateCreateInput = CreateFieldInput | UpdateFieldInput;
@@ -59,7 +60,7 @@ export class FieldMetadataEnumValidationService {
 
     if (shouldThrow) {
       throw new FieldMetadataException(
-        message,
+        'Invalid field input',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         {
           userFriendlyMessage: message,
@@ -72,11 +73,11 @@ export class FieldMetadataEnumValidationService {
     const validators: Validator<string>[] = [
       {
         validator: (id) => !isDefined(id),
-        message: 'Option id is required',
+        message: msg`Option id is required`,
       },
       {
         validator: (id) => !z.string().uuid().safeParse(id).success,
-        message: 'Option id is invalid',
+        message: msg`Option id is invalid`,
       },
     ];
 
@@ -89,23 +90,23 @@ export class FieldMetadataEnumValidationService {
     const validators: Validator<string>[] = [
       {
         validator: (label) => !isDefined(label),
-        message: t`Option label is required`,
+        message: msg`Option label is required`,
       },
       {
         validator: exceedsDatabaseIdentifierMaximumLength,
-        message: t`Option label exceeds 63 characters`,
+        message: msg`Option label exceeds 63 characters`,
       },
       {
         validator: beneathDatabaseIdentifierMinimumLength,
-        message: t`Option label "${sanitizedLabel}" is beneath 1 character`,
+        message: msg`Option label "${sanitizedLabel}" is beneath 1 character`,
       },
       {
         validator: (label) => label.includes(','),
-        message: t`Label must not contain a comma`,
+        message: msg`Label must not contain a comma`,
       },
       {
         validator: (label) => !isNonEmptyString(label) || label === ' ',
-        message: t`Label must not be empty`,
+        message: msg`Label must not be empty`,
       },
     ];
 
@@ -118,19 +119,19 @@ export class FieldMetadataEnumValidationService {
     const validators: Validator<string>[] = [
       {
         validator: (value) => !isDefined(value),
-        message: t`Option value is required`,
+        message: msg`Option value is required`,
       },
       {
         validator: exceedsDatabaseIdentifierMaximumLength,
-        message: t`Option value exceeds 63 characters`,
+        message: msg`Option value exceeds 63 characters`,
       },
       {
         validator: beneathDatabaseIdentifierMinimumLength,
-        message: t`Option value "${sanitizedValue}" is beneath 1 character`,
+        message: msg`Option value "${sanitizedValue}" is beneath 1 character`,
       },
       {
         validator: (value) => !isSnakeCaseString(value),
-        message: `Value must be in UPPER_CASE and follow snake_case "${sanitizedValue}"`,
+        message: msg`Value must be in UPPER_CASE and follow snake_case "${sanitizedValue}"`,
       },
     ];
 
@@ -153,7 +154,7 @@ export class FieldMetadataEnumValidationService {
     const duplicatedValidators = fieldsToCheckForDuplicates.map<
       Validator<FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]>
     >((field) => ({
-      message: `Duplicated option ${field}`,
+      message: msg`Duplicated option ${field}`,
       validator: () =>
         new Set(options.map((option) => option[field])).size !== options.length,
     }));
@@ -198,7 +199,7 @@ export class FieldMetadataEnumValidationService {
     const validators: Validator<string>[] = [
       {
         validator: (value: string) => !QUOTED_STRING_REGEX.test(value),
-        message: 'Default value should be as quoted string',
+        message: msg`Default value should be as quoted string`,
       },
       {
         validator: (value: string) =>
@@ -206,7 +207,7 @@ export class FieldMetadataEnumValidationService {
             (option) =>
               option.value === value.replace(QUOTED_STRING_REGEX, '$1'),
           ),
-        message: `Default value "${defaultValue}" must be one of the option values`,
+        message: msg`Default value "${defaultValue}" must be one of the option values`,
       },
     ];
 
@@ -229,11 +230,11 @@ export class FieldMetadataEnumValidationService {
     const validators: Validator<string[]>[] = [
       {
         validator: (values) => values.length === 0,
-        message: 'If defined default value must contain at least one value',
+        message: msg`If defined default value must contain at least one value`,
       },
       {
         validator: (values) => new Set(values).size !== values.length,
-        message: 'Default values must be unique',
+        message: msg`Default values must be unique`,
       },
     ];
 

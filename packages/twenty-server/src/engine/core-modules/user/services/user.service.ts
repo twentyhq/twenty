@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
+import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { IsNull, Not, Repository } from 'typeorm';
@@ -124,8 +125,7 @@ export class UserService extends TypeOrmQueryService<User> {
                 PermissionsExceptionMessage.CANNOT_DELETE_LAST_ADMIN_USER,
                 PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER,
                 {
-                  userFriendlyMessage:
-                    'Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first.',
+                  userFriendlyMessage: msg`Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first.`,
                 },
               );
             }

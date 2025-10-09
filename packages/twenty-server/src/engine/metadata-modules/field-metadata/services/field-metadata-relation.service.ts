@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { IsEnum, IsString, IsUUID } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -201,7 +201,7 @@ export class FieldMetadataRelationService {
             `Name "${computedMetadataNameFromLabel}" cannot be the same on both side of the relation`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
             {
-              userFriendlyMessage: t`Name "${computedMetadataNameFromLabel}" cannot be the same on both side of the relation`,
+              userFriendlyMessage: msg`Name "${computedMetadataNameFromLabel}" cannot be the same on both side of the relation`,
             },
           );
         }

@@ -53,7 +53,7 @@ const validateMetadataOptionLabel = (
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: t`Option label is required`,
-        userFriendlyMessage: t`Option label is required`,
+        userFriendlyMessage: msg`Option label is required`,
       },
     ];
   }
@@ -63,7 +63,7 @@ const validateMetadataOptionLabel = (
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: t`Option label must be a string of at least one character`,
-        userFriendlyMessage: t`Option label format not supported`,
+        userFriendlyMessage: msg`Option label format not supported`,
         value: sanitizedLabel,
       },
     ];
@@ -102,7 +102,7 @@ const validateMetadataOptionValue = (
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: t`Option value is required`,
-        userFriendlyMessage: t`Option value is required`,
+        userFriendlyMessage: msg`Option value is required`,
       },
     ];
   }
@@ -112,7 +112,7 @@ const validateMetadataOptionValue = (
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: t`Option value must be a string of at least one character`,
-        userFriendlyMessage: t`Option value format not supported`,
+        userFriendlyMessage: msg`Option value format not supported`,
       },
     ];
   }
@@ -175,7 +175,7 @@ const validateFieldMetadataInputOptions = <T extends EnumFieldMetadataType>(
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: 'Options are required for enum fields',
-        userFriendlyMessage: t`Options are required for enum fields`,
+        userFriendlyMessage: msg`Options are required for enum fields`,
         value: options,
       },
     ];
@@ -206,7 +206,7 @@ const validateSelectDefaultValue = ({
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: `Default value for select must be a string got ${defaultValue}`,
-        userFriendlyMessage: t`Default value must be a string`,
+        userFriendlyMessage: msg`Default value must be a string`,
         value: defaultValue,
       },
     ];
@@ -243,7 +243,7 @@ const validateMultiSelectDefaultValue = ({
     return [
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        userFriendlyMessage: t`Multi-select field default value must be an array`,
+        userFriendlyMessage: msg`Multi-select field default value must be an array`,
         message: `Default value for multi-select must be an array got ${multiSelectDefaultValue}`,
         value: multiSelectDefaultValue,
       },

@@ -1,5 +1,6 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, In, Repository } from 'typeorm';
 
@@ -44,8 +45,7 @@ export class PermissionFlagService {
         `${PermissionsExceptionMessage.INVALID_SETTING}: ${invalidFlags.join(', ')}`,
         PermissionsExceptionCode.INVALID_SETTING,
         {
-          userFriendlyMessage:
-            'Some of the permissions you selected are not valid. Please try again with valid permission settings.',
+          userFriendlyMessage: msg`Some of the permissions you selected are not valid. Please try again with valid permission settings.`,
         },
       );
     }
@@ -119,8 +119,7 @@ export class PermissionFlagService {
             PermissionsExceptionMessage.ROLE_NOT_FOUND,
             PermissionsExceptionCode.ROLE_NOT_FOUND,
             {
-              userFriendlyMessage:
-                'The role you are trying to modify could not be found. It may have been deleted or you may not have access to it.',
+              userFriendlyMessage: msg`The role you are trying to modify could not be found. It may have been deleted or you may not have access to it.`,
             },
           );
         }
@@ -157,8 +156,7 @@ export class PermissionFlagService {
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,
         {
-          userFriendlyMessage:
-            'This role cannot be modified because it is a system role. Only custom roles can be edited.',
+          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
         },
       );
     }

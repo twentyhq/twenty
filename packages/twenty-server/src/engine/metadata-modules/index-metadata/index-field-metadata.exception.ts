@@ -1,3 +1,5 @@
+import { type MessageDescriptor } from '@lingui/core';
+
 import { CustomException } from 'src/utils/custom-exception';
 
 export class IndexMetadataException extends CustomException {
@@ -5,7 +7,7 @@ export class IndexMetadataException extends CustomException {
   constructor(
     message: string,
     code: IndexMetadataExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, { userFriendlyMessage });
   }

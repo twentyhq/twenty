@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto, { randomUUID } from 'node:crypto';
 
-import { msg, t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -163,7 +163,7 @@ export class AuthService {
         'Incorrect login method',
         AuthExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage: t`User was not created with email/password`,
+          userFriendlyMessage: msg`User was not created with email/password`,
         },
       );
     }
@@ -175,7 +175,7 @@ export class AuthService {
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: t`Wrong password`,
+          userFriendlyMessage: msg`Wrong password`,
         },
       );
     }
@@ -746,7 +746,7 @@ export class AuthService {
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: t`User does not have access to this workspace`,
+          userFriendlyMessage: msg`User does not have access to this workspace`,
         },
       );
     }

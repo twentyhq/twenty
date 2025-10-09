@@ -1,4 +1,5 @@
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -8,7 +9,7 @@ export class ViewSortException extends CustomException {
   constructor(
     message: string,
     code: ViewSortExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, { userFriendlyMessage });
   }
@@ -62,13 +63,13 @@ export const generateViewSortExceptionMessage = (
 
 export const generateViewSortUserFriendlyExceptionMessage = (
   key: ViewSortExceptionMessageKey,
-) => {
+): MessageDescriptor | undefined => {
   switch (key) {
     case ViewSortExceptionMessageKey.WORKSPACE_ID_REQUIRED:
-      return t`WorkspaceId is required to create a view sort.`;
+      return msg`WorkspaceId is required to create a view sort.`;
     case ViewSortExceptionMessageKey.VIEW_ID_REQUIRED:
-      return t`ViewId is required to create a view sort.`;
+      return msg`ViewId is required to create a view sort.`;
     case ViewSortExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
-      return t`FieldMetadataId is required to create a view sort.`;
+      return msg`FieldMetadataId is required to create a view sort.`;
   }
 };
