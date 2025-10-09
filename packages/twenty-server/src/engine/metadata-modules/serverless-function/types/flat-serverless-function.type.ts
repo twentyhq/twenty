@@ -25,5 +25,4 @@ export type FlatServerlessFunction = Omit<
 > & {
   universalIdentifier: string;
   code?: ServerlessFunctionCode;
-  serverlessFunctionLayerId?: string | null;
 };
