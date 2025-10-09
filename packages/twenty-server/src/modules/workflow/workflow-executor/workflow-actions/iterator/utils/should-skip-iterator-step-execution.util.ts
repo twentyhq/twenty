@@ -8,7 +8,7 @@ import {
   type WorkflowIteratorAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-export const canExecuteIteratorStep = ({
+export const shouldSkipIteratorStepExecution = ({
   step,
   steps,
   stepInfos,
@@ -22,28 +22,27 @@ export const canExecuteIteratorStep = ({
       isDefined(parentStep) && parentStep.nextStepIds?.includes(step.id),
   );
 
-  // If the step has been started, we need to check if all the steps targeting the iterator have been successful.
-  if (stepHasBeenStarted(step.id, stepInfos)) {
-    return stepsTargetingIterator.every(
-      (step) => stepInfos[step.id]?.status === StepStatus.SUCCESS,
-    );
-  } else {
-    const initialLoopStepIds = step.settings.input.initialLoopStepIds;
+  const initialLoopStepIds = step.settings.input.initialLoopStepIds;
 
-    const stepIdsInLoop = isDefined(initialLoopStepIds)
-      ? getAllStepIdsInLoop({
-          iteratorStepId: step.id,
-          initialLoopStepIds,
-          steps,
-        })
-      : [];
+  const stepIdsInLoop = isDefined(initialLoopStepIds)
+    ? getAllStepIdsInLoop({
+        iteratorStepId: step.id,
+        initialLoopStepIds,
+        steps,
+      })
+    : [];
 
-    const parentSteps = stepsTargetingIterator.filter(
-      (step) => !stepIdsInLoop.includes(step.id),
-    );
+  const parentSteps = stepsTargetingIterator.filter(
+    (step) => !stepIdsInLoop.includes(step.id),
+  );
 
-    return parentSteps.every(
-      (step) => stepInfos[step.id]?.status === StepStatus.SUCCESS,
-    );
+  if (stepHasBeenStarted(step.id, stepInfos) || parentSteps.length === 0) {
+    return false;
   }
+
+  return parentSteps.every(
+    (step) =>
+      stepInfos[step.id]?.status === StepStatus.SKIPPED ||
+      stepInfos[step.id]?.status === StepStatus.STOPPED,
+  );
 };
