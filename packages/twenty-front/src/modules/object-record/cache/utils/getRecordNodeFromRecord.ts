@@ -48,11 +48,10 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           return undefined;
         }
 
-        const field =
-          objectMetadataItem.fields.find((field) => field.name === fieldName) ??
-          objectMetadataItem.fields.find(
-            (field) => field.settings?.joinColumnName === fieldName,
-          );
+        const field = getFieldMetadataFromGqlField({
+          objectMetadataItem,
+          gqlField: fieldName,
+        });
 
         if (isUndefined(field)) {
           return undefined;
