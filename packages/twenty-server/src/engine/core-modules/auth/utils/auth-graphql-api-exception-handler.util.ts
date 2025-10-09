@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
@@ -31,14 +31,14 @@ export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
     case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
     case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
       throw new ForbiddenError(exception.message, {
-        userFriendlyMessage: t`Authentication is not enabled with this provider.`,
+        userFriendlyMessage: msg`Authentication is not enabled with this provider.`,
         subCode: exception.code,
       });
     case AuthExceptionCode.EMAIL_NOT_VERIFIED:
     case AuthExceptionCode.INVALID_DATA:
       throw new ForbiddenError(exception.message, {
         subCode: AuthExceptionCode.EMAIL_NOT_VERIFIED,
-        userFriendlyMessage: t`Email is not verified.`,
+        userFriendlyMessage: msg`Email is not verified.`,
       });
     case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED:
     case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED:
@@ -47,7 +47,7 @@ export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
       });
     case AuthExceptionCode.UNAUTHENTICATED:
       throw new AuthenticationError(exception.message, {
-        userFriendlyMessage: t`You must be authenticated to perform this action.`,
+        userFriendlyMessage: msg`You must be authenticated to perform this action.`,
         subCode: exception.code,
       });
     case AuthExceptionCode.USER_NOT_FOUND:

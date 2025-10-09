@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -319,7 +320,7 @@ export class ViewFieldService {
 
     if (newOrUpdatedViewField.isVisible === false) {
       throw new UserInputError('Label metadata identifier must stay visible.', {
-        userFriendlyMessage: 'Record text must stay visible.',
+        userFriendlyMessage: msg`Record text must stay visible.`,
       });
     }
   }
@@ -370,8 +371,7 @@ export class ViewFieldService {
         throw new UserInputError(
           'Label metadata identifier must keep the minimal position in the view.',
           {
-            userFriendlyMessage:
-              'Record text must be in first position of the view.',
+            userFriendlyMessage: msg`Record text must be in first position of the view.`,
           },
         );
       }
@@ -389,8 +389,7 @@ export class ViewFieldService {
         throw new UserInputError(
           'Label metadata identifier must keep the minimal position in the view.',
           {
-            userFriendlyMessage:
-              'Record text must be in first position of the view.',
+            userFriendlyMessage: msg`Record text must be in first position of the view.`,
           },
         );
       }
