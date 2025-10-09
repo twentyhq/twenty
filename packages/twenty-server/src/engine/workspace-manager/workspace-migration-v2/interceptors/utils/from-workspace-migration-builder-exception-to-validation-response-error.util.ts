@@ -1,14 +1,14 @@
 import { type I18n } from '@lingui/core';
 
 import { type WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { type TranslatedValidationErrorResponse } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/types/translated-validation-error-response.type';
+import { type ValidationErrorResponse } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/types/validate-error-response.type';
 import { translateValidationErrors } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/translate-validation-errors.util';
 
 export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
   workspaceMigrationBuilderException: WorkspaceMigrationBuilderExceptionV2,
   i18n: I18n,
-): TranslatedValidationErrorResponse => {
-  const emptyResponseError: TranslatedValidationErrorResponse = {
+): ValidationErrorResponse => {
+  const emptyResponseError: ValidationErrorResponse = {
     summary: {
       invalidObjectMetadata: 0,
       invalidView: 0,
@@ -59,6 +59,6 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
 
   return {
     ...emptyResponseError,
-    errors: translatedReport as TranslatedValidationErrorResponse['errors'],
+    errors: translatedReport as ValidationErrorResponse['errors'],
   };
 };

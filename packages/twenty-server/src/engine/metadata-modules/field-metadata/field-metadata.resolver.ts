@@ -8,8 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared/utils';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
