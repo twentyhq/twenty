@@ -4,7 +4,7 @@ export type UpdateRecordParams = {
   objectName: string;
   objectRecordId: string;
   objectRecord: ObjectRecord;
-  fieldsToUpdate: string[];
+  fieldsToUpdate?: string[];
   workspaceId: string;
   roleId?: string;
 };
