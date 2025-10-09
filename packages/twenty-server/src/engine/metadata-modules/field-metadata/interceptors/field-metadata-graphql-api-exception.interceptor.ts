@@ -4,6 +4,7 @@ import {
   Injectable,
   type NestInterceptor,
 } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { type Observable, catchError } from 'rxjs';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -18,8 +19,11 @@ export class FieldMetadataGraphqlApiExceptionInterceptor
   constructor(private readonly i18nService: I18nService) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  intercept(_: ExecutionContext, next: CallHandler): Observable<any> {
-    const i18n = this.i18nService.getI18nInstance(SOURCE_LOCALE);
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const gqlContext = GqlExecutionContext.create(context);
+    const ctx = gqlContext.getContext();
+    const locale = ctx.req?.locale ?? SOURCE_LOCALE;
+    const i18n = this.i18nService.getI18nInstance(locale);
 
     return next
       .handle()

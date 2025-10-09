@@ -44,7 +44,7 @@ export class ViewGraphqlApiExceptionFilter implements ExceptionFilter {
   ) {
     const gqlContext = GqlExecutionContext.create(host);
     const ctx = gqlContext.getContext();
-    const userLocale = ctx.req?.user?.locale ?? SOURCE_LOCALE;
+    const userLocale = ctx.req?.locale ?? SOURCE_LOCALE;
     const i18n = this.i18nService.getI18nInstance(userLocale);
 
     return viewGraphqlApiExceptionHandler(exception, i18n);

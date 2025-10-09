@@ -8,7 +8,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -62,6 +61,7 @@ export class FieldMetadataResolver {
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ) {
     try {
       return await this.fieldMetadataService.createOne({
@@ -71,7 +71,7 @@ export class FieldMetadataResolver {
     } catch (error) {
       return fieldMetadataGraphqlApiExceptionHandler(
         error,
-        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+        this.i18nService.getI18nInstance(context.req.locale),
       );
     }
   }
@@ -109,7 +109,7 @@ export class FieldMetadataResolver {
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(
         error,
-        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+        this.i18nService.getI18nInstance(context.req.locale),
       );
     }
   }
@@ -119,6 +119,7 @@ export class FieldMetadataResolver {
   async deleteOneField(
     @Args('input') input: DeleteOneFieldInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ) {
     if (!isDefined(workspaceId)) {
       throw new ForbiddenError('Could not retrieve workspace ID');
@@ -140,7 +141,7 @@ export class FieldMetadataResolver {
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(
         error,
-        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+        this.i18nService.getI18nInstance(context.req.locale),
       );
     }
 
@@ -168,7 +169,7 @@ export class FieldMetadataResolver {
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(
         error,
-        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+        this.i18nService.getI18nInstance(context.req.locale),
       );
     }
   }
@@ -182,7 +183,7 @@ export class FieldMetadataResolver {
       id: fieldMetadataId,
       objectMetadataId,
     }: Pick<FieldMetadataDTO, 'id' | 'objectMetadataId'>,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<RelationDTO | null> {
     try {
       return await context.loaders.relationLoader.load({
@@ -193,7 +194,7 @@ export class FieldMetadataResolver {
     } catch (error) {
       return fieldMetadataGraphqlApiExceptionHandler(
         error,
-        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+        this.i18nService.getI18nInstance(context.req.locale),
       );
     }
   }
@@ -206,7 +207,7 @@ export class FieldMetadataResolver {
       id: fieldMetadataId,
       objectMetadataId,
     }: Pick<FieldMetadataDTO, 'id' | 'objectMetadataId'>,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<RelationDTO[] | null> {
     try {
       return await context.loaders.morphRelationLoader.load({
@@ -217,7 +218,7 @@ export class FieldMetadataResolver {
     } catch (error) {
       return fieldMetadataGraphqlApiExceptionHandler(
         error,
-        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+        this.i18nService.getI18nInstance(context.req.locale),
       );
     }
   }

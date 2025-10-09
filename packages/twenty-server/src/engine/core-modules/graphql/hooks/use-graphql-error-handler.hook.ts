@@ -12,7 +12,7 @@ import {
   print,
 } from 'graphql';
 import semver from 'semver';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
@@ -205,11 +205,9 @@ export const useGraphQLErrorHandlerHook = <
             }
 
             // Step 3: Transform errors for GraphQL response (clean GraphQL errors)
-            const userLocale =
-              args.contextValue.req.user?.locale ?? SOURCE_LOCALE;
-            const i18n = options.i18nService.getI18nInstance(
-              userLocale as keyof typeof APP_LOCALES,
-            );
+            // Get locale from request (set by middleware from userWorkspace or x-locale header)
+            const userLocale = args.contextValue.req.locale ?? SOURCE_LOCALE;
+            const i18n = options.i18nService.getI18nInstance(userLocale);
             const defaultErrorMessage = msg`An error occurred.`;
 
             const transformedErrors = processedErrors.map((error) => {

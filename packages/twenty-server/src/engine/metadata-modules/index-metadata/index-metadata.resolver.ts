@@ -1,11 +1,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Context, Parent, ResolveField, Resolver } from '@nestjs/graphql';
 
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
-
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -29,7 +28,7 @@ export class IndexMetadataResolver {
   async indexFieldMetadataList(
     @AuthWorkspace() workspace: Workspace,
     @Parent() indexMetadata: IndexMetadataDTO,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<IndexFieldMetadataDTO[]> {
     try {
       const indexFieldMetadataItems =
@@ -43,7 +42,7 @@ export class IndexMetadataResolver {
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(
         error,
-        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+        this.i18nService.getI18nInstance(context.req.locale),
       );
 
       return [];
