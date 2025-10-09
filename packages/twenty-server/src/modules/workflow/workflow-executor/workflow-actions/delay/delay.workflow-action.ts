@@ -23,7 +23,7 @@ export type ResumeDelayedJobData = {
 @Injectable()
 export class DelayWorkflowAction implements WorkflowAction {
   constructor(
-    @InjectMessageQueue(MessageQueue.workflowQueue)
+    @InjectMessageQueue(MessageQueue.workflowDelayedJobsQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
