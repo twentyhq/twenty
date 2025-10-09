@@ -1,11 +1,17 @@
-import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
+import {
+  type ApolloClient,
+  type NormalizedCacheObject,
+  useApolloClient,
+} from '@apollo/client';
+import { type MockedResponse } from '@apollo/client/testing';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { MemoryRouter } from 'react-router-dom';
 
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
+import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
-import { RecoilRoot } from 'recoil';
+import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
 import {
   GraphOrderBy,
   GraphType,
@@ -18,7 +24,7 @@ import {
   PageLayoutType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockPersonObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
@@ -164,6 +170,11 @@ const mixedGraphsPageLayoutMocks = {
   ],
 };
 
+const barChartGroupByQuery = generateGroupByQuery({
+  objectMetadataItem: mockPersonObjectMetadataItem,
+  aggregateOperations: ['totalCount'],
+});
+
 const graphqlMocks: MockedResponse[] = [
   {
     request: {
@@ -178,20 +189,81 @@ const graphqlMocks: MockedResponse[] = [
       },
     },
   },
+  {
+    request: {
+      query: barChartGroupByQuery,
+      variables: {
+        groupBy: [
+          {
+            createdAt: {
+              granularity: 'DAY',
+            },
+          },
+        ],
+      },
+    },
+    result: {
+      data: {
+        peopleGroupBy: [
+          {
+            groupByDimensionValues: ['2024-01-15T00:00:00.000Z'],
+            totalCount: 12,
+          },
+          {
+            groupByDimensionValues: ['2024-02-15T00:00:00.000Z'],
+            totalCount: 18,
+          },
+          {
+            groupByDimensionValues: ['2024-03-15T00:00:00.000Z'],
+            totalCount: 25,
+          },
+          {
+            groupByDimensionValues: ['2024-04-15T00:00:00.000Z'],
+            totalCount: 15,
+          },
+          {
+            groupByDimensionValues: ['2024-05-15T00:00:00.000Z'],
+            totalCount: 22,
+          },
+          {
+            groupByDimensionValues: ['2024-06-15T00:00:00.000Z'],
+            totalCount: 30,
+          },
+        ],
+      },
+    },
+  },
 ];
+
+const CoreClientProviderWrapper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>;
+
+  return (
+    <ApolloCoreClientContext.Provider value={apolloClient}>
+      {children}
+    </ApolloCoreClientContext.Provider>
+  );
+};
+
+const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: graphqlMocks,
+});
 
 const meta: Meta<typeof PageLayoutRenderer> = {
   title: 'Modules/PageLayout/PageLayoutRenderer',
   component: PageLayoutRenderer,
   decorators: [
-    ObjectMetadataItemsDecorator,
     (Story) => (
       <MemoryRouter>
-        <MockedProvider mocks={graphqlMocks} addTypename={false}>
-          <RecoilRoot>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
             <Story />
-          </RecoilRoot>
-        </MockedProvider>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
       </MemoryRouter>
     ),
   ],
