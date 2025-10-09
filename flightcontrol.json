@@ -25,7 +25,8 @@
           "type": "elasticache",
           "engine": "redis",
           "engineVersion": "7.0",
-          "instanceSize": "cache.t4g.micro"
+          "instanceSize": "cache.t4g.micro",
+          "private": false
         },
         {
           "id": "twenty-server",
@@ -67,7 +68,7 @@
           "dockerContext": ".",
           "cpu": 0.5,
           "memory": 1,
-          "startCommand": "sh -c 'node dist/src/queue-worker/queue-worker'",
+          "startCommand": "node dist/src/queue-worker/queue-worker",
           "envVariables": {
             "PG_DATABASE_URL": {
               "fromService": {
