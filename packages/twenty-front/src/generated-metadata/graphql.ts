@@ -281,10 +281,10 @@ export type BarChartConfiguration = {
   __typename?: 'BarChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: ExtendedAggregateOperations;
-  axisNameDisplay: AxisNameDisplay;
+  axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  displayDataLabel: Scalars['Boolean'];
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
@@ -292,7 +292,7 @@ export type BarChartConfiguration = {
   groupBySubFieldNameX?: Maybe<Scalars['String']>;
   groupBySubFieldNameY?: Maybe<Scalars['String']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
-  orderByX: GraphOrderBy;
+  orderByX?: Maybe<GraphOrderBy>;
   orderByY?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
@@ -1368,7 +1368,7 @@ export type GaugeChartConfiguration = {
   aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  displayDataLabel: Scalars['Boolean'];
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
 };
@@ -1593,10 +1593,10 @@ export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: ExtendedAggregateOperations;
-  axisNameDisplay: AxisNameDisplay;
+  axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  displayDataLabel: Scalars['Boolean'];
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
@@ -1604,7 +1604,7 @@ export type LineChartConfiguration = {
   groupBySubFieldNameX?: Maybe<Scalars['String']>;
   groupBySubFieldNameY?: Maybe<Scalars['String']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
-  orderByX: GraphOrderBy;
+  orderByX?: Maybe<GraphOrderBy>;
   orderByY?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
@@ -2709,9 +2709,8 @@ export type NumberChartConfiguration = {
   __typename?: 'NumberChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: ExtendedAggregateOperations;
-  color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  displayDataLabel: Scalars['Boolean'];
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   format?: Maybe<Scalars['String']>;
   graphType: GraphType;
@@ -2956,12 +2955,12 @@ export type PieChartConfiguration = {
   aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  displayDataLabel: Scalars['Boolean'];
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataId: Scalars['UUID'];
   groupBySubFieldName?: Maybe<Scalars['String']>;
-  orderBy: GraphOrderBy;
+  orderBy?: Maybe<GraphOrderBy>;
 };
 
 export type PlaceDetailsResultDto = {

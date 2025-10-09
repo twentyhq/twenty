@@ -21,7 +21,7 @@ export const createTestPageLayoutWidgetWithRestApi = async (
 
   const response = await makeRestAPIRequest({
     method: 'post',
-    path: '/metadata/page-layout-widgets',
+    path: '/metadata/pageLayoutWidgets',
     body: pageLayoutWidgetData,
     bearer: API_KEY_ACCESS_TOKEN,
   });
@@ -40,7 +40,7 @@ export const deleteTestPageLayoutWidgetWithRestApi = async (
 ): Promise<void> => {
   await makeRestAPIRequest({
     method: 'delete',
-    path: `/metadata/page-layout-widgets/${pageLayoutWidgetId}`,
+    path: `/metadata/pageLayoutWidgets/${pageLayoutWidgetId}`,
     bearer: API_KEY_ACCESS_TOKEN,
   });
 };
