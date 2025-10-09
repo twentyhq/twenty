@@ -4,7 +4,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ObjectRecord = Record<string, any>;
+export type ObjectRecord = Record<string, any>;
 
 export type WorkflowCreateRecordActionInput = {
   objectName: string;
