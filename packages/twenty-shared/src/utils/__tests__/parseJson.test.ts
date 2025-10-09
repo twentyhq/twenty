@@ -6,7 +6,7 @@ describe('parseJson', () => {
     expect(result).toBeNull();
   });
 
-  it('if value is null', () => {
+  it('if value is raw string', () => {
     const result = parseJson('t');
     expect(result).toBeNull();
   });

@@ -317,7 +317,7 @@ export class ViewFilterV2Service {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
-        'Multiple validation errors occurred while deleting view filter',
+        'Multiple validation errors occurred while destroying view filter',
       );
     }
 

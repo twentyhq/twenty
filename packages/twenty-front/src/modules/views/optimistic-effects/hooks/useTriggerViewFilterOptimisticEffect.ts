@@ -6,7 +6,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewFilter } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-type CreatedUdpatedDeletedCoreViewFilter = {
+type UpdatedDeletedCoreViewFilter = {
   createdViewFilters?: Omit<CoreViewFilter, 'workspaceId'>[];
   updatedViewFilters?: Omit<CoreViewFilter, 'workspaceId'>[];
   deletedViewFilters?: Pick<CoreViewFilter, 'id' | 'viewId'>[];
@@ -22,7 +22,7 @@ export const useTriggerViewFilterOptimisticEffect = () => {
         createdViewFilters = [],
         updatedViewFilters = [],
         deletedViewFilters = [],
-      }: CreatedUdpatedDeletedCoreViewFilter) => {
+      }: UpdatedDeletedCoreViewFilter) => {
         const coreViews = getSnapshotValue(snapshot, coreViewsState);
         let newCoreViews = [...coreViews];
 

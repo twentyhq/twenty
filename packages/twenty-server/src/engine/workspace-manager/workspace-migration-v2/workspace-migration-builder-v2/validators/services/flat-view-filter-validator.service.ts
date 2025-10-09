@@ -38,7 +38,7 @@ export class FlatViewFilterValidatorService {
 
     if (isDefined(existingViewFilter)) {
       validationResult.errors.push({
-        code: ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+        code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         message: t`View filter with this id already exists`,
         userFriendlyMessage: t`View filter with this id already exists`,
       });
@@ -51,7 +51,7 @@ export class FlatViewFilterValidatorService {
 
     if (!isDefined(referencedView)) {
       validationResult.errors.push({
-        code: ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+        code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         message: t`View not found`,
         userFriendlyMessage: t`View not found`,
       });
@@ -64,7 +64,7 @@ export class FlatViewFilterValidatorService {
 
     if (!isDefined(referencedFieldMetadata)) {
       validationResult.errors.push({
-        code: ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+        code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         message: t`Field metadata not found`,
         userFriendlyMessage: t`Field metadata not found`,
       });
@@ -78,7 +78,6 @@ export class FlatViewFilterValidatorService {
     optimisticFlatViewFilterMaps,
   }: {
     flatViewFilterToValidate: FlatViewFilter;
-    dependencyOptimisticFlatEntityMaps: ViewFilterRelatedFlatEntityMaps;
     optimisticFlatViewFilterMaps: FlatViewFilterMaps;
   }): FailedFlatEntityValidation<FlatViewFilter> {
     const validationResult: FailedFlatEntityValidation<FlatViewFilter> = {
@@ -148,7 +147,7 @@ export class FlatViewFilterValidatorService {
 
     if (!isDefined(referencedFieldMetadata)) {
       validationResult.errors.push({
-        code: ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+        code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         message: t`Field metadata not found`,
         userFriendlyMessage: t`Field metadata not found`,
       });

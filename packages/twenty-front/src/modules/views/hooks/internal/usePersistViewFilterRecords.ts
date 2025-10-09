@@ -28,7 +28,7 @@ export const usePersistViewFilterRecords = () => {
       }
 
       return Promise.all(
-        createCoreViewFilterInputs.map(async (variables) =>
+        createCoreViewFilterInputs.map((variables) =>
           createCoreViewFilterMutation({
             variables,
             update: (_cache, { data }) => {

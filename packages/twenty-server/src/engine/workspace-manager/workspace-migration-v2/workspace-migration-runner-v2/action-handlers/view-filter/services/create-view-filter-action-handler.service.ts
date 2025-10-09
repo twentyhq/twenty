@@ -15,10 +15,6 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 export class CreateViewFilterActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'create_view_filter',
 ) {
-  constructor() {
-    super();
-  }
-
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
