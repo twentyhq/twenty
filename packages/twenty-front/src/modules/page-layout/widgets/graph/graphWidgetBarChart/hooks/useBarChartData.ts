@@ -36,6 +36,7 @@ export const useBarChartData = ({
     () => new Map<string, BarChartSeries>(series?.map((s) => [s.key, s]) || []),
     [series],
   );
+
   const barConfigs = useMemo((): BarChartConfig[] => {
     return data.flatMap((dataPoint, dataIndex) => {
       const indexValue = dataPoint[indexBy];

@@ -1,44 +1,45 @@
 import { v4 } from 'uuid';
 
-import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
 import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ServerlessFunctionRuntime } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 
-export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
-  createServerlessFunctionInput,
-  workspaceId,
-}: {
-  createServerlessFunctionInput: CreateServerlessFunctionInput;
+export type FromCreateServerlessFunctionInputToFlatServerlessFunctionArgs = {
+  createServerlessFunctionInput: CreateServerlessFunctionInput & {
+    serverlessFunctionLayerId: string;
+  };
   workspaceId: string;
-}): FlatServerlessFunction => {
+};
+
+export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
+  createServerlessFunctionInput: rawCreateServerlessFunctionInput,
+  workspaceId,
+}: FromCreateServerlessFunctionInputToFlatServerlessFunctionArgs): FlatServerlessFunction => {
   const id = v4();
   const currentDate = new Date();
 
   return {
     id,
-    name: createServerlessFunctionInput.name,
-    description: createServerlessFunctionInput.description ?? null,
+    name: rawCreateServerlessFunctionInput.name,
+    description: rawCreateServerlessFunctionInput.description ?? null,
     universalIdentifier:
-      createServerlessFunctionInput.universalIdentifier ?? v4(),
+      rawCreateServerlessFunctionInput.universalIdentifier ?? v4(),
     createdAt: currentDate,
     updatedAt: currentDate,
     deletedAt: null,
     latestVersion: null,
     publishedVersions: [],
-    applicationId: createServerlessFunctionInput.applicationId ?? null,
-    latestVersionInputSchema: null,
+    applicationId: rawCreateServerlessFunctionInput.applicationId ?? null,
     runtime: ServerlessFunctionRuntime.NODE22,
-    timeoutSeconds: createServerlessFunctionInput.timeoutSeconds ?? 300,
-    layerVersion: LAST_LAYER_VERSION,
+    timeoutSeconds: rawCreateServerlessFunctionInput.timeoutSeconds ?? 300,
     serverlessFunctionLayerId:
-      createServerlessFunctionInput.serverlessFunctionLayerId ?? null,
+      rawCreateServerlessFunctionInput.serverlessFunctionLayerId,
     workspaceId,
-    code: createServerlessFunctionInput?.code,
-    checksum: createServerlessFunctionInput?.code
+    code: rawCreateServerlessFunctionInput?.code,
+    checksum: rawCreateServerlessFunctionInput?.code
       ? serverlessFunctionCreateHash(
-          JSON.stringify(createServerlessFunctionInput.code),
+          JSON.stringify(rawCreateServerlessFunctionInput.code),
         )
       : null,
   };

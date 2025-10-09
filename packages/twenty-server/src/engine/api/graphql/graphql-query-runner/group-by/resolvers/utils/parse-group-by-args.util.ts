@@ -1,7 +1,9 @@
 import { isDefined } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 
-import { ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {

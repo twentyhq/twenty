@@ -4,6 +4,7 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
   createTestViewWithRestApi,
   findViewByIdWithRestApi,
@@ -11,11 +12,10 @@ import {
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 describe('deleteOne', () => {
   beforeAll(async () => {

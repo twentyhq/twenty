@@ -25,11 +25,11 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
+import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import {
   generateViewSortExceptionMessage,
   ViewSortExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-sort.exception';
+} from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 
 describe('View Sort Resolver', () => {
   let testViewId: string;
