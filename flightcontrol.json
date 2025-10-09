@@ -40,6 +40,7 @@
           "maxInstances": 3,
           "port": 3000,
           "healthCheckPath": "/healthz",
+          "healthCheckGracePeriodSeconds": 300,
           "envVariables": {
             "NODE_PORT": "3000",
             "PG_DATABASE_URL": {
@@ -61,15 +62,13 @@
         {
           "id": "twenty-worker",
           "name": "Twenty Worker",
-          "type": "web",
+          "type": "worker",
           "buildType": "docker",
           "dockerfilePath": "packages/twenty-docker/twenty/Dockerfile",
           "dockerContext": ".",
           "cpu": 0.5,
           "memory": 1,
-          "minInstances": 1,
-          "maxInstances": 2,
-          "startCommand": "node dist/src/queue-worker/queue-worker",
+          "startCommand": "sh -c 'node dist/src/queue-worker/queue-worker'",
           "envVariables": {
             "PG_DATABASE_URL": {
               "fromService": {
