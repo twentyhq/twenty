@@ -31,6 +31,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 Should fail to crea
           "type": "create_view_field",
         },
       ],
+      "viewFilter": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -43,6 +44,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 Should fail to crea
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
+      "invalidViewFilter": 0,
       "totalErrors": 0,
     },
     "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
@@ -83,6 +85,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
           "type": "create_view_field",
         },
       ],
+      "viewFilter": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -95,6 +98,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
+      "invalidViewFilter": 0,
       "totalErrors": 0,
     },
     "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
@@ -135,6 +139,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
           "type": "create_view_field",
         },
       ],
+      "viewFilter": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -147,6 +152,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
+      "invalidViewFilter": 0,
       "totalErrors": 0,
     },
     "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
