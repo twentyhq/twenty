@@ -468,6 +468,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.viewField.deleted,
           ...aggregatedOrchestratorActionsReport.viewField.created,
           ...aggregatedOrchestratorActionsReport.viewField.updated,
+          ...aggregatedOrchestratorActionsReport.viewFilter.deleted,
+          ...aggregatedOrchestratorActionsReport.viewFilter.created,
+          ...aggregatedOrchestratorActionsReport.viewFilter.updated,
           ///
 
           // Serverless functions
