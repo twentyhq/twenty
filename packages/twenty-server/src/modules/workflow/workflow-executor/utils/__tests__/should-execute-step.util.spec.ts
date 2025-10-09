@@ -1,13 +1,13 @@
 import { StepStatus } from 'twenty-shared/workflow';
 
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import {
   type WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
-describe('canExecuteStep', () => {
+describe('shouldExecuteStep', () => {
   const steps = [
     {
       id: 'step-1',
@@ -57,10 +57,10 @@ describe('canExecuteStep', () => {
       },
     };
 
-    const result = canExecuteStep({
+    const result = shouldExecuteStep({
       stepInfos,
       steps,
-      stepId: 'step-3',
+      step: steps[2],
       workflowRunStatus: WorkflowRunStatus.RUNNING,
     });
 
@@ -69,7 +69,7 @@ describe('canExecuteStep', () => {
 
   it('should return false if one parent is not succeeded', () => {
     expect(
-      canExecuteStep({
+      shouldExecuteStep({
         stepInfos: {
           'step-1': {
             status: StepStatus.NOT_STARTED,
@@ -82,13 +82,13 @@ describe('canExecuteStep', () => {
           },
         },
         steps,
-        stepId: 'step-3',
+        step: steps[2],
         workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
 
     expect(
-      canExecuteStep({
+      shouldExecuteStep({
         stepInfos: {
           'step-1': {
             status: StepStatus.SUCCESS,
@@ -101,13 +101,13 @@ describe('canExecuteStep', () => {
           },
         },
         steps,
-        stepId: 'step-3',
+        step: steps[2],
         workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
 
     expect(
-      canExecuteStep({
+      shouldExecuteStep({
         stepInfos: {
           'step-1': {
             status: StepStatus.NOT_STARTED,
@@ -120,7 +120,7 @@ describe('canExecuteStep', () => {
           },
         },
         steps,
-        stepId: 'step-3',
+        step: steps[2],
         workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
@@ -128,7 +128,7 @@ describe('canExecuteStep', () => {
 
   it('should return false if step has already ran', () => {
     expect(
-      canExecuteStep({
+      shouldExecuteStep({
         stepInfos: {
           'step-1': {
             status: StepStatus.SUCCESS,
@@ -141,13 +141,13 @@ describe('canExecuteStep', () => {
           },
         },
         steps,
-        stepId: 'step-3',
+        step: steps[2],
         workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
 
     expect(
-      canExecuteStep({
+      shouldExecuteStep({
         stepInfos: {
           'step-1': {
             status: StepStatus.SUCCESS,
@@ -160,13 +160,13 @@ describe('canExecuteStep', () => {
           },
         },
         steps,
-        stepId: 'step-3',
+        step: steps[2],
         workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
 
     expect(
-      canExecuteStep({
+      shouldExecuteStep({
         stepInfos: {
           'step-1': {
             status: StepStatus.SUCCESS,
@@ -179,13 +179,13 @@ describe('canExecuteStep', () => {
           },
         },
         steps,
-        stepId: 'step-3',
+        step: steps[2],
         workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
 
     expect(
-      canExecuteStep({
+      shouldExecuteStep({
         stepInfos: {
           'step-1': {
             status: StepStatus.SUCCESS,
@@ -198,7 +198,7 @@ describe('canExecuteStep', () => {
           },
         },
         steps,
-        stepId: 'step-3',
+        step: steps[2],
         workflowRunStatus: WorkflowRunStatus.RUNNING,
       }),
     ).toBe(false);
@@ -223,10 +223,10 @@ describe('canExecuteStep', () => {
       WorkflowRunStatus.COMPLETED,
       WorkflowRunStatus.NOT_STARTED,
     ]) {
-      const result = canExecuteStep({
+      const result = shouldExecuteStep({
         stepInfos,
         steps,
-        stepId: 'step-3',
+        step: steps[2],
         workflowRunStatus,
       });
 

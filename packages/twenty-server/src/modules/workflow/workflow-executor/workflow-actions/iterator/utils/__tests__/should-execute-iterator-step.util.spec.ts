@@ -1,6 +1,6 @@
 import { StepStatus } from 'twenty-shared/workflow';
 
-import { canExecuteIteratorStep } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/can-execute-iterator-step.util';
+import { shouldExecuteIteratorStep } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/should-execute-iterator-step.util';
 import {
   type WorkflowAction,
   type WorkflowIteratorAction,
@@ -19,7 +19,7 @@ const { getAllStepIdsInLoop } = jest.requireMock(
   'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util',
 );
 
-describe('canExecuteIteratorStep', () => {
+describe('shouldExecuteIteratorStep', () => {
   const createMockIteratorStep = (
     id: string,
     initialLoopStepIds: string[] = [],
@@ -90,7 +90,7 @@ describe('canExecuteIteratorStep', () => {
       // Mock getAllStepIdsInLoop to return the loop step IDs
       getAllStepIdsInLoop.mockReturnValue(['step-1', 'step-2']);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -121,7 +121,7 @@ describe('canExecuteIteratorStep', () => {
 
       getAllStepIdsInLoop.mockReturnValue(['step-2']);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -147,7 +147,7 @@ describe('canExecuteIteratorStep', () => {
 
       getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -171,7 +171,7 @@ describe('canExecuteIteratorStep', () => {
       // Only step-1 is in the loop
       getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -194,7 +194,7 @@ describe('canExecuteIteratorStep', () => {
 
       getAllStepIdsInLoop.mockReturnValue([]);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -216,7 +216,7 @@ describe('canExecuteIteratorStep', () => {
 
       getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -247,7 +247,7 @@ describe('canExecuteIteratorStep', () => {
 
       getAllStepIdsInLoop.mockReturnValue(['step-1', 'step-2', 'step-3']);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -273,7 +273,7 @@ describe('canExecuteIteratorStep', () => {
 
       getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -297,7 +297,7 @@ describe('canExecuteIteratorStep', () => {
 
       getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -321,7 +321,7 @@ describe('canExecuteIteratorStep', () => {
 
       getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -340,7 +340,7 @@ describe('canExecuteIteratorStep', () => {
 
       getAllStepIdsInLoop.mockReturnValue([]);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
@@ -364,7 +364,7 @@ describe('canExecuteIteratorStep', () => {
 
       getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
-      const result = canExecuteIteratorStep({
+      const result = shouldExecuteIteratorStep({
         step: iteratorStep,
         steps,
         stepInfos,
