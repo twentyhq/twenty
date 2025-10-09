@@ -1,19 +1,20 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { isDefined } from 'class-validator';
-
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
+import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
+import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
 import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
+import { isDefined } from 'twenty-shared/utils';
 
 @Resolver(() => ViewFilterDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -72,8 +73,7 @@ export class ViewFilterResolver {
 
   @Mutation(() => ViewFilterDTO)
   async updateCoreViewFilter(
-    @Args('id', { type: () => String }) id: string,
-    @Args('input') input: UpdateViewFilterInput,
+    @Args('input') updateViewFilterInput: UpdateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<ViewFilterDTO> {
     const isWorkspaceMigrationV2Enabled =
@@ -84,19 +84,23 @@ export class ViewFilterResolver {
 
     if (isWorkspaceMigrationV2Enabled) {
       return await this.viewFilterV2Service.updateOne({
-        updateViewFilterInput: { id, ...input },
+        updateViewFilterInput,
         workspaceId,
       });
     }
 
-    return this.viewFilterService.update(id, workspaceId, input);
+    return this.viewFilterService.update(
+      updateViewFilterInput.id,
+      workspaceId,
+      updateViewFilterInput.update,
+    );
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ViewFilterDTO)
   async deleteCoreViewFilter(
-    @Args('id', { type: () => String }) id: string,
+    @Args('input') deleteViewFilterInput: DeleteViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<boolean> {
+  ): Promise<ViewFilterDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -104,25 +108,23 @@ export class ViewFilterResolver {
       );
 
     if (isWorkspaceMigrationV2Enabled) {
-      const deletedViewFilter = await this.viewFilterV2Service.deleteOne({
-        deleteViewFilterInput: { id },
+      return await this.viewFilterV2Service.deleteOne({
+        deleteViewFilterInput,
         workspaceId,
       });
-
-      return isDefined(deletedViewFilter);
     }
 
     const deletedViewFilter = await this.viewFilterService.delete(
-      id,
+      deleteViewFilterInput.id,
       workspaceId,
     );
 
-    return isDefined(deletedViewFilter);
+    return deletedViewFilter;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ViewFilterDTO)
   async destroyCoreViewFilter(
-    @Args('id', { type: () => String }) id: string,
+    @Args('input') destroyViewFilterInput: DestroyViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<boolean> {
     const isWorkspaceMigrationV2Enabled =
@@ -133,15 +135,14 @@ export class ViewFilterResolver {
 
     if (isWorkspaceMigrationV2Enabled) {
       const deletedViewFilter = await this.viewFilterV2Service.destroyOne({
-        destroyViewFilterInput: { id },
+        destroyViewFilterInput,
         workspaceId,
       });
-
       return isDefined(deletedViewFilter);
     }
 
     const deletedViewFilter = await this.viewFilterService.destroy(
-      id,
+      destroyViewFilterInput.id,
       workspaceId,
     );
 
