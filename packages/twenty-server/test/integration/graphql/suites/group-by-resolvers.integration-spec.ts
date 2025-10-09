@@ -3,7 +3,6 @@ import { randomUUID } from 'crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { createViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/create-view-filter-group-operation-factory.util';
-import { createViewFilterOperationFactory } from 'test/integration/graphql/utils/create-view-filter-operation-factory.util';
 import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
@@ -14,6 +13,8 @@ import { ViewFilterOperand } from 'twenty-shared/types';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
+import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 
 describe('group-by resolvers (integration)', () => {
   describe('standard case', () => {
@@ -443,18 +444,18 @@ describe('group-by resolvers (integration)', () => {
       const viewFilterGroupId = viewFilterGroupResponse.body.data
         .createCoreViewFilterGroup.id as string;
 
-      await makeGraphqlAPIRequest(
-        createViewFilterOperationFactory({
-          data: {
-            viewId,
-            viewFilterGroupId,
-            fieldMetadataId: cityFieldMetadataId,
-            operand: ViewFilterOperand.CONTAINS,
-            value: cityToKeep,
-            positionInViewFilterGroup: 0,
-          },
-        }),
-      );
+      jestExpectToBeDefined(cityFieldMetadataId);
+      await createOneCoreViewFilter({
+        input: {
+          viewId,
+          viewFilterGroupId,
+          fieldMetadataId: cityFieldMetadataId,
+          operand: ViewFilterOperand.CONTAINS,
+          value: cityToKeep,
+          positionInViewFilterGroup: 0,
+        },
+        expectToFail: false,
+      });
 
       const response = await makeGraphqlAPIRequest(
         groupByOperationFactory({
