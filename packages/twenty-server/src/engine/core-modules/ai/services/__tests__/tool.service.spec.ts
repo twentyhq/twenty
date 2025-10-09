@@ -1,6 +1,10 @@
 import { Test } from '@nestjs/testing';
 
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
+import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
+import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -98,6 +102,22 @@ describe('ToolService', () => {
               idByNameSingular: { [testObject.nameSingular]: testObject.id },
             }),
           },
+        },
+        {
+          provide: CreateRecordService,
+          useValue: { execute: jest.fn() },
+        },
+        {
+          provide: UpdateRecordService,
+          useValue: { execute: jest.fn() },
+        },
+        {
+          provide: DeleteRecordService,
+          useValue: { execute: jest.fn() },
+        },
+        {
+          provide: FindRecordsService,
+          useValue: { execute: jest.fn() },
         },
       ],
     }).compile();
