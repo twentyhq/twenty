@@ -49,7 +49,7 @@ const createDefaultGraphConfiguration = (
         color: 'blue' satisfies ThemeColor,
         groupByFieldMetadataIdX: fieldSelection.groupByFieldMetadataIdX,
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
-        aggregateOperation: ExtendedAggregateOperations.SUM,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         orderByX: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
       };

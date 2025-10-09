@@ -1,13 +1,23 @@
+import {
+  type ApolloClient,
+  type NormalizedCacheObject,
+  useApolloClient,
+} from '@apollo/client';
+import { type MockedResponse } from '@apollo/client/testing';
+import { type Meta, type StoryObj } from '@storybook/react';
+import { type MutableSnapshot } from 'recoil';
+import { MemoryRouter } from 'react-router-dom';
+
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { type MutableSnapshot } from 'recoil';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
 import { GraphType } from '~/generated-metadata/graphql';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -24,11 +34,81 @@ const createdAtField = getMockFieldMetadataItemOrThrow({
   fieldName: 'createdAt',
 });
 
+const barChartGroupByQuery = generateGroupByQuery({
+  objectMetadataItem: companyObjectMetadataItem,
+  aggregateOperations: ['totalCount'],
+});
+
+const graphqlMocks: MockedResponse[] = [
+  {
+    request: {
+      query: barChartGroupByQuery,
+      variables: {
+        groupBy: [
+          {
+            createdAt: {
+              granularity: 'DAY',
+            },
+          },
+        ],
+      },
+    },
+    result: {
+      data: {
+        companiesGroupBy: [
+          {
+            groupByDimensionValues: ['2024-01-15T00:00:00.000Z'],
+            totalCount: 12,
+          },
+          {
+            groupByDimensionValues: ['2024-02-15T00:00:00.000Z'],
+            totalCount: 18,
+          },
+          {
+            groupByDimensionValues: ['2024-03-15T00:00:00.000Z'],
+            totalCount: 25,
+          },
+          {
+            groupByDimensionValues: ['2024-04-15T00:00:00.000Z'],
+            totalCount: 15,
+          },
+          {
+            groupByDimensionValues: ['2024-05-15T00:00:00.000Z'],
+            totalCount: 22,
+          },
+          {
+            groupByDimensionValues: ['2024-06-15T00:00:00.000Z'],
+            totalCount: 30,
+          },
+        ],
+      },
+    },
+  },
+];
+
+const CoreClientProviderWrapper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>;
+
+  return (
+    <ApolloCoreClientContext.Provider value={apolloClient}>
+      {children}
+    </ApolloCoreClientContext.Provider>
+  );
+};
+
+const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: graphqlMocks,
+});
+
 const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
   component: WidgetRenderer,
   decorators: [
-    (Story, context) => {
+    (Story) => {
       const initializeState = (snapshot: MutableSnapshot) => {
         snapshot.set(
           objectMetadataItemsState,
@@ -38,12 +118,17 @@ const meta: Meta<typeof WidgetRenderer> = {
       };
 
       return (
-        <PageLayoutTestWrapper initializeState={initializeState}>
-          {Story(context)}
-        </PageLayoutTestWrapper>
+        <MemoryRouter>
+          <JestMetadataAndApolloMocksWrapper>
+            <CoreClientProviderWrapper>
+              <PageLayoutTestWrapper initializeState={initializeState}>
+                <Story />
+              </PageLayoutTestWrapper>
+            </CoreClientProviderWrapper>
+          </JestMetadataAndApolloMocksWrapper>
+        </MemoryRouter>
       );
     },
-    ComponentDecorator,
   ],
   parameters: {
     layout: 'centered',
