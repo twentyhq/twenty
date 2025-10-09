@@ -146,6 +146,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       objectMetadataNameSingular,
       forwardPagination,
       isGroupBy,
+      groupByFields,
     );
 
     const result = await queryBuilder.getRawMany();
