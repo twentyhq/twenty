@@ -85,7 +85,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
     }
 
     return {
-      result: toolOutput.result as object,
+      result: toolOutput.result,
     };
   }
 }

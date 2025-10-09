@@ -60,7 +60,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     }
 
     return {
-      result: toolOutput.result as object,
+      result: toolOutput.result,
     };
   }
 }

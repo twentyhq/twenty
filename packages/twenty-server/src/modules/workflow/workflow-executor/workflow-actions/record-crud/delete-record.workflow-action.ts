@@ -84,7 +84,7 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
     }
 
     return {
-      result: toolOutput.result as object,
+      result: toolOutput.result,
     };
   }
 }
