@@ -26,7 +26,10 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
   where: '"deletedAt" IS NULL',
 })
 @Index('IDX_VIEW_FILTER_FIELD_METADATA_ID', ['fieldMetadataId'])
-export class ViewFilterEntity extends SyncableEntity {
+export class ViewFilterEntity
+  extends SyncableEntity
+  implements Required<ViewFilterEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -51,13 +54,13 @@ export class ViewFilterEntity extends SyncableEntity {
   value: ViewFilterValue;
 
   @Column({ nullable: true, type: 'uuid' })
-  viewFilterGroupId?: string | null;
+  viewFilterGroupId: string | null;
 
   @Column({ nullable: true, type: 'double precision' })
   positionInViewFilterGroup: number | null;
 
   @Column({ nullable: true, type: 'text', default: null })
-  subFieldName?: string | null;
+  subFieldName: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
@@ -72,7 +75,7 @@ export class ViewFilterEntity extends SyncableEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date | null;
+  deletedAt: Date | null;
 
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',

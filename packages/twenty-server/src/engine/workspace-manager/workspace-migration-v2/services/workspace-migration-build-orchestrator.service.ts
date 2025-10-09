@@ -88,6 +88,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       cronTrigger: [],
       routeTrigger: [],
       fieldMetadata: [],
+      viewFilter: []
     };
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({

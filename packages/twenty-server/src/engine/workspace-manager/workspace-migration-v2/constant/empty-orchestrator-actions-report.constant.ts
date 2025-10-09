@@ -19,4 +19,5 @@ export const EMPTY_ORCHESTRATOR_ACTIONS_REPORT = {
   databaseEventTrigger: emptyCreatedDeletedUpdated,
   cronTrigger: emptyCreatedDeletedUpdated,
   routeTrigger: emptyCreatedDeletedUpdated,
+  viewFilter: emptyCreatedDeletedUpdated
 } as const satisfies OrchestratorActionsReport;
