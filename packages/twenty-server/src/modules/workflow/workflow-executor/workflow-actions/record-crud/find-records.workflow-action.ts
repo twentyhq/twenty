@@ -73,9 +73,8 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       );
     }
 
-    const result = toolOutput.result as { records?: unknown[]; count?: number };
-    const records = result?.records || [];
-    const totalCount = result?.count || 0;
+    const records = toolOutput.result?.records ?? [];
+    const totalCount = toolOutput.result?.count ?? 0;
 
     return {
       result: {

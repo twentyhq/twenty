@@ -16,6 +16,11 @@ import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/works
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
+type FindRecordsResult = {
+  records: unknown[];
+  count: number;
+};
+
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class FindRecordsService {
@@ -26,7 +31,9 @@ export class FindRecordsService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
-  async execute(params: FindRecordsParams): Promise<ToolOutput> {
+  async execute(
+    params: FindRecordsParams,
+  ): Promise<ToolOutput<FindRecordsResult>> {
     const {
       objectName,
       filter,
