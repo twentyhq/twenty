@@ -27,6 +27,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
     type: FieldMetadataType.UUID,
     id: v4(),
+    viewFieldIds: [],
     isLabelSyncedWithName: false,
     isUnique: true,
     objectMetadataId,
@@ -60,6 +61,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   const nameField: FlatFieldMetadata<FieldMetadataType.TEXT> = {
     type: FieldMetadataType.TEXT,
     id: v4(),
+    viewFieldIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -93,6 +95,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   const createdAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
     id: v4(),
+    viewFieldIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -126,6 +129,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   const updatedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
     id: v4(),
+    viewFieldIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -159,6 +163,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   const deletedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
     id: v4(),
+    viewFieldIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -192,6 +197,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   const createdByField: FlatFieldMetadata<FieldMetadataType.ACTOR> = {
     type: FieldMetadataType.ACTOR,
     id: v4(),
+    viewFieldIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -225,6 +231,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   const positionField: FlatFieldMetadata<FieldMetadataType.POSITION> = {
     type: FieldMetadataType.POSITION,
     id: v4(),
+    viewFieldIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -257,6 +264,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
 
   const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
     type: FieldMetadataType.TS_VECTOR,
+    viewFieldIds: [],
     id: v4(),
     isLabelSyncedWithName: false,
     isUnique: false,

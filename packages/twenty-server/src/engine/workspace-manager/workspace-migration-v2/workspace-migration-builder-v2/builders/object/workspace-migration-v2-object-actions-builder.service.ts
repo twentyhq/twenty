@@ -19,9 +19,6 @@ export type ObjectMetadataRelatedFlatEntityMaps = Pick<
   'flatFieldMetadataMaps'
 >;
 
-// TODO find a solution in order to handle label indentifier validation
-// export type ObjectMetadataRelatedFlatEntityMaps = undefined;
-
 @Injectable()
 export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   'objectMetadata',

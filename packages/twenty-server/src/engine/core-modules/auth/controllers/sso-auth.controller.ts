@@ -36,10 +36,10 @@ import {
   IdentityProviderType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -49,10 +49,8 @@ export class SSOAuthController {
     private readonly authService: AuthService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly domainManagerService: DomainManagerService,
-
+    private readonly userService: UserService,
     private readonly sSOService: SSOService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     @InjectRepository(WorkspaceSSOIdentityProvider)
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
   ) {}
@@ -180,11 +178,7 @@ export class SSOAuthController {
         })
       : undefined;
 
-    const existingUser = await this.userRepository.findOne({
-      where: {
-        email: payload.email,
-      },
-    });
+    const existingUser = await this.userService.findUserByEmail(payload.email);
 
     const { userData } = this.authService.formatUserDataPayload(
       payload,

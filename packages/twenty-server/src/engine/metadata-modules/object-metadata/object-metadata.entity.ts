@@ -13,6 +13,7 @@ import {
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -145,8 +146,7 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @OneToMany(
     () => ObjectPermissionEntity,
-    (objectPermission: ObjectPermissionEntity) =>
-      objectPermission.objectMetadata,
+    (objectPermission) => objectPermission.objectMetadata,
     {
       cascade: true,
     },
@@ -155,10 +155,15 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @OneToMany(
     () => FieldPermissionEntity,
-    (fieldPermission: FieldPermissionEntity) => fieldPermission.objectMetadata,
+    (fieldPermission) => fieldPermission.objectMetadata,
     {
       cascade: true,
     },
   )
   fieldPermissions: Relation<FieldPermissionEntity[]>;
+
+  @OneToMany(() => ViewEntity, (view) => view.objectMetadata, {
+    cascade: true,
+  })
+  views: Relation<ViewEntity[]>;
 }

@@ -1,5 +1,57 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`View Field Resolver - Failing Create Operation - v2 Should fail to create a conflicting view field on view and field metadata 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View field with same fieldmetadataId and viewId already exists",
+              "userFriendlyMessage": "View field already exists",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating view field",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`View Field Resolver - Failing Create Operation - v2 should fail to create view field when non-existent field metadata 1`] = `
 {
   "extensions": {

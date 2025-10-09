@@ -6,8 +6,8 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findObjectFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -30,10 +30,11 @@ export const findAllOthersMorphRelationFlatFieldMetadatasOrThrow = ({
     );
   }
 
-  const { objectFlatFieldMetadatas } = findObjectFlatFieldMetadatasOrThrow({
-    flatFieldMetadataMaps,
-    flatObjectMetadata,
-  });
+  const objectFlatFieldMetadatas =
+    findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+    });
 
   return objectFlatFieldMetadatas.filter(
     (
