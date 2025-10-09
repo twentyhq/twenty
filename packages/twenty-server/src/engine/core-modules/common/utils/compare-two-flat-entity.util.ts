@@ -3,8 +3,8 @@ import { type FromTo } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
 
 import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
+import { transformFlatEntityForComparison } from 'src/engine/core-modules/common/utils/transform-flat-entity-for-comparison.util';
 import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
-import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 export const compareTwoFlatEntity = <
   TFlatEntity extends AllFlatEntities,
@@ -14,26 +14,28 @@ export const compareTwoFlatEntity = <
   fromFlatEntity,
   toFlatEntity,
   propertiesToCompare,
-  jsonbProperties,
+  propertiesToStringify,
 }: {
   propertiesToCompare: PToCompare[];
-  jsonbProperties: PJsonB[];
+  propertiesToStringify: PJsonB[];
 } & FromTo<TFlatEntity, 'flatEntity'>) => {
-  const transformMetadataForComparisonParameters = {
-    shouldIgnoreProperty: (property: string) =>
-      !propertiesToCompare.includes(property as PToCompare),
-    propertiesToStringify: jsonbProperties,
-  };
-  const fromCompare = transformMetadataForComparison(
+  const [transformedFromFlatEntity, transformedToFlatEntity] = [
     fromFlatEntity,
-    transformMetadataForComparisonParameters,
-  );
-  const toCompare = transformMetadataForComparison(
     toFlatEntity,
-    transformMetadataForComparisonParameters,
+  ].map((flatEntity) =>
+    transformFlatEntityForComparison({
+      flatEntity,
+      options: {
+        propertiesToCompare,
+        propertiesToStringify,
+      },
+    }),
   );
 
-  const flatEntityDifferences = diff(fromCompare, toCompare);
+  const flatEntityDifferences = diff(
+    transformedFromFlatEntity,
+    transformedToFlatEntity,
+  );
 
   return flatEntityDifferences.flatMap<
     Array<
@@ -46,7 +48,9 @@ export const compareTwoFlatEntity = <
       case 'CHANGE': {
         const { oldValue, path, value } = difference;
         const property = path[0] as PToCompare;
-        const isJsonb = jsonbProperties.includes(property as unknown as PJsonB);
+        const isJsonb = propertiesToStringify.includes(
+          property as unknown as PJsonB,
+        );
 
         if (isJsonb) {
           return {

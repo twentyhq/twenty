@@ -16,7 +16,7 @@ export const compareTwoFlatViewField = ({
   return compareTwoFlatEntity({
     fromFlatEntity: fromFlatViewField,
     toFlatEntity: toFlatViewField,
-    jsonbProperties: [],
+    propertiesToStringify: [],
     propertiesToCompare: FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE,
   });
 };
