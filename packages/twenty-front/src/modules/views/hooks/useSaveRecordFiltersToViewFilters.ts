@@ -56,37 +56,43 @@ export const useSaveRecordFiltersToViewFilters = () => {
           newViewFilters,
         );
 
-        const createViewFilterInputs = viewFiltersToCreate.map((viewFilter) => ({
-          input: {
-            id: viewFilter.id,
-            fieldMetadataId: viewFilter.fieldMetadataId,
-            viewId: currentView.id,
-            value: viewFilter.value,
-            operand: viewFilter.operand,
-            viewFilterGroupId: viewFilter.viewFilterGroupId,
-            positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-            subFieldName: viewFilter.subFieldName ?? null,
-          },
-        }));
-
-        const updateViewFilterInputs = viewFiltersToUpdate.map((viewFilter) => ({
-          input: {
-            id: viewFilter.id,
-            update: {
+        const createViewFilterInputs = viewFiltersToCreate.map(
+          (viewFilter) => ({
+            input: {
+              id: viewFilter.id,
+              fieldMetadataId: viewFilter.fieldMetadataId,
+              viewId: currentView.id,
               value: viewFilter.value,
               operand: viewFilter.operand,
-              positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
               viewFilterGroupId: viewFilter.viewFilterGroupId,
+              positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
               subFieldName: viewFilter.subFieldName ?? null,
             },
-          },
-        }));
+          }),
+        );
 
-        const deleteViewFilterInputs = viewFiltersToDelete.map((viewFilter) => ({
-          input: {
-            id: viewFilter.id,
-          },
-        }));
+        const updateViewFilterInputs = viewFiltersToUpdate.map(
+          (viewFilter) => ({
+            input: {
+              id: viewFilter.id,
+              update: {
+                value: viewFilter.value,
+                operand: viewFilter.operand,
+                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+                viewFilterGroupId: viewFilter.viewFilterGroupId,
+                subFieldName: viewFilter.subFieldName ?? null,
+              },
+            },
+          }),
+        );
+
+        const deleteViewFilterInputs = viewFiltersToDelete.map(
+          (viewFilter) => ({
+            input: {
+              id: viewFilter.id,
+            },
+          }),
+        );
 
         await createViewFilterRecords(createViewFilterInputs);
         await updateViewFilterRecords(updateViewFilterInputs);
