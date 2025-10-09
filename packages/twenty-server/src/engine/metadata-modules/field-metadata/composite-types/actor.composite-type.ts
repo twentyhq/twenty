@@ -12,6 +12,7 @@ export enum FieldActorSource {
   EMAIL = 'EMAIL',
   CALENDAR = 'CALENDAR',
   WORKFLOW = 'WORKFLOW',
+  AGENT = 'AGENT',
   API = 'API',
   IMPORT = 'IMPORT',
   MANUAL = 'MANUAL',
