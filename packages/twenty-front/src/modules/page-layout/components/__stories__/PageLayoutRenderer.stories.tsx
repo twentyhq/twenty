@@ -4,18 +4,22 @@ import { expect, within } from '@storybook/test';
 import { MemoryRouter } from 'react-router-dom';
 
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
-import { RecoilRoot } from 'recoil';
 import {
   GraphOrderBy,
   GraphType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
+  AxisNameDisplay,
   ExtendedAggregateOperations,
   PageLayoutType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
@@ -25,6 +29,18 @@ const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   await expect(await canvas.findByText('Revenue Sources')).toBeVisible();
   await expect(await canvas.findByText('Quarterly Comparison')).toBeVisible();
 };
+
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
+  CoreObjectNameSingular.Company,
+);
+const idField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'id',
+});
+const createdAtField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'createdAt',
+});
 
 const mixedGraphsPageLayoutMocks = {
   __typename: 'PageLayout',
@@ -52,7 +68,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Revenue',
-          objectMetadataId: null,
+          objectMetadataId: companyObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 0,
@@ -64,7 +80,8 @@ const mixedGraphsPageLayoutMocks = {
             __typename: 'NumberChartConfiguration',
             graphType: GraphType.NUMBER,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
-            aggregateFieldMetadataId: 'id',
+            aggregateFieldMetadataId: idField.id,
+            displayDataLabel: false,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -76,7 +93,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Goal Progress',
-          objectMetadataId: null,
+          objectMetadataId: companyObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 0,
@@ -88,7 +105,7 @@ const mixedGraphsPageLayoutMocks = {
             __typename: 'GaugeChartConfiguration',
             graphType: GraphType.GAUGE,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
-            aggregateFieldMetadataId: 'id',
+            aggregateFieldMetadataId: idField.id,
             displayDataLabel: false,
           },
           createdAt: '2024-01-01T00:00:00Z',
@@ -101,7 +118,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Revenue Sources',
-          objectMetadataId: null,
+          objectMetadataId: companyObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 0,
@@ -113,9 +130,10 @@ const mixedGraphsPageLayoutMocks = {
             __typename: 'PieChartConfiguration',
             graphType: GraphType.PIE,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
-            aggregateFieldMetadataId: 'id',
-            groupByFieldMetadataId: 'createdAt',
+            aggregateFieldMetadataId: idField.id,
+            groupByFieldMetadataId: createdAtField.id,
             orderBy: GraphOrderBy.VALUE_DESC,
+            displayDataLabel: false,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -127,7 +145,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Quarterly Comparison',
-          objectMetadataId: null,
+          objectMetadataId: companyObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 2,
@@ -139,9 +157,11 @@ const mixedGraphsPageLayoutMocks = {
             __typename: 'BarChartConfiguration',
             graphType: GraphType.BAR,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
-            aggregateFieldMetadataId: 'id',
-            groupByFieldMetadataIdX: 'createdAt',
+            aggregateFieldMetadataId: idField.id,
+            groupByFieldMetadataIdX: createdAtField.id,
             orderByX: GraphOrderBy.FIELD_ASC,
+            axisNameDisplay: AxisNameDisplay.BOTH,
+            displayDataLabel: false,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -172,12 +192,11 @@ const meta: Meta<typeof PageLayoutRenderer> = {
   title: 'Modules/PageLayout/PageLayoutRenderer',
   component: PageLayoutRenderer,
   decorators: [
+    ObjectMetadataItemsDecorator,
     (Story) => (
       <MemoryRouter>
         <MockedProvider mocks={graphqlMocks} addTypename={false}>
-          <RecoilRoot>
-            <Story />
-          </RecoilRoot>
+          <Story />
         </MockedProvider>
       </MemoryRouter>
     ),

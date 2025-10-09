@@ -1,17 +1,48 @@
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { type MutableSnapshot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { GraphType } from '~/generated-metadata/graphql';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
+  CoreObjectNameSingular.Company,
+);
+const idField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'id',
+});
+const createdAtField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'createdAt',
+});
 
 const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
   component: WidgetRenderer,
   decorators: [
-    (Story, context) => (
-      <PageLayoutTestWrapper>{Story(context)}</PageLayoutTestWrapper>
-    ),
+    (Story, context) => {
+      const initializeState = (snapshot: MutableSnapshot) => {
+        snapshot.set(
+          objectMetadataItemsState,
+          generatedMockObjectMetadataItems,
+        );
+        snapshot.set(isAppWaitingForFreshObjectMetadataState, false);
+      };
+
+      return (
+        <PageLayoutTestWrapper initializeState={initializeState}>
+          {Story(context)}
+        </PageLayoutTestWrapper>
+      );
+    },
     ComponentDecorator,
   ],
   parameters: {
@@ -35,11 +66,16 @@ export const WithNumberChart: Story = {
       pageLayoutTabId: 'tab-overview',
       title: 'Sales Pipeline',
       graphType: GraphType.NUMBER,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 3,
+      },
+      fieldSelection: {
+        objectMetadataId: companyObjectMetadataItem.id,
+        aggregateFieldMetadataId: idField.id,
       },
     }),
   },
@@ -57,11 +93,16 @@ export const WithGaugeChart: Story = {
       pageLayoutTabId: 'tab-overview',
       title: 'Conversion Rate',
       graphType: GraphType.GAUGE,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 5,
         columnSpan: 3,
+      },
+      fieldSelection: {
+        objectMetadataId: companyObjectMetadataItem.id,
+        aggregateFieldMetadataId: idField.id,
       },
     }),
   },
@@ -72,18 +113,24 @@ export const WithGaugeChart: Story = {
   ),
 };
 
-export const WithPieChart: Story = {
+export const WithBarChart: Story = {
   args: {
     widget: createDefaultGraphWidget({
       id: 'widget-1',
       pageLayoutTabId: 'tab-overview',
-      title: 'Lead Distribution',
-      graphType: GraphType.PIE,
+      title: 'Monthly Trends',
+      graphType: GraphType.BAR,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 5,
         columnSpan: 3,
+      },
+      fieldSelection: {
+        objectMetadataId: companyObjectMetadataItem.id,
+        aggregateFieldMetadataId: idField.id,
+        groupByFieldMetadataIdX: createdAtField.id,
       },
     }),
   },
@@ -101,11 +148,16 @@ export const SmallWidget: Story = {
       pageLayoutTabId: 'tab-overview',
       title: 'Small Widget (2x2 grid)',
       graphType: GraphType.NUMBER,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 2,
+      },
+      fieldSelection: {
+        objectMetadataId: companyObjectMetadataItem.id,
+        aggregateFieldMetadataId: idField.id,
       },
     }),
   },
@@ -129,12 +181,18 @@ export const MediumWidget: Story = {
       id: 'widget-1',
       pageLayoutTabId: 'tab-overview',
       title: 'Medium Widget (4x3 grid)',
-      graphType: GraphType.GAUGE,
+      graphType: GraphType.BAR,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 3,
         columnSpan: 4,
+      },
+      fieldSelection: {
+        objectMetadataId: companyObjectMetadataItem.id,
+        aggregateFieldMetadataId: idField.id,
+        groupByFieldMetadataIdX: createdAtField.id,
       },
     }),
   },
@@ -158,12 +216,18 @@ export const LargeWidget: Story = {
       id: 'widget-1',
       pageLayoutTabId: 'tab-overview',
       title: 'Large Widget (6x4 grid)',
-      graphType: GraphType.PIE,
+      graphType: GraphType.BAR,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 4,
         columnSpan: 6,
+      },
+      fieldSelection: {
+        objectMetadataId: companyObjectMetadataItem.id,
+        aggregateFieldMetadataId: idField.id,
+        groupByFieldMetadataIdX: createdAtField.id,
       },
     }),
   },
@@ -188,11 +252,16 @@ export const WideWidget: Story = {
       pageLayoutTabId: 'tab-overview',
       title: 'Wide Widget (8x2 grid)',
       graphType: GraphType.NUMBER,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 8,
+      },
+      fieldSelection: {
+        objectMetadataId: companyObjectMetadataItem.id,
+        aggregateFieldMetadataId: idField.id,
       },
     }),
   },
@@ -216,12 +285,18 @@ export const TallWidget: Story = {
       id: 'widget-1',
       pageLayoutTabId: 'tab-overview',
       title: 'Tall Widget (3x6 grid)',
-      graphType: GraphType.GAUGE,
+      graphType: GraphType.BAR,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
         row: 0,
         column: 0,
         rowSpan: 6,
         columnSpan: 3,
+      },
+      fieldSelection: {
+        objectMetadataId: companyObjectMetadataItem.id,
+        aggregateFieldMetadataId: idField.id,
+        groupByFieldMetadataIdX: createdAtField.id,
       },
     }),
   },
