@@ -5,38 +5,42 @@ import { ServerlessFunctionRuntime } from 'src/engine/metadata-modules/serverles
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 
-export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
-  createServerlessFunctionInput,
-  workspaceId,
-}: {
-  createServerlessFunctionInput: CreateServerlessFunctionInput;
+export type FromCreateServerlessFunctionInputToFlatServerlessFunctionArgs = {
+  createServerlessFunctionInput: CreateServerlessFunctionInput & {
+    serverlessFunctionLayerId: string;
+  };
   workspaceId: string;
-}): FlatServerlessFunction => {
+};
+
+export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
+  createServerlessFunctionInput: rawCreateServerlessFunctionInput,
+  workspaceId,
+}: FromCreateServerlessFunctionInputToFlatServerlessFunctionArgs): FlatServerlessFunction => {
   const id = v4();
   const currentDate = new Date();
 
   return {
     id,
-    name: createServerlessFunctionInput.name,
-    description: createServerlessFunctionInput.description ?? null,
+    name: rawCreateServerlessFunctionInput.name,
+    description: rawCreateServerlessFunctionInput.description ?? null,
     universalIdentifier:
-      createServerlessFunctionInput.universalIdentifier ?? v4(),
+      rawCreateServerlessFunctionInput.universalIdentifier ?? v4(),
     createdAt: currentDate,
     updatedAt: currentDate,
     deletedAt: null,
     latestVersion: null,
     publishedVersions: [],
-    applicationId: createServerlessFunctionInput.applicationId ?? null,
+    applicationId: rawCreateServerlessFunctionInput.applicationId ?? null,
     latestVersionInputSchema: null,
     runtime: ServerlessFunctionRuntime.NODE22,
-    timeoutSeconds: createServerlessFunctionInput.timeoutSeconds ?? 300,
+    timeoutSeconds: rawCreateServerlessFunctionInput.timeoutSeconds ?? 300,
     serverlessFunctionLayerId:
-      createServerlessFunctionInput.serverlessFunctionLayerId,
+      rawCreateServerlessFunctionInput.serverlessFunctionLayerId,
     workspaceId,
-    code: createServerlessFunctionInput?.code,
-    checksum: createServerlessFunctionInput?.code
+    code: rawCreateServerlessFunctionInput?.code,
+    checksum: rawCreateServerlessFunctionInput?.code
       ? serverlessFunctionCreateHash(
-          JSON.stringify(createServerlessFunctionInput.code),
+          JSON.stringify(rawCreateServerlessFunctionInput.code),
         )
       : null,
   };

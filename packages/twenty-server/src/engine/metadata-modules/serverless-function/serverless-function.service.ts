@@ -18,7 +18,6 @@ import { ServerlessService } from 'src/engine/core-modules/serverless/serverless
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { type UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
@@ -31,6 +30,7 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
+import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -314,20 +314,30 @@ export class ServerlessFunctionService {
   }
 
   async createOneServerlessFunction(
-    serverlessFunctionInput: CreateServerlessFunctionInput,
+    serverlessFunctionInput: CreateServerlessFunctionInput & {
+      serverlessFunctionLayerId?: string;
+    },
     workspaceId: string,
   ) {
-    const commonServerlessFunctionLayer =
-      await this.serverlessFunctionLayerService.createCommonLayerIfNotExist(
-        workspaceId,
-      );
+    let serverlessFunctionToCreateLayerId =
+      serverlessFunctionInput.serverlessFunctionLayerId;
+
+    if (!isDefined(serverlessFunctionToCreateLayerId)) {
+      const { id: commonServerlessFunctionLayerId } =
+        await this.serverlessFunctionLayerService.createCommonLayerIfNotExist(
+          workspaceId,
+        );
+
+      serverlessFunctionToCreateLayerId = commonServerlessFunctionLayerId;
+    }
+
+    const createServerlessFunctionInput: CreateServerlessFunctionInput = {
+      ...serverlessFunctionInput,
+      serverlessFunctionLayerId: serverlessFunctionToCreateLayerId,
+    };
 
     const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
-      {
-        ...serverlessFunctionInput,
-        workspaceId,
-        serverlessFunctionLayerId: commonServerlessFunctionLayer.id,
-      },
+      { ...createServerlessFunctionInput, workspaceId },
     );
 
     const createdServerlessFunction =
