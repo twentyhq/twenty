@@ -1,13 +1,12 @@
 import gql from 'graphql-tag';
-import { useRecoilValue } from 'recoil';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
-import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
@@ -21,7 +20,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const apolloCoreClient = useApolloCoreClient();
@@ -31,9 +30,11 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
       objectMetadataItem,
       input: record,
     });
-    const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
+    const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
+      objectMetadataItems,
       objectMetadataItem,
       record: prefilledRecord,
+      depth: 1,
     });
     const fragment = gql`
           fragment Create${capitalize(

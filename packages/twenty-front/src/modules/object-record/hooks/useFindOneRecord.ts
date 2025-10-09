@@ -7,7 +7,7 @@ import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/Objec
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -34,7 +34,8 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   const apolloCoreClient = useApolloCoreClient();
 
   const computedRecordGqlFields =
-    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+    recordGqlFields ??
+    generateDepthRecordGqlFields({ objectMetadataItem, depth: 1 });
 
   const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular,

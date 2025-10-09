@@ -5,9 +5,9 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
 
 type UseLazyFindOneRecordParams = ObjectMetadataItemIdentifier & {
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
@@ -36,7 +36,7 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
     recordGqlFields:
       recordGqlFields ??
-      generateDepthOneRecordGqlFields({ objectMetadataItem }),
+      generateDepthRecordGqlFields({ objectMetadataItem, depth: 1 }),
     withSoftDeleted,
   });
 

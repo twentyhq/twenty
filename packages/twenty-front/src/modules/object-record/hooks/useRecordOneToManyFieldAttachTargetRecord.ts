@@ -3,7 +3,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
 import { CustomError, isDefined } from 'twenty-shared/utils';
@@ -80,9 +80,11 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
         [targetGQLFieldName]: previousRecord,
       };
 
-      const gqlFields = computeDepthOneRecordGqlFieldsFromRecord({
+      const gqlFields = generateDepthRecordGqlFieldsFromRecord({
         objectMetadataItem: targetObjectMetadataItem,
+        objectMetadataItems,
         record: previousRecordWithRelation,
+        depth: 1,
       });
 
       updateRecordFromCache({

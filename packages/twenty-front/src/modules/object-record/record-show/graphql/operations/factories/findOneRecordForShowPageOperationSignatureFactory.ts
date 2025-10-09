@@ -2,7 +2,7 @@ import { generateActivityTargetMorphFieldKeys } from '@/activities/utils/generat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
 
 export const buildFindOneRecordForShowPageOperationSignature: RecordGqlOperationSignatureFactory =
   ({
@@ -15,7 +15,7 @@ export const buildFindOneRecordForShowPageOperationSignature: RecordGqlOperation
     objectNameSingular: objectMetadataItem.nameSingular,
     variables: {},
     fields: {
-      ...generateDepthOneRecordGqlFields({ objectMetadataItem }),
+      ...generateDepthRecordGqlFields({ objectMetadataItem, depth: 1 }),
       ...(objectMetadataItem.nameSingular === CoreObjectNameSingular.Task
         ? {
             taskTargets: {

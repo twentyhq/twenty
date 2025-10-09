@@ -6,7 +6,7 @@ import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
@@ -17,6 +17,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
 const StyledMessageContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(6)};
@@ -32,9 +33,12 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     settingsAccountsSelectedMessageChannelState,
   );
 
-  const messageChannelObjectMetadataItem = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.MessageChannel,
-  });
+  const { objectMetadataItem: messageChannelObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.MessageChannel,
+    });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { records: accounts } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
@@ -59,9 +63,11 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         eq: true,
       },
     },
-    recordGqlFields: generateDepthOneRecordGqlFields(
-      messageChannelObjectMetadataItem,
-    ),
+    recordGqlFields: generateDepthRecordGqlFields({
+      objectMetadataItems,
+      depth: 1,
+      objectMetadataItem: messageChannelObjectMetadataItem,
+    }),
     onCompleted: (data) => {
       setSelectedMessageChannel(data[0]);
     },

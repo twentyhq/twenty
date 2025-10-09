@@ -1,16 +1,19 @@
-import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
 import {
   allMockPersonRecords,
   getMockPersonObjectMetadataItem,
 } from '~/testing/mock-data/people';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 describe('computeDepthOneRecordGqlFieldsFromRecord', () => {
   const objectMetadataItem = getMockPersonObjectMetadataItem();
   it('Should handle basic call', () => {
     const personRecord = allMockPersonRecords[0];
-    const result = computeDepthOneRecordGqlFieldsFromRecord({
+    const result = generateDepthRecordGqlFieldsFromRecord({
       objectMetadataItem,
+      objectMetadataItems: generatedMockObjectMetadataItems,
       record: personRecord,
+      depth: 1,
     });
     expect(result).toMatchInlineSnapshot(`
 {

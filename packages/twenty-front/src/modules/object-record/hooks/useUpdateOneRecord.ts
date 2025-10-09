@@ -7,8 +7,8 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
@@ -43,7 +43,8 @@ export const useUpdateOneRecord = <
   });
 
   const computedRecordGqlFields =
-    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+    recordGqlFields ??
+    generateDepthRecordGqlFields({ objectMetadataItem, depth: 1 });
 
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular,
@@ -109,9 +110,10 @@ export const useUpdateOneRecord = <
       isDefined(cachedRecordWithConnection);
 
     if (shouldHandleOptimisticCache) {
-      const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
+      const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
         objectMetadataItem,
         record: optimisticRecordInput,
+        depth: 1,
       });
 
       updateRecordFromCache({
@@ -171,9 +173,10 @@ export const useUpdateOneRecord = <
         ).filter((diffKey) => !cachedRecordKeys.has(diffKey));
 
         const recordGqlFields = {
-          ...computeDepthOneRecordGqlFieldsFromRecord({
+          ...generateDepthRecordGqlFieldsFromRecord({
             objectMetadataItem,
             record: cachedRecord,
+            depth: 1,
           }),
           ...buildRecordFromKeysWithSameValue(
             recordKeysAddedByOptimisticCache,

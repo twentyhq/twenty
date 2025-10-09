@@ -1,7 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { InMemoryCache, type NormalizedCacheObject } from '@apollo/client';
 
@@ -57,7 +57,9 @@ export class InMemoryTestingCacheInstance {
           objectMetadataItem,
           objectMetadataItems: this.objectMetadataItems,
           record,
-          recordGqlFields: computeDepthOneRecordGqlFieldsFromRecord({
+          recordGqlFields: generateDepthRecordGqlFieldsFromRecord({
+            objectMetadataItems: this.objectMetadataItems,
+            depth: 1,
             objectMetadataItem,
             record,
           }),

@@ -1,12 +1,11 @@
 import { useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
@@ -20,12 +19,17 @@ export const useGetRecordFromCache = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const appliedRecordGqlFields =
-    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
-
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+    recordGqlFields ??
+    generateDepthRecordGqlFields({
+      objectMetadataItem,
+      objectMetadataItems,
+      depth: 1,
+    });
 
   const apolloCoreClient = useApolloCoreClient();
 

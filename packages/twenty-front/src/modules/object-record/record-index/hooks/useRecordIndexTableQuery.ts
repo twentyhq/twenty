@@ -1,10 +1,9 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useRecordFieldGqlFields } from '@/object-record/record-field/hooks/useRecordFieldGqlFields';
+import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-
 export const useRecordIndexTableQuery = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -14,7 +13,7 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
-  const recordGqlFields = useRecordFieldGqlFields({ objectMetadataItem });
+  const recordGqlFields = useRecordsFieldVisibleGqlFields();
 
   const { records, hasNextPage, queryIdentifier, loading } = useFindManyRecords(
     {
