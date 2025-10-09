@@ -16,7 +16,7 @@ const meta: Meta<PageDecoratorArgs> = {
   args: {
     routePath: '/settings/apis/:apiKeyId',
     routeParams: {
-      ':apiKeyId': 'f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
+      apiKeyId: 'f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
     },
   },
   parameters: {

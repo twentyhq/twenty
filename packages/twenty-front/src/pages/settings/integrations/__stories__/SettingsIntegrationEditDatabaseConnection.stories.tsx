@@ -15,10 +15,10 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsIntegrationEditDatabaseConnection,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/integrations/:databaseKey/edit',
+    routePath: '/settings/integrations/:databaseKey/:connectionId/edit',
     routeParams: {
-      ':databaseKey': 'postgresql',
-      ':connectionId': '67cbfd35-8dd4-4591-b9d4-c1906281a5da',
+      databaseKey: 'postgresql',
+      connectionId: '67cbfd35-8dd4-4591-b9d4-c1906281a5da',
     },
   },
   parameters: {

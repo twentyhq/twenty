@@ -20,8 +20,8 @@ const meta: Meta<PageDecoratorArgs> = {
   args: {
     routePath: getSettingsPath(SettingsPath.IntegrationDatabaseConnection),
     routeParams: {
-      ':databaseKey': 'postgresql',
-      ':connectionId': '67cbfd35-8dd4-4591-b9d4-c1906281a5da',
+      databaseKey: 'postgresql',
+      connectionId: '67cbfd35-8dd4-4591-b9d4-c1906281a5da',
     },
   },
   parameters: {
@@ -36,7 +36,7 @@ export type Story = StoryObj<typeof SettingsIntegrationShowDatabaseConnection>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     within(canvasElement);
-    sleep(1000);
+    await sleep(1000);
 
     // Todo: Implement mocks in graphqlMocks for databaseConnection
     // await canvas.findByText('Tables');

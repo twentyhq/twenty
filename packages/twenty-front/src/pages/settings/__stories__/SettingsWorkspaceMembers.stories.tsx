@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { within } from '@storybook/test';
 
 import {
   PageDecorator,
@@ -30,10 +30,6 @@ export const Default: Story = {
 
     await sleep(1000);
 
-    const buttons = await canvas.getAllByRole('button');
-
-    expect(
-      buttons.findIndex((button) => button.outerHTML.includes('Copy link')),
-    ).toBeGreaterThan(-1);
+    await canvas.findByRole('button', { name: 'Copy link' });
   },
 };

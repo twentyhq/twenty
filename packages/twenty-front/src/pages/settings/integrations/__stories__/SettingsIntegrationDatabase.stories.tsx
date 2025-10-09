@@ -18,7 +18,7 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: {
     routePath: getSettingsPath(SettingsPath.IntegrationDatabase),
-    routeParams: { ':databaseKey': 'postgresql' },
+    routeParams: { databaseKey: 'postgresql' },
   },
   parameters: {
     msw: graphqlMocks,
