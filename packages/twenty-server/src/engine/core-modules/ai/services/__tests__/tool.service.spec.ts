@@ -24,10 +24,7 @@ describe('ToolService', () => {
   const roleId = 'role_1';
 
   let service: ToolService;
-  let ormManager: TwentyORMGlobalManager;
   let permissionsCacheService: WorkspacePermissionsCacheService;
-  let transformer: RecordInputTransformerService;
-  let workspaceCache: WorkspaceCacheStorageService;
 
   const testObject = getMockObjectMetadataEntity({
     workspaceId: '',
@@ -106,10 +103,7 @@ describe('ToolService', () => {
     }).compile();
 
     service = moduleRef.get(ToolService);
-    ormManager = moduleRef.get(TwentyORMGlobalManager);
     permissionsCacheService = moduleRef.get(WorkspacePermissionsCacheService);
-    transformer = moduleRef.get(RecordInputTransformerService);
-    workspaceCache = moduleRef.get(WorkspaceCacheStorageService);
   });
 
   describe('listTools', () => {
