@@ -22,6 +22,9 @@ import { ResponsiveBar, type BarCustomLayerProps } from '@nivo/bar';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+const LEGEND_THRESHOLD = 10;
+const LABEL_THRESHOLD = 15;
+
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
   indexBy: string;
@@ -108,6 +111,13 @@ export const GraphWidgetBarChart = ({
     formatOptions,
   });
 
+  const isLargeChart = data.length * keys.length > LABEL_THRESHOLD;
+  const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
+
+  const shouldShowLabels = showValues && !isLargeChart;
+
+  const shouldShowLegend = showLegend && !areThereTooManyKeys;
+
   const axisBottomConfig = getBarChartAxisBottomConfig(
     layout,
     xAxisLabel,
@@ -172,13 +182,13 @@ export const GraphWidgetBarChart = ({
           ]}
           axisTop={null}
           axisRight={null}
-          axisBottom={axisBottomConfig}
+          axisBottom={isLargeChart ? null : axisBottomConfig}
           axisLeft={axisLeftConfig}
           enableGridX={layout === 'horizontal' && showGrid}
           enableGridY={layout === 'vertical' && showGrid}
           gridXValues={layout === 'horizontal' ? 5 : undefined}
           gridYValues={layout === 'vertical' ? 5 : undefined}
-          enableLabel={showValues}
+          enableLabel={shouldShowLabels}
           labelSkipWidth={12}
           labelSkipHeight={12}
           labelTextColor={theme.font.color.primary}
@@ -198,7 +208,7 @@ export const GraphWidgetBarChart = ({
         />
       </GraphWidgetChartContainer>
       <GraphWidgetLegend
-        show={showLegend}
+        show={shouldShowLegend}
         items={enrichedKeys.map((item) => {
           const total = data.reduce(
             (sum, d) => sum + Number(d[item.key] || 0),
