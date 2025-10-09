@@ -4,13 +4,16 @@ import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effec
 import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type ApolloCache } from '@apollo/client';
 import { isArray } from '@sniptt/guards';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type triggerUpdateRelationsOptimisticEffectArgs = {
@@ -33,28 +36,78 @@ export const triggerUpdateRelationsOptimisticEffect = ({
 
   return sourceObjectMetadataItem.fields.forEach(
     (fieldMetadataItemOnSourceRecord) => {
-      const notARelationField =
-        fieldMetadataItemOnSourceRecord.type !== FieldMetadataType.RELATION;
-
-      if (notARelationField) {
+      if (
+        fieldMetadataItemOnSourceRecord.type ===
+        FieldMetadataType.MORPH_RELATION
+      ) {
+        debugger;
+      }
+      if (
+        !isFieldMorphRelation(fieldMetadataItemOnSourceRecord) &&
+        !isFieldRelation(fieldMetadataItemOnSourceRecord)
+      ) {
         return;
       }
 
-      const fieldDoesNotExist =
-        isDefined(updatedSourceRecord) &&
-        !(fieldMetadataItemOnSourceRecord.name in updatedSourceRecord);
+      let relationFound;
+      if (isFieldRelation(fieldMetadataItemOnSourceRecord)) {
+        const fieldDoesNotExist =
+          isDefined(updatedSourceRecord) &&
+          !(fieldMetadataItemOnSourceRecord.name in updatedSourceRecord);
 
-      if (fieldDoesNotExist) {
-        return;
+        if (fieldDoesNotExist) {
+          return;
+        }
+
+        const relation = fieldMetadataItemOnSourceRecord.relation;
+        if (!relation) {
+          return;
+        }
+        // const { targetObjectMetadata, targetFieldMetadata } = relation;
+        relationFound = relation;
       }
 
-      const relation = fieldMetadataItemOnSourceRecord.relation;
+      if (isFieldMorphRelation(fieldMetadataItemOnSourceRecord)) {
+        const morphRelations = fieldMetadataItemOnSourceRecord.morphRelations;
+        if (!morphRelations) {
+          return;
+        }
+        const possibleMorphRelationsNames =
+          computePossibleMorphGqlFieldForFieldName({
+            morphRelations,
+            fieldName: fieldMetadataItemOnSourceRecord.name,
+          });
 
-      if (!relation) {
+        const morphRelationFound = isDefined(updatedSourceRecord)
+          ? possibleMorphRelationsNames.find(
+              (possibleMorphRelationName) =>
+                possibleMorphRelationName in updatedSourceRecord,
+            )
+          : undefined;
+
+        const fieldDoesNotExist =
+          isDefined(updatedSourceRecord) && !morphRelationFound;
+
+        if (fieldDoesNotExist) {
+          return;
+        }
+
+        if (!morphRelationFound) {
+          return;
+        }
+
+        const morphRelation = morphRelations.find(
+          (morphRelation) =>
+            morphRelation.sourceFieldMetadata.id ===
+            fieldMetadataItemOnSourceRecord.id,
+        );
+
+        relationFound = morphRelation;
+      }
+      if (!relationFound) {
         return;
       }
-
-      const { targetObjectMetadata, targetFieldMetadata } = relation;
+      const { targetObjectMetadata, targetFieldMetadata } = relationFound;
 
       const fullTargetObjectMetadataItem = objectMetadataItems.find(
         ({ nameSingular }) =>
@@ -93,7 +146,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
           return [];
         }
 
-        if (isObjectRecordConnection(relation, value)) {
+        if (isObjectRecordConnection(relationFound, value)) {
           return value.edges.map(({ node }) => node);
         }
 

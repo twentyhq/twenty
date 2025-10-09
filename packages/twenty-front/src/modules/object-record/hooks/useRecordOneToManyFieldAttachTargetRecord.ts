@@ -6,7 +6,6 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
-import updateRecordRelationInCache from '@/object-record/utils/updateRecordRelationInCache';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
@@ -114,19 +113,6 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
       updateOneRecordInput: {
         [`${targetGQLFieldName}Id`]: sourceRecordId,
       },
-    });
-
-    updateRecordRelationInCache({
-      sourceObjectMetadataItem,
-      sourceRecordId,
-      apolloCoreClient,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-      sourceFieldMetadataType,
-      sourceFieldMetadataName,
-      targetObjectNameSingular,
-      targetObjectNamePlural,
-      cachedTargetRecord,
     });
   };
 
