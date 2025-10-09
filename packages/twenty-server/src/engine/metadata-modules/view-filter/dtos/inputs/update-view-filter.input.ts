@@ -1,18 +1,6 @@
-import { InputType, OmitType, PartialType } from '@nestjs/graphql';
+import { InputType, PartialType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { IsUUID } from 'class-validator';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
+import { CreateViewFilterInput } from './create-view-filter.input';
 
-// TODO refactor to fit standards
 @InputType()
-export class UpdateViewFilterInput extends PartialType(
-  OmitType(CreateViewFilterInput, ['id'] as const, InputType),
-) {
-  @IDField(() => UUIDScalarType, {
-    description: 'The id of the view filter to destroy.',
-  })
-  @IsUUID()
-  id: string;
-}
+export class UpdateViewFilterInput extends PartialType(CreateViewFilterInput) {}
