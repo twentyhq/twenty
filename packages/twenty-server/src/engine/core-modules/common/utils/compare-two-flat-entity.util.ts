@@ -1,8 +1,8 @@
 import diff from 'microdiff';
-import { type FromTo } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
 
 import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
+import { CompareTwoFlatEntityArgs } from 'src/engine/core-modules/common/types/compare-two-flat-entity-args.type';
 import { transformFlatEntityForComparison } from 'src/engine/core-modules/common/utils/transform-flat-entity-for-comparison.util';
 import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 
@@ -15,10 +15,7 @@ export const compareTwoFlatEntity = <
   toFlatEntity,
   propertiesToCompare,
   propertiesToStringify,
-}: {
-  propertiesToCompare: PToCompare[];
-  propertiesToStringify: PJsonB[];
-} & FromTo<TFlatEntity, 'flatEntity'>) => {
+}: CompareTwoFlatEntityArgs<TFlatEntity, PToCompare, PJsonB>) => {
   const [transformedFromFlatEntity, transformedToFlatEntity] = [
     fromFlatEntity,
     toFlatEntity,

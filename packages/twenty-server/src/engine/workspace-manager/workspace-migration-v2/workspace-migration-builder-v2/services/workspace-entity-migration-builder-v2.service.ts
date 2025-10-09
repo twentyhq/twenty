@@ -50,7 +50,6 @@ export type ValidateAndBuildReturnType<
   | FailedFlatEntityValidateAndBuild<TFlatEntity, TRelatedFlatEntityMaps>;
 
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
-  // TODO refactor the whole generic to be inferred from this one only
   T extends keyof AllFlatEntitiesByMetadataEngineName,
   TFlatEntity extends AllFlatEntities,
   TActions extends WorkspaceMigrationActionV2,
@@ -61,15 +60,20 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
   private metadataName: T;
+  private comparisonOptions: {
+    propertiesToStringify: (keyof TFlatEntity)[];
+    propertiesToCompare: (keyof TFlatEntity)[];
+  };
 
   constructor(
     metadataName: T,
     comparisonOptions: {
-      propertiesToStringify: (keyof T)[];
-      propertiesToCompare: (keyof T)[];
+      propertiesToStringify: (keyof TFlatEntity)[];
+      propertiesToCompare: (keyof TFlatEntity)[];
     },
   ) {
     this.metadataName = metadataName;
+    this.comparisonOptions = comparisonOptions;
   }
 
   public async validateAndBuild({
