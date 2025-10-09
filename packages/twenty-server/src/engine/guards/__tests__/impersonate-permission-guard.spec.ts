@@ -109,8 +109,11 @@ describe('ImpersonateGuard', () => {
 
     await expect(guard.canActivate(mockExecutionContext)).rejects.toMatchObject(
       {
-        userFriendlyMessage:
-          'You do not have permission to impersonate users. Please contact your workspace administrator for access.',
+        userFriendlyMessage: expect.objectContaining({
+          id: expect.any(String),
+          message:
+            'You do not have permission to impersonate users. Please contact your workspace administrator for access.',
+        }),
       },
     );
   });
@@ -137,7 +140,10 @@ describe('ImpersonateGuard', () => {
 
     await expect(guard.canActivate(mockExecutionContext)).rejects.toMatchObject(
       {
-        userFriendlyMessage: "Can't impersonate user via api key",
+        userFriendlyMessage: expect.objectContaining({
+          id: expect.any(String),
+          message: "Can't impersonate user via api key",
+        }),
       },
     );
   });

@@ -37,8 +37,11 @@ describe('TwoFactorAuthenticationExceptionFilter', () => {
         expect(error.extensions.subCode).toBe(
           TwoFactorAuthenticationExceptionCode.INVALID_OTP,
         );
-        expect(error.extensions.userFriendlyMessage).toBe(
-          'Invalid verification code. Please try again.',
+        expect(error.extensions.userFriendlyMessage).toEqual(
+          expect.objectContaining({
+            id: expect.any(String),
+            message: 'Invalid verification code. Please try again.',
+          }),
         );
       }
     });
