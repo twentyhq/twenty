@@ -9,9 +9,18 @@ import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-r
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageSubContainer';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import React, { Suspense } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useTheme } from '@emotion/react';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+
+const LazyShowPageSubContainer = React.lazy(() =>
+  import('@/ui/layout/show-page/components/ShowPageSubContainer').then(
+    (mod) => ({ default: mod.ShowPageSubContainer }),
+  ),
+);
 
 const StyledShowPageBannerContainer = styled.div`
   z-index: 1;
@@ -23,6 +32,54 @@ type RecordShowContainerProps = {
   loading: boolean;
   isInRightDrawer?: boolean;
   isNewRightDrawerItemLoading?: boolean;
+};
+
+const StyledSkeletonWrapper = styled.div<{ theme: any }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
+const RecordShowSubcontainerSkeleton = () => {
+  const theme = useTheme();
+
+  return (
+    <StyledSkeletonWrapper theme={theme}>
+      <SkeletonTheme
+        baseColor={theme.background.tertiary}
+        highlightColor={theme.background.transparent.lighter}
+        borderRadius={theme.border.radius.sm}
+      >
+        <Skeleton
+          height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+          width="35%"
+        />
+        <div style={{ display: 'flex', gap: theme.spacing(3) }}>
+          <Skeleton
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+            width={70}
+          />
+          <Skeleton
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+            width={70}
+          />
+          <Skeleton
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+            width={70}
+          />
+        </div>
+        <Skeleton
+          height={SKELETON_LOADER_HEIGHT_SIZES.columns.m}
+          width="100%"
+        />
+        <Skeleton
+          height={SKELETON_LOADER_HEIGHT_SIZES.columns.m}
+          width="100%"
+        />
+      </SkeletonTheme>
+    </StyledSkeletonWrapper>
+  );
 };
 
 export const RecordShowContainer = ({
@@ -67,16 +124,18 @@ export const RecordShowContainer = ({
         </StyledShowPageBannerContainer>
       )}
       <ShowPageContainer>
-        <ShowPageSubContainer
-          tabs={tabs}
-          layout={layout}
-          targetableObject={{
-            id: objectRecordId,
-            targetObjectNameSingular: objectMetadataItem?.nameSingular,
-          }}
-          isInRightDrawer={isInRightDrawer}
-          loading={isPrefetchLoading || loading || recordLoading}
-        />
+        <Suspense fallback={<RecordShowSubcontainerSkeleton />}>
+          <LazyShowPageSubContainer
+            tabs={tabs}
+            layout={layout}
+            targetableObject={{
+              id: objectRecordId,
+              targetObjectNameSingular: objectMetadataItem?.nameSingular,
+            }}
+            isInRightDrawer={isInRightDrawer}
+            loading={isPrefetchLoading || loading || recordLoading}
+          />
+        </Suspense>
       </ShowPageContainer>
     </RightDrawerProvider>
   );
