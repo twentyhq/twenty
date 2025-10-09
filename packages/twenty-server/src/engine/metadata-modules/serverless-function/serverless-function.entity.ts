@@ -19,7 +19,6 @@ import { CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/c
 import { DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { RouteTrigger } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionEntityRelationProperties } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 
@@ -56,9 +55,6 @@ export class ServerlessFunctionEntity
 
   @Column({ nullable: false, type: 'jsonb', default: [] })
   publishedVersions: string[];
-
-  @Column({ nullable: true, type: 'jsonb' })
-  latestVersionInputSchema: InputSchema | null;
 
   @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE22 })
   runtime: ServerlessFunctionRuntime;
