@@ -21,6 +21,10 @@ export const generateDepthOneRecordGqlFields = ({
         fieldMetadata.type === FieldMetadataType.RELATION &&
         fieldMetadata.settings.relationType === RelationType.MANY_TO_ONE;
 
+      const isOneToManyMorphRelation =
+        fieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
+        fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY;
+
       if (isManyToOneRelation) {
         return [`${fieldMetadata.name}Id`, `${fieldMetadata.name}`];
       }
@@ -48,6 +52,31 @@ export const generateDepthOneRecordGqlFields = ({
         return morphGqlFields.flatMap((morphGqlField) => [
           morphGqlField.gqlField,
           `${morphGqlField.gqlField}Id`,
+        ]);
+      }
+
+      if (isOneToManyMorphRelation) {
+        if (!isDefined(fieldMetadata.morphRelations)) {
+          throw new Error(
+            `Field ${fieldMetadata.name} is missing, please refresh the page. If the problem persists, please contact support.`,
+          );
+        }
+
+        const morphGqlFields = fieldMetadata.morphRelations.map(
+          (morphRelation) => ({
+            gqlField: computeMorphRelationFieldName({
+              fieldName: fieldMetadata.name,
+              relationType: morphRelation.type,
+              targetObjectMetadataNameSingular:
+                morphRelation.targetObjectMetadata.nameSingular,
+              targetObjectMetadataNamePlural:
+                morphRelation.targetObjectMetadata.namePlural,
+            }),
+            fieldMetadata,
+          }),
+        );
+        return morphGqlFields.flatMap((morphGqlField) => [
+          morphGqlField.gqlField,
         ]);
       }
 

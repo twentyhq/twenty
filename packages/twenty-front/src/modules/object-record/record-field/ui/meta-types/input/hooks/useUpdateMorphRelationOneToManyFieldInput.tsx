@@ -56,8 +56,12 @@ export const useUpdateMorphRelationOneToManyFieldInput = () => {
           await recordOneToManyFieldAttachTargetRecord({
             sourceObjectNameSingular:
               fieldDefinition.metadata.objectMetadataNameSingular,
+            sourceFieldMetadataName: fieldDefinition.metadata.fieldName,
+            sourceFieldMetadataType: FieldMetadataType.MORPH_RELATION,
             targetObjectNameSingular:
               targetMorphRelation.targetObjectMetadata.nameSingular,
+            targetObjectNamePlural:
+              targetMorphRelation.targetObjectMetadata.namePlural,
             targetGQLFieldName: targetMorphRelation.targetFieldMetadata.name,
             sourceRecordId: recordId,
             targetRecordId: morphItem.recordId,
