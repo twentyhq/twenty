@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ObjectRecord = Record<string, any>;
+import { type ObjectRecord } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
 export type CreateRecordParams = {
   objectName: string;
