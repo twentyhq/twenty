@@ -111,7 +111,8 @@ export class ViewFilterV2Service {
     workspaceId,
   }: {
     workspaceId: string;
-    updateViewFilterInput: UpdateViewFilterInput;
+    updateViewFilterInput: Omit<UpdateViewFilterInput, 'id'> &
+      Required<Pick<UpdateViewFilterInput, 'id'>>;
   }): Promise<ViewFilterDTO> {
     const {
       flatViewFilterMaps: existingFlatViewFilterMaps,
@@ -319,4 +320,3 @@ export class ViewFilterV2Service {
     return existingViewFilterToDelete;
   }
 }
-
