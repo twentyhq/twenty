@@ -89,7 +89,6 @@ export abstract class RestApiBaseHandler {
   protected readonly twentyORMManager: TwentyORMManager;
   @Inject()
   protected readonly getVariablesFactory: GetVariablesFactory;
-
   @Inject()
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   @Inject()
@@ -605,5 +604,23 @@ export abstract class RestApiBaseHandler {
       objectMetadataMapItem,
       depth,
     });
+  }
+
+  async buildCommonOptions(request: AuthenticatedRequest) {
+    const { object: parsedObject } = parseCorePath(request);
+
+    const { objectMetadataMaps, objectMetadataMapItem } =
+      await this.coreQueryBuilderFactory.getObjectMetadata(
+        request,
+        parsedObject,
+      );
+
+    const authContext = this.getAuthContextFromRequest(request);
+
+    return {
+      authContext: authContext,
+      objectMetadataItemWithFieldMaps: objectMetadataMapItem,
+      objectMetadataMaps: objectMetadataMaps,
+    };
   }
 }
