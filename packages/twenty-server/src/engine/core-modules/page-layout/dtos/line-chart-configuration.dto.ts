@@ -75,10 +75,13 @@ export class LineChartConfigurationDTO {
   @IsOptional()
   omitNullValues?: boolean;
 
-  @Field(() => AxisNameDisplay, { nullable: true })
+  @Field(() => AxisNameDisplay, {
+    nullable: true,
+    defaultValue: AxisNameDisplay.BOTH,
+  })
   @IsEnum(AxisNameDisplay)
   @IsOptional()
-  axisNameDisplay?: AxisNameDisplay = AxisNameDisplay.BOTH;
+  axisNameDisplay?: AxisNameDisplay;
 
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
