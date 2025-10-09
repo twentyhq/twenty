@@ -3248,9 +3248,15 @@ export class SetServerlessFunctionLayerNotNullable1759931071049
     await queryRunner.query(
       `ALTER TABLE "core"."serverlessFunction" ADD CONSTRAINT "FK_4b9625a4babf7f4fa942fd26514" FOREIGN KEY ("serverlessFunctionLayerId") REFERENCES "core"."serverlessFunctionLayer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "layerVersion"`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" ADD "layerVersion" integer`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."serverlessFunction" DROP CONSTRAINT "FK_4b9625a4babf7f4fa942fd26514"`,
     );
