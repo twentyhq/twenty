@@ -69,7 +69,7 @@
           "memory": 1,
           "minInstances": 1,
           "maxInstances": 2,
-          "startCommand": "yarn worker:prod",
+          "startCommand": "node dist/src/queue-worker/queue-worker",
           "envVariables": {
             "PG_DATABASE_URL": {
               "fromService": {
