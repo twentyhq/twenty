@@ -14,7 +14,6 @@ import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view
 import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
-import { isDefined } from 'twenty-shared/utils';
 
 @Resolver(() => ViewFilterDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -126,7 +125,7 @@ export class ViewFilterResolver {
   async destroyCoreViewFilter(
     @Args('input') destroyViewFilterInput: DestroyViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<boolean> {
+  ): Promise<ViewFilterDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -134,18 +133,18 @@ export class ViewFilterResolver {
       );
 
     if (isWorkspaceMigrationV2Enabled) {
-      const deletedViewFilter = await this.viewFilterV2Service.destroyOne({
+      const destroyedViewFilter = await this.viewFilterV2Service.destroyOne({
         destroyViewFilterInput,
         workspaceId,
       });
-      return isDefined(deletedViewFilter);
+      return destroyedViewFilter;
     }
 
-    const deletedViewFilter = await this.viewFilterService.destroy(
+    const destroyedViewFilter = await this.viewFilterService.destroy(
       destroyViewFilterInput.id,
       workspaceId,
     );
 
-    return isDefined(deletedViewFilter);
+    return destroyedViewFilter;
   }
 }
