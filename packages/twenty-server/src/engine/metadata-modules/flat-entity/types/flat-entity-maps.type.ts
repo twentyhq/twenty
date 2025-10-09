@@ -1,4 +1,4 @@
-import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
+import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
 export type FlatEntityMaps<T extends FlatEntity> = {
   byId: Partial<Record<string, T>>;

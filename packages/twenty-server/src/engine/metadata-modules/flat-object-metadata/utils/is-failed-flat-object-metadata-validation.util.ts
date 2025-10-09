@@ -1,4 +1,4 @@
-import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
+import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   WORKSPACE_MIGRATION_OBJECT_ACTION_TYPES,

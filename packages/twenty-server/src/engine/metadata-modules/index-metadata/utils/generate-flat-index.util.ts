@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
-} from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';

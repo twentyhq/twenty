@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { t, msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { RouteTriggerExceptionCode } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { RouteTriggerRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/types/route-trigger-related-flat-entity-maps.type';

@@ -1,6 +1,6 @@
 import { type FromTo } from 'twenty-shared/types';
 
-import { compareTwoFlatEntity } from 'src/engine/core-modules/common/utils/compare-two-flat-entity.util';
+import { compareTwoFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/compare-two-flat-entity.util';
 import { FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-view-field/constants/flat-view-field-properties-to-compare.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 

@@ -3,9 +3,9 @@ import { isDefined } from 'class-validator';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
-} from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
 type AddFlatEntityToFlatEntityMapsOrThrowArgs<T extends FlatEntity> = {
   flatEntity: T;

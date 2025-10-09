@@ -1,9 +1,9 @@
 import diff from 'microdiff';
 import { parseJson } from 'twenty-shared/utils';
 
-import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
-import { CompareTwoFlatEntityArgs } from 'src/engine/core-modules/common/types/compare-two-flat-entity-args.type';
-import { transformFlatEntityForComparison } from 'src/engine/core-modules/common/utils/transform-flat-entity-for-comparison.util';
+import { type AllFlatEntities } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities.type';
+import { CompareTwoFlatEntityArgs } from 'src/engine/metadata-modules/flat-entity/types/compare-two-flat-entity-args.type';
+import { transformFlatEntityForComparison } from 'src/engine/metadata-modules/flat-entity/utils/transform-flat-entity-for-comparison.util';
 import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 
 export const compareTwoFlatEntity = <
