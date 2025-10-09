@@ -45,17 +45,38 @@ export class DelayWorkflowAction implements WorkflowAction {
     }
 
     const settings = step.settings.input;
+    let delayInMs: number;
 
-    if (!settings.scheduledDateTime) {
+    if (settings.delayType === 'schedule_date') {
+      if (!settings.scheduledDateTime) {
+        throw new WorkflowStepExecutorException(
+          'Scheduled date time is required for scheduled date delay',
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+        );
+      }
+
+      const scheduledDate = new Date(settings.scheduledDateTime);
+      const now = new Date();
+      delayInMs = scheduledDate.getTime() - now.getTime();
+    } else if (settings.delayType === 'duration') {
+      if (!settings.duration) {
+        throw new WorkflowStepExecutorException(
+          'Duration is required for duration delay',
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+        );
+      }
+
+      const { days, hours, minutes, seconds } = settings.duration;
+      delayInMs = (days * 24 * 60 * 60 * 1000) + 
+                 (hours * 60 * 60 * 1000) + 
+                 (minutes * 60 * 1000) + 
+                 (seconds * 1000);
+    } else {
       throw new WorkflowStepExecutorException(
-        'Scheduled date time is required for delay action',
+        'Invalid delay type',
         WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }
-
-    const scheduledDate = new Date(settings.scheduledDateTime);
-    const now = new Date();
-    const delayInMs = scheduledDate.getTime() - now.getTime();
 
     await this.messageQueueService.add<ResumeDelayedJobData>(
       'ResumeDelayedJob',

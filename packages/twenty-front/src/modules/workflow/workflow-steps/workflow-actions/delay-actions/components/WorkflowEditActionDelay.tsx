@@ -1,6 +1,8 @@
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
+import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type WorkflowDelayAction } from '@/workflow/types/Workflow';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -8,7 +10,11 @@ import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-acti
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import { HorizontalSeparator, IconCalendar } from 'twenty-ui/display';
+import {
+  HorizontalSeparator,
+  IconCalendar,
+  IconClockHour8,
+} from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 type WorkflowEditActionDelayProps = {
@@ -24,7 +30,14 @@ type WorkflowEditActionDelayProps = {
 };
 
 type DelayFormData = {
+  delayType: 'schedule_date' | 'duration';
   scheduledDateTime: string | null;
+  duration: {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  };
 };
 
 export const WorkflowEditActionDelay = ({
@@ -37,15 +50,30 @@ export const WorkflowEditActionDelay = ({
       defaultTitle: 'Delay',
     });
 
-  const [formData, setFormData] = useState<DelayFormData>({
-    scheduledDateTime: action.settings.input.scheduledDateTime ?? null,
+  const [formData, setFormData] = useState<DelayFormData>(() => {
+    const input = action.settings.input;
+    return {
+      delayType: input.delayType ?? 'duration',
+      scheduledDateTime: input.scheduledDateTime ?? null,
+      duration: input.duration ?? {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      },
+    };
   });
 
   const delayOptions: Array<SelectOption<string>> = [
     {
       label: 'At a specific date or time',
-      value: 'specific_date_time',
+      value: 'schedule_date',
       Icon: IconCalendar,
+    },
+    {
+      label: 'After a set amount of time',
+      value: 'duration',
+      Icon: IconClockHour8,
     },
   ];
 
@@ -58,7 +86,13 @@ export const WorkflowEditActionDelay = ({
       settings: {
         ...action.settings,
         input: {
-          scheduledDateTime: formData.scheduledDateTime,
+          delayType: formData.delayType,
+          scheduledDateTime:
+            formData.delayType === 'schedule_date'
+              ? formData.scheduledDateTime
+              : null,
+          duration:
+            formData.delayType === 'duration' ? formData.duration : undefined,
         },
       },
     });
@@ -70,10 +104,38 @@ export const WorkflowEditActionDelay = ({
     };
   }, [saveAction]);
 
+  const handleDelayTypeChange = (value: string) => {
+    const delayType = value === 'schedule_date' ? 'schedule_date' : 'duration';
+    const newFormData: DelayFormData = {
+      ...formData,
+      delayType,
+    };
+
+    setFormData(newFormData);
+    saveAction(newFormData);
+  };
+
   const handleDateTimeChange = (value: string | null) => {
     const newFormData: DelayFormData = {
       ...formData,
       scheduledDateTime: value,
+    };
+
+    setFormData(newFormData);
+    saveAction(newFormData);
+  };
+
+  const handleDurationChange = (
+    field: keyof DelayFormData['duration'],
+    value: number | null | string,
+  ) => {
+    const numberValue = value === null || value === '' ? 0 : Number(value);
+    const newFormData: DelayFormData = {
+      ...formData,
+      duration: {
+        ...formData.duration,
+        [field]: numberValue,
+      },
     };
 
     setFormData(newFormData);
@@ -103,22 +165,61 @@ export const WorkflowEditActionDelay = ({
 
       <WorkflowStepBody>
         <Select
-          dropdownId="workflow-edit-action-delay-duration"
+          dropdownId="workflow-edit-action-delay-type"
           label="Resume"
           options={delayOptions}
-          value="specific_date_time"
-          onChange={() => {}}
+          dropdownWidth={GenericDropdownContentWidth.Large}
+          value={formData.delayType}
+          onChange={handleDelayTypeChange}
+          disabled={actionOptions.readonly}
         />
         <HorizontalSeparator noMargin />
 
-        <FormDateTimeFieldInput
-          label={t`Delay Until`}
-          defaultValue={formData.scheduledDateTime ?? ''}
-          onChange={handleDateTimeChange}
-          readonly={actionOptions.readonly}
-          VariablePicker={WorkflowVariablePicker}
-          dateOnly={false}
-        />
+        {formData.delayType === 'schedule_date' ? (
+          <FormDateTimeFieldInput
+            label={t`Delay Until Date`}
+            defaultValue={formData.scheduledDateTime ?? ''}
+            onChange={handleDateTimeChange}
+            readonly={actionOptions.readonly}
+            VariablePicker={WorkflowVariablePicker}
+            placeholder="Select a date"
+          />
+        ) : (
+          <>
+            <FormNumberFieldInput
+              label={t`Days`}
+              defaultValue={formData.duration.days}
+              onChange={(value) => handleDurationChange('days', value)}
+              readonly={actionOptions.readonly}
+              VariablePicker={WorkflowVariablePicker}
+              placeholder="0"
+            />
+            <FormNumberFieldInput
+              label={t`Hours`}
+              defaultValue={formData.duration.hours}
+              onChange={(value) => handleDurationChange('hours', value)}
+              readonly={actionOptions.readonly}
+              VariablePicker={WorkflowVariablePicker}
+              placeholder="0"
+            />
+            <FormNumberFieldInput
+              label={t`Minutes`}
+              defaultValue={formData.duration.minutes}
+              onChange={(value) => handleDurationChange('minutes', value)}
+              readonly={actionOptions.readonly}
+              VariablePicker={WorkflowVariablePicker}
+              placeholder="0"
+            />
+            <FormNumberFieldInput
+              label={t`Seconds`}
+              defaultValue={formData.duration.seconds}
+              onChange={(value) => handleDurationChange('seconds', value)}
+              readonly={actionOptions.readonly}
+              VariablePicker={WorkflowVariablePicker}
+              placeholder="0"
+            />
+          </>
+        )}
       </WorkflowStepBody>
 
       <WorkflowActionFooter stepId={action.id} />

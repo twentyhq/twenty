@@ -362,7 +362,14 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             settings: {
               ...BASE_STEP_DEFINITION,
               input: {
+                delayType: 'duration',
                 scheduledDateTime: null,
+                duration: {
+                  days: 0,
+                  hours: 0,
+                  minutes: 0,
+                  seconds: 0,
+                },
               },
             },
           },
