@@ -30,6 +30,7 @@ export class HealthController {
   @UseGuards(PublicEndpointGuard)
   @HealthCheck()
   check() {
+    console.log('[HEALTH CHECK] Request received at /healthz');
     return this.health.check([]);
   }
 
