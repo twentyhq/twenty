@@ -103,7 +103,6 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterDeletion({
-        dependencyOptimisticFlatEntityMaps,
         flatViewFilterToValidate,
         optimisticFlatViewFilterMaps,
       });
