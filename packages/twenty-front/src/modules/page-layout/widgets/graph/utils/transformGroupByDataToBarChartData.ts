@@ -86,7 +86,7 @@ export const transformGroupByDataToBarChartData = ({
     };
   }
 
-  // TODO: Add a limit to the query instead of slicing here
+  // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const rawResults = queryResults.slice(0, GRAPH_MAXIMUM_NUMBER_OF_GROUPS);
 
   const showXAxis =
