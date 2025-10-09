@@ -1,13 +1,11 @@
 import { Test } from '@nestjs/testing';
 
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
-import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
-import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
 // Minimal mock repository type
@@ -26,7 +24,10 @@ describe('ToolService', () => {
   const roleId = 'role_1';
 
   let service: ToolService;
+  let ormManager: TwentyORMGlobalManager;
   let permissionsCacheService: WorkspacePermissionsCacheService;
+  let transformer: RecordInputTransformerService;
+  let workspaceCache: WorkspaceCacheStorageService;
 
   const testObject = getMockObjectMetadataEntity({
     workspaceId: '',
@@ -79,50 +80,36 @@ describe('ToolService', () => {
           },
         },
         {
-          provide: CreateRecordService,
+          provide: RecordInputTransformerService,
           useValue: {
-            execute: jest.fn(async () => ({
-              success: true,
-              message: 'Success',
-              result: {},
-            })),
+            process: jest.fn(async ({ recordInput }) => recordInput),
           },
         },
         {
-          provide: UpdateRecordService,
+          provide: WorkspaceCacheStorageService,
           useValue: {
-            execute: jest.fn(async () => ({
-              success: true,
-              message: 'Success',
-              result: {},
-            })),
-          },
-        },
-        {
-          provide: DeleteRecordService,
-          useValue: {
-            execute: jest.fn(async () => ({
-              success: true,
-              message: 'Success',
-              result: {},
-            })),
-          },
-        },
-        {
-          provide: FindRecordsService,
-          useValue: {
-            execute: jest.fn(async () => ({
-              success: true,
-              message: 'Success',
-              result: { records: [], count: 0 },
-            })),
+            getObjectMetadataMapsOrThrow: jest.fn().mockResolvedValue({
+              byId: {
+                [testObject.id]: {
+                  ...testObject,
+                  fieldsById: {},
+                  fieldIdByJoinColumnName: {},
+                  fieldIdByName: {},
+                  indexMetadatas: [],
+                },
+              },
+              idByNameSingular: { [testObject.nameSingular]: testObject.id },
+            }),
           },
         },
       ],
     }).compile();
 
     service = moduleRef.get(ToolService);
+    ormManager = moduleRef.get(TwentyORMGlobalManager);
     permissionsCacheService = moduleRef.get(WorkspacePermissionsCacheService);
+    transformer = moduleRef.get(RecordInputTransformerService);
+    workspaceCache = moduleRef.get(WorkspaceCacheStorageService);
   });
 
   describe('listTools', () => {
@@ -143,6 +130,68 @@ describe('ToolService', () => {
 
       // Ensure the execute functions are wired
       expect(typeof tools['create_testObject'].execute).toBe('function');
+    });
+  });
+
+  describe('createRecord', () => {
+    it('should create a record successfully', async () => {
+      const record = { id: 'r1', name: 'Test' };
+
+      mockRepo.save.mockResolvedValue(record);
+
+      const result = await service.createRecord(
+        'testObject',
+        { name: 'Test' },
+        workspaceId,
+        roleId,
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.result).toEqual(record);
+      expect(ormManager.getRepositoryForWorkspace).toHaveBeenCalledWith(
+        workspaceId,
+        'testObject',
+        { roleId },
+      );
+      expect(workspaceCache.getObjectMetadataMapsOrThrow).toHaveBeenCalledWith(
+        workspaceId,
+      );
+      expect(transformer.process).toHaveBeenCalled();
+      expect(mockRepo.save).toHaveBeenCalledWith({ name: 'Test' });
+    });
+  });
+
+  describe('updateRecord', () => {
+    it('should return error when id is missing', async () => {
+      const result = await (service as any).updateRecord(
+        'testObject',
+        { name: 'No ID' },
+        workspaceId,
+        roleId,
+      );
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Record ID is required for update');
+    });
+  });
+
+  describe('findRecords', () => {
+    it('should return records and count', async () => {
+      const records = [{ id: 'a' }, { id: 'b' }];
+
+      mockRepo.find.mockResolvedValue(records);
+
+      const result = await (service as any).findRecords(
+        'testObject',
+        {},
+        workspaceId,
+        roleId,
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.result.records).toEqual(records);
+      expect(result.result.count).toBe(2);
+      expect(mockRepo.find).toHaveBeenCalled();
     });
   });
 
