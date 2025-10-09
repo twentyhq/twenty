@@ -19,7 +19,8 @@ export const fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow = ({
   updateViewFilterInput: rawUpdateViewFilterInput,
   flatViewFilterMaps,
 }: {
-  updateViewFilterInput: UpdateViewFilterInput;
+  updateViewFilterInput: Omit<UpdateViewFilterInput, 'id'> &
+    Required<Pick<UpdateViewFilterInput, 'id'>>;
   flatViewFilterMaps: FlatViewFilterMaps;
 }): FlatViewFilter => {
   const { id: viewFilterToUpdateId, ...update } =
