@@ -8,7 +8,6 @@ export const SERVERLESS_FUNCTION_FRAGMENT = gql`
     runtime
     timeoutSeconds
     latestVersion
-    latestVersionInputSchema
     publishedVersions
     createdAt
     updatedAt

@@ -555,6 +555,7 @@ msgid "Add view"
 msgstr ""
 
 #. js-lingui-id: iRpDWj
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr ""
@@ -1562,6 +1563,11 @@ msgstr ""
 #. js-lingui-id: b8wwse
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Click on the checkmark to apply your changes."
+msgstr ""
+
+#. js-lingui-id: WTlZnA
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+msgid "Click to add your first widget"
 msgstr ""
 
 #. js-lingui-id: d0rtA5
@@ -5420,6 +5426,11 @@ msgstr ""
 #. js-lingui-id: A5XQ/A
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "No variables found"
+msgstr ""
+
+#. js-lingui-id: xyEjfo
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+msgid "No widgets yet"
 msgstr ""
 
 #. js-lingui-id: 0uWxPM
