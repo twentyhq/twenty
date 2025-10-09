@@ -57,6 +57,7 @@ export class DelayWorkflowAction implements WorkflowAction {
 
       const scheduledDate = new Date(settings.scheduledDateTime);
       const now = new Date();
+
       delayInMs = scheduledDate.getTime() - now.getTime();
     } else if (settings.delayType === 'duration') {
       if (!settings.duration) {
@@ -67,10 +68,12 @@ export class DelayWorkflowAction implements WorkflowAction {
       }
 
       const { days, hours, minutes, seconds } = settings.duration;
-      delayInMs = (days * 24 * 60 * 60 * 1000) + 
-                 (hours * 60 * 60 * 1000) + 
-                 (minutes * 60 * 1000) + 
-                 (seconds * 1000);
+
+      delayInMs =
+        days * 24 * 60 * 60 * 1000 +
+        hours * 60 * 60 * 1000 +
+        minutes * 60 * 1000 +
+        seconds * 1000;
     } else {
       throw new WorkflowStepExecutorException(
         'Invalid delay type',
