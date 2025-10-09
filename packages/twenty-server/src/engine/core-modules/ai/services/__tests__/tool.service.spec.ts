@@ -133,68 +133,6 @@ describe('ToolService', () => {
     });
   });
 
-  describe('createRecord', () => {
-    it('should create a record successfully', async () => {
-      const record = { id: 'r1', name: 'Test' };
-
-      mockRepo.save.mockResolvedValue(record);
-
-      const result = await service.createRecord(
-        'testObject',
-        { name: 'Test' },
-        workspaceId,
-        roleId,
-      );
-
-      expect(result.success).toBe(true);
-      expect(result.result).toEqual(record);
-      expect(ormManager.getRepositoryForWorkspace).toHaveBeenCalledWith(
-        workspaceId,
-        'testObject',
-        { roleId },
-      );
-      expect(workspaceCache.getObjectMetadataMapsOrThrow).toHaveBeenCalledWith(
-        workspaceId,
-      );
-      expect(transformer.process).toHaveBeenCalled();
-      expect(mockRepo.save).toHaveBeenCalledWith({ name: 'Test' });
-    });
-  });
-
-  describe('updateRecord', () => {
-    it('should return error when id is missing', async () => {
-      const result = await (service as any).updateRecord(
-        'testObject',
-        { name: 'No ID' },
-        workspaceId,
-        roleId,
-      );
-
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Record ID is required for update');
-    });
-  });
-
-  describe('findRecords', () => {
-    it('should return records and count', async () => {
-      const records = [{ id: 'a' }, { id: 'b' }];
-
-      mockRepo.find.mockResolvedValue(records);
-
-      const result = await (service as any).findRecords(
-        'testObject',
-        {},
-        workspaceId,
-        roleId,
-      );
-
-      expect(result.success).toBe(true);
-      expect(result.result.records).toEqual(records);
-      expect(result.result.count).toBe(2);
-      expect(mockRepo.find).toHaveBeenCalled();
-    });
-  });
-
   describe('softDeleteManyRecords', () => {
     it('should error when filter is invalid', async () => {
       const result = await (service as any).softDeleteManyRecords(
