@@ -95,7 +95,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
   private async parseRequestArgs(request: AuthenticatedRequest) {
     const { id: recordId } = parseCorePath(request);
     const filter = { id: { eq: recordId } };
-    const depth = this.depthInputFactory.create(request);
+    const depth = parseDepthRestRequest(request);
 
     return {
       filter,

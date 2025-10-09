@@ -1,4 +1,4 @@
-import { checkFilterQuery } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/check-filter-query.utils';
+import { checkFilterQuery } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/check-filter-query.util';
 
 describe('checkFilterQuery', () => {
   it('should check filter query', () => {
