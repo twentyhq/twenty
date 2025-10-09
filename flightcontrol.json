@@ -54,7 +54,7 @@
                 "value": "connectionString"
               }
             },
-            "PGSSLMODE": "require"
+            "PGSSLMODE": "no-verify"
           }
         },
         {
@@ -82,7 +82,7 @@
                 "value": "connectionString"
               }
             },
-            "PGSSLMODE": "require",
+            "PGSSLMODE": "no-verify",
             "DISABLE_DB_MIGRATIONS": "true",
             "DISABLE_CRON_JOBS_REGISTRATION": "true"
           }
