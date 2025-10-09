@@ -12,6 +12,7 @@ export class HealthController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @HealthCheck()
   check() {
+    console.log('[HEALTH CHECK] Request received at /healthz');
     return this.health.check([]);
   }
 }
