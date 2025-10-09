@@ -163,20 +163,19 @@ export const MatchingNavigateShortcuts: Story = {
   },
 };
 
-// TEMP_DISABLED_TEST: Temporarily commented out due to test failure
-// export const SearchRecordsAction: Story = {
-//   play: async () => {
-//     const canvas = within(document.body);
-//     const searchRecordsButton = await canvas.findByText('Search records');
-//     await userEvent.click(searchRecordsButton);
-//     const searchInput = await canvas.findByPlaceholderText('Type anything');
-//     await sleep(openTimeout);
-//     await userEvent.type(searchInput, 'n');
-//     expect(await canvas.findByText('Linkedin')).toBeVisible();
-//     const companyTexts = await canvas.findAllByText('Company');
-//     expect(companyTexts[0]).toBeVisible();
-//   },
-// };
+export const SearchRecordsAction: Story = {
+  play: async () => {
+    const canvas = within(document.body);
+    const searchRecordsButton = await canvas.findByText('Search records');
+    await userEvent.click(searchRecordsButton);
+    const searchInput = await canvas.findByPlaceholderText('Type anything');
+    await sleep(openTimeout);
+    await userEvent.type(searchInput, 'n');
+    expect(await canvas.findByText('Linkedin')).toBeVisible();
+    const companyTexts = await canvas.findAllByText('Company');
+    expect(companyTexts[0]).toBeVisible();
+  },
+};
 
 export const NoResultsSearchFallback: Story = {
   play: async () => {
@@ -209,17 +208,16 @@ export const NoResultsSearchFallback: Story = {
   },
 };
 
-// TEMP_DISABLED_TEST: Temporarily commented out due to test failure
-// export const ClickOnSearchRecordsAndGoBack: Story = {
-//   play: async () => {
-//     const canvas = within(document.body);
-//     const searchRecordsButton = await canvas.findByText('Search records');
-//     await userEvent.click(searchRecordsButton);
-//     await sleep(openTimeout);
-//     const goBackButton = await canvas.findByTestId(
-//       'command-menu-go-back-button',
-//     );
-//     await userEvent.click(goBackButton);
-//     expect(await canvas.findByText('Search records')).toBeVisible();
-//   },
-// };
+export const ClickOnSearchRecordsAndGoBack: Story = {
+  play: async () => {
+    const canvas = within(document.body);
+    const searchRecordsButton = await canvas.findByText('Search records');
+    await userEvent.click(searchRecordsButton);
+    await sleep(openTimeout);
+    const goBackButton = await canvas.findByTestId(
+      'command-menu-go-back-button',
+    );
+    await userEvent.click(goBackButton);
+    expect(await canvas.findByText('Search records')).toBeVisible();
+  },
+};

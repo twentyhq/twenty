@@ -1,11 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-
+import { within } from '@storybook/test';
 import { SettingsIntegrationEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationEditDatabaseConnection';
 import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { sleep } from '~/utils/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title:
@@ -28,12 +29,11 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsIntegrationEditDatabaseConnection>;
 
-// TEMP_DISABLED_TEST: Temporarily commented out due to test failure
-// export const Default: Story = {
-//   play: async ({ canvasElement }) => {
-//     const canvas = within(canvasElement);
-//     sleep(100);
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await sleep(100);
 
-//     await canvas.findByText('Edit Connection', undefined, { timeout: 3000 });
-//   },
-// };
+    await canvas.findByText('Edit Connection', undefined, { timeout: 3000 });
+  },
+};
