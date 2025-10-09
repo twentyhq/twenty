@@ -1,16 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { In, LessThan } from 'typeorm';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export type WorkspaceTrashCleanupInput = {
   workspaceId: string;
-  schemaName: string;
   trashRetentionDays: number;
 };
 
@@ -18,38 +16,69 @@ export type WorkspaceTrashCleanupInput = {
 export class WorkspaceTrashCleanupService {
   private readonly logger = new Logger(WorkspaceTrashCleanupService.name);
   private readonly maxRecordsPerWorkspace: number;
+  private readonly batchSize: number;
 
   constructor(
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     this.maxRecordsPerWorkspace = this.twentyConfigService.get(
       'TRASH_CLEANUP_MAX_RECORDS_PER_WORKSPACE',
     );
+    this.batchSize = this.twentyConfigService.get('TRASH_CLEANUP_BATCH_SIZE');
   }
 
   async cleanupWorkspaceTrash(
     input: WorkspaceTrashCleanupInput,
   ): Promise<number> {
-    const { workspaceId, schemaName, trashRetentionDays } = input;
+    const { workspaceId, trashRetentionDays } = input;
 
-    const tableNames = await this.discoverTablesWithSoftDelete(schemaName);
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
 
-    if (tableNames.length === 0) {
-      this.logger.log(`No tables with deletedAt found in workspace ${workspaceId}`);
+    const objectNames = Object.values(flatObjectMetadataMaps.byId ?? {})
+      .map((metadata) => metadata?.nameSingular)
+      .filter(isDefined);
+
+    if (objectNames.length === 0) {
+      this.logger.log(`No objects found in workspace ${workspaceId}`);
 
       return 0;
     }
 
-    const deletedCount = await this.deleteSoftDeletedRecords(
-      workspaceId,
-      schemaName,
-      tableNames,
-      trashRetentionDays,
-    );
+    const cutoffDate = this.calculateCutoffDate(trashRetentionDays);
+    let deletedCount = 0;
+
+    for (const objectName of objectNames) {
+      if (deletedCount >= this.maxRecordsPerWorkspace) {
+        this.logger.log(
+          `Reached deletion limit (${this.maxRecordsPerWorkspace}) for workspace ${workspaceId}`,
+        );
+        break;
+      }
+
+      const remainingQuota = this.maxRecordsPerWorkspace - deletedCount;
+      const deletedForObject = await this.deleteSoftDeletedRecords({
+        workspaceId,
+        objectName,
+        cutoffDate,
+        remainingQuota,
+      });
+
+      if (deletedForObject > 0) {
+        this.logger.log(
+          `Deleted ${deletedForObject} record(s) from ${objectName} in workspace ${workspaceId}`,
+        );
+      }
+
+      deletedCount += deletedForObject;
+    }
 
     this.logger.log(
       `Deleted ${deletedCount} record(s) from workspace ${workspaceId}`,
@@ -58,67 +87,56 @@ export class WorkspaceTrashCleanupService {
     return deletedCount;
   }
 
-  private async discoverTablesWithSoftDelete(
-    schemaName: string,
-  ): Promise<string[]> {
-    const rawResults = await this.objectMetadataRepository
-      .createQueryBuilder('object')
-      .innerJoin('object.dataSource', 'dataSource')
-      .select('object.nameSingular', 'nameSingular')
-      .addSelect('object.isCustom', 'isCustom')
-      .where('dataSource.schema = :schemaName', { schemaName })
-      .andWhere('object.isActive = :isActive', { isActive: true })
-      .andWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select('1')
-          .from(FieldMetadataEntity, 'field')
-          .where('field.objectMetadataId = object.id')
-          .andWhere('field.name = :fieldName', { fieldName: 'deletedAt' })
-          .andWhere('field.isActive = :isActive', { isActive: true })
-          .getQuery();
+  private async deleteSoftDeletedRecords({
+    workspaceId,
+    objectName,
+    cutoffDate,
+    remainingQuota,
+  }: {
+    workspaceId: string;
+    objectName: string;
+    cutoffDate: Date;
+    remainingQuota: number;
+  }): Promise<number> {
+    if (remainingQuota <= 0) {
+      return 0;
+    }
 
-        return `EXISTS ${subQuery}`;
-      })
-      .getRawMany();
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        objectName,
+        { shouldBypassPermissionChecks: true },
+      );
 
-    return rawResults.map((row) =>
-      computeObjectTargetTable({
-        nameSingular: row.nameSingular,
-        isCustom: row.isCustom,
-      }),
-    );
-  }
+    let deleted = 0;
 
-  private async deleteSoftDeletedRecords(
-    workspaceId: string,
-    schemaName: string,
-    tableNames: string[],
-    trashRetentionDays: number,
-  ): Promise<number> {
-    let totalDeleted = 0;
-    const cutoffDate = this.calculateCutoffDate(trashRetentionDays);
+    while (deleted < remainingQuota) {
+      const take = Math.min(this.batchSize, remainingQuota - deleted);
 
-    for (const tableName of tableNames) {
-      if (totalDeleted >= this.maxRecordsPerWorkspace) {
-        this.logger.log(
-          `Reached deletion limit (${this.maxRecordsPerWorkspace}) for workspace ${workspaceId}`,
-        );
+      const recordsToDelete = await repository.find({
+        withDeleted: true,
+        select: ['id'],
+        where: {
+          deletedAt: LessThan(cutoffDate),
+        },
+        order: { deletedAt: 'ASC' },
+        take,
+        loadEagerRelations: false,
+      });
+
+      if (recordsToDelete.length === 0) {
         break;
       }
 
-      const remainingQuota = this.maxRecordsPerWorkspace - totalDeleted;
-      const deleted = await this.deleteFromTable(
-        schemaName,
-        tableName,
-        cutoffDate,
-        remainingQuota,
-      );
+      await repository.delete({
+        id: In(recordsToDelete.map((record) => record.id)),
+      });
 
-      totalDeleted += deleted;
+      deleted += recordsToDelete.length;
     }
 
-    return totalDeleted;
+    return deleted;
   }
 
   private calculateCutoffDate(trashRetentionDays: number): Date {
@@ -128,31 +146,5 @@ export class WorkspaceTrashCleanupService {
     cutoffDate.setDate(cutoffDate.getDate() - trashRetentionDays + 1);
 
     return cutoffDate;
-  }
-
-  private async deleteFromTable(
-    schemaName: string,
-    tableName: string,
-    cutoffDate: Date,
-    limit: number,
-  ): Promise<number> {
-    const result = await this.dataSource.query(
-      `
-      WITH deleted AS (
-        DELETE FROM "${schemaName}"."${tableName}"
-        WHERE ctid IN (
-          SELECT ctid FROM "${schemaName}"."${tableName}"
-          WHERE "deletedAt" IS NOT NULL
-            AND "deletedAt" < $1
-          LIMIT $2
-        )
-        RETURNING 1
-      )
-      SELECT COUNT(*) as count FROM deleted
-    `,
-      [cutoffDate, limit],
-    );
-
-    return parseInt(result[0]?.count || '0', 10);
   }
 }

@@ -1140,6 +1140,15 @@ export class ConfigVariables {
   TRASH_CLEANUP_MAX_RECORDS_PER_WORKSPACE = 100000;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Number of records deleted per batch during trash cleanup',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  TRASH_CLEANUP_BATCH_SIZE = 1000;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,
     description: 'Throttle limit for workflow execution',
     type: ConfigVariableType.NUMBER,

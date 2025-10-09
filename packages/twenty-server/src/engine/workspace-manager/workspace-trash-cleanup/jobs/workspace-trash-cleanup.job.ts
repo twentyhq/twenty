@@ -7,7 +7,6 @@ import { WorkspaceTrashCleanupService } from 'src/engine/workspace-manager/works
 
 export type WorkspaceTrashCleanupJobData = {
   workspaceId: string;
-  schemaName: string;
   trashRetentionDays: number;
 };
 
@@ -22,12 +21,11 @@ export class WorkspaceTrashCleanupJob {
 
   @Process(WorkspaceTrashCleanupJob.name)
   async handle(data: WorkspaceTrashCleanupJobData): Promise<void> {
-    const { workspaceId, schemaName, trashRetentionDays } = data;
+    const { workspaceId, trashRetentionDays } = data;
 
     try {
       await this.workspaceTrashCleanupService.cleanupWorkspaceTrash({
         workspaceId,
-        schemaName,
         trashRetentionDays,
       });
     } catch (error) {

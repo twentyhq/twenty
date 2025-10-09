@@ -17,7 +17,6 @@ import {
   WorkspaceTrashCleanupJob,
   type WorkspaceTrashCleanupJobData,
 } from 'src/engine/workspace-manager/workspace-trash-cleanup/jobs/workspace-trash-cleanup.job';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @Injectable()
 @Processor(MessageQueue.cronQueue)
@@ -56,7 +55,6 @@ export class WorkspaceTrashCleanupCronJob {
           WorkspaceTrashCleanupJob.name,
           {
             workspaceId: workspace.id,
-            schemaName: workspace.schema,
             trashRetentionDays: workspace.trashRetentionDays,
           },
         );
@@ -75,7 +73,7 @@ export class WorkspaceTrashCleanupCronJob {
   }
 
   private async getActiveWorkspaces(): Promise<
-    Array<{ id: string; trashRetentionDays: number; schema: string }>
+    Array<{ id: string; trashRetentionDays: number }>
   > {
     const workspaces = await this.workspaceRepository.find({
       where: {
@@ -92,7 +90,6 @@ export class WorkspaceTrashCleanupCronJob {
     return workspaces.map((workspace) => ({
       id: workspace.id,
       trashRetentionDays: workspace.trashRetentionDays,
-      schema: getWorkspaceSchemaName(workspace.id),
     }));
   }
 }

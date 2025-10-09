@@ -1,42 +1,43 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { DataSource } from 'typeorm';
-
-import { WorkspaceTrashCleanupService } from 'src/engine/workspace-manager/workspace-trash-cleanup/services/workspace-trash-cleanup.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceTrashCleanupService } from 'src/engine/workspace-manager/workspace-trash-cleanup/services/workspace-trash-cleanup.service';
 
 describe('WorkspaceTrashCleanupService', () => {
   let service: WorkspaceTrashCleanupService;
-  let mockDataSource: any;
-  let mockObjectMetadataRepository: any;
+  let mockFlatEntityMapsCacheService: any;
+  let mockTwentyORMGlobalManager: any;
+  let mockConfigService: { get: jest.Mock };
 
   beforeEach(async () => {
-    mockDataSource = {
-      query: jest.fn(),
+    mockFlatEntityMapsCacheService = {
+      getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
     };
 
-    mockObjectMetadataRepository = {
-      createQueryBuilder: jest.fn(),
+    mockTwentyORMGlobalManager = {
+      getRepositoryForWorkspace: jest.fn(),
+    };
+
+    mockConfigService = {
+      get: jest.fn().mockReturnValue(100000),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkspaceTrashCleanupService,
         {
-          provide: DataSource,
-          useValue: mockDataSource,
-        },
-        {
-          provide: getRepositoryToken(ObjectMetadataEntity),
-          useValue: mockObjectMetadataRepository,
-        },
-        {
           provide: TwentyConfigService,
-          useValue: {
-            get: jest.fn().mockReturnValue(100000),
-          },
+          useValue: mockConfigService,
+        },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: mockFlatEntityMapsCacheService,
+        },
+        {
+          provide: TwentyORMGlobalManager,
+          useValue: mockTwentyORMGlobalManager,
         },
       ],
     }).compile();
@@ -57,140 +58,167 @@ describe('WorkspaceTrashCleanupService', () => {
   });
 
   describe('cleanupWorkspaceTrash', () => {
-    it('should return deleted count when cleanup succeeds', async () => {
-      const mockQueryBuilder = {
-        innerJoin: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getRawMany: jest.fn().mockResolvedValue([
-          { nameSingular: 'company', isCustom: false },
-          { nameSingular: 'person', isCustom: false },
-        ]),
-      };
+    const createRepositoryMock = (name: string, initialCount: number) => {
+      let remaining = initialCount;
+      let counter = 0;
 
-      mockObjectMetadataRepository.createQueryBuilder.mockReturnValue(
-        mockQueryBuilder,
+      return {
+        find: jest.fn().mockImplementation(({ take }) => {
+          const amount = Math.min(take ?? remaining, remaining);
+          const records = Array.from({ length: amount }, () => ({
+            id: `${name}-${counter++}`,
+          }));
+
+          remaining -= amount;
+
+          return Promise.resolve(records);
+        }),
+        delete: jest.fn().mockResolvedValue(undefined),
+      };
+    };
+
+    const setObjectMetadataCache = (
+      entries: Array<{ id: string; nameSingular: string }>,
+    ) => {
+      const byId = entries.reduce<Record<string, any>>(
+        (acc, { id, nameSingular }) => {
+          acc[id] = {
+            id,
+            nameSingular,
+          };
+
+          return acc;
+        },
+        {},
       );
 
-      mockDataSource.query.mockResolvedValueOnce([{ count: '30000' }]);
-      mockDataSource.query.mockResolvedValueOnce([{ count: '20000' }]);
+      mockFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
+        {
+          flatObjectMetadataMaps: {
+            byId,
+            idByUniversalIdentifier: {},
+          },
+        },
+      );
+    };
+
+    it('should return deleted count when cleanup succeeds', async () => {
+      setObjectMetadataCache([
+        { id: 'obj-company', nameSingular: 'company' },
+        { id: 'obj-person', nameSingular: 'person' },
+      ]);
+
+      const companyRepository = createRepositoryMock('company', 2);
+      const personRepository = createRepositoryMock('person', 1);
+
+      mockTwentyORMGlobalManager.getRepositoryForWorkspace
+        .mockResolvedValueOnce(companyRepository)
+        .mockResolvedValueOnce(personRepository);
 
       const result = await service.cleanupWorkspaceTrash({
         workspaceId: 'workspace-id',
-        schemaName: 'workspace_test',
         trashRetentionDays: 14,
       });
 
-      expect(result).toEqual(50000);
+      expect(result).toEqual(3);
+      expect(companyRepository.find).toHaveBeenCalled();
+      expect(personRepository.find).toHaveBeenCalled();
+      expect(companyRepository.delete).toHaveBeenCalledTimes(1);
+      expect(personRepository.delete).toHaveBeenCalledTimes(1);
+
+      const findArgs = companyRepository.find.mock.calls[0][0];
+
+      expect(findArgs.withDeleted).toBe(true);
+      expect(findArgs.order).toEqual({ deletedAt: 'ASC' });
     });
 
-    it('should return zero when no tables found', async () => {
-      const mockQueryBuilder = {
-        innerJoin: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getRawMany: jest.fn().mockResolvedValue([]),
-      };
-
-      mockObjectMetadataRepository.createQueryBuilder.mockReturnValue(
-        mockQueryBuilder,
-      );
+    it('should return zero when no objects are found', async () => {
+      setObjectMetadataCache([]);
 
       const result = await service.cleanupWorkspaceTrash({
         workspaceId: 'workspace-id',
-        schemaName: 'workspace_test',
         trashRetentionDays: 14,
       });
 
       expect(result).toEqual(0);
+      expect(
+        mockTwentyORMGlobalManager.getRepositoryForWorkspace,
+      ).not.toHaveBeenCalled();
     });
 
-    it('should throw when discovery fails', async () => {
-      const mockQueryBuilder = {
-        innerJoin: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getRawMany: jest.fn().mockRejectedValue(new Error('Database error')),
-      };
+    it('should respect max records limit across objects', async () => {
+      mockConfigService.get.mockReturnValue(3);
+      (service as any).maxRecordsPerWorkspace = 3;
+      (service as any).batchSize = 3;
+      setObjectMetadataCache([
+        { id: 'obj-company', nameSingular: 'company' },
+        { id: 'obj-person', nameSingular: 'person' },
+      ]);
 
-      mockObjectMetadataRepository.createQueryBuilder.mockReturnValue(
-        mockQueryBuilder,
-      );
+      const companyRepository = createRepositoryMock('company', 2);
+      const personRepository = createRepositoryMock('person', 5);
 
-      await expect(
-        service.cleanupWorkspaceTrash({
-          workspaceId: 'workspace-id',
-          schemaName: 'workspace_test',
-          trashRetentionDays: 14,
-        }),
-      ).rejects.toThrow('Database error');
-    });
-
-    it('should respect max records limit across multiple tables', async () => {
-      const mockQueryBuilder = {
-        innerJoin: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getRawMany: jest.fn().mockResolvedValue([
-          { nameSingular: 'company', isCustom: false },
-          { nameSingular: 'person', isCustom: false },
-          { nameSingular: 'opportunity', isCustom: false },
-        ]),
-      };
-
-      mockObjectMetadataRepository.createQueryBuilder.mockReturnValue(
-        mockQueryBuilder,
-      );
-
-      // Mock deletion results: 60k + 40k = 100k (hits limit, third table not processed)
-      mockDataSource.query
-        .mockResolvedValueOnce([{ count: '60000' }])
-        .mockResolvedValueOnce([{ count: '40000' }]);
+      mockTwentyORMGlobalManager.getRepositoryForWorkspace
+        .mockResolvedValueOnce(companyRepository)
+        .mockResolvedValueOnce(personRepository);
 
       const result = await service.cleanupWorkspaceTrash({
         workspaceId: 'workspace-id',
-        schemaName: 'workspace_test',
         trashRetentionDays: 14,
       });
 
-      expect(result).toEqual(100000);
-      // Should only process 2 tables (company, person) and stop before opportunity
-      expect(mockDataSource.query).toHaveBeenCalledTimes(2);
+      expect(result).toEqual(3);
+      expect(companyRepository.delete).toHaveBeenCalledTimes(1);
+      expect(personRepository.delete).toHaveBeenCalledTimes(1);
+      const personDeleteArgs = personRepository.delete.mock.calls[0][0];
+      const deletedIds =
+        personDeleteArgs.id._value ?? personDeleteArgs.id.value;
+
+      expect(deletedIds).toHaveLength(1);
+      expect(personRepository.find).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw when deletion fails', async () => {
-      const mockQueryBuilder = {
-        innerJoin: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getRawMany: jest
-          .fn()
-          .mockResolvedValue([{ nameSingular: 'company', isCustom: false }]),
-      };
+    it('should ignore objects without soft deleted records', async () => {
+      setObjectMetadataCache([{ id: 'obj-company', nameSingular: 'company' }]);
 
-      mockObjectMetadataRepository.createQueryBuilder.mockReturnValue(
-        mockQueryBuilder,
+      const companyRepository = createRepositoryMock('company', 0);
+
+      mockTwentyORMGlobalManager.getRepositoryForWorkspace.mockResolvedValueOnce(
+        companyRepository,
       );
 
-      mockDataSource.query.mockRejectedValue(new Error('Deletion failed'));
+      const result = await service.cleanupWorkspaceTrash({
+        workspaceId: 'workspace-id',
+        trashRetentionDays: 14,
+      });
 
-      await expect(
-        service.cleanupWorkspaceTrash({
-          workspaceId: 'workspace-id',
-          schemaName: 'workspace_test',
-          trashRetentionDays: 14,
-        }),
-      ).rejects.toThrow('Deletion failed');
+      expect(result).toEqual(0);
+      expect(companyRepository.delete).not.toHaveBeenCalled();
     });
+
+    it('should delete records across multiple batches', async () => {
+      setObjectMetadataCache([
+        { id: 'obj-company', nameSingular: 'company' },
+      ]);
+
+      const companyRepository = createRepositoryMock('company', 5);
+
+      mockTwentyORMGlobalManager.getRepositoryForWorkspace.mockResolvedValueOnce(
+        companyRepository,
+      );
+
+      (service as any).batchSize = 2;
+      (service as any).maxRecordsPerWorkspace = 10;
+
+      const result = await service.cleanupWorkspaceTrash({
+        workspaceId: 'workspace-id',
+        trashRetentionDays: 14,
+      });
+
+      expect(result).toEqual(5);
+      expect(companyRepository.find).toHaveBeenCalledTimes(4);
+      expect(companyRepository.delete).toHaveBeenCalledTimes(3);
+    });
+
   });
 });
