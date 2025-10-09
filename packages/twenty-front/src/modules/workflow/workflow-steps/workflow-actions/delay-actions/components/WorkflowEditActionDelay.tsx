@@ -66,18 +66,18 @@ export const WorkflowEditActionDelay = ({
 
   const delayOptions: Array<SelectOption<string>> = [
     {
-      label: 'At a specific date or time',
+      label: t`At a specific date or time`,
       value: 'schedule_date',
       Icon: IconCalendar,
     },
     {
-      label: 'After a set amount of time',
+      label: t`After a set amount of time`,
       value: 'duration',
       Icon: IconClockHour8,
     },
   ];
 
-  const saveAction = useDebouncedCallback(async (formData: DelayFormData) => {
+  const saveAction = useDebouncedCallback((formData: DelayFormData) => {
     if (actionOptions.readonly === true) {
       return;
     }
@@ -166,7 +166,7 @@ export const WorkflowEditActionDelay = ({
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-action-delay-type"
-          label="Resume"
+          label={t`Resume`}
           options={delayOptions}
           dropdownWidth={GenericDropdownContentWidth.Large}
           value={formData.delayType}

@@ -7,10 +7,10 @@ export const workflowDelayActionSettingsSchema =
       delayType: z.enum(['schedule_date', 'duration']),
       scheduledDateTime: z.string().nullable().optional(),
       duration: z.object({
-        days: z.number(),
-        hours: z.number(),
-        minutes: z.number(),
-        seconds: z.number(),
+        days: z.number().min(0),
+        hours: z.number().min(0),
+        minutes: z.number().min(0),
+        seconds: z.number().min(0),
       }).optional(),
     }),
   });

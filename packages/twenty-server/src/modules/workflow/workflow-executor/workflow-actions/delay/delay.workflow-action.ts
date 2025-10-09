@@ -59,6 +59,13 @@ export class DelayWorkflowAction implements WorkflowAction {
       const now = new Date();
 
       delayInMs = scheduledDate.getTime() - now.getTime();
+
+      if (delayInMs < 0) {
+        throw new WorkflowStepExecutorException(
+          'Scheduled date cannot be in the past',
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+        );
+      }
     } else if (settings.delayType === 'duration') {
       if (!settings.duration) {
         throw new WorkflowStepExecutorException(
