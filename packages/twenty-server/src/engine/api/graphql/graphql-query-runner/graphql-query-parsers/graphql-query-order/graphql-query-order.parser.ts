@@ -19,7 +19,11 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
 import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
-import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
+import {
+  type GroupByDateField,
+  type GroupByField,
+} from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
+import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   getAvailableAggregationsFromObjectFields,
@@ -29,6 +33,7 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
 export type OrderByCondition = {
   order: 'ASC' | 'DESC';
@@ -147,26 +152,18 @@ export class GraphqlQueryOrderFieldParser {
           fieldMetadata.type,
         )
       ) {
-        const granularity = Object.values(orderByArg)[0]?.granularity;
+        const parsedOrderByForGroupByDateField =
+          this.parseObjectRecordOrderByWithGroupByDateField({
+            groupByFields,
+            orderByArg,
+            fieldMetadataId,
+          });
 
-        if (!isDefined(granularity)) {
-          throw new UserInputError(
-            `Missing date granularity for field ${Object.keys(orderByArg)[0]}.`,
-          );
+        if (!isDefined(parsedOrderByForGroupByDateField)) {
+          continue;
         }
 
-        if (
-          !groupByFields.some(
-            (groupByField) => groupByField.fieldMetadata.id === fieldMetadataId,
-          )
-          //   && groupByField.dateGranularity === granularity,
-        ) {
-          throw new UserInputError(
-            `You can only order by date granularity that is in groupBy criteria.`,
-          );
-        }
-
-        // TODO IMPLEMENT
+        parsedOrderBy.push(parsedOrderByForGroupByDateField);
         continue;
       }
 
@@ -446,5 +443,59 @@ export class GraphqlQueryOrderFieldParser {
       orderBySubField,
       objectMetadataItemWithFieldMaps.nameSingular,
     );
+  };
+
+  parseObjectRecordOrderByWithGroupByDateField = ({
+    groupByFields,
+    orderByArg,
+    fieldMetadataId,
+  }: {
+    groupByFields: GroupByField[];
+    orderByArg: ObjectRecordOrderByWithGroupByDateField;
+    fieldMetadataId: string;
+  }) => {
+    const orderByDirection = Object.values(orderByArg)[0]?.orderBy;
+
+    if (!isDefined(orderByDirection)) {
+      return null;
+    }
+
+    const granularity = Object.values(orderByArg)[0]?.granularity;
+
+    if (!isDefined(granularity)) {
+      throw new UserInputError(
+        `Missing date granularity for field ${Object.keys(orderByArg)[0]}.`,
+      );
+    }
+
+    const associatedGroupByField = groupByFields.find(
+      (groupByField) =>
+        groupByField.fieldMetadata.id === fieldMetadataId &&
+        (groupByField as GroupByDateField).dateGranularity === granularity,
+    );
+
+    if (!isDefined(associatedGroupByField)) {
+      throw new UserInputError(
+        `You can only order by date granularity that is in groupBy criteria.`,
+      );
+    }
+
+    const columnNameWithQuotes = `"${
+      formatColumnNamesFromCompositeFieldAndSubfields(
+        associatedGroupByField.fieldMetadata.name,
+        associatedGroupByField.subFieldName
+          ? [associatedGroupByField.subFieldName]
+          : undefined,
+      )[0]
+    }"`;
+
+    const expression = getGroupByExpression({
+      groupByField: associatedGroupByField,
+      columnNameWithQuotes,
+    });
+
+    return {
+      [expression]: convertOrderByToFindOptionsOrder(orderByDirection),
+    };
   };
 }
