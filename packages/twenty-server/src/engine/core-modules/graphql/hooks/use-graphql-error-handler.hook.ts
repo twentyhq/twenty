@@ -205,7 +205,6 @@ export const useGraphQLErrorHandlerHook = <
             }
 
             // Step 3: Transform errors for GraphQL response (clean GraphQL errors)
-            // Get locale from request (set by middleware from userWorkspace or x-locale header)
             const userLocale = args.contextValue.req.locale ?? SOURCE_LOCALE;
             const i18n = options.i18nService.getI18nInstance(userLocale);
             const defaultErrorMessage = msg`An error occurred.`;
