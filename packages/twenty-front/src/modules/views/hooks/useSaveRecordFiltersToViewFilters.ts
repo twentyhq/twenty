@@ -56,13 +56,41 @@ export const useSaveRecordFiltersToViewFilters = () => {
           newViewFilters,
         );
 
-        const viewFilterIdsToDelete = viewFiltersToDelete.map(
-          (viewFilter) => viewFilter.id,
-        );
+        const createViewFilterInputs = viewFiltersToCreate.map((viewFilter) => ({
+          input: {
+            id: viewFilter.id,
+            fieldMetadataId: viewFilter.fieldMetadataId,
+            viewId: currentView.id,
+            value: viewFilter.value,
+            operand: viewFilter.operand,
+            viewFilterGroupId: viewFilter.viewFilterGroupId,
+            positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+            subFieldName: viewFilter.subFieldName ?? null,
+          },
+        }));
 
-        await createViewFilterRecords(viewFiltersToCreate, currentView);
-        await updateViewFilterRecords(viewFiltersToUpdate);
-        await deleteViewFilterRecords(viewFilterIdsToDelete);
+        const updateViewFilterInputs = viewFiltersToUpdate.map((viewFilter) => ({
+          input: {
+            id: viewFilter.id,
+            update: {
+              value: viewFilter.value,
+              operand: viewFilter.operand,
+              positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+              viewFilterGroupId: viewFilter.viewFilterGroupId,
+              subFieldName: viewFilter.subFieldName ?? null,
+            },
+          },
+        }));
+
+        const deleteViewFilterInputs = viewFiltersToDelete.map((viewFilter) => ({
+          input: {
+            id: viewFilter.id,
+          },
+        }));
+
+        await createViewFilterRecords(createViewFilterInputs);
+        await updateViewFilterRecords(updateViewFilterInputs);
+        await deleteViewFilterRecords(deleteViewFilterInputs);
       },
     [
       currentView,
