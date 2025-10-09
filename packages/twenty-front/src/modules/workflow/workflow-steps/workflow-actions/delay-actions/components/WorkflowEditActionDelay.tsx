@@ -6,11 +6,11 @@ import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/Workf
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { HorizontalSeparator, IconCalendar } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
-
 type WorkflowEditActionDelayProps = {
   action: WorkflowDelayAction;
   actionOptions:
@@ -65,14 +65,19 @@ export const WorkflowEditActionDelay = ({
   }, 1_000);
 
   useEffect(() => {
-    saveAction(formData);
-  }, [formData, saveAction]);
+    return () => {
+      saveAction.flush();
+    };
+  }, [saveAction]);
 
   const handleDateTimeChange = (value: string | null) => {
-    setFormData((prev) => ({
-      ...prev,
+    const newFormData: DelayFormData = {
+      ...formData,
       scheduledDateTime: value,
-    }));
+    };
+
+    setFormData(newFormData);
+    saveAction(newFormData);
   };
 
   const HeaderIcon = getIcon(headerIcon ?? 'IconPlayerPause');
@@ -107,7 +112,7 @@ export const WorkflowEditActionDelay = ({
         <HorizontalSeparator noMargin />
 
         <FormDateTimeFieldInput
-          label="Delay Until"
+          label={t`Delay Until`}
           defaultValue={formData.scheduledDateTime ?? ''}
           onChange={handleDateTimeChange}
           readonly={actionOptions.readonly}

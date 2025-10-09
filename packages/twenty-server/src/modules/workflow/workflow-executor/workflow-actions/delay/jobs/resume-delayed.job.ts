@@ -6,7 +6,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { type DelayedResumeJobData } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/delay.workflow-action';
+import { type ResumeDelayedJobData } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/delay.workflow-action';
 import {
   RunWorkflowJob,
   type RunWorkflowJobData,
@@ -15,7 +15,7 @@ import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
-export class DelayedResumeJob {
+export class ResumeDelayedJob {
   constructor(
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -23,12 +23,12 @@ export class DelayedResumeJob {
     private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
   ) {}
 
-  @Process(DelayedResumeJob.name)
+  @Process(ResumeDelayedJob.name)
   async handle({
     workspaceId,
     workflowRunId,
     stepId,
-  }: DelayedResumeJobData): Promise<void> {
+  }: ResumeDelayedJobData): Promise<void> {
     try {
       const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun(
         {

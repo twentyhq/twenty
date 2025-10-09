@@ -13,9 +13,8 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowDelayAction } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/guards/is-workflow-delay-action.guard';
-import { type WorkflowDelayActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-input.type';
 
-export type DelayedResumeJobData = {
+export type ResumeDelayedJobData = {
   workspaceId: string;
   workflowRunId: string;
   stepId: string;
@@ -45,7 +44,7 @@ export class DelayWorkflowAction implements WorkflowAction {
       );
     }
 
-    const settings = step.settings.input as WorkflowDelayActionInput;
+    const settings = step.settings.input;
 
     if (!settings.scheduledDateTime) {
       throw new WorkflowStepExecutorException(
@@ -58,8 +57,8 @@ export class DelayWorkflowAction implements WorkflowAction {
     const now = new Date();
     const delayInMs = scheduledDate.getTime() - now.getTime();
 
-    await this.messageQueueService.add<DelayedResumeJobData>(
-      'DelayedResumeJob',
+    await this.messageQueueService.add<ResumeDelayedJobData>(
+      'ResumeDelayedJob',
       {
         workspaceId: runInfo.workspaceId,
         workflowRunId: runInfo.workflowRunId,
