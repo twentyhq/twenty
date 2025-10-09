@@ -52,14 +52,13 @@ export const handleDuplicateKeyError = (
 
     if (affectedColumns?.length === 1) {
       const fieldName = columnNames.toLowerCase();
-      const valueInfo = duplicatedValues
-        ? `with value ${duplicatedValues}`
-        : '';
 
       throw new UserInputError(
         `Duplicate ${columnNames} ${duplicatedValues ? `with value ${duplicatedValues}` : ''}. Please set a unique one.`,
         {
-          userFriendlyMessage: msg`This ${fieldName} ${valueInfo} is already taken. Please choose a different value.`,
+          userFriendlyMessage: duplicatedValues
+            ? msg`This ${fieldName} with value ${duplicatedValues} is already taken. Please choose a different value.`
+            : msg`This ${fieldName} is already taken. Please choose a different value.`,
           isExpected: true,
         },
       );
