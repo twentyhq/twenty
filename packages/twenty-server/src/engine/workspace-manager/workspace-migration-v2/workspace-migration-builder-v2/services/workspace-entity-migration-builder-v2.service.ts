@@ -15,47 +15,16 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/co
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import {
-  type DeletedCreatedUpdatedMatrix,
-  flatEntityDeletedCreatedUpdatedMatrixDispatcher,
-} from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
+import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { CreatedDeletedUpdatedActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/created-deleted-updated-actions.type';
+import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/failed-flat-entity-validate-and-build.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
+import { SuccessfulFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/successful-flat-entity-validate-and-build.type';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
-
-// TODO extract types in dedicated files
-export type CreatedDeletedUpdatedActions<
-  TActions extends WorkspaceMigrationActionV2,
-> = {
-  created: TActions[];
-  deleted: TActions[];
-  updated: TActions[];
-};
-
-export type SuccessfulEntityMigrationBuildResult<
-  TActions extends WorkspaceMigrationActionV2,
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> = {
-  status: 'success';
-  actions: CreatedDeletedUpdatedActions<TActions>;
-  optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
-  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-};
-
-export type FailedEntityMigrationBuildResult<
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> = {
-  status: 'fail';
-  errors: FailedFlatEntityValidation<TFlatEntity>[];
-  optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
-  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-};
 
 export type ValidateAndBuildArgs<
   T extends AllFlatEntities,
@@ -73,72 +42,16 @@ export type ValidateAndBuildReturnType<
     | Partial<AllFlatEntityMaps>
     | undefined = undefined,
 > =
-  | SuccessfulEntityMigrationBuildResult<
+  | SuccessfulFlatEntityValidateAndBuild<
       TActions,
       TFlatEntity,
       TRelatedFlatEntityMaps
     >
-  | FailedEntityMigrationBuildResult<TFlatEntity, TRelatedFlatEntityMaps>;
+  | FailedFlatEntityValidateAndBuild<TFlatEntity, TRelatedFlatEntityMaps>;
 
-export type ValidateAndBuildActionsArgs<
-  T extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
-> = ValidateAndBuildArgs<T, TRelatedFlatEntityMaps> &
-  DeletedCreatedUpdatedMatrix<T>;
-
-export type ValidateAndBuilActionsReturnType<
-  TFlatEntity extends AllFlatEntities,
-  TActions extends WorkspaceMigrationActionV2,
-> = {
-  failed: FailedFlatEntityValidation<TFlatEntity>[];
-} & CreatedDeletedUpdatedActions<TActions>;
-
-export type FlatEntityValidationArgs<
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> = {
-  flatEntityToValidate: TFlatEntity;
-  optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
-  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-  workspaceId: string;
-  remainingFlatEntityMapsToValidate: FlatEntityMaps<TFlatEntity>;
-  buildOptions: WorkspaceMigrationBuilderOptions;
-};
-
-export type FlatEntityUpdateValidationArgs<
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> = Omit<
-  FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  'flatEntityToValidate' | 'remainingFlatEntityMapsToValidate'
-> & {
-  flatEntityUpdate: FromTo<TFlatEntity>;
-  remainingFlatEntityMapsToValidate: FromTo<FlatEntityMaps<TFlatEntity>>;
-};
-
-export type FlatEntityValidationReturnType<
-  TActions extends WorkspaceMigrationActionV2,
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> =
-  | {
-      status: 'success';
-      action: TActions | TActions[];
-      dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-    }
-  | ({
-      status: 'fail';
-    } & FailedFlatEntityValidation<TFlatEntity>);
-
-// TODO prastoin refactor the builder to building a selection of flatEntityMaps => simplify
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
-  T extends keyof AllFlatEntitiesByMetadataEngineName, // TODO refactor the whole generic to be inferred from this one only
+  // TODO refactor the whole generic to be inferred from this one only
+  T extends keyof AllFlatEntitiesByMetadataEngineName,
   TFlatEntity extends AllFlatEntities,
   TActions extends WorkspaceMigrationActionV2,
   TRelatedFlatEntityMaps extends
@@ -149,7 +62,13 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   protected readonly logger: LoggerService;
   private metadataName: T;
 
-  constructor(metadataName: T) {
+  constructor(
+    metadataName: T,
+    comparisonOptions: {
+      propertiesToStringify: (keyof T)[];
+      propertiesToCompare: (keyof T)[];
+    },
+  ) {
     this.metadataName = metadataName;
   }
 
@@ -192,10 +111,9 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'entity processing');
 
     let optimisticFlatEntityMaps = structuredClone(fromFlatEntityMaps);
-    const validateAndBuildResult: ValidateAndBuilActionsReturnType<
-      TFlatEntity,
-      TActions
-    > = {
+    const validateAndBuildResult: {
+      failed: FailedFlatEntityValidation<TFlatEntity>[];
+    } & CreatedDeletedUpdatedActions<TActions> = {
       failed: [],
       created: [],
       deleted: [],
