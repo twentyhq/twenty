@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { msg } from '@lingui/core/macro';
 
 import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { type MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
@@ -137,8 +138,7 @@ const assertIsSubscription = (
       'Subscription must have exactly two subscription items. Check that stripe and database are in sync',
       BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
       {
-        userFriendlyMessage:
-          'Your billing subscription is corrupted. Please contact support.',
+        userFriendlyMessage: msg`Your billing subscription is corrupted. Please contact support.`,
       },
     );
   }

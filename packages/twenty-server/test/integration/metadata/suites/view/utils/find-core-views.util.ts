@@ -4,7 +4,7 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 export const findCoreViews = async ({
   objectMetadataId,

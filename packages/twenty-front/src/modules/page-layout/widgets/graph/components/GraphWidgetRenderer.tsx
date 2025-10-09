@@ -1,16 +1,9 @@
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartRenderer';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
 import { lazy, Suspense } from 'react';
 import { GraphType, type PageLayoutWidget } from '~/generated-metadata/graphql';
-
-const GraphWidgetBarChart = lazy(() =>
-  import(
-    '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart'
-  ).then((module) => ({
-    default: module.GraphWidgetBarChart,
-  })),
-);
 
 const GraphWidgetLineChart = lazy(() =>
   import(
@@ -100,21 +93,7 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
       );
 
     case GraphType.BAR:
-      return (
-        <Suspense fallback={<ChartSkeletonLoader />}>
-          <GraphWidgetBarChart
-            data={data.items}
-            indexBy={data.indexBy}
-            keys={data.keys}
-            seriesLabels={data.seriesLabels}
-            layout={data.layout}
-            showLegend
-            showGrid
-            displayType="number"
-            id={`bar-chart-${widget.id}`}
-          />
-        </Suspense>
-      );
+      return <GraphWidgetBarChartRenderer widget={widget} />;
 
     case GraphType.LINE:
       return (

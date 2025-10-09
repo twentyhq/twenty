@@ -5,7 +5,10 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
   "error": {
     "code": "FIELD_METADATA_RELATION_MALFORMED",
     "message": "Morph relation creation payloads must have the same relation type",
-    "userFriendlyMessage": "Morph relation creation payloads must have the same relation type",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "Morph relation creation payloads must have the same relation type",
+    },
   },
   "status": "fail",
 }
@@ -16,7 +19,10 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
   "error": {
     "code": "FIELD_METADATA_RELATION_MALFORMED",
     "message": "Morph relation input transpilation failed",
-    "userFriendlyMessage": "Invalid morph relation input",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "Invalid morph relation input",
+    },
     "value": [
       {
         "targetObjectMetadataId": Any<String>,
@@ -33,7 +39,10 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
   "error": {
     "code": "FIELD_METADATA_RELATION_MALFORMED",
     "message": "Morph relation creation payloads must have only relation to the same object metadata",
-    "userFriendlyMessage": "Morph relation creation payloads must only contain relation to the same object metadata",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "Morph relation creation payloads must only contain relation to the same object metadata",
+    },
   },
   "status": "fail",
 }
@@ -44,7 +53,10 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
   "error": {
     "code": "FIELD_METADATA_RELATION_MALFORMED",
     "message": "Morph relation creation payloads are empty",
-    "userFriendlyMessage": "At least one relation is require",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "At least one relation is require",
+    },
   },
   "status": "fail",
 }
@@ -55,7 +67,10 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
   "error": {
     "code": "INVALID_FIELD_INPUT",
     "message": "Relation creation payload is required",
-    "userFriendlyMessage": "Relation creation payload is required",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "Relation creation payload is required",
+    },
     "value": undefined,
   },
   "status": "fail",
@@ -67,7 +82,10 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
   "error": {
     "code": "FIELD_METADATA_RELATION_MALFORMED",
     "message": "Morph relation input transpilation failed",
-    "userFriendlyMessage": "Invalid morph relation input",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "Invalid morph relation input",
+    },
     "value": [
       {
         "targetFieldIcon": "IconPet",

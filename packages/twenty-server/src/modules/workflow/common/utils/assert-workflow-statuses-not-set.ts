@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 
 import {
   WorkflowQueryValidationException,
@@ -14,7 +14,7 @@ export const assertWorkflowStatusesNotSet = (
       'Statuses cannot be set manually.',
       WorkflowQueryValidationExceptionCode.FORBIDDEN,
       {
-        userFriendlyMessage: t`Statuses cannot be set manually.`,
+        userFriendlyMessage: msg`Statuses cannot be set manually.`,
       },
     );
   }
