@@ -56,16 +56,19 @@
               }
             },
             "PGSSLMODE": "require",
-            "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+            "NODE_TLS_REJECT_UNAUTHORIZED": "0",
+            "DISABLE_DB_MIGRATIONS": "true",
+            "DISABLE_CRON_JOBS_REGISTRATION": "true"
           }
         },
         {
-          "id": "twenty-worker",
+          "id": "twenty-background",
           "name": "Twenty Worker",
-          "type": "web",
-          "buildType": "docker",
-          "dockerfilePath": "packages/twenty-docker/twenty/Dockerfile",
-          "dockerContext": ".",
+          "type": "worker",
+          "buildType": "fromService",
+          "fromService": {
+            "id": "twenty-server"
+          },
           "cpu": 0.5,
           "memory": 1,
           "startCommand": "node dist/src/queue-worker/queue-worker",
