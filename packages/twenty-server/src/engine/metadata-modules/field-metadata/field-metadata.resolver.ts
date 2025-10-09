@@ -9,6 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -18,6 +19,7 @@ import {
   ForbiddenError,
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -52,6 +54,7 @@ export class FieldMetadataResolver {
     private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
     private readonly featureFlagService: FeatureFlagService,
     private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
+    private readonly i18nService: I18nService,
   ) {}
 
   @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
@@ -66,7 +69,10 @@ export class FieldMetadataResolver {
         workspaceId,
       });
     } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
     }
   }
 
@@ -101,7 +107,10 @@ export class FieldMetadataResolver {
         workspaceId,
       });
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
     }
   }
 
@@ -129,7 +138,10 @@ export class FieldMetadataResolver {
         });
       }
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
     }
 
     const fieldMetadata =
@@ -154,7 +166,10 @@ export class FieldMetadataResolver {
     try {
       return await this.fieldMetadataService.deleteOneField(input, workspaceId);
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
     }
   }
 
@@ -176,7 +191,10 @@ export class FieldMetadataResolver {
         workspaceId: workspace.id,
       });
     } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
     }
   }
 
@@ -197,7 +215,10 @@ export class FieldMetadataResolver {
         workspaceId: workspace.id,
       });
     } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
     }
   }
 }

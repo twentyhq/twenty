@@ -1,8 +1,11 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Context, Parent, ResolveField, Resolver } from '@nestjs/graphql';
 
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
+
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -20,6 +23,8 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
   PermissionsGraphqlApiExceptionFilter,
 )
 export class IndexMetadataResolver {
+  constructor(private readonly i18nService: I18nService) {}
+
   @ResolveField(() => [IndexFieldMetadataDTO], { nullable: false })
   async indexFieldMetadataList(
     @AuthWorkspace() workspace: Workspace,
@@ -36,7 +41,10 @@ export class IndexMetadataResolver {
 
       return indexFieldMetadataItems;
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
 
       return [];
     }

@@ -1,3 +1,4 @@
+import { type I18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
 import {
@@ -9,9 +10,13 @@ import { fromWorkspaceMigrationBuilderExceptionToValidationResponseError } from 
 
 export const workspaceMigrationBuilderExceptionV2Formatter = (
   error: WorkspaceMigrationBuilderExceptionV2,
+  i18n: I18n,
 ) => {
   const { errors, summary } =
-    fromWorkspaceMigrationBuilderExceptionToValidationResponseError(error);
+    fromWorkspaceMigrationBuilderExceptionToValidationResponseError(
+      error,
+      i18n,
+    );
 
   throw new BaseGraphQLError(error.message, ErrorCode.BAD_USER_INPUT, {
     code: 'METADATA_VALIDATION_ERROR',

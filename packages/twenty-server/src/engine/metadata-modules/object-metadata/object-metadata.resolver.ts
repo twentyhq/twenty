@@ -8,6 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -124,7 +126,10 @@ export class ObjectMetadataResolver {
         workspaceId,
       );
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
     }
   }
 
@@ -148,7 +153,10 @@ export class ObjectMetadataResolver {
           workspaceId,
         });
       } catch (error) {
-        objectMetadataGraphqlApiExceptionHandler(error);
+        objectMetadataGraphqlApiExceptionHandler(
+          error,
+          this.i18nService.getI18nInstance(SOURCE_LOCALE),
+        );
       }
     }
 
@@ -166,7 +174,10 @@ export class ObjectMetadataResolver {
         workspaceId,
       );
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
     }
   }
 
@@ -187,7 +198,10 @@ export class ObjectMetadataResolver {
 
       return fieldMetadataItems;
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
 
       return [];
     }
@@ -209,7 +223,10 @@ export class ObjectMetadataResolver {
 
       return indexMetadataItems;
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(SOURCE_LOCALE),
+      );
 
       return [];
     }
