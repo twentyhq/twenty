@@ -9,12 +9,12 @@ import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { ViewFilterOperand } from 'twenty-shared/types';
+import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
-import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 
 describe('group-by resolvers (integration)', () => {
   describe('standard case', () => {
