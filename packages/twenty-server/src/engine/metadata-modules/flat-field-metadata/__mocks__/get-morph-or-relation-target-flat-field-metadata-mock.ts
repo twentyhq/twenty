@@ -32,6 +32,7 @@ export const getRelationTargetFlatFieldMetadataMock = ({
   const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
 
   return {
+    viewFieldIds: [],
     createdAt,
     updatedAt: createdAt,
     description: 'default flat field metadata description',

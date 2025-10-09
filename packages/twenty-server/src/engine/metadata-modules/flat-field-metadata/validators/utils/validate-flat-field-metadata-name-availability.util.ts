@@ -4,13 +4,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findObjectFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -50,10 +50,11 @@ export const validateFlatFieldMetadataNameAvailability = ({
   remainingFlatEntityMapsToValidate?: FlatEntityMaps<FlatFieldMetadata>;
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
-  const { objectFlatFieldMetadatas } = findObjectFlatFieldMetadatasOrThrow({
-    flatFieldMetadataMaps,
-    flatObjectMetadata,
-  });
+  const objectFlatFieldMetadatas =
+    findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+    });
   const reservedCompositeFieldsNames = getReservedCompositeFieldNames(
     objectFlatFieldMetadatas,
   );

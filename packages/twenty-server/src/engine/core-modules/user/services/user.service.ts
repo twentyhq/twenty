@@ -5,6 +5,7 @@ import assert from 'assert';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { IsNull, Not, Repository } from 'typeorm';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import {
   AuthException,
@@ -188,26 +189,40 @@ export class UserService extends TypeOrmQueryService<User> {
     );
   }
 
-  async getUserByEmail(email: string) {
-    const user = await this.userRepository.findOne({
+  async findUserByEmailOrThrow(email: string, error?: Error) {
+    const user = await this.findUserByEmail(email);
+
+    assertIsDefinedOrThrow(user, error);
+
+    return user;
+  }
+
+  async findUserByEmail(email: string) {
+    return await this.userRepository.findOne({
       where: {
         email,
       },
     });
+  }
 
-    userValidator.assertIsDefinedOrThrow(user);
+  async findUserById(id: string) {
+    return await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async findUserByIdOrThrow(id: string, error?: Error) {
+    const user = await this.findUserById(id);
+
+    assertIsDefinedOrThrow(user, error);
 
     return user;
   }
 
   async markEmailAsVerified(userId: string) {
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userId,
-      },
-    });
-
-    userValidator.assertIsDefinedOrThrow(user);
+    const user = await this.findUserByIdOrThrow(userId);
 
     user.isEmailVerified = true;
 

@@ -80,4 +80,12 @@ export const createGraphColorRegistry = (
     },
     solid: theme.color.sky,
   },
+  gray: {
+    name: 'gray',
+    gradient: {
+      normal: [theme.adaptiveColors.gray1, theme.adaptiveColors.gray2],
+      hover: [theme.adaptiveColors.gray3, theme.adaptiveColors.gray4],
+    },
+    solid: theme.color.gray,
+  },
 });

@@ -17,9 +17,9 @@ import {
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 
-import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
-import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
-import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
+import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
+import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 describe('View REST API', () => {
   let testObjectMetadataId: string;

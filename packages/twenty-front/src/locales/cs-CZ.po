@@ -263,6 +263,21 @@ msgstr "Sdílené prostředí, ve kterém budete moci spravovat vztahy se zákaz
 msgid "A verification email has been sent to"
 msgstr "Verifikační email byl odeslán na"
 
+#. js-lingui-id: DqlQy+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Ability to add more than one email address"
+msgstr ""
+
+#. js-lingui-id: XkK/Vw
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Ability to add more than one phone number"
+msgstr ""
+
+#. js-lingui-id: ICtlXD
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Ability to add more than one URL"
+msgstr ""
+
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
@@ -545,6 +560,7 @@ msgid "Add view"
 msgstr "Přidat zobrazení"
 
 #. js-lingui-id: iRpDWj
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr "Přidat widget"
@@ -773,6 +789,11 @@ msgstr "Umožnit pozvání nových uživatelů sdílením odkazu na pozvánku."
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow users to sign in with an email and password."
 msgstr "Povolit uživatelům přihlášení pomocí e-mailu a hesla."
+
+#. js-lingui-id: VD5bNu
+#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
+msgid "An error occurred while checking user existence"
+msgstr ""
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -1548,6 +1569,11 @@ msgstr "Klikněte na \"Přidat výstupní pole\" níže, abyste definovali struk
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Click on the checkmark to apply your changes."
 msgstr "Klikněte na zaškrtnutí pro použití změn."
+
+#. js-lingui-id: WTlZnA
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+msgid "Click to add your first widget"
+msgstr ""
 
 #. js-lingui-id: d0rtA5
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
@@ -4616,6 +4642,11 @@ msgstr "Menší nebo rovno"
 msgid "Light"
 msgstr "Světlý"
 
+#. js-lingui-id: Qds9fe
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Limit how many values can be added to this field"
+msgstr ""
+
 #. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line"
@@ -4767,6 +4798,26 @@ msgstr "Maximální"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
 msgstr "Maximální kapacita importu: {formatSpreadsheetMaxRecordImportCapacity} záznamů. V opačném případě zvažte rozdělení svého souboru nebo použití API."
+
+#. js-lingui-id: DBiUDH
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum email addresses"
+msgstr ""
+
+#. js-lingui-id: iwCoSG
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum phone numbers"
+msgstr ""
+
+#. js-lingui-id: aiuTYK
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum URLs"
+msgstr ""
+
+#. js-lingui-id: ZEH/cb
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum values"
+msgstr ""
 
 #. js-lingui-id: nA8kxD
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
@@ -5141,6 +5192,7 @@ msgstr "Devátý"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+#: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
 msgid "No"
 msgstr "Ne"
 
@@ -5381,6 +5433,11 @@ msgstr "Žádné výběrové pole"
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "No variables found"
 msgstr "Žádné proměnné nenalezeny"
+
+#. js-lingui-id: xyEjfo
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+msgid "No widgets yet"
+msgstr ""
 
 #. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -8218,6 +8275,11 @@ msgstr "Pracovní postupy"
 msgid "Workspace"
 msgstr "Pracovní prostor"
 
+#. js-lingui-id: fQ8teq
+#: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
+msgid "Workspace creation failed"
+msgstr ""
+
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
@@ -8298,6 +8360,11 @@ msgstr "let"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
 msgstr "ano"
+
+#. js-lingui-id: l75CjT
+#: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
+msgid "Yes"
+msgstr ""
 
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts

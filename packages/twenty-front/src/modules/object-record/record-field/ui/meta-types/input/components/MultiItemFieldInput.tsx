@@ -41,6 +41,7 @@ type MultiItemFieldInputProps<T> = {
   renderInput?: MultiItemBaseInputProps['renderInput'];
   onClickOutside?: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
   onError?: (hasError: boolean, values: any[]) => void;
+  maxItemCount?: number;
 };
 
 // Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
@@ -58,6 +59,7 @@ export const MultiItemFieldInput = <T,>({
   renderInput,
   onClickOutside,
   onError,
+  maxItemCount,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -91,14 +93,47 @@ export const MultiItemFieldInput = <T,>({
     dependencies: [handleEscape],
   });
 
-  const [isInputDisplayed, setIsInputDisplayed] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [itemToEditIndex, setItemToEditIndex] = useState(-1);
+  const getItemValueAsString = (index: number): string => {
+    let item;
+    switch (fieldMetadataType) {
+      case FieldMetadataType.LINKS:
+        item = items[index] as { label: string; url: string };
+        return item.url || '';
+      case FieldMetadataType.PHONES:
+        item = items[index] as PhoneRecord;
+        return item.callingCode + item.number;
+      case FieldMetadataType.EMAILS:
+        item = items[index] as string;
+        return item;
+      case FieldMetadataType.ARRAY:
+        item = items[index] as string;
+        return item;
+      default:
+        throw new CustomError(
+          `Unsupported field type: ${fieldMetadataType}`,
+          'UNSUPPORTED_FIELD_TYPE',
+        );
+    }
+  };
+
+  const shouldAutoEditSingleItem = items.length === 1 && maxItemCount === 1;
+
+  const [isInputDisplayed, setIsInputDisplayed] = useState(
+    shouldAutoEditSingleItem,
+  );
+  const [inputValue, setInputValue] = useState(() =>
+    shouldAutoEditSingleItem ? getItemValueAsString(0) : '',
+  );
+  const [itemToEditIndex, setItemToEditIndex] = useState(
+    shouldAutoEditSingleItem ? 0 : -1,
+  );
   const [errorData, setErrorData] = useState({
     isValid: true,
     errorMessage: '',
   });
   const isAddingNewItem = itemToEditIndex === -1;
+  const isLimitReached =
+    typeof maxItemCount === 'number' && items.length >= maxItemCount;
 
   const handleInputChange = (value: string) => {
     setInputValue(value);
@@ -113,50 +148,22 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleAddButtonClick = () => {
+    if (isLimitReached) {
+      return;
+    }
+
     setItemToEditIndex(-1);
     setIsInputDisplayed(true);
   };
 
   const handleEditButtonClick = (index: number) => {
-    let item;
-    switch (fieldMetadataType) {
-      case FieldMetadataType.LINKS:
-        item = items[index] as { label: string; url: string };
-        setInputValue(item.url || '');
-        break;
-      case FieldMetadataType.PHONES:
-        item = items[index] as PhoneRecord;
-        setInputValue(item.callingCode + item.number);
-        break;
-      case FieldMetadataType.EMAILS:
-        item = items[index] as string;
-        setInputValue(item);
-        break;
-      case FieldMetadataType.ARRAY:
-        item = items[index] as string;
-        setInputValue(item);
-        break;
-      default:
-        throw new CustomError(
-          `Unsupported field type: ${fieldMetadataType}`,
-          'UNSUPPORTED_FIELD_TYPE',
-        );
-    }
-
+    setInputValue(getItemValueAsString(index));
     setItemToEditIndex(index);
     setIsInputDisplayed(true);
   };
 
   const handleSubmitInput = () => {
     const sanitizedInput = inputValue.trim();
-    if (validateInput !== undefined) {
-      const validationData = validateInput(sanitizedInput) ?? { isValid: true };
-      if (!validationData.isValid) {
-        onError?.(true, items);
-        setErrorData(validationData);
-        return;
-      }
-    }
 
     if (sanitizedInput === '' && isAddingNewItem) {
       return;
@@ -165,6 +172,15 @@ export const MultiItemFieldInput = <T,>({
     if (sanitizedInput === '' && !isAddingNewItem) {
       handleDeleteItem(itemToEditIndex);
       return;
+    }
+
+    if (validateInput !== undefined) {
+      const validationData = validateInput(sanitizedInput) ?? { isValid: true };
+      if (!validationData.isValid) {
+        onError?.(true, items);
+        setErrorData(validationData);
+        return;
+      }
     }
 
     const newItem = formatInput
@@ -194,11 +210,14 @@ export const MultiItemFieldInput = <T,>({
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
+    setIsInputDisplayed(false);
+    setInputValue('');
+    setItemToEditIndex(-1);
   };
 
   return (
     <DropdownContent ref={containerRef}>
-      {!!items.length && (
+      {!!items.length && !shouldAutoEditSingleItem && (
         <>
           <DropdownMenuItemsContainer hasMaxHeight>
             {items.map((item, index) =>
@@ -211,7 +230,9 @@ export const MultiItemFieldInput = <T,>({
               }),
             )}
           </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
+          {isInputDisplayed || !isLimitReached ? (
+            <DropdownMenuSeparator />
+          ) : null}
         </>
       )}
       {isInputDisplayed || !items.length ? (
@@ -239,7 +260,7 @@ export const MultiItemFieldInput = <T,>({
             ) : null
           }
         />
-      ) : (
+      ) : !isLimitReached ? (
         <DropdownMenuItemsContainer>
           <MenuItem
             onClick={handleAddButtonClick}
@@ -247,7 +268,7 @@ export const MultiItemFieldInput = <T,>({
             text={newItemLabel || `Add ${placeholder}`}
           />
         </DropdownMenuItemsContainer>
-      )}
+      ) : null}
     </DropdownContent>
   );
 };

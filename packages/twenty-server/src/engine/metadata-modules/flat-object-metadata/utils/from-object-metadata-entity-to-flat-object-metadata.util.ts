@@ -16,6 +16,7 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
 
   return {
     ...objectMetadataEntityWithoutRelations,
+    viewIds: objectMetadataEntity.views.map((viewEntity) => viewEntity.id),
     indexMetadataIds: objectMetadataEntity.indexMetadatas.map(
       (indexEntity) => indexEntity.id,
     ),

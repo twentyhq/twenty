@@ -34,7 +34,7 @@ const createMockLoginTokenService = () => ({
 });
 
 const createMockUserService = () => ({
-  getUserByEmail: jest.fn(),
+  findUserByEmailOrThrow: jest.fn(),
 });
 
 const createMockDomainManagerService = () => ({
@@ -128,7 +128,7 @@ describe('TwoFactorAuthenticationResolver', () => {
       domainManagerService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
         mockWorkspace,
       );
-      userService.getUserByEmail.mockResolvedValue(mockUser);
+      userService.findUserByEmailOrThrow.mockResolvedValue(mockUser);
       twoFactorAuthenticationService.initiateStrategyConfiguration.mockResolvedValue(
         'otpauth://totp/Twenty:test@example.com?secret=SECRETKEY&issuer=Twenty',
       );
@@ -146,7 +146,9 @@ describe('TwoFactorAuthenticationResolver', () => {
       expect(
         domainManagerService.getWorkspaceByOriginOrDefaultWorkspace,
       ).toHaveBeenCalledWith(origin);
-      expect(userService.getUserByEmail).toHaveBeenCalledWith(mockUser.email);
+      expect(userService.findUserByEmailOrThrow).toHaveBeenCalledWith(
+        mockUser.email,
+      );
       expect(
         twoFactorAuthenticationService.initiateStrategyConfiguration,
       ).toHaveBeenCalledWith(

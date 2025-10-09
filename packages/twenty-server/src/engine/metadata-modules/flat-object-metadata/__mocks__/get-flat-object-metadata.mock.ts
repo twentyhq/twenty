@@ -12,6 +12,7 @@ export const getFlatObjectMetadataMock = (
   const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
 
   return {
+    viewIds: [],
     indexMetadataIds: [],
     fieldMetadataIds: [],
     description: 'default flat object metadata description',

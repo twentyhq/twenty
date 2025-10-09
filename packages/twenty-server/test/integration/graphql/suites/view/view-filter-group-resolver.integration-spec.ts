@@ -24,11 +24,11 @@ import {
 } from 'test/integration/utils/view-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
+import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import {
   generateViewFilterGroupExceptionMessage,
   ViewFilterGroupExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
+} from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 
 describe('View Filter Group Resolver', () => {
   let testViewId: string;

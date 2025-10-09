@@ -23,11 +23,11 @@ import {
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
+import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import {
   generateViewSortExceptionMessage,
   ViewSortExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-sort.exception';
+} from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 
 describe('View Sort REST API', () => {
   let testObjectMetadataId: string;

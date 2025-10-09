@@ -19,6 +19,7 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 @Entity('objectMetadata')
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
@@ -145,8 +146,7 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @OneToMany(
     () => ObjectPermissionEntity,
-    (objectPermission: ObjectPermissionEntity) =>
-      objectPermission.objectMetadata,
+    (objectPermission) => objectPermission.objectMetadata,
     {
       cascade: true,
     },
@@ -155,10 +155,15 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @OneToMany(
     () => FieldPermissionEntity,
-    (fieldPermission: FieldPermissionEntity) => fieldPermission.objectMetadata,
+    (fieldPermission) => fieldPermission.objectMetadata,
     {
       cascade: true,
     },
   )
   fieldPermissions: Relation<FieldPermissionEntity[]>;
+
+  @OneToMany(() => ViewEntity, (view) => view.objectMetadata, {
+    cascade: true,
+  })
+  views: Relation<ViewEntity[]>;
 }
