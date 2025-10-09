@@ -11,7 +11,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/record-crud-params.type';
+import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';

@@ -8,7 +8,7 @@ import {
   RecordCrudException,
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
-import { type UpdateRecordParams } from 'src/engine/core-modules/record-crud/types/record-crud-params.type';
+import { type UpdateRecordParams } from 'src/engine/core-modules/record-crud/types/update-record-params.type';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';

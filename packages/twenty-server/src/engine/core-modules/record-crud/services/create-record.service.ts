@@ -7,7 +7,7 @@ import {
   RecordCrudException,
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
-import { type CreateRecordParams } from 'src/engine/core-modules/record-crud/types/record-crud-params.type';
+import { type CreateRecordParams } from 'src/engine/core-modules/record-crud/types/create-record-params.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';

@@ -7,7 +7,7 @@ import {
   RecordCrudException,
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
-import { type DeleteRecordParams } from 'src/engine/core-modules/record-crud/types/record-crud-params.type';
+import { type DeleteRecordParams } from 'src/engine/core-modules/record-crud/types/delete-record-params.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
