@@ -1673,7 +1673,7 @@ export type Mutation = {
   createCoreViewGroup: CoreViewGroup;
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
-  createDraftFromWorkflowVersion: WorkflowVersion;
+  createDraftFromWorkflowVersion: WorkflowVersionDto;
   createEmailingDomain: EmailingDomain;
   createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
@@ -4444,9 +4444,16 @@ export type WorkflowStepPositionUpdateInput = {
   position: WorkflowStepPositionInput;
 };
 
-export type WorkflowVersion = {
-  __typename?: 'WorkflowVersion';
+export type WorkflowVersionDto = {
+  __typename?: 'WorkflowVersionDTO';
+  createdAt: Scalars['String'];
   id: Scalars['UUID'];
+  name: Scalars['String'];
+  status: Scalars['String'];
+  steps?: Maybe<Scalars['JSON']>;
+  trigger?: Maybe<Scalars['JSON']>;
+  updatedAt: Scalars['String'];
+  workflowId: Scalars['UUID'];
 };
 
 export type WorkflowVersionStepChanges = {
@@ -5881,7 +5888,7 @@ export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
 }>;
 
 
-export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersion', id: string } };
+export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersionDTO', id: string, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } };
 
 export type CreateWorkflowVersionEdgeMutationVariables = Exact<{
   input: CreateWorkflowVersionEdgeInput;
@@ -13034,6 +13041,12 @@ export const CreateDraftFromWorkflowVersionDocument = gql`
     mutation CreateDraftFromWorkflowVersion($input: CreateDraftFromWorkflowVersionInput!) {
   createDraftFromWorkflowVersion(input: $input) {
     id
+    name
+    status
+    trigger
+    steps
+    createdAt
+    updatedAt
   }
 }
     `;

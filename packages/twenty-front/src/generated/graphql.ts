@@ -1630,7 +1630,7 @@ export type Mutation = {
   createCoreViewGroup: CoreViewGroup;
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
-  createDraftFromWorkflowVersion: WorkflowVersion;
+  createDraftFromWorkflowVersion: WorkflowVersionDto;
   createEmailingDomain: EmailingDomain;
   createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
@@ -4272,9 +4272,16 @@ export type WorkflowStepPositionUpdateInput = {
   position: WorkflowStepPositionInput;
 };
 
-export type WorkflowVersion = {
-  __typename?: 'WorkflowVersion';
+export type WorkflowVersionDto = {
+  __typename?: 'WorkflowVersionDTO';
+  createdAt: Scalars['String'];
   id: Scalars['UUID'];
+  name: Scalars['String'];
+  status: Scalars['String'];
+  steps?: Maybe<Scalars['JSON']>;
+  trigger?: Maybe<Scalars['JSON']>;
+  updatedAt: Scalars['String'];
+  workflowId: Scalars['UUID'];
 };
 
 export type WorkflowVersionStepChanges = {
