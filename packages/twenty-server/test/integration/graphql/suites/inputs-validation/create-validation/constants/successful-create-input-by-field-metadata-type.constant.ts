@@ -67,4 +67,17 @@ export const successfulCreateInputByFieldMetadataType: {
       },
     },
   ],
+  [FieldMetadataType.UUID]: [
+    {
+      gqlInput: {
+        uuidField: '00000000-0000-4000-8000-000000000000',
+      },
+      restInput: {
+        uuidField: '00000000-0000-4000-8000-000000000000',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.uuidField === '00000000-0000-4000-8000-000000000000';
+      },
+    },
+  ],
 };

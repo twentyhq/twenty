@@ -121,4 +121,67 @@ export const failingCreateInputByFieldMetadataType: {
     //   restErrorMessage: '',
     // },
   ],
+  [FieldMetadataType.UUID]: [
+    // //TODO - to fix ? should fail ?
+    // {
+    //   gqlInput: {
+    //     uuidField: null,
+    //   },
+    //   gqlErrorMessage: '',
+    //   restInput: {
+    //     uuidField: null,
+    //   },
+    //   restErrorMessage: '',
+    // },
+    {
+      gqlInput: {
+        uuidField: {},
+      },
+      gqlErrorMessage: 'UUID must be a string',
+      restInput: {
+        uuidField: {},
+      },
+      restErrorMessage: 'invalid input syntax for type uuid',
+    },
+    {
+      gqlInput: {
+        uuidField: [],
+      },
+      gqlErrorMessage: 'UUID must be a string',
+      restInput: {
+        uuidField: [],
+      },
+      restErrorMessage: 'invalid input syntax for type uuid',
+    },
+    {
+      gqlInput: {
+        uuidField: true,
+      },
+      gqlErrorMessage: 'UUID must be a string',
+      restInput: {
+        uuidField: true,
+      },
+      restErrorMessage: 'invalid input syntax for type uuid',
+    },
+    {
+      gqlInput: {
+        uuidField: 1,
+      },
+      gqlErrorMessage: 'UUID must be a string',
+      restInput: {
+        uuidField: 1,
+      },
+      restErrorMessage: 'invalid input syntax for type uuid',
+    },
+    {
+      gqlInput: {
+        uuidField: 'non-uuid',
+      },
+      gqlErrorMessage: 'Invalid UUID',
+      restInput: {
+        uuidField: 'non-uuid',
+      },
+      restErrorMessage: 'invalid input syntax for type uuid',
+    },
+  ],
 };
