@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -40,7 +40,7 @@ export class FlatViewFilterValidatorService {
       validationResult.errors.push({
         code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         message: t`View filter with this id already exists`,
-        userFriendlyMessage: t`View filter with this id already exists`,
+        userFriendlyMessage: msg`View filter with this id already exists`,
       });
     }
 
@@ -53,7 +53,7 @@ export class FlatViewFilterValidatorService {
       validationResult.errors.push({
         code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         message: t`View not found`,
-        userFriendlyMessage: t`View not found`,
+        userFriendlyMessage: msg`View not found`,
       });
     }
 
@@ -66,7 +66,7 @@ export class FlatViewFilterValidatorService {
       validationResult.errors.push({
         code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         message: t`Field metadata not found`,
-        userFriendlyMessage: t`Field metadata not found`,
+        userFriendlyMessage: msg`Field metadata not found`,
       });
     }
 
@@ -97,13 +97,13 @@ export class FlatViewFilterValidatorService {
       validationResult.errors.push({
         code: ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
         message: t`View filter not found`,
-        userFriendlyMessage: t`View filter not found`,
+        userFriendlyMessage: msg`View filter not found`,
       });
     } else if (!isDefined(existingViewFilter.deletedAt)) {
       validationResult.errors.push({
         code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         message: t`View filter has to be soft deleted first`,
-        userFriendlyMessage: t`View filter has to be soft deleted first`,
+        userFriendlyMessage: msg`View filter has to be soft deleted first`,
       });
     }
 
@@ -136,7 +136,7 @@ export class FlatViewFilterValidatorService {
       validationResult.errors.push({
         code: ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
         message: t`View filter not found`,
-        userFriendlyMessage: t`View filter not found`,
+        userFriendlyMessage: msg`View filter not found`,
       });
     }
 
@@ -149,7 +149,7 @@ export class FlatViewFilterValidatorService {
       validationResult.errors.push({
         code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
         message: t`Field metadata not found`,
-        userFriendlyMessage: t`Field metadata not found`,
+        userFriendlyMessage: msg`Field metadata not found`,
       });
     }
 
