@@ -12,10 +12,16 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
+  AxisNameDisplay,
+  type BarChartConfiguration,
   ExtendedAggregateOperations,
   PageLayoutType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const mockPersonObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
 const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
@@ -31,7 +37,7 @@ const mixedGraphsPageLayoutMocks = {
   id: 'mixed-graphs-layout',
   name: 'Mixed Graph Dashboard',
   type: PageLayoutType.DASHBOARD,
-  objectMetadataId: null,
+  objectMetadataId: mockPersonObjectMetadataItem.id,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
   deletedAt: null,
@@ -52,7 +58,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Revenue',
-          objectMetadataId: null,
+          objectMetadataId: mockPersonObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 0,
@@ -76,7 +82,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Goal Progress',
-          objectMetadataId: null,
+          objectMetadataId: mockPersonObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 0,
@@ -101,7 +107,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Revenue Sources',
-          objectMetadataId: null,
+          objectMetadataId: mockPersonObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 0,
@@ -127,7 +133,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Quarterly Comparison',
-          objectMetadataId: null,
+          objectMetadataId: mockPersonObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 2,
@@ -139,10 +145,16 @@ const mixedGraphsPageLayoutMocks = {
             __typename: 'BarChartConfiguration',
             graphType: GraphType.BAR,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
-            aggregateFieldMetadataId: 'id',
-            groupByFieldMetadataIdX: 'createdAt',
+            aggregateFieldMetadataId: mockPersonObjectMetadataItem.fields.find(
+              (field) => field.name === 'name',
+            )?.id,
+            groupByFieldMetadataIdX: mockPersonObjectMetadataItem.fields.find(
+              (field) => field.name === 'createdAt',
+            )?.id,
             orderByX: GraphOrderBy.FIELD_ASC,
-          },
+            axisNameDisplay: AxisNameDisplay.BOTH,
+            displayDataLabel: false,
+          } satisfies BarChartConfiguration,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
@@ -172,6 +184,7 @@ const meta: Meta<typeof PageLayoutRenderer> = {
   title: 'Modules/PageLayout/PageLayoutRenderer',
   component: PageLayoutRenderer,
   decorators: [
+    ObjectMetadataItemsDecorator,
     (Story) => (
       <MemoryRouter>
         <MockedProvider mocks={graphqlMocks} addTypename={false}>
