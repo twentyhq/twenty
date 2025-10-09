@@ -72,7 +72,6 @@ export class UpdateRecordService {
         );
       }
 
-      // If fieldsToUpdate is provided, filter the objectRecord
       const fieldsToUpdateArray = fieldsToUpdate || Object.keys(objectRecord);
 
       if (fieldsToUpdateArray.length === 0) {
