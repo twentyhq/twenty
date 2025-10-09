@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
@@ -43,7 +43,7 @@ export const validatesNoOtherObjectWithSameNameExistsOrThrows = (
       'Object already exists',
       ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
       {
-        userFriendlyMessage: t`Object already exists`,
+        userFriendlyMessage: msg`Object already exists`,
       },
     );
   }
