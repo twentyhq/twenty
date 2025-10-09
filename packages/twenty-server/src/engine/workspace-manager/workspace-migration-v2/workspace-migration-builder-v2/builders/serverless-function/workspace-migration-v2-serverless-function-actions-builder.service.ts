@@ -3,15 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { compareTwoFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/compare-two-flat-serverless-function.util';
 import {
+  UpdateServerlessFunctionAction,
+  WorkspaceMigrationServerlessFunctionActionV2,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
+import {
   FlatEntityUpdateValidationArgs,
   FlatEntityValidationArgs,
   FlatEntityValidationReturnType,
   WorkspaceEntityMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import {
-  UpdateServerlessFunctionAction,
-  WorkspaceMigrationServerlessFunctionActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-serverless-function-action-v2.type';
 import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
 
 @Injectable()

@@ -6,7 +6,7 @@ import { FLAT_CRON_TRIGGER_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-mod
 import { type CronTriggerSettings } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type FlatCronTriggerPropertiesToCompare } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger-properties-to-compare.type';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
-import { type UpdateCronTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-cron-trigger-action-v2.type';
+import { type UpdateCronTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/workspace-migration-cron-trigger-action-v2.type';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 type GetWorkspaceMigrationUpdateCronTriggerActionArgs = FromTo<

@@ -6,7 +6,7 @@ import { FLAT_DATABASE_EVENT_TRIGGER_PROPERTIES_TO_COMPARE } from 'src/engine/me
 import { type DatabaseEventTriggerSettings } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { type FlatDatabaseEventTriggerPropertiesToCompare } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger-properties-to-compare.type';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { type UpdateDatabaseEventTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-database-event-trigger-action-v2.type';
+import { type UpdateDatabaseEventTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action-v2.type';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 type GetWorkspaceMigrationUpdateDatabaseEventTriggerActionArgs = FromTo<

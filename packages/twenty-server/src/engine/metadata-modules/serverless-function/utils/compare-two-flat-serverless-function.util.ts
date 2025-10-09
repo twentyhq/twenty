@@ -4,7 +4,7 @@ import { type FromTo } from 'twenty-shared/types';
 import { FLAT_SERVERLESS_FUNCTION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/serverless-function/constants/flat-serverless-function-properties-to-compare.constant';
 import { type FlatServerlessFunctionPropertiesToCompare } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function-properties-to-compare.type';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { type UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-serverless-function-action-v2.type';
+import { type UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 type GetWorkspaceMigrationUpdateServerlessFunctionActionArgs = FromTo<

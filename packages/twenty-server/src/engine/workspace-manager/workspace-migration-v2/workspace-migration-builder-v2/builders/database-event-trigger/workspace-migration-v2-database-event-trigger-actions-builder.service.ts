@@ -4,15 +4,15 @@ import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-e
 import { compareTwoFlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/utils/compare-two-flat-database-event-trigger.util';
 import { DatabaseEventTriggerRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/database-event-trigger-related-flat-entity-maps.type';
 import {
+  UpdateDatabaseEventTriggerAction,
+  WorkspaceMigrationDatabaseEventTriggerActionV2,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action-v2.type';
+import {
   FlatEntityUpdateValidationArgs,
   FlatEntityValidationArgs,
   FlatEntityValidationReturnType,
   WorkspaceEntityMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import {
-  UpdateDatabaseEventTriggerAction,
-  WorkspaceMigrationDatabaseEventTriggerActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-database-event-trigger-action-v2.type';
 import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service';
 
 @Injectable()

@@ -9,15 +9,15 @@ import { FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types
 import { compareTwoFlatViewField } from 'src/engine/metadata-modules/flat-view-field/utils/compare-two-flat-view-field.util';
 import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/view-field-related-flat-entity-maps.type';
 import {
+  UpdateViewFieldAction,
+  WorkspaceMigrationViewFieldActionV2,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/workspace-migration-view-field-action-v2.type';
+import {
   FlatEntityUpdateValidationArgs,
   FlatEntityValidationArgs,
   FlatEntityValidationReturnType,
   WorkspaceEntityMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import {
-  UpdateViewFieldAction,
-  WorkspaceMigrationViewFieldActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-field-action-v2.type';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
 
 @Injectable()

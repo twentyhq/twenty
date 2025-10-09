@@ -4,15 +4,15 @@ import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/
 import { compareTwoFlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/utils/compare-two-flat-cron-trigger.util';
 import { CronTriggerRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/cron-trigger-related-flat-entity-maps.type';
 import {
+  UpdateCronTriggerAction,
+  WorkspaceMigrationCronTriggerActionV2,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/workspace-migration-cron-trigger-action-v2.type';
+import {
   FlatEntityUpdateValidationArgs,
   FlatEntityValidationArgs,
   FlatEntityValidationReturnType,
   WorkspaceEntityMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import {
-  UpdateCronTriggerAction,
-  WorkspaceMigrationCronTriggerActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-cron-trigger-action-v2.type';
 import { FlatCronTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service';
 
 @Injectable()
