@@ -98,22 +98,6 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
 
     const tableName = computeObjectTargetTable(messageChannelObject);
 
-    const tableExists = await this.coreDataSource.query(`
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables
-        WHERE table_schema = '${schemaName}'
-        AND table_name = '${tableName}'
-      );
-    `);
-
-    if (!tableExists[0]?.exists) {
-      this.logger.log(
-        `Table ${schemaName}.${tableName} does not exist in workspace ${workspaceId}, skipping schema migration`,
-      );
-
-      return;
-    }
-
     // Add new enum values for MessageChannelSyncStage
     if (options.dryRun) {
       this.logger.log(
@@ -194,22 +178,6 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
     }
 
     const tableName = computeObjectTargetTable(calendarChannelObject);
-
-    const tableExists = await this.coreDataSource.query(`
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables
-        WHERE table_schema = '${schemaName}'
-        AND table_name = '${tableName}'
-      );
-    `);
-
-    if (!tableExists[0]?.exists) {
-      this.logger.log(
-        `Table ${schemaName}.${tableName} does not exist in workspace ${workspaceId}, skipping schema migration`,
-      );
-
-      return;
-    }
 
     // Add new enum values for CalendarChannelSyncStage
     if (options.dryRun) {
