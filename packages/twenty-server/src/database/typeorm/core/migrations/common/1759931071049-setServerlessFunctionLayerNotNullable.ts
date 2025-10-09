@@ -1,5 +1,85 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
+export class SetServerlessFunctionLayerNotNullable1759931071049
+  implements MigrationInterface
+{
+  name = 'SetServerlessFunctionLayerNotNullable1759931071049';
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await this.fillNullServerlessFunctionLayerId(queryRunner);
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" DROP CONSTRAINT "FK_4b9625a4babf7f4fa942fd26514"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" ALTER COLUMN "serverlessFunctionLayerId" SET NOT NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" ADD CONSTRAINT "FK_4b9625a4babf7f4fa942fd26514" FOREIGN KEY ("serverlessFunctionLayerId") REFERENCES "core"."serverlessFunctionLayer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "layerVersion"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "latestVersionInputSchema"`,
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" ADD "latestVersionInputSchema" jsonb`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" ADD "layerVersion" integer`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" DROP CONSTRAINT "FK_4b9625a4babf7f4fa942fd26514"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" ALTER COLUMN "serverlessFunctionLayerId" DROP NOT NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunction" ADD CONSTRAINT "FK_4b9625a4babf7f4fa942fd26514" FOREIGN KEY ("serverlessFunctionLayerId") REFERENCES "core"."serverlessFunctionLayer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+  }
+
+  private async fillNullServerlessFunctionLayerId(queryRunner: QueryRunner) {
+    const distinctWorkspaceIds = await queryRunner.query(
+      `SELECT DISTINCT "workspaceId" FROM "core"."serverlessFunction" WHERE "serverlessFunctionLayerId" IS NULL`,
+    );
+
+    for (const { workspaceId } of distinctWorkspaceIds) {
+      const serverlessFunctionLayerId = await this.getOrInsertCommonLayer(
+        workspaceId,
+        queryRunner,
+      );
+
+      await queryRunner.query(
+        `UPDATE "core"."serverlessFunction" SET "serverlessFunctionLayerId" = '${serverlessFunctionLayerId}' WHERE "workspaceId" = '${workspaceId}' AND "serverlessFunctionLayerId" IS NULL`,
+      );
+    }
+  }
+
+  private async getOrInsertCommonLayer(
+    workspaceId: string,
+    queryRunner: QueryRunner,
+  ) {
+    const commonServerlessFunctionLayers = await queryRunner.query(
+      `SELECT id FROM "core"."serverlessFunctionLayer" WHERE "workspaceId" = '${workspaceId}' AND "checksum" = '${COMMON_SERVERLESS_FUNCTION_LAYER_V1_CHECKSUM}'`,
+    );
+
+    if (commonServerlessFunctionLayers.length === 0) {
+      const insertedServerlessFunctionLayers = await queryRunner.query(
+        `INSERT INTO "core"."serverlessFunctionLayer" ("packageJson", "yarnLock", "checksum", "workspaceId") VALUES ('${COMMON_SERVERLESS_FUNCTION_LAYER_PACKAGE_JSON}', '${COMMON_SERVERLESS_FUNCTION_LAYER_YARN_LOCK}', '${COMMON_SERVERLESS_FUNCTION_LAYER_V1_CHECKSUM}', '${workspaceId}') RETURNING id;`,
+      );
+
+      return insertedServerlessFunctionLayers[0].id;
+    }
+
+    return commonServerlessFunctionLayers[0].id;
+  }
+}
+
 const COMMON_SERVERLESS_FUNCTION_LAYER_V1_CHECKSUM =
   'a8ea7aee7c82b6a9d526bdf0f5228d7c';
 
@@ -3217,79 +3297,3 @@ __metadata:
   languageName: node
   linkType: hard
 `;
-
-export class SetServerlessFunctionLayerNotNullable1759931071049
-  implements MigrationInterface
-{
-  name = 'SetServerlessFunctionLayerNotNullable1759931071049';
-
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    const distinctWorkspaceIds = await queryRunner.query(
-      `SELECT DISTINCT "workspaceId" FROM "core"."serverlessFunction" WHERE "serverlessFunctionLayerId" IS NULL`,
-    );
-
-    for (const { workspaceId } of distinctWorkspaceIds) {
-      const serverlessFunctionLayerId = await this.getOrInsertCommonLayer(
-        workspaceId,
-        queryRunner,
-      );
-
-      await queryRunner.query(
-        `UPDATE "core"."serverlessFunction" SET "serverlessFunctionLayerId" = '${serverlessFunctionLayerId}' WHERE "workspaceId" = '${workspaceId}' AND "serverlessFunctionLayerId" IS NULL`,
-      );
-    }
-
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" DROP CONSTRAINT "FK_4b9625a4babf7f4fa942fd26514"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" ALTER COLUMN "serverlessFunctionLayerId" SET NOT NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" ADD CONSTRAINT "FK_4b9625a4babf7f4fa942fd26514" FOREIGN KEY ("serverlessFunctionLayerId") REFERENCES "core"."serverlessFunctionLayer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "layerVersion"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "latestVersionInputSchema"`,
-    );
-  }
-
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" ADD "latestVersionInputSchema" jsonb`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" ADD "layerVersion" integer`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" DROP CONSTRAINT "FK_4b9625a4babf7f4fa942fd26514"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" ALTER COLUMN "serverlessFunctionLayerId" DROP NOT NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" ADD CONSTRAINT "FK_4b9625a4babf7f4fa942fd26514" FOREIGN KEY ("serverlessFunctionLayerId") REFERENCES "core"."serverlessFunctionLayer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-  }
-
-  private async getOrInsertCommonLayer(
-    workspaceId: string,
-    queryRunner: QueryRunner,
-  ) {
-    const commonServerlessFunctionLayers = await queryRunner.query(
-      `SELECT id FROM "core"."serverlessFunctionLayer" WHERE "workspaceId" = '${workspaceId}' AND "checksum" = '${COMMON_SERVERLESS_FUNCTION_LAYER_V1_CHECKSUM}'`,
-    );
-
-    if (commonServerlessFunctionLayers.length === 0) {
-      const insertedServerlessFunctionLayers = await queryRunner.query(
-        `INSERT INTO "core"."serverlessFunctionLayer" ("packageJson", "yarnLock", "checksum", "workspaceId") VALUES ('${COMMON_SERVERLESS_FUNCTION_LAYER_PACKAGE_JSON}', '${COMMON_SERVERLESS_FUNCTION_LAYER_YARN_LOCK}', '${COMMON_SERVERLESS_FUNCTION_LAYER_V1_CHECKSUM}', '${workspaceId}') RETURNING id;`,
-      );
-
-      return insertedServerlessFunctionLayers[0].id;
-    }
-
-    return commonServerlessFunctionLayers[0].id;
-  }
-}
