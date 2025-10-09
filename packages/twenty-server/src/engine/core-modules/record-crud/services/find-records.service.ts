@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type Entity } from '@microsoft/microsoft-graph-types';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectLiteral } from 'typeorm';
 
@@ -161,7 +160,7 @@ export class FindRecordsService {
       | Partial<ObjectRecordFilter>
       | Partial<ObjectRecordFilter>[]
       | undefined;
-    repository: WorkspaceRepository<Entity>;
+    repository: WorkspaceRepository<ObjectLiteral>;
     graphqlQueryParser: GraphqlQueryParser;
   }): Promise<number> {
     const countQueryBuilder = repository.createQueryBuilder(objectName);
