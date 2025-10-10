@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { ArrayContains, IsNull, Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -78,7 +79,7 @@ export class WebhookService {
       throw new WebhookException(
         'Invalid target URL provided',
         WebhookExceptionCode.INVALID_TARGET_URL,
-        { userFriendlyMessage: 'Please provide a valid HTTP or HTTPS URL.' },
+        { userFriendlyMessage: msg`Please provide a valid HTTP or HTTPS URL.` },
       );
     }
 
@@ -111,7 +112,9 @@ export class WebhookService {
         throw new WebhookException(
           'Invalid target URL provided',
           WebhookExceptionCode.INVALID_TARGET_URL,
-          { userFriendlyMessage: 'Please provide a valid HTTP or HTTPS URL.' },
+          {
+            userFriendlyMessage: msg`Please provide a valid HTTP or HTTPS URL.`,
+          },
         );
       }
 

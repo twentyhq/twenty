@@ -19,6 +19,7 @@ import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upg
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
 import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
+import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-workflow-step-filter-operand-value';
 import { AddEnqueuedStatusToWorkflowRunV2Command } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run-v2.command';
 import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
 import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
@@ -83,6 +84,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.7 Commands
     protected readonly backfillWorkflowManualTriggerAvailabilityCommand: BackfillWorkflowManualTriggerAvailabilityCommand,
+
+    // 1.10 Commands
+    protected readonly migrateWorkflowStepFilterOperandValueCommand: MigrateWorkflowStepFilterOperandValueCommand,
   ) {
     super(
       workspaceRepository,
@@ -176,6 +180,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
+    const commands_1100: VersionCommands = {
+      beforeSyncMetadata: [this.migrateWorkflowStepFilterOperandValueCommand],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '0.53.0': commands_053,
       '0.54.0': commands_054,
@@ -189,6 +198,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.5.0': commands_150,
       '1.6.0': commands_160,
       '1.7.0': commands_170,
+      '1.10.0': commands_1100,
     };
   }
 
