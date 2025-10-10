@@ -14,7 +14,6 @@ import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
@@ -56,9 +55,13 @@ export const useAgentChat = (
   const { scrollWrapperHTMLElement } =
     useScrollWrapperHTMLElement(scrollWrapperId);
 
-  const { enqueueErrorSnackBar } = useSnackBar();
-
-  const { sendMessage, messages, status, error } = useChat({
+  const {
+    sendMessage,
+    messages,
+    status,
+    error,
+    regenerate: retry,
+  } = useChat({
     transport: new DefaultChatTransport({
       api: `${REST_API_BASE_URL}/agent-chat/stream`,
       headers: () => ({
@@ -67,9 +70,6 @@ export const useAgentChat = (
     }),
     messages: uiMessages,
     id: `${currentAIChatThread}-${uiMessages.length}`,
-    onError: (error) => {
-      enqueueErrorSnackBar({ message: error.message });
-    },
   });
 
   const isStreaming = status === 'streaming';
@@ -141,5 +141,6 @@ export const useAgentChat = (
     scrollWrapperId,
     isStreaming,
     error,
+    retry,
   };
 };

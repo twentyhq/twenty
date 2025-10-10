@@ -39,7 +39,7 @@ const dots = keyframes`
   100% { content: '...'; }
 `;
 
-const StyledToolCallContainer = styled.div`
+const StyledStreamingIndicator = styled.div`
   &::after {
     display: inline-block;
     content: '';
@@ -62,9 +62,11 @@ const LoadingDotsIcon = () => {
 export const AIChatAssistantMessageRenderer = ({
   messageParts,
   isLastMessageStreaming,
+  hasError,
 }: {
   messageParts: UIMessagePart<UIDataTypes, UITools>[];
   isLastMessageStreaming: boolean;
+  hasError?: boolean;
 }) => {
   const renderStep = (
     part: UIMessagePart<UIDataTypes, UITools>,
@@ -99,7 +101,7 @@ export const AIChatAssistantMessageRenderer = ({
     }
   };
 
-  if (!messageParts.length) {
+  if (!messageParts.length && !hasError) {
     return <LoadingDotsIcon />;
   }
 
@@ -108,7 +110,7 @@ export const AIChatAssistantMessageRenderer = ({
       <StyledStepsContainer>
         {messageParts.map(renderStep)}
       </StyledStepsContainer>
-      {isLastMessageStreaming && <StyledToolCallContainer />}
+      {isLastMessageStreaming && !hasError && <StyledStreamingIndicator />}
     </div>
   );
 };

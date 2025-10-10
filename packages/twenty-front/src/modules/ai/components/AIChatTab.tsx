@@ -69,6 +69,8 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
     scrollWrapperId,
     messages,
     isStreaming,
+    error,
+    retry,
   } = useAgentChatContextOrThrow();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
@@ -94,16 +96,22 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
         <>
           {messages.length !== 0 && (
             <StyledScrollWrapper componentInstanceId={scrollWrapperId}>
-              {messages.map((message) => (
-                <AIChatMessage
-                  isLastMessageStreaming={
-                    isStreaming &&
-                    message.id === messages[messages.length - 1].id
-                  }
-                  message={message}
-                  key={message.id}
-                />
-              ))}
+              {messages.map((message, index) => {
+                const isLastMessage = index === messages.length - 1;
+                const isLastMessageStreaming = isStreaming && isLastMessage;
+                const shouldShowError = error && isLastMessage;
+
+                return (
+                  <AIChatMessage
+                    isLastMessageStreaming={isLastMessageStreaming}
+                    message={message}
+                    key={message.id}
+                    error={shouldShowError ? error : null}
+                    onRetry={shouldShowError ? retry : undefined}
+                    isRetrying={isStreaming}
+                  />
+                );
+              })}
             </StyledScrollWrapper>
           )}
           {messages.length === 0 && <AIChatEmptyState />}

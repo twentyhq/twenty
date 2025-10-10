@@ -7,6 +7,7 @@ import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePrev
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
+import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
 import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -139,12 +140,21 @@ const StyledFilesContainer = styled.div`
 export const AIChatMessage = ({
   message,
   isLastMessageStreaming,
+  error,
+  onRetry,
+  isRetrying,
 }: {
   message: UIMessageWithMetadata;
   isLastMessageStreaming: boolean;
+  error?: Error | null;
+  onRetry?: () => void;
+  isRetrying?: boolean;
 }) => {
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
+
+  const showError =
+    error && message.role === AgentChatMessageRole.ASSISTANT && onRetry;
 
   return (
     <StyledMessageBubble
@@ -174,6 +184,7 @@ export const AIChatMessage = ({
             <AIChatAssistantMessageRenderer
               isLastMessageStreaming={isLastMessageStreaming}
               messageParts={message.parts}
+              hasError={Boolean(showError)}
             />
           </StyledMessageText>
           {message.parts.length > 0 && (
@@ -184,6 +195,13 @@ export const AIChatMessage = ({
                   <AgentChatFilePreview key={file.filename} file={file} />
                 ))}
             </StyledFilesContainer>
+          )}
+          {showError && (
+            <AIChatErrorMessage
+              error={error}
+              onRetry={onRetry}
+              isRetrying={isRetrying}
+            />
           )}
           {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">
