@@ -36,17 +36,20 @@ export const useStartNodeCreation = () => {
       nextStepId,
       position,
       connectionOptions,
+      sourceHandleId,
     }: {
       parentStepId: string | undefined;
       nextStepId: string | undefined;
       position?: { x: number; y: number };
       connectionOptions?: WorkflowStepConnectionOptions;
+      sourceHandleId?: string;
     }) => {
       setWorkflowInsertStepIds({
         parentStepId,
         nextStepId,
         position,
         connectionOptions,
+        sourceHandleId,
       });
 
       if (!isDefined(workflowVisualizerWorkflowId)) {
@@ -71,13 +74,18 @@ export const useStartNodeCreation = () => {
   const isNodeCreationStarted = ({
     parentStepId,
     nextStepId,
+    sourceHandleId,
   }: {
     parentStepId?: string;
     nextStepId?: string;
+    sourceHandleId?: string;
   }) => {
     return (
       workflowInsertStepIds.parentStepId === parentStepId &&
-      workflowInsertStepIds.nextStepId === nextStepId
+      workflowInsertStepIds.nextStepId === nextStepId &&
+      (isDefined(sourceHandleId)
+        ? workflowInsertStepIds.sourceHandleId === sourceHandleId
+        : true)
     );
   };
 

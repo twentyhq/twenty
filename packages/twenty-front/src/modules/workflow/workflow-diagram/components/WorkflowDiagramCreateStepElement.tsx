@@ -1,6 +1,7 @@
 import { WorkflowDiagramConnector } from '@/workflow/workflow-diagram/components/WorkflowDiagramConnector';
 import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui/display';
@@ -43,6 +44,7 @@ export const WorkflowDiagramCreateStepElement = ({
         x: data.position.x,
         y: data.position.y + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
       },
+      sourceHandleId: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
     });
   };
 

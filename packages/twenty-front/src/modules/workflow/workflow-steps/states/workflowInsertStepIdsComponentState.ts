@@ -7,6 +7,7 @@ type WorkflowInsertStepIdsState = {
   nextStepId: string | undefined;
   position?: { x: number; y: number };
   connectionOptions?: WorkflowStepConnectionOptions;
+  sourceHandleId?: string;
 };
 
 export const workflowInsertStepIdsComponentState =
@@ -17,6 +18,7 @@ export const workflowInsertStepIdsComponentState =
       nextStepId: undefined,
       position: undefined,
       connectionOptions: undefined,
+      sourceHandleId: undefined,
     },
     componentInstanceContext: WorkflowVisualizerComponentInstanceContext,
   });
