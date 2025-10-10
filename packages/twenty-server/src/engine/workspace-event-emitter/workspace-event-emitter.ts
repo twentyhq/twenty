@@ -25,7 +25,7 @@ type ActionEventMap<T> = {
   [DatabaseEventAction.UPSERTED]: ObjectRecordUpsertEvent<T>;
 };
 
-export type DatabaseBatchEventData<T, A extends keyof ActionEventMap<T>> = {
+export type DatabaseBatchEventInput<T, A extends keyof ActionEventMap<T>> = {
   objectMetadataNameSingular: string;
   action: A;
   events: ActionEventMap<T>[A][];
@@ -38,9 +38,9 @@ export class WorkspaceEventEmitter {
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
   public emitDatabaseBatchEvent<T, A extends keyof ActionEventMap<T>>(
-    databaseBatchEventData: DatabaseBatchEventData<T, A> | undefined,
+    databaseBatchEventInput: DatabaseBatchEventInput<T, A> | undefined,
   ) {
-    if (!isDefined(databaseBatchEventData)) {
+    if (!isDefined(databaseBatchEventInput)) {
       return;
     }
 
@@ -50,7 +50,7 @@ export class WorkspaceEventEmitter {
       events,
       objectMetadata,
       workspaceId,
-    } = databaseBatchEventData;
+    } = databaseBatchEventInput;
 
     if (!events.length) {
       return;

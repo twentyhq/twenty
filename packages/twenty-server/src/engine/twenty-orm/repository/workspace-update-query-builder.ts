@@ -29,7 +29,7 @@ import { type WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repo
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { formatMutationBatchEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-mutation-batch-event-to-database-batch-event.util';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 
 export class WorkspaceUpdateQueryBuilder<
   T extends ObjectLiteral,
@@ -154,7 +154,7 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
-        formatMutationBatchEventToDatabaseBatchEvent({
+        formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPDATED,
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,
@@ -165,7 +165,7 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
-        formatMutationBatchEventToDatabaseBatchEvent({
+        formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPSERTED,
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,
@@ -299,7 +299,7 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
-        formatMutationBatchEventToDatabaseBatchEvent({
+        formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPDATED,
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,
@@ -310,7 +310,7 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
-        formatMutationBatchEventToDatabaseBatchEvent({
+        formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPSERTED,
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,

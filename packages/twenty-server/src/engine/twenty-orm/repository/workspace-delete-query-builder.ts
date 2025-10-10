@@ -27,7 +27,7 @@ import { applyTableAliasOnWhereCondition } from 'src/engine/twenty-orm/utils/app
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { formatMutationBatchEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-mutation-batch-event-to-database-batch-event.util';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 
 export class WorkspaceDeleteQueryBuilder<
   T extends ObjectLiteral,
@@ -124,7 +124,7 @@ export class WorkspaceDeleteQueryBuilder<
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
-        formatMutationBatchEventToDatabaseBatchEvent({
+        formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.DESTROYED,
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,

@@ -1,17 +1,21 @@
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import type { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { transformEventBatchToWebhookEvents } from 'src/engine/core-modules/webhook/utils/transform-event-batch-to-webhook-events';
+import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
+
+const mockObjectMetadata = getMockObjectMetadataEntity({
+  id: 'id',
+  nameSingular: 'nameSingular',
+  namePlural: 'namePlural',
+  workspaceId: 'workspaceId',
+});
 
 describe('transformEventBatchToWebhookEvents', () => {
   it('should transform properly', () => {
     const workspaceEventBatch = {
       workspaceId: 'workspaceId',
-      objectMetadata: {
-        id: 'id',
-        nameSingular: 'nameSingular',
-      } as ObjectMetadataEntity,
+      objectMetadata: mockObjectMetadata,
       name: 'objectNameSingular.created',
       events: [
         {
@@ -68,8 +72,8 @@ describe('transformEventBatchToWebhookEvents', () => {
         targetUrl: 'targetUrl',
         eventName: 'objectNameSingular.created',
         objectMetadata: {
-          id: 'id',
-          nameSingular: 'nameSingular',
+          id: mockObjectMetadata.id,
+          nameSingular: mockObjectMetadata.nameSingular,
         },
         workspaceId: 'workspaceId',
         webhookId: 'webhook-id',
@@ -83,8 +87,8 @@ describe('transformEventBatchToWebhookEvents', () => {
         targetUrl: 'targetUrl',
         eventName: 'objectNameSingular.created',
         objectMetadata: {
-          id: 'id',
-          nameSingular: 'nameSingular',
+          id: mockObjectMetadata.id,
+          nameSingular: mockObjectMetadata.nameSingular,
         },
         workspaceId: 'workspaceId',
         webhookId: 'webhook-id',
@@ -98,8 +102,8 @@ describe('transformEventBatchToWebhookEvents', () => {
         targetUrl: 'targetUrl',
         eventName: 'objectNameSingular.created',
         objectMetadata: {
-          id: 'id',
-          nameSingular: 'nameSingular',
+          id: mockObjectMetadata.id,
+          nameSingular: mockObjectMetadata.nameSingular,
         },
         workspaceId: 'workspaceId',
         webhookId: 'webhook-id',
@@ -115,8 +119,8 @@ describe('transformEventBatchToWebhookEvents', () => {
         targetUrl: 'targetUrl-2',
         eventName: 'objectNameSingular.created',
         objectMetadata: {
-          id: 'id',
-          nameSingular: 'nameSingular',
+          id: mockObjectMetadata.id,
+          nameSingular: mockObjectMetadata.nameSingular,
         },
         workspaceId: 'workspaceId',
         webhookId: 'webhook-id-2',
@@ -130,8 +134,8 @@ describe('transformEventBatchToWebhookEvents', () => {
         targetUrl: 'targetUrl-2',
         eventName: 'objectNameSingular.created',
         objectMetadata: {
-          id: 'id',
-          nameSingular: 'nameSingular',
+          id: mockObjectMetadata.id,
+          nameSingular: mockObjectMetadata.nameSingular,
         },
         workspaceId: 'workspaceId',
         webhookId: 'webhook-id-2',
@@ -145,8 +149,8 @@ describe('transformEventBatchToWebhookEvents', () => {
         targetUrl: 'targetUrl-2',
         eventName: 'objectNameSingular.created',
         objectMetadata: {
-          id: 'id',
-          nameSingular: 'nameSingular',
+          id: mockObjectMetadata.id,
+          nameSingular: mockObjectMetadata.nameSingular,
         },
         workspaceId: 'workspaceId',
         webhookId: 'webhook-id-2',
@@ -172,10 +176,7 @@ describe('transformEventBatchToWebhookEvents', () => {
   it('should sanitize records properly', () => {
     const workspaceEventBatch = {
       workspaceId: 'workspaceId',
-      objectMetadata: {
-        id: 'id',
-        nameSingular: 'webhook',
-      } as ObjectMetadataEntity,
+      objectMetadata: mockObjectMetadata,
       name: 'webhook.created',
       events: [
         {
@@ -209,8 +210,8 @@ describe('transformEventBatchToWebhookEvents', () => {
         targetUrl: 'targetUrl',
         eventName: 'webhook.created',
         objectMetadata: {
-          id: 'id',
-          nameSingular: 'webhook',
+          id: mockObjectMetadata.id,
+          nameSingular: mockObjectMetadata.nameSingular,
         },
         workspaceId: 'workspaceId',
         webhookId: 'webhook-id',

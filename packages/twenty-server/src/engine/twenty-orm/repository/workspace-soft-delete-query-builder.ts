@@ -23,7 +23,7 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/reposito
 import { type WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { formatMutationBatchEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-mutation-batch-event-to-database-batch-event.util';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 
 export class WorkspaceSoftDeleteQueryBuilder<
   T extends ObjectLiteral,
@@ -87,7 +87,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
-        formatMutationBatchEventToDatabaseBatchEvent({
+        formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.DELETED,
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,

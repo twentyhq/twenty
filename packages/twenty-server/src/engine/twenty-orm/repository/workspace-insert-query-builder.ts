@@ -30,7 +30,7 @@ import { type WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/reposito
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { formatMutationBatchEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-mutation-batch-event-to-database-batch-event.util';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 
 export class WorkspaceInsertQueryBuilder<
   T extends ObjectLiteral,
@@ -162,7 +162,7 @@ export class WorkspaceInsertQueryBuilder<
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
-        formatMutationBatchEventToDatabaseBatchEvent({
+        formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.CREATED,
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,
@@ -172,7 +172,7 @@ export class WorkspaceInsertQueryBuilder<
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
-        formatMutationBatchEventToDatabaseBatchEvent({
+        formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPSERTED,
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,

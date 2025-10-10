@@ -13,9 +13,9 @@ import { ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/t
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import type { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
-import { type DatabaseBatchEventData } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-export const formatMutationBatchEventToDatabaseBatchEvent = <
+export const formatTwentyOrmEventToDatabaseBatchEvent = <
   T extends ObjectLiteral,
 >({
   action,
@@ -31,7 +31,7 @@ export const formatMutationBatchEventToDatabaseBatchEvent = <
   authContext?: AuthContext;
   entities: T | T[];
   beforeEntities?: T | T[];
-}): DatabaseBatchEventData<T, DatabaseEventAction> | undefined => {
+}): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
   if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.timelineActivity) {
     return;
   }
