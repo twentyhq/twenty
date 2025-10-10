@@ -7,12 +7,17 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
     case 'CODE':
       return msg`Code`;
     case 'CREATE_RECORD':
+      return msg`Create Record`;
     case 'UPDATE_RECORD':
+      return msg`Update Record`;
     case 'DELETE_RECORD':
+      return msg`Delete Record`;
     case 'FIND_RECORDS':
+      return msg`Find Records`;
     case 'FORM':
+      return msg`Form`;
     case 'SEND_EMAIL':
-      return msg`Action`;
+      return msg`Send Email`;
     case 'HTTP_REQUEST':
       return msg`HTTP Request`;
     case 'AI_AGENT':
