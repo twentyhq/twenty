@@ -1,6 +1,8 @@
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -59,6 +61,9 @@ import {
   type UpdateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/types/workspace-migration-view-action-v2.type';
 
+/**
+ * @deprecated REPLACE
+ */
 export type AllFlatEntitiesByMetadataEngineName = {
   fieldMetadata: FlatFieldMetadata;
   objectMetadata: FlatObjectMetadata;
@@ -72,7 +77,7 @@ export type AllFlatEntitiesByMetadataEngineName = {
   viewFilter: FlatViewFilter;
 };
 
-export type AllFlatEntitiesByMetadataEngineNameV2 = {
+export type AllFlatEntityConfigurationByMetadataName = {
   fieldMetadata: {
     actions: {
       created: CreateFieldAction;
@@ -80,6 +85,7 @@ export type AllFlatEntitiesByMetadataEngineNameV2 = {
       deleted: DeleteFieldAction;
     };
     flatEntity: FlatFieldMetadata;
+    // Should be spread sibling instead of under configuration?
     configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.fieldMetadata;
   };
   objectMetadata: {
@@ -164,3 +170,31 @@ export type AllFlatEntitiesByMetadataEngineNameV2 = {
     configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.viewFilter;
   };
 };
+
+export type AllMetadataName = keyof AllFlatEntityConfigurationByMetadataName;
+
+export type MetadataRelatedFlatEntityMapsKeys<T extends AllMetadataName> =
+  AllFlatEntityConfigurationByMetadataName[T]['configuration']['relatedFlatEntityMapsKeys'][number];
+
+export type MetadataRelatedFlatEntityMaps<T extends AllMetadataName> = Pick<
+  AllFlatEntityMaps,
+  MetadataRelatedFlatEntityMapsKeys<T>
+>;
+
+export type MetadataFlatEntity<T extends AllMetadataName> =
+  AllFlatEntityConfigurationByMetadataName[T]['flatEntity'];
+
+export type MetadataFlatEntityMaps<T extends AllMetadataName> = FlatEntityMaps<
+  MetadataFlatEntity<T>
+>;
+
+export type MetadataWorkspaceMigrationActionsRecord<T extends AllMetadataName> =
+  AllFlatEntityConfigurationByMetadataName[T]['actions'];
+
+export type MetadataWorkspaceMigrationAction<
+  T extends AllMetadataName,
+  TOperation extends 'created' | 'deleted' | 'updated' =
+    | 'created'
+    | 'deleted'
+    | 'updated',
+> = MetadataWorkspaceMigrationActionsRecord<T>[TOperation];

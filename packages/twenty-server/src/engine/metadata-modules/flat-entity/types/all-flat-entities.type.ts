@@ -1,4 +1,4 @@
-import { AllFlatEntitiesByMetadataEngineNameV2 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { AllFlatEntityConfigurationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 
 export type AllFlatEntities =
-  AllFlatEntitiesByMetadataEngineNameV2[keyof AllFlatEntitiesByMetadataEngineNameV2]['flatEntity'];
+  AllFlatEntityConfigurationByMetadataName[keyof AllFlatEntityConfigurationByMetadataName]['flatEntity'];

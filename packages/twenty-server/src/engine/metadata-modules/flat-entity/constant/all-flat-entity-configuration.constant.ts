@@ -1,6 +1,9 @@
 import { FLAT_CRON_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/cron-trigger/constants/flat-cron-trigger-editable-properties.constant';
 import { FLAT_DATABASE_EVENT_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/database-event-trigger/constants/flat-database-event-trigger-editable-properties.constant';
-import { AllFlatEntitiesByMetadataEngineNameV2 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import {
+  AllMetadataName,
+  MetadataFlatEntity
+} from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FromMetadataEngineNameToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-engine-name-to-flat-entity-maps-key.type';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
@@ -10,11 +13,9 @@ import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-
 import { FLAT_ROUTE_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/route-trigger/constants/flat-route-trigger-editable-properties.constant';
 import { FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/serverless-function/constants/flat-serverless-function-editable-properties.constant';
 
-type OneFlatEntityConfiguration<
-  P extends keyof AllFlatEntitiesByMetadataEngineNameV2,
-> = {
-  propertiesToCompare: (keyof AllFlatEntitiesByMetadataEngineNameV2[P]['flatEntity'])[];
-  propertiesToStringify: (keyof AllFlatEntitiesByMetadataEngineNameV2[P]['flatEntity'])[];
+type OneFlatEntityConfiguration<P extends AllMetadataName> = {
+  propertiesToCompare: (keyof MetadataFlatEntity<P>)[];
+  propertiesToStringify: (keyof MetadataFlatEntity<P>)[];
   flatEntityMapsKey: FromMetadataEngineNameToFlatEntityMapsKey<P>;
   relatedFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
 };
@@ -120,5 +121,5 @@ export const ALL_FLAT_ENTITY_CONFIGURATION = {
     relatedFlatEntityMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
   },
 } as const satisfies {
-  [P in keyof AllFlatEntitiesByMetadataEngineNameV2]: OneFlatEntityConfiguration<P>;
+  [P in AllMetadataName]: OneFlatEntityConfiguration<P>;
 };

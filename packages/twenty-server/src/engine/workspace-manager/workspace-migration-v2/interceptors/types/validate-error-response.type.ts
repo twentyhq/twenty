@@ -1,4 +1,4 @@
-import { AllFlatEntitiesByMetadataEngineNameV2 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { AllFlatEntityConfigurationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type FieldMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-field-metadata/types/field-metadata-minimal-information.type';
 import { type ObjectMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-object-metadata/types/object-metadata-minimal-information.type';
 import { type TranslatedFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/translate-validation-errors.util';
@@ -22,7 +22,7 @@ export type ValidationErrorResponse = {
   summary: {
     totalErrors: number;
   } & {
-    [P in keyof AllFlatEntitiesByMetadataEngineNameV2 as `invalid${Capitalize<P>}`]: number;
+    [P in keyof AllFlatEntityConfigurationByMetadataName as `invalid${Capitalize<P>}`]: number;
   };
   errors: OrchestratorFailureReport;
 };

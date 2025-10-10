@@ -1,18 +1,14 @@
-import { AllFlatEntities } from "src/engine/metadata-modules/flat-entity/types/all-flat-entities.type";
-import { AllFlatEntityMaps } from "src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type";
-import { FlatEntityMaps } from "src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type";
-import { CreatedDeletedUpdatedActions } from "src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/created-deleted-updated-actions.type";
-import { WorkspaceMigrationActionV2 } from "src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2";
+import {
+  AllMetadataName,
+  MetadataFlatEntityMaps,
+  MetadataRelatedFlatEntityMaps,
+  MetadataWorkspaceMigrationActionsRecord,
+} from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { Arrayable } from 'twenty-shared/types';
 
-    export type SuccessfulFlatEntityValidateAndBuild<
-      TActions extends WorkspaceMigrationActionV2,
-      TFlatEntity extends AllFlatEntities,
-      TRelatedFlatEntityMaps extends
-        | Partial<AllFlatEntityMaps>
-        | undefined = undefined,
-    > = {
-      status: 'success';
-      actions: CreatedDeletedUpdatedActions<TActions>;
-      optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
-      dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-    };
+export type SuccessfulFlatEntityValidateAndBuild<T extends AllMetadataName> = {
+  status: 'success';
+  actions: Arrayable<MetadataWorkspaceMigrationActionsRecord<T>>;
+  optimisticFlatEntityMaps: MetadataFlatEntityMaps<T>;
+  dependencyOptimisticFlatEntityMaps: MetadataRelatedFlatEntityMaps<T>;
+};
