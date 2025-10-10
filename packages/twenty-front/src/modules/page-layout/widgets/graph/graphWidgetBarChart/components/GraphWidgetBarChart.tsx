@@ -8,8 +8,7 @@ import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChar
 import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTooltip';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
-import { getBarChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisBottomConfig';
-import { getBarChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisLeftConfig';
+import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
@@ -139,23 +138,17 @@ export const GraphWidgetBarChart = ({
 
   const shouldShowLegend = showLegend && !areThereTooManyKeys;
 
-  const axisBottomConfig = getBarChartAxisBottomConfig({
-    width: chartWidth,
-    data,
-    layout,
-    indexBy,
-    xAxisLabel,
-    yAxisLabel,
-    formatOptions,
-    axisFontSize: chartTheme.axis.ticks.text.fontSize,
-  });
-
-  const axisLeftConfig = getBarChartAxisLeftConfig(
-    layout,
-    xAxisLabel,
-    yAxisLabel,
-    formatOptions,
-  );
+  const { axisBottom: axisBottomConfig, axisLeft: axisLeftConfig } =
+    getBarChartAxisConfigs({
+      width: chartWidth,
+      data,
+      layout,
+      indexBy,
+      xAxisLabel,
+      yAxisLabel,
+      formatOptions,
+      axisFontSize: chartTheme.axis.ticks.text.fontSize,
+    });
 
   const renderTooltip = (datum: Parameters<typeof getTooltipData>[0]) => {
     const tooltipData = getTooltipData(datum);

@@ -1,5 +1,6 @@
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { computeBarChartBottomTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartBottomTickValues';
+import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
@@ -7,19 +8,9 @@ import {
 
 const AVERAGE_CHARACTER_WIDTH_RATIO = 0.6;
 const MIN_TICK_LABEL_LENGTH = 5;
+const MAX_LEFT_AXIS_LABEL_LENGTH = 20;
 
-const truncateTickLabel = (
-  value: string | number,
-  maxLength: number,
-): string => {
-  const stringValue = String(value);
-  if (stringValue.length <= maxLength) {
-    return stringValue;
-  }
-  return stringValue.slice(0, maxLength - 3) + '...';
-};
-
-type GetBarChartAxisBottomConfigProps = {
+type GetBarChartAxisConfigsProps = {
   width: number;
   data: BarChartDataItem[];
   layout: 'vertical' | 'horizontal';
@@ -30,7 +21,7 @@ type GetBarChartAxisBottomConfigProps = {
   axisFontSize?: number;
 };
 
-export const getBarChartAxisBottomConfig = ({
+export const getBarChartAxisConfigs = ({
   width,
   data,
   layout,
@@ -39,7 +30,7 @@ export const getBarChartAxisBottomConfig = ({
   yAxisLabel,
   formatOptions,
   axisFontSize = 11,
-}: GetBarChartAxisBottomConfigProps) => {
+}: GetBarChartAxisConfigsProps) => {
   const tickValues = computeBarChartBottomTickValues({
     width,
     data,
@@ -57,8 +48,9 @@ export const getBarChartAxisBottomConfig = ({
     Math.floor(widthPerTick / averageCharacterWidth),
   );
 
-  return layout === 'vertical'
-    ? {
+  if (layout === 'vertical') {
+    return {
+      axisBottom: {
         tickSize: 0,
         tickPadding: 5,
         tickRotation: 0,
@@ -67,16 +59,40 @@ export const getBarChartAxisBottomConfig = ({
         legendPosition: 'middle' as const,
         legendOffset: 40,
         format: (value: string | number) =>
-          truncateTickLabel(value, maxLabelLength),
-      }
-    : {
+          truncateTickLabel(String(value), maxLabelLength),
+      },
+      axisLeft: {
         tickSize: 0,
         tickPadding: 5,
         tickRotation: 0,
-        tickValues,
         legend: yAxisLabel,
         legendPosition: 'middle' as const,
-        legendOffset: 40,
+        legendOffset: -50,
         format: (value: number) => formatGraphValue(value, formatOptions || {}),
-      };
+      },
+    };
+  }
+
+  return {
+    axisBottom: {
+      tickSize: 0,
+      tickPadding: 5,
+      tickRotation: 0,
+      tickValues,
+      legend: yAxisLabel,
+      legendPosition: 'middle' as const,
+      legendOffset: 40,
+      format: (value: number) => formatGraphValue(value, formatOptions || {}),
+    },
+    axisLeft: {
+      tickSize: 0,
+      tickPadding: 5,
+      tickRotation: 0,
+      legend: xAxisLabel,
+      legendPosition: 'middle' as const,
+      legendOffset: -50,
+      format: (value: string | number) =>
+        truncateTickLabel(value, MAX_LEFT_AXIS_LABEL_LENGTH),
+    },
+  };
 };

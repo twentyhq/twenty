@@ -7,6 +7,7 @@ import {
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
 type FormatDimensionValueParams = {
   value: unknown;
@@ -83,6 +84,12 @@ export const formatDimensionValue = ({
         return String(value);
       }
       return formatDateByGranularity(new Date(String(value)), dateGranularity);
+    }
+
+    case FieldMetadataType.NUMBER:
+    case FieldMetadataType.CURRENCY: {
+      const numericValue = typeof value === 'number' ? value : Number(value);
+      return formatToShortNumber(numericValue);
     }
 
     default:
