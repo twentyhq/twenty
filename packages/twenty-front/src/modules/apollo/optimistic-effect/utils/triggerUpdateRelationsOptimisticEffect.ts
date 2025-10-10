@@ -4,6 +4,7 @@ import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effec
 import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
@@ -21,7 +22,7 @@ import {
 } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type triggerUpdateRelationsOptimisticEffectArgs = {
+type TriggerUpdateRelationsOptimisticEffectArgs = {
   cache: ApolloCache<unknown>;
   sourceObjectMetadataItem: ObjectMetadataItem;
   currentSourceRecord: RecordGqlNode | null;
@@ -34,45 +35,43 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   currentSourceRecord,
   updatedSourceRecord,
   objectMetadataItems,
-}: triggerUpdateRelationsOptimisticEffectArgs) => {
+}: TriggerUpdateRelationsOptimisticEffectArgs) => {
   const isDeletion =
     isDefined(updatedSourceRecord) &&
     isDefined(updatedSourceRecord['deletedAt']);
 
-  return sourceObjectMetadataItem.fields.forEach(
-    (fieldMetadataItemOnSourceRecord) => {
-      if (
-        !isFieldMorphRelation(fieldMetadataItemOnSourceRecord) &&
-        !isFieldRelation(fieldMetadataItemOnSourceRecord)
-      ) {
-        return;
-      }
+  sourceObjectMetadataItem.fields.forEach((fieldMetadataItemOnSourceRecord) => {
+    if (
+      !isFieldMorphRelation(fieldMetadataItemOnSourceRecord) &&
+      !isFieldRelation(fieldMetadataItemOnSourceRecord)
+    ) {
+      return;
+    }
 
-      if (isFieldRelation(fieldMetadataItemOnSourceRecord)) {
-        triggerUpdateRelationOptimisticEffect({
-          fieldMetadataItemOnSourceRecord,
-          updatedSourceRecord,
-          currentSourceRecord,
-          objectMetadataItems,
-          sourceObjectMetadataItem,
-          cache,
-          isDeletion,
-        });
-      }
+    if (isFieldRelation(fieldMetadataItemOnSourceRecord)) {
+      triggerUpdateRelationOptimisticEffect({
+        fieldMetadataItemOnSourceRecord,
+        updatedSourceRecord,
+        currentSourceRecord,
+        objectMetadataItems,
+        sourceObjectMetadataItem,
+        cache,
+        isDeletion,
+      });
+    }
 
-      if (isFieldMorphRelation(fieldMetadataItemOnSourceRecord)) {
-        triggerUpdateMorphRelationOptimisticEffect({
-          fieldMetadataItemOnSourceRecord,
-          updatedSourceRecord,
-          currentSourceRecord,
-          objectMetadataItems,
-          sourceObjectMetadataItem,
-          cache,
-          isDeletion,
-        });
-      }
-    },
-  );
+    if (isFieldMorphRelation(fieldMetadataItemOnSourceRecord)) {
+      triggerUpdateMorphRelationOptimisticEffect({
+        fieldMetadataItemOnSourceRecord,
+        updatedSourceRecord,
+        currentSourceRecord,
+        objectMetadataItems,
+        sourceObjectMetadataItem,
+        cache,
+        isDeletion,
+      });
+    }
+  });
 };
 
 const triggerUpdateRelationOptimisticEffect = ({
@@ -146,29 +145,12 @@ const triggerUpdateRelationOptimisticEffect = ({
     return;
   }
 
-  const extractTargetRecordsFromRelation = (
-    value: RecordGqlConnection | RecordGqlNode | null,
-  ): RecordGqlNode[] => {
-    // TODO investigate on the root cause of array injection here, should never occurs
-    // Cache might be corrupted somewhere due to ObjectRecord and RecordGqlNode inclusion
-    if (!isDefined(value) || isArray(value)) {
-      return [];
-    }
-    if (!isDefined(relation)) {
-      throw new Error('Relation found is undefined');
-    }
-    if (isObjectRecordConnection(relation, value)) {
-      return value.edges.map(({ node }) => node);
-    }
-
-    return [value];
-  };
-
   const recordToExtractDetachFrom = isDeletion
     ? updatedFieldValueOnSourceRecord
     : currentFieldValueOnSourceRecord;
   const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
     recordToExtractDetachFrom,
+    relation,
   );
 
   // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
@@ -210,6 +192,7 @@ const triggerUpdateRelationOptimisticEffect = ({
   if (!isDeletion && isDefined(updatedSourceRecord)) {
     const targetRecordsToAttachTo = extractTargetRecordsFromRelation(
       updatedFieldValueOnSourceRecord,
+      relation,
     );
 
     targetRecordsToAttachTo.forEach((targetRecordToAttachTo) =>
@@ -306,31 +289,12 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
       return;
     }
 
-    const extractTargetRecordsFromRelation = (
-      value: RecordGqlConnection | RecordGqlNode | null,
-    ): RecordGqlNode[] => {
-      // TODO investigate on the root cause of array injection here, should never occurs
-      // Cache might be corrupted somewhere due to ObjectRecord and RecordGqlNode inclusion
-      if (!isDefined(value) || isArray(value)) {
-        return [];
-      }
-
-      if (!isDefined(morphRelation)) {
-        throw new Error('Relation found is undefined');
-      }
-
-      if (isObjectRecordConnection(morphRelation, value)) {
-        return value.edges.map(({ node }) => node);
-      }
-
-      return [value];
-    };
-
     const recordToExtractDetachFrom = isDeletion
       ? updatedFieldValueOnSourceRecord
       : currentFieldValueOnSourceRecord;
     const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
       recordToExtractDetachFrom,
+      morphRelation,
     );
 
     // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
@@ -362,6 +326,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
     if (!isDeletion && isDefined(updatedSourceRecord)) {
       const targetRecordsToAttachTo = extractTargetRecordsFromRelation(
         updatedFieldValueOnSourceRecord,
+        morphRelation,
       );
 
       targetRecordsToAttachTo.forEach((targetRecordToAttachTo) =>
@@ -376,4 +341,23 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
       );
     }
   });
+};
+
+const extractTargetRecordsFromRelation = (
+  value: RecordGqlConnection | RecordGqlNode | null,
+  relation: FieldMetadataItemRelation,
+): RecordGqlNode[] => {
+  // TODO investigate on the root cause of array injection here, should never occurs
+  // Cache might be corrupted somewhere due to ObjectRecord and RecordGqlNode inclusion
+  if (!isDefined(value) || isArray(value)) {
+    return [];
+  }
+  if (!isDefined(relation)) {
+    throw new Error('Relation found is undefined');
+  }
+  if (isObjectRecordConnection(relation, value)) {
+    return value.edges.map(({ node }) => node);
+  }
+
+  return [value];
 };
