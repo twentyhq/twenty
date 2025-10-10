@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   assertUnreachable,
@@ -59,7 +59,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       error: {
         code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: 'Provided object metadata id does not exist',
-        userFriendlyMessage: t`Created field metadata, parent object metadata not found`,
+        userFriendlyMessage: msg`Created field metadata, parent object metadata not found`,
       },
     };
   }

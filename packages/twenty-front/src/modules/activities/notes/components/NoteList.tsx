@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { type Note } from '@/activities/types/Note';
 
-import { NoteCard } from './NoteCard';
+import { NoteTile } from './NoteTile';
 
 type NoteListProps = {
   title: string;
@@ -59,7 +59,7 @@ export const NoteList = ({ title, notes, button }: NoteListProps) => (
         </StyledTitleBar>
         <StyledNoteContainer>
           {notes.map((note) => (
-            <NoteCard
+            <NoteTile
               key={note.id}
               note={note}
               isSingleNote={notes.length === 1}

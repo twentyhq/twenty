@@ -11,7 +11,7 @@ import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-ada
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
+import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -29,7 +29,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     TypeOrmModule.forFeature([RoleEntity]),
     TokenModule,
     FeatureFlagModule,
-    RecordTransformerModule,
+    RecordCrudModule,
     ObjectMetadataModule,
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,

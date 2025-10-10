@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import axios from 'axios';
 import semver from 'semver';
 import { Repository } from 'typeorm';
@@ -65,7 +66,7 @@ export class AdminPanelService {
     userValidator.assertIsDefinedOrThrow(
       targetUser,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT, {
-        userFriendlyMessage: 'User not found. Please check the email or ID.',
+        userFriendlyMessage: msg`User not found. Please check the email or ID.`,
       }),
     );
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
@@ -47,7 +47,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         `Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
         GraphqlQueryRunnerExceptionCode.UPSERT_MAX_RECORDS_EXCEEDED,
         {
-          userFriendlyMessage: t`Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+          userFriendlyMessage: msg`Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
         },
       );
     }
@@ -359,7 +359,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         `Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
         GraphqlQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT,
         {
-          userFriendlyMessage: t`Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
+          userFriendlyMessage: msg`Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
         },
       );
     }

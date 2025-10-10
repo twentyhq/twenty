@@ -23,6 +23,7 @@ export const getDefaultFlatFieldMetadata = ({
   const createdAt = new Date();
 
   return {
+    viewFieldIds: [],
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,
     icon: createFieldInput.icon ?? null,

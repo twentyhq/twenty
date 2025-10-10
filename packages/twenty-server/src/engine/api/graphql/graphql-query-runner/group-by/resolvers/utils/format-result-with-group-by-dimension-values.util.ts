@@ -1,9 +1,7 @@
 import { t } from '@lingui/core/macro';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
-import {
-  ObjectRecordGroupByDateGranularity,
-  type ObjectRecord,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { type IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
 

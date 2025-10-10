@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -38,7 +38,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
       error: {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: `Relation creation payload is required`,
-        userFriendlyMessage: t`Relation creation payload is required`,
+        userFriendlyMessage: msg`Relation creation payload is required`,
         value: rawCreationPayload,
       },
     };

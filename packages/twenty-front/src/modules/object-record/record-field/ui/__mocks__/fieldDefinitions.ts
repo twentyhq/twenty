@@ -126,5 +126,6 @@ export const linksFieldDefinition: FieldDefinition<FieldLinksMetadata> = {
   metadata: {
     fieldName: 'links',
     objectMetadataNameSingular: 'company',
+    settings: null,
   },
 };

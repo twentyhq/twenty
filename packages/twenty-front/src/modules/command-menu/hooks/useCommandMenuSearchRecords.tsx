@@ -65,7 +65,8 @@ export const useCommandMenuSearchRecords = () => {
           Icon: () => (
             <Avatar
               type={
-                searchRecord.objectNameSingular === 'company'
+                searchRecord.objectNameSingular ===
+                CoreObjectNameSingular.Company
                   ? 'squared'
                   : 'rounded'
               }

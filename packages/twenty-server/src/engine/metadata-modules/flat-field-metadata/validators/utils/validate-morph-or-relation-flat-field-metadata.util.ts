@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -26,7 +26,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
       : {
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message: `Invalid uuid ${id}`,
-          userFriendlyMessage: t`Invalid uuid ${id}`,
+          userFriendlyMessage: msg`Invalid uuid ${id}`,
           value: id,
         },
   );
@@ -44,7 +44,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
     errors.push({
       code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       message: 'Relation target object metadata not found',
-      userFriendlyMessage: t`Object targeted by the relation not found`,
+      userFriendlyMessage: msg`Object targeted by the relation not found`,
     });
   }
 
@@ -61,7 +61,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
       message: isDefined(remainingFlatEntityMapsToValidate)
         ? 'Relation field target metadata not found in both existing and about to be created field metadatas'
         : 'Relation field target metadata not found',
-      userFriendlyMessage: t`Relation field target metadata not found`,
+      userFriendlyMessage: msg`Relation field target metadata not found`,
     });
   }
 

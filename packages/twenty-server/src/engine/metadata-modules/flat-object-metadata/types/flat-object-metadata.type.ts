@@ -10,6 +10,7 @@ export const objectMetadataEntityRelationProperties = [
   'application',
   'objectPermissions',
   'fieldPermissions',
+  'views',
 ] as const satisfies ObjectMetadataRelationProperties[];
 
 type ObjectMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
@@ -24,4 +25,5 @@ export type FlatObjectMetadata = Omit<
   universalIdentifier: string;
   fieldMetadataIds: string[];
   indexMetadataIds: string[];
+  viewIds: string[];
 };

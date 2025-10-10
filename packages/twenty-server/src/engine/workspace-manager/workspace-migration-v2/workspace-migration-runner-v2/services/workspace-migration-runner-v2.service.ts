@@ -85,7 +85,6 @@ export class WorkspaceMigrationRunnerV2Service {
       await queryRunner.commitTransaction();
 
       this.logger.timeEnd('Runner', 'Transaction execution');
-      this.logger.time('Runner', 'Cache invalidation');
 
       const flatEntitiesCacheToInvalidate = [
         ...new Set([
@@ -94,6 +93,10 @@ export class WorkspaceMigrationRunnerV2Service {
         ]),
       ];
 
+      this.logger.time(
+        'Runner',
+        `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,
+      );
       if (
         flatEntitiesCacheToInvalidate.includes('flatObjectMetadataMaps') ||
         flatEntitiesCacheToInvalidate.includes('flatFieldMetadataMaps')
@@ -119,7 +122,10 @@ export class WorkspaceMigrationRunnerV2Service {
         ],
       });
 
-      this.logger.timeEnd('Runner', 'Cache invalidation');
+      this.logger.timeEnd(
+        'Runner',
+        `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,
+      );
       this.logger.timeEnd('Runner', 'Total execution');
 
       return allFlatEntityMaps;

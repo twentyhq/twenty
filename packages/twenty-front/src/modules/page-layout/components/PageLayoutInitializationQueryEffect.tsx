@@ -15,7 +15,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
   pageLayoutId: string;
-  onInitialized: (pageLayout: PageLayout) => void;
+  onInitialized?: (pageLayout: PageLayout) => void;
 };
 
 export const PageLayoutInitializationQueryEffect = ({

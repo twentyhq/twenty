@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { GraphQLEnumType, GraphQLInputObjectType } from 'graphql';
-
-import { ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 

@@ -1,11 +1,10 @@
 import { useLazyQuery, type WatchQueryFetchPolicy } from '@apollo/client';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
@@ -26,17 +25,17 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   withSoftDeleted = false,
   fetchPolicy = 'cache-first',
 }: UseLazyFindOneRecordParams) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
   const apolloCoreClient = useApolloCoreClient();
+
+  const { recordGqlFields: depthOneRecordGqlFields } =
+    useGenerateDepthRecordGqlFieldsFromObject({
+      objectNameSingular,
+      depth: 1,
+    });
 
   const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular,
-    recordGqlFields:
-      recordGqlFields ??
-      generateDepthOneRecordGqlFields({ objectMetadataItem }),
+    recordGqlFields: recordGqlFields ?? depthOneRecordGqlFields,
     withSoftDeleted,
   });
 

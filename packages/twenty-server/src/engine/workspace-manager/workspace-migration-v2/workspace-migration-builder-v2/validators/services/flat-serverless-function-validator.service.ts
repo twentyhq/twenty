@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
@@ -31,7 +31,7 @@ export class FlatServerlessFunctionValidatorService {
       errors.push({
         code: ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
-        userFriendlyMessage: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 
@@ -57,7 +57,7 @@ export class FlatServerlessFunctionValidatorService {
       errors.push({
         code: ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
-        userFriendlyMessage: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 
@@ -88,7 +88,7 @@ export class FlatServerlessFunctionValidatorService {
       errors.push({
         code: ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_ALREADY_EXIST,
         message: t`Serverless function with same id already exists`,
-        userFriendlyMessage: t`Serverless function already exists`,
+        userFriendlyMessage: msg`Serverless function already exists`,
       });
     }
 

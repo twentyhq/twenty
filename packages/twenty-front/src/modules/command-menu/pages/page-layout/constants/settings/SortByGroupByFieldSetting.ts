@@ -9,5 +9,6 @@ export const SORT_BY_GROUP_BY_FIELD_SETTING: ChartSettingsItem = {
   Icon: IconArrowsSort,
   label: CHART_CONFIGURATION_SETTING_LABELS.SORT_BY_GROUP_BY_FIELD,
   id: CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD,
+  dependsOn: [CHART_CONFIGURATION_SETTING_IDS.GROUP_BY],
   DropdownContent: ChartSortByGroupByFieldDropdownContent,
 };

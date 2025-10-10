@@ -1,3 +1,4 @@
+import { type MessageDescriptor } from '@lingui/core';
 import { CustomError } from 'twenty-shared/utils';
 
 const CommonExceptionCode = {
@@ -19,17 +20,16 @@ export abstract class CustomException<
   ExceptionCode extends string = string,
   ForceFriendlyMessage = false,
   ExceptionMessage extends string = string,
-  ExceptionFriendlyMessage extends string = string,
 > extends CustomError {
   code: ExceptionCode;
-  userFriendlyMessage?: ExceptionFriendlyMessage;
+  userFriendlyMessage?: MessageDescriptor;
 
   constructor(
     message: ExceptionMessage,
     code: ExceptionCode,
     ...userFriendlyMessage: ForceFriendlyMessage extends true
-      ? [{ userFriendlyMessage: ExceptionFriendlyMessage }]
-      : [{ userFriendlyMessage?: ExceptionFriendlyMessage }?]
+      ? [{ userFriendlyMessage: MessageDescriptor }]
+      : [{ userFriendlyMessage?: MessageDescriptor }?]
   ) {
     super(message);
     this.code = code;

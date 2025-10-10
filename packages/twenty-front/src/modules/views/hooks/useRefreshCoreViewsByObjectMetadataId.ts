@@ -95,7 +95,17 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
             );
           }
 
-          if (!isDeeplyEqual(coreView.viewFilters, existingView.viewFilters)) {
+          if (
+            !isDeeplyEqual(
+              coreView.viewFilters.map((viewFilter) =>
+                removePropertiesFromRecord(viewFilter, [
+                  'createdAt',
+                  'updatedAt',
+                ]),
+              ),
+              existingView.viewFilters,
+            )
+          ) {
             const view = convertCoreViewToView(coreView);
             set(
               currentRecordFiltersComponentState.atomFamily({

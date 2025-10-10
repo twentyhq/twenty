@@ -66,6 +66,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
   );
 
+  const isGroupByEnabled = getChartSettingsValues(
+    CHART_CONFIGURATION_SETTING_IDS.GROUP_BY,
+  );
+
   return (
     <CommandMenuList
       commandGroups={[]}
@@ -81,11 +85,15 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
         <CommandGroup key={group.heading} heading={group.heading}>
           {group.items.map((item) => {
             const isDisabled =
-              !isNonEmptyString(widget.objectMetadataId) &&
-              (item?.dependsOn?.includes(
-                CHART_CONFIGURATION_SETTING_IDS.SOURCE,
-              ) ??
-                false);
+              (!isNonEmptyString(widget.objectMetadataId) &&
+                (item?.dependsOn?.includes(
+                  CHART_CONFIGURATION_SETTING_IDS.SOURCE,
+                ) ??
+                  false)) ||
+              (!isGroupByEnabled &&
+                item?.dependsOn?.includes(
+                  CHART_CONFIGURATION_SETTING_IDS.GROUP_BY,
+                ));
 
             const handleToggleChange = () => {
               const configKey =

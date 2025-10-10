@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -50,8 +51,7 @@ export class PermissionsService {
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         {
-          userFriendlyMessage:
-            'Your role in this workspace could not be found. Please contact your workspace administrator.',
+          userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
         },
       );
     }
@@ -135,8 +135,7 @@ export class PermissionsService {
           PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
           PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
           {
-            userFriendlyMessage:
-              'The API key does not have a valid role assigned. Please check your API key configuration.',
+            userFriendlyMessage: msg`The API key does not have a valid role assigned. Please check your API key configuration.`,
           },
         );
       }
@@ -157,8 +156,7 @@ export class PermissionsService {
           PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
           PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
           {
-            userFriendlyMessage:
-              'Your role in this workspace could not be found. Please contact your workspace administrator.',
+            userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
           },
         );
       }
@@ -170,8 +168,7 @@ export class PermissionsService {
       PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
       PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
       {
-        userFriendlyMessage:
-          'Authentication is required to access this feature. Please sign in and try again.',
+        userFriendlyMessage: msg`Authentication is required to access this feature. Please sign in and try again.`,
       },
     );
   }

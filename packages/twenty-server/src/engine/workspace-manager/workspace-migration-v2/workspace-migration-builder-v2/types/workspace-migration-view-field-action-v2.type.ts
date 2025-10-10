@@ -1,14 +1,6 @@
-import { type FromTo } from 'twenty-shared/types';
-
-import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { type FlatViewFieldPropertiesToCompare } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-properties-to-compare.type';
-import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-
-export type FlatViewFieldPropertyUpdate<
-  P extends FlatViewFieldPropertiesToCompare,
-> = {
-  property: P;
-} & FromTo<ViewFieldEntity[P]>;
+import { type FlatViewFieldPropertiesToCompare } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-properties-to-compare.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 
 export type CreateViewFieldAction = {
   type: 'create_view_field';
@@ -20,7 +12,7 @@ export type UpdateViewFieldAction = {
   viewFieldId: string;
   updates: Array<
     {
-      [P in FlatViewFieldPropertiesToCompare]: FlatViewFieldPropertyUpdate<P>;
+      [P in FlatViewFieldPropertiesToCompare]: PropertyUpdate<FlatViewField, P>;
     }[FlatViewFieldPropertiesToCompare]
   >;
 };

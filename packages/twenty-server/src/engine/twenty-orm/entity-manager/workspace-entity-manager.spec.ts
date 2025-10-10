@@ -142,6 +142,7 @@ describe('WorkspaceEntityManager', () => {
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_DYNAMIC_SEARCH_FIELDS_ENABLED: false,
+        IS_COMMON_API_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),

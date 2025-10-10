@@ -1,6 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
@@ -128,9 +128,11 @@ describe('computeOptimisticRecordFromInput', () => {
         (field) => field.name === 'id',
       ),
     };
-    const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
+    const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
       objectMetadataItem,
+      objectMetadataItems: generatedMockObjectMetadataItems,
       record: companyRecord,
+      depth: 1,
     });
     updateRecordFromCache({
       objectMetadataItems: generatedMockObjectMetadataItems,
@@ -178,9 +180,11 @@ describe('computeOptimisticRecordFromInput', () => {
         }),
       ],
     };
-    const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
+    const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
+      depth: 1,
       objectMetadataItem,
       record: companyRecord,
+      objectMetadataItems: generatedMockObjectMetadataItems,
     });
     updateRecordFromCache({
       objectMetadataItems: generatedMockObjectMetadataItems,

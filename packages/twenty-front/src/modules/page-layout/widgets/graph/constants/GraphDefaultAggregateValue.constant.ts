@@ -1,0 +1,1 @@
+export const GRAPH_DEFAULT_AGGREGATE_VALUE = 0;

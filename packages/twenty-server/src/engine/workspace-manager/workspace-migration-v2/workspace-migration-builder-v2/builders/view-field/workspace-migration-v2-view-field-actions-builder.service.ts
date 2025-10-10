@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-import { compareTwoFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view-field.util';
+import { FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { compareTwoFlatViewField } from 'src/engine/metadata-modules/flat-view-field/utils/compare-two-flat-view-field.util';
 import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/view-field-related-flat-entity-maps.type';
 import {
   FlatEntityUpdateValidationArgs,
@@ -48,7 +48,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     >
   > {
     const validationResult =
-      await this.flatViewFieldValidatorService.validateFlatViewFieldCreation({
+      this.flatViewFieldValidatorService.validateFlatViewFieldCreation({
         dependencyOptimisticFlatEntityMaps,
         flatViewFieldToValidate,
         optimisticFlatViewFieldMaps,
@@ -61,12 +61,30 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       };
     }
 
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatViewFieldToValidate.fieldMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+    });
+
+    const updatedFlatFieldMetadataMaps =
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...flatFieldMetadata,
+          viewFieldIds: [
+            ...flatFieldMetadata.viewFieldIds,
+            flatViewFieldToValidate.id,
+          ],
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      });
+
     const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewFieldToValidate.viewId,
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
-    const updatedFlatViewFields = replaceFlatEntityInFlatEntityMapsOrThrow({
+    const updatedFlatViewMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
       flatEntity: {
         ...flatView,
         viewFieldIds: [...flatView.viewFieldIds, flatViewFieldToValidate.id],
@@ -82,7 +100,8 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       },
       dependencyOptimisticFlatEntityMaps: {
         ...dependencyOptimisticFlatEntityMaps,
-        flatViewMaps: updatedFlatViewFields,
+        flatViewMaps: updatedFlatViewMaps,
+        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
       },
     };
   }
@@ -115,12 +134,30 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       };
     }
 
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewFieldToValidate.fieldMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+    });
+
+    const updatedFlatFieldMetadataMaps = isDefined(flatFieldMetadata)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...flatFieldMetadata,
+            viewFieldIds: flatFieldMetadata.viewFieldIds.filter(
+              (id) => id !== flatViewFieldToValidate.id,
+            ),
+          },
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps;
+
     const flatView = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFieldToValidate.viewId,
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
-    const updatedFlatViewFields = isDefined(flatView)
+    const updatedFlatViewMaps = isDefined(flatView)
       ? replaceFlatEntityInFlatEntityMapsOrThrow({
           flatEntity: {
             ...flatView,
@@ -140,7 +177,8 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       },
       dependencyOptimisticFlatEntityMaps: {
         ...dependencyOptimisticFlatEntityMaps,
-        flatViewMaps: updatedFlatViewFields,
+        flatViewMaps: updatedFlatViewMaps,
+        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
       },
     };
   }

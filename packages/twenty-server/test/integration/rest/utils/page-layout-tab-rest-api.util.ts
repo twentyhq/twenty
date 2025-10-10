@@ -14,7 +14,7 @@ export const createTestPageLayoutTabWithRestApi = async (
 
   const response = await makeRestAPIRequest({
     method: 'post',
-    path: '/metadata/page-layout-tabs',
+    path: '/metadata/pageLayoutTabs',
     body: pageLayoutTabData,
     bearer: API_KEY_ACCESS_TOKEN,
   });
@@ -33,7 +33,7 @@ export const deleteTestPageLayoutTabWithRestApi = async (
 ): Promise<void> => {
   await makeRestAPIRequest({
     method: 'delete',
-    path: `/metadata/page-layout-tabs/${pageLayoutTabId}`,
+    path: `/metadata/pageLayoutTabs/${pageLayoutTabId}`,
     bearer: API_KEY_ACCESS_TOKEN,
   });
 };

@@ -5,6 +5,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type Favorite } from '@/favorites/types/Favorite';
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -36,19 +37,19 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
     prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
   );
 
+  const { objectMetadataItem: favoriteObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.Favorite,
+    });
+
   const findAllFavoritesOperationSignature =
     findAllFavoritesOperationSignatureFactory({
-      objectMetadataItem: objectMetadataItems.find(
-        (item) => item.nameSingular === CoreObjectNameSingular.Favorite,
-      ),
+      objectMetadataItem: favoriteObjectMetadataItem,
+      objectMetadataItems,
     });
 
   const findAllFavoriteFoldersOperationSignature =
-    findAllFavoritesFolderOperationSignatureFactory({
-      objectMetadataItem: objectMetadataItems.find(
-        (item) => item.nameSingular === CoreObjectNameSingular.FavoriteFolder,
-      ),
-    });
+    findAllFavoritesFolderOperationSignatureFactory({});
 
   const { records: favorites } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Favorite,

@@ -6,7 +6,7 @@ import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/objec
 
 export interface WorkspaceQueryRunnerOptions {
   authContext: AuthContext;
-  info: GraphQLResolveInfo;
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   objectMetadataMaps: ObjectMetadataMaps;
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+  info: GraphQLResolveInfo;
 }

@@ -19,9 +19,11 @@ import { AppPath } from 'twenty-shared/types';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '../../hooks/useAuth';
+import { useLingui } from '@lingui/react/macro';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { t } = useLingui();
 
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
@@ -55,28 +57,33 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     setSignInUpStep(SignInUpStep.Email);
   }, [setSignInUpStep]);
 
+  const errorMsgUserAlreadyExist = t`An error occurred while checking user existence`;
   const continueWithCredentials = useCallback(async () => {
     const token = await readCaptchaToken();
     if (!form.getValues('email')) {
       return;
     }
-    checkUserExistsQuery({
-      variables: {
-        email: form.getValues('email').toLowerCase().trim(),
-        captchaToken: token,
-      },
-      onError: (error) => {
-        enqueueErrorSnackBar({ apolloError: error });
-      },
-      onCompleted: (data) => {
-        setSignInUpMode(
-          data?.checkUserExists.exists
-            ? SignInUpMode.SignIn
-            : SignInUpMode.SignUp,
-        );
-        setSignInUpStep(SignInUpStep.Password);
-      },
-    });
+    try {
+      const { data } = await checkUserExistsQuery({
+        variables: {
+          email: form.getValues('email').toLowerCase().trim(),
+          captchaToken: token,
+        },
+      });
+
+      setSignInUpMode(
+        data?.checkUserExists.exists
+          ? SignInUpMode.SignIn
+          : SignInUpMode.SignUp,
+      );
+      setSignInUpStep(SignInUpStep.Password);
+    } catch (error) {
+      enqueueErrorSnackBar({
+        ...(error instanceof ApolloError
+          ? { apolloError: error }
+          : { message: errorMsgUserAlreadyExist }),
+      });
+    }
   }, [
     readCaptchaToken,
     form,
@@ -84,6 +91,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     enqueueErrorSnackBar,
     setSignInUpStep,
     setSignInUpMode,
+    errorMsgUserAlreadyExist,
   ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(

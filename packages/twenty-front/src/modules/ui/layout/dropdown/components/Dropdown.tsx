@@ -1,5 +1,8 @@
 import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/DropdownOnToggleEffect';
 import { DropdownInternalContainer } from '@/ui/layout/dropdown/components/internal/DropdownInternalContainer';
+import { DROPDOWN_BOUNDARY_BOTTOM_PADDING_DESKTOP } from '@/ui/layout/dropdown/constants/DropdownBoundaryBottomPaddingDesktop';
+import { DROPDOWN_BOUNDARY_BOTTOM_PADDING_MOBILE } from '@/ui/layout/dropdown/constants/DropdownBoundaryBottomPaddingMobile';
+import { DROPDOWN_BOUNDARY_HORIZONTAL_PADDING } from '@/ui/layout/dropdown/constants/DropdownBoundaryHorizontalPadding';
 import { DROPDOWN_RESIZE_MIN_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownResizeMinHeight';
 import { DROPDOWN_RESIZE_MIN_WIDTH } from '@/ui/layout/dropdown/constants/DropdownResizeMinWidth';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -59,6 +62,12 @@ export type DropdownProps = {
   excludedClickOutsideIds?: string[];
   isDropdownInModal?: boolean;
   disableClickForClickableComponent?: boolean;
+  middlewareBoundaryPadding?: {
+    right?: number;
+    left?: number;
+    bottomDesktop?: number;
+    bottomMobile?: number;
+  };
 };
 
 export const Dropdown = ({
@@ -77,6 +86,7 @@ export const Dropdown = ({
   excludedClickOutsideIds,
   isDropdownInModal = false,
   disableClickForClickableComponent = false,
+  middlewareBoundaryPadding = {},
 }: DropdownProps) => {
   const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
@@ -108,13 +118,19 @@ export const Dropdown = ({
   );
 
   const isMobile = useIsMobile();
-  const bottomAutoresizePadding = isMobile ? 64 : 32;
+  const bottomAutoresizePadding = isMobile
+    ? (middlewareBoundaryPadding.bottomMobile ??
+      DROPDOWN_BOUNDARY_BOTTOM_PADDING_MOBILE)
+    : (middlewareBoundaryPadding.bottomDesktop ??
+      DROPDOWN_BOUNDARY_BOTTOM_PADDING_DESKTOP);
 
   const boundaryOptions = {
     boundary: document.querySelector('#root') ?? undefined,
     padding: {
-      right: 32,
-      left: 32,
+      right:
+        middlewareBoundaryPadding.right ?? DROPDOWN_BOUNDARY_HORIZONTAL_PADDING,
+      left:
+        middlewareBoundaryPadding.left ?? DROPDOWN_BOUNDARY_HORIZONTAL_PADDING,
       bottom: bottomAutoresizePadding,
     },
   };

@@ -84,7 +84,7 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
     if (!selectedMorphItem?.recordId || !relationFieldMetadataItem?.name)
       return;
 
-    onSubmit?.({ newValue: selectedMorphItem.recordId });
+    onSubmit?.({ newValue: { id: selectedMorphItem.recordId } });
   };
 
   const { createNewRecordAndOpenRightDrawer } =

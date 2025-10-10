@@ -1,7 +1,7 @@
 import { Catch, type ExceptionFilter } from '@nestjs/common';
 
 import { assertUnreachable } from 'twenty-shared/utils';
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 
 import {
   EmailVerificationException,
@@ -19,7 +19,7 @@ export class EmailVerificationExceptionFilter implements ExceptionFilter {
       case EmailVerificationExceptionCode.TOKEN_EXPIRED:
         throw new ForbiddenError(exception.message, {
           subCode: exception.code,
-          userFriendlyMessage: t`Request has expired, please try again.`,
+          userFriendlyMessage: msg`Request has expired, please try again.`,
         });
       case EmailVerificationExceptionCode.INVALID_TOKEN:
       case EmailVerificationExceptionCode.INVALID_APP_TOKEN_TYPE:
@@ -30,12 +30,12 @@ export class EmailVerificationExceptionFilter implements ExceptionFilter {
       case EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED:
         throw new UserInputError(exception.message, {
           subCode: exception.code,
-          userFriendlyMessage: t`Email already verified.`,
+          userFriendlyMessage: msg`Email already verified.`,
         });
       case EmailVerificationExceptionCode.EMAIL_VERIFICATION_NOT_REQUIRED:
         throw new UserInputError(exception.message, {
           subCode: exception.code,
-          userFriendlyMessage: t`Email verification not required.`,
+          userFriendlyMessage: msg`Email verification not required.`,
         });
       case EmailVerificationExceptionCode.INVALID_EMAIL:
         throw new UserInputError(exception);

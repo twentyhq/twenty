@@ -2,5 +2,5 @@ import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all
 
 export type ViewFieldRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  'flatViewMaps' | 'flatFieldMetadataMaps'
+  'flatViewMaps' | 'flatFieldMetadataMaps' | 'flatObjectMetadataMaps'
 >;

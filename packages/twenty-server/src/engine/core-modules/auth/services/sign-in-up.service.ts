@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
@@ -66,7 +66,7 @@ export class SignInUpService {
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage: t`Email is required`,
+          userFriendlyMessage: msg`Email is required`,
         },
       );
     }
@@ -124,7 +124,7 @@ export class SignInUpService {
         'Password too weak',
         AuthExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage: t`Password too weak`,
+          userFriendlyMessage: msg`Password too weak`,
         },
       );
     }
@@ -146,7 +146,7 @@ export class SignInUpService {
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: t`Wrong password`,
+          userFriendlyMessage: msg`Wrong password`,
         },
       );
     }
@@ -172,7 +172,7 @@ export class SignInUpService {
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage: t`Email is required`,
+          userFriendlyMessage: msg`Email is required`,
         },
       );
     }
@@ -216,7 +216,7 @@ export class SignInUpService {
         'Workspace is not ready to welcome new members',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: t`Workspace is not ready to welcome new members`,
+          userFriendlyMessage: msg`Workspace is not ready to welcome new members`,
         },
       );
     }
@@ -232,7 +232,7 @@ export class SignInUpService {
         'User is not part of the workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: t`User is not part of the workspace`,
+          userFriendlyMessage: msg`User is not part of the workspace`,
         },
       );
     }
@@ -379,7 +379,7 @@ export class SignInUpService {
         'Workspace creation is restricted to admins',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: t`Workspace creation is restricted to admins`,
+          userFriendlyMessage: msg`Workspace creation is restricted to admins`,
         },
       );
     }
@@ -398,7 +398,7 @@ export class SignInUpService {
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage: t`Email is required`,
+          userFriendlyMessage: msg`Email is required`,
         },
       );
     }
@@ -465,6 +465,15 @@ export class SignInUpService {
     newUserParams: SignInUpNewUserPayload,
     authParams: AuthProviderWithPasswordType['authParams'],
   ) {
+    await this.userService.findUserByEmailOrThrow(
+      newUserParams.email,
+      new AuthException(
+        'User already exist',
+        AuthExceptionCode.USER_ALREADY_EXIST,
+        { userFriendlyMessage: msg`User already exists` },
+      ),
+    );
+
     return this.saveNewUser(
       await this.computePartialUserFromUserPayload(newUserParams, authParams),
       await this.setDefaultImpersonateAndAccessFullAdminPanel(),

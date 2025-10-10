@@ -5,6 +5,7 @@ import merge from 'lodash.merge';
 import { type QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { type WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
 import { type WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
@@ -18,8 +19,9 @@ export class WorkspaceQueryHookService {
     private readonly workspaceQueryHookExplorer: WorkspaceQueryHookExplorer,
   ) {}
 
+  //TODO : Refacto-common - Should be Common
   public async executePreQueryHooks<
-    T extends WorkspaceResolverBuilderMethodNames,
+    T extends WorkspaceResolverBuilderMethodNames | CommonQueryNames,
   >(
     authContext: AuthContext,
     // TODO: We should allow wildcard for object name

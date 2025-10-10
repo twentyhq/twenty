@@ -90,6 +90,7 @@ describe('Custom object renaming', () => {
 
     // Act
     const { data } = await createOneObjectMetadata({
+      expectToFail: false,
       input: CUSTOM_OBJECT,
       gqlFields: `
           id
@@ -141,6 +142,7 @@ describe('Custom object renaming', () => {
 
     // Act
     const { data } = await updateOneObjectMetadata({
+      expectToFail: false,
       gqlFields: `
         nameSingular
         labelSingular

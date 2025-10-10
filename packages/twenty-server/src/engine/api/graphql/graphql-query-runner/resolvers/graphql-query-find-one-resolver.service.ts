@@ -1,3 +1,4 @@
+//TODO : Refacto-common - To delete
 import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';

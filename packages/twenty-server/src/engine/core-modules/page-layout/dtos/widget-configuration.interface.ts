@@ -6,6 +6,7 @@ import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos
 import { LineChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/line-chart-configuration.dto';
 import { NumberChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/number-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
+import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 import { WidgetConfigurationType } from 'src/engine/core-modules/page-layout/enums/widget-configuration-type.enum';
 
 export const WidgetConfiguration = createUnionType({
@@ -25,24 +26,34 @@ export const WidgetConfiguration = createUnionType({
       );
     }
 
-    switch (configuration.configurationType) {
-      case WidgetConfigurationType.IFRAME_CONFIG:
-        return IframeConfigurationDTO;
-      case WidgetConfigurationType.BAR_CHART_CONFIG:
-        return BarChartConfigurationDTO;
-      case WidgetConfigurationType.LINE_CHART_CONFIG:
-        return LineChartConfigurationDTO;
-      case WidgetConfigurationType.PIE_CHART_CONFIG:
-        return PieChartConfigurationDTO;
-      case WidgetConfigurationType.NUMBER_CHART_CONFIG:
-        return NumberChartConfigurationDTO;
-      case WidgetConfigurationType.GAUGE_CHART_CONFIG:
-        return GaugeChartConfigurationDTO;
-      default:
-        throw new Error(
-          `Unknown widget configuration type: ${configuration.configurationType}`,
-        );
+    if (
+      configuration.configurationType === WidgetConfigurationType.CHART_CONFIG
+    ) {
+      switch (configuration.graphType) {
+        case GraphType.BAR:
+          return BarChartConfigurationDTO;
+        case GraphType.LINE:
+          return LineChartConfigurationDTO;
+        case GraphType.PIE:
+          return PieChartConfigurationDTO;
+        case GraphType.NUMBER:
+          return NumberChartConfigurationDTO;
+        case GraphType.GAUGE:
+          return GaugeChartConfigurationDTO;
+        default:
+          throw new Error(`Unknown graph type: ${configuration.graphType}`);
+      }
     }
+
+    if (
+      configuration.configurationType === WidgetConfigurationType.IFRAME_CONFIG
+    ) {
+      return IframeConfigurationDTO;
+    }
+
+    throw new Error(
+      `Unknown widget configuration type: ${configuration.configurationType}`,
+    );
   },
 });
 

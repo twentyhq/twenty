@@ -1,4 +1,4 @@
-import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { isDefined } from 'twenty-shared/utils';
 
 export const isRecordGqlFieldsNode = (

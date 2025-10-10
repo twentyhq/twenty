@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
 import { SettingsPath } from 'twenty-shared/types';
@@ -46,7 +46,7 @@ export class ApprovedAccessDomainService {
         'Approved access domain has already been validated',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VERIFIED,
         {
-          userFriendlyMessage: t`Approved access domain has already been validated`,
+          userFriendlyMessage: msg`Approved access domain has already been validated`,
         },
       );
     }
@@ -56,7 +56,7 @@ export class ApprovedAccessDomainService {
         'Approved access domain does not match email domain',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL,
         {
-          userFriendlyMessage: t`Approved access domain does not match email domain`,
+          userFriendlyMessage: msg`Approved access domain does not match email domain`,
         },
       );
     }
@@ -136,7 +136,7 @@ export class ApprovedAccessDomainService {
         'Approved access domain has already been validated',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED,
         {
-          userFriendlyMessage: t`Approved access domain has already been validated`,
+          userFriendlyMessage: msg`Approved access domain has already been validated`,
         },
       );
     }
@@ -180,7 +180,7 @@ export class ApprovedAccessDomainService {
         'Approved access domain already registered.',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED,
         {
-          userFriendlyMessage: t`Approved access domain already registered.`,
+          userFriendlyMessage: msg`Approved access domain already registered.`,
         },
       );
     }

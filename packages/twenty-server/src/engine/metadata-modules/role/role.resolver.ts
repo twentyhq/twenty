@@ -8,6 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { msg } from '@lingui/core/macro';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -92,8 +94,7 @@ export class RoleResolver {
         PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
         PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE,
         {
-          userFriendlyMessage:
-            'You cannot change your own role. Please ask another administrator to update your role.',
+          userFriendlyMessage: msg`You cannot change your own role. Please ask another administrator to update your role.`,
         },
       );
     }

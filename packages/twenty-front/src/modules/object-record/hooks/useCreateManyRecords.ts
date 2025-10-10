@@ -11,8 +11,8 @@ import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreate
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
@@ -54,12 +54,16 @@ export const useCreateManyRecords = <
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+  const { recordGqlFields: depthOneRecordGqlFields } =
+    useGenerateDepthRecordGqlFieldsFromObject({
+      objectNameSingular,
+      depth: 1,
+    });
 
   const objectMetadataHasCreatedByField =
     hasObjectMetadataItemFieldCreatedBy(objectMetadataItem);
 
-  const computedRecordGqlFields =
-    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+  const computedRecordGqlFields = recordGqlFields ?? depthOneRecordGqlFields;
 
   const { createManyRecordsMutation } = useCreateManyRecordsMutation({
     objectNameSingular,

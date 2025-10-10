@@ -1,6 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateManyRecords';
 import { useBuildSpreadsheetImportFields } from '@/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
@@ -32,11 +32,14 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
 
   const abortController = new AbortController();
 
+  const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
+    objectNameSingular,
+    depth: 0,
+  });
+
   const { batchCreateManyRecords } = useBatchCreateManyRecords({
     objectNameSingular,
-    recordGqlFields: generateDepthOneWithoutRelationsRecordGqlFields({
-      objectMetadataItem,
-    }),
+    recordGqlFields,
     mutationBatchSize: SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE,
     setBatchedRecordsCount: setCreatedRecordsProgress,
     abortController,

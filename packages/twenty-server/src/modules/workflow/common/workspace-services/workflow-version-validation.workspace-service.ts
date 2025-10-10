@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { IsNull, Not } from 'typeorm';
 
 import {
@@ -40,7 +40,7 @@ export class WorkflowVersionValidationWorkspaceService {
         'Cannot create workflow version with status other than draft',
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: t`Cannot create workflow version with status other than draft`,
+          userFriendlyMessage: msg`Cannot create workflow version with status other than draft`,
         },
       );
     }
@@ -67,7 +67,7 @@ export class WorkflowVersionValidationWorkspaceService {
         'Cannot create multiple draft versions for the same workflow',
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: t`Cannot create multiple draft versions for the same workflow`,
+          userFriendlyMessage: msg`Cannot create multiple draft versions for the same workflow`,
         },
       );
     }
@@ -97,7 +97,7 @@ export class WorkflowVersionValidationWorkspaceService {
         'Cannot update workflow version status manually',
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: t`Cannot update workflow version status manually`,
+          userFriendlyMessage: msg`Cannot update workflow version status manually`,
         },
       );
     }
@@ -143,7 +143,7 @@ export class WorkflowVersionValidationWorkspaceService {
         'The initial version of a workflow can not be deleted',
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: t`The initial version of a workflow can not be deleted`,
+          userFriendlyMessage: msg`The initial version of a workflow can not be deleted`,
         },
       );
     }

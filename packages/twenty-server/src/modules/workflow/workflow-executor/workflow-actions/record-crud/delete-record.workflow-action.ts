@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
-import { isValidUuid, resolveInput } from 'twenty-shared/utils';
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
+import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import {
+  RecordCrudException,
+  RecordCrudExceptionCode,
+} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
+import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -16,18 +17,13 @@ import {
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import {
-  RecordCRUDActionException,
-  RecordCRUDActionExceptionCode,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
 import { isWorkflowDeleteRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-delete-record-action.guard';
 import { type WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
 @Injectable()
 export class DeleteRecordWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly deleteRecordService: DeleteRecordService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
@@ -58,69 +54,37 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       !isValidUuid(workflowActionInput.objectRecordId) ||
       !isDefined(workflowActionInput.objectName)
     ) {
-      throw new RecordCRUDActionException(
-        'Failed to update: Object record ID and name are required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      throw new RecordCrudException(
+        'Failed to delete: Object record ID and name are required',
+        RecordCrudExceptionCode.INVALID_REQUEST,
       );
     }
 
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
-      throw new RecordCRUDActionException(
+      throw new RecordCrudException(
         'Failed to delete: Workspace ID is required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+        RecordCrudExceptionCode.INVALID_REQUEST,
       );
     }
 
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        workflowActionInput.objectName,
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const { objectMetadataItemWithFieldsMaps } =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        workflowActionInput.objectName,
-        workspaceId,
-      );
-
-    if (
-      !canObjectBeManagedByWorkflow({
-        nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
-        isSystem: objectMetadataItemWithFieldsMaps.isSystem,
-      })
-    ) {
-      throw new RecordCRUDActionException(
-        'Failed to delete: Object cannot be deleted by workflow',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
-    const objectRecord = await repository.findOne({
-      where: {
-        id: workflowActionInput.objectRecordId,
-      },
+    const toolOutput = await this.deleteRecordService.execute({
+      objectName: workflowActionInput.objectName,
+      objectRecordId: workflowActionInput.objectRecordId,
+      workspaceId,
+      soft: true,
     });
 
-    if (!objectRecord) {
-      throw new RecordCRUDActionException(
-        `Failed to delete: Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
-        RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
+    if (!toolOutput.success) {
+      throw new RecordCrudException(
+        toolOutput.error || toolOutput.message,
+        RecordCrudExceptionCode.RECORD_DELETION_FAILED,
       );
     }
 
-    const columnsToReturnForSoftDelete: string[] = [];
-
-    await repository.softDelete(
-      workflowActionInput.objectRecordId,
-      undefined,
-      columnsToReturnForSoftDelete,
-    );
-
     return {
-      result: objectRecord,
+      result: toolOutput.result,
     };
   }
 }

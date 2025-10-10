@@ -4,12 +4,12 @@ import {
   type RecordGqlOperationFilter,
 } from '@/types';
 import {
-  isDefined,
   turnRecordFilterGroupsIntoGqlOperationFilter,
-  turnRecordFilterIntoRecordGqlOperationFilter,
   type RecordFilter,
   type RecordFilterGroup,
-} from '@/utils';
+} from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
+import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export const computeRecordGqlOperationFilter = ({
   fields,

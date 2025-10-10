@@ -9,6 +9,7 @@ import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphq
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DataloaderService } from 'src/engine/dataloaders/dataloader.service';
@@ -20,6 +21,7 @@ export const metadataModuleFactory = async (
   dataloaderService: DataloaderService,
   cacheStorageService: CacheStorageService,
   metricsService: MetricsService,
+  i18nService: I18nService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
@@ -39,6 +41,7 @@ export const metadataModuleFactory = async (
       useGraphQLErrorHandlerHook({
         metricsService: metricsService,
         exceptionHandlerService,
+        i18nService,
         twentyConfigService,
       }),
       useCachedMetadata({

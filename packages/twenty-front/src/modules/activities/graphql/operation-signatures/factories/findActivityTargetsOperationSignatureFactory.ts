@@ -4,21 +4,24 @@ import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectN
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 
-export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSignatureFactory =
-  ({
-    objectNameSingular,
-    objectMetadataItems,
-  }: {
-    objectNameSingular: CoreObjectNameSingular;
-    objectMetadataItems: ObjectMetadataItem[];
-  }) => ({
-    objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
-    variables: {},
-    fields: {
-      id: true,
-      __typename: true,
-      createdAt: true,
-      updatedAt: true,
-      ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
-    },
-  });
+type FindActivityTargetsOperationSignatureFactory = {
+  objectNameSingular: CoreObjectNameSingular;
+  objectMetadataItems: ObjectMetadataItem[];
+};
+
+export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSignatureFactory<
+  FindActivityTargetsOperationSignatureFactory
+> = ({
+  objectNameSingular,
+  objectMetadataItems,
+}: FindActivityTargetsOperationSignatureFactory) => ({
+  objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
+  variables: {},
+  fields: {
+    id: true,
+    __typename: true,
+    createdAt: true,
+    updatedAt: true,
+    ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
+  },
+});

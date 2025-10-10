@@ -58,8 +58,8 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     items: sourceObjectMetadataItem?.fields || [],
     searchQuery,
     getSearchableValues: (item) => [item.label, item.name],
-    // TODO: remove this once group by is supported for relation fields
-  }).filter((field) => !isFieldRelation(field));
+    // TODO: remove the relation filter once group by is supported for relation fields
+  }).filter((field) => !isFieldRelation(field) && !field.isSystem);
 
   const { getIcon } = useIcons();
 

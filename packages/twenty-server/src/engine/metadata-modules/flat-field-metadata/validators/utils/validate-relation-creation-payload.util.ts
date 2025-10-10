@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { type RelationCreationPayload } from 'twenty-shared/types';
 import {
   isDefined,
@@ -42,7 +42,7 @@ export const validateRelationCreationPayload = async ({
         error: {
           code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
           message: `Relation creation payload is invalid`,
-          userFriendlyMessage: t`Invalid relation creation payload`,
+          userFriendlyMessage: msg`Invalid relation creation payload`,
           value: relationCreationPayload,
         },
       };
@@ -62,7 +62,7 @@ export const validateRelationCreationPayload = async ({
       error: {
         code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
         message: `Object metadata relation target not found for relation creation payload`,
-        userFriendlyMessage: t`Object targeted by field to create not found`,
+        userFriendlyMessage: msg`Object targeted by field to create not found`,
         value: relationCreationPayload,
       },
     };

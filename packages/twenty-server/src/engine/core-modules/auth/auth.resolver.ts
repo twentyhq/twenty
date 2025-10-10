@@ -61,7 +61,6 @@ import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -75,6 +74,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginToken } from './dto/login-token.entity';
@@ -99,8 +99,6 @@ import { AuthService } from './services/auth.service';
 )
 export class AuthResolver {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(AppToken)
@@ -345,7 +343,7 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.findUserByEmailOrThrow(email);
 
     await this.twoFactorAuthenticationService.validateStrategy(
       user.id,
@@ -430,11 +428,9 @@ export class AuthResolver {
           })
         : undefined;
 
-    const existingUser = await this.userRepository.findOne({
-      where: {
-        email: signUpInput.email,
-      },
-    });
+    const existingUser = await this.userService.findUserByEmail(
+      signUpInput.email,
+    );
 
     const { userData } = this.authService.formatUserDataPayload(
       {
@@ -636,7 +632,7 @@ export class AuthResolver {
     email: string,
     workspaceId: string,
   ): Promise<{ user: User; userWorkspace: UserWorkspace }> {
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.findUserByEmailOrThrow(email);
 
     await this.authService.checkIsEmailVerified(user.isEmailVerified);
 

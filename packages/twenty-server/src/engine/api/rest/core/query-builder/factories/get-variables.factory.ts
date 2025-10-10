@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 import { EndingBeforeInputFactory } from 'src/engine/api/rest/input-factories/ending-before-input.factory';
@@ -29,7 +30,7 @@ export class GetVariablesFactory {
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     },
   ): QueryVariables {
-    if (id) {
+    if (isDefined(id)) {
       return { filter: { id: { eq: id } } };
     }
 

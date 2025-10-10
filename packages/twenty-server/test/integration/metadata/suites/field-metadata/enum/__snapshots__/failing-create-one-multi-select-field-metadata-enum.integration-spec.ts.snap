@@ -50,7 +50,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option id",
     },
-    "message": "Duplicated option id",
+    "message": "Duplicated option {field}",
     "name": "UserInputError",
   },
 ]
@@ -64,7 +64,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option position",
     },
-    "message": "Duplicated option position",
+    "message": "Duplicated option {field}",
     "name": "UserInputError",
   },
 ]
@@ -78,7 +78,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option value",
     },
-    "message": "Duplicated option value",
+    "message": "Duplicated option {field}",
     "name": "UserInputError",
   },
 ]
@@ -92,7 +92,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option value",
     },
-    "message": "Duplicated option value",
+    "message": "Duplicated option {field}",
     "name": "UserInputError",
   },
 ]
@@ -162,7 +162,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
-    "message": "Option label "" is beneath 1 character",
+    "message": "Option label "{sanitizedLabel}" is beneath 1 character",
     "name": "UserInputError",
   },
 ]
@@ -176,7 +176,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
-    "message": "Option value "" is beneath 1 character",
+    "message": "Option value "{sanitizedValue}" is beneath 1 character",
     "name": "UserInputError",
   },
 ]
@@ -218,7 +218,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
     },
-    "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+    "message": "Value must be in UPPER_CASE and follow snake_case "{sanitizedValue}"",
     "name": "UserInputError",
   },
 ]
@@ -287,7 +287,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "22222"",
     },
-    "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
+    "message": "Value must be in UPPER_CASE and follow snake_case "{sanitizedValue}"",
     "name": "UserInputError",
   },
 ]
@@ -385,7 +385,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
-    "message": "Option label "" is beneath 1 character",
+    "message": "Option label "{sanitizedLabel}" is beneath 1 character",
     "name": "UserInputError",
   },
 ]
@@ -399,7 +399,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
-    "message": "Option value "" is beneath 1 character",
+    "message": "Option value "{sanitizedValue}" is beneath 1 character",
     "name": "UserInputError",
   },
 ]
@@ -511,7 +511,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite Create should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
     },
-    "message": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
+    "message": "Default value "{defaultValue}" must be one of the option values",
     "name": "UserInputError",
   },
 ]

@@ -73,7 +73,6 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     aggregateOperation
     description
     filter
-    color
     format
     label
   }

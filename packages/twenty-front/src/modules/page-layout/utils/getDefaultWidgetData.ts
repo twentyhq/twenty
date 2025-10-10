@@ -135,7 +135,7 @@ export const getWidgetSize = (graphType: GraphType) => {
     case GraphType.PIE:
       return { w: 4, h: 4 };
     case GraphType.BAR:
-      return { w: 6, h: 4 };
+      return { w: 6, h: 6 };
     case GraphType.LINE:
       return { w: 6, h: 10 };
     default:

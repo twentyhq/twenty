@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
@@ -16,12 +17,12 @@ export const permissionGraphqlApiExceptionHandler = (
   switch (error.code) {
     case PermissionsExceptionCode.PERMISSION_DENIED:
       throw new ForbiddenError(error.message, {
-        userFriendlyMessage: 'User does not have permission.',
+        userFriendlyMessage: msg`User does not have permission.`,
         subCode: error.code,
       });
     case PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT:
       throw new ForbiddenError(error.message, {
-        userFriendlyMessage: 'No valid authentication context found.',
+        userFriendlyMessage: msg`No valid authentication context found.`,
         subCode: error.code,
       });
     case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:

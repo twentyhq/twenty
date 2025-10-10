@@ -7,6 +7,7 @@ import { type WorkspaceMigrationRouteTriggerActionV2 } from 'src/engine/workspac
 import { type WorkspaceMigrationServerlessFunctionActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-serverless-function-action-v2.type';
 import { type WorkspaceMigrationViewActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2.type';
 import { type WorkspaceMigrationViewFieldActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-field-action-v2.type';
+import { type WorkspaceMigrationViewFilterActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-filter-action-v2.type';
 
 export type WorkspaceMigrationActionV2 =
   | WorkspaceMigrationObjectActionV2
@@ -14,6 +15,7 @@ export type WorkspaceMigrationActionV2 =
   | WorkspaceMigrationIndexActionV2
   | WorkspaceMigrationViewActionV2
   | WorkspaceMigrationViewFieldActionV2
+  | WorkspaceMigrationViewFilterActionV2
   | WorkspaceMigrationServerlessFunctionActionV2
   | WorkspaceMigrationDatabaseEventTriggerActionV2
   | WorkspaceMigrationCronTriggerActionV2

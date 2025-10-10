@@ -1,3 +1,6 @@
+import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+
+//TODO : Refacto-common - Should be moved to common api layer
 export interface ObjectRecord {
   id: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,17 +40,6 @@ export enum OrderByDirection {
   AscNullsLast = 'AscNullsLast',
   DescNullsFirst = 'DescNullsFirst',
   DescNullsLast = 'DescNullsLast',
-}
-
-export enum ObjectRecordGroupByDateGranularity {
-  DAY = 'DAY',
-  MONTH = 'MONTH',
-  QUARTER = 'QUARTER',
-  YEAR = 'YEAR',
-  DAY_OF_THE_WEEK = 'DAY_OF_THE_WEEK',
-  QUARTER_OF_THE_YEAR = 'QUARTER_OF_THE_YEAR',
-  MONTH_OF_THE_YEAR = 'MONTH_OF_THE_YEAR',
-  NONE = 'NONE',
 }
 
 export type ObjectRecordOrderBy = Array<

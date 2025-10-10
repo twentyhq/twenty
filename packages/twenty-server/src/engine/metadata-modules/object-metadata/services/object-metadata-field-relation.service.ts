@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, Repository } from 'typeorm';
@@ -607,7 +608,7 @@ export class ObjectMetadataFieldRelationService {
           `Name "${name}" is not available.`,
           ObjectMetadataExceptionCode.NAME_CONFLICT,
           {
-            userFriendlyMessage: `Name "${name}" is not available.`,
+            userFriendlyMessage: msg`Name "${name}" is not available.`,
           },
         );
       }

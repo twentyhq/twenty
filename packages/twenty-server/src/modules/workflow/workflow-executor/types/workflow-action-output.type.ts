@@ -4,4 +4,5 @@ export type WorkflowActionOutput = {
   pendingEvent?: boolean;
   shouldEndWorkflowRun?: boolean;
   shouldRemainRunning?: boolean;
+  shouldSkipStepExecution?: boolean;
 };

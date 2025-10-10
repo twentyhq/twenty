@@ -19,19 +19,20 @@ export const extractFieldMetadataIdsFromWidget = (
       return [
         config.aggregateFieldMetadataId,
         config.groupByFieldMetadataIdX,
-        ...(isDefined(config.groupByFieldMetadataIdY)
-          ? [config.groupByFieldMetadataIdY]
-          : []),
-      ];
+        config.groupByFieldMetadataIdY,
+      ].filter(isDefined);
 
     case 'PieChartConfiguration':
-      return [config.aggregateFieldMetadataId, config.groupByFieldMetadataId];
+      return [
+        config.aggregateFieldMetadataId,
+        config.groupByFieldMetadataId,
+      ].filter(isDefined);
 
     case 'NumberChartConfiguration':
-      return [config.aggregateFieldMetadataId];
+      return [config.aggregateFieldMetadataId].filter(isDefined);
 
     case 'GaugeChartConfiguration':
-      return [config.aggregateFieldMetadataId];
+      return [config.aggregateFieldMetadataId].filter(isDefined);
 
     case 'IframeConfiguration':
       return [];

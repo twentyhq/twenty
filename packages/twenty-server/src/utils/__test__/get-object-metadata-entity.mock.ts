@@ -46,6 +46,7 @@ export const getMockObjectMetadataEntity = (
     targetRelationFields: [],
     standardOverrides: null,
     targetTableName: faker.string.uuid(),
+    views: [],
     ...overrides,
   };
 };

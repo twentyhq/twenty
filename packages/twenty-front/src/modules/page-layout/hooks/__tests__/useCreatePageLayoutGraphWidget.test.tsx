@@ -6,12 +6,14 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { GraphType, WidgetType } from '~/generated-metadata/graphql';
 import { PageLayoutType } from '~/generated/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mock-uuid'),
@@ -82,7 +84,9 @@ describe('useCreatePageLayoutGraphWidget', () => {
     });
 
     act(() => {
-      result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
+      result.current.createWidget.createPageLayoutGraphWidget({
+        graphType: GraphType.BAR,
+      });
     });
 
     expect(result.current.allWidgets).toHaveLength(1);
@@ -162,9 +166,28 @@ describe('useCreatePageLayoutGraphWidget', () => {
       GraphType.BAR,
     ];
 
+    const mockFieldSelections: Partial<
+      Record<GraphType, GraphWidgetFieldSelection>
+    > = {
+      [GraphType.NUMBER]: {
+        objectMetadataId: 'test-object-id',
+        aggregateFieldMetadataId: 'test-aggregate-field-id',
+      },
+      [GraphType.BAR]: {
+        objectMetadataId: 'test-object-id',
+        groupByFieldMetadataIdX: 'test-groupby-field-id',
+        aggregateFieldMetadataId: 'test-aggregate-field-id',
+      },
+    };
+
     graphTypes.forEach((graphType) => {
       act(() => {
-        result.current.createWidget.createPageLayoutGraphWidget(graphType);
+        const fieldSelection =
+          mockFieldSelections[graphType as keyof typeof mockFieldSelections];
+        result.current.createWidget.createPageLayoutGraphWidget({
+          graphType,
+          fieldSelection,
+        });
       });
     });
 
@@ -174,11 +197,14 @@ describe('useCreatePageLayoutGraphWidget', () => {
       const widget = result.current.allWidgets[index];
       expect(widget.type).toBe(WidgetType.GRAPH);
       expect(widget.pageLayoutTabId).toBe('tab-1');
-      expect(
-        widget.configuration && 'graphType' in widget.configuration
-          ? widget.configuration.graphType
-          : null,
-      ).toBe(graphType);
+
+      if (
+        isDefined(widget.configuration) &&
+        'graphType' in widget.configuration
+      ) {
+        expect(widget.configuration.graphType).toBe(graphType);
+      }
+
       expect(widget.id).toBe('mock-uuid');
     });
 
@@ -207,7 +233,9 @@ describe('useCreatePageLayoutGraphWidget', () => {
     );
 
     expect(() => {
-      result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
+      result.current.createWidget.createPageLayoutGraphWidget({
+        graphType: GraphType.BAR,
+      });
     }).toThrow('A tab must be selected to create a new graph widget');
   });
 });

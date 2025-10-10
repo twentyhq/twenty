@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 
@@ -145,7 +145,7 @@ export class WorkflowRunnerWorkspaceService {
         'Step is not a form',
         WorkflowVersionStepExceptionCode.INVALID_REQUEST,
         {
-          userFriendlyMessage: t`Step is not a form`,
+          userFriendlyMessage: msg`Step is not a form`,
         },
       );
     }

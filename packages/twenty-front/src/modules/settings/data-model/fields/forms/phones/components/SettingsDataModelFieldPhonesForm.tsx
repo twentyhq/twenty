@@ -4,6 +4,7 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { countryCodeToCallingCode } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
+import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
 import { Select } from '@/ui/input/components/Select';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { useLingui } from '@lingui/react/macro';
@@ -23,9 +24,11 @@ type SettingsDataModelFieldPhonesFormProps = {
   existingFieldMetadataId: string;
 };
 
-export const settingsDataModelFieldPhonesFormSchema = z.object({
-  defaultValue: phonesFieldDefaultValueSchema,
-});
+export const settingsDataModelFieldPhonesFormSchema = z
+  .object({
+    defaultValue: phonesFieldDefaultValueSchema,
+  })
+  .merge(settingsDataModelFieldMaxValuesSchema);
 
 export type SettingsDataModelFieldPhonesFormValues = z.infer<
   typeof settingsDataModelFieldPhonesFormSchema

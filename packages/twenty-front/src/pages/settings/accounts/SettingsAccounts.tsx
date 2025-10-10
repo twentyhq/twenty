@@ -1,8 +1,7 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountLoader } from '@/settings/accounts/components/SettingsAccountLoader';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
@@ -21,8 +20,10 @@ export const SettingsAccounts = () => {
   const { t } = useLingui();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const { objectMetadataItem } = useObjectMetadataItem({
+  const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
+    depth: 1,
+    shouldOnlyLoadRelationIdentifiers: false,
   });
 
   const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
@@ -32,7 +33,7 @@ export const SettingsAccounts = () => {
         eq: currentWorkspaceMember?.id,
       },
     },
-    recordGqlFields: generateDepthOneRecordGqlFields({ objectMetadataItem }),
+    recordGqlFields,
   });
 
   return (
