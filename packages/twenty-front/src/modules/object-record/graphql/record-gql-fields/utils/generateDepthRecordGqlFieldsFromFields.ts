@@ -48,7 +48,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
         const imageIdentifierFieldMetadataItem =
           getImageIdentifierFieldMetadataItem(targetObjectMetadataItem);
 
-        const relationIdentifierGqlFields = {
+        const relationIdentifierSubGqlFields = {
           id: true,
           ...(isDefined(labelIdentifierFieldMetadataItem)
             ? { [labelIdentifierFieldMetadataItem.name]: true }
@@ -64,7 +64,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
 
         return {
           ...recordGqlFields,
-          ...(depth === 1 ? relationIdentifierGqlFields : undefined),
+          ...(depth === 1
+            ? { [fieldMetadata.name]: relationIdentifierSubGqlFields }
+            : undefined),
           ...(relationType === RelationType.MANY_TO_ONE
             ? manyToOneGqlFields
             : undefined),
