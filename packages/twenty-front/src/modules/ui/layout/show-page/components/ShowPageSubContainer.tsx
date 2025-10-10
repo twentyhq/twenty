@@ -7,11 +7,11 @@ import { SummaryCard } from '@/object-record/record-show/components/SummaryCard'
 import { type RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import { getCardComponent } from '@/object-record/record-show/utils/getCardComponent';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { PageLayoutType } from '~/generated/graphql';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { PageLayoutType } from '~/generated/graphql';
 
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';

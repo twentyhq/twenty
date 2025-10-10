@@ -9,7 +9,7 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useRecoilValue } from 'recoil';
 
-const ORDERED_STANDARD_OBJECTS = [
+const ORDERED_STANDARD_OBJECTS: string[] = [
   CoreObjectNameSingular.Person,
   CoreObjectNameSingular.Company,
   CoreObjectNameSingular.Opportunity,

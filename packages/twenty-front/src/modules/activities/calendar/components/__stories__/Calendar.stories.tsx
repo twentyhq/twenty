@@ -6,8 +6,8 @@ import { CalendarEventsCard } from '@/activities/calendar/components/CalendarEve
 import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { PageLayoutType } from '~/generated/graphql';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { PageLayoutType } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
