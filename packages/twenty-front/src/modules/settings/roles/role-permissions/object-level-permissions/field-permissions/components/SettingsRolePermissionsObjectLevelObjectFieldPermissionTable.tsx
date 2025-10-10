@@ -1,8 +1,10 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow';
-import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow';
-import { FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/constants/FieldLevelPermissionTableGridTemplateColumns';
+import {
+  SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow,
+  StyledObjectFieldTableRow,
+} from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { type OrderBy } from '@/types/OrderBy';
@@ -11,7 +13,6 @@ import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableH
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -31,8 +32,8 @@ const StyledSearchInput = styled(SettingsTextInput)`
   width: 100%;
 `;
 
-const StyledObjectFieldTableRow = styled(TableRow)`
-  grid-auto-columns: ${FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS};
+const StyledDataTypeTableHeader = styled(TableHeader)`
+  gap: 0;
 `;
 
 export type SettingsRolePermissionsObjectLevelObjectFieldPermissionTableProps =
@@ -116,9 +117,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
             }
             initialSort={{ fieldName: 'label', orderBy: 'AscNullsFirst' }}
           />
-          <TableHeader>
+          <StyledDataTypeTableHeader>
             <TableHeaderText>{t`Data type`}</TableHeaderText>
-          </TableHeader>
+          </StyledDataTypeTableHeader>
           <>
             {shouldShowEmptyTableHeader && <TableHeader />}
             {shouldShowSeeTableHeader && (
