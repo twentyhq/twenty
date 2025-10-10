@@ -80,7 +80,9 @@ export const useLoadRecordIndexBoardColumn = ({
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
 
-  const recordGqlFields = useRecordsFieldVisibleGqlFields();
+  const recordGqlFields = useRecordsFieldVisibleGqlFields({
+    objectMetadataItem,
+  });
 
   const recordIndexKanbanFieldMetadataFilterValue = isDefined(
     recordGroupDefinition?.value,

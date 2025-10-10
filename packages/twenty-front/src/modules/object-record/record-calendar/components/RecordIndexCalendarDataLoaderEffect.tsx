@@ -38,7 +38,9 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
-  const recordGqlFields = useRecordsFieldVisibleGqlFields();
+  const recordGqlFields = useRecordsFieldVisibleGqlFields({
+    objectMetadataItem,
+  });
 
   const { records } = useFindManyRecords({
     ...params,

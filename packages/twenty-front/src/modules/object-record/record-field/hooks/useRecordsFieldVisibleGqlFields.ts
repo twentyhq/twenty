@@ -1,13 +1,24 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isDefined } from 'twenty-shared/utils';
 
-export const useRecordsFieldVisibleGqlFields = () => {
+type UseRecordsFieldVisibleGqlFields = {
+  objectMetadataItem: ObjectMetadataItem;
+};
+
+export const useRecordsFieldVisibleGqlFields = ({
+  objectMetadataItem,
+}: UseRecordsFieldVisibleGqlFields) => {
   const visibleRecordFields = useRecoilComponentValue(
     visibleRecordFieldsComponentSelector,
   );
@@ -35,8 +46,22 @@ export const useRecordsFieldVisibleGqlFields = () => {
     depth: 1,
   });
 
+  const labelIdentifierFieldMetadataItem =
+    getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+  const imageIdentifierFieldMetadataItem =
+    getImageIdentifierFieldMetadataItem(objectMetadataItem);
+
+  const hasPosition = hasObjectMetadataItemPositionField(objectMetadataItem);
+
   return {
     id: true,
+    ...(isDefined(labelIdentifierFieldMetadataItem)
+      ? { [labelIdentifierFieldMetadataItem.name]: true }
+      : {}),
+    ...(isDefined(imageIdentifierFieldMetadataItem)
+      ? { [imageIdentifierFieldMetadataItem.name]: true }
+      : {}),
+    ...(hasPosition ? { position: true } : {}),
     ...allDepthOneGqlFields,
     noteTargets: generateDepthRecordGqlFieldsFromObject({
       objectMetadataItem: noteTargetObjectMetadataItem,

@@ -1,3 +1,4 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
@@ -8,7 +9,13 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
-  const recordGqlFields = useRecordsFieldVisibleGqlFields();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const recordGqlFields = useRecordsFieldVisibleGqlFields({
+    objectMetadataItem,
+  });
 
   const { records, hasNextPage, queryIdentifier, loading } = useFindManyRecords(
     {

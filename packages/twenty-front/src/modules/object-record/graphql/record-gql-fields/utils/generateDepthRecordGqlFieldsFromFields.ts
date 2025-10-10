@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
@@ -44,13 +45,21 @@ export const generateDepthRecordGqlFieldsFromFields = ({
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(targetObjectMetadataItem);
 
+        const imageIdentifierFieldMetadataItem =
+          getImageIdentifierFieldMetadataItem(targetObjectMetadataItem);
+
         return {
           ...recordGqlFields,
           ...(depth === 1
             ? {
                 [`${fieldMetadata.name}`]: {
                   id: true,
-                  [labelIdentifierFieldMetadataItem?.name ?? 'name']: true,
+                  ...(isDefined(labelIdentifierFieldMetadataItem)
+                    ? { [labelIdentifierFieldMetadataItem.name]: true }
+                    : {}),
+                  ...(isDefined(imageIdentifierFieldMetadataItem)
+                    ? { [imageIdentifierFieldMetadataItem.name]: true }
+                    : {}),
                 },
               }
             : {}),
