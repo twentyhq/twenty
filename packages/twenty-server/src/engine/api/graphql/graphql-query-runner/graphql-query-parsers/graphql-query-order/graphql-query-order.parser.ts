@@ -434,7 +434,7 @@ export class GraphqlQueryOrderFieldParser {
       )
     ) {
       throw new UserInputError(
-        `You can only order by aggregated fields or fields that are in groupBy.`,
+        `Cannot order by a field that is not in groupBy or that is not an aggregate field: ${subFieldName}`,
       );
     }
 
@@ -464,7 +464,7 @@ export class GraphqlQueryOrderFieldParser {
 
     if (!isDefined(granularity)) {
       throw new UserInputError(
-        `Missing date granularity for field ${Object.keys(orderByArg)[0]}.`,
+        `Missing date granularity for field ${Object.keys(orderByArg)[0]}`,
       );
     }
 
@@ -476,7 +476,7 @@ export class GraphqlQueryOrderFieldParser {
 
     if (!isDefined(associatedGroupByField)) {
       throw new UserInputError(
-        `You can only order by date granularity that is in groupBy criteria.`,
+        `Cannot order by a date granularity that is not in groupBy criteria: ${granularity}`,
       );
     }
 
