@@ -35,6 +35,9 @@
           "buildType": "docker",
           "dockerfilePath": "packages/twenty-docker/twenty/Dockerfile",
           "dockerContext": ".",
+          "buildArguments": {
+            "REACT_APP_SERVER_BASE_URL": "{{SERVER_URL}}"
+          },
           "cpu": 0.5,
           "memory": 1,
           "minInstances": 1,
