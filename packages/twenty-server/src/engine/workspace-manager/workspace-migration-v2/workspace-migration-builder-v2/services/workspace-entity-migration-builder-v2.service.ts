@@ -4,11 +4,13 @@ import { Arrayable, type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import {
+  AllFlatEntityConfigurationByMetadataName,
   AllMetadataName,
   MetadataFlatEntityMaps,
   MetadataRelatedFlatEntityMaps,
@@ -41,9 +43,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
   private metadataName: T;
+  private flatEntityConfiguration: AllFlatEntityConfigurationByMetadataName[T]['configuration'];
 
   constructor(metadataName: T) {
     this.metadataName = metadataName;
+    this.flatEntityConfiguration = ALL_FLAT_ENTITY_CONFIGURATION[metadataName];
   }
 
   public async validateAndBuild({
