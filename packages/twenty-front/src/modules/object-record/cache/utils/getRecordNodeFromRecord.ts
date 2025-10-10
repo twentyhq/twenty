@@ -1,6 +1,7 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getFieldMetadataFromGqlField } from '@/object-record/cache/utils/getFieldMetadataFromGqlField';
 import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
