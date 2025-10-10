@@ -2,6 +2,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 import {
@@ -52,7 +53,13 @@ export const useCreatePageLayoutGraphWidget = (
 
   const createPageLayoutGraphWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (graphType: GraphType): PageLayoutWidget => {
+      ({
+        graphType,
+        fieldSelection,
+      }: {
+        graphType: GraphType;
+        fieldSelection?: GraphWidgetFieldSelection;
+      }): PageLayoutWidget => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 
         if (!isDefined(activeTabId)) {
@@ -101,6 +108,7 @@ export const useCreatePageLayoutGraphWidget = (
             rowSpan: position.h,
             columnSpan: position.w,
           },
+          fieldSelection,
         });
 
         const newLayout = {
