@@ -43,27 +43,26 @@ export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
 };
 
 export const perform = (z: ZObject, bundle: Bundle) => {
-  const items = bundle.cleanedRequest.items;
+  const data = {
+    record: bundle.cleanedRequest.record,
+    ...(bundle.cleanedRequest.updatedFields && {
+      updatedFields: bundle.cleanedRequest.updatedFields,
+    }),
+  };
+  if (data.record.createdAt) {
+    data.record.createdAt = data.record.createdAt + 'Z';
+  }
+  if (data.record.updatedAt) {
+    data.record.updatedAt = data.record.updatedAt + 'Z';
+  }
+  if (data.record.revokedAt) {
+    data.record.revokedAt = data.record.revokedAt + 'Z';
+  }
+  if (data.record.expiresAt) {
+    data.record.expiresAt = data.record.expiresAt + 'Z';
+  }
 
-  return items.map((item: any) => {
-    if (item.createdAt) {
-      item.createdAt = item.createdAt + 'Z';
-    }
-
-    if (item.updatedAt) {
-      item.updatedAt = item.updatedAt + 'Z';
-    }
-
-    if (item.revokedAt) {
-      item.revokedAt = item.revokedAt + 'Z';
-    }
-
-    if (item.expiresAt) {
-      item.expiresAt = item.expiresAt + 'Z';
-    }
-
-    return item;
-  });
+  return [data];
 };
 
 const getNamePluralFromNameSingular = async (
