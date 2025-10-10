@@ -102,6 +102,9 @@ export const formatDimensionValue = ({
         return String(value);
       }
       const numericValue = typeof value === 'number' ? value : Number(value);
+      if (isNaN(numericValue)) {
+        return String(value);
+      }
       return formatToShortNumber(numericValue);
     }
 

@@ -27,6 +27,14 @@ export const useLineChartTooltip = ({
   );
 
   const createSliceTooltipData = ({ slice }: SliceTooltipProps<LineSeries>) => {
+    if (!isDefined(slice.points) || slice.points.length === 0) {
+      return {
+        items: [],
+        showClickHint: false,
+        title: undefined,
+      };
+    }
+
     const tooltipItems = slice.points
       .map((point) => {
         const enrichedSeriesItem = enrichedSeriesMap.get(

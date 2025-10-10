@@ -106,7 +106,7 @@ export const getBarChartAxisConfigs = ({
       legendPosition: 'middle' as const,
       legendOffset: -50,
       format: (value: string | number) =>
-        truncateTickLabel(value, MAX_LEFT_AXIS_LABEL_LENGTH),
+        truncateTickLabel(String(value), MAX_LEFT_AXIS_LABEL_LENGTH),
     },
   };
 };

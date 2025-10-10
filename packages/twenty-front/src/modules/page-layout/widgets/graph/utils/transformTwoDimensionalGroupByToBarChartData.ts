@@ -84,6 +84,8 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       objectMetadataItem,
     });
 
+    if (!isDefined(aggregateValue)) return;
+
     xValues.add(xValue);
     yValues.add(yValue);
 
