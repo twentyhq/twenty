@@ -1,9 +1,7 @@
 import { RecordFieldList } from '@/object-record/record-field-list/components/RecordFieldList';
 import { type FieldCardConfiguration } from '@/object-record/record-show/types/CardConfiguration';
-import {
-  useLayoutRenderingContext,
-  useTargetRecord,
-} from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 
 type FieldsCardProps = {
   configuration?: FieldCardConfiguration;

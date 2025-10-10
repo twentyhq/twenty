@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { useTargetRecord } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 
 const StyledContainer = styled.div`
   display: flex;

@@ -42,7 +42,6 @@ export const evaluateTabVisibility = (
     return true;
   }
 
-  // Check feature flag requirements
   const featureNotEnabled =
     hide.ifFeaturesDisabled.length > 0 &&
     !hide.ifFeaturesDisabled.every((flagKey) => {
@@ -57,7 +56,6 @@ export const evaluateTabVisibility = (
     return true;
   }
 
-  // Check if required objects are inactive
   const requiredObjectInactive = hide.ifRequiredObjectsInactive.some(
     (requiredObjectName) => {
       const objectMetadataItem = objectMetadataItems.find(
@@ -71,7 +69,6 @@ export const evaluateTabVisibility = (
     return true;
   }
 
-  // Check if required relations are missing
   const relationMissing = hide.ifRelationsMissing.some((relationName) => {
     return !context.targetObjectMetadataItem.fields.some(
       (field) =>
