@@ -1,6 +1,7 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getFieldMetadataFromGqlField } from '@/object-record/cache/utils/getFieldMetadataFromGqlField';
 import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
@@ -48,11 +49,10 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           return undefined;
         }
 
-        const field =
-          objectMetadataItem.fields.find((field) => field.name === fieldName) ??
-          objectMetadataItem.fields.find(
-            (field) => field.settings?.joinColumnName === fieldName,
-          );
+        const field = getFieldMetadataFromGqlField({
+          objectMetadataItem,
+          gqlField: fieldName,
+        });
 
         if (isUndefined(field)) {
           return undefined;
