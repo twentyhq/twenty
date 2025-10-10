@@ -1,3 +1,4 @@
+import { AddSelectOptionMenuItem } from '@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -24,6 +25,7 @@ interface SelectInputProps {
   onClear?: () => void;
   clearLabel?: string;
   focusId: string;
+  onAddSelectOption?: (optionName: string) => void;
 }
 
 export const SelectInput = ({
@@ -34,6 +36,7 @@ export const SelectInput = ({
   onCancel,
   defaultOption,
   onFilterChange,
+  onAddSelectOption,
 }: SelectInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -144,6 +147,17 @@ export const SelectInput = ({
           );
         })}
       </DropdownMenuItemsContainer>
+      {onAddSelectOption && searchFilter && optionsToSelect.length === 0 && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer scrollable={false}>
+            <AddSelectOptionMenuItem
+              name={searchFilter}
+              onAddSelectOption={onAddSelectOption}
+            />
+          </DropdownMenuItemsContainer>
+        </>
+      )}
     </DropdownContent>
   );
 };

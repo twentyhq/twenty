@@ -4,7 +4,7 @@ import {
   type OnExecuteDoneHookResultOnNextHook,
   type Plugin,
 } from '@envelop/core';
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import {
   GraphQLError,
   Kind,
@@ -12,6 +12,7 @@ import {
   print,
 } from 'graphql';
 import semver from 'semver';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
@@ -23,6 +24,7 @@ import {
   convertGraphQLErrorToBaseGraphQLError,
   ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -45,6 +47,8 @@ type GraphQLErrorHandlerHookOptions = {
    * The exception handler service to use.
    */
   exceptionHandlerService: ExceptionHandlerService;
+
+  i18nService: I18nService;
 
   twentyConfigService: TwentyConfigService;
   /**
@@ -94,11 +98,6 @@ export const useGraphQLErrorHandlerHook = <
         rootOperation.name?.value ||
         'Anonymous Operation';
       const workspaceInfo = extractWorkspaceInfo(args.contextValue.req);
-
-      // eslint-disable-next-line no-console
-      console.log(
-        `[GQL Execute] Processing GQL query ${opName} on workspace ${workspaceInfo?.id}`,
-      );
 
       return {
         onExecuteDone(payload) {
@@ -206,6 +205,10 @@ export const useGraphQLErrorHandlerHook = <
             }
 
             // Step 3: Transform errors for GraphQL response (clean GraphQL errors)
+            const userLocale = args.contextValue.req.locale ?? SOURCE_LOCALE;
+            const i18n = options.i18nService.getI18nInstance(userLocale);
+            const defaultErrorMessage = msg`An error occurred.`;
+
             const transformedErrors = processedErrors.map((error) => {
               const graphqlError =
                 error instanceof BaseGraphQLError
@@ -213,12 +216,13 @@ export const useGraphQLErrorHandlerHook = <
                       ...error,
                       extensions: {
                         ...error.extensions,
-                        userFriendlyMessage:
+                        userFriendlyMessage: i18n._(
                           error.extensions.userFriendlyMessage ??
-                          t`An error occurred.`,
+                            defaultErrorMessage,
+                        ),
                       },
                     }
-                  : generateGraphQLErrorFromError(error);
+                  : generateGraphQLErrorFromError(error, i18n);
 
               if (error.eventId && eventIdKey) {
                 graphqlError.extensions = {
@@ -265,7 +269,7 @@ export const useGraphQLErrorHandlerHook = <
           });
           throw new GraphQLError(SCHEMA_MISMATCH_ERROR, {
             extensions: {
-              userFriendlyMessage: t`Your workspace has been updated with a new data model. Please refresh the page.`,
+              userFriendlyMessage: msg`Your workspace has been updated with a new data model. Please refresh the page.`,
             },
           });
         }
@@ -293,7 +297,7 @@ export const useGraphQLErrorHandlerHook = <
           throw new GraphQLError(APP_VERSION_MISMATCH_ERROR, {
             extensions: {
               code: APP_VERSION_MISMATCH_CODE,
-              userFriendlyMessage: t`Your app version is out of date. Please refresh the page to continue.`,
+              userFriendlyMessage: msg`Your app version is out of date. Please refresh the page to continue.`,
             },
           });
         }

@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
@@ -196,8 +197,7 @@ export class UserRoleService {
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         {
-          userFriendlyMessage:
-            'Your role in this workspace could not be found. Please contact your workspace administrator.',
+          userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
         },
       );
     }
@@ -235,8 +235,7 @@ export class UserRoleService {
         'User workspace not found',
         PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
         {
-          userFriendlyMessage:
-            'Your workspace membership could not be found. You may no longer have access to this workspace.',
+          userFriendlyMessage: msg`Your workspace membership could not be found. You may no longer have access to this workspace.`,
         },
       );
     }
@@ -252,8 +251,7 @@ export class UserRoleService {
         'Role not found',
         PermissionsExceptionCode.ROLE_NOT_FOUND,
         {
-          userFriendlyMessage:
-            'The role you are trying to assign could not be found. It may have been deleted.',
+          userFriendlyMessage: msg`The role you are trying to assign could not be found. It may have been deleted.`,
         },
       );
     }
@@ -263,8 +261,7 @@ export class UserRoleService {
         `Role "${role.label}" cannot be assigned to users`,
         PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
         {
-          userFriendlyMessage:
-            'This role cannot be assigned to users. Please select a different role.',
+          userFriendlyMessage: msg`This role cannot be assigned to users. Please select a different role.`,
         },
       );
     }
@@ -312,8 +309,7 @@ export class UserRoleService {
         PermissionsExceptionMessage.CANNOT_UNASSIGN_LAST_ADMIN,
         PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN,
         {
-          userFriendlyMessage:
-            'You cannot remove the admin role from the last administrator. Please assign another administrator first.',
+          userFriendlyMessage: msg`You cannot remove the admin role from the last administrator. Please assign another administrator first.`,
         },
       );
     }

@@ -25,6 +25,7 @@ import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metad
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 
 @Entity('fieldMetadata')
 @Check(
@@ -133,8 +134,7 @@ export class FieldMetadataEntity<
 
   @OneToOne(
     () => FieldMetadataEntity,
-    (fieldMetadata: FieldMetadataEntity) =>
-      fieldMetadata.relationTargetFieldMetadataId,
+    (fieldMetadata) => fieldMetadata.relationTargetFieldMetadataId,
     { nullable: true },
   )
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
@@ -151,8 +151,7 @@ export class FieldMetadataEntity<
 
   @ManyToOne(
     () => ObjectMetadataEntity,
-    (objectMetadata: ObjectMetadataEntity) =>
-      objectMetadata.targetRelationFields,
+    (objectMetadata) => objectMetadata.targetRelationFields,
     { onDelete: 'CASCADE', nullable: true },
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
@@ -170,8 +169,7 @@ export class FieldMetadataEntity<
 
   @OneToMany(
     () => IndexFieldMetadataEntity,
-    (indexFieldMetadata: IndexFieldMetadataEntity) =>
-      indexFieldMetadata.indexMetadata,
+    (indexFieldMetadata) => indexFieldMetadata.indexMetadata,
     {
       cascade: true,
     },
@@ -186,7 +184,10 @@ export class FieldMetadataEntity<
 
   @OneToMany(
     () => FieldPermissionEntity,
-    (fieldPermission: FieldPermissionEntity) => fieldPermission.fieldMetadata,
+    (fieldPermission) => fieldPermission.fieldMetadata,
   )
   fieldPermissions: Relation<FieldPermissionEntity[]>;
+
+  @OneToMany(() => ViewFieldEntity, (viewField) => viewField.fieldMetadata)
+  viewFields: Relation<ViewFieldEntity[]>;
 }

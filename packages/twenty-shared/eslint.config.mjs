@@ -26,6 +26,9 @@ export default [
   {
     ignores: [
       '**/node_modules/**',
+      'packages/twenty-shared/**/dist/**',
+      'packages/twenty-shared/vite.config.ts',
+      'packages/twenty-shared/scripts/**',
     ],
   },
 
@@ -50,6 +53,7 @@ export default [
       'no-duplicate-imports': 'error',
       'no-undef': 'off',
       'no-unused-vars': 'off',
+      'prettier/prettier': 'error',
 
       // Nx rules
       '@nx/enforce-module-boundaries': [

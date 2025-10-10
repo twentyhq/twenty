@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { GraphqlQueryGroupByResolverService } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/graphql-query-group-by-resolver.service';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { ProcessNestedRelationsV2Helper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations-v2.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
@@ -13,7 +14,6 @@ import { GraphqlQueryDestroyOneResolverService } from 'src/engine/api/graphql/gr
 import { GraphqlQueryFindDuplicatesResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-duplicates-resolver.service';
 import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
-import { GraphqlQueryGroupByResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-group-by-resolver.service';
 import { GraphqlQueryMergeManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-merge-many-resolver.service';
 import { GraphqlQueryRestoreManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-restore-many-resolver.service';
 import { GraphqlQueryRestoreOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-restore-one-resolver.service';
@@ -22,10 +22,12 @@ import { GraphqlQueryUpdateOneResolverService } from 'src/engine/api/graphql/gra
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
-import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { ViewFilterGroupModule } from 'src/engine/metadata-modules/view-filter-group/view-filter-group.module';
+import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
+import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 
 const graphqlQueryResolvers = [
   GraphqlQueryCreateManyResolverService,
@@ -53,7 +55,9 @@ const graphqlQueryResolvers = [
     TypeOrmModule.forFeature([RoleTargetsEntity]),
     UserRoleModule,
     ApiKeyModule,
-    CoreViewModule,
+    ViewModule,
+    ViewFilterModule,
+    ViewFilterGroupModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,

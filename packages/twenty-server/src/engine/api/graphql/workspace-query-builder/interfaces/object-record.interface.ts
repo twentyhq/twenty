@@ -1,3 +1,6 @@
+import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+
+//TODO : Refacto-common - Should be moved to common api layer
 export interface ObjectRecord {
   id: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,7 +16,9 @@ export type ObjectRecordFilter = Partial<{
 }>;
 
 export type ObjectRecordGroupBy = Array<
-  ObjectRecordGroupByForAtomicField | ObjectRecordGroupByForCompositeField
+  | ObjectRecordGroupByForAtomicField
+  | ObjectRecordGroupByForCompositeField
+  | ObjectRecordGroupByForDateField
 >;
 
 export type ObjectRecordGroupByForAtomicField = Partial<{
@@ -22,6 +27,12 @@ export type ObjectRecordGroupByForAtomicField = Partial<{
 
 export type ObjectRecordGroupByForCompositeField = Partial<{
   [Property in keyof ObjectRecord]: Record<string, boolean>;
+}>;
+
+export type ObjectRecordGroupByForDateField = Partial<{
+  [Property in keyof ObjectRecord]: {
+    granularity: ObjectRecordGroupByDateGranularity;
+  };
 }>;
 
 export enum OrderByDirection {

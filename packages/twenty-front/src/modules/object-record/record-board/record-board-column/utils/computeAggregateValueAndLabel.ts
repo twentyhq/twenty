@@ -31,6 +31,7 @@ export const computeAggregateValueAndLabel = ({
   timeZone,
   localeCatalog,
   formatNumberFn,
+  formatShortNumberFn,
 }: {
   data: AggregateRecordsData;
   objectMetadataItem: ObjectMetadataItem;
@@ -44,6 +45,7 @@ export const computeAggregateValueAndLabel = ({
     value: number,
     options?: Omit<FormatNumberOptions, 'format'>,
   ) => string;
+  formatShortNumberFn?: (value: number) => string | number;
 }) => {
   const formatNumber =
     formatNumberFn ??
@@ -95,7 +97,9 @@ export const computeAggregateValueAndLabel = ({
     switch (field.type) {
       case FieldMetadataType.CURRENCY: {
         value = Number(aggregateValue);
-        value = formatToShortNumber(value / 1_000_000);
+        value = isDefined(formatShortNumberFn)
+          ? formatShortNumberFn(value / 1_000_000)
+          : formatToShortNumber(value / 1_000_000);
         break;
       }
 

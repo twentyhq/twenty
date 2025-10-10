@@ -11,14 +11,12 @@ export const isExpectedSubFieldName = <
   subFieldName: PossibleSubFieldName,
   subFieldNameToCheck: string | null | undefined,
 ): subFieldNameToCheck is PossibleSubFieldName => {
-  const allowedSubFields = Object.values(COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[
-    fieldMetadataType
-  ]) as readonly string[];
+  const allowedSubFields = Object.values(
+    COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[fieldMetadataType],
+  ) as readonly string[];
 
   return (
     allowedSubFields.includes(subFieldName as string) &&
     subFieldName === subFieldNameToCheck
   );
 };
-
-
