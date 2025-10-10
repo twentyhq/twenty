@@ -32,10 +32,6 @@ const StyledSearchInput = styled(SettingsTextInput)`
   width: 100%;
 `;
 
-const StyledDataTypeTableHeader = styled(TableHeader)`
-  gap: 0;
-`;
-
 export type SettingsRolePermissionsObjectLevelObjectFieldPermissionTableProps =
   {
     objectMetadataItem: ObjectMetadataItem;
@@ -117,9 +113,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
             }
             initialSort={{ fieldName: 'label', orderBy: 'AscNullsFirst' }}
           />
-          <StyledDataTypeTableHeader>
+          <TableHeader>
             <TableHeaderText>{t`Data type`}</TableHeaderText>
-          </StyledDataTypeTableHeader>
+          </TableHeader>
           <>
             {shouldShowEmptyTableHeader && <TableHeader />}
             {shouldShowSeeTableHeader && (
