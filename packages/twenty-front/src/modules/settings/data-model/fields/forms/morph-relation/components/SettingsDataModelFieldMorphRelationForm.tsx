@@ -10,19 +10,71 @@ import { useMorphRelationSettingsFormInitialTargetMetadatas } from '@/settings/d
 import { fieldMetadataItemDisableFieldEdition } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemDisableFieldEdition';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import {
-  RELATION_TYPE_OPTIONS,
-  StyledInputsContainer,
-  StyledInputsLabel,
-  StyledSelectsContainer,
-} from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
+
+import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
+
+export const settingsDataModelFieldRelationFormSchema = z.object({
+  relation: z.object({
+    field: fieldMetadataItemSchema()
+      .pick({
+        icon: true,
+        label: true,
+      })
+      // NOT SURE IF THIS IS CORRECT
+      .extend(
+        fieldMetadataItemSchema()
+          .pick({
+            name: true,
+            isLabelSyncedWithName: true,
+          })
+          .partial().shape,
+      ),
+    objectMetadataId: z.uuid(),
+    type: z.enum(
+      Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
+    ),
+  }),
+});
+
+export type SettingsDataModelFieldRelationFormValues = z.infer<
+  typeof settingsDataModelFieldRelationFormSchema
+>;
+
+export const StyledSelectsContainer = styled.div<{ isMobile: boolean }>`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing(4)};
+  grid-template-columns: ${({ isMobile }) => (isMobile ? '1fr' : '1fr 1fr')};
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
+export const StyledInputsLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  display: block;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
+export const StyledInputsContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+`;
+
+export const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES).map(
+  ([value, { label, Icon }]) => ({
+    label,
+    value: value as RelationType,
+    Icon,
+  }),
+);
 
 export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   morphRelationObjectMetadataIds: z.array(z.uuid()).min(1),

@@ -21,8 +21,7 @@ import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fi
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
 import { settingsDataModelFieldPhonesFormSchema } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
 import { SettingsDataModelFieldPhonesSettingsFormCard } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesSettingsFormCard';
-import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
-import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
+
 import {
   settingsDataModelFieldMultiSelectFormSchema,
   settingsDataModelFieldSelectFormSchema,
@@ -30,12 +29,8 @@ import {
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useFormContext } from 'react-hook-form';
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 const isUniqueFieldFormSchema = z.object({
@@ -59,10 +54,6 @@ const dateTimeFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.DATE_TIME) })
   .extend(settingsDataModelFieldDateFormSchema.shape)
   .extend(isUniqueFieldFormSchema.shape);
-
-const relationFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.RELATION) })
-  .extend(settingsDataModelFieldRelationFormSchema.shape);
 
 // todo @guillim : remove this once we have a proper morph relation form
 const morphRelationFieldFormSchema = z
@@ -128,7 +119,6 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     currencyFieldFormSchema,
     dateFieldFormSchema,
     dateTimeFieldFormSchema,
-    relationFieldFormSchema,
     morphRelationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,
@@ -175,9 +165,9 @@ export const SettingsDataModelFieldSettingsFormCard = ({
 }: SettingsDataModelFieldSettingsFormCardProps) => {
   const { watch } = useFormContext<SettingsDataModelFieldEditFormValues>();
 
-  const isMorphRelationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
-  );
+  // const isMorphRelationEnabled = useIsFeatureEnabled(
+  //   FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
+  // );
   if (!previewableTypes.includes(fieldType)) {
     return null;
   }
@@ -214,15 +204,14 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   }
 
   if (fieldType === FieldMetadataType.RELATION) {
-    if (!isMorphRelationEnabled) {
-      return (
-        <SettingsDataModelFieldRelationSettingsFormCard
-          existingFieldMetadataId={existingFieldMetadataId}
-          objectNameSingular={objectNameSingular}
-        />
-      );
-    }
-
+    // if (!isMorphRelationEnabled) {
+    //   return (
+    //     <SettingsDataModelFieldRelationSettingsFormCard
+    //       existingFieldMetadataId={existingFieldMetadataId}
+    //       objectNameSingular={objectNameSingular}
+    //     />
+    //   );
+    // }
     return (
       <SettingsDataModelFieldMorphRelationFormCard
         existingFieldMetadataId={existingFieldMetadataId}
