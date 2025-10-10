@@ -283,6 +283,7 @@ const FieldActorSourceSchema = z.union([
   z.literal('SYSTEM'),
   z.literal('WORKFLOW'),
   z.literal('WEBHOOK'),
+  z.literal('AGENT'),
 ]);
 
 export const FieldActorValueSchema = z.object({

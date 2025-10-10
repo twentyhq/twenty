@@ -25,11 +25,12 @@ const StyledContent = styled.div`
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
-  const { hasAccess, restriction } = useWidgetPermissions(widget);
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
+
+  const { hasAccess, restriction } = useWidgetPermissions(widget);
 
   return (
     <WidgetContainer isRestricted={!hasAccess}>
@@ -37,7 +38,10 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         isInEditMode={isPageLayoutInEditMode}
         title={widget.title}
         onEdit={() =>
-          handleEditWidget({ widgetId: widget.id, widgetType: widget.type })
+          handleEditWidget({
+            widgetId: widget.id,
+            widgetType: widget.type,
+          })
         }
         onRemove={() => deletePageLayoutWidget(widget.id)}
       />

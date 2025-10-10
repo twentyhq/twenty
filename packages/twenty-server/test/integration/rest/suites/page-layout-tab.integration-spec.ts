@@ -78,7 +78,7 @@ describe('Page Layout Tab REST API', () => {
     await cleanupPageLayoutTabRecords();
   });
 
-  describe('GET /rest/metadata/page-layout-tabs', () => {
+  describe('GET /rest/metadata/pageLayoutTabs', () => {
     it('should return page layout tabs filtered by pageLayoutId', async () => {
       const input1 = {
         title: 'Tab 1',
@@ -96,7 +96,7 @@ describe('Page Layout Tab REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layout-tabs?pageLayoutId=${testPageLayoutId}`,
+        path: `/metadata/pageLayoutTabs?pageLayoutId=${testPageLayoutId}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -111,7 +111,7 @@ describe('Page Layout Tab REST API', () => {
     it('should return empty array when no page layout tabs match pageLayoutId', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layout-tabs?pageLayoutId=${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
+        path: `/metadata/pageLayoutTabs?pageLayoutId=${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -123,7 +123,7 @@ describe('Page Layout Tab REST API', () => {
     it('should return error when pageLayoutId is missing', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: '/metadata/page-layout-tabs',
+        path: '/metadata/pageLayoutTabs',
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -137,7 +137,7 @@ describe('Page Layout Tab REST API', () => {
     });
   });
 
-  describe('POST /rest/metadata/page-layout-tabs', () => {
+  describe('POST /rest/metadata/pageLayoutTabs', () => {
     it('should create a new page layout tab with all properties', async () => {
       const input = {
         title: 'Test Tab',
@@ -180,7 +180,7 @@ describe('Page Layout Tab REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'post',
-        path: '/metadata/page-layout-tabs',
+        path: '/metadata/pageLayoutTabs',
         body: pageLayoutTabData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -202,7 +202,7 @@ describe('Page Layout Tab REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'post',
-        path: '/metadata/page-layout-tabs',
+        path: '/metadata/pageLayoutTabs',
         body: pageLayoutTabData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -211,7 +211,7 @@ describe('Page Layout Tab REST API', () => {
     });
   });
 
-  describe('GET /rest/metadata/page-layout-tabs/:id', () => {
+  describe('GET /rest/metadata/pageLayoutTabs/:id', () => {
     it('should return a page layout tab by id', async () => {
       const input = {
         title: 'Tab',
@@ -222,7 +222,7 @@ describe('Page Layout Tab REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layout-tabs/${pageLayoutTab.id}`,
+        path: `/metadata/pageLayoutTabs/${pageLayoutTab.id}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -238,7 +238,7 @@ describe('Page Layout Tab REST API', () => {
     it('should return error for non-existent page layout tab', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layout-tabs/${TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID}`,
+        path: `/metadata/pageLayoutTabs/${TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -253,7 +253,7 @@ describe('Page Layout Tab REST API', () => {
     });
   });
 
-  describe('PATCH /rest/metadata/page-layout-tabs/:id', () => {
+  describe('PATCH /rest/metadata/pageLayoutTabs/:id', () => {
     it('should update an existing page layout tab', async () => {
       const input = {
         title: 'Test Tab for Update',
@@ -269,7 +269,7 @@ describe('Page Layout Tab REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'patch',
-        path: `/metadata/page-layout-tabs/${pageLayoutTab.id}`,
+        path: `/metadata/pageLayoutTabs/${pageLayoutTab.id}`,
         body: updateData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -299,7 +299,7 @@ describe('Page Layout Tab REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'patch',
-        path: `/metadata/page-layout-tabs/${pageLayoutTab.id}`,
+        path: `/metadata/pageLayoutTabs/${pageLayoutTab.id}`,
         body: updateData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -323,7 +323,7 @@ describe('Page Layout Tab REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'patch',
-        path: `/metadata/page-layout-tabs/${TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID}`,
+        path: `/metadata/pageLayoutTabs/${TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID}`,
         body: updateData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -339,7 +339,7 @@ describe('Page Layout Tab REST API', () => {
     });
   });
 
-  describe('DELETE /rest/metadata/page-layout-tabs/:id', () => {
+  describe('DELETE /rest/metadata/pageLayoutTabs/:id', () => {
     it('should delete an existing page layout tab', async () => {
       const pageLayoutTabTitle = generateRecordName('Test Tab for Delete');
       const pageLayoutTab = await createTestPageLayoutTabWithRestApi({
@@ -350,7 +350,7 @@ describe('Page Layout Tab REST API', () => {
 
       const deleteResponse = await makeRestAPIRequest({
         method: 'delete',
-        path: `/metadata/page-layout-tabs/${pageLayoutTab.id}`,
+        path: `/metadata/pageLayoutTabs/${pageLayoutTab.id}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -359,7 +359,7 @@ describe('Page Layout Tab REST API', () => {
 
       const getResponse = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layout-tabs/${pageLayoutTab.id}`,
+        path: `/metadata/pageLayoutTabs/${pageLayoutTab.id}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -376,7 +376,7 @@ describe('Page Layout Tab REST API', () => {
     it('should return error when deleting non-existent page layout tab', async () => {
       const response = await makeRestAPIRequest({
         method: 'delete',
-        path: `/metadata/page-layout-tabs/${TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID}`,
+        path: `/metadata/pageLayoutTabs/${TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 

@@ -1,4 +1,5 @@
-import { t } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -8,7 +9,7 @@ export class ViewFieldException extends CustomException {
   constructor(
     message: string,
     code: ViewFieldExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, { userFriendlyMessage });
   }
@@ -52,15 +53,15 @@ export const generateViewFieldExceptionMessage = (
 
 export const generateViewFieldUserFriendlyExceptionMessage = (
   key: ViewFieldExceptionMessageKey,
-) => {
+): MessageDescriptor | undefined => {
   switch (key) {
     case ViewFieldExceptionMessageKey.WORKSPACE_ID_REQUIRED:
-      return t`WorkspaceId is required to create a view field.`;
+      return msg`WorkspaceId is required to create a view field.`;
     case ViewFieldExceptionMessageKey.VIEW_ID_REQUIRED:
-      return t`ViewId is required to create a view field.`;
+      return msg`ViewId is required to create a view field.`;
     case ViewFieldExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
-      return t`FieldMetadataId is required to create a view field.`;
+      return msg`FieldMetadataId is required to create a view field.`;
     case ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS:
-      return t`View field already exists.`;
+      return msg`View field already exists.`;
   }
 };
