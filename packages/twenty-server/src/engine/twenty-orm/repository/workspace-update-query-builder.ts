@@ -29,6 +29,7 @@ import { type WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repo
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { formatMutationBatchEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-mutation-batch-event-to-database-batch-event.util';
 
 export class WorkspaceUpdateQueryBuilder<
   T extends ObjectLiteral,
@@ -152,23 +153,27 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext.objectMetadataMaps,
       );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPDATED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedAfter,
-        beforeEntities: formattedBefore,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatMutationBatchEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPDATED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          beforeEntities: formattedBefore,
+          authContext: this.authContext,
+        }),
+      );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPSERTED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedAfter,
-        beforeEntities: formattedBefore,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatMutationBatchEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPSERTED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          beforeEntities: formattedBefore,
+          authContext: this.authContext,
+        }),
+      );
 
       const formattedResult = formatResult<T[]>(
         result.raw,
@@ -293,23 +298,27 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext.objectMetadataMaps,
       );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPDATED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedAfter,
-        beforeEntities: formattedBefore,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatMutationBatchEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPDATED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          beforeEntities: formattedBefore,
+          authContext: this.authContext,
+        }),
+      );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPSERTED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedAfter,
-        beforeEntities: formattedBefore,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatMutationBatchEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPSERTED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          beforeEntities: formattedBefore,
+          authContext: this.authContext,
+        }),
+      );
 
       const formattedResults = formatResult<T[]>(
         results.flatMap((result) => result.raw),
