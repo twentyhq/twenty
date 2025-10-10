@@ -16,6 +16,14 @@ export class ApplicationService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
+  async findManyApplications(
+    workspaceId: string,
+  ): Promise<ApplicationEntity[]> {
+    return this.applicationRepository.find({
+      where: { workspaceId },
+    });
+  }
+
   async findById(id: string): Promise<ApplicationEntity | null> {
     return this.applicationRepository.findOne({
       where: { id },

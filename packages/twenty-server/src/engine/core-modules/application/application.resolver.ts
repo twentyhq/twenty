@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -8,6 +8,9 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { DeleteApplicationInput } from 'src/engine/core-modules/application/dtos/deleteApplication.input';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
@@ -16,6 +19,12 @@ export class ApplicationResolver {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
   ) {}
+
+  @Query(() => [ApplicationDTO])
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  async findManyApplications(@AuthWorkspace() { id: workspaceId }: Workspace) {
+    return this.applicationService.findManyApplications(workspaceId);
+  }
 
   @Mutation(() => Boolean)
   async syncApplication(

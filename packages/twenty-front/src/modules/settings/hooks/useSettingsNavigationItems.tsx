@@ -26,6 +26,7 @@ import {
   IconServer,
   IconSettings,
   IconSparkles,
+  IconPuzzle2,
   IconUserCircle,
   IconUsers,
   IconWorld,
@@ -156,6 +157,14 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
+          isHidden:
+            !isAIEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+          isNew: true,
+        },
+        {
+          label: t`Applications`,
+          path: SettingsPath.Applications,
+          Icon: IconPuzzle2,
           isHidden:
             !isAIEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
           isNew: true,

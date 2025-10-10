@@ -200,6 +200,14 @@ export type AppTokenEdge = {
   node: AppToken;
 };
 
+export type Application = {
+  __typename?: 'Application';
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  universalIdentifier?: Maybe<Scalars['UUID']>;
+};
+
 export type ApprovedAccessDomain = {
   __typename?: 'ApprovedAccessDomain';
   createdAt: Scalars['DateTime'];
@@ -1226,6 +1234,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
   IS_CALENDAR_VIEW_ENABLED = 'IS_CALENDAR_VIEW_ENABLED',
   IS_COMMON_API_ENABLED = 'IS_COMMON_API_ENABLED',
   IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
@@ -3071,6 +3080,7 @@ export type Query = {
   findAgentHandoffs: Array<AgentHandoffDto>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
+  findManyApplications: Array<Application>;
   findManyCronTriggers: Array<CronTrigger>;
   findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
   findManyPublicDomains: Array<PublicDomain>;
@@ -4757,6 +4767,13 @@ export type TrackAnalyticsMutationVariables = Exact<{
 
 export type TrackAnalyticsMutation = { __typename?: 'Mutation', trackAnalytics: { __typename?: 'Analytics', success: boolean } };
 
+export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string };
+
+export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindManyApplicationsQuery = { __typename?: 'Query', findManyApplications: Array<{ __typename?: 'Application', id: string, name: string, description: string }> };
+
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
@@ -6107,6 +6124,13 @@ export const AgentFieldsFragmentDoc = gql`
   updatedAt
 }
     `;
+export const ApplicationFieldsFragmentDoc = gql`
+    fragment ApplicationFields on Application {
+  id
+  name
+  description
+}
+    `;
 export const AuthTokenFragmentFragmentDoc = gql`
     fragment AuthTokenFragment on AuthToken {
   token
@@ -7144,6 +7168,40 @@ export function useTrackAnalyticsMutation(baseOptions?: Apollo.MutationHookOptio
 export type TrackAnalyticsMutationHookResult = ReturnType<typeof useTrackAnalyticsMutation>;
 export type TrackAnalyticsMutationResult = Apollo.MutationResult<TrackAnalyticsMutation>;
 export type TrackAnalyticsMutationOptions = Apollo.BaseMutationOptions<TrackAnalyticsMutation, TrackAnalyticsMutationVariables>;
+export const FindManyApplicationsDocument = gql`
+    query FindManyApplications {
+  findManyApplications {
+    ...ApplicationFields
+  }
+}
+    ${ApplicationFieldsFragmentDoc}`;
+
+/**
+ * __useFindManyApplicationsQuery__
+ *
+ * To run a query within a React component, call `useFindManyApplicationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindManyApplicationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindManyApplicationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindManyApplicationsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyApplicationsQuery, FindManyApplicationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindManyApplicationsQuery, FindManyApplicationsQueryVariables>(FindManyApplicationsDocument, options);
+      }
+export function useFindManyApplicationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyApplicationsQuery, FindManyApplicationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindManyApplicationsQuery, FindManyApplicationsQueryVariables>(FindManyApplicationsDocument, options);
+        }
+export type FindManyApplicationsQueryHookResult = ReturnType<typeof useFindManyApplicationsQuery>;
+export type FindManyApplicationsLazyQueryHookResult = ReturnType<typeof useFindManyApplicationsLazyQuery>;
+export type FindManyApplicationsQueryResult = Apollo.QueryResult<FindManyApplicationsQuery, FindManyApplicationsQueryVariables>;
 export const UploadFileDocument = gql`
     mutation uploadFile($file: Upload!, $fileFolder: FileFolder) {
   uploadFile(file: $file, fileFolder: $fileFolder) {

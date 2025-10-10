@@ -32,6 +32,8 @@ export enum SettingsPath {
   AI = 'ai',
   AINewAgent = 'ai/new-agent',
   AIAgentDetail = 'ai/agents/:agentId',
+  Applications = 'applications',
+  ApplicationDetail = 'applications/:applicationId',
   ApiWebhooks = 'api-webhooks',
   RestPlayground = 'playground/rest/:schema',
   GraphQLPlayground = 'playground/graphql/:schema',
