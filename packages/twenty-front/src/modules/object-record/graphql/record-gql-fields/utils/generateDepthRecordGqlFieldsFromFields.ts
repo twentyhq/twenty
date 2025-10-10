@@ -13,12 +13,14 @@ export type GenerateDepthRecordGqlFieldsFromFields = {
     'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
   >[];
   depth: 0 | 1;
+  shouldOnlyLoadRelationIdentifiers?: boolean;
 };
 
 export const generateDepthRecordGqlFieldsFromFields = ({
   objectMetadataItems,
   fields,
   depth,
+  shouldOnlyLoadRelationIdentifiers = true,
 }: GenerateDepthRecordGqlFieldsFromFields) => {
   const generatedRecordGqlFields: RecordGqlFields = fields.reduce(
     (recordGqlFields, fieldMetadata) => {
@@ -64,8 +66,11 @@ export const generateDepthRecordGqlFieldsFromFields = ({
 
         return {
           ...recordGqlFields,
-          ...(depth === 1
+          ...(depth === 1 && shouldOnlyLoadRelationIdentifiers
             ? { [fieldMetadata.name]: relationIdentifierSubGqlFields }
+            : undefined),
+          ...(depth === 1 && !shouldOnlyLoadRelationIdentifiers
+            ? { [fieldMetadata.name]: true }
             : undefined),
           ...(relationType === RelationType.MANY_TO_ONE
             ? manyToOneGqlFields

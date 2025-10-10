@@ -87,7 +87,7 @@ export const useLoadRecordIndexBoardColumn = ({
 
   const recordGqlFields = useRecordsFieldVisibleGqlFields({
     objectMetadataItem,
-    recordGroupFieldMetadataId: recordGroupFieldMetadata?.id,
+    additionalFieldMetadataId: recordGroupFieldMetadata?.id,
   });
 
   const recordIndexKanbanFieldMetadataFilterValue = isDefined(

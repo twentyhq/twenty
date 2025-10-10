@@ -5,16 +5,19 @@ export type GenerateDepthRecordGqlFields = {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   depth: 0 | 1;
+  shouldOnlyLoadRelationIdentifiers?: boolean;
 };
 
 export const generateDepthRecordGqlFieldsFromObject = ({
   objectMetadataItems,
   objectMetadataItem,
   depth,
+  shouldOnlyLoadRelationIdentifiers = true,
 }: GenerateDepthRecordGqlFields) => {
   return generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
     fields: objectMetadataItem.fields,
     depth,
+    shouldOnlyLoadRelationIdentifiers,
   });
 };

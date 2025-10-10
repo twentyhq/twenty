@@ -23,6 +23,7 @@ export const SettingsAccounts = () => {
   const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
     depth: 1,
+    shouldOnlyLoadRelationIdentifiers: false,
   });
 
   const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({

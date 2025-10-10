@@ -5,11 +5,13 @@ import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/
 export type GenerateDepthRecordGqlFieldsFromObjectData = {
   objectNameSingular: string;
   depth: 0 | 1;
+  shouldOnlyLoadRelationIdentifiers?: boolean;
 };
 
 export const useGenerateDepthRecordGqlFieldsFromObject = ({
   objectNameSingular,
   depth,
+  shouldOnlyLoadRelationIdentifiers = true,
 }: GenerateDepthRecordGqlFieldsFromObjectData) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -22,6 +24,7 @@ export const useGenerateDepthRecordGqlFieldsFromObject = ({
       objectMetadataItems,
       objectMetadataItem,
       depth,
+      shouldOnlyLoadRelationIdentifiers,
     }),
   };
 };
