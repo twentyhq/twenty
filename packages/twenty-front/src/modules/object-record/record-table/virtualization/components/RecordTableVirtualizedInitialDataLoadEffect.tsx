@@ -5,9 +5,11 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { isInitializingVirtualTableDataLoadingComponentState } from '@/object-record/record-table/virtualization/states/isInitializingVirtualTableDataLoadingComponentState';
+import { lastContextStoreVirtualizedViewIdComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedViewIdComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useEffect } from 'react';
 
 // TODO: see if we can merge the initial and load more processes, to have only one load at scroll index effect
@@ -30,13 +32,24 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const { triggerInitialRecordTableDataLoad } =
     useTriggerInitialRecordTableDataLoad();
 
+  const [
+    lastContextStoreVirtualizedViewId,
+    setLastContextStoreVirtualizedViewId,
+  ] = useRecoilComponentState(lastContextStoreVirtualizedViewIdComponentState);
+
+  const { currentView } = useGetCurrentViewOnly();
+
   useEffect(() => {
     if (isInitializingVirtualTableDataLoading) {
       return;
     }
 
     (async () => {
-      if (
+      if (currentView?.id !== lastContextStoreVirtualizedViewId) {
+        setLastContextStoreVirtualizedViewId(currentView?.id ?? null);
+
+        await triggerInitialRecordTableDataLoad();
+      } else if (
         queryIdentifier !== lastRecordTableQueryIdentifier &&
         !isFetchingMoreRecords
       ) {
@@ -52,6 +65,9 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     setLastRecordTableQueryIdentifier,
     isFetchingMoreRecords,
     isInitializingVirtualTableDataLoading,
+    currentView,
+    lastContextStoreVirtualizedViewId,
+    setLastContextStoreVirtualizedViewId,
   ]);
 
   return <></>;
