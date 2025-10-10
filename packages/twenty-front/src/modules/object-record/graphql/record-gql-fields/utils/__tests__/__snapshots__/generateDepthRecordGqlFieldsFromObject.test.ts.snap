@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record gql fields from object 1`] = `
+{
+  "accountOwner": {
+    "avatarUrl": true,
+    "id": true,
+    "name": true,
+  },
+  "accountOwnerId": true,
+  "address": true,
+  "annualRecurringRevenue": true,
+  "attachments": {
+    "id": true,
+    "name": true,
+  },
+  "createdAt": true,
+  "createdBy": true,
+  "deletedAt": true,
+  "domainName": true,
+  "employees": true,
+  "favorites": {
+    "id": true,
+  },
+  "id": true,
+  "idealCustomerProfile": true,
+  "introVideo": true,
+  "linkedinLink": true,
+  "name": true,
+  "noteTargets": {
+    "id": true,
+  },
+  "opportunities": {
+    "id": true,
+    "name": true,
+  },
+  "people": {
+    "avatarUrl": true,
+    "id": true,
+    "name": true,
+  },
+  "position": true,
+  "searchVector": true,
+  "tagline": true,
+  "taskTargets": {
+    "id": true,
+  },
+  "timelineActivities": {
+    "id": true,
+  },
+  "updatedAt": true,
+  "visaSponsorship": true,
+  "workPolicy": true,
+  "xLink": true,
+}
+`;
+
+exports[`generateDepthRecordGqlFieldsFromObject should generate depth zero record gql fields from object 1`] = `
+{
+  "accountOwnerId": true,
+  "address": true,
+  "annualRecurringRevenue": true,
+  "createdAt": true,
+  "createdBy": true,
+  "deletedAt": true,
+  "domainName": true,
+  "employees": true,
+  "id": true,
+  "idealCustomerProfile": true,
+  "introVideo": true,
+  "linkedinLink": true,
+  "name": true,
+  "position": true,
+  "searchVector": true,
+  "tagline": true,
+  "updatedAt": true,
+  "visaSponsorship": true,
+  "workPolicy": true,
+  "xLink": true,
+}
+`;
