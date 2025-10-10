@@ -1,16 +1,16 @@
-import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
+import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
-
 export const computePossibleMorphGqlFieldForFieldName = ({
-  morphRelations,
-  fieldName,
+  fieldMetadata,
 }: {
-  morphRelations: FieldMetadataItemRelation[];
-  fieldName: string;
+  fieldMetadata: Pick<
+    FieldMorphRelationMetadata,
+    'morphRelations' | 'fieldName'
+  >;
 }) =>
-  morphRelations.map((morphRelation) => {
+  fieldMetadata.morphRelations.map((morphRelation) => {
     return computeMorphRelationFieldName({
-      fieldName,
+      fieldName: fieldMetadata.fieldName,
       relationType: morphRelation.type,
       targetObjectMetadataNameSingular:
         morphRelation.targetObjectMetadata.nameSingular,

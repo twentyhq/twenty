@@ -19,8 +19,10 @@ export const getFieldMetadataFromGqlField = ({
       if (!morphRelations) return false;
       const possibleMorphRelationsNames =
         computePossibleMorphGqlFieldForFieldName({
-          morphRelations,
-          fieldName: field.name,
+          fieldMetadata: {
+            morphRelations: field.morphRelations ?? [],
+            fieldName: field.name,
+          },
         });
       return possibleMorphRelationsNames
         .flatMap((possibleMorphRelationName) => [

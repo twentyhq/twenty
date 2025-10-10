@@ -11,7 +11,6 @@ export const getFieldMetadataMorphRelationFromGqlField = ({
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   fieldMetadata: Pick<FieldMorphRelationMetadata, 'morphRelations'>;
-
   gqlField: string;
 }) => {
   const possibleMorphRelationGqlFields = fieldMetadata.morphRelations.map(
