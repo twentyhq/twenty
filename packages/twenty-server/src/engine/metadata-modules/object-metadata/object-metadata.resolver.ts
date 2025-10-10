@@ -117,6 +117,7 @@ export class ObjectMetadataResolver {
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ) {
     try {
       return await this.objectMetadataService.deleteOneObject(
@@ -124,7 +125,10 @@ export class ObjectMetadataResolver {
         workspaceId,
       );
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
     }
   }
 
@@ -148,7 +152,10 @@ export class ObjectMetadataResolver {
           workspaceId,
         });
       } catch (error) {
-        objectMetadataGraphqlApiExceptionHandler(error);
+        objectMetadataGraphqlApiExceptionHandler(
+          error,
+          this.i18nService.getI18nInstance(context.req.locale),
+        );
       }
     }
 
@@ -166,7 +173,10 @@ export class ObjectMetadataResolver {
         workspaceId,
       );
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
     }
   }
 
@@ -187,7 +197,10 @@ export class ObjectMetadataResolver {
 
       return fieldMetadataItems;
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
 
       return [];
     }
@@ -197,7 +210,7 @@ export class ObjectMetadataResolver {
   async indexMetadataList(
     @AuthWorkspace() workspace: Workspace,
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<IndexMetadataDTO[]> {
     try {
       const indexMetadataItems = await context.loaders.indexMetadataLoader.load(
@@ -209,7 +222,10 @@ export class ObjectMetadataResolver {
 
       return indexMetadataItems;
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
 
       return [];
     }

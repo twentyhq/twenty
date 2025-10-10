@@ -1,7 +1,7 @@
 import { Catch, type ExceptionFilter } from '@nestjs/common';
 
 import { assertUnreachable } from 'twenty-shared/utils';
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 
 import {
   ForbiddenError,
@@ -19,7 +19,7 @@ export class TwoFactorAuthenticationExceptionFilter implements ExceptionFilter {
       case TwoFactorAuthenticationExceptionCode.INVALID_OTP:
         throw new UserInputError(exception.message, {
           subCode: exception.code,
-          userFriendlyMessage: t`Invalid verification code. Please try again.`,
+          userFriendlyMessage: msg`Invalid verification code. Please try again.`,
         });
       case TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION:
       case TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_NOT_FOUND:

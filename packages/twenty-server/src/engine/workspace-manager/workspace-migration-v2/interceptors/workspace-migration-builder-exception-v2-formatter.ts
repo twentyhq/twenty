@@ -1,4 +1,5 @@
-import { t } from '@lingui/core/macro';
+import { type I18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
 import {
   BaseGraphQLError,
@@ -9,15 +10,19 @@ import { fromWorkspaceMigrationBuilderExceptionToValidationResponseError } from 
 
 export const workspaceMigrationBuilderExceptionV2Formatter = (
   error: WorkspaceMigrationBuilderExceptionV2,
+  i18n: I18n,
 ) => {
   const { errors, summary } =
-    fromWorkspaceMigrationBuilderExceptionToValidationResponseError(error);
+    fromWorkspaceMigrationBuilderExceptionToValidationResponseError(
+      error,
+      i18n,
+    );
 
   throw new BaseGraphQLError(error.message, ErrorCode.BAD_USER_INPUT, {
     code: 'METADATA_VALIDATION_ERROR',
     errors,
     summary,
     message: `Validation failed for 0 object(s) and 0 field(s)`,
-    userFriendlyMessage: t`Validation failed for 0 object(s) and 0 field(s)`,
+    userFriendlyMessage: msg`Validation failed for 0 object(s) and 0 field(s)`,
   });
 };

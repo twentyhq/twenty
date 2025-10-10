@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, type QueryRunner, Table, type TableColumn } from 'typeorm';
 
@@ -257,7 +257,7 @@ export class WorkspaceMigrationRunnerService {
           `Unique index creation failed because of unique constraint violation`,
           IndexMetadataExceptionCode.INDEX_CREATION_FAILED,
           {
-            userFriendlyMessage: t`Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records).`,
+            userFriendlyMessage: msg`Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records).`,
           },
         );
       }

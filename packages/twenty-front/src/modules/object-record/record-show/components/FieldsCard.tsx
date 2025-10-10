@@ -1,25 +1,22 @@
 import { RecordFieldList } from '@/object-record/record-field-list/components/RecordFieldList';
-import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { type FieldCardConfiguration } from '@/object-record/record-show/types/CardConfiguration';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 
 type FieldsCardProps = {
-  objectNameSingular: string;
-  objectRecordId: string;
-  showDuplicatesSection?: boolean;
+  configuration?: FieldCardConfiguration;
 };
 
-export const FieldsCard = ({
-  objectNameSingular,
-  objectRecordId,
-  showDuplicatesSection = true,
-}: FieldsCardProps) => {
-  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
+export const FieldsCard = ({ configuration }: FieldsCardProps) => {
+  const targetRecord = useTargetRecord();
+  const { isInRightDrawer } = useLayoutRenderingContext();
 
   return (
     <RecordFieldList
-      instanceId={`fields-card-${objectRecordId}-${isInRightDrawer ? 'right-drawer' : ''}`}
-      objectNameSingular={objectNameSingular}
-      objectRecordId={objectRecordId}
-      showDuplicatesSection={showDuplicatesSection}
+      instanceId={`fields-card-${targetRecord.id}-${isInRightDrawer ? 'right-drawer' : ''}`}
+      objectNameSingular={targetRecord.targetObjectNameSingular}
+      objectRecordId={targetRecord.id}
+      showDuplicatesSection={configuration?.showDuplicatesSection ?? true}
     />
   );
 };

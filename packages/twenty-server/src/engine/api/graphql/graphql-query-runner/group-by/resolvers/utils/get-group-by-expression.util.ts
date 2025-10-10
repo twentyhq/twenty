@@ -1,6 +1,5 @@
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
-
-import { ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';

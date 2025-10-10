@@ -6,6 +6,7 @@ import {
   getWorkflowRunContext,
   StepStatus,
   WorkflowRunStepInfo,
+  WorkflowRunStepInfos,
 } from 'twenty-shared/workflow';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
@@ -22,7 +23,8 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
-import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';
+import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
+import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
@@ -91,51 +93,35 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
+    let actionOutput: WorkflowActionOutput;
+
     if (
-      !canExecuteStep({
-        stepId,
+      shouldExecuteStep({
+        step: stepToExecute,
         steps,
         stepInfos,
         workflowRunStatus: workflowRun.status,
       })
     ) {
-      return;
-    }
-
-    let actionOutput: WorkflowActionOutput;
-
-    if (await this.canBillWorkflowNodeExecution(workspaceId)) {
-      const workflowAction = this.workflowActionFactory.get(stepToExecute.type);
-
-      await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-        stepId,
-        stepInfo: {
-          ...stepInfos[stepId],
-          status: StepStatus.RUNNING,
-        },
+      actionOutput = await this.executeStep({
+        step: stepToExecute,
+        steps,
+        stepInfos,
         workflowRunId,
         workspaceId,
       });
-
-      try {
-        actionOutput = await workflowAction.execute({
-          currentStepId: stepId,
-          steps,
-          context: getWorkflowRunContext(stepInfos),
-          runInfo: {
-            workflowRunId,
-            workspaceId,
-          },
-        });
-      } catch (error) {
-        actionOutput = {
-          error: error.message ?? 'Execution result error, no data or error',
-        };
-      }
-    } else {
+    } else if (
+      shouldSkipStepExecution({
+        step: stepToExecute,
+        steps,
+        stepInfos,
+      })
+    ) {
       actionOutput = {
-        error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
+        shouldSkipStepExecution: true,
       };
+    } else {
+      return;
     }
 
     const isError = isDefined(actionOutput.error);
@@ -266,8 +252,9 @@ export class WorkflowExecutorWorkspaceService {
   }): Promise<{ shouldProcessNextSteps: boolean }> {
     const isPendingEvent = actionOutput.pendingEvent;
     const isSuccess = isDefined(actionOutput.result);
-    const isStopped = actionOutput.shouldEndWorkflowRun;
-    const isNotFinished = actionOutput.shouldRemainRunning;
+    const isStopped = actionOutput.shouldEndWorkflowRun ?? false;
+    const isNotFinished = actionOutput.shouldRemainRunning ?? false;
+    const isSkipped = actionOutput.shouldSkipStepExecution ?? false;
 
     let stepInfo: WorkflowRunStepInfo;
 
@@ -290,6 +277,10 @@ export class WorkflowExecutorWorkspaceService {
         status: StepStatus.SUCCESS,
         result: actionOutput?.result,
       };
+    } else if (isSkipped) {
+      stepInfo = {
+        status: StepStatus.SKIPPED,
+      };
     } else {
       stepInfo = {
         status: StepStatus.FAILED,
@@ -305,7 +296,59 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     return {
-      shouldProcessNextSteps: isSuccess && !isStopped,
+      shouldProcessNextSteps: isSuccess || isStopped || isSkipped,
     };
+  }
+
+  private async executeStep({
+    step,
+    steps,
+    stepInfos,
+    workflowRunId,
+    workspaceId,
+  }: {
+    step: WorkflowAction;
+    steps: WorkflowAction[];
+    stepInfos: WorkflowRunStepInfos;
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    const canBill = await this.canBillWorkflowNodeExecution(workspaceId);
+
+    if (!canBill) {
+      return {
+        error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
+      };
+    }
+
+    const stepId = step.id;
+
+    const workflowAction = this.workflowActionFactory.get(step.type);
+
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+      stepId,
+      stepInfo: {
+        ...stepInfos[stepId],
+        status: StepStatus.RUNNING,
+      },
+      workflowRunId,
+      workspaceId,
+    });
+
+    try {
+      return await workflowAction.execute({
+        currentStepId: stepId,
+        steps,
+        context: getWorkflowRunContext(stepInfos),
+        runInfo: {
+          workflowRunId,
+          workspaceId,
+        },
+      });
+    } catch (error) {
+      return {
+        error: error.message ?? 'Execution result error, no data or error',
+      };
+    }
   }
 }
