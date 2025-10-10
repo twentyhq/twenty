@@ -1,7 +1,7 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -46,25 +46,18 @@ const LoadingSkeleton = () => {
   );
 };
 
-export const ShowPageActivityContainer = ({
-  targetableObject,
-}: {
-  targetableObject: Pick<
-    ActivityTargetableObject,
-    'targetObjectNameSingular' | 'id'
-  >;
-}) => {
-  const activityObjectNameSingular =
-    targetableObject.targetObjectNameSingular as
-      | CoreObjectNameSingular.Note
-      | CoreObjectNameSingular.Task;
-
+export const RichTextCard = () => {
+  const targetRecord = useTargetRecord();
   const activityBodyV2 = useRecoilValue(
     recordStoreFamilySelector({
-      recordId: targetableObject.id,
+      recordId: targetRecord.id,
       fieldName: 'bodyV2',
     }),
   );
+
+  const activityObjectNameSingular = targetRecord.targetObjectNameSingular as
+    | CoreObjectNameSingular.Note
+    | CoreObjectNameSingular.Task;
 
   if (!isDefined(activityBodyV2)) {
     return <LoadingSkeleton />;
@@ -72,12 +65,12 @@ export const ShowPageActivityContainer = ({
 
   return (
     <ScrollWrapper
-      componentInstanceId={`scroll-wrapper-tab-list-${targetableObject.id}`}
+      componentInstanceId={`scroll-wrapper-tab-list-${targetRecord.id}`}
     >
       <StyledShowPageActivityContainer>
         <Suspense fallback={<LoadingSkeleton />}>
           <ActivityRichTextEditor
-            activityId={targetableObject.id}
+            activityId={targetRecord.id}
             activityObjectNameSingular={activityObjectNameSingular}
           />
         </Suspense>

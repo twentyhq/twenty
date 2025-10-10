@@ -6,9 +6,9 @@ import { AttachmentList } from '@/activities/files/components/AttachmentList';
 import { DropZone } from '@/activities/files/components/DropZone';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
@@ -38,13 +38,10 @@ const StyledDropZoneContainer = styled.div`
   height: 100%;
 `;
 
-export const Attachments = ({
-  targetableObject,
-}: {
-  targetableObject: ActivityTargetableObject;
-}) => {
+export const FilesCard = () => {
+  const targetRecord = useTargetRecord();
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const { attachments, loading } = useAttachments(targetableObject);
+  const { attachments, loading } = useAttachments(targetRecord);
   const { uploadAttachmentFile } = useUploadAttachmentFile();
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -52,7 +49,7 @@ export const Attachments = ({
   const { t } = useLingui();
 
   const onUploadFile = async (file: File) => {
-    await uploadAttachmentFile(file, targetableObject);
+    await uploadAttachmentFile(file, targetRecord);
   };
 
   const onUploadFiles = async (files: File[]) => {
@@ -74,7 +71,7 @@ export const Attachments = ({
   const isAttachmentsEmpty = !attachments || attachments.length === 0;
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetableObject.targetObjectNameSingular,
+    objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
   const objectPermissions = useObjectPermissionsForObject(
@@ -138,7 +135,7 @@ export const Attachments = ({
         multiple
       />
       <AttachmentList
-        targetableObject={targetableObject}
+        targetableObject={targetRecord}
         title={t`All`}
         attachments={attachments ?? []}
         button={

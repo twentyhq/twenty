@@ -2,12 +2,13 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
 export const useCompanyDefaultChartConfig = () => {
   const companyObjectMetadata = useRecoilValue(
     objectMetadataItemFamilySelector({
-      objectName: 'company',
+      objectName: CoreObjectNameSingular.Company,
       objectNameType: 'singular',
     }),
   );

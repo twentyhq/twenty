@@ -9,8 +9,8 @@ import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/que
 import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromOpportunityId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import {
@@ -45,16 +45,13 @@ const StyledEmailCount = styled.span`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-export const EmailThreads = ({
-  targetableObject,
-}: {
-  targetableObject: ActivityTargetableObject;
-}) => {
+export const EmailsCard = () => {
+  const targetRecord = useTargetRecord();
+
   const [query, queryName] =
-    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person
+    targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? [getTimelineThreadsFromPersonId, 'getTimelineThreadsFromPersonId']
-      : targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Company
+      : targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Company
         ? [getTimelineThreadsFromCompanyId, 'getTimelineThreadsFromCompanyId']
         : [
             getTimelineThreadsFromOpportunityId,
@@ -66,7 +63,7 @@ export const EmailThreads = ({
       query,
       queryName,
       'timelineThreads',
-      targetableObject,
+      targetRecord,
       TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
     );
 

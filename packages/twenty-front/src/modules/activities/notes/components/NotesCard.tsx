@@ -2,10 +2,10 @@ import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -26,12 +26,9 @@ const StyledNotesContainer = styled.div`
   overflow: auto;
 `;
 
-export const Notes = ({
-  targetableObject,
-}: {
-  targetableObject: ActivityTargetableObject;
-}) => {
-  const { notes, loading } = useNotes(targetableObject);
+export const NotesCard = () => {
+  const targetRecord = useTargetRecord();
+  const { notes, loading } = useNotes(targetRecord);
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Note,
@@ -40,7 +37,7 @@ export const Notes = ({
   const isNotesEmpty = !notes || notes.length === 0;
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetableObject.targetObjectNameSingular,
+    objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
   const objectPermissions = useObjectPermissionsForObject(
@@ -75,7 +72,7 @@ export const Notes = ({
             variant="secondary"
             onClick={() =>
               openCreateActivity({
-                targetableObjects: [targetableObject],
+                targetableObjects: [targetRecord],
               })
             }
           />
@@ -98,7 +95,7 @@ export const Notes = ({
               title="Add note"
               onClick={() =>
                 openCreateActivity({
-                  targetableObjects: [targetableObject],
+                  targetableObjects: [targetRecord],
                 })
               }
             />

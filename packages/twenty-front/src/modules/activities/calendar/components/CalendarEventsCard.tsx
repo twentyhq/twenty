@@ -12,8 +12,8 @@ import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { H3Title } from 'twenty-ui/display';
 import {
   AnimatedPlaceholder,
@@ -45,21 +45,17 @@ const StyledTitleContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const Calendar = ({
-  targetableObject,
-}: {
-  targetableObject: ActivityTargetableObject;
-}) => {
+export const CalendarEventsCard = () => {
+  const targetRecord = useTargetRecord();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
 
   const [query, queryName] =
-    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person
+    targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? [
           getTimelineCalendarEventsFromPersonId,
           'getTimelineCalendarEventsFromPersonId',
         ]
-      : targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Company
+      : targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Company
         ? [
             getTimelineCalendarEventsFromCompanyId,
             'getTimelineCalendarEventsFromCompanyId',
@@ -74,12 +70,20 @@ export const Calendar = ({
       query,
       queryName,
       'timelineCalendarEvents',
-      targetableObject,
+      targetRecord,
       TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     );
 
   const { timelineCalendarEvents, totalNumberOfCalendarEvents } =
     data?.[queryName] ?? {};
+
+  const {
+    calendarEventsByDayTime,
+    daysByMonthTime,
+    monthTimes,
+    monthTimesByYear,
+  } = useCalendarEvents(timelineCalendarEvents || []);
+
   const hasMoreCalendarEvents =
     timelineCalendarEvents && totalNumberOfCalendarEvents
       ? timelineCalendarEvents?.length < totalNumberOfCalendarEvents
@@ -90,13 +94,6 @@ export const Calendar = ({
       await fetchMoreRecords();
     }
   };
-
-  const {
-    calendarEventsByDayTime,
-    daysByMonthTime,
-    monthTimes,
-    monthTimesByYear,
-  } = useCalendarEvents(timelineCalendarEvents || []);
 
   if (firstQueryLoading) {
     return <SkeletonLoader />;
@@ -116,7 +113,7 @@ export const Calendar = ({
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
             No events have been scheduled with this{' '}
-            {targetableObject.targetObjectNameSingular} yet.
+            {targetRecord.targetObjectNameSingular} yet.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
