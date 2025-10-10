@@ -1,21 +1,19 @@
 import { Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
+  CallWebhookBatchJobData,
   CallWebhookJob,
   type CallWebhookJobData,
 } from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
 import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
 import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
+import { transformEventBatchToWebhookBatch } from 'src/engine/core-modules/webhook/utils/transform-webhook-event-batch-to-webhook-data';
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
@@ -47,51 +45,38 @@ export class CallWebhookJobsJob {
       ],
     );
 
-    for (const eventData of workspaceEventBatch.events) {
-      const eventName = workspaceEventBatch.name;
-      const objectMetadata: Pick<ObjectMetadataEntity, 'id' | 'nameSingular'> =
-        {
-          id: workspaceEventBatch.objectMetadata.id,
-          nameSingular: workspaceEventBatch.objectMetadata.nameSingular,
-        };
-      const workspaceId = workspaceEventBatch.workspaceId;
-      const record =
-        'after' in eventData.properties && isDefined(eventData.properties.after)
-          ? eventData.properties.after
-          : 'before' in eventData.properties &&
-              isDefined(eventData.properties.before)
-            ? eventData.properties.before
-            : {};
-      const updatedFields =
-        'updatedFields' in eventData.properties
-          ? eventData.properties.updatedFields
-          : undefined;
+    for (const webhook of webhooks) {
+      const webhookEventBatch = transformEventBatchToWebhookBatch({
+        workspaceEventBatch,
+        webhook,
+      });
 
-      const isWebhookEvent = nameSingular === 'webhook';
-      const sanitizedRecord = removeSecretFromWebhookRecord(
-        record,
-        isWebhookEvent,
+      await this.messageQueueService.add<CallWebhookBatchJobData>(
+        CallWebhookJob.name,
+        webhookEventBatch,
+        { retryLimit: 3 },
       );
 
-      webhooks.forEach((webhook) => {
-        const webhookData = {
-          targetUrl: webhook.targetUrl,
-          secret: webhook.secret,
-          eventName,
-          objectMetadata,
-          workspaceId,
-          webhookId: webhook.id,
-          eventDate: new Date(),
-          record: sanitizedRecord,
-          ...(updatedFields && { updatedFields }),
+      // DEPRECATED: REMOVE THE LINES BELOW AFTER 12/11/2025
+      const {
+        items,
+        batchSize: _,
+        ...webhookEventBatchWithoutItems
+      } = webhookEventBatch;
+
+      for (const item of items) {
+        const webhookData: CallWebhookJobData = {
+          ...webhookEventBatchWithoutItems,
+          ...item,
         };
 
-        this.messageQueueService.add<CallWebhookJobData>(
+        await this.messageQueueService.add<CallWebhookJobData>(
           CallWebhookJob.name,
           webhookData,
           { retryLimit: 3 },
         );
-      });
+      }
+      // END DEPRECATED
     }
   }
 }

@@ -49,7 +49,7 @@ export class CallWebhookJob {
   ) {}
 
   private generateSignature(
-    payload: CallWebhookJobData,
+    payload: CallWebhookJobData | CallWebhookBatchJobData,
     secret: string,
     timestamp: string,
   ): string {
