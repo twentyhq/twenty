@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
@@ -42,6 +43,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   });
 
   const dataMap = new Map<string, BarChartDataItem>();
+  const xValues = new Set<string>();
   const yValues = new Set<string>();
 
   rawResults.forEach((result) => {
@@ -59,6 +61,20 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       subFieldName: configuration.groupBySubFieldNameY ?? undefined,
     });
 
+    // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
+    const isNewX = !xValues.has(xValue);
+    const isNewY = !yValues.has(yValue);
+    const totalUniqueDimensions = xValues.size * yValues.size;
+    const additionalDimensions =
+      (isNewX ? 1 : 0) * yValues.size + (isNewY ? 1 : 0) * xValues.size;
+
+    if (
+      totalUniqueDimensions + additionalDimensions >
+      GRAPH_MAXIMUM_NUMBER_OF_GROUPS
+    ) {
+      return;
+    }
+
     const aggregateValue = computeAggregateValueFromGroupByResult({
       rawResult: result,
       aggregateField,
@@ -68,6 +84,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       objectMetadataItem,
     });
 
+    xValues.add(xValue);
     yValues.add(yValue);
 
     if (!dataMap.has(xValue)) {
