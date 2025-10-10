@@ -1415,6 +1415,10 @@ msgid "Field Metadata Id"
 msgstr "Ідентифікатор метаданих поля"
 
 #. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "Field metadata not found"
@@ -3885,6 +3889,20 @@ msgstr "Ідентифікатор групи фільтрів перегляд�
 msgid "View Filter Groups"
 msgstr "Групи фільтрів перегляду"
 
+#. js-lingui-id: DjGFaP
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter has to be soft deleted first"
+msgstr ""
+
+#. js-lingui-id: 1KSqGE
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter not found"
+msgstr ""
+
 #. js-lingui-id: 4MG8+B
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter operand"
@@ -3900,10 +3918,31 @@ msgstr "Переглянути відповідний розділ фільтр�
 msgid "View Filter target field"
 msgstr "Цільове поле фільтра перегляду"
 
+#. js-lingui-id: 3l1ppY
+#: src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util.ts
+msgid "View filter to delete not found"
+msgstr ""
+
+#. js-lingui-id: 9gedIx
+#: src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util.ts
+msgid "View filter to destroy not found"
+msgstr ""
+
+#. js-lingui-id: GzthLy
+#: src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util.ts
+msgid "View filter to update not found"
+msgstr ""
+
 #. js-lingui-id: 3KzkxN
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter value"
 msgstr "Значення фільтра перегляду"
+
+#. js-lingui-id: LnNgrI
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter with this id already exists"
+msgstr ""
 
 #. js-lingui-id: vj5JsR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3964,6 +4003,8 @@ msgstr "Назва перегляду"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View not found"
