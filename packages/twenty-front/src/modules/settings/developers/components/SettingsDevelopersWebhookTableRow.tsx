@@ -7,10 +7,6 @@ import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/display';
 import { type Webhook } from '~/generated-metadata/graphql';
 
-export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 28px;
-`;
-
 const StyledIconTableCell = styled(TableCell)`
   justify-content: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
@@ -19,7 +15,8 @@ const StyledIconTableCell = styled(TableCell)`
 
 const StyledUrlTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
-  overflow-x: scroll;
+  overflow: auto;
+  text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
@@ -40,7 +37,7 @@ export const SettingsDevelopersWebhookTableRow = ({
   const theme = useTheme();
 
   return (
-    <StyledApisFieldTableRow to={to}>
+    <TableRow to={to}>
       <StyledUrlTableCell>
         {isValidUrl(webhook.targetUrl)
           ? getUrlHostnameOrThrow(webhook.targetUrl)
@@ -52,6 +49,6 @@ export const SettingsDevelopersWebhookTableRow = ({
           stroke={theme.icon.stroke.sm}
         />
       </StyledIconTableCell>
-    </StyledApisFieldTableRow>
+    </TableRow>
   );
 };
