@@ -100,58 +100,10 @@ export const computeWebhooks = (
                   type: 'string',
                   example: '2024-02-14T11:27:01.779Z',
                 },
-                batchSize: {
-                  type: 'number',
-                  example: 1,
+                record: {
+                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
                 },
-                items: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      record: {
-                        ...(type === DatabaseEventAction.DELETED
-                          ? {
-                              id: {
-                                type: 'string',
-                                example: '5ad8b9e4-02f5-498e-964f-f06a06491f7e',
-                              },
-                              deletedAt: {
-                                type: 'string',
-                                example: '2025-10-10T11:12:46.779Z',
-                              },
-                            }
-                          : {
-                              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
-                            }),
-                      },
-                      ...(type === DatabaseEventAction.UPDATED && {
-                        updatedFields,
-                      }),
-                    },
-                  },
-                  example: [
-                    {
-                      record: {
-                        ...(type === DatabaseEventAction.DELETED
-                          ? {
-                              id: '370985db-22d8-4463-8e5f-2271d30913bd',
-                              deletedAt: '2025-10-10T11:12:46.779Z',
-                            }
-                          : {
-                              id: '370985db-22d8-4463-8e5f-2271d30913bd',
-                              name:
-                                type === DatabaseEventAction.UPDATED
-                                  ? 'Name updated'
-                                  : 'Name',
-                            }),
-                      },
-                      ...(type === DatabaseEventAction.UPDATED && {
-                        updatedFields: ['name'],
-                      }),
-                    },
-                  ],
-                },
+                ...(type === DatabaseEventAction.UPDATED && { updatedFields }),
               },
             },
           },
