@@ -168,7 +168,7 @@ export const ChartDataSourceDropdownContent = () => {
               onEnter={handleAdvancedObjectsClick}
             >
               <MenuItem
-                text="Advanced objects"
+                text={t`Advanced objects`}
                 LeftIcon={IconSettings}
                 onClick={handleAdvancedObjectsClick}
                 hasSubMenu
