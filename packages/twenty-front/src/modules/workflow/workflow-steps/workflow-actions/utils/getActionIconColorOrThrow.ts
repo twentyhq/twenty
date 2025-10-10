@@ -22,9 +22,10 @@ export const getActionIconColorOrThrow = ({
     case 'FORM':
       return theme.color.orange;
     case 'ITERATOR':
-    case 'FILTER':
     case 'EMPTY':
-      return theme.font.color.tertiary;
+    case 'FILTER':
+    case 'DELAY':
+      return theme.color.green60;
     case 'AI_AGENT':
       return theme.color.pink;
     default:
