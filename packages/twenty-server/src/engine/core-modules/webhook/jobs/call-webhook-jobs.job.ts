@@ -16,7 +16,7 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { transformEventBatchToWebhookEvents } from 'src/engine/core-modules/webhook/utils/transform-event-batch-to-webhook-events';
 
-const WEBHOOK_JOBS_CHUNK_SIZE = 100;
+const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
