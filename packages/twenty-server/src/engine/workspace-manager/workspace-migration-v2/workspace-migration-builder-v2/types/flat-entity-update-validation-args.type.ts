@@ -1,18 +1,15 @@
-import { AllFlatEntities } from "src/engine/metadata-modules/flat-entity/types/all-flat-entities.type";
-import { AllFlatEntityMaps } from "src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type";
-import { FlatEntityMaps } from "src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type";
-import { FlatEntityValidationArgs } from "src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type";
-import { FromTo } from "twenty-shared/types";
+import {
+  AllMetadataName,
+  MetadataFlatEntity,
+  MetadataFlatEntityMaps,
+} from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FromTo } from 'twenty-shared/types';
 
-export type FlatEntityUpdateValidationArgs<
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> = Omit<
-  FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
+export type FlatEntityUpdateValidationArgs<T extends AllMetadataName> = Omit<
+  FlatEntityValidationArgs<T>,
   'flatEntityToValidate' | 'remainingFlatEntityMapsToValidate'
 > & {
-  flatEntityUpdate: FromTo<TFlatEntity>;
-  remainingFlatEntityMapsToValidate: FromTo<FlatEntityMaps<TFlatEntity>>;
+  flatEntityUpdate: FromTo<MetadataFlatEntity<T>>;
+  remainingFlatEntityMapsToValidate: FromTo<MetadataFlatEntityMaps<T>>;
 };

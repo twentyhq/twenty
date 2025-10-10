@@ -1,20 +1,22 @@
-import { AllFlatEntities } from "src/engine/metadata-modules/flat-entity/types/all-flat-entities.type";
-import { AllFlatEntityMaps } from "src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type";
-import { FailedFlatEntityValidation } from "src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type";
-import { WorkspaceMigrationActionV2 } from "src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2";
+import {
+  AllMetadataName,
+  MetadataFlatEntity,
+  MetadataRelatedFlatEntityMaps,
+  MetadataWorkspaceMigrationAction
+} from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
 export type FlatEntityValidationReturnType<
-  TActions extends WorkspaceMigrationActionV2,
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
+  T extends AllMetadataName,
+  TOperation extends 'created' | 'deleted' | 'updated',
 > =
   | {
       status: 'success';
-      action: TActions | TActions[];
-      dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
+      action:
+        | MetadataWorkspaceMigrationAction<T, TOperation>
+        | MetadataWorkspaceMigrationAction<T, TOperation>[];
+      dependencyOptimisticFlatEntityMaps: MetadataRelatedFlatEntityMaps<T>;
     }
   | ({
       status: 'fail';
-    } & FailedFlatEntityValidation<TFlatEntity>);
+    } & FailedFlatEntityValidation<MetadataFlatEntity<T>>);
