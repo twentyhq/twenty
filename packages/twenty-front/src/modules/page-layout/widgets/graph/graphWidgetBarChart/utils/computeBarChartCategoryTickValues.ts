@@ -1,26 +1,21 @@
+import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 
-const VERTICAL_LAYOUT_MARGIN = 90;
-const HORIZONTAL_LAYOUT_MARGIN = 140;
 const MINIMUM_WIDTH_PER_TICK = 100;
 
-export const computeBarChartBottomTickValues = ({
+export const computeBarChartCategoryTickValues = ({
   width,
   data,
-  layout,
   indexBy,
 }: {
   width: number;
   data: BarChartDataItem[];
-  layout: 'vertical' | 'horizontal';
   indexBy: string;
 }): (string | number)[] => {
   if (width === 0 || data.length === 0) return [];
 
-  const availableWidth =
-    layout === 'vertical'
-      ? width - VERTICAL_LAYOUT_MARGIN
-      : width - HORIZONTAL_LAYOUT_MARGIN;
+  const horizontalMargins = BAR_CHART_MARGINS.left + BAR_CHART_MARGINS.right;
+  const availableWidth = width - horizontalMargins;
   const numberOfTicks = Math.floor(availableWidth / MINIMUM_WIDTH_PER_TICK);
 
   if (numberOfTicks <= 0) return [];

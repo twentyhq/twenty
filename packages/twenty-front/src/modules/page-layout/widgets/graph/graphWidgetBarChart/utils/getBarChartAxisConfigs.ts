@@ -1,5 +1,7 @@
+import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
-import { computeBarChartBottomTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartBottomTickValues';
+import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
+import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import {
   formatGraphValue,
@@ -12,6 +14,7 @@ const MAX_LEFT_AXIS_LABEL_LENGTH = 20;
 
 type GetBarChartAxisConfigsProps = {
   width: number;
+  height: number;
   data: BarChartDataItem[];
   layout: 'vertical' | 'horizontal';
   indexBy: string;
@@ -23,6 +26,7 @@ type GetBarChartAxisConfigsProps = {
 
 export const getBarChartAxisConfigs = ({
   width,
+  height,
   data,
   layout,
   indexBy,
@@ -31,22 +35,30 @@ export const getBarChartAxisConfigs = ({
   formatOptions,
   axisFontSize = 11,
 }: GetBarChartAxisConfigsProps) => {
-  const tickValues = computeBarChartBottomTickValues({
+  const categoryTickValues = computeBarChartCategoryTickValues({
     width,
     data,
-    layout,
     indexBy,
   });
 
-  const verticalLayoutMargin = 90;
-  const availableWidth = width - verticalLayoutMargin;
+  const availableWidth =
+    width - (BAR_CHART_MARGINS.left + BAR_CHART_MARGINS.right);
+  const availableHeight =
+    height - (BAR_CHART_MARGINS.top + BAR_CHART_MARGINS.bottom);
   const widthPerTick =
-    tickValues.length > 0 ? availableWidth / tickValues.length : 0;
+    categoryTickValues.length > 0
+      ? availableWidth / categoryTickValues.length
+      : 0;
   const averageCharacterWidth = axisFontSize * AVERAGE_CHARACTER_WIDTH_RATIO;
   const maxLabelLength = Math.max(
     MIN_TICK_LABEL_LENGTH,
     Math.floor(widthPerTick / averageCharacterWidth),
   );
+
+  const numberOfValueTicks = computeBarChartValueTickCount({
+    height: availableHeight,
+    axisFontSize,
+  });
 
   if (layout === 'vertical') {
     return {
@@ -54,7 +66,7 @@ export const getBarChartAxisConfigs = ({
         tickSize: 0,
         tickPadding: 5,
         tickRotation: 0,
-        tickValues,
+        tickValues: categoryTickValues,
         legend: xAxisLabel,
         legendPosition: 'middle' as const,
         legendOffset: 40,
@@ -65,6 +77,7 @@ export const getBarChartAxisConfigs = ({
         tickSize: 0,
         tickPadding: 5,
         tickRotation: 0,
+        tickValues: numberOfValueTicks,
         legend: yAxisLabel,
         legendPosition: 'middle' as const,
         legendOffset: -50,
@@ -78,7 +91,7 @@ export const getBarChartAxisConfigs = ({
       tickSize: 0,
       tickPadding: 5,
       tickRotation: 0,
-      tickValues,
+      tickValues: numberOfValueTicks,
       legend: yAxisLabel,
       legendPosition: 'middle' as const,
       legendOffset: 40,
@@ -88,6 +101,7 @@ export const getBarChartAxisConfigs = ({
       tickSize: 0,
       tickPadding: 5,
       tickRotation: 0,
+      tickValues: categoryTickValues,
       legend: xAxisLabel,
       legendPosition: 'middle' as const,
       legendOffset: -50,

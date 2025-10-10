@@ -2,6 +2,7 @@ import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/component
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { BarChartEndLines } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartEndLines';
+import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
@@ -73,18 +74,20 @@ export const GraphWidgetBarChart = ({
   const instanceId = useId();
   const colorRegistry = createGraphColorRegistry(theme);
   const [chartWidth, setChartWidth] = useState<number>(0);
+  const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const updateWidth = () => {
+    const updateDimensions = () => {
       if (isDefined(containerRef.current)) {
         setChartWidth(containerRef.current.offsetWidth);
+        setChartHeight(containerRef.current.offsetHeight);
       }
     };
 
-    updateWidth();
+    updateDimensions();
 
-    const resizeObserver = new ResizeObserver(updateWidth);
+    const resizeObserver = new ResizeObserver(updateDimensions);
     if (isDefined(containerRef.current)) {
       resizeObserver.observe(containerRef.current);
     }
@@ -141,6 +144,7 @@ export const GraphWidgetBarChart = ({
   const { axisBottom: axisBottomConfig, axisLeft: axisLeftConfig } =
     getBarChartAxisConfigs({
       width: chartWidth,
+      height: chartHeight,
       data,
       layout,
       indexBy,
@@ -184,7 +188,7 @@ export const GraphWidgetBarChart = ({
           data={data}
           keys={keys}
           indexBy={indexBy}
-          margin={{ top: 20, right: 20, bottom: 60, left: 70 }}
+          margin={BAR_CHART_MARGINS}
           padding={0.3}
           groupMode={groupMode}
           layout={layout}
