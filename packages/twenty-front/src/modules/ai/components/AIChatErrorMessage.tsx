@@ -36,7 +36,7 @@ const StyledErrorTitle = styled.div`
 const StyledErrorMessage = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.xs};
-  word-break: break-all;
+  word-break: break-word;
 `;
 
 type AIChatErrorMessageProps = {
