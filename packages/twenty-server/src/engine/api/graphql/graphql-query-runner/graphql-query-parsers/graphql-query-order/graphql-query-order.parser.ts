@@ -1,9 +1,8 @@
 import { isObject } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  ObjectRecordGroupByDateGranularity,
   OrderByDirection,
   type AggregateOrderByWithGroupByField,
   type ObjectRecordOrderBy,

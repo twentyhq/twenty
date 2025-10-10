@@ -1,10 +1,9 @@
-import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
 import {
+  OrderByWithGroupBy,
   type ObjectRecordFilter,
-  type ObjectRecordOrderBy,
-  type OrderByWithGroupBy,
+  type ObjectRecordOrderBy
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
@@ -103,18 +102,20 @@ export class GraphqlQueryParser {
     orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
     objectNameSingular: string,
     isForwardPagination = true,
-    isGroupBy = false,
-    groupByFields?: GroupByField[],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): WorkspaceSelectQueryBuilder<any> {
-    if (isGroupBy) {
-      if (!isDefined(groupByFields)) {
-        throw new GraphqlQueryRunnerException(
-          'groupByFields is required to parse orderBy arguments',
-          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        );
-      }
+      const parsedOrderBys = this.orderFieldParser.parse(
+        orderBy as ObjectRecordOrderBy,
+        objectNameSingular,
+        isForwardPagination,
+      );
 
+      return queryBuilder.orderBy(parsedOrderBys);
+  }
+
+  public applyGroupByOrderToBuilder(queryBuilder: WorkspaceSelectQueryBuilder<any>,
+    orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
+    groupByFields: GroupByField[]) {
       const parsedOrderBys = this.orderFieldParser.parseForGroupBy({
         orderBy,
         groupByFields,
@@ -135,16 +136,7 @@ export class GraphqlQueryParser {
       });
 
       return queryBuilder;
-    } else {
-      const parsedOrderBys = this.orderFieldParser.parse(
-        orderBy as ObjectRecordOrderBy,
-        objectNameSingular,
-        isForwardPagination,
-      );
-
-      return queryBuilder.orderBy(parsedOrderBys);
     }
-  }
 
   public parseSelectedFields(
     parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
