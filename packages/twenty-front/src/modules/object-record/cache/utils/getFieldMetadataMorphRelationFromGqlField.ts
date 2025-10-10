@@ -14,7 +14,7 @@ export const getFieldMetadataMorphRelationFromGqlField = ({
 
   gqlField: string;
 }) => {
-  const possibeMorphRelationGqlFields = fieldMetadata.morphRelations.map(
+  const possibleMorphRelationGqlFields = fieldMetadata.morphRelations.map(
     (morphRelation) => {
       const targetObjectMetadata = objectMetadataItems.find(
         (objectMetadataItem) =>
@@ -40,7 +40,7 @@ export const getFieldMetadataMorphRelationFromGqlField = ({
     },
   );
 
-  const gqlFieldMorphRelation = possibeMorphRelationGqlFields.find(
+  const gqlFieldMorphRelation = possibleMorphRelationGqlFields.find(
     (possibeMorphRelationGqlField) =>
       possibeMorphRelationGqlField.gqlField === gqlField,
   );
@@ -53,7 +53,7 @@ export const getFieldMetadataMorphRelationFromGqlField = ({
     morphRelation: gqlFieldMorphRelation.morphRelation,
     sourceFieldMetadata: getFieldMetadataItemById({
       fieldMetadataId:
-        gqlFieldMorphRelation.morphRelation?.sourceFieldMetadata.id,
+        gqlFieldMorphRelation.morphRelation.sourceFieldMetadata.id,
       objectMetadataItems,
     }),
     targetFieldMetadata: getFieldMetadataItemById({

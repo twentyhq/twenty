@@ -59,23 +59,26 @@ export const updateRecordRelationInCache = ({
           targetObjectMetadataNameSingular: targetObjectNameSingular,
           targetObjectMetadataNamePlural: targetObjectNamePlural,
         });
-  const deduplicatedRecords = [
-    ...previousRecord[sourceFieldMetadataNameComputed],
-    cachedTargetRecord,
-  ].reduce<ObjectRecord[]>((deduplicatedArray, record) => {
-    if (
-      !deduplicatedArray.some(
-        (deduplicatedRecord) => deduplicatedRecord.id === record.id,
-      )
-    ) {
-      deduplicatedArray.push(record);
-    }
-    return deduplicatedArray;
-  }, []);
+  // const deduplicatedRecords = [
+  //   ...previousRecord[sourceFieldMetadataNameComputed],
+  //   cachedTargetRecord,
+  // ].reduce<ObjectRecord[]>((deduplicatedArray, record) => {
+  //   if (
+  //     !deduplicatedArray.some(
+  //       (deduplicatedRecord) => deduplicatedRecord.id === record.id,
+  //     )
+  //   ) {
+  //     deduplicatedArray.push(record);
+  //   }
+  //   return deduplicatedArray;
+  // }, []);
 
   const previousRecordWithUpdatedRelation = {
     ...previousRecord,
-    [sourceFieldMetadataNameComputed]: deduplicatedRecords,
+    [sourceFieldMetadataNameComputed]: [
+      ...previousRecord[sourceFieldMetadataNameComputed],
+      cachedTargetRecord,
+    ],
   };
 
   const gqlFields = computeDepthOneRecordGqlFieldsFromRecord({

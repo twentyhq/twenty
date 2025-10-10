@@ -6,7 +6,6 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
-import { type FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const useRecordOneToManyFieldAttachTargetRecord = () => {
@@ -18,21 +17,13 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
 
   const recordOneToManyFieldAttachTargetRecord = async ({
     sourceObjectNameSingular,
-    sourceFieldMetadataName,
-    sourceFieldMetadataType,
     targetObjectNameSingular,
-    targetObjectNamePlural,
     targetGQLFieldName,
     sourceRecordId,
     targetRecordId,
   }: {
     sourceObjectNameSingular: string;
-    sourceFieldMetadataName: string;
-    sourceFieldMetadataType:
-      | FieldMetadataType.RELATION
-      | FieldMetadataType.MORPH_RELATION;
     targetObjectNameSingular: string;
-    targetObjectNamePlural: string;
     targetGQLFieldName: string;
     sourceRecordId: string;
     targetRecordId: string;
