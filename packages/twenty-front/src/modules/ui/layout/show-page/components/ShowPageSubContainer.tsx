@@ -19,6 +19,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import React from 'react';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -99,11 +100,15 @@ export const ShowPageSubContainer = ({
     const activeTab = tabs.find((tab) => tab.id === activeTabId);
     if (!activeTab?.cards?.length) return null;
 
-    return activeTab.cards.map((card, index) => (
-      <div key={`${activeTab.id}-card-${index}`}>
-        {getCardComponent(card.type, card.configuration)}
-      </div>
-    ));
+    return (
+      <>
+        {activeTab.cards.map((card, index) => (
+          <React.Fragment key={`${activeTab.id}-card-${index}`}>
+            {getCardComponent(card.type, card.configuration)}
+          </React.Fragment>
+        ))}
+      </>
+    );
   };
 
   const visibleTabs = tabs.filter((tab) => !tab.hide);
