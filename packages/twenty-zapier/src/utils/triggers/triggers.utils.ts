@@ -1,4 +1,4 @@
-import { Bundle, ZObject } from 'zapier-platform-core';
+import { type Bundle, type ZObject } from 'zapier-platform-core';
 
 import handleQueryParams from '../../utils/handleQueryParams';
 import requestDb, {
@@ -43,26 +43,27 @@ export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
 };
 
 export const perform = (z: ZObject, bundle: Bundle) => {
-  const data = {
-    record: bundle.cleanedRequest.record,
-    ...(bundle.cleanedRequest.updatedFields && {
-      updatedFields: bundle.cleanedRequest.updatedFields,
-    }),
-  };
-  if (data.record.createdAt) {
-    data.record.createdAt = data.record.createdAt + 'Z';
-  }
-  if (data.record.updatedAt) {
-    data.record.updatedAt = data.record.updatedAt + 'Z';
-  }
-  if (data.record.revokedAt) {
-    data.record.revokedAt = data.record.revokedAt + 'Z';
-  }
-  if (data.record.expiresAt) {
-    data.record.expiresAt = data.record.expiresAt + 'Z';
-  }
+  const items = bundle.cleanedRequest.items;
 
-  return [data];
+  return items.map((item: any) => {
+    if (item.createdAt) {
+      item.createdAt = item.createdAt + 'Z';
+    }
+
+    if (item.updatedAt) {
+      item.updatedAt = item.updatedAt + 'Z';
+    }
+
+    if (item.revokedAt) {
+      item.revokedAt = item.revokedAt + 'Z';
+    }
+
+    if (item.expiresAt) {
+      item.expiresAt = item.expiresAt + 'Z';
+    }
+
+    return item;
+  });
 };
 
 const getNamePluralFromNameSingular = async (
@@ -93,9 +94,7 @@ export const performList = async (
   return results.map((result) => ({
     record: result,
     ...(bundle.inputData.operation === DatabaseEventAction.UPDATED && {
-      updatedFields: [
-        Object.keys(result).filter((key) => key !== 'id')?.[0],
-      ] || ['updatedField'],
+      updatedFields: [Object.keys(result).filter((key) => key !== 'id')?.[0]],
     }),
   }));
 };
