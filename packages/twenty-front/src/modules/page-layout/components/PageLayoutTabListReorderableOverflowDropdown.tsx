@@ -8,13 +8,18 @@ import {
   Droppable,
 } from '@hello-pangea/dnd';
 
+import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
+import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useContext } from 'react';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 const StyledDraggableWrapper = styled.div`
@@ -50,6 +55,30 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   onClose,
 }: PageLayoutTabListReorderableOverflowDropdownProps) => {
   const theme = useTheme();
+  const context = useContext(TabListComponentInstanceContext);
+  const instanceId = context?.instanceId;
+
+  const isTabDragging = useRecoilComponentValue(
+    isPageLayoutTabDraggingComponentState,
+    instanceId,
+  );
+
+  const setIsTabDragging = useSetRecoilComponentState(
+    isPageLayoutTabDraggingComponentState,
+    instanceId,
+  );
+
+  const handleClose = () => {
+    if (!isTabDragging) {
+      onClose();
+    }
+  };
+
+  const handleTabSelect = (tabId: string) => {
+    setIsTabDragging(false);
+    onSelect(tabId);
+    handleClose();
+  };
 
   const renderClone = (
     provided: DraggableProvided,
@@ -88,12 +117,14 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
       dropdownId={dropdownId}
       dropdownPlacement="bottom-end"
       dropdownOffset={{ x: 0, y: 8 }}
-      onClickOutside={onClose}
+      onClickOutside={handleClose}
       clickableComponent={
-        <TabMoreButton
-          hiddenTabsCount={hiddenTabsCount}
-          active={isActiveTabHidden}
-        />
+        <div data-dropdown-id={dropdownId}>
+          <TabMoreButton
+            hiddenTabsCount={hiddenTabsCount}
+            active={isActiveTabHidden}
+          />
+        </div>
       }
       dropdownComponents={
         <DropdownContent>
@@ -146,10 +177,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                               onClick={
                                 draggableSnapshot.isDragging
                                   ? undefined
-                                  : () => {
-                                      onSelect(tab.id);
-                                      onClose();
-                                    }
+                                  : () => handleTabSelect(tab.id)
                               }
                               disabled={disabled}
                             />

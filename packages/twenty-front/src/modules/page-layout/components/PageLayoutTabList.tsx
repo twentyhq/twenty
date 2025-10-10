@@ -1,10 +1,15 @@
 import styled from '@emotion/styled';
-import { DragDropContext, type OnDragEndResponder } from '@hello-pangea/dnd';
+import {
+  DragDropContext,
+  type OnDragEndResponder,
+  type OnDragStartResponder,
+} from '@hello-pangea/dnd';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
+import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
@@ -14,8 +19,11 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
+import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
@@ -92,6 +100,12 @@ export const PageLayoutTabList = ({
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
   const { closeDropdown } = useCloseDropdown();
+  const { toggleClickOutside } = useClickOutsideListener(dropdownId);
+
+  const setIsTabDragging = useSetRecoilComponentState(
+    isPageLayoutTabDraggingComponentState,
+    componentInstanceId,
+  );
 
   const isActiveTabHidden = useMemo(() => {
     if (!hasHiddenTabs) return false;
@@ -128,15 +142,30 @@ export const PageLayoutTabList = ({
     closeDropdown(dropdownId);
   }, [closeDropdown, dropdownId]);
 
+  const handleDragStart = useCallback<OnDragStartResponder>(() => {
+    setIsTabDragging(true);
+    toggleClickOutside(false);
+  }, [setIsTabDragging, toggleClickOutside]);
+
   const handleDragEnd = useCallback<OnDragEndResponder>(
     (result, provided) => {
+      const droppedInOverflow =
+        result.destination?.droppableId ===
+        PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS;
+
+      if (!droppedInOverflow) {
+        setIsTabDragging(false);
+      }
+
+      toggleClickOutside(true);
+
       if (!onReorder) {
         return;
       }
 
       onReorder(result, provided);
     },
-    [onReorder],
+    [onReorder, setIsTabDragging, toggleClickOutside],
   );
 
   if (visibleTabs.length === 0) {
@@ -178,7 +207,10 @@ export const PageLayoutTabList = ({
 
       <NodeDimension onDimensionChange={onContainerWidthChange}>
         {isReorderEnabled && onReorder ? (
-          <DragDropContext onDragEnd={handleDragEnd}>
+          <DragDropContext
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
             <StyledContainer className={className}>
               <PageLayoutTabListVisibleTabs
                 visibleTabs={visibleTabs}
