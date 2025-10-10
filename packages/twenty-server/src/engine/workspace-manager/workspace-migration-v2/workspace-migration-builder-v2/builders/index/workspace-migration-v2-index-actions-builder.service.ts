@@ -4,31 +4,28 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { compareTwoFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/compare-two-flat-index-metadata.util';
-import { WorkspaceMigrationIndexActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/types/workspace-migration-index-action-v2';
-import {
-  FlatEntityUpdateValidationArgs,
-  FlatEntityValidationArgs,
-  FlatEntityValidationReturnType,
-  WorkspaceEntityMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service';
 
 export type IndexRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
   (typeof ALL_FLAT_ENTITY_CONFIGURATION.index.relatedFlatEntityMapsKeys)[number]
 >;
+
+const INDEX_METADATA_NAME = 'index' as const satisfies AllMetadataName;
+
 @Injectable()
 export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  'index',
-  FlatIndexMetadata,
-  WorkspaceMigrationIndexActionV2,
-  IndexRelatedFlatEntityMaps
+  typeof INDEX_METADATA_NAME
 > {
   constructor(
     private readonly flatIndexValidatorService: FlatIndexValidatorService,
@@ -40,15 +37,8 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatIndexToValidate,
     optimisticFlatEntityMaps: optimisticFlatIndexMaps,
-  }: FlatEntityValidationArgs<
-    FlatIndexMetadata,
-    IndexRelatedFlatEntityMaps
-  >): Promise<
-    FlatEntityValidationReturnType<
-      WorkspaceMigrationIndexActionV2,
-      FlatIndexMetadata,
-      IndexRelatedFlatEntityMaps
-    >
+  }: FlatEntityValidationArgs<typeof INDEX_METADATA_NAME>): Promise<
+    FlatEntityValidationReturnType<typeof INDEX_METADATA_NAME, 'created'>
   > {
     const validationResult =
       this.flatIndexValidatorService.validateFlatIndexCreation({
@@ -99,15 +89,8 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatIndexToValidate,
     optimisticFlatEntityMaps: optimisticFlatIndexMaps,
-  }: FlatEntityValidationArgs<
-    FlatIndexMetadata,
-    IndexRelatedFlatEntityMaps
-  >): Promise<
-    FlatEntityValidationReturnType<
-      WorkspaceMigrationIndexActionV2,
-      FlatIndexMetadata,
-      IndexRelatedFlatEntityMaps
-    >
+  }: FlatEntityValidationArgs<typeof INDEX_METADATA_NAME>): Promise<
+    FlatEntityValidationReturnType<typeof INDEX_METADATA_NAME, 'deleted'>
   > {
     const validationResult =
       this.flatIndexValidatorService.validateFlatIndexDeletion({
@@ -158,15 +141,8 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     dependencyOptimisticFlatEntityMaps,
     flatEntityUpdate: { from: fromFlatIndex, to: toFlatIndex },
     optimisticFlatEntityMaps: optimisticFlatIndexMaps,
-  }: FlatEntityUpdateValidationArgs<
-    FlatIndexMetadata,
-    IndexRelatedFlatEntityMaps
-  >): Promise<
-    | FlatEntityValidationReturnType<
-        WorkspaceMigrationIndexActionV2,
-        FlatIndexMetadata,
-        IndexRelatedFlatEntityMaps
-      >
+  }: FlatEntityUpdateValidationArgs<typeof INDEX_METADATA_NAME>): Promise<
+    | FlatEntityValidationReturnType<typeof INDEX_METADATA_NAME, 'updated'>
     | undefined
   > {
     const indexUpdatedProperties = compareTwoFlatIndexMetadata({

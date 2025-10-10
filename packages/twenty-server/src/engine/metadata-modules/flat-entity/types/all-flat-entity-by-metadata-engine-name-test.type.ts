@@ -5,9 +5,9 @@ import { type Expect } from 'twenty-shared/testing';
 
 type ExpectedGenericFlatEntityInformation = {
   actions: {
-    created: WorkspaceMigrationActionV2;
-    deleted: WorkspaceMigrationActionV2;
-    updated: WorkspaceMigrationActionV2;
+    created: WorkspaceMigrationActionV2 | WorkspaceMigrationActionV2[];
+    deleted: WorkspaceMigrationActionV2 | WorkspaceMigrationActionV2[];
+    updated: WorkspaceMigrationActionV2 | WorkspaceMigrationActionV2[];
   };
   flatEntity: FlatEntity;
 };

@@ -2,50 +2,35 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { compareTwoFlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/utils/compare-two-flat-view-filter.util';
-import { ViewFilterRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/types/view-filter-related-flat-entity-maps.type';
-import {
-  UpdateViewFilterAction,
-  WorkspaceMigrationViewFilterActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/types/workspace-migration-view-filter-action-v2.type';
-import {
-  WorkspaceEntityMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { UpdateViewFilterAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/types/workspace-migration-view-filter-action-v2.type';
+import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatViewFilterValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service';
 
+const VIEW_FILTER_METADATA_NAME = 'viewFilter' as const satisfies AllMetadataName;
 @Injectable()
 export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  'viewFilter',
-  FlatViewFilter,
-  WorkspaceMigrationViewFilterActionV2,
-  ViewFilterRelatedFlatEntityMaps
+  typeof VIEW_FILTER_METADATA_NAME
 > {
   constructor(
     private readonly flatViewFilterValidatorService: FlatViewFilterValidatorService,
   ) {
-    super('viewFilter');
+    super(VIEW_FILTER_METADATA_NAME);
   }
 
   protected async validateFlatEntityCreation({
     dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatViewFilterToValidate,
     optimisticFlatEntityMaps: optimisticFlatViewFilterMaps,
-  }: FlatEntityValidationArgs<
-    FlatViewFilter,
-    ViewFilterRelatedFlatEntityMaps
-  >): Promise<
-    FlatEntityValidationReturnType<
-      WorkspaceMigrationViewFilterActionV2,
-      FlatViewFilter,
-      ViewFilterRelatedFlatEntityMaps
-    >
+  }: FlatEntityValidationArgs<typeof VIEW_FILTER_METADATA_NAME>): Promise<
+    FlatEntityValidationReturnType<typeof VIEW_FILTER_METADATA_NAME, 'created'>
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterCreation({
@@ -91,15 +76,8 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatViewFilterToValidate,
     optimisticFlatEntityMaps: optimisticFlatViewFilterMaps,
-  }: FlatEntityValidationArgs<
-    FlatViewFilter,
-    ViewFilterRelatedFlatEntityMaps
-  >): Promise<
-    FlatEntityValidationReturnType<
-      WorkspaceMigrationViewFilterActionV2,
-      FlatViewFilter,
-      ViewFilterRelatedFlatEntityMaps
-    >
+  }: FlatEntityValidationArgs<typeof VIEW_FILTER_METADATA_NAME>): Promise<
+    FlatEntityValidationReturnType<typeof VIEW_FILTER_METADATA_NAME, 'deleted'>
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterDeletion({
@@ -148,15 +126,8 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     dependencyOptimisticFlatEntityMaps,
     flatEntityUpdate: { from: fromFlatViewFilter, to: toFlatViewFilter },
     optimisticFlatEntityMaps: optimisticFlatViewFilterMaps,
-  }: FlatEntityUpdateValidationArgs<
-    FlatViewFilter,
-    ViewFilterRelatedFlatEntityMaps
-  >): Promise<
-    | FlatEntityValidationReturnType<
-        WorkspaceMigrationViewFilterActionV2,
-        FlatViewFilter,
-        ViewFilterRelatedFlatEntityMaps
-      >
+  }: FlatEntityUpdateValidationArgs<typeof VIEW_FILTER_METADATA_NAME>): Promise<
+    | FlatEntityValidationReturnType<typeof VIEW_FILTER_METADATA_NAME, 'updated'>
     | undefined
   > {
     const viewFilterUpdatedProperties = compareTwoFlatViewFilter({

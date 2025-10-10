@@ -1,46 +1,31 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { compareTwoFlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/utils/compare-two-flat-database-event-trigger.util';
-import { DatabaseEventTriggerRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/database-event-trigger-related-flat-entity-maps.type';
-import {
-  UpdateDatabaseEventTriggerAction,
-  WorkspaceMigrationDatabaseEventTriggerActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action-v2.type';
-import {
-  FlatEntityUpdateValidationArgs,
-  FlatEntityValidationArgs,
-  FlatEntityValidationReturnType,
-  WorkspaceEntityMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { UpdateDatabaseEventTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action-v2.type';
+import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service';
 
+const DATABASE_EVENT_TRIGGER_METADATA_NAME = 'databaseEventTrigger' as const satisfies AllMetadataName;
 @Injectable()
 export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  'databaseEventTrigger',
-  FlatDatabaseEventTrigger,
-  WorkspaceMigrationDatabaseEventTriggerActionV2,
-  DatabaseEventTriggerRelatedFlatEntityMaps
+  typeof DATABASE_EVENT_TRIGGER_METADATA_NAME
 > {
   constructor(
     private readonly flatDatabaseEventTriggerValidatorService: FlatDatabaseEventTriggerValidatorService,
   ) {
-    super('databaseEventTrigger');
+    super(DATABASE_EVENT_TRIGGER_METADATA_NAME);
   }
 
   protected async validateFlatEntityCreation({
     flatEntityToValidate: flatDatabaseEventTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<
-    FlatDatabaseEventTrigger,
-    DatabaseEventTriggerRelatedFlatEntityMaps
-  >): Promise<
-    FlatEntityValidationReturnType<
-      WorkspaceMigrationDatabaseEventTriggerActionV2,
-      FlatDatabaseEventTrigger,
-      DatabaseEventTriggerRelatedFlatEntityMaps
-    >
+  }: FlatEntityValidationArgs<typeof DATABASE_EVENT_TRIGGER_METADATA_NAME>): Promise<
+    FlatEntityValidationReturnType<typeof DATABASE_EVENT_TRIGGER_METADATA_NAME, 'created'>
   > {
     const validationResult =
       await this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerCreation(
@@ -72,15 +57,8 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     flatEntityToValidate: flatDatabaseEventTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<
-    FlatDatabaseEventTrigger,
-    DatabaseEventTriggerRelatedFlatEntityMaps
-  >): Promise<
-    FlatEntityValidationReturnType<
-      WorkspaceMigrationDatabaseEventTriggerActionV2,
-      FlatDatabaseEventTrigger,
-      DatabaseEventTriggerRelatedFlatEntityMaps
-    >
+  }: FlatEntityValidationArgs<typeof DATABASE_EVENT_TRIGGER_METADATA_NAME>): Promise<
+    FlatEntityValidationReturnType<typeof DATABASE_EVENT_TRIGGER_METADATA_NAME, 'deleted'>
   > {
     const validationResult =
       this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerDeletion(
@@ -115,15 +93,8 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     },
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityUpdateValidationArgs<
-    FlatDatabaseEventTrigger,
-    DatabaseEventTriggerRelatedFlatEntityMaps
-  >): Promise<
-    | FlatEntityValidationReturnType<
-        WorkspaceMigrationDatabaseEventTriggerActionV2,
-        FlatDatabaseEventTrigger,
-        DatabaseEventTriggerRelatedFlatEntityMaps
-      >
+  }: FlatEntityUpdateValidationArgs<typeof DATABASE_EVENT_TRIGGER_METADATA_NAME>): Promise<
+    | FlatEntityValidationReturnType<typeof DATABASE_EVENT_TRIGGER_METADATA_NAME, 'updated'>
     | undefined
   > {
     const databaseEventTriggerUpdatedProperties =

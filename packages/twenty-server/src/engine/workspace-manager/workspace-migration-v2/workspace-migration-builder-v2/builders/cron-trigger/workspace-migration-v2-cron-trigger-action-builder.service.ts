@@ -1,46 +1,31 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { compareTwoFlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/utils/compare-two-flat-cron-trigger.util';
-import { CronTriggerRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/cron-trigger-related-flat-entity-maps.type';
-import {
-  UpdateCronTriggerAction,
-  WorkspaceMigrationCronTriggerActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/workspace-migration-cron-trigger-action-v2.type';
-import {
-  FlatEntityUpdateValidationArgs,
-  FlatEntityValidationArgs,
-  FlatEntityValidationReturnType,
-  WorkspaceEntityMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { UpdateCronTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/workspace-migration-cron-trigger-action-v2.type';
+import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatCronTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service';
 
+const CRON_TRIGGER_METADATA_NAME = 'cronTrigger' as const satisfies AllMetadataName;
 @Injectable()
 export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  'cronTrigger',
-  FlatCronTrigger,
-  WorkspaceMigrationCronTriggerActionV2,
-  CronTriggerRelatedFlatEntityMaps
+  typeof CRON_TRIGGER_METADATA_NAME
 > {
   constructor(
     private readonly flatCronTriggerValidatorService: FlatCronTriggerValidatorService,
   ) {
-    super('cronTrigger');
+    super(CRON_TRIGGER_METADATA_NAME);
   }
 
   protected async validateFlatEntityCreation({
     flatEntityToValidate: flatCronTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<
-    FlatCronTrigger,
-    CronTriggerRelatedFlatEntityMaps
-  >): Promise<
-    FlatEntityValidationReturnType<
-      WorkspaceMigrationCronTriggerActionV2,
-      FlatCronTrigger,
-      CronTriggerRelatedFlatEntityMaps
-    >
+  }: FlatEntityValidationArgs<typeof CRON_TRIGGER_METADATA_NAME>): Promise<
+    FlatEntityValidationReturnType<typeof CRON_TRIGGER_METADATA_NAME, 'created'>
   > {
     const validationResult =
       await this.flatCronTriggerValidatorService.validateFlatCronTriggerCreation(
@@ -72,15 +57,8 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     flatEntityToValidate: flatCronTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<
-    FlatCronTrigger,
-    CronTriggerRelatedFlatEntityMaps
-  >): Promise<
-    FlatEntityValidationReturnType<
-      WorkspaceMigrationCronTriggerActionV2,
-      FlatCronTrigger,
-      CronTriggerRelatedFlatEntityMaps
-    >
+  }: FlatEntityValidationArgs<typeof CRON_TRIGGER_METADATA_NAME>): Promise<
+    FlatEntityValidationReturnType<typeof CRON_TRIGGER_METADATA_NAME, 'deleted'>
   > {
     const validationResult =
       this.flatCronTriggerValidatorService.validateFlatCronTriggerDeletion({
@@ -110,15 +88,8 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     flatEntityUpdate: { from: fromFlatCronTrigger, to: toFlatCronTrigger },
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityUpdateValidationArgs<
-    FlatCronTrigger,
-    CronTriggerRelatedFlatEntityMaps
-  >): Promise<
-    | FlatEntityValidationReturnType<
-        WorkspaceMigrationCronTriggerActionV2,
-        FlatCronTrigger,
-        CronTriggerRelatedFlatEntityMaps
-      >
+  }: FlatEntityUpdateValidationArgs<typeof CRON_TRIGGER_METADATA_NAME>): Promise<
+    | FlatEntityValidationReturnType<typeof CRON_TRIGGER_METADATA_NAME, 'updated'>
     | undefined
   > {
     const cronTriggerUpdatedProperties = compareTwoFlatCronTrigger({
