@@ -2,6 +2,7 @@ import { FLAT_CRON_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modul
 import { FLAT_DATABASE_EVENT_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/database-event-trigger/constants/flat-database-event-trigger-editable-properties.constant';
 import { type AllFlatEntitiesByMetadataEngineName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type AllFlatEntities } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FromMetadataEngineNameToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-engine-name-to-flat-entity-maps-key.type';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field/constants/flat-view-field-editable-properties.constant';
@@ -17,6 +18,7 @@ type OneFlatEntityConstants<
   propertiesToCompare: (keyof TFlatEntity)[];
   propertiesToStringify: (keyof TFlatEntity)[];
   flatEntityMapsKey: FromMetadataEngineNameToFlatEntityMapsKey<TFlatEntityName>;
+  relatedFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
 };
 
 export const ALL_FLAT_ENTITY_CONSTANTS = {
@@ -32,6 +34,7 @@ export const ALL_FLAT_ENTITY_CONSTANTS = {
       'standardOverrides',
       'defaultValue',
     ],
+    relatedFlatEntityMapsKeys: ['flatObjectMetadataMaps'],
   },
   objectMetadata: {
     flatEntityMapsKey: 'flatObjectMetadataMaps',
@@ -48,23 +51,23 @@ export const ALL_FLAT_ENTITY_CONSTANTS = {
       'labelIdentifierFieldMetadataId',
     ],
     propertiesToStringify: ['standardOverrides'],
+    relatedFlatEntityMapsKeys: ['flatFieldMetadataMaps'],
   },
   view: {
     flatEntityMapsKey: 'flatViewMaps',
-    propertiesToCompare: [
-      'key',
-      'deletedAt',
-      ...FLAT_VIEW_EDITABLE_PROPERTIES,
-    ],
+    propertiesToCompare: ['key', 'deletedAt', ...FLAT_VIEW_EDITABLE_PROPERTIES],
     propertiesToStringify: [],
+    relatedFlatEntityMapsKeys: ['flatObjectMetadataMaps'],
   },
   viewField: {
     flatEntityMapsKey: 'flatViewFieldMaps',
-    propertiesToCompare: [
-      ...FLAT_VIEW_FIELD_EDITABLE_PROPERTIES,
-      'deletedAt',
-    ],
+    propertiesToCompare: [...FLAT_VIEW_FIELD_EDITABLE_PROPERTIES, 'deletedAt'],
     propertiesToStringify: [],
+    relatedFlatEntityMapsKeys: [
+      'flatViewMaps',
+      'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
+    ],
   },
   index: {
     flatEntityMapsKey: 'flatIndexMaps',
@@ -76,6 +79,10 @@ export const ALL_FLAT_ENTITY_CONSTANTS = {
       'name',
     ],
     propertiesToStringify: ['flatIndexFieldMetadatas'],
+    relatedFlatEntityMapsKeys: [
+      'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
+    ],
   },
   serverlessFunction: {
     flatEntityMapsKey: 'flatServerlessFunctionMaps',
@@ -84,21 +91,25 @@ export const ALL_FLAT_ENTITY_CONSTANTS = {
       'deletedAt',
     ],
     propertiesToStringify: [],
+    relatedFlatEntityMapsKeys: [],
   },
   cronTrigger: {
     flatEntityMapsKey: 'flatCronTriggerMaps',
     propertiesToCompare: [...FLAT_CRON_TRIGGER_EDITABLE_PROPERTIES],
     propertiesToStringify: ['settings'],
+    relatedFlatEntityMapsKeys: ['flatServerlessFunctionMaps'],
   },
   databaseEventTrigger: {
     flatEntityMapsKey: 'flatDatabaseEventTriggerMaps',
     propertiesToCompare: [...FLAT_DATABASE_EVENT_TRIGGER_EDITABLE_PROPERTIES],
     propertiesToStringify: ['settings'],
+    relatedFlatEntityMapsKeys: ['flatServerlessFunctionMaps'],
   },
   routeTrigger: {
     flatEntityMapsKey: 'flatRouteTriggerMaps',
     propertiesToCompare: [...FLAT_ROUTE_TRIGGER_EDITABLE_PROPERTIES],
     propertiesToStringify: [],
+    relatedFlatEntityMapsKeys: ['flatServerlessFunctionMaps'],
   },
   viewFilter: {
     flatEntityMapsKey: 'flatViewFilterMaps',
@@ -108,6 +119,7 @@ export const ALL_FLAT_ENTITY_CONSTANTS = {
       ...FLAT_VIEW_FILTER_EDITABLE_PROPERTIES,
     ],
     propertiesToStringify: ['value'],
+    relatedFlatEntityMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
   },
 } as const satisfies {
   [P in keyof AllFlatEntitiesByMetadataEngineName]: OneFlatEntityConstants<
