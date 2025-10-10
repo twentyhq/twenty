@@ -12,31 +12,55 @@ describe('generateDepthOneRecordGqlFields', () => {
     });
     expect(result).toMatchInlineSnapshot(`
 {
-  "attachments": true,
+  "attachments": {
+    "id": true,
+    "name": true,
+  },
   "avatarUrl": true,
-  "calendarEventParticipants": true,
+  "calendarEventParticipants": {
+    "handle": true,
+    "id": true,
+  },
   "city": true,
-  "company": true,
+  "company": {
+    "domainName": true,
+    "id": true,
+    "name": true,
+  },
   "companyId": true,
   "createdAt": true,
   "createdBy": true,
   "deletedAt": true,
   "emails": true,
-  "favorites": true,
+  "favorites": {
+    "id": true,
+  },
   "id": true,
   "intro": true,
   "jobTitle": true,
   "linkedinLink": true,
-  "messageParticipants": true,
+  "messageParticipants": {
+    "handle": true,
+    "id": true,
+  },
   "name": true,
-  "noteTargets": true,
+  "noteTargets": {
+    "id": true,
+  },
   "performanceRating": true,
   "phones": true,
-  "pointOfContactForOpportunities": true,
+  "pointOfContactForOpportunities": {
+    "id": true,
+    "name": true,
+  },
   "position": true,
   "searchVector": true,
-  "taskTargets": true,
-  "timelineActivities": true,
+  "taskTargets": {
+    "id": true,
+  },
+  "timelineActivities": {
+    "id": true,
+  },
   "updatedAt": true,
   "whatsapp": true,
   "workPreference": true,
