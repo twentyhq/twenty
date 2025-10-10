@@ -62,22 +62,6 @@ import {
   type UpdateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/types/workspace-migration-view-action-v2.type';
 
-/**
- * @deprecated REPLACE
- */
-export type AllFlatEntitiesByMetadataEngineName = {
-  fieldMetadata: FlatFieldMetadata;
-  objectMetadata: FlatObjectMetadata;
-  view: FlatView;
-  viewField: FlatViewField;
-  index: FlatIndexMetadata;
-  serverlessFunction: FlatServerlessFunction;
-  cronTrigger: FlatCronTrigger;
-  databaseEventTrigger: FlatDatabaseEventTrigger;
-  routeTrigger: FlatRouteTrigger;
-  viewFilter: FlatViewFilter;
-};
-
 export type AllFlatEntityConfigurationByMetadataName = {
   fieldMetadata: {
     actions: {
@@ -164,10 +148,10 @@ export type AllFlatEntityConfigurationByMetadataName = {
 export type MetadataRelatedFlatEntityMapsKeys<T extends AllMetadataName> =
   (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['relatedFlatEntityMapsKeys'][number];
 
-export type MetadataRelatedFlatEntityMaps<T extends AllMetadataName> = Pick<
-  AllFlatEntityMaps,
-  MetadataRelatedFlatEntityMapsKeys<T>
->;
+export type MetadataRelatedFlatEntityMaps<T extends AllMetadataName> =
+  MetadataRelatedFlatEntityMapsKeys<T> extends []
+    ? undefined
+    : Pick<AllFlatEntityMaps, MetadataRelatedFlatEntityMapsKeys<T>>;
 
 export type MetadataFlatEntity<T extends AllMetadataName> =
   AllFlatEntityConfigurationByMetadataName[T]['flatEntity'];
@@ -186,3 +170,13 @@ export type MetadataWorkspaceMigrationAction<
     | 'deleted'
     | 'updated',
 > = MetadataWorkspaceMigrationActionsRecord<T>[TOperation];
+
+type tmp = MetadataWorkspaceMigrationAction<AllMetadataName>;
+export type MetadataWorkspaceMigrationActionType<
+  T extends
+    MetadataWorkspaceMigrationAction<AllMetadataName> = MetadataWorkspaceMigrationAction<AllMetadataName>,
+> = T extends any[]
+  ? T[number]['type']
+  : T extends { type: any }
+    ? T['type']
+    : never;
