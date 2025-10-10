@@ -20,6 +20,7 @@ import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/work
 import { WorkspaceMigrationV2RouteTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/workspace-migration-v2-route-trigger-actions-builder.service';
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
+import { WorkspaceMigrationV2ViewFilterActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/workspace-migration-v2-view-filter-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
@@ -28,6 +29,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2IndexActionsBuilderService: WorkspaceMigrationV2IndexActionsBuilderService,
     private readonly workspaceMigrationV2ViewActionsBuilderService: WorkspaceMigrationV2ViewActionsBuilderService,
     private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,
+    private readonly workspaceMigrationV2ViewFilterActionsBuilderService: WorkspaceMigrationV2ViewFilterActionsBuilderService,
     private readonly workspaceMigrationV2ServerlessFunctionActionsBuilderService: WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
     private readonly workspaceMigrationV2DatabaseEventTriggerActionsBuilderService: WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService,
     private readonly workspaceMigrationV2CronTriggerActionsBuilderService: WorkspaceMigrationV2CronTriggerActionsBuilderService,
@@ -88,6 +90,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       cronTrigger: [],
       routeTrigger: [],
       fieldMetadata: [],
+      viewFilter: [],
     };
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
@@ -104,6 +107,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatCronTriggerMaps,
       flatRouteTriggerMaps,
       flatFieldMetadataMaps,
+      flatViewFilterMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -265,6 +269,36 @@ export class WorkspaceMigrationBuildOrchestratorService {
         orchestratorFailureReport.viewField.push(...viewFieldResult.errors);
       } else {
         orchestratorActionsReport.viewField = viewFieldResult.actions;
+      }
+    }
+
+    if (isDefined(flatViewFilterMaps)) {
+      const { from: fromFlatViewFilterMaps, to: toFlatViewFilterMaps } =
+        flatViewFilterMaps;
+      const viewFilterResult =
+        await this.workspaceMigrationV2ViewFilterActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatViewFilterMaps,
+            to: toFlatViewFilterMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatFieldMetadataMaps:
+                optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
+              flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
+            },
+            workspaceId,
+          },
+        );
+
+      optimisticAllFlatEntityMaps.flatViewFilterMaps =
+        viewFilterResult.optimisticFlatEntityMaps;
+      optimisticAllFlatEntityMaps.flatViewMaps =
+        viewFilterResult.dependencyOptimisticFlatEntityMaps.flatViewMaps;
+
+      if (viewFilterResult.status === 'fail') {
+        orchestratorFailureReport.viewFilter.push(...viewFilterResult.errors);
+      } else {
+        orchestratorActionsReport.viewFilter = viewFilterResult.actions;
       }
     }
 
@@ -434,6 +468,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.viewField.deleted,
           ...aggregatedOrchestratorActionsReport.viewField.created,
           ...aggregatedOrchestratorActionsReport.viewField.updated,
+          ...aggregatedOrchestratorActionsReport.viewFilter.deleted,
+          ...aggregatedOrchestratorActionsReport.viewFilter.created,
+          ...aggregatedOrchestratorActionsReport.viewFilter.updated,
           ///
 
           // Serverless functions
