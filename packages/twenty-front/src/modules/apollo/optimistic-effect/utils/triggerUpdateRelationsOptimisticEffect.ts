@@ -159,7 +159,7 @@ const triggerUpdateRelationOptimisticEffect = ({
     CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH.includes(
       targetObjectMetadata.nameSingular as CoreObjectNameSingular,
     );
-  const fieldNameOnTargetRecord =
+  const gqlFieldNameOnTargetRecord =
     targetFieldMetadataFullObject.type === FieldMetadataType.RELATION
       ? targetFieldMetadataFullObject.name
       : computeMorphRelationFieldName({
@@ -182,7 +182,7 @@ const triggerUpdateRelationOptimisticEffect = ({
         cache,
         sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
         sourceRecordId: currentSourceRecord.id,
-        fieldNameOnTargetRecord: fieldNameOnTargetRecord,
+        fieldNameOnTargetRecord: gqlFieldNameOnTargetRecord,
         targetObjectNameSingular: targetObjectMetadata.nameSingular,
         targetRecordId: targetRecordToDetachFrom.id,
       });
@@ -200,7 +200,7 @@ const triggerUpdateRelationOptimisticEffect = ({
         cache,
         sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
         sourceRecordId: updatedSourceRecord.id,
-        fieldNameOnTargetRecord: fieldNameOnTargetRecord,
+        fieldNameOnTargetRecord: gqlFieldNameOnTargetRecord,
         targetObjectNameSingular: targetObjectMetadata.nameSingular,
         targetRecordId: targetRecordToAttachTo.id,
       }),

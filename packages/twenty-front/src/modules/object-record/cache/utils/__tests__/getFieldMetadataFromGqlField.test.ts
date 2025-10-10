@@ -32,7 +32,7 @@ const objectMetadataItemGenerator = (relationType: RelationType) => {
             },
           },
           {
-            type: 'ONE_TO_MANY',
+            type: relationType,
             targetObjectMetadata: {
               nameSingular: 'person',
               namePlural: 'people',
