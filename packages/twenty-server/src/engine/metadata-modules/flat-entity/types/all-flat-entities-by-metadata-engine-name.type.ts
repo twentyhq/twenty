@@ -174,3 +174,12 @@ export type MetadataWorkspaceMigrationAction<
     ? Action[number]
     : Action
   : never;
+
+export type FromWorkspaceMigrationActionToMetadataName<TAction> = {
+  [K in AllMetadataName]: TAction extends AllFlatEntityConfigurationByMetadataName[K]['actions'][
+    | 'created'
+    | 'deleted'
+    | 'updated']
+    ? K
+    : never;
+}[AllMetadataName];

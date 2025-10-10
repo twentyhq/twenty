@@ -3,7 +3,7 @@ import { FLAT_DATABASE_EVENT_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/meta
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
-import { FromMetadataEngineNameToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-engine-name-to-flat-entity-maps-key.type';
+import { FromMetadataNameToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-name-to-flat-entity-maps-key.type';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field/constants/flat-view-field-editable-properties.constant';
 import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-editable-properties.constant';
@@ -15,7 +15,7 @@ type OneFlatEntityConfiguration<
 > = {
   propertiesToCompare: (keyof MetadataFlatEntity<T>)[];
   propertiesToStringify: (keyof MetadataFlatEntity<T>)[];
-  flatEntityMapsKey: FromMetadataEngineNameToFlatEntityMapsKey<T>;
+  flatEntityMapsKey: FromMetadataNameToFlatEntityMapsKey<T>;
   relatedFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
 };
 export const ALL_FLAT_ENTITY_CONFIGURATION = {
