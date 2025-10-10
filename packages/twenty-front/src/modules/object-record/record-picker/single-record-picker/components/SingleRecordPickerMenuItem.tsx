@@ -3,12 +3,14 @@ import styled from '@emotion/styled';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
+import { singleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
@@ -18,7 +20,6 @@ type SingleRecordPickerMenuItemProps = {
   morphItem: RecordPickerPickableMorphItem;
   onMorphItemSelected: (morphItem?: RecordPickerPickableMorphItem) => void;
   isRecordSelected: boolean;
-  showObjectName?: boolean;
 };
 
 const StyledSelectableItem = styled(SelectableListItem)`
@@ -29,7 +30,6 @@ export const SingleRecordPickerMenuItem = ({
   morphItem,
   onMorphItemSelected,
   isRecordSelected,
-  showObjectName,
 }: SingleRecordPickerMenuItemProps) => {
   const recordPickerComponentInstanceId =
     useAvailableComponentInstanceIdOrThrow(
@@ -49,9 +49,16 @@ export const SingleRecordPickerMenuItem = ({
     searchRecordStoreFamilyState(morphItem.recordId),
   );
 
+  const searchableObjectMetadataItems = useRecoilComponentValue(
+    singleRecordPickerSearchableObjectMetadataItemsComponentState,
+    recordPickerComponentInstanceId,
+  );
+
   if (!isDefined(searchRecord)) {
     return null;
   }
+
+  const showObjectName = searchableObjectMetadataItems.length > 1;
 
   return (
     <StyledSelectableItem

@@ -92,7 +92,6 @@ export const MorphRelationManyToOneFieldInput = () => {
           : 'search-bar-on-bottom'
       }
       dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-      showObjectName={true}
     />
   );
 };
