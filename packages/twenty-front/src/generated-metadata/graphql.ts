@@ -202,9 +202,12 @@ export type AppTokenEdge = {
 
 export type Application = {
   __typename?: 'Application';
+  agents: Array<Agent>;
   description: Scalars['String'];
   id: Scalars['UUID'];
   name: Scalars['String'];
+  objects: Array<Object>;
+  serverlessFunctions: Array<ServerlessFunction>;
   universalIdentifier?: Maybe<Scalars['UUID']>;
 };
 
@@ -3088,6 +3091,7 @@ export type Query = {
   findManyRouteTriggers: Array<RouteTrigger>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
+  findOneApplication: Application;
   findOneCronTrigger: CronTrigger;
   findOneDatabaseEventTrigger: DatabaseEventTrigger;
   findOneRemoteServerById: RemoteServer;
@@ -3218,6 +3222,11 @@ export type QueryFindManyRemoteServersByTypeArgs = {
 
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
+};
+
+
+export type QueryFindOneApplicationArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -4767,12 +4776,19 @@ export type TrackAnalyticsMutationVariables = Exact<{
 
 export type TrackAnalyticsMutation = { __typename?: 'Mutation', trackAnalytics: { __typename?: 'Analytics', success: boolean } };
 
-export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string };
+export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string }> };
 
 export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyApplicationsQuery = { __typename?: 'Query', findManyApplications: Array<{ __typename?: 'Application', id: string, name: string, description: string }> };
+export type FindManyApplicationsQuery = { __typename?: 'Query', findManyApplications: Array<{ __typename?: 'Application', id: string, name: string, description: string, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string }> }> };
+
+export type FindOneApplicationQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string }> } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -5148,6 +5164,8 @@ export type DeleteFileMutationVariables = Exact<{
 
 
 export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } };
+
+export type ObjectMetadataFieldsFragment = { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> };
 
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
   input: CreateOneObjectInput;
@@ -6124,13 +6142,140 @@ export const AgentFieldsFragmentDoc = gql`
   updatedAt
 }
     `;
+export const ObjectMetadataFieldsFragmentDoc = gql`
+    fragment ObjectMetadataFields on Object {
+  id
+  nameSingular
+  namePlural
+  labelSingular
+  labelPlural
+  description
+  icon
+  isCustom
+  isRemote
+  isActive
+  isSystem
+  isUIReadOnly
+  createdAt
+  updatedAt
+  labelIdentifierFieldMetadataId
+  imageIdentifierFieldMetadataId
+  shortcut
+  isLabelSyncedWithName
+  isSearchable
+  duplicateCriteria
+  indexMetadataList {
+    id
+    createdAt
+    updatedAt
+    name
+    indexWhereClause
+    indexType
+    isUnique
+    isCustom
+    indexFieldMetadataList {
+      id
+      fieldMetadataId
+      createdAt
+      updatedAt
+      order
+    }
+  }
+  fieldsList {
+    id
+    type
+    name
+    label
+    description
+    icon
+    isCustom
+    isActive
+    isSystem
+    isUIReadOnly
+    isNullable
+    isUnique
+    createdAt
+    updatedAt
+    defaultValue
+    options
+    settings
+    isLabelSyncedWithName
+    relation {
+      type
+      sourceObjectMetadata {
+        id
+        nameSingular
+        namePlural
+      }
+      targetObjectMetadata {
+        id
+        nameSingular
+        namePlural
+      }
+      sourceFieldMetadata {
+        id
+        name
+      }
+      targetFieldMetadata {
+        id
+        name
+      }
+    }
+    morphRelations {
+      type
+      sourceObjectMetadata {
+        id
+        nameSingular
+        namePlural
+      }
+      targetObjectMetadata {
+        id
+        nameSingular
+        namePlural
+      }
+      sourceFieldMetadata {
+        id
+        name
+      }
+      targetFieldMetadata {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+export const ServerlessFunctionFieldsFragmentDoc = gql`
+    fragment ServerlessFunctionFields on ServerlessFunction {
+  id
+  name
+  description
+  runtime
+  timeoutSeconds
+  latestVersion
+  publishedVersions
+  createdAt
+  updatedAt
+}
+    `;
 export const ApplicationFieldsFragmentDoc = gql`
     fragment ApplicationFields on Application {
   id
   name
   description
+  agents {
+    ...AgentFields
+  }
+  objects {
+    ...ObjectMetadataFields
+  }
+  serverlessFunctions {
+    ...ServerlessFunctionFields
+  }
 }
-    `;
+    ${AgentFieldsFragmentDoc}
+${ObjectMetadataFieldsFragmentDoc}
+${ServerlessFunctionFieldsFragmentDoc}`;
 export const AuthTokenFragmentFragmentDoc = gql`
     fragment AuthTokenFragment on AuthToken {
   token
@@ -6248,19 +6393,6 @@ export const PermissionFlagFragmentFragmentDoc = gql`
   id
   flag
   roleId
-}
-    `;
-export const ServerlessFunctionFieldsFragmentDoc = gql`
-    fragment ServerlessFunctionFields on ServerlessFunction {
-  id
-  name
-  description
-  runtime
-  timeoutSeconds
-  latestVersion
-  publishedVersions
-  createdAt
-  updatedAt
 }
     `;
 export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
@@ -7202,6 +7334,41 @@ export function useFindManyApplicationsLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type FindManyApplicationsQueryHookResult = ReturnType<typeof useFindManyApplicationsQuery>;
 export type FindManyApplicationsLazyQueryHookResult = ReturnType<typeof useFindManyApplicationsLazyQuery>;
 export type FindManyApplicationsQueryResult = Apollo.QueryResult<FindManyApplicationsQuery, FindManyApplicationsQueryVariables>;
+export const FindOneApplicationDocument = gql`
+    query FindOneApplication($id: UUID!) {
+  findOneApplication(id: $id) {
+    ...ApplicationFields
+  }
+}
+    ${ApplicationFieldsFragmentDoc}`;
+
+/**
+ * __useFindOneApplicationQuery__
+ *
+ * To run a query within a React component, call `useFindOneApplicationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneApplicationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindOneApplicationQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFindOneApplicationQuery(baseOptions: Apollo.QueryHookOptions<FindOneApplicationQuery, FindOneApplicationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindOneApplicationQuery, FindOneApplicationQueryVariables>(FindOneApplicationDocument, options);
+      }
+export function useFindOneApplicationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneApplicationQuery, FindOneApplicationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindOneApplicationQuery, FindOneApplicationQueryVariables>(FindOneApplicationDocument, options);
+        }
+export type FindOneApplicationQueryHookResult = ReturnType<typeof useFindOneApplicationQuery>;
+export type FindOneApplicationLazyQueryHookResult = ReturnType<typeof useFindOneApplicationLazyQuery>;
+export type FindOneApplicationQueryResult = Apollo.QueryResult<FindOneApplicationQuery, FindOneApplicationQueryVariables>;
 export const UploadFileDocument = gql`
     mutation uploadFile($file: Upload!, $fileFolder: FileFolder) {
   uploadFile(file: $file, fileFolder: $fileFolder) {
@@ -9343,105 +9510,7 @@ export const ObjectMetadataItemsDocument = gql`
   objects(paging: {first: 1000}) {
     edges {
       node {
-        id
-        nameSingular
-        namePlural
-        labelSingular
-        labelPlural
-        description
-        icon
-        isCustom
-        isRemote
-        isActive
-        isSystem
-        isUIReadOnly
-        createdAt
-        updatedAt
-        labelIdentifierFieldMetadataId
-        imageIdentifierFieldMetadataId
-        shortcut
-        isLabelSyncedWithName
-        isSearchable
-        duplicateCriteria
-        indexMetadataList {
-          id
-          createdAt
-          updatedAt
-          name
-          indexWhereClause
-          indexType
-          isUnique
-          isCustom
-          indexFieldMetadataList {
-            id
-            fieldMetadataId
-            createdAt
-            updatedAt
-            order
-          }
-        }
-        fieldsList {
-          id
-          type
-          name
-          label
-          description
-          icon
-          isCustom
-          isActive
-          isSystem
-          isUIReadOnly
-          isNullable
-          isUnique
-          createdAt
-          updatedAt
-          defaultValue
-          options
-          settings
-          isLabelSyncedWithName
-          relation {
-            type
-            sourceObjectMetadata {
-              id
-              nameSingular
-              namePlural
-            }
-            targetObjectMetadata {
-              id
-              nameSingular
-              namePlural
-            }
-            sourceFieldMetadata {
-              id
-              name
-            }
-            targetFieldMetadata {
-              id
-              name
-            }
-          }
-          morphRelations {
-            type
-            sourceObjectMetadata {
-              id
-              nameSingular
-              namePlural
-            }
-            targetObjectMetadata {
-              id
-              nameSingular
-              namePlural
-            }
-            sourceFieldMetadata {
-              id
-              name
-            }
-            targetFieldMetadata {
-              id
-              name
-            }
-          }
-        }
+        ...ObjectMetadataFields
       }
     }
     pageInfo {
@@ -9452,7 +9521,7 @@ export const ObjectMetadataItemsDocument = gql`
     }
   }
 }
-    `;
+    ${ObjectMetadataFieldsFragmentDoc}`;
 
 /**
  * __useObjectMetadataItemsQuery__

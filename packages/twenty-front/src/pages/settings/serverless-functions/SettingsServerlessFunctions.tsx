@@ -6,8 +6,10 @@ import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 
 export const SettingsServerlessFunctions = () => {
+  const { serverlessFunctions } = useGetManyServerlessFunctions();
   return (
     <SubMenuTopBarContainer
       title="Functions"
@@ -34,7 +36,9 @@ export const SettingsServerlessFunctions = () => {
       ]}
     >
       <Section>
-        <SettingsServerlessFunctionsTable />
+        <SettingsServerlessFunctionsTable
+          serverlessFunctions={serverlessFunctions}
+        />
       </Section>
     </SubMenuTopBarContainer>
   );

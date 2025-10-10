@@ -165,6 +165,14 @@ const SettingsApplications = lazy(() =>
   ),
 );
 
+const SettingsApplicationDetails = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationDetails').then(
+    (module) => ({
+      default: module.SettingsApplicationDetails,
+    }),
+  ),
+);
+
 const SettingsAgentForm = lazy(() =>
   import('~/pages/settings/ai/SettingsAgentForm').then((module) => ({
     default: module.SettingsAgentForm,
@@ -467,7 +475,10 @@ export const SettingsRoutes = ({
           path={SettingsPath.Applications}
           element={<SettingsApplications />}
         />
-
+        <Route
+          path={SettingsPath.ApplicationDetail}
+          element={<SettingsApplicationDetails />}
+        />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
         <Route
@@ -613,12 +624,13 @@ export const SettingsRoutes = ({
             path={SettingsPath.NewServerlessFunction}
             element={<SettingsServerlessFunctionsNew />}
           />
-          <Route
-            path={SettingsPath.ServerlessFunctionDetail}
-            element={<SettingsServerlessFunctionDetail />}
-          />
         </>
       )}
+
+      <Route
+        path={SettingsPath.ServerlessFunctionDetail}
+        element={<SettingsServerlessFunctionDetail />}
+      />
 
       <Route
         element={

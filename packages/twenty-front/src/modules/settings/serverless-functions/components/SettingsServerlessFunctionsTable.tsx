@@ -1,7 +1,5 @@
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsServerlessFunctionsFieldItemTableRow } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsFieldItemTableRow';
 import { SettingsServerlessFunctionsTableEmpty } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTableEmpty';
-import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -19,34 +17,34 @@ const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
-export const SettingsServerlessFunctionsTable = () => {
-  const { serverlessFunctions } = useGetManyServerlessFunctions();
-
+export const SettingsServerlessFunctionsTable = ({
+  serverlessFunctions,
+}: {
+  serverlessFunctions: ServerlessFunction[];
+}) => {
   return (
     <>
       {serverlessFunctions.length ? (
-        <SettingsPageContainer>
-          <Table>
-            <StyledTableRow>
-              <TableHeader>Name</TableHeader>
-              <TableHeader>Runtime</TableHeader>
-              <TableHeader></TableHeader>
-            </StyledTableRow>
-            <StyledTableBody>
-              {serverlessFunctions.map(
-                (serverlessFunction: ServerlessFunction) => (
-                  <SettingsServerlessFunctionsFieldItemTableRow
-                    key={serverlessFunction.id}
-                    serverlessFunction={serverlessFunction}
-                    to={getSettingsPath(SettingsPath.ServerlessFunctions, {
-                      id: serverlessFunction.id,
-                    })}
-                  />
-                ),
-              )}
-            </StyledTableBody>
-          </Table>
-        </SettingsPageContainer>
+        <Table>
+          <StyledTableRow>
+            <TableHeader>Name</TableHeader>
+            <TableHeader>Runtime</TableHeader>
+            <TableHeader></TableHeader>
+          </StyledTableRow>
+          <StyledTableBody>
+            {serverlessFunctions.map(
+              (serverlessFunction: ServerlessFunction) => (
+                <SettingsServerlessFunctionsFieldItemTableRow
+                  key={serverlessFunction.id}
+                  serverlessFunction={serverlessFunction}
+                  to={getSettingsPath(SettingsPath.ServerlessFunctionDetail, {
+                    serverlessFunctionId: serverlessFunction.id,
+                  })}
+                />
+              ),
+            )}
+          </StyledTableBody>
+        </Table>
       ) : (
         <SettingsServerlessFunctionsTableEmpty />
       )}
