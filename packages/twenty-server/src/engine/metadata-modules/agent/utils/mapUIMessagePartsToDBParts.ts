@@ -72,7 +72,7 @@ export const mapUIMessagePartsToDBParts = (
               toolInput: input,
               toolOutput: output,
               errorMessage: errorText,
-              state: state,
+              state,
             };
           }
         }
