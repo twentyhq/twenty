@@ -1,31 +1,35 @@
 import diff from 'microdiff';
 import { parseJson } from 'twenty-shared/utils';
 
-import { type AllFlatEntities } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities.type';
-import { CompareTwoFlatEntityArgs } from 'src/engine/metadata-modules/flat-entity/types/compare-two-flat-entity-args.type';
+import {
+  AllFlatEntityConfigurationByMetadataName,
+  AllMetadataName,
+  MetadataFlatEntity,
+} from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { transformFlatEntityForComparison } from 'src/engine/metadata-modules/flat-entity/utils/transform-flat-entity-for-comparison.util';
 import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
+import { FromTo } from 'twenty-shared/types';
 
-export const compareTwoFlatEntity = <
-  TFlatEntity extends AllFlatEntities,
-  PToCompare extends keyof TFlatEntity,
-  PJsonB extends keyof TFlatEntity,
->({
+export type CompareTwoFlatEntityArgs<T extends AllMetadataName> = Pick<
+  AllFlatEntityConfigurationByMetadataName[T]['configuration'],
+  'propertiesToCompare' | 'propertiesToStringify'
+> &
+  FromTo<MetadataFlatEntity<T>, 'flatEntity'>;
+
+export const compareTwoFlatEntity = <T extends AllMetadataName>({
   fromFlatEntity,
   toFlatEntity,
   propertiesToCompare,
   propertiesToStringify,
-}: CompareTwoFlatEntityArgs<TFlatEntity, PToCompare, PJsonB>) => {
+}: CompareTwoFlatEntityArgs<T>) => {
   const [transformedFromFlatEntity, transformedToFlatEntity] = [
     fromFlatEntity,
     toFlatEntity,
   ].map((flatEntity) =>
     transformFlatEntityForComparison({
       flatEntity,
-      options: {
         propertiesToCompare,
         propertiesToStringify,
-      },
     }),
   );
 

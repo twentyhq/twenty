@@ -1,26 +1,28 @@
-import { FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
+import {
+  AllFlatEntityConfigurationByMetadataName,
+  AllMetadataName,
+  MetadataFlatEntity,
+} from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { orderObjectProperties } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/order-object-properties.util';
 
-export function transformFlatEntityForComparison<
-  TFlatEntity extends FlatEntity,
-  PToCompare extends keyof TFlatEntity,
-  PJsonB extends keyof TFlatEntity,
->({
+export type transformFlatEntityForComparisonArgs<T extends AllMetadataName> =
+  Pick<
+    AllFlatEntityConfigurationByMetadataName[T]['configuration'],
+    'propertiesToCompare' | 'propertiesToStringify'
+  > & { flatEntity: MetadataFlatEntity<T> };
+
+export function transformFlatEntityForComparison<T extends AllMetadataName>({
   flatEntity,
-  options: { propertiesToCompare, propertiesToStringify },
-}: {
-  flatEntity: TFlatEntity;
-  options: {
-    propertiesToCompare: PToCompare[];
-    propertiesToStringify: PJsonB[];
-  };
-}) {
+  propertiesToCompare,
+  propertiesToStringify,
+}: transformFlatEntityForComparisonArgs<T>) {
   return propertiesToCompare.reduce(
     (flatEntityAccumulator, propertyToCompare) => {
       const currentValue = flatEntity[propertyToCompare];
 
       if (
-        propertiesToStringify.includes(propertyToCompare as unknown as PJsonB)
+        // @ts-expect-error TODO prastoin
+        propertiesToStringify.includes(propertyToCompare)
       ) {
         const orderedValue = orderObjectProperties(currentValue);
 
@@ -35,6 +37,9 @@ export function transformFlatEntityForComparison<
         [propertyToCompare]: currentValue,
       };
     },
-    {} as Pick<TFlatEntity, PToCompare>,
+    {} as Pick<
+      MetadataFlatEntity<T>,
+      AllFlatEntityConfigurationByMetadataName[T]['configuration']['propertiesToCompare']
+    >,
   );
 }

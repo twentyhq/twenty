@@ -1,38 +1,46 @@
 import { type FromTo } from 'twenty-shared/types';
 
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
-import { type AllFlatEntities } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import {
+  AllFlatEntityConfigurationByMetadataName,
+  AllMetadataName,
+  MetadataFlatEntity,
+  MetadataFlatEntityMaps,
+} from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { compareTwoFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/compare-two-flat-entity.util';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
 import { isDefined } from 'twenty-shared/utils';
 
-export type DeletedCreatedUpdatedMatrix<T extends AllFlatEntities> = {
-  createdFlatEntityMaps: FlatEntityMaps<T>;
-  deletedFlatEntityMaps: FlatEntityMaps<T>;
-  updatedFlatEntityMaps: FromTo<FlatEntityMaps<T>>;
+export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
+  createdFlatEntityMaps: MetadataFlatEntityMaps<T>;
+  deletedFlatEntityMaps: MetadataFlatEntityMaps<T>;
+  updatedFlatEntityMaps: FromTo<MetadataFlatEntityMaps<T>>;
 };
 
 export type UniversalIdentifierItem = {
   universalIdentifier: string;
 };
 
+type FlatEntityDeletedCreatedUpdatedMatrixDispatcherArgs<
+  T extends AllMetadataName,
+> = FromTo<MetadataFlatEntity<T>[]> & {
+  buildOptions: WorkspaceMigrationBuilderOptions;
+  comparisonOptions: Pick<
+    AllFlatEntityConfigurationByMetadataName[T]['configuration'],
+    'propertiesToCompare' | 'propertiesToStringify'
+  >;
+};
+
 export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
-  TFlatEntity extends AllFlatEntities,
+  T extends AllMetadataName,
 >({
   from,
   to,
   buildOptions,
   comparisonOptions: { propertiesToCompare, propertiesToStringify },
-}: FromTo<TFlatEntity[]> & {
-  buildOptions: WorkspaceMigrationBuilderOptions;
-  comparisonOptions: {
-    propertiesToStringify: (keyof TFlatEntity)[];
-    propertiesToCompare: (keyof TFlatEntity)[];
-  };
-}): DeletedCreatedUpdatedMatrix<TFlatEntity> => {
-  const initialDispatcher: DeletedCreatedUpdatedMatrix<TFlatEntity> = {
+}: FlatEntityDeletedCreatedUpdatedMatrixDispatcherArgs<T>): DeletedCreatedUpdatedMatrix<T> => {
+  const initialDispatcher: DeletedCreatedUpdatedMatrix<T> = {
     createdFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
     deletedFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
     updatedFlatEntityMaps: {

@@ -12,53 +12,53 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import {
-  type CreateCronTriggerAction,
-  type DeleteCronTriggerAction,
-  type UpdateCronTriggerAction,
+    type CreateCronTriggerAction,
+    type DeleteCronTriggerAction,
+    type UpdateCronTriggerAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/workspace-migration-cron-trigger-action-v2.type';
 import {
-  type CreateDatabaseEventTriggerAction,
-  type DeleteDatabaseEventTriggerAction,
-  type UpdateDatabaseEventTriggerAction,
+    type CreateDatabaseEventTriggerAction,
+    type DeleteDatabaseEventTriggerAction,
+    type UpdateDatabaseEventTriggerAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action-v2.type';
 import {
-  type CreateFieldAction,
-  type DeleteFieldAction,
-  type UpdateFieldAction,
+    type CreateFieldAction,
+    type DeleteFieldAction,
+    type UpdateFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
 import {
-  type CreateIndexAction,
-  type DeleteIndexAction,
+    type CreateIndexAction,
+    type DeleteIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/types/workspace-migration-index-action-v2';
 import {
-  type CreateObjectAction,
-  type DeleteObjectAction,
-  type UpdateObjectAction,
+    type CreateObjectAction,
+    type DeleteObjectAction,
+    type UpdateObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
 import {
-  type CreateRouteTriggerAction,
-  type DeleteRouteTriggerAction,
-  type UpdateRouteTriggerAction,
+    type CreateRouteTriggerAction,
+    type DeleteRouteTriggerAction,
+    type UpdateRouteTriggerAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/types/workspace-migration-route-trigger-action-v2.type';
 import {
-  type CreateServerlessFunctionAction,
-  type DeleteServerlessFunctionAction,
-  type UpdateServerlessFunctionAction,
+    type CreateServerlessFunctionAction,
+    type DeleteServerlessFunctionAction,
+    type UpdateServerlessFunctionAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
 import {
-  type CreateViewFieldAction,
-  type DeleteViewFieldAction,
-  type UpdateViewFieldAction,
+    type CreateViewFieldAction,
+    type DeleteViewFieldAction,
+    type UpdateViewFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/workspace-migration-view-field-action-v2.type';
 import {
-  type CreateViewFilterAction,
-  type DeleteViewFilterAction,
-  type UpdateViewFilterAction,
+    type CreateViewFilterAction,
+    type DeleteViewFilterAction,
+    type UpdateViewFilterAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/types/workspace-migration-view-filter-action-v2.type';
 import {
-  type CreateViewAction,
-  type DeleteViewAction,
-  type UpdateViewAction,
+    type CreateViewAction,
+    type DeleteViewAction,
+    type UpdateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/types/workspace-migration-view-action-v2.type';
 
 /**
@@ -85,9 +85,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteFieldAction;
     };
     flatEntity: FlatFieldMetadata;
-    // Should be spread sibling instead of under configuration?
-    configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.fieldMetadata;
-  };
+  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.fieldMetadata;
   objectMetadata: {
     actions: {
       created: CreateObjectAction;
@@ -95,8 +93,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteObjectAction;
     };
     flatEntity: FlatObjectMetadata;
-    configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.objectMetadata;
-  };
+  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.objectMetadata;
   view: {
     actions: {
       created: CreateViewAction;
@@ -104,8 +101,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteViewAction;
     };
     flatEntity: FlatView;
-    configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.view;
-  };
+  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.view;
   viewField: {
     actions: {
       created: CreateViewFieldAction;
@@ -113,8 +109,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteViewFieldAction;
     };
     flatEntity: FlatViewField;
-    configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.viewField;
-  };
+  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.viewField;
   index: {
     actions: {
       created: CreateIndexAction;
@@ -122,8 +117,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteIndexAction;
     };
     flatEntity: FlatIndexMetadata;
-    configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.index;
-  };
+  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.index;
   serverlessFunction: {
     actions: {
       created: CreateServerlessFunctionAction;
@@ -131,8 +125,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteServerlessFunctionAction;
     };
     flatEntity: FlatServerlessFunction;
-    configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.serverlessFunction;
-  };
+  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.serverlessFunction;
   cronTrigger: {
     actions: {
       created: CreateCronTriggerAction;
@@ -140,8 +133,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteCronTriggerAction;
     };
     flatEntity: FlatCronTrigger;
-    configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.cronTrigger;
-  };
+  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.cronTrigger;
   databaseEventTrigger: {
     actions: {
       created: CreateDatabaseEventTriggerAction;
@@ -149,8 +141,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteDatabaseEventTriggerAction;
     };
     flatEntity: FlatDatabaseEventTrigger;
-    configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.databaseEventTrigger;
-  };
+  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.databaseEventTrigger;
   routeTrigger: {
     actions: {
       created: CreateRouteTriggerAction;
@@ -158,8 +149,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteRouteTriggerAction;
     };
     flatEntity: FlatRouteTrigger;
-    configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.routeTrigger;
-  };
+  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.routeTrigger;
   viewFilter: {
     actions: {
       created: CreateViewFilterAction;
@@ -167,14 +157,13 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteViewFilterAction;
     };
     flatEntity: FlatViewFilter;
-    configuration: typeof ALL_FLAT_ENTITY_CONFIGURATION.viewFilter;
-  };
+  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.viewFilter;
 };
 
 export type AllMetadataName = keyof AllFlatEntityConfigurationByMetadataName;
 
 export type MetadataRelatedFlatEntityMapsKeys<T extends AllMetadataName> =
-  AllFlatEntityConfigurationByMetadataName[T]['configuration']['relatedFlatEntityMapsKeys'][number];
+  AllFlatEntityConfigurationByMetadataName[T]['relatedFlatEntityMapsKeys'][number];
 
 export type MetadataRelatedFlatEntityMaps<T extends AllMetadataName> = Pick<
   AllFlatEntityMaps,

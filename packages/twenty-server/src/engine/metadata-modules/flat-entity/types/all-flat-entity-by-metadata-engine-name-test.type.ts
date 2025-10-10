@@ -13,8 +13,7 @@ type ExpectedGenericFlatEntityInformation<
     updated: WorkspaceMigrationActionV2;
   };
   flatEntity: FlatEntity;
-  configuration: (typeof ALL_FLAT_ENTITY_CONFIGURATION)[P];
-};
+} & (typeof ALL_FLAT_ENTITY_CONFIGURATION)[P];
 
 type ExpectedGenericAllFlatEntityInformationByMetadataEngine = {
   [P in keyof AllFlatEntityConfigurationByMetadataName]: ExpectedGenericFlatEntityInformation<P>;
