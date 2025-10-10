@@ -21,6 +21,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey, RelationType } from '~/generated-metadata/graphql';
 
 const StyledSelectsContainer = styled.div<{ isMobile: boolean }>`
@@ -74,7 +75,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
   const { t } = useLingui();
   const { control } =
     useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
-
+  const { getIcon } = useIcons();
   const { fieldMetadataItem: existingFieldMetadataItem } =
     useFieldMetadataItemById(existingFieldMetadataId);
 
@@ -154,7 +155,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
                 disabled={disableRelationEdition}
                 value={value}
                 options={activeObjectMetadataItems
-                  .fitler(isObjectMetadataAvailableForRelation)
+                  .filter(isObjectMetadataAvailableForRelation)
                   .sort((item1, item2) =>
                     item1.labelSingular.localeCompare(item2.labelSingular),
                   )
