@@ -10,12 +10,11 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import {
-  AllFlatEntityConfigurationByMetadataName,
-  AllMetadataName,
   MetadataFlatEntityMaps,
   MetadataRelatedFlatEntityMaps,
   MetadataWorkspaceMigrationActionsRecord,
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
@@ -43,11 +42,9 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
   private metadataName: T;
-  private flatEntityConfiguration: AllFlatEntityConfigurationByMetadataName[T]['configuration'];
 
   constructor(metadataName: T) {
     this.metadataName = metadataName;
-    this.flatEntityConfiguration = ALL_FLAT_ENTITY_CONFIGURATION[metadataName];
   }
 
   public async validateAndBuild({
@@ -74,10 +71,17 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       createdFlatEntityMaps,
       deletedFlatEntityMaps,
       updatedFlatEntityMaps,
-    } = flatEntityDeletedCreatedUpdatedMatrixDispatcher({
+    } = flatEntityDeletedCreatedUpdatedMatrixDispatcher<T>({
       from: fromFlatEntities,
       to: toFlatEntities,
       buildOptions,
+      comparisonOptions: {
+        propertiesToCompare:
+          ALL_FLAT_ENTITY_CONFIGURATION[this.metadataName].propertiesToCompare,
+        propertiesToStringify:
+          ALL_FLAT_ENTITY_CONFIGURATION[this.metadataName]
+            .propertiesToStringify,
+      },
     });
 
     this.logger.timeEnd(

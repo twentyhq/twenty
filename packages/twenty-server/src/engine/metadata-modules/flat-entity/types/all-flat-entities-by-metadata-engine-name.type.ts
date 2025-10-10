@@ -2,6 +2,7 @@ import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/t
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -12,53 +13,53 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import {
-    type CreateCronTriggerAction,
-    type DeleteCronTriggerAction,
-    type UpdateCronTriggerAction,
+  type CreateCronTriggerAction,
+  type DeleteCronTriggerAction,
+  type UpdateCronTriggerAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/workspace-migration-cron-trigger-action-v2.type';
 import {
-    type CreateDatabaseEventTriggerAction,
-    type DeleteDatabaseEventTriggerAction,
-    type UpdateDatabaseEventTriggerAction,
+  type CreateDatabaseEventTriggerAction,
+  type DeleteDatabaseEventTriggerAction,
+  type UpdateDatabaseEventTriggerAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action-v2.type';
 import {
-    type CreateFieldAction,
-    type DeleteFieldAction,
-    type UpdateFieldAction,
+  type CreateFieldAction,
+  type DeleteFieldAction,
+  type UpdateFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
 import {
-    type CreateIndexAction,
-    type DeleteIndexAction,
+  type CreateIndexAction,
+  type DeleteIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/types/workspace-migration-index-action-v2';
 import {
-    type CreateObjectAction,
-    type DeleteObjectAction,
-    type UpdateObjectAction,
+  type CreateObjectAction,
+  type DeleteObjectAction,
+  type UpdateObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
 import {
-    type CreateRouteTriggerAction,
-    type DeleteRouteTriggerAction,
-    type UpdateRouteTriggerAction,
+  type CreateRouteTriggerAction,
+  type DeleteRouteTriggerAction,
+  type UpdateRouteTriggerAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/types/workspace-migration-route-trigger-action-v2.type';
 import {
-    type CreateServerlessFunctionAction,
-    type DeleteServerlessFunctionAction,
-    type UpdateServerlessFunctionAction,
+  type CreateServerlessFunctionAction,
+  type DeleteServerlessFunctionAction,
+  type UpdateServerlessFunctionAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
 import {
-    type CreateViewFieldAction,
-    type DeleteViewFieldAction,
-    type UpdateViewFieldAction,
+  type CreateViewFieldAction,
+  type DeleteViewFieldAction,
+  type UpdateViewFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/workspace-migration-view-field-action-v2.type';
 import {
-    type CreateViewFilterAction,
-    type DeleteViewFilterAction,
-    type UpdateViewFilterAction,
+  type CreateViewFilterAction,
+  type DeleteViewFilterAction,
+  type UpdateViewFilterAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/types/workspace-migration-view-filter-action-v2.type';
 import {
-    type CreateViewAction,
-    type DeleteViewAction,
-    type UpdateViewAction,
+  type CreateViewAction,
+  type DeleteViewAction,
+  type UpdateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/types/workspace-migration-view-action-v2.type';
 
 /**
@@ -85,7 +86,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteFieldAction;
     };
     flatEntity: FlatFieldMetadata;
-  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.fieldMetadata;
+  };
   objectMetadata: {
     actions: {
       created: CreateObjectAction;
@@ -93,7 +94,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteObjectAction;
     };
     flatEntity: FlatObjectMetadata;
-  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.objectMetadata;
+  };
   view: {
     actions: {
       created: CreateViewAction;
@@ -101,7 +102,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteViewAction;
     };
     flatEntity: FlatView;
-  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.view;
+  };
   viewField: {
     actions: {
       created: CreateViewFieldAction;
@@ -109,7 +110,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteViewFieldAction;
     };
     flatEntity: FlatViewField;
-  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.viewField;
+  };
   index: {
     actions: {
       created: CreateIndexAction;
@@ -117,7 +118,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteIndexAction;
     };
     flatEntity: FlatIndexMetadata;
-  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.index;
+  };
   serverlessFunction: {
     actions: {
       created: CreateServerlessFunctionAction;
@@ -125,7 +126,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteServerlessFunctionAction;
     };
     flatEntity: FlatServerlessFunction;
-  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.serverlessFunction;
+  };
   cronTrigger: {
     actions: {
       created: CreateCronTriggerAction;
@@ -133,7 +134,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteCronTriggerAction;
     };
     flatEntity: FlatCronTrigger;
-  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.cronTrigger;
+  };
   databaseEventTrigger: {
     actions: {
       created: CreateDatabaseEventTriggerAction;
@@ -141,7 +142,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteDatabaseEventTriggerAction;
     };
     flatEntity: FlatDatabaseEventTrigger;
-  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.databaseEventTrigger;
+  };
   routeTrigger: {
     actions: {
       created: CreateRouteTriggerAction;
@@ -149,7 +150,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteRouteTriggerAction;
     };
     flatEntity: FlatRouteTrigger;
-  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.routeTrigger;
+  };
   viewFilter: {
     actions: {
       created: CreateViewFilterAction;
@@ -157,13 +158,11 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteViewFilterAction;
     };
     flatEntity: FlatViewFilter;
-  } & typeof ALL_FLAT_ENTITY_CONFIGURATION.viewFilter;
+  };
 };
 
-export type AllMetadataName = keyof AllFlatEntityConfigurationByMetadataName;
-
 export type MetadataRelatedFlatEntityMapsKeys<T extends AllMetadataName> =
-  AllFlatEntityConfigurationByMetadataName[T]['relatedFlatEntityMapsKeys'][number];
+  (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['relatedFlatEntityMapsKeys'][number];
 
 export type MetadataRelatedFlatEntityMaps<T extends AllMetadataName> = Pick<
   AllFlatEntityMaps,

@@ -1,12 +1,12 @@
 import { type FromTo } from 'twenty-shared/types';
 
+import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import {
-  AllFlatEntityConfigurationByMetadataName,
-  AllMetadataName,
   MetadataFlatEntity,
-  MetadataFlatEntityMaps,
+  MetadataFlatEntityMaps
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { compareTwoFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/compare-two-flat-entity.util';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
@@ -27,7 +27,7 @@ type FlatEntityDeletedCreatedUpdatedMatrixDispatcherArgs<
 > = FromTo<MetadataFlatEntity<T>[]> & {
   buildOptions: WorkspaceMigrationBuilderOptions;
   comparisonOptions: Pick<
-    AllFlatEntityConfigurationByMetadataName[T]['configuration'],
+    (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T],
     'propertiesToCompare' | 'propertiesToStringify'
   >;
 };
@@ -78,16 +78,16 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
 
   for (const [universalIdentifier, fromFlatEntity] of fromMap) {
     const toFlatEntity = toMap.get(universalIdentifier);
-    // TODO Perf improvement compare directly here to avoid mapping the whole workspaces + avoid compare duplication
-    // Would not have FromTo anymore but an PropertyUpdates[]
     if (!isDefined(toFlatEntity)) {
       continue;
     }
     const updates = compareTwoFlatEntity({
       fromFlatEntity,
       toFlatEntity,
-      propertiesToCompare,
-      propertiesToStringify,
+      propertiesToCompare:
+        propertiesToCompare as unknown as (keyof MetadataFlatEntity<T>)[],
+      propertiesToStringify:
+        propertiesToStringify as unknown as (keyof MetadataFlatEntity<T>)[],
     });
 
     if (updates.length === 0) {
