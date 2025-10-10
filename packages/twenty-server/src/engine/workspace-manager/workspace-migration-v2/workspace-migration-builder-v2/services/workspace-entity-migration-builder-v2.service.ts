@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
 
-import { Arrayable, type FromTo } from 'twenty-shared/types';
+import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
@@ -12,13 +12,13 @@ import {
 import {
   MetadataFlatEntityMaps,
   MetadataRelatedFlatEntityMaps,
-  MetadataWorkspaceMigrationActionsRecord,
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
+import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/get-metadata-empty-workspace-migration-action-record.util';
 import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/failed-flat-entity-validate-and-build.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
@@ -91,11 +91,9 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'entity processing');
 
     let optimisticFlatEntityMaps = structuredClone(fromFlatEntityMaps);
-    const actionsResult = {
-      created: [],
-      deleted: [],
-      updated: [],
-    } as Arrayable<MetadataWorkspaceMigrationActionsRecord<T>>;
+    const actionsResult = getMetadataEmptyWorkspaceMigrationActionRecord(
+      this.metadataName,
+    );
     const allValidationResult: FailedFlatEntityValidateAndBuild<T>['errors'] =
       [];
     let remainingFlatEntityMapsToCreate = structuredClone(

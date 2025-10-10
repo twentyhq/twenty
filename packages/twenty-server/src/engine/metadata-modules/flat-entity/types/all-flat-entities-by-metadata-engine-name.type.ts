@@ -161,7 +161,12 @@ export type MetadataFlatEntityMaps<T extends AllMetadataName> = FlatEntityMaps<
 >;
 
 export type MetadataWorkspaceMigrationActionsRecord<T extends AllMetadataName> =
-  AllFlatEntityConfigurationByMetadataName[T]['actions'];
+  {
+    [K in 'created' | 'updated' | 'deleted']: MetadataWorkspaceMigrationAction<
+      T,
+      K
+    >[];
+  };
 
 export type MetadataWorkspaceMigrationAction<
   T extends AllMetadataName,
@@ -169,7 +174,7 @@ export type MetadataWorkspaceMigrationAction<
     | 'created'
     | 'deleted'
     | 'updated',
-> = MetadataWorkspaceMigrationActionsRecord<T>[TOperation] extends infer Action
+> = AllFlatEntityConfigurationByMetadataName[T]['actions'][TOperation] extends infer Action
   ? Action extends any[]
     ? Action[number]
     : Action

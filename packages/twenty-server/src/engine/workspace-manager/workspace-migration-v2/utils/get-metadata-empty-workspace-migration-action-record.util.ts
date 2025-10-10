@@ -1,6 +1,5 @@
 import { MetadataWorkspaceMigrationActionsRecord } from "src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type";
 import { AllMetadataName } from "src/engine/metadata-modules/flat-entity/types/all-metadata-name.type";
-import { Arrayable } from "twenty-shared/types";
 
 export const getMetadataEmptyWorkspaceMigrationActionRecord = <
   T extends AllMetadataName,
@@ -11,4 +10,4 @@ export const getMetadataEmptyWorkspaceMigrationActionRecord = <
     created: [],
     deleted: [],
     updated: [],
-  }) as Arrayable<MetadataWorkspaceMigrationActionsRecord<T>>;
+  }) as MetadataWorkspaceMigrationActionsRecord<T>;

@@ -1,4 +1,4 @@
-import { Arrayable, type FromTo } from 'twenty-shared/types';
+import { type FromTo } from 'twenty-shared/types';
 
 import {
   MetadataFlatEntity,
@@ -24,7 +24,7 @@ export type OrchestratorFailureReport = {
 };
 
 export type OrchestratorActionsReport = {
-  [P in AllMetadataName]: Arrayable<MetadataWorkspaceMigrationActionsRecord<P>>;
+  [P in AllMetadataName]: MetadataWorkspaceMigrationActionsRecord<P>;
 };
 
 export type WorkspaceMigrationOrchestratorFailedResult = {

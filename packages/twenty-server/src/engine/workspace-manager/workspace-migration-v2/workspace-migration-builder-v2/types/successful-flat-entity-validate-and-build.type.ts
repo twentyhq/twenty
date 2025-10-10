@@ -4,11 +4,10 @@ import {
   MetadataWorkspaceMigrationActionsRecord,
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
-import { Arrayable } from 'twenty-shared/types';
 
 export type SuccessfulFlatEntityValidateAndBuild<T extends AllMetadataName> = {
   status: 'success';
-  actions: Arrayable<MetadataWorkspaceMigrationActionsRecord<T>>;
+  actions: MetadataWorkspaceMigrationActionsRecord<T>;
   optimisticFlatEntityMaps: MetadataFlatEntityMaps<T>;
   dependencyOptimisticFlatEntityMaps: MetadataRelatedFlatEntityMaps<T>;
 };
