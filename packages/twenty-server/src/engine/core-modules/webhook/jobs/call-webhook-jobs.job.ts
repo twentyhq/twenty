@@ -11,11 +11,11 @@ import {
   CallWebhookJob,
   type CallWebhookJobData,
 } from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
-import { type ObjectRecordEventForWebhook } from 'src/engine/core-modules/webhook/types/object-record-event-for-webhook.type';
 import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
+import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
@@ -28,7 +28,7 @@ export class CallWebhookJobsJob {
 
   @Process(CallWebhookJobsJob.name)
   async handle(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEventForWebhook>,
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): Promise<void> {
     // If you change that function, double check it does not break Zapier
     // trigger in packages/twenty-zapier/src/triggers/trigger_record.ts
@@ -51,8 +51,8 @@ export class CallWebhookJobsJob {
       const eventName = workspaceEventBatch.name;
       const objectMetadata: Pick<ObjectMetadataEntity, 'id' | 'nameSingular'> =
         {
-          id: eventData.objectMetadata.id,
-          nameSingular: eventData.objectMetadata.nameSingular,
+          id: workspaceEventBatch.objectMetadata.id,
+          nameSingular: workspaceEventBatch.objectMetadata.nameSingular,
         };
       const workspaceId = workspaceEventBatch.workspaceId;
       const record =

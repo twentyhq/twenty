@@ -4,7 +4,7 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
 
 @Injectable()

@@ -1,16 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import type { ObjectRecordEventForWebhook } from 'src/engine/core-modules/webhook/types/object-record-event-for-webhook.type';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type CallWebhookBatchJobData } from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
 import { type Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
+import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 
 export const transformEventBatchToWebhookBatch = ({
   workspaceEventBatch,
   webhook,
 }: {
-  workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEventForWebhook>;
+  workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
   webhook: Webhook;
 }): CallWebhookBatchJobData => {
   const targetUrl = webhook.targetUrl;

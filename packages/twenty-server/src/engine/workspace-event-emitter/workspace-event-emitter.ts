@@ -18,6 +18,9 @@ import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-module
 import { type CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import type { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 
 type ActionEventMap<T> = {
   [DatabaseEventAction.CREATED]: ObjectRecordCreateEvent<T>;
@@ -74,7 +77,6 @@ export class WorkspaceEventEmitter {
 
           event.userId = authContext?.user?.id;
           event.recordId = after.id;
-          event.objectMetadata = { ...objectMetadataItem, fields };
           event.properties = { after };
 
           return event;
@@ -107,7 +109,6 @@ export class WorkspaceEventEmitter {
 
             event.userId = authContext?.user?.id;
             event.recordId = after.id;
-            event.objectMetadata = { ...objectMetadataItem, fields };
             event.properties = {
               before,
               after,
@@ -125,7 +126,6 @@ export class WorkspaceEventEmitter {
 
           event.userId = authContext?.user?.id;
           event.recordId = before.id;
-          event.objectMetadata = { ...objectMetadataItem, fields };
           event.properties = { before };
 
           return event;
@@ -137,7 +137,6 @@ export class WorkspaceEventEmitter {
 
           event.userId = authContext?.user?.id;
           event.recordId = before.id;
-          event.objectMetadata = { ...objectMetadataItem, fields };
           event.properties = { before };
 
           return event;
@@ -149,7 +148,6 @@ export class WorkspaceEventEmitter {
 
           event.userId = authContext?.user?.id;
           event.recordId = after.id;
-          event.objectMetadata = { ...objectMetadataItem, fields };
 
           const before = beforeEntities
             ? Array.isArray(beforeEntities)
@@ -191,6 +189,7 @@ export class WorkspaceEventEmitter {
     this.eventEmitter.emit(eventName, {
       name: eventName,
       workspaceId,
+      objectMetadata: { ...objectMetadataItem, fields },
       events,
     });
   }
@@ -199,12 +198,14 @@ export class WorkspaceEventEmitter {
     objectMetadataNameSingular,
     action,
     events,
+    objectMetadata,
     workspaceId,
   }: {
     objectMetadataNameSingular: string;
     action: A;
     events: ActionEventMap<T>[A][];
-    workspaceId: string | undefined;
+    objectMetadata: Omit<ObjectMetadataEntity, 'indexMetadatas'>;
+    workspaceId: string;
   }) {
     if (!events.length) {
       return;
@@ -212,11 +213,14 @@ export class WorkspaceEventEmitter {
 
     const eventName = `${objectMetadataNameSingular}.${action}`;
 
-    this.eventEmitter.emit(eventName, {
+    const workspaceEventBatch: WorkspaceEventBatch<ActionEventMap<T>[A]> = {
       name: eventName,
       workspaceId,
+      objectMetadata,
       events,
-    });
+    };
+
+    this.eventEmitter.emit(eventName, workspaceEventBatch);
   }
 
   public emitCustomBatchEvent<T extends object>(
@@ -228,10 +232,12 @@ export class WorkspaceEventEmitter {
       return;
     }
 
-    this.eventEmitter.emit(eventName, {
+    const customWorkspaceEventBatch: CustomWorkspaceEventBatch<T> = {
       name: eventName,
       workspaceId,
       events,
-    });
+    };
+
+    this.eventEmitter.emit(eventName, customWorkspaceEventBatch);
   }
 }
