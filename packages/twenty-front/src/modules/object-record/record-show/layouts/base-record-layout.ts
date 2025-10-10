@@ -1,19 +1,12 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { type RecordLayout } from '@/object-record/record-show/types/RecordLayout';
-import {
-  IconCheckbox,
-  IconList,
-  IconNotes,
-  IconPaperclip,
-  IconTimelineEvent,
-} from 'twenty-ui/display';
 
 export const BASE_RECORD_LAYOUT: RecordLayout = {
   tabs: {
     fields: {
       title: 'Fields',
-      Icon: IconList,
+      icon: 'IconList',
       position: 100,
       cards: [{ type: CardType.FieldCard }],
       hide: {
@@ -27,7 +20,7 @@ export const BASE_RECORD_LAYOUT: RecordLayout = {
     },
     timeline: {
       title: 'Timeline',
-      Icon: IconTimelineEvent,
+      icon: 'IconTimelineEvent',
       position: 200,
       cards: [{ type: CardType.TimelineCard }],
       hide: {
@@ -41,10 +34,9 @@ export const BASE_RECORD_LAYOUT: RecordLayout = {
     },
     tasks: {
       title: 'Tasks',
-      Icon: IconCheckbox,
+      icon: 'IconCheckbox',
       position: 300,
       cards: [{ type: CardType.TaskCard }],
-      targetObjectNameSingular: CoreObjectNameSingular.Task,
       hide: {
         ifMobile: false,
         ifDesktop: false,
@@ -53,14 +45,14 @@ export const BASE_RECORD_LAYOUT: RecordLayout = {
         ifRequiredObjectsInactive: [CoreObjectNameSingular.Task],
         ifRelationsMissing: ['taskTargets'],
         ifNoReadPermission: true,
+        ifNoReadPermissionObject: CoreObjectNameSingular.Task,
       },
     },
     notes: {
       title: 'Notes',
-      Icon: IconNotes,
+      icon: 'IconNotes',
       position: 400,
       cards: [{ type: CardType.NoteCard }],
-      targetObjectNameSingular: CoreObjectNameSingular.Note,
       hide: {
         ifMobile: false,
         ifDesktop: false,
@@ -69,11 +61,12 @@ export const BASE_RECORD_LAYOUT: RecordLayout = {
         ifRequiredObjectsInactive: [CoreObjectNameSingular.Note],
         ifRelationsMissing: ['noteTargets'],
         ifNoReadPermission: true,
+        ifNoReadPermissionObject: CoreObjectNameSingular.Note,
       },
     },
     files: {
       title: 'Files',
-      Icon: IconPaperclip,
+      icon: 'IconPaperclip',
       position: 500,
       cards: [{ type: CardType.FileCard }],
       hide: {

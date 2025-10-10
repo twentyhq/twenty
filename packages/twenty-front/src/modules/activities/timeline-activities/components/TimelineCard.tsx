@@ -4,7 +4,10 @@ import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomRes
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EventList } from '@/activities/timeline-activities/components/EventList';
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import {
+  useLayoutRenderingContext,
+  useTargetRecord,
+} from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   AnimatedPlaceholder,
@@ -44,15 +47,11 @@ const StyledRightDrawerAnimatedPlaceholderEmptyContainer = styled(
   padding-top: ${({ theme }) => theme.spacing(8)};
 `;
 
-export const TimelineActivities = ({
-  targetableObject,
-  isInRightDrawer,
-}: {
-  targetableObject: ActivityTargetableObject;
-  isInRightDrawer?: boolean;
-}) => {
+export const TimelineCard = () => {
+  const targetRecord = useTargetRecord();
+  const { isInRightDrawer } = useLayoutRenderingContext();
   const { timelineActivities, loading, fetchMoreRecords } =
-    useTimelineActivities(targetableObject);
+    useTimelineActivities(targetRecord);
 
   const isTimelineActivitiesEmpty =
     !timelineActivities || timelineActivities.length === 0;
@@ -87,7 +86,7 @@ export const TimelineActivities = ({
   return (
     <StyledMainContainer>
       <EventList
-        targetableObject={targetableObject}
+        targetableObject={targetRecord}
         title="All"
         events={timelineActivities ?? []}
       />

@@ -62,7 +62,7 @@ const StyledFooter = styled.div`
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
-export const NoteCard = ({
+export const NoteTile = ({
   note,
   isSingleNote,
 }: {
