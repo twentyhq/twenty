@@ -174,6 +174,7 @@ const previewableTypes = [
   FieldMetadataType.PHONES,
   FieldMetadataType.RATING,
   FieldMetadataType.RAW_JSON,
+  FieldMetadataType.RELATION,
   FieldMetadataType.MORPH_RELATION,
   FieldMetadataType.SELECT,
   FieldMetadataType.TEXT,
@@ -222,6 +223,16 @@ export const SettingsDataModelFieldSettingsFormCard = ({
         fieldType={fieldType}
         objectNameSingular={objectNameSingular}
       />
+    );
+  }
+
+  if (fieldType === FieldMetadataType.RELATION) {
+    return (
+      <>relation to be implemented with new morph relation form</>
+      // <SettingsDataModelFieldMorphRelationFormCard
+      //   existingFieldMetadataId={existingFieldMetadataId}
+      //   objectNameSingular={objectNameSingular}
+      // />
     );
   }
 

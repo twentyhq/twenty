@@ -11,50 +11,25 @@ import { fieldMetadataItemDisableFieldEdition } from '@/settings/data-model/fiel
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 
-import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, RelationType } from '~/generated-metadata/graphql';
 
-export const settingsDataModelFieldRelationFormSchema = z.object({
-  relation: z.object({
-    field: fieldMetadataItemSchema()
-      .pick({
-        icon: true,
-        label: true,
-      })
-      // NOT SURE IF THIS IS CORRECT
-      .extend(
-        fieldMetadataItemSchema()
-          .pick({
-            name: true,
-            isLabelSyncedWithName: true,
-          })
-          .partial().shape,
-      ),
-    objectMetadataId: z.uuid(),
-    type: z.enum(
-      Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
-    ),
-  }),
-});
-
-export type SettingsDataModelFieldRelationFormValues = z.infer<
-  typeof settingsDataModelFieldRelationFormSchema
->;
-
-export const StyledSelectsContainer = styled.div<{ isMobile: boolean }>`
+const StyledSelectsContainer = styled.div<{ isMobile: boolean }>`
   display: grid;
   gap: ${({ theme }) => theme.spacing(4)};
   grid-template-columns: ${({ isMobile }) => (isMobile ? '1fr' : '1fr 1fr')};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
-export const StyledInputsLabel = styled.span`
+const StyledInputsLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   display: block;
   font-size: ${({ theme }) => theme.font.size.xs};
@@ -62,13 +37,13 @@ export const StyledInputsLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const StyledInputsContainer = styled.div`
+const StyledInputsContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
-export const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES).map(
+const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES).map(
   ([value, { label, Icon }]) => ({
     label,
     value: value as RelationType,
@@ -130,6 +105,12 @@ export const SettingsDataModelFieldMorphRelationForm = ({
     );
   const isMobile = useIsMobile();
 
+  const isMorphRelationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
+  );
+
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+
   return (
     <StyledContainer>
       <StyledSelectsContainer isMobile={isMobile}>
@@ -154,17 +135,38 @@ export const SettingsDataModelFieldMorphRelationForm = ({
           name="morphRelationObjectMetadataIds"
           control={control}
           defaultValue={initialMorphRelationsObjectMetadataIds}
-          render={({ field: { onChange, value } }) => (
-            <SettingsMorphRelationMultiSelect
-              label={t`Object destination`}
-              dropdownId="object-destination-select"
-              fullWidth
-              disabled={disableRelationEdition}
-              selectedObjectMetadataIds={value}
-              withSearchInput={true}
-              onChange={onChange}
-            />
-          )}
+          render={({ field: { onChange, value } }) =>
+            isMorphRelationEnabled ? (
+              <SettingsMorphRelationMultiSelect
+                label={t`Object destination`}
+                dropdownId="object-destination-select"
+                fullWidth
+                disabled={disableRelationEdition}
+                selectedObjectMetadataIds={value}
+                withSearchInput={true}
+                onChange={onChange}
+              />
+            ) : (
+              <Select
+                label={t`Object destination`}
+                dropdownId="object-destination-select"
+                fullWidth
+                disabled={disableRelationEdition}
+                value={value}
+                options={activeObjectMetadataItems
+                  .fitler(isObjectMetadataAvailableForRelation)
+                  .sort((item1, item2) =>
+                    item1.labelSingular.localeCompare(item2.labelSingular),
+                  )
+                  .map((objectMetadataItem) => ({
+                    label: objectMetadataItem.labelPlural,
+                    value: objectMetadataItem.id,
+                    Icon: getIcon(objectMetadataItem.icon),
+                  }))}
+                onChange={onChange}
+              />
+            )
+          }
         />
       </StyledSelectsContainer>
       <StyledInputsLabel>{t`Field on destination`}</StyledInputsLabel>

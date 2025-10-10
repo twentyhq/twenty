@@ -132,7 +132,17 @@ export const SettingsObjectNewFieldSelector = ({
                 <StyledContainer>
                   {fieldTypeConfigs
                     .filter(([, config]) => config.category === category)
-                    .filter(([key]) => key !== FieldMetadataType.MORPH_RELATION)
+                    // by default, we hide the relation type and create only the morph relation type
+                    .filter(([key]) => key !== FieldMetadataType.RELATION)
+                    .map(
+                      ([key, config]) =>
+                        [
+                          key,
+                          key === FieldMetadataType.MORPH_RELATION
+                            ? { ...config, label: 'Relation' }
+                            : config,
+                        ] as [string, SettingsFieldTypeConfig<any>],
+                    )
                     .map(([key, config]) => (
                       <StyledCardContainer key={key}>
                         <UndecoratedLink

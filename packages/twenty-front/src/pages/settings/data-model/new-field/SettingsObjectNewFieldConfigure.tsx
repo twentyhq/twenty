@@ -20,7 +20,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
+import {
+  AppPath,
+  type RelationCreationPayload,
+  SettingsPath,
+} from 'twenty-shared/types';
 import { CustomError, getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -120,10 +124,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   ) => {
     try {
       setIsSaving(true);
-      if (
-        formValues.type === FieldMetadataType.RELATION &&
-        'relation' in formValues
-      ) {
+      if (formValues.type === FieldMetadataType.MORPH_RELATION) {
         const {
           morphRelationObjectMetadataIds,
           targetFieldLabel,
@@ -133,26 +134,31 @@ export const SettingsObjectNewFieldConfigure = () => {
         if (morphRelationObjectMetadataIds.length > 1) {
           await createMetadataField({
             ...formValues,
+            type: FieldMetadataType.MORPH_RELATION,
             objectMetadataId: activeObjectMetadataItem.id,
             morphRelationsCreationPayload: morphRelationObjectMetadataIds.map(
-              (morphRelationObjectMetadataId: string) => ({
-                type: relationType,
-                targetObjectMetadataId: morphRelationObjectMetadataId,
-                targetFieldLabel,
-                targetFieldIcon: iconOnDestination,
-              }),
+              (morphRelationObjectMetadataId: string) =>
+                ({
+                  type: relationType,
+                  targetObjectMetadataId: morphRelationObjectMetadataId,
+                  targetFieldLabel,
+                  targetFieldIcon: iconOnDestination,
+                }) satisfies RelationCreationPayload,
             ),
           });
         } else if (morphRelationObjectMetadataIds.length === 1) {
+          const relationCreationPayload = {
+            type: relationType,
+            targetObjectMetadataId: morphRelationObjectMetadataIds[0],
+            targetFieldLabel,
+            targetFieldIcon: iconOnDestination,
+          } satisfies RelationCreationPayload;
+
           await createMetadataField({
             ...formValues,
+            type: FieldMetadataType.RELATION,
             objectMetadataId: activeObjectMetadataItem.id,
-            relationCreationPayload: {
-              type: relationType,
-              targetObjectMetadataId: morphRelationObjectMetadataIds[0],
-              targetFieldLabel: formValues.field.label,
-              targetFieldIcon: formValues.field.icon,
-            },
+            relationCreationPayload,
           });
         } else {
           throw new CustomError(
