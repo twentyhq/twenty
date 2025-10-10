@@ -6,6 +6,8 @@ const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(6)};
+  flex-shrink: 0;
 `;
 
 const StyledDragHandleButton = styled(IconButton)`

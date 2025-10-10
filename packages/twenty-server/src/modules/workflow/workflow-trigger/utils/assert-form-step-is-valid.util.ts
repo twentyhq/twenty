@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
@@ -13,7 +13,7 @@ export function assertFormStepIsValid(settings: WorkflowFormActionSettings) {
       'No input provided in form step',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
       {
-        userFriendlyMessage: t`No input provided in form step`,
+        userFriendlyMessage: msg`No input provided in form step`,
       },
     );
   }
@@ -23,7 +23,7 @@ export function assertFormStepIsValid(settings: WorkflowFormActionSettings) {
       'Form action must have at least one field',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
       {
-        userFriendlyMessage: t`Form action must have at least one field`,
+        userFriendlyMessage: msg`Form action must have at least one field`,
       },
     );
   }
@@ -37,7 +37,7 @@ export function assertFormStepIsValid(settings: WorkflowFormActionSettings) {
       'Form action fields must have unique names',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
       {
-        userFriendlyMessage: t`Form action fields must have unique names`,
+        userFriendlyMessage: msg`Form action fields must have unique names`,
       },
     );
   }
@@ -52,7 +52,7 @@ export function assertFormStepIsValid(settings: WorkflowFormActionSettings) {
         'Form action fields must have a defined label and type',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
         {
-          userFriendlyMessage: t`Form action fields must have a defined label and type`,
+          userFriendlyMessage: msg`Form action fields must have a defined label and type`,
         },
       );
     }

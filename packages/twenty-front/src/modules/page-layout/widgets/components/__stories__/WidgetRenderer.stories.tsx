@@ -1,18 +1,142 @@
-import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
-import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
-import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import {
+  type ApolloClient,
+  type NormalizedCacheObject,
+  useApolloClient,
+} from '@apollo/client';
+import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui/testing';
-import { GraphType } from '~/generated-metadata/graphql';
+import { type MutableSnapshot } from 'recoil';
+import { MemoryRouter } from 'react-router-dom';
+
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
+import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
+import {
+  GraphOrderBy,
+  GraphType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
+import {
+  AxisNameDisplay,
+  ExtendedAggregateOperations,
+  type PageLayoutWidget,
+} from '~/generated/graphql';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
+  CoreObjectNameSingular.Company,
+);
+const idField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'id',
+});
+const createdAtField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'createdAt',
+});
+
+const barChartGroupByQuery = generateGroupByQuery({
+  objectMetadataItem: companyObjectMetadataItem,
+  aggregateOperations: ['totalCount'],
+});
+
+const graphqlMocks: MockedResponse[] = [
+  {
+    request: {
+      query: barChartGroupByQuery,
+      variables: {
+        groupBy: [
+          {
+            createdAt: {
+              granularity: 'DAY',
+            },
+          },
+        ],
+      },
+    },
+    result: {
+      data: {
+        companiesGroupBy: [
+          {
+            groupByDimensionValues: ['2024-01-15T00:00:00.000Z'],
+            totalCount: 12,
+          },
+          {
+            groupByDimensionValues: ['2024-02-15T00:00:00.000Z'],
+            totalCount: 18,
+          },
+          {
+            groupByDimensionValues: ['2024-03-15T00:00:00.000Z'],
+            totalCount: 25,
+          },
+          {
+            groupByDimensionValues: ['2024-04-15T00:00:00.000Z'],
+            totalCount: 15,
+          },
+          {
+            groupByDimensionValues: ['2024-05-15T00:00:00.000Z'],
+            totalCount: 22,
+          },
+          {
+            groupByDimensionValues: ['2024-06-15T00:00:00.000Z'],
+            totalCount: 30,
+          },
+        ],
+      },
+    },
+  },
+];
+
+const CoreClientProviderWrapper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>;
+
+  return (
+    <ApolloCoreClientContext.Provider value={apolloClient}>
+      {children}
+    </ApolloCoreClientContext.Provider>
+  );
+};
+
+const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: graphqlMocks,
+});
 
 const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
   component: WidgetRenderer,
   decorators: [
-    (Story, context) => (
-      <PageLayoutTestWrapper>{Story(context)}</PageLayoutTestWrapper>
-    ),
-    ComponentDecorator,
+    (Story) => {
+      const initializeState = (snapshot: MutableSnapshot) => {
+        snapshot.set(
+          objectMetadataItemsState,
+          generatedMockObjectMetadataItems,
+        );
+        snapshot.set(isAppWaitingForFreshObjectMetadataState, false);
+      };
+
+      return (
+        <MemoryRouter>
+          <JestMetadataAndApolloMocksWrapper>
+            <CoreClientProviderWrapper>
+              <PageLayoutTestWrapper initializeState={initializeState}>
+                <Story />
+              </PageLayoutTestWrapper>
+            </CoreClientProviderWrapper>
+          </JestMetadataAndApolloMocksWrapper>
+        </MemoryRouter>
+      );
+    },
   ],
   parameters: {
     layout: 'centered',
@@ -30,18 +154,31 @@ type Story = StoryObj<typeof WidgetRenderer>;
 
 export const WithNumberChart: Story = {
   args: {
-    widget: createDefaultGraphWidget({
+    widget: {
+      __typename: 'PageLayoutWidget',
       id: 'widget-1',
       pageLayoutTabId: 'tab-overview',
+      type: WidgetType.GRAPH,
       title: 'Sales Pipeline',
-      graphType: GraphType.NUMBER,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
+        __typename: 'GridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 3,
       },
-    }),
+      configuration: {
+        __typename: 'NumberChartConfiguration',
+        graphType: GraphType.NUMBER,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: true,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
@@ -52,18 +189,31 @@ export const WithNumberChart: Story = {
 
 export const WithGaugeChart: Story = {
   args: {
-    widget: createDefaultGraphWidget({
-      id: 'widget-1',
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-2',
       pageLayoutTabId: 'tab-overview',
+      type: WidgetType.GRAPH,
       title: 'Conversion Rate',
-      graphType: GraphType.GAUGE,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
+        __typename: 'GridPosition',
         row: 0,
         column: 0,
         rowSpan: 5,
         columnSpan: 3,
       },
-    }),
+      configuration: {
+        __typename: 'GaugeChartConfiguration',
+        graphType: GraphType.GAUGE,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: false,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
   },
   render: (args) => (
     <div style={{ width: '300px', height: '400px' }}>
@@ -72,20 +222,36 @@ export const WithGaugeChart: Story = {
   ),
 };
 
-export const WithPieChart: Story = {
+export const WithBarChart: Story = {
   args: {
-    widget: createDefaultGraphWidget({
-      id: 'widget-1',
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-3',
       pageLayoutTabId: 'tab-overview',
-      title: 'Lead Distribution',
-      graphType: GraphType.PIE,
+      type: WidgetType.GRAPH,
+      title: 'Monthly Trends',
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
+        __typename: 'GridPosition',
         row: 0,
         column: 0,
         rowSpan: 5,
         columnSpan: 3,
       },
-    }),
+      configuration: {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.BAR,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        groupByFieldMetadataIdX: createdAtField.id,
+        orderByX: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
+        displayDataLabel: false,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
@@ -96,18 +262,31 @@ export const WithPieChart: Story = {
 
 export const SmallWidget: Story = {
   args: {
-    widget: createDefaultGraphWidget({
-      id: 'widget-1',
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-4',
       pageLayoutTabId: 'tab-overview',
+      type: WidgetType.GRAPH,
       title: 'Small Widget (2x2 grid)',
-      graphType: GraphType.NUMBER,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
+        __typename: 'GridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 2,
       },
-    }),
+      configuration: {
+        __typename: 'NumberChartConfiguration',
+        graphType: GraphType.NUMBER,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: true,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
   },
   parameters: {
     docs: {
@@ -125,18 +304,34 @@ export const SmallWidget: Story = {
 
 export const MediumWidget: Story = {
   args: {
-    widget: createDefaultGraphWidget({
-      id: 'widget-1',
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-5',
       pageLayoutTabId: 'tab-overview',
+      type: WidgetType.GRAPH,
       title: 'Medium Widget (4x3 grid)',
-      graphType: GraphType.GAUGE,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
+        __typename: 'GridPosition',
         row: 0,
         column: 0,
         rowSpan: 3,
         columnSpan: 4,
       },
-    }),
+      configuration: {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.BAR,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        groupByFieldMetadataIdX: createdAtField.id,
+        orderByX: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
+        displayDataLabel: false,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
   },
   parameters: {
     docs: {
@@ -154,18 +349,34 @@ export const MediumWidget: Story = {
 
 export const LargeWidget: Story = {
   args: {
-    widget: createDefaultGraphWidget({
-      id: 'widget-1',
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-6',
       pageLayoutTabId: 'tab-overview',
+      type: WidgetType.GRAPH,
       title: 'Large Widget (6x4 grid)',
-      graphType: GraphType.PIE,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
+        __typename: 'GridPosition',
         row: 0,
         column: 0,
         rowSpan: 4,
         columnSpan: 6,
       },
-    }),
+      configuration: {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.BAR,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        groupByFieldMetadataIdX: createdAtField.id,
+        orderByX: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
+        displayDataLabel: false,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
   },
   parameters: {
     docs: {
@@ -183,18 +394,31 @@ export const LargeWidget: Story = {
 
 export const WideWidget: Story = {
   args: {
-    widget: createDefaultGraphWidget({
-      id: 'widget-1',
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-7',
       pageLayoutTabId: 'tab-overview',
+      type: WidgetType.GRAPH,
       title: 'Wide Widget (8x2 grid)',
-      graphType: GraphType.NUMBER,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
+        __typename: 'GridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
         columnSpan: 8,
       },
-    }),
+      configuration: {
+        __typename: 'NumberChartConfiguration',
+        graphType: GraphType.NUMBER,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: true,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
   },
   parameters: {
     docs: {
@@ -212,18 +436,34 @@ export const WideWidget: Story = {
 
 export const TallWidget: Story = {
   args: {
-    widget: createDefaultGraphWidget({
-      id: 'widget-1',
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-8',
       pageLayoutTabId: 'tab-overview',
+      type: WidgetType.GRAPH,
       title: 'Tall Widget (3x6 grid)',
-      graphType: GraphType.GAUGE,
+      objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
+        __typename: 'GridPosition',
         row: 0,
         column: 0,
         rowSpan: 6,
         columnSpan: 3,
       },
-    }),
+      configuration: {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.BAR,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        groupByFieldMetadataIdX: createdAtField.id,
+        orderByX: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
+        displayDataLabel: false,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
   },
   parameters: {
     docs: {

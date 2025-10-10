@@ -1,6 +1,6 @@
+import { faker } from '@faker-js/faker';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { faker } from '@faker-js/faker';
 
 import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -61,6 +61,7 @@ describe('computeSchemaComponents', () => {
               "EMAIL",
               "CALENDAR",
               "WORKFLOW",
+              "AGENT",
               "API",
               "IMPORT",
               "MANUAL",
@@ -292,6 +293,7 @@ describe('computeSchemaComponents', () => {
               "EMAIL",
               "CALENDAR",
               "WORKFLOW",
+              "AGENT",
               "API",
               "IMPORT",
               "MANUAL",
@@ -562,6 +564,7 @@ describe('computeSchemaComponents', () => {
               "EMAIL",
               "CALENDAR",
               "WORKFLOW",
+              "AGENT",
               "API",
               "IMPORT",
               "MANUAL",
