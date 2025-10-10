@@ -1,5 +1,4 @@
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { ALL_FLAT_ENTITY_CONSTANTS } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-contants.constant';
 
-export const FLAT_OBJECT_METADATA_JSONB_PROPERTIES = [
-  'standardOverrides',
-] as const satisfies (keyof FlatObjectMetadata)[];
+export const FLAT_OBJECT_METADATA_JSONB_PROPERTIES =
+  ALL_FLAT_ENTITY_CONSTANTS.objectMetadata.propertiesToStringify;

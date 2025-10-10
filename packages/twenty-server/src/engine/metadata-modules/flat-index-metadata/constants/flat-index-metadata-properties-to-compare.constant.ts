@@ -1,9 +1,4 @@
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { ALL_FLAT_ENTITY_CONSTANTS } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-contants.constant';
 
-export const FLAT_INDEX_METADATA_PROPERTIES_TO_COMPARE = [
-  'indexType',
-  'indexWhereClause',
-  'flatIndexFieldMetadatas',
-  'isUnique',
-  'name',
-] as const satisfies (keyof FlatIndexMetadata)[];
+export const FLAT_INDEX_METADATA_PROPERTIES_TO_COMPARE =
+  ALL_FLAT_ENTITY_CONSTANTS.index.propertiesToCompare;

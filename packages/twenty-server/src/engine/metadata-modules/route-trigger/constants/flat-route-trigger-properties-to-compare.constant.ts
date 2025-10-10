@@ -1,6 +1,4 @@
-import { FLAT_ROUTE_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/route-trigger/constants/flat-route-trigger-editable-properties.constant';
-import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
+import { ALL_FLAT_ENTITY_CONSTANTS } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-contants.constant';
 
-export const FLAT_ROUTE_TRIGGER_PROPERTIES_TO_COMPARE = [
-  ...FLAT_ROUTE_TRIGGER_EDITABLE_PROPERTIES,
-] as const satisfies (keyof FlatRouteTrigger)[];
+export const FLAT_ROUTE_TRIGGER_PROPERTIES_TO_COMPARE =
+  ALL_FLAT_ENTITY_CONSTANTS.routeTrigger.propertiesToCompare;
