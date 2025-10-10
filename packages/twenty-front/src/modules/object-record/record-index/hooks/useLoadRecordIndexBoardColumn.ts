@@ -15,6 +15,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 
 import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
+import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import {
@@ -79,9 +80,14 @@ export const useLoadRecordIndexBoardColumn = ({
     });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
+  const recordGroupFieldMetadata = useRecoilComponentValue(
+    recordGroupFieldMetadataComponentState,
+    recordBoardId,
+  );
 
   const recordGqlFields = useRecordsFieldVisibleGqlFields({
     objectMetadataItem,
+    recordGroupFieldMetadataId: recordGroupFieldMetadata?.id,
   });
 
   const recordIndexKanbanFieldMetadataFilterValue = isDefined(

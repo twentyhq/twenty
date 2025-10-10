@@ -14,10 +14,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordsFieldVisibleGqlFields = {
   objectMetadataItem: ObjectMetadataItem;
+  additionalFieldMetadataId?: string | null;
 };
 
 export const useRecordsFieldVisibleGqlFields = ({
   objectMetadataItem,
+  additionalFieldMetadataId,
 }: UseRecordsFieldVisibleGqlFields) => {
   const visibleRecordFields = useRecoilComponentValue(
     visibleRecordFieldsComponentSelector,
@@ -53,8 +55,15 @@ export const useRecordsFieldVisibleGqlFields = ({
 
   const hasPosition = hasObjectMetadataItemPositionField(objectMetadataItem);
 
+  const additionalFieldMetadataItem = isDefined(additionalFieldMetadataId)
+    ? fieldMetadataItemByFieldMetadataItemId[additionalFieldMetadataId]
+    : undefined;
+
   return {
     id: true,
+    ...(isDefined(additionalFieldMetadataItem)
+      ? { [additionalFieldMetadataItem.name]: true }
+      : {}),
     ...(isDefined(labelIdentifierFieldMetadataItem)
       ? { [labelIdentifierFieldMetadataItem.name]: true }
       : {}),
