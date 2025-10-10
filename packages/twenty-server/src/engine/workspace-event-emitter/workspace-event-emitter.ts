@@ -21,6 +21,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import type { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
+import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 
 type ActionEventMap<T> = {
   [DatabaseEventAction.CREATED]: ObjectRecordCreateEvent<T>;
@@ -186,12 +187,14 @@ export class WorkspaceEventEmitter {
 
     const eventName = computeEventName(objectMetadataNameSingular, action);
 
-    this.eventEmitter.emit(eventName, {
+    const workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent<T>> = {
       name: eventName,
       workspaceId,
       objectMetadata: { ...objectMetadataItem, fields },
       events,
-    });
+    };
+
+    this.eventEmitter.emit(eventName, workspaceEventBatch);
   }
 
   public emitDatabaseBatchEvent<T, A extends keyof ActionEventMap<T>>({
