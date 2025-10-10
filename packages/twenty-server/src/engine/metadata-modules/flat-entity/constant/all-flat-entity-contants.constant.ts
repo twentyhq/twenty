@@ -1,27 +1,24 @@
 import { FLAT_CRON_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/cron-trigger/constants/flat-cron-trigger-editable-properties.constant';
 import { FLAT_DATABASE_EVENT_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/database-event-trigger/constants/flat-database-event-trigger-editable-properties.constant';
-import { AllFlatEntitiesByMetadataEngineName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
-import { AllFlatEntities } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities.type';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type FromMetadataEngineNameToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-engine-name-to-flat-entity-maps-key.type';
+import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { FromMetadataEngineNameToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-engine-name-to-flat-entity-maps-key.type';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field/constants/flat-view-field-editable-properties.constant';
 import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-editable-properties.constant';
 import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view/constants/flat-view-editable-properties.constant';
 import { FLAT_ROUTE_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/route-trigger/constants/flat-route-trigger-editable-properties.constant';
 import { FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/serverless-function/constants/flat-serverless-function-editable-properties.constant';
-
 type OneFlatEntityConfiguration<
-  TFlatEntity extends AllFlatEntities,
-  TFlatEntityName extends keyof AllFlatEntitiesByMetadataEngineName,
+  T extends AllMetadataName,
 > = {
-  propertiesToCompare: (keyof TFlatEntity)[];
-  propertiesToStringify: (keyof TFlatEntity)[];
-  flatEntityMapsKey: FromMetadataEngineNameToFlatEntityMapsKey<TFlatEntityName>;
+  propertiesToCompare: (keyof MetadataFlatEntity<T>)[];
+  propertiesToStringify: (keyof MetadataFlatEntity<T>)[];
+  flatEntityMapsKey: FromMetadataEngineNameToFlatEntityMapsKey<T>;
   relatedFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
 };
-
-export const ALL_FLAT_ENTITY_CONSTANTS = {
+export const ALL_FLAT_ENTITY_CONFIGURATION = {
   fieldMetadata: {
     flatEntityMapsKey: 'flatFieldMetadataMaps',
     propertiesToCompare: [
@@ -122,8 +119,7 @@ export const ALL_FLAT_ENTITY_CONSTANTS = {
     relatedFlatEntityMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
   },
 } as const satisfies {
-  [P in keyof AllFlatEntitiesByMetadataEngineName]: OneFlatEntityConfiguration<
-    AllFlatEntitiesByMetadataEngineName[P],
+  [P in AllMetadataName]: OneFlatEntityConfiguration<
     P
   >;
 };

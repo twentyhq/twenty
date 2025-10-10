@@ -1,29 +1,24 @@
-import {
-  AllFlatEntityConfigurationByMetadataName,
-  AllMetadataName,
-  MetadataFlatEntity,
-} from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { orderObjectProperties } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/order-object-properties.util';
 
-export type transformFlatEntityForComparisonArgs<T extends AllMetadataName> =
-  Pick<
-    AllFlatEntityConfigurationByMetadataName[T]['configuration'],
-    'propertiesToCompare' | 'propertiesToStringify'
-  > & { flatEntity: MetadataFlatEntity<T> };
-
-export function transformFlatEntityForComparison<T extends AllMetadataName>({
+export function transformFlatEntityForComparison<
+  TFlatEntity extends FlatEntity,
+  PToCompare extends keyof TFlatEntity,
+  PJsonB extends PToCompare,
+>({
   flatEntity,
   propertiesToCompare,
   propertiesToStringify,
-}: transformFlatEntityForComparisonArgs<T>) {
+}: {
+  flatEntity: TFlatEntity;
+  propertiesToCompare: readonly PToCompare[];
+  propertiesToStringify: readonly PJsonB[];
+}): Pick<TFlatEntity, PToCompare> {
   return propertiesToCompare.reduce(
     (flatEntityAccumulator, propertyToCompare) => {
       const currentValue = flatEntity[propertyToCompare];
 
-      if (
-        // @ts-expect-error TODO prastoin
-        propertiesToStringify.includes(propertyToCompare)
-      ) {
+      if (propertiesToStringify.includes(propertyToCompare as PJsonB)) {
         const orderedValue = orderObjectProperties(currentValue);
 
         return {
@@ -37,9 +32,6 @@ export function transformFlatEntityForComparison<T extends AllMetadataName>({
         [propertyToCompare]: currentValue,
       };
     },
-    {} as Pick<
-      MetadataFlatEntity<T>,
-      AllFlatEntityConfigurationByMetadataName[T]['configuration']['propertiesToCompare']
-    >,
+    {} as Pick<TFlatEntity, PToCompare>,
   );
 }
