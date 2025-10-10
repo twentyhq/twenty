@@ -10,6 +10,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
 ): ValidationErrorResponse => {
   const emptyResponseError: ValidationErrorResponse = {
     summary: {
+      invalidViewFilter: 0,
       invalidObjectMetadata: 0,
       invalidView: 0,
       invalidViewField: 0,
@@ -31,6 +32,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       databaseEventTrigger: [],
       cronTrigger: [],
       routeTrigger: [],
+      viewFilter: [],
     },
   };
 
