@@ -9,7 +9,9 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatCronTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service';
 
-const CRON_TRIGGER_METADATA_NAME = 'cronTrigger' as const satisfies AllMetadataName;
+const CRON_TRIGGER_METADATA_NAME =
+  'cronTrigger' as const satisfies AllMetadataName;
+
 @Injectable()
 export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   typeof CRON_TRIGGER_METADATA_NAME
@@ -88,8 +90,13 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     flatEntityUpdate: { from: fromFlatCronTrigger, to: toFlatCronTrigger },
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityUpdateValidationArgs<typeof CRON_TRIGGER_METADATA_NAME>): Promise<
-    | FlatEntityValidationReturnType<typeof CRON_TRIGGER_METADATA_NAME, 'updated'>
+  }: FlatEntityUpdateValidationArgs<
+    typeof CRON_TRIGGER_METADATA_NAME
+  >): Promise<
+    | FlatEntityValidationReturnType<
+        typeof CRON_TRIGGER_METADATA_NAME,
+        'updated'
+      >
     | undefined
   > {
     const cronTriggerUpdatedProperties = compareTwoFlatCronTrigger({

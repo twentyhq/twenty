@@ -21,6 +21,7 @@ export type ViewRelatedFlatEntityMaps = Pick<
   (typeof ALL_FLAT_ENTITY_CONFIGURATION.view.relatedFlatEntityMapsKeys)[number]
 >;
 const VIEW_METADATA_NAME = 'view' as const satisfies AllMetadataName;
+
 @Injectable()
 export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   typeof VIEW_METADATA_NAME

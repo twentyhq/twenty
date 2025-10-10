@@ -15,7 +15,9 @@ export type ObjectMetadataRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
   (typeof ALL_FLAT_ENTITY_CONFIGURATION.objectMetadata.relatedFlatEntityMapsKeys)[number]
 >;
-const OBJECT_METADATA_METADATA_NAME = 'objectMetadata' as const satisfies AllMetadataName;
+const OBJECT_METADATA_METADATA_NAME =
+  'objectMetadata' as const satisfies AllMetadataName;
+
 @Injectable()
 export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   typeof OBJECT_METADATA_METADATA_NAME
@@ -32,7 +34,10 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     buildOptions,
     dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<typeof OBJECT_METADATA_METADATA_NAME>): Promise<
-    FlatEntityValidationReturnType<typeof OBJECT_METADATA_METADATA_NAME, 'created'>
+    FlatEntityValidationReturnType<
+      typeof OBJECT_METADATA_METADATA_NAME,
+      'created'
+    >
   > {
     const validationResult =
       await this.flatObjectValidatorService.validateFlatObjectMetadataCreation({
@@ -66,7 +71,10 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
     dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<typeof OBJECT_METADATA_METADATA_NAME>): Promise<
-    FlatEntityValidationReturnType<typeof OBJECT_METADATA_METADATA_NAME, 'deleted'>
+    FlatEntityValidationReturnType<
+      typeof OBJECT_METADATA_METADATA_NAME,
+      'deleted'
+    >
   > {
     const validationResult =
       this.flatObjectValidatorService.validateFlatObjectMetadataDeletion({
@@ -101,8 +109,13 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     },
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityUpdateValidationArgs<typeof OBJECT_METADATA_METADATA_NAME>): Promise<
-    | FlatEntityValidationReturnType<typeof OBJECT_METADATA_METADATA_NAME, 'updated'>
+  }: FlatEntityUpdateValidationArgs<
+    typeof OBJECT_METADATA_METADATA_NAME
+  >): Promise<
+    | FlatEntityValidationReturnType<
+        typeof OBJECT_METADATA_METADATA_NAME,
+        'updated'
+      >
     | undefined
   > {
     const flatObjectPropertiesUpdates = compareTwoFlatObjectMetadata({

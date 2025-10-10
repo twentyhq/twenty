@@ -9,7 +9,9 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatRouteTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service';
 
-const ROUTE_TRIGGER_METADATA_NAME = 'routeTrigger' as const satisfies AllMetadataName;
+const ROUTE_TRIGGER_METADATA_NAME =
+  'routeTrigger' as const satisfies AllMetadataName;
+
 @Injectable()
 export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   typeof ROUTE_TRIGGER_METADATA_NAME
@@ -25,7 +27,10 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<typeof ROUTE_TRIGGER_METADATA_NAME>): Promise<
-    FlatEntityValidationReturnType<typeof ROUTE_TRIGGER_METADATA_NAME, 'created'>
+    FlatEntityValidationReturnType<
+      typeof ROUTE_TRIGGER_METADATA_NAME,
+      'created'
+    >
   > {
     const validationResult =
       await this.flatRouteTriggerValidatorService.validateFlatRouteTriggerCreation(
@@ -58,7 +63,10 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<typeof ROUTE_TRIGGER_METADATA_NAME>): Promise<
-    FlatEntityValidationReturnType<typeof ROUTE_TRIGGER_METADATA_NAME, 'deleted'>
+    FlatEntityValidationReturnType<
+      typeof ROUTE_TRIGGER_METADATA_NAME,
+      'deleted'
+    >
   > {
     const validationResult =
       this.flatRouteTriggerValidatorService.validateFlatRouteTriggerDeletion({
@@ -88,8 +96,13 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     flatEntityUpdate: { from: fromFlatRouteTrigger, to: toFlatRouteTrigger },
     optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityUpdateValidationArgs<typeof ROUTE_TRIGGER_METADATA_NAME>): Promise<
-    | FlatEntityValidationReturnType<typeof ROUTE_TRIGGER_METADATA_NAME, 'updated'>
+  }: FlatEntityUpdateValidationArgs<
+    typeof ROUTE_TRIGGER_METADATA_NAME
+  >): Promise<
+    | FlatEntityValidationReturnType<
+        typeof ROUTE_TRIGGER_METADATA_NAME,
+        'updated'
+      >
     | undefined
   > {
     const routeTriggerUpdatedProperties = compareTwoFlatRouteTrigger({

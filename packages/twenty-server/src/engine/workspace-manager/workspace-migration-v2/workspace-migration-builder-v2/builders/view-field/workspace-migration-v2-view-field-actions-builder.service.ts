@@ -15,6 +15,7 @@ import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/wor
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
 
 const VIEW_FIELD_METADATA_NAME = 'viewField' as const satisfies AllMetadataName;
+
 @Injectable()
 export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   typeof VIEW_FIELD_METADATA_NAME

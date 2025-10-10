@@ -30,7 +30,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
   constructor(
     private readonly flatIndexValidatorService: FlatIndexValidatorService,
   ) {
-    super('index');
+    super(INDEX_METADATA_NAME);
   }
 
   protected async validateFlatEntityCreation({

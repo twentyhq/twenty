@@ -20,7 +20,9 @@ export type FieldMetadataRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
   (typeof ALL_FLAT_ENTITY_CONFIGURATION.fieldMetadata.relatedFlatEntityMapsKeys)[number]
 >;
-const FIELD_METADATA_METADATA_NAME = 'fieldMetadata' as const satisfies AllMetadataName;
+const FIELD_METADATA_METADATA_NAME =
+  'fieldMetadata' as const satisfies AllMetadataName;
+
 @Injectable()
 export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   typeof FIELD_METADATA_METADATA_NAME
@@ -38,7 +40,10 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     workspaceId,
     remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<typeof FIELD_METADATA_METADATA_NAME>): Promise<
-    FlatEntityValidationReturnType<typeof FIELD_METADATA_METADATA_NAME, 'created'>
+    FlatEntityValidationReturnType<
+      typeof FIELD_METADATA_METADATA_NAME,
+      'created'
+    >
   > {
     const validationResult =
       await this.flatFieldValidatorService.validateFlatFieldMetadataCreation({
@@ -93,7 +98,10 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     workspaceId,
   }: FlatEntityValidationArgs<typeof FIELD_METADATA_METADATA_NAME>): Promise<
-    FlatEntityValidationReturnType<typeof FIELD_METADATA_METADATA_NAME, 'deleted'>
+    FlatEntityValidationReturnType<
+      typeof FIELD_METADATA_METADATA_NAME,
+      'deleted'
+    >
   > {
     const validationResult =
       this.flatFieldValidatorService.validateFlatFieldMetadataDeletion({
@@ -146,8 +154,13 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     flatEntityUpdate: { from: fromFlatFieldMetadata, to: toFlatFieldMetadata },
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     workspaceId,
-  }: FlatEntityUpdateValidationArgs<typeof FIELD_METADATA_METADATA_NAME>): Promise<
-    | FlatEntityValidationReturnType<typeof FIELD_METADATA_METADATA_NAME, 'updated'>
+  }: FlatEntityUpdateValidationArgs<
+    typeof FIELD_METADATA_METADATA_NAME
+  >): Promise<
+    | FlatEntityValidationReturnType<
+        typeof FIELD_METADATA_METADATA_NAME,
+        'updated'
+      >
     | undefined
   > {
     const flatFieldMetadataUpdatedProperties = compareTwoFlatFieldMetadata({

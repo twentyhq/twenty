@@ -1,5 +1,5 @@
-import { MetadataWorkspaceMigrationActionsRecord } from "src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type";
-import { AllMetadataName } from "src/engine/metadata-modules/flat-entity/types/all-metadata-name.type";
+import { type MetadataWorkspaceMigrationActionsRecord } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 
 export const getMetadataEmptyWorkspaceMigrationActionRecord = <
   T extends AllMetadataName,

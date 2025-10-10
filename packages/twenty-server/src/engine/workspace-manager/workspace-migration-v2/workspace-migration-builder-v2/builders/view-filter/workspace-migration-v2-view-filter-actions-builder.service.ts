@@ -14,7 +14,9 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatViewFilterValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service';
 
-const VIEW_FILTER_METADATA_NAME = 'viewFilter' as const satisfies AllMetadataName;
+const VIEW_FILTER_METADATA_NAME =
+  'viewFilter' as const satisfies AllMetadataName;
+
 @Injectable()
 export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   typeof VIEW_FILTER_METADATA_NAME
@@ -127,7 +129,10 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     flatEntityUpdate: { from: fromFlatViewFilter, to: toFlatViewFilter },
     optimisticFlatEntityMaps: optimisticFlatViewFilterMaps,
   }: FlatEntityUpdateValidationArgs<typeof VIEW_FILTER_METADATA_NAME>): Promise<
-    | FlatEntityValidationReturnType<typeof VIEW_FILTER_METADATA_NAME, 'updated'>
+    | FlatEntityValidationReturnType<
+        typeof VIEW_FILTER_METADATA_NAME,
+        'updated'
+      >
     | undefined
   > {
     const viewFilterUpdatedProperties = compareTwoFlatViewFilter({

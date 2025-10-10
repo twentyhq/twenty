@@ -1,16 +1,16 @@
 import { type FromTo } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
+import { type ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import {
-  MetadataFlatEntity,
-  MetadataFlatEntityMaps
+  type MetadataFlatEntity,
+  type MetadataFlatEntityMaps,
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
-import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { compareTwoFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/compare-two-flat-entity.util';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
-import { isDefined } from 'twenty-shared/utils';
 
 export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
   createdFlatEntityMaps: MetadataFlatEntityMaps<T>;
@@ -78,6 +78,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
 
   for (const [universalIdentifier, fromFlatEntity] of fromMap) {
     const toFlatEntity = toMap.get(universalIdentifier);
+
     if (!isDefined(toFlatEntity)) {
       continue;
     }
