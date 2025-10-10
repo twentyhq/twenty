@@ -1,8 +1,4 @@
-import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-editable-properties.constant';
-import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { ALL_FLAT_ENTITY_CONSTANTS } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-contants.constant';
 
-export const FLAT_VIEW_FILTER_PROPERTIES_TO_COMPARE = [
-  'viewId',
-  'deletedAt',
-  ...FLAT_VIEW_FILTER_EDITABLE_PROPERTIES,
-] as const satisfies (keyof FlatViewFilter)[];
+export const FLAT_VIEW_FILTER_PROPERTIES_TO_COMPARE =
+  ALL_FLAT_ENTITY_CONSTANTS.viewFilter.propertiesToCompare;

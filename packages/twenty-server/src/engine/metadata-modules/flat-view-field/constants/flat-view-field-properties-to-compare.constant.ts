@@ -1,7 +1,4 @@
-import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field/constants/flat-view-field-editable-properties.constant';
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { ALL_FLAT_ENTITY_CONSTANTS } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-contants.constant';
 
-export const FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE = [
-  ...FLAT_VIEW_FIELD_EDITABLE_PROPERTIES,
-  'deletedAt',
-] as const satisfies (keyof FlatViewField)[];
+export const FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE =
+  ALL_FLAT_ENTITY_CONSTANTS.viewField.propertiesToCompare;
