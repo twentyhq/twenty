@@ -169,14 +169,8 @@ export type MetadataWorkspaceMigrationAction<
     | 'created'
     | 'deleted'
     | 'updated',
-> = MetadataWorkspaceMigrationActionsRecord<T>[TOperation];
-
-type tmp = MetadataWorkspaceMigrationAction<AllMetadataName>;
-export type MetadataWorkspaceMigrationActionType<
-  T extends
-    MetadataWorkspaceMigrationAction<AllMetadataName> = MetadataWorkspaceMigrationAction<AllMetadataName>,
-> = T extends any[]
-  ? T[number]['type']
-  : T extends { type: any }
-    ? T['type']
-    : never;
+> = MetadataWorkspaceMigrationActionsRecord<T>[TOperation] extends infer Action
+  ? Action extends any[]
+    ? Action[number]
+    : Action
+  : never;

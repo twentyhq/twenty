@@ -458,7 +458,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.fieldMetadata.created,
           ...aggregatedOrchestratorActionsReport.fieldMetadata.updated,
           ...aggregatedOrchestratorActionsReport.index.created,
-          ...aggregatedOrchestratorActionsReport.index.updated,
+          ...aggregatedOrchestratorActionsReport.index.updated.flat(),
           ///
 
           // Views
