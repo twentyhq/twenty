@@ -16,10 +16,11 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveBar, type BarCustomLayerProps } from '@nivo/bar';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const LEGEND_THRESHOLD = 10;
@@ -76,26 +77,6 @@ export const GraphWidgetBarChart = ({
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (isDefined(containerRef.current)) {
-        setChartWidth(containerRef.current.offsetWidth);
-        setChartHeight(containerRef.current.offsetHeight);
-      }
-    };
-
-    updateDimensions();
-
-    const resizeObserver = new ResizeObserver(updateDimensions);
-    if (isDefined(containerRef.current)) {
-      resizeObserver.observe(containerRef.current);
-    }
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -184,6 +165,13 @@ export const GraphWidgetBarChart = ({
         $isClickable={hasClickableItems}
         $cursorSelector='svg g[transform] rect[fill^="url(#gradient-"]'
       >
+        <NodeDimensionEffect
+          elementRef={containerRef}
+          onDimensionChange={({ width, height }) => {
+            setChartWidth(width);
+            setChartHeight(height);
+          }}
+        />
         <ResponsiveBar
           data={data}
           keys={keys}
