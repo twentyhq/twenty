@@ -30,6 +30,8 @@ export const useSingleRecordPickerPerformSearch = ({
     SingleRecordPickerComponentInstanceContext,
   );
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const onSearchRecordsCompleted = useRecoilCallback(
     ({ set }) =>
       (data: SearchQuery) => {
@@ -49,10 +51,9 @@ export const useSingleRecordPickerPerformSearch = ({
           objectMetadataItems,
         );
       },
-    [],
+    [objectMetadataItems, singleRecordPickerInstanceId],
   );
 
-  const { objectMetadataItems } = useObjectMetadataItems();
   const selectedIdsFilter = { id: { in: selectedIds } };
 
   const { loading: selectedRecordsLoading, searchRecords: selectedRecords } =
