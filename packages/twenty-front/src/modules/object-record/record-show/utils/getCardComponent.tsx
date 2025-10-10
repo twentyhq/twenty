@@ -17,8 +17,6 @@ import { WorkflowCard } from '@/workflow/workflow-diagram/components/WorkflowCar
 import { WorkflowRunCard } from '@/workflow/workflow-diagram/components/WorkflowRunCard';
 import { WorkflowVersionCard } from '@/workflow/workflow-diagram/components/WorkflowVersionCard';
 
-// Returns the appropriate card component for a given card type and configuration
-// Replaces the CardComponents registry with a direct mapping function
 export const getCardComponent = (
   cardType: CardType,
   configuration?: CardConfiguration,

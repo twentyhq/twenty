@@ -20,7 +20,6 @@ export type TabVisibilityContext = {
   targetObjectMetadataItem: ObjectMetadataItem;
 };
 
-// Evaluates visibility rules for a tab
 export const evaluateTabVisibility = (
   hide: TabVisibilityConfig,
   context: TabVisibilityContext,

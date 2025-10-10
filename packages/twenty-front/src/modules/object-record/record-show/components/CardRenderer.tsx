@@ -1,8 +1,6 @@
 import { type CardConfiguration } from '@/object-record/record-show/types/CardConfiguration';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 
-// Generic card renderer that handles configuration injection and targetRecord guards
-// Works for both cards with configuration and cards without
 export const CardRenderer = <T extends CardConfiguration>({
   Component,
   configuration,
@@ -12,7 +10,6 @@ export const CardRenderer = <T extends CardConfiguration>({
 }) => {
   const { targetRecord } = useLayoutRenderingContext();
 
-  // Guard: Only render if targetRecord exists (for record page cards)
   if (!targetRecord) {
     return null;
   }
