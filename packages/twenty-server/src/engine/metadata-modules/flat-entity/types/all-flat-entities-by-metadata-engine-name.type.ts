@@ -114,7 +114,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
   index: {
     actions: {
       created: CreateIndexAction;
-      updated: never;
+      updated: [DeleteIndexAction, CreateIndexAction];
       deleted: DeleteIndexAction;
     };
     flatEntity: FlatIndexMetadata;
