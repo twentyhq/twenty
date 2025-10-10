@@ -43,7 +43,7 @@ const mockRefetchAggregateQueries = jest.fn();
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
 const objectMetadataItem = getMockPersonObjectMetadataItem();
-const objectMetadataItems = [objectMetadataItem];
+const objectMetadataItems = generatedMockObjectMetadataItems;
 const expectedCachedRecordsWithDeletedAt = personRecords.map(
   (personRecord) => ({
     ...personRecord,
