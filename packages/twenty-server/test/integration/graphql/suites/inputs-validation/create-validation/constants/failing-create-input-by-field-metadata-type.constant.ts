@@ -1,8 +1,13 @@
 import { type FieldMetadataTypesToTestForCreateInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+
 export const failingCreateInputByFieldMetadataType: {
-  [K in FieldMetadataTypesToTestForCreateInputValidation]: {
+  [K in Exclude<
+    FieldMetadataTypesToTestForCreateInputValidation,
+    CompositeFieldMetadataType | FieldMetadataType.ACTOR
+  >]: {
     input: any;
     gqlErrorMessage: string;
     restErrorMessage: string;
@@ -456,74 +461,6 @@ export const failingCreateInputByFieldMetadataType: {
     //   restErrorMessage: '',
     // },
   ],
-  [FieldMetadataType.ADDRESS]: [
-    // {
-    //   input: {
-    //     addressField: null,
-    //   },
-    //   gqlErrorMessage: 'Cannot convert undefined or null to object',
-    //   //TODO - to fix, should throw
-    //   restErrorMessage: '',
-    // },
-    // {
-    //   input: {
-    //     addressField: 'not-an-address',
-    //   },
-    //   gqlErrorMessage: 'to be an object.',
-    //   //TODO - to fix, should throw
-    //   restErrorMessage: '',
-    // },
-  ],
-  [FieldMetadataType.CURRENCY]: [
-    // {
-    //   input: {
-    //     currencyField: null,
-    //   },
-    //   gqlErrorMessage: 'Cannot convert undefined or null to object',
-    //   //TODO - to fix, should throw
-    //   restErrorMessage: '',
-    // },
-  ],
-  [FieldMetadataType.EMAILS]: [
-    // {
-    //   input: {
-    //     emailsField: null,
-    //   },
-    //   gqlErrorMessage: 'Cannot convert undefined or null to objet',
-    //   //TODO - to fix, should throw
-    //   restErrorMessage: '',
-    // },
-  ],
-  [FieldMetadataType.PHONES]: [
-    // {
-    //   input: {
-    //     phonesField: null,
-    //   },
-    //   gqlErrorMessage: 'Cannot convert undefined or null to object',
-    //   //TODO - to fix, should throw
-    //   restErrorMessage: '',
-    // },
-  ],
-  [FieldMetadataType.FULL_NAME]: [
-    // {
-    //   input: {
-    //     fullNameField: null,
-    //   },
-    //   gqlErrorMessage: 'Cannot convert undefined or null to object',
-    //   //TODO - to fix, should throw
-    //   restErrorMessage: '',
-    // },
-  ],
-  [FieldMetadataType.LINKS]: [
-    // {
-    //   input: {
-    //     linksField: null,
-    //   },
-    //   gqlErrorMessage: 'Cannot convert undefined or null to object',
-    //   //TODO - to fix, should throw
-    //   restErrorMessage: '',
-    // },
-  ],
   [FieldMetadataType.RICH_TEXT]: [
     {
       input: {
@@ -535,24 +472,92 @@ export const failingCreateInputByFieldMetadataType: {
         'Rich text is not supported, please use RICH_TEXT_V2 instead',
     },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
-    // {
-    //   input: {
-    //     richTextV2Field: null,
-    //   },
-    //   gqlErrorMessage: 'Cannot convert undefined or null to object',
-    //   //TODO - to fix, should throw
-    //   restErrorMessage: '',
-    // },
-  ],
-  [FieldMetadataType.ACTOR]: [
-    // {
-    //   input: {
-    //     actorField: null,
-    //   },
-    //   gqlErrorMessage: 'Cannot convert undefined or null to object',
-    //   //TODO - to fix, should throw
-    //   restErrorMessage: '',
-    // },
-  ],
+  // [FieldMetadataType.ADDRESS]: [
+  //   // {
+  //   //   input: {
+  //   //     addressField: null,
+  //   //   },
+  //   //   gqlErrorMessage: 'Cannot convert undefined or null to object',
+  //   //   //TODO - to fix, should throw
+  //   //   restErrorMessage: '',
+  //   // },
+  //   // {
+  //   //   input: {
+  //   //     addressField: 'not-an-address',
+  //   //   },
+  //   //   gqlErrorMessage: 'to be an object.',
+  //   //   //TODO - to fix, should throw
+  //   //   restErrorMessage: '',
+  //   // },
+  // ],
+  // [FieldMetadataType.CURRENCY]: [
+  //   // {
+  //   //   input: {
+  //   //     currencyField: null,
+  //   //   },
+  //   //   gqlErrorMessage: 'Cannot convert undefined or null to object',
+  //   //   //TODO - to fix, should throw
+  //   //   restErrorMessage: '',
+  //   // },
+  // ],
+  // [FieldMetadataType.EMAILS]: [
+  //   // {
+  //   //   input: {
+  //   //     emailsField: null,
+  //   //   },
+  //   //   gqlErrorMessage: 'Cannot convert undefined or null to objet',
+  //   //   //TODO - to fix, should throw
+  //   //   restErrorMessage: '',
+  //   // },
+  // ],
+  // [FieldMetadataType.PHONES]: [
+  //   // {
+  //   //   input: {
+  //   //     phonesField: null,
+  //   //   },
+  //   //   gqlErrorMessage: 'Cannot convert undefined or null to object',
+  //   //   //TODO - to fix, should throw
+  //   //   restErrorMessage: '',
+  //   // },
+  // ],
+  // [FieldMetadataType.FULL_NAME]: [
+  //   // {
+  //   //   input: {
+  //   //     fullNameField: null,
+  //   //   },
+  //   //   gqlErrorMessage: 'Cannot convert undefined or null to object',
+  //   //   //TODO - to fix, should throw
+  //   //   restErrorMessage: '',
+  //   // },
+  // ],
+  // [FieldMetadataType.LINKS]: [
+  //   // {
+  //   //   input: {
+  //   //     linksField: null,
+  //   //   },
+  //   //   gqlErrorMessage: 'Cannot convert undefined or null to object',
+  //   //   //TODO - to fix, should throw
+  //   //   restErrorMessage: '',
+  //   // },
+  // ],
+  // [FieldMetadataType.RICH_TEXT_V2]: [
+  //   // {
+  //   //   input: {
+  //   //     richTextV2Field: null,
+  //   //   },
+  //   //   gqlErrorMessage: 'Cannot convert undefined or null to object',
+  //   //   //TODO - to fix, should throw
+  //   //   restErrorMessage: '',
+  //   // },
+  // ],
+  // [FieldMetadataType.ACTOR]: [
+  //   // {
+  //   //   input: {
+  //   //     actorField: null,
+  //   //   },
+  //   //   gqlErrorMessage: 'Cannot convert undefined or null to object',
+  //   //   //TODO - to fix, should throw
+  //   //   restErrorMessage: '',
+  //   // },
+  // ],
 };
