@@ -32,7 +32,6 @@ export const evaluateTabVisibility = (
     objectPermissionsByObjectMetadataId,
   } = context;
 
-  // Check device-based hiding
   const baseHide =
     (hide.ifMobile && isMobile) ||
     (hide.ifDesktop && !isMobile) ||
@@ -82,25 +81,28 @@ export const evaluateTabVisibility = (
     return true;
   }
 
-  // Check permissions if needed
-  if (
+  const noReadPermission =
     hide.ifNoReadPermission === true &&
-    isDefined(hide.ifNoReadPermissionObject)
-  ) {
-    const targetObjectMetadataId = objectMetadataItems.find(
-      (item) => item.nameSingular === hide.ifNoReadPermissionObject,
-    )?.id;
+    isDefined(hide.ifNoReadPermissionObject) &&
+    (() => {
+      const targetObjectMetadataId = objectMetadataItems.find(
+        (item) => item.nameSingular === hide.ifNoReadPermissionObject,
+      )?.id;
 
-    if (isDefined(targetObjectMetadataId)) {
+      if (!isDefined(targetObjectMetadataId)) {
+        return false;
+      }
+
       const objectPermissions = getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
         targetObjectMetadataId,
       );
 
-      if (objectPermissions.canReadObjectRecords === false) {
-        return true;
-      }
-    }
+      return objectPermissions.canReadObjectRecords === false;
+    })();
+
+  if (noReadPermission) {
+    return true;
   }
 
   return false;

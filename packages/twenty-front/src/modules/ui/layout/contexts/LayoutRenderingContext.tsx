@@ -1,4 +1,5 @@
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type PageLayoutType } from '~/generated/graphql';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
 export type LayoutRenderingContextType = {
@@ -10,7 +11,7 @@ export type LayoutRenderingContextType = {
     'id' | 'targetObjectNameSingular'
   >;
 
-  layoutType: 'RECORD_PAGE' | 'DASHBOARD' | 'RECORD_INDEX';
+  layoutType: PageLayoutType;
 
   isInRightDrawer: boolean;
 };

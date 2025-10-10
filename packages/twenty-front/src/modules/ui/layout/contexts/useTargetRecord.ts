@@ -11,4 +11,3 @@ export const useTargetRecord = () => {
 
   return targetRecord;
 };
-

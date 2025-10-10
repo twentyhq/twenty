@@ -4,7 +4,9 @@ import { HttpResponse, graphql } from 'msw';
 
 import { CalendarEventsCard } from '@/activities/calendar/components/CalendarEventsCard';
 import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { PageLayoutType } from '~/generated/graphql';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -25,9 +27,9 @@ const meta: Meta<typeof CalendarEventsCard> = {
         value={{
           targetRecord: {
             id: '1',
-            targetObjectNameSingular: 'Company',
+            targetObjectNameSingular: CoreObjectNameSingular.Company,
           },
-          layoutType: 'RECORD_PAGE',
+          layoutType: PageLayoutType.RECORD_PAGE,
           isInRightDrawer: false,
         }}
       >

@@ -3,8 +3,10 @@ import { HttpResponse, graphql } from 'msw';
 
 import { TimelineCard } from '@/activities/timeline-activities/components/TimelineCard';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { PageLayoutType } from '~/generated/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { mockedTimelineActivities } from '~/testing/mock-data/timeline-activities';
@@ -22,9 +24,9 @@ const meta: Meta<typeof TimelineCard> = {
           value={{
             targetRecord: {
               id: '1',
-              targetObjectNameSingular: 'company',
+              targetObjectNameSingular: CoreObjectNameSingular.Company,
             },
-            layoutType: 'RECORD_PAGE',
+            layoutType: PageLayoutType.RECORD_PAGE,
             isInRightDrawer: false,
           }}
         >

@@ -6,6 +6,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { PageLayoutType } from '~/generated/graphql';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -22,7 +23,7 @@ export const PageLayoutRenderer = ({
     <LayoutRenderingProvider
       value={{
         targetRecord: undefined,
-        layoutType: 'DASHBOARD',
+        layoutType: PageLayoutType.DASHBOARD,
         isInRightDrawer: false,
       }}
     >

@@ -1,29 +1,29 @@
+import { type CardType } from '@/object-record/record-show/types/CardType';
+
+// Card configuration types - each card type can define its own configuration
 export type FieldCardConfiguration = {
   showDuplicatesSection?: boolean;
 };
 
-export type TimelineCardConfiguration = Record<string, never>;
-export type TaskCardConfiguration = Record<string, never>;
-export type NoteCardConfiguration = Record<string, never>;
-export type FileCardConfiguration = Record<string, never>;
-export type EmailCardConfiguration = Record<string, never>;
-export type CalendarCardConfiguration = Record<string, never>;
-export type RichTextCardConfiguration = Record<string, never>;
-export type WorkflowCardConfiguration = Record<string, never>;
-export type WorkflowVersionCardConfiguration = Record<string, never>;
-export type WorkflowRunCardConfiguration = Record<string, never>;
-export type DashboardCardConfiguration = Record<string, never>;
+// For cards that don't need configuration, use undefined
+export type EmptyCardConfiguration = undefined;
 
-export type CardConfiguration =
-  | FieldCardConfiguration
-  | TimelineCardConfiguration
-  | TaskCardConfiguration
-  | NoteCardConfiguration
-  | FileCardConfiguration
-  | EmailCardConfiguration
-  | CalendarCardConfiguration
-  | RichTextCardConfiguration
-  | WorkflowCardConfiguration
-  | WorkflowVersionCardConfiguration
-  | WorkflowRunCardConfiguration
-  | DashboardCardConfiguration;
+// Type mapping from CardType to its specific configuration type
+// This creates precise typing: each CardType is linked to exactly one configuration type
+export type CardTypeToConfiguration = {
+  [CardType.FieldCard]: FieldCardConfiguration;
+  [CardType.TimelineCard]: EmptyCardConfiguration;
+  [CardType.TaskCard]: EmptyCardConfiguration;
+  [CardType.NoteCard]: EmptyCardConfiguration;
+  [CardType.FileCard]: EmptyCardConfiguration;
+  [CardType.EmailCard]: EmptyCardConfiguration;
+  [CardType.CalendarCard]: EmptyCardConfiguration;
+  [CardType.RichTextCard]: EmptyCardConfiguration;
+  [CardType.WorkflowCard]: EmptyCardConfiguration;
+  [CardType.WorkflowVersionCard]: EmptyCardConfiguration;
+  [CardType.WorkflowRunCard]: EmptyCardConfiguration;
+  [CardType.DashboardCard]: EmptyCardConfiguration;
+};
+
+// Union type for all card configurations (for general use)
+export type CardConfiguration = FieldCardConfiguration | EmptyCardConfiguration;
