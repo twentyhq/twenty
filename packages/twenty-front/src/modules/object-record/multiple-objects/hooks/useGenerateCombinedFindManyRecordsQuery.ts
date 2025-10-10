@@ -6,11 +6,11 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
 import isEmpty from 'lodash.isempty';
 import { capitalize } from 'twenty-shared/utils';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 
 export const useGenerateCombinedFindManyRecordsQuery = ({
   operationSignatures,
@@ -98,7 +98,9 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
               objectMetadataItem,
               recordGqlFields:
                 operationSignature.fields ??
-                generateDepthOneRecordGqlFields({
+                generateDepthRecordGqlFieldsFromObject({
+                  objectMetadataItems,
+                  depth: 1,
                   objectMetadataItem,
                 }),
               objectPermissionsByObjectMetadataId,
