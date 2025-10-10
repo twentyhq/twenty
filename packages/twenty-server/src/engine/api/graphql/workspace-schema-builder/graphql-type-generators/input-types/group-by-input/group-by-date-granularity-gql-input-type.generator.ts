@@ -59,7 +59,7 @@ export class GroupByDateGranularityInputTypeGenerator {
       groupByDateField,
     );
 
-    const orderByDateFieldForGroupBy = new GraphQLInputObjectType({
+    const orderByDateField = new GraphQLInputObjectType({
       name: ORDER_BY_DATE_GRANULARITY_INPUT_KEY,
       fields: {
         orderBy: {
@@ -73,7 +73,7 @@ export class GroupByDateGranularityInputTypeGenerator {
 
     this.gqlTypesStorage.addGqlType(
       ORDER_BY_DATE_GRANULARITY_INPUT_KEY,
-      orderByDateFieldForGroupBy,
+      orderByDateField,
     );
   }
 }

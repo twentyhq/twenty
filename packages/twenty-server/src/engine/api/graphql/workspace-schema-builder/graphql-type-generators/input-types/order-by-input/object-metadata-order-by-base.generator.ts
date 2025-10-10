@@ -119,9 +119,9 @@ export class ObjectMetadataOrderByBaseGenerator {
     orderByDateGranularity?: boolean;
   }) {
     if (
-      (orderByDateGranularity === true &&
-        fieldMetadata.type === FieldMetadataType.DATE) ||
-      fieldMetadata.type === FieldMetadataType.DATE_TIME
+      orderByDateGranularity === true &&
+      (fieldMetadata.type === FieldMetadataType.DATE ||
+        fieldMetadata.type === FieldMetadataType.DATE_TIME)
     ) {
       const orderByDateGranularityInputType =
         this.gqlTypesStorage.getGqlTypeByKey(

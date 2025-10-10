@@ -16,7 +16,6 @@ describe('group-by resolvers - order by', () => {
   const testCompanyId7 = randomUUID();
 
   beforeAll(async () => {
-    // Seed three companies with different cities and createdAt days
     await makeGraphqlAPIRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
@@ -147,7 +146,7 @@ describe('group-by resolvers - order by', () => {
     ],
   };
 
-  const groupByAdressCreateAtAndARR = (orderBy: object[]) => {
+  const groupByAddressCreatedAtAndARR = (orderBy: object[]) => {
     return groupByOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
@@ -171,7 +170,7 @@ describe('group-by resolvers - order by', () => {
   describe('valid cases', () => {
     it('should order results in the right order - createdAt, avgEmployees, addressCity', async () => {
       const response = await makeGraphqlAPIRequest(
-        groupByAdressCreateAtAndARR([
+        groupByAddressCreatedAtAndARR([
           {
             createdAt: {
               granularity: 'DAY_OF_THE_WEEK',
@@ -253,7 +252,7 @@ describe('group-by resolvers - order by', () => {
     });
     it('should order results in the right order - createdAt, addressCity, avgEmployees', async () => {
       const response = await makeGraphqlAPIRequest(
-        groupByAdressCreateAtAndARR([
+        groupByAddressCreatedAtAndARR([
           {
             createdAt: {
               granularity: 'DAY_OF_THE_WEEK',
@@ -332,7 +331,7 @@ describe('group-by resolvers - order by', () => {
     });
     it('should order results in the right order - addressCity, createdAt, avgEmployees', async () => {
       const response = await makeGraphqlAPIRequest(
-        groupByAdressCreateAtAndARR([
+        groupByAddressCreatedAtAndARR([
           {
             address: {
               addressCity: 'AscNullsFirst',
@@ -411,7 +410,7 @@ describe('group-by resolvers - order by', () => {
     });
     it('should order results in the right order - avgEmployees, createdAt, addressCity', async () => {
       const response = await makeGraphqlAPIRequest(
-        groupByAdressCreateAtAndARR([
+        groupByAddressCreatedAtAndARR([
           {
             aggregate: {
               avgEmployees: 'AscNullsFirst',
@@ -493,7 +492,7 @@ describe('group-by resolvers - order by', () => {
   describe('invalid cases', () => {
     it('should fail if attempt to order by a field that is not part of the groupBy', async () => {
       const response = await makeGraphqlAPIRequest(
-        groupByAdressCreateAtAndARR([{ employees: 'AscNullsFirst' }]),
+        groupByAddressCreatedAtAndARR([{ employees: 'AscNullsFirst' }]),
       );
 
       expect(response.body.errors).toBeDefined();
@@ -505,7 +504,7 @@ describe('group-by resolvers - order by', () => {
 
     it('should fail if attempt to order by a date granularity that is not the same as in the groupBy', async () => {
       const response = await makeGraphqlAPIRequest(
-        groupByAdressCreateAtAndARR([
+        groupByAddressCreatedAtAndARR([
           { createdAt: { granularity: 'MONTH', orderBy: 'AscNullsFirst' } },
         ]),
       );
@@ -519,7 +518,7 @@ describe('group-by resolvers - order by', () => {
 
     it('should fail if attempt to order by a date without indicating the granularity', async () => {
       const response = await makeGraphqlAPIRequest(
-        groupByAdressCreateAtAndARR([
+        groupByAddressCreatedAtAndARR([
           { createdAt: { orderBy: 'AscNullsFirst' } },
         ]),
       );
@@ -533,7 +532,7 @@ describe('group-by resolvers - order by', () => {
 
     it('should fail if attempt to indicate more than one orderBy field at the time (aggregate)', async () => {
       const response = await makeGraphqlAPIRequest(
-        groupByAdressCreateAtAndARR([
+        groupByAddressCreatedAtAndARR([
           {
             aggregate: {
               avgEmployees: 'AscNullsFirst',
@@ -552,7 +551,7 @@ describe('group-by resolvers - order by', () => {
 
     it('should fail if attempt to indicate more than one orderBy field at the time', async () => {
       const response = await makeGraphqlAPIRequest(
-        groupByAdressCreateAtAndARR([
+        groupByAddressCreatedAtAndARR([
           {
             employees: 'AscNullsFirst',
             name: 'AscNullsFirst',

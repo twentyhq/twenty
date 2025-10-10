@@ -354,7 +354,7 @@ export class GraphqlQueryOrderFieldParser {
 
     if (!isDefined(aggregateExpression)) {
       throw new UserInputError(
-        `Cant find expression for aggregate field: ${Object.keys(aggregate)[0]}`,
+        `Cannot find expression for aggregate field: ${Object.keys(aggregate)[0]}`,
       );
     }
     const orderByDirection = Object.values(aggregate)[0];
@@ -453,7 +453,7 @@ export class GraphqlQueryOrderFieldParser {
     groupByFields: GroupByField[];
     orderByArg: ObjectRecordOrderByWithGroupByDateField;
     fieldMetadataId: string;
-  }) => {
+  }): Record<string, OrderByCondition> | null => {
     const orderByDirection = Object.values(orderByArg)[0]?.orderBy;
 
     if (!isDefined(orderByDirection)) {
