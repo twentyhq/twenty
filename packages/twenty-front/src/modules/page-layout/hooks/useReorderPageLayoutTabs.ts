@@ -41,12 +41,10 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
         return false;
       }
 
-      // Handle drop on MORE_BUTTON - append to end of list
       if (
         destination.droppableId ===
         PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.MORE_BUTTON
       ) {
-        // Find the highest position value
         const maxPosition =
           sortedTabs.length > 0
             ? Math.max(...sortedTabs.map((tab) => tab.position))
@@ -61,7 +59,6 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
           ),
         }));
 
-        // Return true to indicate dropdown should open
         return true;
       }
 

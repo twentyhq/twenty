@@ -31,6 +31,9 @@ const StyledDraggableWrapper = styled.div`
   }
 `;
 
+const StyledPlaceholder = styled.div`
+  margin-bottom: 2px;
+`;
 type PageLayoutTabListReorderableOverflowDropdownProps = {
   dropdownId: string;
   hiddenTabs: SingleTabProps[];
@@ -185,7 +188,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                       </Draggable>
                     );
                   })}
-                  {provided.placeholder}
+                  <StyledPlaceholder>{provided.placeholder}</StyledPlaceholder>
                 </DropdownMenuItemsContainer>
               </div>
             )}
