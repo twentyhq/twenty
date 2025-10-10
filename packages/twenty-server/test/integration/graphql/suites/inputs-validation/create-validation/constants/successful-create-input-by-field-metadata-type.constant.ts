@@ -306,7 +306,7 @@ export const successfulCreateInputByFieldMetadataType: {
       },
       validateInput: (record: Record<string, any>) => {
         return (
-          record.currencyField.amountMicros === 1000000 &&
+          record.currencyField.amountMicros === '1000000' &&
           record.currencyField.currencyCode === 'USD'
         );
       },
@@ -347,7 +347,9 @@ export const successfulCreateInputByFieldMetadataType: {
           record.phonesField.primaryPhoneCountryCode === 'FR' &&
           record.phonesField.primaryPhoneCallingCode === '+33' &&
           record.phonesField.additionalPhones.length === 1 &&
-          record.phonesField.additionalPhones[0] === '1234567890'
+          record.phonesField.additionalPhones[0].number === '1234567890' &&
+          record.phonesField.additionalPhones[0].callingCode === '+33' &&
+          record.phonesField.additionalPhones[0].countryCode === 'FR'
         );
       },
     },
@@ -372,19 +374,17 @@ export const successfulCreateInputByFieldMetadataType: {
     {
       input: {
         linksField: {
-          primaryLinkUrl: 'https://www.twenty.com',
+          primaryLinkUrl: 'https://twenty.com/',
           primaryLinkLabel: '#1 Open source CRM',
-          secondaryLinks: [
-            { url: 'https://www.twenty.com', label: '#1 Open source CRM' },
-          ],
+          secondaryLinks: [{ url: 'twenty.com', label: '#1 Open source CRM' }],
         },
       },
       validateInput: (record: Record<string, any>) => {
         return (
-          record.linksField.primaryLinkUrl === 'https://www.twenty.com' &&
+          record.linksField.primaryLinkUrl === 'https://twenty.com/' &&
           record.linksField.primaryLinkLabel === '#1 Open source CRM' &&
           record.linksField.secondaryLinks.length === 1 &&
-          record.linksField.secondaryLinks[0] === 'https://www.twenty.com'
+          record.linksField.secondaryLinks[0] === 'https://twenty.com/'
         );
       },
     },
@@ -401,24 +401,6 @@ export const successfulCreateInputByFieldMetadataType: {
         return (
           record.richTextV2Field.blocknote === 'test' &&
           record.richTextV2Field.markdown === 'test'
-        );
-      },
-    },
-  ],
-  [FieldMetadataType.ACTOR]: [
-    {
-      input: {
-        actorField: {
-          source: 'SOURCE',
-          workspaceMemberId: 'WORKSPACE_MEMBER_ID',
-          name: 'NAME',
-        },
-      },
-      validateInput: (record: Record<string, any>) => {
-        return (
-          record.actorField.source === 'SOURCE' &&
-          record.actorField.workspaceMemberId === 'WORKSPACE_MEMBER_ID' &&
-          record.actorField.name === 'NAME'
         );
       },
     },

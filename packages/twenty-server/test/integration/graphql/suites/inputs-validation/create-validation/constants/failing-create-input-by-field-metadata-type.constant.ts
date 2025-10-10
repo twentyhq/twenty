@@ -6,7 +6,7 @@ import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/wor
 export const failingCreateInputByFieldMetadataType: {
   [K in Exclude<
     FieldMetadataTypesToTestForCreateInputValidation,
-    CompositeFieldMetadataType | FieldMetadataType.ACTOR
+    CompositeFieldMetadataType
   >]: {
     input: any;
     gqlErrorMessage: string;
