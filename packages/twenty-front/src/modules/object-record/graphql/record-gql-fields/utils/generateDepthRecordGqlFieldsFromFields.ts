@@ -48,24 +48,26 @@ export const generateDepthRecordGqlFieldsFromFields = ({
         const imageIdentifierFieldMetadataItem =
           getImageIdentifierFieldMetadataItem(targetObjectMetadataItem);
 
+        const relationIdentifierGqlFields = {
+          id: true,
+          ...(isDefined(labelIdentifierFieldMetadataItem)
+            ? { [labelIdentifierFieldMetadataItem.name]: true }
+            : {}),
+          ...(isDefined(imageIdentifierFieldMetadataItem)
+            ? { [imageIdentifierFieldMetadataItem.name]: true }
+            : {}),
+        };
+
+        const manyToOneGqlFields = {
+          [`${fieldMetadata.name}Id`]: true,
+        };
+
         return {
           ...recordGqlFields,
-          ...(depth === 1
-            ? {
-                [`${fieldMetadata.name}`]: {
-                  id: true,
-                  ...(isDefined(labelIdentifierFieldMetadataItem)
-                    ? { [labelIdentifierFieldMetadataItem.name]: true }
-                    : {}),
-                  ...(isDefined(imageIdentifierFieldMetadataItem)
-                    ? { [imageIdentifierFieldMetadataItem.name]: true }
-                    : {}),
-                },
-              }
-            : {}),
+          ...(depth === 1 ? relationIdentifierGqlFields : undefined),
           ...(relationType === RelationType.MANY_TO_ONE
-            ? { [`${fieldMetadata.name}Id`]: true }
-            : {}),
+            ? manyToOneGqlFields
+            : undefined),
         };
       }
 
