@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import {
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
@@ -38,14 +38,14 @@ export const validateFlatObjectMetadataIdentifiers = ({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:
           'labelIdentifierFieldMetadataId validation failed: related field metadata not found',
-        userFriendlyMessage: t`Field declared as label identifier not found`,
+        userFriendlyMessage: msg`Field declared as label identifier not found`,
       });
     } else if (!isLabelIdentifierFieldMetadataTypes(flatFieldMetadata.type)) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:
           'labelIdentifierFieldMetadataId validation failed: field type not compatible',
-        userFriendlyMessage: t`Field cannot be used as label identifier`,
+        userFriendlyMessage: msg`Field cannot be used as label identifier`,
       });
     }
   }
@@ -61,7 +61,7 @@ export const validateFlatObjectMetadataIdentifiers = ({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:
           'imageIdentifierFieldMetadataId validation failed: related field metadata not found',
-        userFriendlyMessage: t`Field declared as image identifier not found`,
+        userFriendlyMessage: msg`Field declared as image identifier not found`,
       });
     }
   }

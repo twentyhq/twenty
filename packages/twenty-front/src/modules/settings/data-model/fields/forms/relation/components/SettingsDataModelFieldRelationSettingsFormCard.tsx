@@ -1,6 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
@@ -82,7 +83,8 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
             }}
             shrink
             objectNameSingulars={[
-              relationObjectMetadataItem?.nameSingular ?? 'company',
+              relationObjectMetadataItem?.nameSingular ??
+                CoreObjectNameSingular.Company,
             ]}
             fieldPreviewTargetObjectNameSingular={objectNameSingular}
             pluralizeLabel={oppositeRelationType === RelationType.ONE_TO_MANY}

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -62,7 +62,7 @@ export class PublicDomainService {
         'Domain already used for workspace custom domain',
         PublicDomainExceptionCode.DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN,
         {
-          userFriendlyMessage: t`Domain already used for workspace custom domain`,
+          userFriendlyMessage: msg`Domain already used for workspace custom domain`,
         },
       );
     }
@@ -77,7 +77,7 @@ export class PublicDomainService {
         'Public domain already registered',
         PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED,
         {
-          userFriendlyMessage: t`Public domain already registered`,
+          userFriendlyMessage: msg`Public domain already registered`,
         },
       );
     }

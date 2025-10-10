@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLEnumType, GraphQLInputObjectType } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';

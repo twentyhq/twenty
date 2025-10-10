@@ -8,7 +8,7 @@ import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/bil
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
-import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';
+import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import {
   type WorkflowAction,
   WorkflowActionType,
@@ -17,15 +17,15 @@ import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 jest.mock(
-  'src/modules/workflow/workflow-executor/utils/can-execute-step.util',
+  'src/modules/workflow/workflow-executor/utils/should-execute-step.util',
   () => {
     const actual = jest.requireActual(
-      'src/modules/workflow/workflow-executor/utils/can-execute-step.util',
+      'src/modules/workflow/workflow-executor/utils/should-execute-step.util',
     );
 
     return {
       ...actual,
-      canExecuteStep: jest.fn().mockReturnValue(true), // default behavior
+      shouldExecuteStep: jest.fn().mockReturnValue(true), // default behavior
     };
   },
 );
@@ -325,7 +325,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
     });
 
     it('should return if step should not be executed', async () => {
-      (canExecuteStep as jest.Mock).mockReturnValueOnce(false);
+      (shouldExecuteStep as jest.Mock).mockReturnValueOnce(false);
 
       await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,

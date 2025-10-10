@@ -9,7 +9,7 @@ import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreate
 import { useUpsertFindOneRecordQueryInCache } from '@/object-record/cache/hooks/useUpsertFindOneRecordQueryInCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
@@ -31,13 +31,13 @@ export const useRunWorkflowVersion = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowRun,
   });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const createOneRecordInCache = useCreateOneRecordInCache<WorkflowRun>({
     objectMetadataItem,
   });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
-  const { objectMetadataItems } = useObjectMetadataItems();
 
   const [mutate] = useMutation<
     RunWorkflowVersionMutation,
@@ -46,8 +46,9 @@ export const useRunWorkflowVersion = () => {
     client: apolloCoreClient,
   });
 
-  const computedRecordGqlFields = generateDepthOneRecordGqlFields({
-    objectMetadataItem,
+  const computedRecordGqlFields = useGenerateDepthRecordGqlFieldsFromObject({
+    objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+    depth: 1,
   });
 
   const { upsertFindOneRecordQueryInCache } =

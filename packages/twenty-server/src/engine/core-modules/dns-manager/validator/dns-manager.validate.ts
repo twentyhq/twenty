@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 
 import type Cloudflare from 'cloudflare';
 
@@ -15,7 +15,7 @@ const isCloudflareInstanceDefined = (
       'Cloudflare instance is not defined',
       DnsManagerExceptionCode.CLOUDFLARE_CLIENT_NOT_INITIALIZED,
       {
-        userFriendlyMessage: t`Environment variable CLOUDFLARE_API_KEY must be defined to use this feature.`,
+        userFriendlyMessage: msg`Environment variable CLOUDFLARE_API_KEY must be defined to use this feature.`,
       },
     );
   }
