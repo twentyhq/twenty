@@ -56,7 +56,7 @@ export const WidgetHeader = ({
       <StyledTitle>{isEmpty ? 'Add Widget' : title}</StyledTitle>
       {!isEmpty && isInEditMode && onRemove && (
         <IconButton
-          onClick={(e) => onRemove(e)}
+          onClick={onRemove}
           Icon={IconX}
           variant="tertiary"
           size="small"
