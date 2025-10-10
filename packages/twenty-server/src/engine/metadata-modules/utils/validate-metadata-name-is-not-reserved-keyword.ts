@@ -64,6 +64,7 @@ export const RESERVED_METADATA_NAME_KEYWORDS = [
   'index',
   'relation',
   'relations',
+  'aggregate',
 ];
 
 export const validateMetadataNameIsNotReservedKeywordOrThrow = (

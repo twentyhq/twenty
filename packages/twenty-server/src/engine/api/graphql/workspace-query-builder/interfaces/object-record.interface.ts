@@ -46,6 +46,26 @@ export type ObjectRecordOrderBy = Array<
   ObjectRecordOrderByForScalarField | ObjectRecordOrderByForCompositeField
 >;
 
+export type AggregateOrderByWithGroupByField = {
+  aggregate: {
+    [x: string]: OrderByDirection;
+  };
+};
+
+export type ObjectRecordOrderByWithGroupByDateField = {
+  [Property in keyof ObjectRecord]?: {
+    orderBy: OrderByDirection;
+    granularity: ObjectRecordGroupByDateGranularity;
+  };
+};
+
+export type OrderByWithGroupBy = Array<
+  | ObjectRecordOrderByForScalarField
+  | ObjectRecordOrderByForCompositeField
+  | ObjectRecordOrderByWithGroupByDateField
+  | AggregateOrderByWithGroupByField
+>;
+
 export type ObjectRecordOrderByForScalarField = {
   [Property in keyof ObjectRecord]?: OrderByDirection;
 };
