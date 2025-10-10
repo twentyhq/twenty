@@ -20,13 +20,11 @@ import { useRecoilCallback } from 'recoil';
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
   focusId: string;
-  showObjectName?: boolean;
 };
 
 export const MultipleRecordPickerMenuItems = ({
   onChange,
   focusId,
-  showObjectName,
 }: MultipleRecordPickerMenuItemsProps) => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
@@ -104,7 +102,6 @@ export const MultipleRecordPickerMenuItems = ({
                   handleChange(morphItem);
                   onChange?.(morphItem);
                 }}
-                showObjectName={showObjectName}
               />
             );
           })}

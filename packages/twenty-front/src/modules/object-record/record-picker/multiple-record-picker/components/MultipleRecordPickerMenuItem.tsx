@@ -14,13 +14,11 @@ export const StyledSelectableItem = styled(SelectableListItem)`
 type MultipleRecordPickerMenuItemProps = {
   recordId: string;
   onChange: (morphItem: RecordPickerPickableMorphItem) => void;
-  showObjectName?: boolean;
 };
 
 export const MultipleRecordPickerMenuItem = ({
   recordId,
   onChange,
-  showObjectName,
 }: MultipleRecordPickerMenuItemProps) => {
   const { searchRecord, objectMetadataItem } =
     useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId({
@@ -36,7 +34,6 @@ export const MultipleRecordPickerMenuItem = ({
       searchRecord={searchRecord}
       objectMetadataItem={objectMetadataItem}
       onChange={onChange}
-      showObjectName={showObjectName}
     />
   );
 };

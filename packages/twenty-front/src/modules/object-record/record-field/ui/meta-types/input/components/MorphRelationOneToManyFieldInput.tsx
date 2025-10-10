@@ -41,7 +41,6 @@ export const MorphRelationOneToManyFieldInput = () => {
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }
-      showObjectName={true}
       dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
     />
   );
