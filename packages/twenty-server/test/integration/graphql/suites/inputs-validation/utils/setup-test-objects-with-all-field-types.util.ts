@@ -1,6 +1,5 @@
 import { randomUUID } from 'crypto';
 
-import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/inputs-validation/constants/test-object-gql-fields.constant';
 import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/inputs-validation/utils/get-field-metadata-creation-inputs.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -18,6 +17,9 @@ export const TEST_TARGET_OBJECT_RECORD_ID =
   '20202020-a21e-4ec2-873b-de4264d89025';
 
 export const TEST_UUID_FIELD_VALUE = '20202020-b21e-4ec2-873b-de4264d89025';
+
+export const TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE =
+  '20202020-b21e-4ec2-873b-de4264d89021';
 
 export const setupTestObjectsWithAllFieldTypes = async () => {
   const createdObjectMetadata = await createOneObjectMetadata({
@@ -71,7 +73,7 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
     createManyOperationFactory({
       objectMetadataSingularName: TEST_OBJECT_METADATA_NAME_SINGULAR,
       objectMetadataPluralName: TEST_OBJECT_METADATA_NAME_PLURAL,
-      gqlFields: TEST_OBJECT_GQL_FIELDS,
+      gqlFields: `id`,
       data: [
         {
           id: randomUUID(),
@@ -134,6 +136,19 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
         },
         {
           id: randomUUID(),
+        },
+      ],
+    }),
+  );
+
+  await makeGraphqlAPIRequest(
+    createManyOperationFactory({
+      objectMetadataSingularName: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR,
+      objectMetadataPluralName: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL,
+      gqlFields: `id`,
+      data: [
+        {
+          id: TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE,
         },
       ],
     }),

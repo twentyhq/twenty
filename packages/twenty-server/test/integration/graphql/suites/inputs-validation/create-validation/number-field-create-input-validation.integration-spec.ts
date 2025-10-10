@@ -41,11 +41,11 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
     it.each(
       failingTestCases.map((testCase) => ({
         ...testCase,
-        stringifiedInput: JSON.stringify(testCase.gqlInput),
+        stringifiedInput: JSON.stringify(testCase.input),
       })),
     )(
       `${FIELD_METADATA_TYPE} - should fail with : $stringifiedInput`,
-      async ({ gqlInput: input, gqlErrorMessage: errorMessage }) => {
+      async ({ input, gqlErrorMessage: errorMessage }) => {
         await testGqlFailingScenario(
           objectMetadataSingularName,
           input,
@@ -59,11 +59,11 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
     it.each(
       failingTestCases.map((testCase) => ({
         ...testCase,
-        stringifiedInput: JSON.stringify(testCase.restInput),
+        stringifiedInput: JSON.stringify(testCase.input),
       })),
     )(
       `${FIELD_METADATA_TYPE} - should fail with : $stringifiedInput`,
-      async ({ restInput: input, restErrorMessage: errorMessage }) => {
+      async ({ input, restErrorMessage: errorMessage }) => {
         await testRestFailingScenario(
           objectMetadataPluralName,
           input,
@@ -77,11 +77,11 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
     it.each(
       successfulTestCases.map((testCase) => ({
         ...testCase,
-        stringifiedInput: JSON.stringify(testCase.gqlInput),
+        stringifiedInput: JSON.stringify(testCase.input),
       })),
     )(
       `${FIELD_METADATA_TYPE} - should succeed with : $stringifiedInput`,
-      async ({ gqlInput: input, validateInput }) => {
+      async ({ input, validateInput }) => {
         await testGqlSuccessfulScenario(
           objectMetadataSingularName,
           input,
@@ -95,15 +95,15 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
     it.each(
       successfulTestCases.map((testCase) => ({
         ...testCase,
-        stringifiedInput: JSON.stringify(testCase.restInput),
+        stringifiedInput: JSON.stringify(testCase.input),
       })),
     )(
       `${FIELD_METADATA_TYPE} - should succeed with : $stringifiedInput`,
-      async ({ restInput, validateInput }) => {
+      async ({ input, validateInput }) => {
         await testRestSuccessfulScenario(
           objectMetadataPluralName,
           objectMetadataSingularName,
-          restInput,
+          input,
           validateInput,
         );
       },
