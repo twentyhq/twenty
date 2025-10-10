@@ -11,7 +11,7 @@ import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-
 import { FLAT_ROUTE_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/route-trigger/constants/flat-route-trigger-editable-properties.constant';
 import { FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/serverless-function/constants/flat-serverless-function-editable-properties.constant';
 
-type OneFlatEntityConstants<
+type OneFlatEntityConfiguration<
   TFlatEntity extends AllFlatEntities,
   TFlatEntityName extends keyof AllFlatEntitiesByMetadataEngineName,
 > = {
@@ -21,7 +21,7 @@ type OneFlatEntityConstants<
   relatedFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
 };
 
-export const ALL_FLAT_ENTITY_CONSTANTS = {
+export const ALL_FLAT_ENTITY_CONFIGURATION = {
   fieldMetadata: {
     flatEntityMapsKey: 'flatFieldMetadataMaps',
     propertiesToCompare: [
@@ -122,8 +122,9 @@ export const ALL_FLAT_ENTITY_CONSTANTS = {
     relatedFlatEntityMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
   },
 } as const satisfies {
-  [P in keyof AllFlatEntitiesByMetadataEngineName]: OneFlatEntityConstants<
+  [P in keyof AllFlatEntitiesByMetadataEngineName]: OneFlatEntityConfiguration<
     AllFlatEntitiesByMetadataEngineName[P],
     P
   >;
 };
+
