@@ -33,14 +33,12 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
-  const handleClick = isPageLayoutInEditMode
-    ? () => {
-        handleEditWidget({
-          widgetId: widget.id,
-          widgetType: widget.type,
-        });
-      }
-    : undefined;
+  const handleClick = () => {
+    handleEditWidget({
+      widgetId: widget.id,
+      widgetType: widget.type,
+    });
+  };
 
   const handleRemove = (e?: MouseEvent) => {
     e?.stopPropagation();
@@ -48,7 +46,10 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   };
 
   return (
-    <WidgetContainer isRestricted={!hasAccess} onClick={handleClick}>
+    <WidgetContainer
+      isRestricted={!hasAccess}
+      onClick={isPageLayoutInEditMode ? handleClick : undefined}
+    >
       <WidgetHeader
         isInEditMode={isPageLayoutInEditMode}
         title={widget.title}
