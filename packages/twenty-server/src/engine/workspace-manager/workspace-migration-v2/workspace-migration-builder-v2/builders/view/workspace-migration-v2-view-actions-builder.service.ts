@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_FLAT_ENTITY_CONSTANTS } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-contants.constant';
+import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -18,7 +18,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
 
 export type ViewRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  (typeof ALL_FLAT_ENTITY_CONSTANTS.view.relatedFlatEntityMapsKeys)[number]
+  (typeof ALL_FLAT_ENTITY_CONFIGURATION.view.relatedFlatEntityMapsKeys)[number]
 >;
 const VIEW_METADATA_NAME = 'view' as const satisfies AllMetadataName;
 @Injectable()

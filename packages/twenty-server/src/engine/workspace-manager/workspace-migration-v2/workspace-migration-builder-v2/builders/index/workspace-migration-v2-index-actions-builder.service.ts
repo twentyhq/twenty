@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_FLAT_ENTITY_CONSTANTS } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-contants.constant';
+import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
@@ -18,7 +18,7 @@ import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspac
 
 export type IndexRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  (typeof ALL_FLAT_ENTITY_CONSTANTS.index.relatedFlatEntityMapsKeys)[number]
+  (typeof ALL_FLAT_ENTITY_CONFIGURATION.index.relatedFlatEntityMapsKeys)[number]
 >;
 
 const INDEX_METADATA_NAME = 'index' as const satisfies AllMetadataName;

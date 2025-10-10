@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_FLAT_ENTITY_CONSTANTS } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-contants.constant';
+import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -18,7 +18,7 @@ import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/
 
 export type FieldMetadataRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  (typeof ALL_FLAT_ENTITY_CONSTANTS.fieldMetadata.relatedFlatEntityMapsKeys)[number]
+  (typeof ALL_FLAT_ENTITY_CONFIGURATION.fieldMetadata.relatedFlatEntityMapsKeys)[number]
 >;
 const FIELD_METADATA_METADATA_NAME = 'fieldMetadata' as const satisfies AllMetadataName;
 @Injectable()

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ALL_FLAT_ENTITY_CONSTANTS } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-contants.constant';
+import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { compareTwoFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
@@ -13,7 +13,7 @@ import { FlatObjectMetadataValidatorService } from 'src/engine/workspace-manager
 
 export type ObjectMetadataRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  (typeof ALL_FLAT_ENTITY_CONSTANTS.objectMetadata.relatedFlatEntityMapsKeys)[number]
+  (typeof ALL_FLAT_ENTITY_CONFIGURATION.objectMetadata.relatedFlatEntityMapsKeys)[number]
 >;
 const OBJECT_METADATA_METADATA_NAME = 'objectMetadata' as const satisfies AllMetadataName;
 @Injectable()
