@@ -8,8 +8,8 @@ import { DashboardCard } from '@/dashboards/components/DashboardCard';
 import { CardRenderer } from '@/object-record/record-show/components/CardRenderer';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import {
-  type CardConfiguration,
-  type FieldCardConfiguration,
+    type CardConfiguration,
+    type FieldCardConfiguration,
 } from '@/object-record/record-show/types/CardConfiguration';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { RichTextCard } from '@/ui/layout/show-page/components/RichTextCard';
