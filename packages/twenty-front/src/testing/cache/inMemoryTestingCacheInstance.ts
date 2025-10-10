@@ -1,7 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { InMemoryCache, type NormalizedCacheObject } from '@apollo/client';
 

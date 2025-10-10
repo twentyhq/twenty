@@ -10,7 +10,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
 import isEmpty from 'lodash.isempty';
 import { capitalize } from 'twenty-shared/utils';
-import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 
 export const useGenerateCombinedFindManyRecordsQuery = ({
   operationSignatures,
@@ -98,7 +98,8 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
               objectMetadataItem,
               recordGqlFields:
                 operationSignature.fields ??
-                generateDepthRecordGqlFields({
+                generateDepthRecordGqlFieldsFromObject({
+                  objectMetadataItems,
                   depth: 1,
                   objectMetadataItem,
                 }),

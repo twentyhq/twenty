@@ -1,7 +1,8 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
-import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromFields';
+import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -14,6 +15,7 @@ export const useRecordsFieldVisibleGqlFields = () => {
   const { fieldMetadataItemByFieldMetadataItemId } =
     useRecordIndexContextOrThrow();
 
+  const { objectMetadataItems } = useObjectMetadataItems();
   const { objectMetadataItem: noteTargetObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.NoteTarget,
@@ -25,6 +27,7 @@ export const useRecordsFieldVisibleGqlFields = () => {
     });
 
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
+    objectMetadataItems,
     fields: visibleRecordFields.map(
       (field) =>
         fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
@@ -35,11 +38,13 @@ export const useRecordsFieldVisibleGqlFields = () => {
   return {
     id: true,
     ...allDepthOneGqlFields,
-    noteTargets: generateDepthRecordGqlFields({
+    noteTargets: generateDepthRecordGqlFieldsFromObject({
       objectMetadataItem: noteTargetObjectMetadataItem,
+      objectMetadataItems,
       depth: 1,
     }),
-    taskTargets: generateDepthRecordGqlFields({
+    taskTargets: generateDepthRecordGqlFieldsFromObject({
+      objectMetadataItems,
       objectMetadataItem: taskTargetObjectMetadataItem,
       depth: 1,
     }),

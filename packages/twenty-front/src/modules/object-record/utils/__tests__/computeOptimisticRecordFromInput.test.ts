@@ -1,6 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
@@ -130,6 +130,7 @@ describe('computeOptimisticRecordFromInput', () => {
     };
     const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
       objectMetadataItem,
+      objectMetadataItems: generatedMockObjectMetadataItems,
       record: companyRecord,
       depth: 1,
     });
@@ -183,6 +184,7 @@ describe('computeOptimisticRecordFromInput', () => {
       depth: 1,
       objectMetadataItem,
       record: companyRecord,
+      objectMetadataItems: generatedMockObjectMetadataItems,
     });
     updateRecordFromCache({
       objectMetadataItems: generatedMockObjectMetadataItems,

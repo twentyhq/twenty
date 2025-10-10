@@ -1,5 +1,5 @@
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
-import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -33,7 +33,7 @@ export const generateEmptyJestRecordNode = ({
     objectMetadataItem,
     objectMetadataItems: generatedMockObjectMetadataItems,
     recordGqlFields: withDepthOneRelation
-      ? generateDepthRecordGqlFields({
+      ? generateDepthRecordGqlFieldsFromObject({
           objectMetadataItem,
           objectMetadataItems: generatedMockObjectMetadataItems,
           depth: 1,

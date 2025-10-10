@@ -2,10 +2,8 @@ import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/us
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,11 +15,11 @@ export const useTimelineActivities = (
     nameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.TimelineActivity,
-  });
-
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const { recordGqlFields: depthOneRecordGqlFields } =
+    useGenerateDepthRecordGqlFieldsFromObject({
+      objectNameSingular: CoreObjectNameSingular.TimelineActivity,
+      depth: 1,
+    });
 
   const {
     records: timelineActivities,
@@ -39,11 +37,7 @@ export const useTimelineActivities = (
         createdAt: 'DescNullsFirst',
       },
     ],
-    recordGqlFields: generateDepthRecordGqlFields({
-      objectMetadataItems,
-      objectMetadataItem,
-      depth: 1,
-    }),
+    recordGqlFields: depthOneRecordGqlFields,
     fetchPolicy: 'cache-and-network',
   });
 

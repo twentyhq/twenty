@@ -1,5 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromFields';
+import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 
 export type GenerateDepthRecordGqlFields = {
   objectMetadataItems: ObjectMetadataItem[];
@@ -7,7 +7,7 @@ export type GenerateDepthRecordGqlFields = {
   depth: 0 | 1;
 };
 
-export const generateDepthRecordGqlFields = ({
+export const generateDepthRecordGqlFieldsFromObject = ({
   objectMetadataItems,
   objectMetadataItem,
   depth,

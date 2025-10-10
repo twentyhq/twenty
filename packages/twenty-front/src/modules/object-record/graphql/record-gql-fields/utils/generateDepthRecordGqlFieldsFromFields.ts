@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
@@ -32,7 +32,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
         const targetObjectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>
             objectMetadataItem.id ===
-            fieldMetadata.relation?.targetFieldMetadata.id,
+            fieldMetadata.relation?.targetObjectMetadata.id,
         );
 
         if (!targetObjectMetadataItem) {

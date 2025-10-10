@@ -3,7 +3,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
 import { CustomError, isDefined } from 'twenty-shared/utils';

@@ -1,47 +1,42 @@
-import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
-import {
-  allMockPersonRecords,
-  getMockPersonObjectMetadataItem,
-} from '~/testing/mock-data/people';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
+import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-describe('computeDepthOneRecordGqlFieldsFromRecord', () => {
+describe('generateDepthOneRecordGqlFields', () => {
   const objectMetadataItem = getMockPersonObjectMetadataItem();
-  it('Should handle basic call', () => {
-    const personRecord = allMockPersonRecords[0];
-    const result = generateDepthRecordGqlFieldsFromRecord({
+  it('Should handle basic call with standalone objectMetadataItem', () => {
+    const result = generateDepthRecordGqlFieldsFromObject({
       objectMetadataItem,
       objectMetadataItems: generatedMockObjectMetadataItems,
-      record: personRecord,
       depth: 1,
     });
     expect(result).toMatchInlineSnapshot(`
 {
-  "attachments": false,
+  "attachments": true,
   "avatarUrl": true,
-  "calendarEventParticipants": false,
+  "calendarEventParticipants": true,
   "city": true,
   "company": true,
-  "companyId": false,
+  "companyId": true,
   "createdAt": true,
   "createdBy": true,
   "deletedAt": true,
   "emails": true,
-  "favorites": false,
+  "favorites": true,
   "id": true,
   "intro": true,
   "jobTitle": true,
   "linkedinLink": true,
-  "messageParticipants": false,
+  "messageParticipants": true,
   "name": true,
   "noteTargets": true,
   "performanceRating": true,
   "phones": true,
-  "pointOfContactForOpportunities": false,
+  "pointOfContactForOpportunities": true,
   "position": true,
-  "searchVector": false,
+  "searchVector": true,
   "taskTargets": true,
-  "timelineActivities": false,
+  "timelineActivities": true,
   "updatedAt": true,
   "whatsapp": true,
   "workPreference": true,

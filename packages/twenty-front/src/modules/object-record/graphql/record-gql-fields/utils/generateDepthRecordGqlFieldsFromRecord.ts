@@ -1,8 +1,8 @@
-import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import {
-  generateDepthRecordGqlFields,
+  generateDepthRecordGqlFieldsFromObject,
   type GenerateDepthRecordGqlFields,
-} from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
+} from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type ComputeDepthRecordGqlFieldsFromRecordArgs =
@@ -15,7 +15,7 @@ export const generateDepthRecordGqlFieldsFromRecord = ({
   depth,
   record,
 }: ComputeDepthRecordGqlFieldsFromRecordArgs): RecordGqlFields => {
-  const depthRecordGqlFields = generateDepthRecordGqlFields({
+  const depthRecordGqlFields = generateDepthRecordGqlFieldsFromObject({
     objectMetadataItem,
     objectMetadataItems,
     depth,

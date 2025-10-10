@@ -5,12 +5,12 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { capitalize } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
 
 export const useCreateOneRecordMutation = ({
   objectNameSingular,
@@ -23,12 +23,13 @@ export const useCreateOneRecordMutation = ({
     objectNameSingular,
   });
 
-  const appliedRecordGqlFields =
-    recordGqlFields ??
-    generateDepthRecordGqlFields({
+  const { recordGqlFields: depthOneRecordGqlFields } =
+    useGenerateDepthRecordGqlFieldsFromObject({
+      objectNameSingular,
       depth: 1,
-      objectMetadataItem,
     });
+
+  const appliedRecordGqlFields = recordGqlFields ?? depthOneRecordGqlFields;
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 

@@ -7,9 +7,9 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
-import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
-import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
+import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
@@ -57,7 +57,11 @@ export const useUpdateOneRecordV2 = () => {
 
     const computedRecordGqlFields =
       recordGqlFields ??
-      generateDepthRecordGqlFields({ objectMetadataItem, depth: 1 });
+      generateDepthRecordGqlFieldsFromObject({
+        objectMetadataItem,
+        objectMetadataItems,
+        depth: 1,
+      });
 
     const optimisticRecordInput =
       optimisticRecord ??
@@ -109,6 +113,7 @@ export const useUpdateOneRecordV2 = () => {
     if (shouldHandleOptimisticCache) {
       const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
         objectMetadataItem,
+        objectMetadataItems,
         record: optimisticRecordInput,
         depth: 1,
       });
@@ -181,6 +186,7 @@ export const useUpdateOneRecordV2 = () => {
         const recordGqlFields = {
           ...generateDepthRecordGqlFieldsFromRecord({
             objectMetadataItem,
+            objectMetadataItems,
             record: cachedRecord,
             depth: 1,
           }),

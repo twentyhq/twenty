@@ -7,8 +7,8 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthRecordGqlFields } from '@/object-record/graphql/utils/generateDepthRecordGqlFields';
-import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthRecordGqlFieldsFromRecord';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
@@ -42,9 +42,13 @@ export const useUpdateOneRecord = <
     objectNameSingular,
   });
 
-  const computedRecordGqlFields =
-    recordGqlFields ??
-    generateDepthRecordGqlFields({ objectMetadataItem, depth: 1 });
+  const { recordGqlFields: depthOneRecordGqlFields } =
+    useGenerateDepthRecordGqlFieldsFromObject({
+      objectNameSingular,
+      depth: 1,
+    });
+
+  const computedRecordGqlFields = recordGqlFields ?? depthOneRecordGqlFields;
 
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular,
@@ -112,6 +116,7 @@ export const useUpdateOneRecord = <
     if (shouldHandleOptimisticCache) {
       const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
         objectMetadataItem,
+        objectMetadataItems,
         record: optimisticRecordInput,
         depth: 1,
       });
@@ -175,6 +180,7 @@ export const useUpdateOneRecord = <
         const recordGqlFields = {
           ...generateDepthRecordGqlFieldsFromRecord({
             objectMetadataItem,
+            objectMetadataItems,
             record: cachedRecord,
             depth: 1,
           }),
