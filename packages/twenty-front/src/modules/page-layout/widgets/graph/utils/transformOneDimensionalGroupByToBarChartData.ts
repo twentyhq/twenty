@@ -48,6 +48,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       ? formatDimensionValue({
           value: dimensionValues[0],
           fieldMetadata: groupByFieldX,
+          subFieldName: configuration.groupBySubFieldNameX ?? undefined,
         })
       : '';
 

@@ -51,10 +51,12 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     const xValue = formatDimensionValue({
       value: dimensionValues[0],
       fieldMetadata: groupByFieldX,
+      subFieldName: configuration.groupBySubFieldNameX ?? undefined,
     });
     const yValue = formatDimensionValue({
       value: dimensionValues[1],
       fieldMetadata: groupByFieldY,
+      subFieldName: configuration.groupBySubFieldNameY ?? undefined,
     });
 
     const aggregateValue = computeAggregateValueFromGroupByResult({

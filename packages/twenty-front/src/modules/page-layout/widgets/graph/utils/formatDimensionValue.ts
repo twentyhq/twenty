@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
 import { formatDateByGranularity } from '@/page-layout/widgets/graph/utils/formatDateByGranularity';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
@@ -13,6 +14,7 @@ type FormatDimensionValueParams = {
   value: unknown;
   fieldMetadata: FieldMetadataItem;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
+  subFieldName?: string;
 };
 
 const normalizeMultiSelectValue = (value: unknown): unknown[] => {
@@ -40,9 +42,10 @@ export const formatDimensionValue = ({
   value,
   fieldMetadata,
   dateGranularity = GRAPH_DEFAULT_DATE_GRANULARITY as ObjectRecordGroupByDateGranularity,
+  subFieldName,
 }: FormatDimensionValueParams): string => {
   if (!isDefined(value)) {
-    return '';
+    return 'Not Set';
   }
 
   switch (fieldMetadata.type) {
@@ -88,6 +91,16 @@ export const formatDimensionValue = ({
 
     case FieldMetadataType.NUMBER:
     case FieldMetadataType.CURRENCY: {
+      if (
+        fieldMetadata.type === FieldMetadataType.CURRENCY &&
+        subFieldName === 'currencyCode'
+      ) {
+        if (!isNonEmptyString(value)) {
+          return 'Not Set';
+        }
+
+        return String(value);
+      }
       const numericValue = typeof value === 'number' ? value : Number(value);
       return formatToShortNumber(numericValue);
     }
