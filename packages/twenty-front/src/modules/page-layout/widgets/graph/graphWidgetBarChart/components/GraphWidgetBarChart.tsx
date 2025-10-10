@@ -19,7 +19,7 @@ import {
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveBar, type BarCustomLayerProps } from '@nivo/bar';
-import { useId } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const LEGEND_THRESHOLD = 10;
@@ -73,6 +73,27 @@ export const GraphWidgetBarChart = ({
   const theme = useTheme();
   const instanceId = useId();
   const colorRegistry = createGraphColorRegistry(theme);
+  const [chartWidth, setChartWidth] = useState<number>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (isDefined(containerRef.current)) {
+        setChartWidth(containerRef.current.offsetWidth);
+      }
+    };
+
+    updateWidth();
+
+    const resizeObserver = new ResizeObserver(updateWidth);
+    if (isDefined(containerRef.current)) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -118,12 +139,16 @@ export const GraphWidgetBarChart = ({
 
   const shouldShowLegend = showLegend && !areThereTooManyKeys;
 
-  const axisBottomConfig = getBarChartAxisBottomConfig(
+  const axisBottomConfig = getBarChartAxisBottomConfig({
+    width: chartWidth,
+    data,
     layout,
+    indexBy,
     xAxisLabel,
     yAxisLabel,
     formatOptions,
-  );
+    axisFontSize: chartTheme.axis.ticks.text.fontSize,
+  });
 
   const axisLeftConfig = getBarChartAxisLeftConfig(
     layout,
@@ -158,6 +183,7 @@ export const GraphWidgetBarChart = ({
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
+        ref={containerRef}
         $isClickable={hasClickableItems}
         $cursorSelector='svg g[transform] rect[fill^="url(#gradient-"]'
       >
@@ -183,7 +209,7 @@ export const GraphWidgetBarChart = ({
           ]}
           axisTop={null}
           axisRight={null}
-          axisBottom={isLargeChart ? null : axisBottomConfig}
+          axisBottom={axisBottomConfig}
           axisLeft={axisLeftConfig}
           enableGridX={layout === 'horizontal' && showGrid}
           enableGridY={layout === 'vertical' && showGrid}
