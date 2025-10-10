@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 import {
   DragDropContext,
+  type DropResult,
   type OnDragEndResponder,
   type OnDragStartResponder,
+  type ResponderProvided,
 } from '@hello-pangea/dnd';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +13,7 @@ import { IconButton } from 'twenty-ui/input';
 
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
@@ -58,7 +61,7 @@ const StyledAddButton = styled.div`
 type PageLayoutTabListProps = TabListProps & {
   isReorderEnabled: boolean;
   onAddTab?: () => void;
-  onReorder?: OnDragEndResponder;
+  onReorder?: (result: DropResult, provided: ResponderProvided) => boolean;
 };
 
 export const PageLayoutTabList = ({
@@ -100,6 +103,7 @@ export const PageLayoutTabList = ({
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
   const { closeDropdown } = useCloseDropdown();
+  const { openDropdown } = useOpenDropdown();
   const { toggleClickOutside } = useClickOutsideListener(dropdownId);
 
   const setIsTabDragging = useSetRecoilComponentState(
@@ -163,9 +167,15 @@ export const PageLayoutTabList = ({
         return;
       }
 
-      onReorder(result, provided);
+      const shouldOpenDropdown = onReorder(result, provided);
+
+      if (shouldOpenDropdown === true) {
+        openDropdown({
+          dropdownComponentInstanceIdFromProps: dropdownId,
+        });
+      }
     },
-    [onReorder, setIsTabDragging, toggleClickOutside],
+    [onReorder, setIsTabDragging, toggleClickOutside, openDropdown, dropdownId],
   );
 
   if (visibleTabs.length === 0) {

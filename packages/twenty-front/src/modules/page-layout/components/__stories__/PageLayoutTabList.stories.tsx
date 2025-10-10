@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useMemo, useState } from 'react';
 import { RecoilRoot } from 'recoil';
@@ -8,6 +8,7 @@ import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
+import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
 const StyledContainer = styled.div`
@@ -50,11 +51,28 @@ const PageLayoutTabListPlayground = ({
     setNextIndex((value) => value + 1);
   };
 
-  const handleReorder: OnDragEndResponder = (result) => {
+  const handleReorder = (
+    result: DropResult,
+    _provided: ResponderProvided,
+  ): boolean => {
     const { destination, source, draggableId } = result;
 
     if (!destination) {
-      return;
+      return false;
+    }
+
+    const isDroppedOnMoreButton =
+      destination.droppableId ===
+      PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.MORE_BUTTON;
+
+    if (isDroppedOnMoreButton) {
+      setTabs((prev) => {
+        const maxPosition = Math.max(...prev.map((tab) => tab.position), 0);
+        return prev.map((tab) =>
+          tab.id === draggableId ? { ...tab, position: maxPosition + 1 } : tab,
+        );
+      });
+      return true;
     }
 
     setTabs((prev) => {
@@ -92,6 +110,8 @@ const PageLayoutTabListPlayground = ({
         tab.id === draggableId ? { ...tab, position: newPosition } : tab,
       );
     });
+
+    return false;
   };
 
   return (

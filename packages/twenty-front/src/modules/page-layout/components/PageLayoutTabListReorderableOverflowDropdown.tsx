@@ -9,12 +9,12 @@ import {
 } from '@hello-pangea/dnd';
 
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
+import { PageLayoutTabListDroppableMoreButton } from '@/page-layout/components/PageLayoutTabListDroppableMoreButton';
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
-import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -119,12 +119,11 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
       dropdownOffset={{ x: 0, y: 8 }}
       onClickOutside={handleClose}
       clickableComponent={
-        <div data-dropdown-id={dropdownId}>
-          <TabMoreButton
-            hiddenTabsCount={hiddenTabsCount}
-            active={isActiveTabHidden}
-          />
-        </div>
+        <PageLayoutTabListDroppableMoreButton
+          hiddenTabsCount={hiddenTabsCount}
+          isActiveTabHidden={isActiveTabHidden}
+          data-dropdown-id={dropdownId}
+        />
       }
       dropdownComponents={
         <DropdownContent>
