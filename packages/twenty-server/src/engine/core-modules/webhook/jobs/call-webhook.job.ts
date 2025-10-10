@@ -10,24 +10,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-export type CallWebhookBatchJobData = {
-  targetUrl: string;
-  eventName: string;
-  objectMetadata: { id: string; nameSingular: string };
-  workspaceId: string;
-  webhookId: string;
-  eventDate: Date;
-  items: CallWebhookBatchItem[];
-  batchSize?: number;
-  secret?: string;
-};
-
-export type CallWebhookBatchItem = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  record: any;
-  updatedFields?: string[];
-};
-
 export type CallWebhookJobData = {
   targetUrl: string;
   eventName: string;
@@ -49,7 +31,7 @@ export class CallWebhookJob {
   ) {}
 
   private generateSignature(
-    payload: CallWebhookJobData | CallWebhookBatchJobData,
+    payload: CallWebhookJobData,
     secret: string,
     timestamp: string,
   ): string {
@@ -60,7 +42,15 @@ export class CallWebhookJob {
   }
 
   @Process(CallWebhookJob.name)
-  async handle(data: CallWebhookJobData): Promise<void> {
+  async handle(webhookJobEvents: CallWebhookJobData[]): Promise<void> {
+    await Promise.all(
+      webhookJobEvents.map(
+        async (webhookJobEvent) => await this.callWebhook(webhookJobEvent),
+      ),
+    );
+  }
+
+  private async callWebhook(data: CallWebhookJobData): Promise<void> {
     const commonPayload = {
       url: data.targetUrl,
       webhookId: data.webhookId,

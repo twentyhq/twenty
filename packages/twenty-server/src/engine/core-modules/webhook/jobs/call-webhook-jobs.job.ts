@@ -1,19 +1,22 @@
 import { Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
+
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
-  CallWebhookBatchJobData,
   CallWebhookJob,
   type CallWebhookJobData,
 } from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
 import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
-import { transformEventBatchToWebhookBatch } from 'src/engine/core-modules/webhook/utils/transform-webhook-event-batch-to-webhook-data';
+import { transformEventBatchToWebhookEvents } from 'src/engine/core-modules/webhook/utils/transform-event-batch-to-webhook-events';
+
+const WEBHOOK_JOBS_CHUNK_SIZE = 100;
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
@@ -45,38 +48,19 @@ export class CallWebhookJobsJob {
       ],
     );
 
-    for (const webhook of webhooks) {
-      const webhookEventBatch = transformEventBatchToWebhookBatch({
-        workspaceEventBatch,
-        webhook,
-      });
+    const webhookEvents = transformEventBatchToWebhookEvents({
+      workspaceEventBatch,
+      webhooks,
+    });
 
-      await this.messageQueueService.add<CallWebhookBatchJobData>(
+    const webhookEventsChunks = chunk(webhookEvents, WEBHOOK_JOBS_CHUNK_SIZE);
+
+    for (const webhookEventsChunk of webhookEventsChunks) {
+      await this.messageQueueService.add<CallWebhookJobData[]>(
         CallWebhookJob.name,
-        webhookEventBatch,
+        webhookEventsChunk,
         { retryLimit: 3 },
       );
-
-      // DEPRECATED: REMOVE THE LINES BELOW AFTER 12/11/2025
-      const {
-        items,
-        batchSize: _,
-        ...webhookEventBatchWithoutItems
-      } = webhookEventBatch;
-
-      for (const item of items) {
-        const webhookData: CallWebhookJobData = {
-          ...webhookEventBatchWithoutItems,
-          ...item,
-        };
-
-        await this.messageQueueService.add<CallWebhookJobData>(
-          CallWebhookJob.name,
-          webhookData,
-          { retryLimit: 3 },
-        );
-      }
-      // END DEPRECATED
     }
   }
 }
