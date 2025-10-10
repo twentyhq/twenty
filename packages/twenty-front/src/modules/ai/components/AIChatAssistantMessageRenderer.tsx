@@ -12,13 +12,13 @@ import {
   type UITools,
 } from 'ai';
 
-const StyledStepsContainer = styled.div`
+const StyledMessagePartsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledDotsIconContainer = styled.div`
+const StyledLoadingIconContainer = styled.div`
   align-items: center;
   border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -27,12 +27,12 @@ const StyledDotsIconContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledDotsIcon = styled(IconDotsVertical)`
+const StyledLoadingIcon = styled(IconDotsVertical)`
   color: ${({ theme }) => theme.font.color.light};
   transform: rotate(90deg);
 `;
 
-const dots = keyframes`
+const streamingDotsAnimation = keyframes`
   0% { content: ''; }
   33% { content: '.'; }
   66% { content: '..'; }
@@ -43,19 +43,19 @@ const StyledStreamingIndicator = styled.div`
   &::after {
     display: inline-block;
     content: '';
-    animation: ${dots} 750ms steps(3, end) infinite;
+    animation: ${streamingDotsAnimation} 750ms steps(3, end) infinite;
     width: 2ch;
     text-align: left;
   }
 `;
 
-const LoadingDotsIcon = () => {
+const InitialLoadingIndicator = () => {
   const theme = useTheme();
 
   return (
-    <StyledDotsIconContainer>
-      <StyledDotsIcon size={theme.icon.size.xl} />
-    </StyledDotsIconContainer>
+    <StyledLoadingIconContainer>
+      <StyledLoadingIcon size={theme.icon.size.xl} />
+    </StyledLoadingIconContainer>
   );
 };
 
@@ -68,7 +68,7 @@ export const AIChatAssistantMessageRenderer = ({
   isLastMessageStreaming: boolean;
   hasError?: boolean;
 }) => {
-  const renderStep = (
+  const renderMessagePart = (
     part: UIMessagePart<UIDataTypes, UITools>,
     index: number,
   ) => {
@@ -102,14 +102,14 @@ export const AIChatAssistantMessageRenderer = ({
   };
 
   if (!messageParts.length && !hasError) {
-    return <LoadingDotsIcon />;
+    return <InitialLoadingIndicator />;
   }
 
   return (
     <div>
-      <StyledStepsContainer>
-        {messageParts.map(renderStep)}
-      </StyledStepsContainer>
+      <StyledMessagePartsContainer>
+        {messageParts.map(renderMessagePart)}
+      </StyledMessagePartsContainer>
       {isLastMessageStreaming && !hasError && <StyledStreamingIndicator />}
     </div>
   );
