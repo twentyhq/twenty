@@ -2,8 +2,10 @@ import { RecordTableDeactivateRecordTableRowEffect } from '@/object-record/recor
 import { RecordTableBodyEscapeHotkeyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEscapeHotkeyEffect';
 import { RecordTableBodyFocusClickOutsideEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFocusClickOutsideEffect';
 import { RecordTableBodyFocusKeyboardEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFocusKeyboardEffect';
-import { RecordTableNoRecordGroupBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBodyEffect';
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
+import { ContextStoreVirtualizedViewChangedEffect } from '@/object-record/record-table/virtualization/components/ContextStoreVirtualizedViewChangedEffect';
+import { RecordTableNoRecordGroupScrollToPreviousRecordEffect } from '@/object-record/record-table/virtualization/components/RecordTableNoRecordGroupScrollToPreviousRecordEffect';
+import { RecordTableVirtualizedInitialDataLoadEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedInitialDataLoadEffect';
 
 export interface RecordTableBodyEffectsWrapperProps {
   hasRecordGroups: boolean;
@@ -19,7 +21,11 @@ export const RecordTableBodyEffectsWrapper = ({
       {hasRecordGroups ? (
         <RecordTableRecordGroupBodyEffects />
       ) : (
-        <RecordTableNoRecordGroupBodyEffect />
+        <>
+          <RecordTableNoRecordGroupScrollToPreviousRecordEffect />
+          <RecordTableVirtualizedInitialDataLoadEffect />
+          <ContextStoreVirtualizedViewChangedEffect />
+        </>
       )}
       <RecordTableBodyEscapeHotkeyEffect />
       <RecordTableBodyFocusKeyboardEffect />

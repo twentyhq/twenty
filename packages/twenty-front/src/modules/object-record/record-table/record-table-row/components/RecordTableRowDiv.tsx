@@ -36,26 +36,17 @@ const StyledTr = styled.div<{
   display: flex;
   flex-direction: row;
 
-  &[data-next-row-active-or-focused='true'] {
-    div.table-cell,
-    div.table-cell-0-0 {
-      border-bottom: none;
-    }
-  }
-
-  &[data-focused='true'] {
+  &[data-focused='true'],
+  &[data-active='true'] {
     div.table-cell,
     div.table-cell-0-0 {
       &:not(:first-of-type) {
         border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-        border-top: 1px solid ${({ theme }) => theme.border.color.medium};
         border-color: ${({ theme }) => theme.border.color.medium};
         background-color: ${({ theme }) => theme.background.tertiary};
       }
       &:nth-of-type(2) {
         border-left: 1px solid ${({ theme }) => theme.border.color.medium};
-        border-radius: ${({ theme }) => theme.border.radius.sm} 0 0
-          ${({ theme }) => theme.border.radius.sm};
 
         margin-left: -1px;
 
@@ -67,44 +58,6 @@ const StyledTr = styled.div<{
         border-right: 1px solid ${({ theme }) => theme.border.color.medium};
         border-radius: 0 ${({ theme }) => theme.border.radius.sm}
           ${({ theme }) => theme.border.radius.sm} 0;
-      }
-    }
-  }
-
-  &[data-active='true'] {
-    div.table-cell,
-    div.table-cell-0-0 {
-      &:not(:first-of-type) {
-        border-bottom: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
-        border-top: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
-        background-color: ${({ theme }) => theme.accent.quaternary};
-
-        z-index: var(--z-index-for-normal-cells);
-      }
-      &:nth-of-type(2) {
-        border-left: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
-        border-radius: ${({ theme }) => theme.border.radius.sm} 0 0
-          ${({ theme }) => theme.border.radius.sm};
-
-        margin-left: -1px;
-
-        div {
-          margin-left: -1px;
-        }
-
-        z-index: var(--z-index-for-sticky-cells);
-      }
-      &:nth-of-type(3) {
-        z-index: var(--z-index-for-sticky-cells);
-      }
-      &:nth-of-type(1) {
-        z-index: var(--z-index-for-sticky-cells);
-      }
-      &:last-of-type {
-        border-right: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
-        border-radius: 0 ${({ theme }) => theme.border.radius.sm}
-          ${({ theme }) => theme.border.radius.sm} 0;
-        z-index: var(--z-index-for-normal-cells);
       }
     }
   }

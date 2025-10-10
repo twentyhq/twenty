@@ -151,6 +151,9 @@ export default defineConfig(({ command, mode }) => {
             '**/EmailsDisplay.tsx',
             '**/PhonesDisplay.tsx',
             '**/MultiSelectDisplay.tsx',
+            '**/RecordTableRowVirtualizedContainer.tsx',
+            '**/RecordTableVirtualizedBodyPlaceholder.tsx',
+            '**/RecordTableCellLoading.tsx',
           ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
