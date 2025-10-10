@@ -11,6 +11,7 @@ import { SeeActiveVersionWorkflowSingleRecordAction } from '@/action-menu/action
 import { SeeRunsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeRunsWorkflowSingleRecordAction';
 import { SeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeVersionsWorkflowSingleRecordAction';
 import { TestWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/TestWorkflowSingleRecordAction';
+import { TidyUpWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/TidyUpWorkflowSingleRecordAction';
 import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-actions/types/WorkflowSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
@@ -32,6 +33,7 @@ import {
   IconPlayerPlay,
   IconPlus,
   IconPower,
+  IconReorder,
   IconVersions,
 } from 'twenty-ui/display';
 
@@ -208,6 +210,21 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         !isDefined(selectedRecord?.deletedAt),
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <AddNodeWorkflowSingleRecordAction />,
+    },
+    [WorkflowSingleRecordActionKeys.TIDY_UP]: {
+      key: WorkflowSingleRecordActionKeys.TIDY_UP,
+      label: msg`Tidy up workflow`,
+      shortLabel: msg`Tidy up workflow`,
+      isPinned: false,
+      position: 9,
+      Icon: IconReorder,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
+        isDefined(workflowWithCurrentVersion) &&
+        !isDefined(selectedRecord?.deletedAt),
+      availableOn: [ActionViewType.SHOW_PAGE],
+      component: <TidyUpWorkflowSingleRecordAction />,
     },
     [NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS]: {
       type: ActionType.Navigation,

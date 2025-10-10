@@ -3,7 +3,7 @@ import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useClo
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
-import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
+import { useTidyUp } from '@/workflow/workflow-version/hooks/useTidyUp';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
@@ -41,10 +41,10 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
     workflowDiagramRightClickMenuPositionState,
   );
 
-  const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion();
+  const { tidyUp } = useTidyUp();
 
   const handleReorderWorkflowDiagram = async () => {
-    await tidyUpWorkflowVersion();
+    await tidyUp();
     closeRightClickMenu();
   };
 
