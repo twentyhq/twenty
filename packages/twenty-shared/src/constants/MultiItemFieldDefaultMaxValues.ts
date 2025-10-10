@@ -1,2 +1,1 @@
 export const MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES = 10;
-
