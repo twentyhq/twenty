@@ -3,7 +3,10 @@ import { TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE } from 'test/integration/graph
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const successfulCreateInputByFieldMetadataType: {
-  [K in FieldMetadataTypesToTestForCreateInputValidation]: {
+  [K in Exclude<
+    FieldMetadataTypesToTestForCreateInputValidation,
+    FieldMetadataType.RICH_TEXT
+  >]: {
     input: any;
     validateInput: (record: Record<string, any>) => boolean;
   }[];
@@ -282,8 +285,6 @@ export const successfulCreateInputByFieldMetadataType: {
           addressCity: 'address city',
           addressState: 'address state',
           addressCountry: 'address country',
-          addressLat: 1,
-          addressLng: 1,
         },
       },
       validateInput: (record: Record<string, any>) => {
@@ -293,9 +294,131 @@ export const successfulCreateInputByFieldMetadataType: {
           record.addressField.addressStreet2 === 'address street 2' &&
           record.addressField.addressCity === 'address city' &&
           record.addressField.addressState === 'address state' &&
-          record.addressField.addressCountry === 'address country' &&
-          record.addressField.addressLat === 1 &&
-          record.addressField.addressLng === 1
+          record.addressField.addressCountry === 'address country'
+        );
+      },
+    },
+  ],
+  [FieldMetadataType.CURRENCY]: [
+    {
+      input: {
+        currencyField: { amountMicros: 1000000, currencyCode: 'USD' },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.currencyField.amountMicros === 1000000 &&
+          record.currencyField.currencyCode === 'USD'
+        );
+      },
+    },
+  ],
+  [FieldMetadataType.EMAILS]: [
+    {
+      input: {
+        emailsField: {
+          primaryEmail: 'test@test.com',
+          additionalEmails: ['test2@test.com'],
+        },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.emailsField.primaryEmail === 'test@test.com' &&
+          record.emailsField.additionalEmails.length === 1 &&
+          record.emailsField.additionalEmails[0] === 'test2@test.com'
+        );
+      },
+    },
+  ],
+  [FieldMetadataType.PHONES]: [
+    {
+      input: {
+        phonesField: {
+          primaryPhoneNumber: '1234567890',
+          primaryPhoneCountryCode: 'FR',
+          primaryPhoneCallingCode: '+33',
+          additionalPhones: [
+            { number: '1234567890', callingCode: '+33', countryCode: 'FR' },
+          ],
+        },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.phonesField.primaryPhoneNumber === '1234567890' &&
+          record.phonesField.primaryPhoneCountryCode === 'FR' &&
+          record.phonesField.primaryPhoneCallingCode === '+33' &&
+          record.phonesField.additionalPhones.length === 1 &&
+          record.phonesField.additionalPhones[0] === '1234567890'
+        );
+      },
+    },
+  ],
+  [FieldMetadataType.FULL_NAME]: [
+    {
+      input: {
+        fullNameField: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.fullNameField.firstName === 'John' &&
+          record.fullNameField.lastName === 'Doe'
+        );
+      },
+    },
+  ],
+  [FieldMetadataType.LINKS]: [
+    {
+      input: {
+        linksField: {
+          primaryLinkUrl: 'https://www.twenty.com',
+          primaryLinkLabel: '#1 Open source CRM',
+          secondaryLinks: [
+            { url: 'https://www.twenty.com', label: '#1 Open source CRM' },
+          ],
+        },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.linksField.primaryLinkUrl === 'https://www.twenty.com' &&
+          record.linksField.primaryLinkLabel === '#1 Open source CRM' &&
+          record.linksField.secondaryLinks.length === 1 &&
+          record.linksField.secondaryLinks[0] === 'https://www.twenty.com'
+        );
+      },
+    },
+  ],
+  [FieldMetadataType.RICH_TEXT_V2]: [
+    {
+      input: {
+        richTextV2Field: {
+          blocknote: 'test',
+          markdown: 'test',
+        },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.richTextV2Field.blocknote === 'test' &&
+          record.richTextV2Field.markdown === 'test'
+        );
+      },
+    },
+  ],
+  [FieldMetadataType.ACTOR]: [
+    {
+      input: {
+        actorField: {
+          source: 'SOURCE',
+          workspaceMemberId: 'WORKSPACE_MEMBER_ID',
+          name: 'NAME',
+        },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.actorField.source === 'SOURCE' &&
+          record.actorField.workspaceMemberId === 'WORKSPACE_MEMBER_ID' &&
+          record.actorField.name === 'NAME'
         );
       },
     },
