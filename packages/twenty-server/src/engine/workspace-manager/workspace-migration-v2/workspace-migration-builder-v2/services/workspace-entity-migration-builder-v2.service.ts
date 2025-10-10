@@ -16,6 +16,7 @@ import {
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/get-metadata-empty-workspace-migration-action-record.util';
@@ -25,6 +26,7 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { SuccessfulFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/successful-flat-entity-validate-and-build.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
+import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 
 export type ValidateAndBuildArgs<T extends AllMetadataName> = {
   buildOptions: WorkspaceMigrationBuilderOptions;
@@ -219,41 +221,31 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       updatedFlatEntityMaps,
     );
 
-    for (const flatEntityToUpdateId in updatedFlatEntityMaps.to.byId) {
-      const flatEntityToUpdateFrom =
-        updatedFlatEntityMaps.from.byId[flatEntityToUpdateId];
-      const flatEntityToUpdateTo =
-        updatedFlatEntityMaps.to.byId[flatEntityToUpdateId];
+    for (const flatEntityToUpdateId in updatedFlatEntityMaps.byId) {
+      const flatEntityToUpdate =
+        updatedFlatEntityMaps.byId[flatEntityToUpdateId];
 
-      if (
-        !isDefined(flatEntityToUpdateTo) ||
-        !isDefined(flatEntityToUpdateFrom)
-      ) {
+      if (!isDefined(flatEntityToUpdate)) {
         throw new FlatEntityMapsException(
           'Could not find flat entity to update in maps should never occur',
           FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
         );
       }
 
-      remainingFlatEntityMapsToUpdate.from =
-        deleteFlatEntityFromFlatEntityMapsOrThrow({
-          entityToDeleteId: flatEntityToUpdateId,
-          flatEntityMaps: remainingFlatEntityMapsToUpdate.from,
-        });
-      remainingFlatEntityMapsToUpdate.to =
-        deleteFlatEntityFromFlatEntityMapsOrThrow({
-          entityToDeleteId: flatEntityToUpdateId,
-          flatEntityMaps: remainingFlatEntityMapsToUpdate.to,
-        });
+      // TODO
+      // remainingFlatEntityMapsToUpdate.to =
+      //   deleteFlatEntityFromFlatEntityMapsOrThrow({
+      //     entityToDeleteId: flatEntityToUpdateId,
+      //     flatEntityMaps: remainingFlatEntityMapsToUpdate.to,
+      // });
+      ///
 
       const validationResult = await this.validateFlatEntityUpdate({
+        flatEntityUpdates: flatEntityToUpdate.updates,
         dependencyOptimisticFlatEntityMaps,
-        flatEntityUpdate: {
-          from: flatEntityToUpdateFrom,
-          to: flatEntityToUpdateTo,
-        },
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
+        // @ts-expect-error TODO
         remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToUpdate,
         buildOptions,
       });
@@ -267,8 +259,28 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         continue;
       }
 
+      // For my tomorrow self:
+      /*
+      - [ ] ~~refactor view filter integration tests suite~~
+      - [ ] refactor the builder to embbed flat entity comparison
+      - [ ] refactor the runner optimistic cache side effect on relation parent in order to ease cache invalidation instead of sending depdency as cache to invalidate
+      - [ ] reorganize integration testing file tree
+      - [ ] refactor optimistic to be centralized
+      - [ ] refactor validate build and run args type def
+      - [ ] Update validation should return optimistic updatedFlatEntity in case of success | or just handle as below tbh
+      */
+      const existingFlatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: flatEntityToUpdateId,
+        flatEntityMaps: optimisticFlatEntityMaps,
+      });
+      const updatedFlatEntity = {
+        ...existingFlatEntity,
+        ...fromWorkspaceMigrationUpdateActionToPartialEntity({
+          updates: flatEntityToUpdate.updates,
+        }),
+      };
       optimisticFlatEntityMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: flatEntityToUpdateTo,
+        flatEntity: updatedFlatEntity,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
       dependencyOptimisticFlatEntityMaps =

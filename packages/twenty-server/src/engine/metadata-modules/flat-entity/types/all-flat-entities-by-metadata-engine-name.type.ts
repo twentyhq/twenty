@@ -12,6 +12,7 @@ import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filte
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 import {
   type CreateCronTriggerAction,
   type DeleteCronTriggerAction,
@@ -189,3 +190,13 @@ export type FromWorkspaceMigrationActionToMetadataName<TAction> = {
     ? K
     : never;
 }[AllMetadataName];
+
+export type FlatEntityPropertiesUpdates<T extends AllMetadataName> = Array<
+  PropertyUpdate<
+    MetadataFlatEntity<T>,
+    Extract<
+      (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['propertiesToCompare'][number],
+      keyof MetadataFlatEntity<T>
+    >
+  >
+>;

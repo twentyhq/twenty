@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import {
+  FlatEntityPropertiesUpdates,
   type MetadataFlatEntity,
   type MetadataFlatEntityMaps,
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
@@ -15,7 +16,14 @@ import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-mana
 export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
   createdFlatEntityMaps: MetadataFlatEntityMaps<T>;
   deletedFlatEntityMaps: MetadataFlatEntityMaps<T>;
-  updatedFlatEntityMaps: FromTo<MetadataFlatEntityMaps<T>>;
+  updatedFlatEntityMaps: {
+    byId: Record<
+      string,
+      {
+        updates: FlatEntityPropertiesUpdates<T>;
+      }
+    >;
+  };
 };
 
 export type UniversalIdentifierItem = {
@@ -43,10 +51,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
   const initialDispatcher: DeletedCreatedUpdatedMatrix<T> = {
     createdFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
     deletedFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
-    updatedFlatEntityMaps: {
-      from: EMPTY_FLAT_ENTITY_MAPS,
-      to: EMPTY_FLAT_ENTITY_MAPS,
-    },
+    updatedFlatEntityMaps: { byId: {} },
   };
 
   const fromMap = new Map(from.map((obj) => [obj.universalIdentifier, obj]));
@@ -85,27 +90,23 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     const updates = compareTwoFlatEntity({
       fromFlatEntity,
       toFlatEntity,
-      propertiesToCompare:
-        propertiesToCompare as unknown as (keyof MetadataFlatEntity<T>)[],
-      propertiesToStringify:
-        propertiesToStringify as unknown as (keyof MetadataFlatEntity<T>)[],
+      propertiesToCompare: propertiesToCompare as unknown as Extract<
+        (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['propertiesToCompare'][number],
+        keyof MetadataFlatEntity<T>
+      >[],
+      propertiesToStringify: propertiesToStringify as unknown as Extract<
+        (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['propertiesToStringify'][number],
+        keyof MetadataFlatEntity<T>
+      >[],
     });
 
     if (updates.length === 0) {
       continue;
     }
 
-    initialDispatcher.updatedFlatEntityMaps.from =
-      addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: fromFlatEntity,
-        flatEntityMaps: initialDispatcher.updatedFlatEntityMaps.from,
-      });
-
-    initialDispatcher.updatedFlatEntityMaps.to =
-      addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: toFlatEntity,
-        flatEntityMaps: initialDispatcher.updatedFlatEntityMaps.to,
-      });
+    initialDispatcher.updatedFlatEntityMaps.byId[toFlatEntity.id] = {
+      updates,
+    };
   }
 
   return initialDispatcher;
