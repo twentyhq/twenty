@@ -1,5 +1,5 @@
-import { type StringFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import escapeRegExp from 'lodash.escaperegexp';
+import { type StringFilter } from 'twenty-shared/types';
 
 export const isMatchingStringFilter = ({
   stringFilter,

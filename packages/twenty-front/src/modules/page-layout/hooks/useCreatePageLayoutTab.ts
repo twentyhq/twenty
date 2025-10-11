@@ -1,11 +1,14 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
-import { type PageLayoutTab } from '../types/pageLayoutTypes';
+import { type PageLayoutTab } from '../types/PageLayoutTab';
 import { getEmptyTabLayout } from '../utils/getEmptyTabLayout';
 
 export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
@@ -24,20 +27,26 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
+  const setActiveTabId = useSetRecoilComponentState(
+    activeTabIdComponentState,
+    tabListInstanceId,
+  );
+
   const createPageLayoutTab = useRecoilCallback(
     ({ snapshot, set }) =>
-      (title?: string): string => {
+      (title?: string): void => {
         const pageLayoutDraft = snapshot
           .getLoadable(pageLayoutDraftState)
           .getValue();
 
-        const newTabId = `tab-${uuidv4()}`;
+        const newTabId = uuidv4();
         const tabsLength = pageLayoutDraft.tabs.length;
         const newTab: PageLayoutTab = {
           id: newTabId,
           title: title || `Tab ${tabsLength + 1}`,
           position: tabsLength,
-          pageLayoutId: '',
+          pageLayoutId: pageLayoutId,
           widgets: [],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -55,9 +64,14 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
           getEmptyTabLayout(prev, newTabId),
         );
 
-        return newTabId;
+        setActiveTabId(newTabId);
       },
-    [pageLayoutCurrentLayoutsState, pageLayoutDraftState],
+    [
+      pageLayoutCurrentLayoutsState,
+      pageLayoutDraftState,
+      pageLayoutId,
+      setActiveTabId,
+    ],
   );
 
   return { createPageLayoutTab };

@@ -1,3 +1,6 @@
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+
 import {
   type BaseGraphQLError,
   type ErrorCode,
@@ -42,4 +45,21 @@ export const assertGraphQLErrorResponse = <T extends Record<string, unknown>>(
   if (expectedErrorMessage && response.body.errors) {
     expect(response.body.errors[0].message).toBe(expectedErrorMessage);
   }
+};
+
+export const assertGraphQLErrorResponseWithSnapshot = <
+  T extends Record<string, unknown>,
+>(
+  response: GraphQLResponse<T>,
+) => {
+  expect(response.status).toBe(200);
+  jestExpectToBeDefined(response.body.errors);
+  expect(response.body.errors).toHaveLength(1);
+
+  const firstError = response.body.errors[0];
+
+  jestExpectToBeDefined(firstError);
+  expect(firstError).toMatchSnapshot(
+    extractRecordIdsAndDatesAsExpectAny(firstError),
+  );
 };

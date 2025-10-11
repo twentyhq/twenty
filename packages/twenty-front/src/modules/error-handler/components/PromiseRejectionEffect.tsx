@@ -1,9 +1,8 @@
 import { useCallback, useEffect } from 'react';
 
-import { type CustomError } from '@/error-handler/CustomError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import isEmpty from 'lodash.isempty';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, type CustomError } from 'twenty-shared/utils';
 
 const hasErrorCode = (
   error: CustomError | any,
@@ -24,7 +23,11 @@ export const PromiseRejectionEffect = () => {
         return; // already handled by apolloLink
       }
 
-      if (error.networkError?.name !== 'AbortError') {
+      const isAbortError =
+        error.networkError?.name === 'AbortError' ||
+        error.name === 'AbortError';
+
+      if (!isAbortError) {
         enqueueErrorSnackBar({});
       }
 

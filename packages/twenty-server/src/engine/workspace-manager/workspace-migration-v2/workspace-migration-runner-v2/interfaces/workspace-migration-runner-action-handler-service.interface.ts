@@ -1,6 +1,7 @@
-import { SetMetadata } from '@nestjs/common';
+import { Inject, SetMetadata } from '@nestjs/common';
 
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import {
   type ExtractAction,
   type WorkspaceMigrationActionTypeV2,
@@ -15,6 +16,10 @@ export interface WorkspaceMigrationRunnerActionHandlerService<
   execute(
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<Partial<AllFlatEntityMaps>>;
+
+  rollback(
+    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+  ): Promise<void>;
 }
 
 export type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
@@ -28,32 +33,79 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionTypeV2,
 > implements WorkspaceMigrationRunnerActionHandlerService<TActionType>
 {
-  abstract executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
-  ): Promise<void>;
+  public actionType: TActionType;
 
-  abstract executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
-  ): Promise<void>;
+  @Inject(LoggerService)
+  protected readonly logger: LoggerService;
 
-  abstract optimisticallyApplyActionOnAllFlatEntityMaps(
+  executeForMetadata(
+    _context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+  ): Promise<void> {
+    return Promise.resolve();
+  }
+
+  executeForWorkspaceSchema(
+    _context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+  ): Promise<void> {
+    return Promise.resolve();
+  }
+
+  optimisticallyApplyActionOnAllFlatEntityMaps(
     args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
       ExtractAction<TActionType>
     >,
-  ): Partial<AllFlatEntityMaps>;
+  ): Partial<AllFlatEntityMaps> {
+    return args.allFlatEntityMaps;
+  }
+
+  rollbackForMetadata(
+    _context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+  ): Promise<void> {
+    return Promise.resolve();
+  }
 
   async execute(
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<Partial<AllFlatEntityMaps>> {
     await Promise.all([
-      this.executeForMetadata(context),
-      this.executeForWorkspaceSchema(context),
+      this.asyncMethodPerformanceMetricWrapper({
+        label: 'executeForMetadata',
+        method: async () => this.executeForMetadata(context),
+      }),
+      this.asyncMethodPerformanceMetricWrapper({
+        label: 'executeForWorkspaceSchema',
+        method: async () => this.executeForWorkspaceSchema(context),
+      }),
     ]);
 
     return this.optimisticallyApplyActionOnAllFlatEntityMaps({
       action: context.action,
       allFlatEntityMaps: context.allFlatEntityMaps,
     });
+  }
+
+  async rollback(
+    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+  ): Promise<void> {
+    await this.rollbackForMetadata(context);
+  }
+
+  private async asyncMethodPerformanceMetricWrapper({
+    label,
+    method,
+  }: {
+    label: string;
+    method: () => Promise<void>;
+  }): Promise<void> {
+    this.logger.time(
+      'BaseWorkspaceMigrationRunnerActionHandlerService',
+      `${this.actionType} ${label}`,
+    );
+    await method();
+    this.logger.timeEnd(
+      'BaseWorkspaceMigrationRunnerActionHandlerService',
+      `${this.actionType} ${label}`,
+    );
   }
 }
 
@@ -62,7 +114,9 @@ export function WorkspaceMigrationRunnerActionHandler<
 >(
   actionType: TActionType,
 ): typeof BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {
-  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {}
+  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {
+    actionType = actionType;
+  }
 
   SetMetadata(
     WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY,

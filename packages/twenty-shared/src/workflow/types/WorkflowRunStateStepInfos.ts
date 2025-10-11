@@ -1,3 +1,7 @@
+import { type workflowRunStateStepInfoSchema } from '@/workflow/schemas/workflow-run-state-step-info-schema';
+import { type workflowRunStateStepInfosSchema } from '@/workflow/schemas/workflow-run-state-step-infos-schema';
+import type z from 'zod';
+
 export enum StepStatus {
   NOT_STARTED = 'NOT_STARTED',
   RUNNING = 'RUNNING',
@@ -5,17 +9,13 @@ export enum StepStatus {
   STOPPED = 'STOPPED',
   FAILED = 'FAILED',
   PENDING = 'PENDING',
+  SKIPPED = 'SKIPPED',
 }
 
-export type WorkflowRunStepInfo = {
-  result?: object;
-  error?: string;
-  status: StepStatus;
-  history?: {
-    status: StepStatus;
-    result?: object;
-    error?: string;
-  }[];
-};
+export type WorkflowRunStepInfo = z.infer<
+  typeof workflowRunStateStepInfoSchema
+>;
 
-export type WorkflowRunStepInfos = Record<string, WorkflowRunStepInfo>;
+export type WorkflowRunStepInfos = z.infer<
+  typeof workflowRunStateStepInfosSchema
+>;

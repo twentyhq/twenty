@@ -1,10 +1,9 @@
-import { RATING_VALUES } from '@/object-record/record-field/ui/meta-types/constants/RatingValues';
-import { type FieldRatingValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RatingInput } from '@/ui/field/input/components/RatingInput';
-
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
+import { RatingInput } from '@/ui/field/input/components/RatingInput';
 import styled from '@emotion/styled';
+import { RATING_VALUES } from 'twenty-shared/constants';
+import { type FieldRatingValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRatingInputContainer = styled.div`

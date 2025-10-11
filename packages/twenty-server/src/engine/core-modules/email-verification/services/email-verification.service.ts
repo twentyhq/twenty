@@ -116,7 +116,7 @@ export class EmailVerificationService {
       );
     }
 
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.findUserByEmailOrThrow(email);
 
     if (user.isEmailVerified) {
       throw new EmailVerificationException(

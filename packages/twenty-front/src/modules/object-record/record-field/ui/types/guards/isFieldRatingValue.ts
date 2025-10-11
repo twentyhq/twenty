@@ -1,6 +1,5 @@
-import { RATING_VALUES } from '@/object-record/record-field/ui/meta-types/constants/RatingValues';
-
-import { type FieldRatingValue } from '../FieldMetadata';
+import { RATING_VALUES } from 'twenty-shared/constants';
+import { type FieldRatingValue } from 'twenty-shared/types';
 
 export const isFieldRatingValue = (
   fieldValue: unknown,

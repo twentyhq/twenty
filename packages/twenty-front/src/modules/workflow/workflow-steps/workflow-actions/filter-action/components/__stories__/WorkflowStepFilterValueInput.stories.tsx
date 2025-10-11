@@ -15,7 +15,7 @@ const TEXT_FILTER: StepFilter = {
   stepFilterGroupId: 'filter-group-1',
   stepOutputKey: 'company.name',
   type: 'text',
-  operand: ViewFilterOperand.Contains,
+  operand: ViewFilterOperand.CONTAINS,
   value: 'Acme',
   positionInStepFilterGroup: 0,
 };
@@ -25,7 +25,7 @@ const NUMBER_FILTER: StepFilter = {
   stepFilterGroupId: 'filter-group-1',
   stepOutputKey: 'company.employees',
   type: 'number',
-  operand: ViewFilterOperand.GreaterThanOrEqual,
+  operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
   value: '100',
   positionInStepFilterGroup: 0,
 };

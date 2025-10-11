@@ -9,12 +9,12 @@ import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variabl
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
-import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { ArrayContains, IsNull, Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { Webhook } from './webhook.entity';
 import { WebhookException, WebhookExceptionCode } from './webhook.exception';
@@ -77,7 +79,7 @@ export class WebhookService {
       throw new WebhookException(
         'Invalid target URL provided',
         WebhookExceptionCode.INVALID_TARGET_URL,
-        { userFriendlyMessage: 'Please provide a valid HTTP or HTTPS URL.' },
+        { userFriendlyMessage: msg`Please provide a valid HTTP or HTTPS URL.` },
       );
     }
 
@@ -93,7 +95,7 @@ export class WebhookService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<Webhook>,
+    updateData: QueryDeepPartialEntity<Webhook>,
   ): Promise<Webhook | null> {
     const webhook = await this.findById(id, workspaceId);
 
@@ -102,13 +104,17 @@ export class WebhookService {
     }
 
     if (isDefined(updateData.targetUrl)) {
-      const normalizedTargetUrl = this.normalizeTargetUrl(updateData.targetUrl);
+      const normalizedTargetUrl = this.normalizeTargetUrl(
+        updateData.targetUrl as string,
+      );
 
       if (!this.validateTargetUrl(normalizedTargetUrl)) {
         throw new WebhookException(
           'Invalid target URL provided',
           WebhookExceptionCode.INVALID_TARGET_URL,
-          { userFriendlyMessage: 'Please provide a valid HTTP or HTTPS URL.' },
+          {
+            userFriendlyMessage: msg`Please provide a valid HTTP or HTTPS URL.`,
+          },
         );
       }
 

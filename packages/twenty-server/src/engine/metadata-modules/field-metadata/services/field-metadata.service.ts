@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,6 +15,7 @@ import {
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -101,6 +102,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRelationService: FieldMetadataRelationService,
     private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
     private readonly indexMetadataService: IndexMetadataService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -141,6 +143,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
         { workspaceId: fieldMetadataInput.workspaceId },
       );
+    const { workspaceId } = fieldMetadataInput;
 
     let existingFieldMetadata: FieldMetadataEntity | undefined;
 
@@ -187,7 +190,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         'Unique field cannot have a default value',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         {
-          userFriendlyMessage: t`Unique field cannot have a default value`,
+          userFriendlyMessage: msg`Unique field cannot have a default value`,
         },
       );
     }
@@ -397,6 +400,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput.workspaceId,
       );
 
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatFieldMetadataMaps'],
+      });
+
       return updatedFieldMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
@@ -461,7 +469,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           'Cannot delete, please update the label identifier field first',
           FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
           {
-            userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
+            userFriendlyMessage: msg`Cannot delete, please update the label identifier field first`,
           },
         );
       }
@@ -579,6 +587,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
+
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      });
 
       return fieldMetadata;
     } catch (error) {
@@ -771,6 +784,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         workspaceId,
       );
 
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      });
+
       return createdFieldMetadatas;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
@@ -812,7 +830,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         'Unique field cannot have a default value',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         {
-          userFriendlyMessage: t`Unique field cannot have a default value`,
+          userFriendlyMessage: msg`Unique field cannot have a default value`,
         },
       );
 

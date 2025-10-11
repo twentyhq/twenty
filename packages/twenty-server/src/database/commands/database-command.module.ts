@@ -9,11 +9,14 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database-event-trigger/database-event-trigger.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { TriggerModule } from 'src/engine/metadata-modules/trigger/trigger.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceCleanerModule } from 'src/engine/workspace-manager/workspace-cleaner/workspace-cleaner.module';
@@ -22,8 +25,6 @@ import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
-import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public
     WorkspaceCacheStorageModule,
     ApiKeyModule,
     FeatureFlagModule,
-    TriggerModule,
+    CronTriggerModule,
+    DatabaseEventTriggerModule,
     WorkspaceCleanerModule,
     PublicDomainModule,
   ],

@@ -1,18 +1,23 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
-import { AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
+import { isDefined } from 'twenty-shared/utils';
+
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { WORKSPACE_FLAT_MAP_CACHE_KEY } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
+import {
+  WorkspaceFlatMapCacheException,
+  WorkspaceFlatMapCacheExceptionCode,
+} from 'src/engine/workspace-flat-map-cache/exceptions/workspace-flat-map-cache.exception';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
 @Injectable()
 export class WorkspaceFlatMapCacheRegistryService implements OnModuleInit {
-  private readonly cacheServiceMap = new Map<
-    keyof AllFlatEntityMaps,
-    WorkspaceFlatMapCacheService<FlatEntityMaps<AllFlatEntities>>
-  >();
+  private readonly cacheServiceRecord: {
+    [P in keyof AllFlatEntityMaps]?: WorkspaceFlatMapCacheService<
+      AllFlatEntityMaps[P]
+    >;
+  } = {};
 
   constructor(private readonly discoveryService: DiscoveryService) {}
 
@@ -30,20 +35,31 @@ export class WorkspaceFlatMapCacheRegistryService implements OnModuleInit {
         return;
       }
 
-      const cacheKey = Reflect.getMetadata(
+      const cacheKey: keyof AllFlatEntityMaps | undefined = Reflect.getMetadata(
         WORKSPACE_FLAT_MAP_CACHE_KEY,
         metatype,
       );
 
       if (cacheKey && instance instanceof WorkspaceFlatMapCacheService) {
-        this.cacheServiceMap.set(cacheKey, instance);
+        this.cacheServiceRecord[cacheKey] = instance;
       }
     });
   }
 
-  getCacheService(
-    flatEntityName: keyof AllFlatEntityMaps,
-  ): WorkspaceFlatMapCacheService<FlatEntityMaps<AllFlatEntities>> | undefined {
-    return this.cacheServiceMap.get(flatEntityName);
+  getCacheService<K extends keyof AllFlatEntityMaps>(flatMapsKey: K) {
+    return this.cacheServiceRecord[flatMapsKey];
+  }
+
+  getCacheServiceOrThrow<K extends keyof AllFlatEntityMaps>(flatMapsKey: K) {
+    const service = this.getCacheService(flatMapsKey);
+
+    if (!isDefined(service)) {
+      throw new WorkspaceFlatMapCacheException(
+        `No cache service found for ${flatMapsKey}`,
+        WorkspaceFlatMapCacheExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return service;
   }
 }

@@ -38,17 +38,11 @@ export class BillingUsageService {
     }
 
     const billingSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        {
-          workspaceId,
-        },
-      );
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        workspaceId,
+      });
 
-    if (!billingSubscription) {
-      return false;
-    }
-
-    return true;
+    return !!billingSubscription;
   }
 
   async billUsage({
@@ -93,13 +87,6 @@ export class BillingUsageService {
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId: workspace.id },
       );
-
-    if (!isDefined(subscription)) {
-      throw new BillingException(
-        'Not-canceled subscription not found',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
-      );
-    }
 
     const meteredSubscriptionItemDetails =
       await this.billingSubscriptionItemService.getMeteredSubscriptionItemDetails(

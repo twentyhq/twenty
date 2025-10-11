@@ -20,7 +20,7 @@ export const SeeVersionsWorkflowVersionSingleRecordAction = () => {
       queryParams={{
         filter: {
           workflow: {
-            [ViewFilterOperand.Is]: {
+            [ViewFilterOperand.IS]: {
               selectedRecordIds: [workflowWithCurrentVersion?.id],
             },
           },

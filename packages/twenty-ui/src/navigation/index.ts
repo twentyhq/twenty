@@ -27,12 +27,10 @@ export type {
 export { MenuItem } from './menu/menu-item/components/MenuItem';
 export type { MenuItemAvatarProps } from './menu/menu-item/components/MenuItemAvatar';
 export { MenuItemAvatar } from './menu/menu-item/components/MenuItemAvatar';
-export type { MenuItemCommandProps } from './menu/menu-item/components/MenuItemCommand';
-export { MenuItemCommand } from './menu/menu-item/components/MenuItemCommand';
-export type { MenuItemCommandHotKeysProps } from './menu/menu-item/components/MenuItemCommandHotKeys';
-export { MenuItemCommandHotKeys } from './menu/menu-item/components/MenuItemCommandHotKeys';
 export type { MenuItemDraggableProps } from './menu/menu-item/components/MenuItemDraggable';
 export { MenuItemDraggable } from './menu/menu-item/components/MenuItemDraggable';
+export type { MenuItemHotKeysProps } from './menu/menu-item/components/MenuItemHotKeys';
+export { MenuItemHotKeys } from './menu/menu-item/components/MenuItemHotKeys';
 export { MenuItemMultiSelect } from './menu/menu-item/components/MenuItemMultiSelect';
 export { MenuItemMultiSelectAvatar } from './menu/menu-item/components/MenuItemMultiSelectAvatar';
 export { MenuItemMultiSelectTag } from './menu/menu-item/components/MenuItemMultiSelectTag';
@@ -50,18 +48,22 @@ export {
 export { MenuItemSelectTag } from './menu/menu-item/components/MenuItemSelectTag';
 export type { MenuItemSuggestionProps } from './menu/menu-item/components/MenuItemSuggestion';
 export { MenuItemSuggestion } from './menu/menu-item/components/MenuItemSuggestion';
+export type { MenuItemToggleProps } from './menu/menu-item/components/MenuItemToggle';
 export { MenuItemToggle } from './menu/menu-item/components/MenuItemToggle';
 export { MenuItemLeftContent } from './menu/menu-item/internals/components/MenuItemLeftContent';
 export type { MenuItemBaseProps } from './menu/menu-item/internals/components/StyledMenuItemBase';
 export {
   StyledMenuItemBase,
   StyledMenuItemLabel,
+  StyledMenuItemLabelLight,
   StyledNoIconFiller,
   StyledMenuItemLeftContent,
   StyledMenuItemRightContent,
   StyledDraggableItem,
   StyledHoverableMenuItemBase,
   StyledMenuItemIconCheck,
+  StyledMenuItemContextualText,
+  StyledRightMenuItemContextualText,
 } from './menu/menu-item/internals/components/StyledMenuItemBase';
 export type { MenuItemAccent } from './menu/menu-item/types/MenuItemAccent';
 export { NavigationBar } from './navigation-bar/components/NavigationBar';

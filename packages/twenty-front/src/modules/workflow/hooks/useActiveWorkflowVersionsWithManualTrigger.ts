@@ -1,13 +1,14 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { isGlobalManualTrigger } from '@/action-menu/actions/record-actions/utils/isGlobalManualTrigger';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
   type ManualTriggerWorkflowVersion,
   type Workflow,
 } from '@/workflow/types/Workflow';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useActiveWorkflowVersionsWithManualTrigger = ({
   objectMetadataItem,
@@ -16,6 +17,10 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
   objectMetadataItem?: ObjectMetadataItem;
   skip?: boolean;
 }) => {
+  const isIteratorEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+  );
+
   const filters = [
     {
       status: {
@@ -29,31 +34,40 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
     },
   ];
 
+  const objectTypeFilter = isIteratorEnabled
+    ? {
+        trigger: {
+          like: `%"objectNameSingular": "${objectMetadataItem?.nameSingular}"%`,
+        },
+      }
+    : {
+        trigger: {
+          like: `%"objectType": "${objectMetadataItem?.nameSingular}"%`,
+        },
+      };
+
   if (isDefined(objectMetadataItem)) {
-    filters.push({
-      trigger: {
-        like: `%"objectType": "${objectMetadataItem.nameSingular}"%`,
-      },
-    });
+    filters.push(objectTypeFilter);
   }
 
-  const { objectMetadataItem: workflowVersionObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
-
   const { records } = useFindManyRecords<
-    ManualTriggerWorkflowVersion & { workflow: Workflow }
+    Pick<
+      ManualTriggerWorkflowVersion,
+      'id' | '__typename' | 'status' | 'workflowId' | 'trigger'
+    > & {
+      workflow: Workflow;
+    }
   >({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     filter: {
       and: filters,
     },
     recordGqlFields: {
-      ...generateDepthOneRecordGqlFields({
-        objectMetadataItem: workflowVersionObjectMetadataItem,
-      }),
+      id: true,
+      trigger: true,
+      workflowId: true,
       workflow: true,
+      status: true,
     },
     skip,
   });
@@ -64,8 +78,8 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
       records: records.filter(
         (record) =>
           record.status === 'ACTIVE' &&
-          record.trigger?.type === 'MANUAL' &&
-          !isDefined(record.trigger?.settings.objectType),
+          isDefined(record.trigger) &&
+          isGlobalManualTrigger(record.trigger, isIteratorEnabled),
       ),
     };
   }

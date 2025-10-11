@@ -12,7 +12,8 @@ export const canObjectBeManagedByWorkflow = ({
     'dashboard',
   ];
 
-  return !excludedNonSystemObjectMetadataItemNames.includes(
-    nameSingular,
-  ) && !isSystem;
+  return (
+    !excludedNonSystemObjectMetadataItemNames.includes(nameSingular) &&
+    !isSystem
+  );
 };

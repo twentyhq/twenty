@@ -52,7 +52,10 @@ describe('useUpdateWorkflowVersionTrigger', () => {
     });
 
     expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();
-    expect(mockComputeStepOutputSchema).toHaveBeenCalledWith({ step: trigger });
+    expect(mockComputeStepOutputSchema).toHaveBeenCalledWith({
+      step: trigger,
+      workflowVersionId: 'version-id',
+    });
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: 'version-id',
       updateOneRecordInput: {

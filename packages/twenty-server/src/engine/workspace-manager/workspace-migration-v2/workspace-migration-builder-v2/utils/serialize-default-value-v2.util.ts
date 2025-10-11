@@ -83,7 +83,8 @@ export const serializeDefaultValueV2 = ({
         return `ARRAY[${arrayValues}]${castSuffix}[]`;
       }
 
-      return sanitizeAndAddCastPrefix(`'${JSON.stringify(defaultValue)}'`); // Won't work :thinking: at all will remove every brackets and so on
+      // Default value for objects won't work with sanitization here
+      return sanitizeAndAddCastPrefix(`'${JSON.stringify(defaultValue)}'`);
     }
     default: {
       throw new FieldMetadataException(

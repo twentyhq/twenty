@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -40,6 +41,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     TypeOrmModule.forFeature([Workspace, FeatureFlag]),
     WorkspaceMetadataVersionModule,
     AgentRoleModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
     ...workspaceSyncMetadataFactories,

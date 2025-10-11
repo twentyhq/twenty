@@ -1,17 +1,23 @@
 #!/usr/bin/env node
 
 import chalk from 'chalk';
-import { Command } from 'commander';
+import { Command, CommanderError } from 'commander';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { AppCommand } from './commands/app.command';
 import { AuthCommand } from './commands/auth.command';
 import { ConfigCommand } from './commands/config.command';
+
+const packageJson = JSON.parse(
+  readFileSync(join(__dirname, '../package.json'), 'utf-8'),
+);
 
 const program = new Command();
 
 program
   .name('twenty')
   .description('CLI for Twenty application development')
-  .version('0.1.0');
+  .version(packageJson.version);
 
 program.option(
   '--api-url <url>',
@@ -28,6 +34,9 @@ program.exitOverride();
 try {
   program.parse();
 } catch (error) {
+  if (error instanceof CommanderError) {
+    process.exit(error.exitCode);
+  }
   if (error instanceof Error) {
     console.error(chalk.red('Error:'), error.message);
     process.exit(1);

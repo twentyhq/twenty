@@ -4,6 +4,7 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertRestApiErrorNotFoundResponse,
@@ -21,20 +22,16 @@ import {
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 
-import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
+import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import {
   generateViewFilterGroupExceptionMessage,
   ViewFilterGroupExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
+} from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 
 describe('View Filter Group REST API', () => {
   let testObjectMetadataId: string;
 
   beforeAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-
     const {
       data: {
         createOneObject: { id: objectMetadataId },
@@ -53,6 +50,15 @@ describe('View Filter Group REST API', () => {
   });
 
   afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });

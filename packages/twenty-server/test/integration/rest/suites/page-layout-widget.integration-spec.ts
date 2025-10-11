@@ -2,6 +2,7 @@ import { TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID } from 'test/integration/constants
 import { TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID } from 'test/integration/constants/test-page-layout-widget-ids.constants';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   createTestPageLayoutWithRestApi,
@@ -74,6 +75,15 @@ describe('Page Layout Widget REST API', () => {
   afterAll(async () => {
     await deleteTestPageLayoutTabWithRestApi(testPageLayoutTabId);
     await deleteTestPageLayoutWithRestApi(testPageLayoutId);
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
@@ -83,7 +93,7 @@ describe('Page Layout Widget REST API', () => {
     await cleanupPageLayoutWidgetRecords();
   });
 
-  describe('GET /rest/metadata/page-layout-widgets', () => {
+  describe('GET /rest/metadata/pageLayoutWidgets', () => {
     it('should return page layout widgets filtered by pageLayoutTabId', async () => {
       const input1 = {
         title: 'Widget 1',
@@ -113,7 +123,7 @@ describe('Page Layout Widget REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layout-widgets?pageLayoutTabId=${testPageLayoutTabId}`,
+        path: `/metadata/pageLayoutWidgets?pageLayoutTabId=${testPageLayoutTabId}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -130,7 +140,7 @@ describe('Page Layout Widget REST API', () => {
     it('should return empty array when no page layout widgets match pageLayoutTabId', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layout-widgets?pageLayoutTabId=${TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID}`,
+        path: `/metadata/pageLayoutWidgets?pageLayoutTabId=${TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -142,7 +152,7 @@ describe('Page Layout Widget REST API', () => {
     it('should return error when pageLayoutTabId is missing', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: '/metadata/page-layout-widgets',
+        path: '/metadata/pageLayoutWidgets',
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -156,7 +166,7 @@ describe('Page Layout Widget REST API', () => {
     });
   });
 
-  describe('POST /rest/metadata/page-layout-widgets', () => {
+  describe('POST /rest/metadata/pageLayoutWidgets', () => {
     it('should create a new page layout widget with all properties', async () => {
       const input = {
         title: 'Test Widget',
@@ -169,7 +179,7 @@ describe('Page Layout Widget REST API', () => {
           rowSpan: 2,
           columnSpan: 2,
         },
-        configuration: { theme: 'dark', showLegend: true },
+        configuration: null,
       };
 
       const pageLayoutWidget =
@@ -222,7 +232,7 @@ describe('Page Layout Widget REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'post',
-        path: '/metadata/page-layout-widgets',
+        path: '/metadata/pageLayoutWidgets',
         body: pageLayoutWidgetData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -249,7 +259,7 @@ describe('Page Layout Widget REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'post',
-        path: '/metadata/page-layout-widgets',
+        path: '/metadata/pageLayoutWidgets',
         body: pageLayoutWidgetData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -265,7 +275,7 @@ describe('Page Layout Widget REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'post',
-        path: '/metadata/page-layout-widgets',
+        path: '/metadata/pageLayoutWidgets',
         body: pageLayoutWidgetData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -274,7 +284,7 @@ describe('Page Layout Widget REST API', () => {
     });
   });
 
-  describe('GET /rest/metadata/page-layout-widgets/:id', () => {
+  describe('GET /rest/metadata/pageLayoutWidgets/:id', () => {
     it('should return a page layout widget by id', async () => {
       const input = {
         title: 'Widget For Get',
@@ -292,7 +302,7 @@ describe('Page Layout Widget REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layout-widgets/${pageLayoutWidget.id}`,
+        path: `/metadata/pageLayoutWidgets/${pageLayoutWidget.id}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -308,7 +318,7 @@ describe('Page Layout Widget REST API', () => {
     it('should return error for non-existent page layout widget', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layout-widgets/${TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID}`,
+        path: `/metadata/pageLayoutWidgets/${TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -323,7 +333,7 @@ describe('Page Layout Widget REST API', () => {
     });
   });
 
-  describe('PATCH /rest/metadata/page-layout-widgets/:id', () => {
+  describe('PATCH /rest/metadata/pageLayoutWidgets/:id', () => {
     it('should update an existing page layout widget', async () => {
       const input = {
         title: 'Test Widget for Update',
@@ -348,12 +358,12 @@ describe('Page Layout Widget REST API', () => {
           rowSpan: 2,
           columnSpan: 3,
         },
-        configuration: { updated: true },
+        configuration: null,
       };
 
       const response = await makeRestAPIRequest({
         method: 'patch',
-        path: `/metadata/page-layout-widgets/${pageLayoutWidget.id}`,
+        path: `/metadata/pageLayoutWidgets/${pageLayoutWidget.id}`,
         body: updateData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -390,7 +400,7 @@ describe('Page Layout Widget REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'patch',
-        path: `/metadata/page-layout-widgets/${pageLayoutWidget.id}`,
+        path: `/metadata/pageLayoutWidgets/${pageLayoutWidget.id}`,
         body: updateData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -415,7 +425,7 @@ describe('Page Layout Widget REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'patch',
-        path: `/metadata/page-layout-widgets/${TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID}`,
+        path: `/metadata/pageLayoutWidgets/${TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID}`,
         body: updateData,
         bearer: API_KEY_ACCESS_TOKEN,
       });
@@ -431,7 +441,7 @@ describe('Page Layout Widget REST API', () => {
     });
   });
 
-  describe('DELETE /rest/metadata/page-layout-widgets/:id', () => {
+  describe('DELETE /rest/metadata/pageLayoutWidgets/:id', () => {
     it('should delete an existing page layout widget', async () => {
       const pageLayoutWidgetTitle = generateRecordName(
         'Test Widget for Delete',
@@ -450,7 +460,7 @@ describe('Page Layout Widget REST API', () => {
 
       const deleteResponse = await makeRestAPIRequest({
         method: 'delete',
-        path: `/metadata/page-layout-widgets/${pageLayoutWidget.id}`,
+        path: `/metadata/pageLayoutWidgets/${pageLayoutWidget.id}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -459,7 +469,7 @@ describe('Page Layout Widget REST API', () => {
 
       const getResponse = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layout-widgets/${pageLayoutWidget.id}`,
+        path: `/metadata/pageLayoutWidgets/${pageLayoutWidget.id}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -476,7 +486,7 @@ describe('Page Layout Widget REST API', () => {
     it('should return error when deleting non-existent page layout widget', async () => {
       const response = await makeRestAPIRequest({
         method: 'delete',
-        path: `/metadata/page-layout-widgets/${TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID}`,
+        path: `/metadata/pageLayoutWidgets/${TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 

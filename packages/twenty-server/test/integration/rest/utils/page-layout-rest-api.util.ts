@@ -16,7 +16,7 @@ export const createTestPageLayoutWithRestApi = async (
 
   const response = await makeRestAPIRequest({
     method: 'post',
-    path: '/metadata/page-layouts',
+    path: '/metadata/pageLayouts',
     body: pageLayoutData,
     bearer: API_KEY_ACCESS_TOKEN,
   });
@@ -35,7 +35,7 @@ export const deleteTestPageLayoutWithRestApi = async (
 ): Promise<void> => {
   await makeRestAPIRequest({
     method: 'delete',
-    path: `/metadata/page-layouts/${pageLayoutId}`,
+    path: `/metadata/pageLayouts/${pageLayoutId}`,
     bearer: API_KEY_ACCESS_TOKEN,
   }).catch(() => {});
 };

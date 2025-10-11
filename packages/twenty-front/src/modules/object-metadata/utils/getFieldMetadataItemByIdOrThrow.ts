@@ -1,6 +1,5 @@
-import { CustomError } from '@/error-handler/CustomError';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type GetFieldMetadataItemByIdParams = {
   fieldMetadataId: string;

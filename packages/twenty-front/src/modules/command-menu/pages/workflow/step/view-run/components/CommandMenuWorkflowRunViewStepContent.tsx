@@ -1,3 +1,4 @@
+import { CommandMenuWorkflowRunStepContentComponentInstanceContext } from '@/command-menu/pages/workflow/step/view-run/states/contexts/CommandMenuWorkflowRunStepContentComponentInstanceContext';
 import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
 import { getShouldFocusNodeTab } from '@/command-menu/pages/workflow/step/view-run/utils/getShouldFocusNodeTab';
@@ -12,6 +13,7 @@ import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
+import { WorkflowIteratorSubStepSwitcher } from '@/workflow/workflow-steps/components/WorkflowIteratorSubStepSwitcher';
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
 import { WorkflowRunStepNodeDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepNodeDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
@@ -112,46 +114,54 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
   ];
 
   return (
-    <StyledContainer>
-      {shouldFocusNodeTab ? (
-        <WorkflowRunStepNodeDetail
-          stepId={workflowSelectedNode}
-          trigger={flow.trigger}
-          steps={flow.steps}
-          stepExecutionStatus={stepExecutionStatus}
-        />
-      ) : (
-        <>
-          <StyledTabList
-            tabs={tabs}
-            behaveAsLinks={false}
-            componentInstanceId={commandMenuPageComponentInstance.instanceId}
+    <CommandMenuWorkflowRunStepContentComponentInstanceContext.Provider
+      value={{
+        instanceId: `${workflowRunId}_${workflowSelectedNode}`,
+      }}
+    >
+      <StyledContainer>
+        {shouldFocusNodeTab ? (
+          <WorkflowRunStepNodeDetail
+            stepId={workflowSelectedNode}
+            trigger={flow.trigger}
+            steps={flow.steps}
+            stepExecutionStatus={stepExecutionStatus}
           />
-
-          {activeTabId === WorkflowRunTabId.OUTPUT ? (
-            <WorkflowRunStepOutputDetail
-              key={workflowSelectedNode}
-              stepId={workflowSelectedNode}
+        ) : (
+          <>
+            <StyledTabList
+              tabs={tabs}
+              behaveAsLinks={false}
+              componentInstanceId={commandMenuPageComponentInstance.instanceId}
             />
-          ) : null}
 
-          {activeTabId === WorkflowRunTabId.NODE ? (
-            <WorkflowRunStepNodeDetail
-              stepId={workflowSelectedNode}
-              trigger={flow.trigger}
-              steps={flow.steps}
-              stepExecutionStatus={stepExecutionStatus}
-            />
-          ) : null}
+            {activeTabId === WorkflowRunTabId.OUTPUT ? (
+              <WorkflowRunStepOutputDetail
+                key={workflowSelectedNode}
+                stepId={workflowSelectedNode}
+              />
+            ) : null}
 
-          {activeTabId === WorkflowRunTabId.INPUT ? (
-            <WorkflowRunStepInputDetail
-              key={workflowSelectedNode}
-              stepId={workflowSelectedNode}
-            />
-          ) : null}
-        </>
-      )}
-    </StyledContainer>
+            {activeTabId === WorkflowRunTabId.NODE ? (
+              <WorkflowRunStepNodeDetail
+                stepId={workflowSelectedNode}
+                trigger={flow.trigger}
+                steps={flow.steps}
+                stepExecutionStatus={stepExecutionStatus}
+              />
+            ) : null}
+
+            {activeTabId === WorkflowRunTabId.INPUT ? (
+              <WorkflowRunStepInputDetail
+                key={workflowSelectedNode}
+                stepId={workflowSelectedNode}
+              />
+            ) : null}
+
+            <WorkflowIteratorSubStepSwitcher stepId={workflowSelectedNode} />
+          </>
+        )}
+      </StyledContainer>
+    </CommandMenuWorkflowRunStepContentComponentInstanceContext.Provider>
   );
 };

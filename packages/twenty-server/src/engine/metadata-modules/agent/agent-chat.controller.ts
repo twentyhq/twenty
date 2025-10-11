@@ -9,14 +9,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { UIDataTypes, UIMessage, UITools } from 'ai';
 import { Response } from 'express';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 
 import { AgentChatService } from './agent-chat.service';
@@ -63,45 +64,21 @@ export class AgentChatController {
     @Body()
     body: {
       threadId: string;
-      userMessage: string;
-      fileIds?: string[];
+      messages: UIMessage<unknown, UIDataTypes, UITools>[];
       recordIdsByObjectMetadataNameSingular?: RecordIdsByObjectMetadataNameSingularType;
     },
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: Workspace,
-    @Res() res: Response,
+    @Res() response: Response,
   ) {
-    try {
-      await this.agentStreamingService.streamAgentChat({
-        threadId: body.threadId,
-        userMessage: body.userMessage,
-        userWorkspaceId,
-        workspace,
-        fileIds: body.fileIds || [],
-        recordIdsByObjectMetadataNameSingular:
-          body.recordIdsByObjectMetadataNameSingular || [],
-        res,
-      });
-    } catch (error) {
-      // Handle errors at controller level for streaming responses
-      // since the RestApiExceptionFilter interferes with our streaming error handling
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error occurred';
-
-      if (!res.headersSent) {
-        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-        res.setHeader('Transfer-Encoding', 'chunked');
-        res.setHeader('Cache-Control', 'no-cache');
-      }
-
-      res.write(
-        JSON.stringify({
-          type: 'error',
-          message: errorMessage,
-        }) + '\n',
-      );
-
-      res.end();
-    }
+    this.agentStreamingService.streamAgentChat({
+      threadId: body.threadId,
+      messages: body.messages,
+      userWorkspaceId,
+      workspace,
+      recordIdsByObjectMetadataNameSingular:
+        body.recordIdsByObjectMetadataNameSingular || [],
+      response,
+    });
   }
 }

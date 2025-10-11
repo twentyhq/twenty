@@ -2,26 +2,28 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
+import { convertViewFilterOperandToCoreOperand } from 'twenty-shared/utils';
 import { DataSource, In, Repository, type QueryRunner } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { type ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
-import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
-import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
-import { type ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
-import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
+import { type ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
+import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
+import { type ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
+import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { type ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
@@ -29,7 +31,6 @@ import { type ViewFilterWorkspaceEntity } from 'src/modules/view/standard-object
 import { type ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { type ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 import { convertViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/convert-view-filter-workspace-value-to-core-value';
 
 @Command({
@@ -477,7 +478,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       viewName = 'All {objectLabelPlural}';
     }
 
-    const coreView: Partial<ViewEntity> = {
+    const coreView: QueryDeepPartialEntity<ViewEntity> = {
       id: workspaceView.id,
       name: viewName,
       objectMetadataId: workspaceView.objectMetadataId,
@@ -517,7 +518,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     queryRunner: QueryRunner,
   ): Promise<void> {
     for (const field of workspaceViewFields) {
-      const coreViewField: Partial<ViewFieldEntity> = {
+      const coreViewField: QueryDeepPartialEntity<ViewFieldEntity> = {
         id: field.id,
         fieldMetadataId: field.fieldMetadataId,
         viewId: field.viewId,
@@ -549,7 +550,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      const coreViewFilter: Partial<ViewFilterEntity> = {
+      const coreViewFilter: QueryDeepPartialEntity<ViewFilterEntity> = {
         id: filter.id,
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
@@ -586,7 +587,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
 
       const direction = sort.direction.toUpperCase() as ViewSortDirection;
 
-      const coreViewSort: Partial<ViewSortEntity> = {
+      const coreViewSort: QueryDeepPartialEntity<ViewSortEntity> = {
         id: sort.id,
         fieldMetadataId: sort.fieldMetadataId,
         viewId: sort.viewId,
@@ -616,7 +617,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      const coreViewGroup: Partial<ViewGroupEntity> = {
+      const coreViewGroup: QueryDeepPartialEntity<ViewGroupEntity> = {
         id: group.id,
         fieldMetadataId: group.fieldMetadataId,
         viewId: group.viewId,
@@ -644,20 +645,21 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     )) {
-      const coreViewFilterGroup: Partial<ViewFilterGroupEntity> = {
-        id: filterGroup.id,
-        viewId: filterGroup.viewId,
-        logicalOperator:
-          filterGroup.logicalOperator as ViewFilterGroupLogicalOperator,
-        parentViewFilterGroupId: filterGroup.parentViewFilterGroupId,
-        positionInViewFilterGroup: filterGroup.positionInViewFilterGroup,
-        workspaceId,
-        createdAt: new Date(filterGroup.createdAt),
-        updatedAt: new Date(filterGroup.updatedAt),
-        deletedAt: filterGroup.deletedAt
-          ? new Date(filterGroup.deletedAt)
-          : null,
-      };
+      const coreViewFilterGroup: QueryDeepPartialEntity<ViewFilterGroupEntity> =
+        {
+          id: filterGroup.id,
+          viewId: filterGroup.viewId,
+          logicalOperator:
+            filterGroup.logicalOperator as ViewFilterGroupLogicalOperator,
+          parentViewFilterGroupId: filterGroup.parentViewFilterGroupId,
+          positionInViewFilterGroup: filterGroup.positionInViewFilterGroup,
+          workspaceId,
+          createdAt: new Date(filterGroup.createdAt),
+          updatedAt: new Date(filterGroup.updatedAt),
+          deletedAt: filterGroup.deletedAt
+            ? new Date(filterGroup.deletedAt)
+            : null,
+        };
 
       const repository = queryRunner.manager.getRepository(
         ViewFilterGroupEntity,

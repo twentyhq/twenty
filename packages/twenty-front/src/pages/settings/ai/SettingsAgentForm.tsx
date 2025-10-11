@@ -71,9 +71,10 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           description: agent.description,
           icon: agent.icon || 'IconRobot',
           modelId: agent.modelId,
-          role: agent.roleId ?? undefined,
+          role: agent.roleId,
           prompt: agent.prompt,
           isCustom: agent.isCustom,
+          modelConfiguration: agent.modelConfiguration || {},
         });
       } else {
         enqueueErrorSnackBar({
@@ -118,8 +119,9 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           description: formValues.description,
           icon: formValues.icon,
           modelId: formValues.modelId,
-          roleId: formValues.role || undefined,
+          roleId: formValues.role,
           prompt: formValues.prompt,
+          modelConfiguration: formValues.modelConfiguration,
         };
 
         await createAgent({
@@ -142,8 +144,9 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             description: formValues.description,
             icon: formValues.icon,
             modelId: formValues.modelId,
-            roleId: formValues.role || undefined,
+            roleId: formValues.role,
             prompt: formValues.prompt,
+            modelConfiguration: formValues.modelConfiguration,
           },
         },
       });

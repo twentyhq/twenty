@@ -17,7 +17,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useMorphRelationToOneFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
-
   const { chipGeneratorPerObjectPerField } = useContext(
     PreComputedChipGeneratorsContext,
   );
@@ -34,13 +33,10 @@ export const useMorphRelationToOneFieldDisplay = () => {
 
   const button = fieldDefinition.editButtonIcon;
 
-  const fieldName = fieldDefinition.metadata.fieldName;
-
   const morphFieldValueWithObjectName = useRecoilValue(
     recordStoreMorphManyToOneValueWithObjectNameFamilySelector({
       recordId,
       morphRelations: fieldDefinition.metadata.morphRelations,
-      fieldName,
     }),
   );
 

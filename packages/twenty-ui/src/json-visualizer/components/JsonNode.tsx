@@ -1,7 +1,6 @@
 import {
   isBoolean,
   isNonEmptyString,
-  isNull,
   isNumber,
   isString,
 } from '@sniptt/guards';
@@ -16,6 +15,7 @@ import { JsonObjectNode } from '@ui/json-visualizer/components/JsonObjectNode';
 import { JsonValueNode } from '@ui/json-visualizer/components/JsonValueNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { isArray } from '@ui/json-visualizer/utils/isArray';
+import { isDefined } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 
 export const JsonNode = ({
@@ -33,7 +33,7 @@ export const JsonNode = ({
 
   const highlighting = getNodeHighlighting?.(keyPath);
 
-  if (isNull(value)) {
+  if (!isDefined(value)) {
     return (
       <JsonValueNode
         label={label}

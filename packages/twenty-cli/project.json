@@ -4,17 +4,27 @@
   "projectType": "application",
   "tags": ["scope:cli"],
   "targets": {
-    "build": {
+    "after-build": {
       "executor": "nx:run-commands",
       "cache": true,
       "options": {
         "cwd": "packages/twenty-cli",
         "commands": ["rimraf dist", "tsc"]
       },
-      "dependsOn": ["^build"]
+      "dependsOn": ["^after-build"]
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "packages/twenty-cli",
+        "commands": ["cp -R src/constants/base-application-project dist/constants"]
+      },
+      "dependsOn": ["after-build"]
     },
     "dev": {
       "executor": "nx:run-commands",
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-cli",
         "command": "tsx src/cli.ts"

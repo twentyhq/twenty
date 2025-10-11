@@ -11,6 +11,8 @@ import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { assertEdgeHasDefinedHandlesOrThrow } from '@/workflow/workflow-diagram/utils/assertEdgeHasDefinedHandlesOrThrow';
+import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/utils/assertWorkflowConnectionOrThrow';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
@@ -21,8 +23,13 @@ import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
-import { addEdge, ReactFlowProvider } from '@xyflow/react';
-import React from 'react';
+import {
+  addEdge,
+  ReactFlowProvider,
+  type Connection,
+  type Edge,
+} from '@xyflow/react';
+import React, { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramCanvasEditable = () => {
@@ -72,6 +79,30 @@ export const WorkflowDiagramCanvasEditable = () => {
       }),
     });
   };
+
+  const handleReconnect = useCallback(
+    async (oldEdge: Edge, connection: Connection) => {
+      assertEdgeHasDefinedHandlesOrThrow(oldEdge);
+      assertWorkflowConnectionOrThrow(connection);
+
+      await deleteEdge({
+        source: oldEdge.source,
+        target: oldEdge.target,
+        sourceConnectionOptions: getConnectionOptionsForSourceHandle({
+          sourceHandleId: oldEdge.sourceHandle,
+        }),
+      });
+
+      await createEdge({
+        source: connection.source,
+        target: connection.target,
+        connectionOptions: getConnectionOptionsForSourceHandle({
+          sourceHandleId: connection.sourceHandle,
+        }),
+      });
+    },
+    [deleteEdge, createEdge],
+  );
 
   const onDeleteEdge = async (edge: WorkflowDiagramEdge) => {
     await deleteEdge({
@@ -140,6 +171,7 @@ export const WorkflowDiagramCanvasEditable = () => {
         tagColor={tagProps.color}
         tagText={tagProps.text}
         onConnect={onConnect}
+        onReconnect={handleReconnect}
         onNodeDragStop={onNodeDragStop}
         handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable

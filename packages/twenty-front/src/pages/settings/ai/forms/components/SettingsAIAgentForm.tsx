@@ -9,6 +9,7 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { isDefined } from 'twenty-shared/utils';
 import { useGetRolesQuery } from '~/generated-metadata/graphql';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
+import { SettingsAgentModelCapabilities } from '../../components/SettingsAgentModelCapabilities';
 import { type SettingsAIAgentFormValues } from '../../hooks/useSettingsAgentFormState';
 
 const StyledFormContainer = styled.div`
@@ -52,13 +53,18 @@ export const SettingsAIAgentForm = ({
   const modelOptions = useAiModelOptions();
   const { data: rolesData } = useGetRolesQuery();
 
-  const rolesOptions =
-    rolesData?.getRoles
+  const rolesOptions = [
+    {
+      label: t`None`,
+      value: null,
+    },
+    ...(rolesData?.getRoles
       ?.filter((role) => role.canBeAssignedToAgents)
       .map((role) => ({
         label: role.label,
         value: role.id,
-      })) || [];
+      })) || []),
+  ];
 
   const noModelsAvailable = modelOptions.length === 0;
 
@@ -122,6 +128,19 @@ export const SettingsAIAgentForm = ({
         )}
       </StyledFormContainer>
 
+      {formValues.modelId && (
+        <StyledFormContainer>
+          <SettingsAgentModelCapabilities
+            selectedModelId={formValues.modelId}
+            modelConfiguration={formValues.modelConfiguration || {}}
+            onConfigurationChange={(configuration) =>
+              onFieldChange('modelConfiguration', configuration)
+            }
+            disabled={disabled}
+          />
+        </StyledFormContainer>
+      )}
+
       <StyledFormContainer>
         <Select
           dropdownId="ai-role-select"
@@ -129,10 +148,6 @@ export const SettingsAIAgentForm = ({
           value={formValues.role || ''}
           onChange={(value) => onFieldChange('role', value)}
           options={rolesOptions}
-          emptyOption={{
-            label: t`Select a role`,
-            value: '',
-          }}
           disabled={disabled}
         />
       </StyledFormContainer>

@@ -4,12 +4,10 @@ import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-me
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
 describe.each(fieldMetadataEnumTypes)(
@@ -25,12 +23,6 @@ describe.each(fieldMetadataEnumTypes)(
     const { failing: failingTestCases } = testCases;
 
     beforeAll(async () => {
-      await updateFeatureFlag({
-        expectToFail: false,
-        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        value: true,
-      });
-
       const {
         labelPlural,
         description,
@@ -55,25 +47,17 @@ describe.each(fieldMetadataEnumTypes)(
     });
 
     afterAll(async () => {
-      try {
-        await updateOneObjectMetadata({
-          expectToFail: false,
-          input: {
-            idToUpdate: createdObjectMetadataId,
-            updatePayload: { isActive: false },
-          },
-        });
-        await deleteOneObjectMetadata({
-          expectToFail: false,
-          input: { idToDelete: createdObjectMetadataId },
-        });
-      } finally {
-        await updateFeatureFlag({
-          expectToFail: false,
-          featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-          value: false,
-        });
-      }
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: createdObjectMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: createdObjectMetadataId },
+      });
     });
 
     test.each(eachTestingContextFilter(failingTestCases))(

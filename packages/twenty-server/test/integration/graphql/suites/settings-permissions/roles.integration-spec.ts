@@ -2,6 +2,7 @@ import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
 import { fieldTextMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -89,7 +90,7 @@ describe('roles permissions', () => {
 
       expect(resp.status).toBe(200);
       expect(resp.body.errors).toBeUndefined();
-      expect(resp.body.data.getRoles).toHaveLength(5);
+      expect(resp.body.data.getRoles).toHaveLength(7);
 
       const roles = resp.body.data.getRoles;
       const guestRole = roles.find((role: any) => role.label === 'Guest');
@@ -466,6 +467,15 @@ describe('roles permissions', () => {
       });
 
       afterAll(async () => {
+        await updateOneObjectMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: listingObjectId,
+            updatePayload: {
+              isActive: false,
+            },
+          },
+        });
         await deleteOneObjectMetadata({
           expectToFail: false,
           input: { idToDelete: listingObjectId },

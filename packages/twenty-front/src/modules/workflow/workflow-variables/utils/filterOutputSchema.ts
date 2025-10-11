@@ -104,6 +104,10 @@ const filterBaseOutputSchema = ({
   for (const key in outputSchema) {
     const field = outputSchema[key];
 
+    if (!isDefined(field)) {
+      continue;
+    }
+
     if (field.isLeaf) {
       if (isFieldTypeCompatibleWithRecordId(field.type)) {
         filteredSchema[key] = field;

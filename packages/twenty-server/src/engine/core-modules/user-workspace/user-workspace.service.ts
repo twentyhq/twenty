@@ -217,6 +217,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return workspace;
   }
 
+  async countUserWorkspaces(userId: string): Promise<number> {
+    return await this.userWorkspaceRepository.count({ where: { userId } });
+  }
+
   async findAvailableWorkspacesByEmail(email: string) {
     const user = await this.userRepository.findOne({
       where: {
@@ -381,7 +385,12 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       id: workspace.id,
       displayName: workspace.displayName,
       workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
-      logo: workspace.logo,
+      logo: workspace.logo
+        ? this.fileService.signFileUrl({
+            url: workspace.logo,
+            workspaceId: workspace.id,
+          })
+        : workspace.logo,
       sso:
         workspace.workspaceSSOIdentityProviders?.reduce(
           (acc, identityProvider) =>

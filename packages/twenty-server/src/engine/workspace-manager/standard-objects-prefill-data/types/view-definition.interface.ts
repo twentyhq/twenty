@@ -1,4 +1,5 @@
 import { type MessageDescriptor } from '@lingui/core';
+import { type ViewFilterOperand } from 'twenty-shared/types';
 
 import { type AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
@@ -26,7 +27,7 @@ export interface ViewDefinition {
   filters?: {
     fieldMetadataId: string;
     displayValue: string;
-    operand: string;
+    operand: ViewFilterOperand;
     value: string;
   }[];
   groups?: {

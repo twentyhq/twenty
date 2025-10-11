@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { DataSource, IsNull, Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -78,7 +80,7 @@ export class ApiKeyService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<ApiKey>,
+    updateData: QueryDeepPartialEntity<ApiKey>,
   ): Promise<ApiKey | null> {
     const apiKey = await this.findById(id, workspaceId);
 
@@ -112,8 +114,7 @@ export class ApiKeyService {
         'This API Key is revoked',
         ApiKeyExceptionCode.API_KEY_REVOKED,
         {
-          userFriendlyMessage:
-            'This API Key has been revoked and can no longer be used.',
+          userFriendlyMessage: msg`This API Key has been revoked and can no longer be used.`,
         },
       );
     }
@@ -123,8 +124,7 @@ export class ApiKeyService {
         'This API Key has expired',
         ApiKeyExceptionCode.API_KEY_EXPIRED,
         {
-          userFriendlyMessage:
-            'This API Key has expired. Please create a new one.',
+          userFriendlyMessage: msg`This API Key has expired. Please create a new one.`,
         },
       );
     }

@@ -9,9 +9,9 @@ const isParentStep = ({
   currentStep: WorkflowStep;
   potentialParentStep: WorkflowStep;
   steps: WorkflowStep[];
-}) => {
+}): boolean => {
   if (potentialParentStep.type === 'ITERATOR') {
-    return (
+    return !!(
       potentialParentStep.settings.input.initialLoopStepIds?.includes(
         currentStep.id,
       ) || potentialParentStep.nextStepIds?.includes(currentStep.id)
@@ -19,7 +19,7 @@ const isParentStep = ({
   }
 
   if (currentStep.type === 'ITERATOR') {
-    return (
+    return !!(
       potentialParentStep.nextStepIds?.includes(currentStep.id) &&
       !isLastStepOfLoop({
         iterator: currentStep,
@@ -29,7 +29,7 @@ const isParentStep = ({
     );
   }
 
-  return potentialParentStep.nextStepIds?.includes(currentStep.id);
+  return !!potentialParentStep.nextStepIds?.includes(currentStep.id);
 };
 
 export const getPreviousSteps = ({

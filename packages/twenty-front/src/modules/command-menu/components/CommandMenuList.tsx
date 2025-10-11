@@ -2,6 +2,7 @@ import { ActionComponent } from '@/action-menu/actions/display/components/Action
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { type ActionGroupConfig } from '@/command-menu/components/CommandMenu';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
+import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
@@ -30,7 +31,7 @@ const StyledInnerList = styled.div`
   );
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
 
   @media (min-width: ${MOBILE_VIEWPORT}px) {
@@ -74,7 +75,7 @@ export const CommandMenuList = ({
       <ScrollWrapper componentInstanceId={`scroll-wrapper-command-menu`}>
         <StyledInnerList>
           <SelectableList
-            selectableListInstanceId="command-menu-list"
+            selectableListInstanceId={COMMAND_MENU_LIST_SELECTABLE_LIST_ID}
             focusId={SIDE_PANEL_FOCUS_ID}
             selectableItemIdArray={selectableItemIds}
             onSelect={() => {

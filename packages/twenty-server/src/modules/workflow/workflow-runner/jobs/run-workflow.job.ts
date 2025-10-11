@@ -2,7 +2,6 @@ import { Scope } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -37,7 +36,6 @@ export class RunWorkflowJob {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly metricsService: MetricsService,
     private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Process(RunWorkflowJob.name)

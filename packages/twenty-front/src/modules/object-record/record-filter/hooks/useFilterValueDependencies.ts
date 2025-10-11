@@ -1,6 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { type RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { useRecoilValue } from 'recoil';
+import { type RecordFilterValueDependencies } from 'twenty-shared/types';
 
 export const useFilterValueDependencies = (): {
   filterValueDependencies: RecordFilterValueDependencies;

@@ -1,5 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormBooleanFieldInput } from '../FormBooleanFieldInput';
 
 const meta: Meta<typeof FormBooleanFieldInput> = {
@@ -7,6 +11,7 @@ const meta: Meta<typeof FormBooleanFieldInput> = {
   component: FormBooleanFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;
@@ -18,7 +23,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('False');
+    await canvas.findByText('Select a value');
   },
 };
 
@@ -30,6 +35,17 @@ export const WithLabel: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Boolean');
+  },
+};
+
+export const EmptyByDefault: Story = {
+  args: {
+    defaultValue: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Select a value');
   },
 };
 
@@ -86,5 +102,87 @@ export const Disabled: Story = {
 
     const variablePicker = canvas.queryByText('VariablePicker');
     expect(variablePicker).not.toBeInTheDocument();
+  },
+};
+
+export const ChangesValueToTrue: Story = {
+  args: {
+    defaultValue: undefined,
+    label: 'Boolean',
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const select = await canvas.findByText('Select a value');
+
+    await userEvent.click(select);
+
+    const trueOption = await within(
+      getCanvasElementForDropdownTesting(),
+    ).findByText('True');
+
+    await userEvent.click(trueOption);
+
+    await waitFor(() => {
+      expect(args.onChange).toHaveBeenCalledWith(true);
+    });
+  },
+};
+
+export const ChangesValueToFalse: Story = {
+  args: {
+    defaultValue: undefined,
+    label: 'Boolean',
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const select = await canvas.findByText('Select a value');
+
+    await userEvent.click(select);
+
+    const falseOption = await within(
+      getCanvasElementForDropdownTesting(),
+    ).findByText('False');
+
+    await userEvent.click(falseOption);
+
+    await waitFor(() => {
+      expect(args.onChange).toHaveBeenCalledWith(false);
+    });
+  },
+};
+
+export const ChangesValueToVariable: Story = {
+  args: {
+    defaultValue: undefined,
+    label: 'Boolean',
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const addVariableButton = await canvas.findByRole('button', {
+      name: 'Add variable',
+    });
+
+    await userEvent.click(addVariableButton);
+
+    await waitFor(() => {
+      expect(args.onChange).toHaveBeenCalledWith(`{{${MOCKED_STEP_ID}.name}}`);
+    });
   },
 };

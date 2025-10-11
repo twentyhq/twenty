@@ -3,10 +3,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import assert from 'assert';
-
 import { Not, Repository } from 'typeorm';
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  findOrThrow,
+  isDefined,
+} from 'twenty-shared/utils';
 import { differenceInDays } from 'date-fns';
 
 import type Stripe from 'stripe';
@@ -50,12 +52,14 @@ import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/c
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { ensureFutureStartDate } from 'src/engine/core-modules/billing/utils/ensure-future-start-date.util';
+import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
   constructor(
     private readonly stripeSubscriptionService: StripeSubscriptionService,
+    private readonly billingPriceService: BillingPriceService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingProductService: BillingProductService,
     @InjectRepository(BillingEntitlement)
@@ -80,10 +84,10 @@ export class BillingSubscriptionService {
     });
   }
 
-  async getCurrentBillingSubscriptionOrThrow(criteria: {
+  async getCurrentBillingSubscription(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
-  }) {
+  }): Promise<BillingSubscription | undefined> {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
         where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
@@ -93,12 +97,32 @@ export class BillingSubscriptionService {
         ],
       });
 
-    assert(
-      notCanceledSubscriptions.length <= 1,
-      `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
+    if (notCanceledSubscriptions.length > 1) {
+      throw new BillingException(
+        `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
+        BillingExceptionCode.BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND,
+      );
+    }
+
+    return notCanceledSubscriptions[0];
+  }
+
+  async getCurrentBillingSubscriptionOrThrow(criteria: {
+    workspaceId?: string;
+    stripeCustomerId?: string;
+  }): Promise<BillingSubscription> {
+    const notCanceledSubscription =
+      await this.getCurrentBillingSubscription(criteria);
+
+    assertIsDefinedOrThrow(
+      notCanceledSubscription,
+      new BillingException(
+        `No active subscription found for workspace ${criteria.workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      ),
     );
 
-    return notCanceledSubscriptions?.[0];
+    return notCanceledSubscription;
   }
 
   async getBaseProductCurrentBillingSubscriptionItemOrThrow(
@@ -138,10 +162,9 @@ export class BillingSubscriptionService {
   }
 
   async deleteSubscriptions(workspaceId: string) {
-    const subscriptionToCancel =
-      await this.getCurrentBillingSubscriptionOrThrow({
-        workspaceId,
-      });
+    const subscriptionToCancel = await this.getCurrentBillingSubscription({
+      workspaceId,
+    });
 
     if (subscriptionToCancel) {
       await this.stripeSubscriptionService.cancelSubscription(
@@ -238,7 +261,7 @@ export class BillingSubscriptionService {
     await this.stripeSubscriptionScheduleService.replaceEditablePhases(
       updatedSchedule.id,
       {
-        currentSnapshot: currentMutated ?? undefined,
+        currentPhaseSnapshot: currentMutated ?? undefined,
         nextPhase: nextForUpdate,
       },
     );
@@ -351,15 +374,20 @@ export class BillingSubscriptionService {
         ],
       });
 
+    const { stripePriceId: meterStripePriceId } = findOrThrow(
+      billingSubscription.billingSubscriptionItems,
+      (billingSubscriptionItem) =>
+        billingSubscriptionItem.billingProduct.metadata.productKey ===
+        BillingProductKey.WORKFLOW_NODE_EXECUTION,
+    );
+
     await this.stripeSubscriptionService.updateSubscription(
       billingSubscription.stripeSubscriptionId,
       {
-        billing_thresholds: {
-          amount_gte: this.twentyConfigService.get(
-            'BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT',
+        billing_thresholds:
+          await this.billingPriceService.getBillingThresholdsByMeterPriceId(
+            meterStripePriceId,
           ),
-          reset_billing_cycle_anchor: false,
-        },
       },
     );
 
@@ -379,6 +407,8 @@ export class BillingSubscriptionService {
   }
 
   async getMeteredBillingPriceByPriceId(stripePriceId: string) {
+    assertIsDefinedOrThrow(stripePriceId);
+
     const currentMeteredBillingPrice =
       await this.billingPriceRepository.findOneOrFail({
         where: {
@@ -504,21 +534,12 @@ export class BillingSubscriptionService {
     return currentBillingSubscription;
   }
 
-  private async getBillingThresholdsByPriceId(priceId: string) {
-    const price = await this.billingPriceRepository.findOneByOrFail({
-      stripePriceId: priceId,
-    });
-
-    return this.stripeSubscriptionService.getBillingThresholdsByInterval(
-      price.interval,
-    );
-  }
-
   private async loadScheduleEditable(stripeSubscriptionId: string) {
     const subscription =
       await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
         stripeSubscriptionId,
       );
+
     const schedule =
       await this.stripeSubscriptionScheduleService.findOrCreateSubscriptionSchedule(
         subscription,
@@ -731,12 +752,11 @@ export class BillingSubscriptionService {
       : currentLicensedId;
     const currentMutated = currentSnap
       ? mutateCurrentNow
-        ? this.billingSubscriptionPhaseService.buildSnapshot(
+        ? await this.billingSubscriptionPhaseService.buildSnapshot(
             currentSnap,
             currentLicensedId,
             currentPhaseDetails.quantity,
             mappedCurrentMeteredId,
-            await this.getBillingThresholdsByPriceId(currentLicensedId),
           )
         : currentSnap
       : undefined;
@@ -760,13 +780,13 @@ export class BillingSubscriptionService {
       items: baseItems,
       proration_behavior: 'none',
     };
-    const nextMutated = this.billingSubscriptionPhaseService.buildSnapshot(
-      nextPhaseBase,
-      nextLicensedId,
-      nextPhaseDetails?.quantity ?? currentPhaseDetails.quantity,
-      mappedNextMeteredId,
-      await this.getBillingThresholdsByPriceId(nextLicensedId),
-    );
+    const nextMutated =
+      await this.billingSubscriptionPhaseService.buildSnapshot(
+        nextPhaseBase,
+        nextLicensedId,
+        nextPhaseDetails?.quantity ?? currentPhaseDetails.quantity,
+        mappedNextMeteredId,
+      );
 
     return {
       currentSnap,
@@ -963,7 +983,7 @@ export class BillingSubscriptionService {
           updateType: 'interval',
         });
 
-      return this.upgradeIntervalNowWithReanchor(
+      await this.upgradeIntervalNowWithReanchor(
         billingSubscription.stripeSubscriptionId,
         {
           licensedPriceId: targetLicensedPrice.stripePriceId,
@@ -971,6 +991,52 @@ export class BillingSubscriptionService {
           seats,
         },
       );
+
+      const { currentEditable, nextEditable, subscription, schedule } =
+        await this.loadScheduleEditable(
+          billingSubscription.stripeSubscriptionId,
+        );
+
+      if (nextEditable && currentEditable) {
+        const reloadedNextDetails =
+          await this.billingSubscriptionPhaseService.getDetailsFromPhase(
+            nextEditable as BillingSubscriptionSchedulePhase,
+          );
+
+        const mappedNext = await this.resolvePrices({
+          interval: SubscriptionInterval.Year,
+          planKey: reloadedNextDetails.plan.planKey,
+          meteredPriceId: reloadedNextDetails.meteredPrice.stripePriceId,
+          updateType: 'interval',
+        });
+
+        const currentSnap =
+          this.billingSubscriptionPhaseService.toSnapshot(currentEditable);
+
+        const nextPhaseForYear =
+          await this.billingSubscriptionPhaseService.buildSnapshot(
+            {
+              start_date: ensureFutureStartDate(
+                (currentSnap?.end_date as number | undefined) ??
+                  subscription.current_period_end,
+              ),
+              items: currentSnap.items,
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+            mappedNext.targetLicensedPrice.stripePriceId,
+            reloadedNextDetails.quantity,
+            mappedNext.targetMeteredPrice.stripePriceId,
+          );
+
+        return await this.scheduleReplaceNext({
+          subscription,
+          scheduleId: schedule.id,
+          currentPhaseSnapshot: currentSnap,
+          nextPhase: nextPhaseForYear,
+        });
+      }
+
+      return;
     }
 
     // Case C: Year -> Month
@@ -1089,7 +1155,7 @@ export class BillingSubscriptionService {
       return;
     }
 
-    // Case B: PRO -> ENTERPRISE (immediate)
+    // Case B: PRO -> ENTERPRISE
     if (
       currentPlan === BillingPlanKey.PRO &&
       targetPlanKey === BillingPlanKey.ENTERPRISE
@@ -1097,7 +1163,7 @@ export class BillingSubscriptionService {
       const { targetLicensedPrice, targetMeteredPrice } =
         await this.resolvePrices({
           interval,
-          planKey: BillingPlanKey.ENTERPRISE,
+          planKey: targetPlanKey,
           meteredPriceId: currentMeteredPriceId,
           updateType: 'plan',
         });
@@ -1106,8 +1172,54 @@ export class BillingSubscriptionService {
         licensedPriceId: targetLicensedPrice.stripePriceId,
         meteredPriceId: targetMeteredPrice.stripePriceId,
         seats,
-        planMeta: BillingPlanKey.ENTERPRISE,
+        planMeta: targetPlanKey,
       });
+
+      const { currentEditable, nextEditable, subscription, schedule } =
+        await this.loadScheduleEditable(stripeSubscriptionId);
+
+      if (nextEditable && currentEditable) {
+        const nextDetails =
+          await this.billingSubscriptionPhaseService.getDetailsFromPhase(
+            nextEditable as BillingSubscriptionSchedulePhase,
+          );
+
+        const preservedNextInterval = nextDetails?.interval ?? interval;
+        const preservedNextMeteredId =
+          nextDetails?.meteredPrice.stripePriceId ?? currentMeteredPriceId;
+
+        const mappedNext = await this.resolvePrices({
+          interval: preservedNextInterval,
+          planKey: targetPlanKey,
+          meteredPriceId: preservedNextMeteredId,
+          updateType: 'plan',
+        });
+
+        const currentPhaseSnapshot =
+          this.billingSubscriptionPhaseService.toSnapshot(currentEditable);
+
+        const nextPhase =
+          await this.billingSubscriptionPhaseService.buildSnapshot(
+            {
+              start_date: ensureFutureStartDate(
+                (currentPhaseSnapshot?.end_date as number | undefined) ??
+                  subscription.current_period_end,
+              ),
+              items: currentPhaseSnapshot.items,
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+            mappedNext.targetLicensedPrice.stripePriceId,
+            nextDetails.quantity,
+            mappedNext.targetMeteredPrice.stripePriceId,
+          );
+
+        return await this.scheduleReplaceNext({
+          subscription,
+          scheduleId: schedule.id,
+          currentPhaseSnapshot,
+          nextPhase,
+        });
+      }
 
       return;
     }
@@ -1138,12 +1250,12 @@ export class BillingSubscriptionService {
 
       const nextPrices = await this.resolvePrices({
         interval: preservedNextInterval,
-        planKey: BillingPlanKey.PRO,
+        planKey: targetPlanKey,
         meteredPriceId: preservedNextMeteredId,
         updateType: 'plan',
       });
 
-      await this.downgradeDeferred(stripeSubscriptionId, {
+      return await this.downgradeDeferred(stripeSubscriptionId, {
         current: {
           licensedPriceId: currentPrices.targetLicensedPrice.stripePriceId,
           meteredPriceId: currentMeteredPriceId,
@@ -1156,8 +1268,6 @@ export class BillingSubscriptionService {
           planKey: BillingPlanKey.PRO,
         },
       });
-
-      return;
     }
 
     throw new BillingException(
@@ -1187,7 +1297,6 @@ export class BillingSubscriptionService {
       seats,
       anchor,
       proration,
-      thresholdsPriceId,
       metadata,
     } = params;
 
@@ -1200,13 +1309,11 @@ export class BillingSubscriptionService {
         ],
         ...(anchor ? { billing_cycle_anchor: anchor } : {}),
         ...(proration ? { proration_behavior: proration } : {}),
-        ...(thresholdsPriceId
-          ? {
-              billing_thresholds:
-                await this.getBillingThresholdsByPriceId(thresholdsPriceId),
-            }
-          : {}),
         ...(metadata ? { metadata } : {}),
+        billing_thresholds:
+          await this.billingPriceService.getBillingThresholdsByMeterPriceId(
+            meteredPriceId,
+          ),
       },
     );
   }
@@ -1214,16 +1321,16 @@ export class BillingSubscriptionService {
   private async scheduleReplaceNext(params: {
     scheduleId: string;
     subscription: SubscriptionWithSchedule | Stripe.Subscription;
-    currentSnapshot: Stripe.SubscriptionScheduleUpdateParams.Phase;
+    currentPhaseSnapshot: Stripe.SubscriptionScheduleUpdateParams.Phase;
     nextPhase?: Stripe.SubscriptionScheduleUpdateParams.Phase;
   }): Promise<void> {
-    const { scheduleId, currentSnapshot } = params;
+    const { scheduleId, currentPhaseSnapshot, subscription } = params;
     let { nextPhase } = params;
 
     if (
       nextPhase &&
       (await this.billingSubscriptionPhaseService.isSamePhaseSignature(
-        currentSnapshot,
+        currentPhaseSnapshot,
         nextPhase,
       ))
     ) {
@@ -1233,18 +1340,19 @@ export class BillingSubscriptionService {
     await this.stripeSubscriptionScheduleService.replaceEditablePhases(
       scheduleId,
       {
-        currentSnapshot,
+        currentPhaseSnapshot,
         nextPhase,
       },
     );
     const refreshed =
       await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
-        (params.subscription as Stripe.Subscription).id ??
-          (params.subscription as SubscriptionWithSchedule).id,
+        subscription.id,
       );
     const workspaceId = (
-      await this.billingSubscriptionRepository.findOneByOrFail({
-        stripeSubscriptionId: refreshed.id,
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: {
+          stripeSubscriptionId: refreshed.id,
+        },
       })
     ).workspaceId;
 
@@ -1253,38 +1361,46 @@ export class BillingSubscriptionService {
 
   private async upgradePlanNow(
     stripeSubscriptionId: string,
-    prices: {
+    newPrices: {
       licensedPriceId: string;
       meteredPriceId: string;
       seats: number;
       planMeta?: BillingPlanKey;
     },
   ): Promise<void> {
-    const sub = await this.billingSubscriptionRepository.findOneOrFail({
-      where: { stripeSubscriptionId },
-      relations: [
-        'billingSubscriptionItems',
-        'billingSubscriptionItems.billingProduct',
-      ],
-    });
+    const currentSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { stripeSubscriptionId },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
+      });
 
-    const licensed = this.getCurrentLicensedBillingSubscriptionItemOrThrow(sub);
-    const metered = this.getCurrentMeteredBillingSubscriptionItemOrThrow(sub);
+    const currentLicenseSubsciptionItem =
+      this.getCurrentLicensedBillingSubscriptionItemOrThrow(
+        currentSubscription,
+      );
+    const currentMeteredSubsciptionItem =
+      this.getCurrentMeteredBillingSubscriptionItemOrThrow(currentSubscription);
 
     const updatedSubscription = await this.updateSubscription({
       stripeSubscriptionId,
-      licensedItemId: licensed.stripeSubscriptionItemId,
-      meteredItemId: metered.stripeSubscriptionItemId,
-      licensedPriceId: prices.licensedPriceId,
-      meteredPriceId: prices.meteredPriceId,
-      seats: prices.seats,
+      licensedItemId: currentLicenseSubsciptionItem.stripeSubscriptionItemId,
+      meteredItemId: currentMeteredSubsciptionItem.stripeSubscriptionItemId,
+      licensedPriceId: newPrices.licensedPriceId,
+      meteredPriceId: newPrices.meteredPriceId,
+      seats: newPrices.seats,
       proration: 'create_prorations',
-      metadata: prices.planMeta
-        ? { ...(sub?.metadata || {}), plan: prices.planMeta }
+      metadata: newPrices.planMeta
+        ? { ...(currentSubscription?.metadata || {}), plan: newPrices.planMeta }
         : undefined,
     });
 
-    await this.syncSubscriptionToDatabase(sub.workspaceId, updatedSubscription);
+    await this.syncSubscriptionToDatabase(
+      currentSubscription.workspaceId,
+      updatedSubscription,
+    );
   }
 
   private async upgradeIntervalNowWithReanchor(
@@ -1348,25 +1464,26 @@ export class BillingSubscriptionService {
 
     const { currentEditable } =
       this.stripeSubscriptionScheduleService.getEditablePhases(schedule);
-    const current = this.billingSubscriptionPhaseService.toSnapshot(
-      currentEditable as Stripe.SubscriptionSchedule.Phase,
-    );
-    const next = this.billingSubscriptionPhaseService.buildSnapshot(
+    const currentPhaseSnapshot =
+      this.billingSubscriptionPhaseService.toSnapshot(
+        currentEditable as Stripe.SubscriptionSchedule.Phase,
+      );
+    const next = await this.billingSubscriptionPhaseService.buildSnapshot(
       {
-        start_date: current.end_date ?? subscription.current_period_end,
-        items: current.items,
+        start_date:
+          currentPhaseSnapshot.end_date ?? subscription.current_period_end,
+        items: currentPhaseSnapshot.items,
         proration_behavior: 'none',
       } as Stripe.SubscriptionScheduleUpdateParams.Phase,
       prices.next.licensedPriceId,
       prices.next.seats,
       prices.next.meteredPriceId,
-      await this.getBillingThresholdsByPriceId(prices.next.licensedPriceId),
     );
 
     await this.scheduleReplaceNext({
       scheduleId: schedule.id,
       subscription,
-      currentSnapshot: current,
+      currentPhaseSnapshot,
       nextPhase: next,
     });
   }

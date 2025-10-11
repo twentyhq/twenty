@@ -5,10 +5,12 @@ import { MAX_RECORDS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/c
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { getRecordFilterLabelValue } from '@/views/utils/getRecordFilterLabelValue';
-import { arrayOfUuidOrVariableSchema } from '@/views/view-filter-value/validation-schemas/arrayOfUuidsOrVariablesSchema';
-import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  arrayOfUuidOrVariableSchema,
+  isDefined,
+  jsonRelationFilterValueSchema,
+} from 'twenty-shared/utils';
 
 type ObjectFilterDropdownRecordSelectProps = {
   recordFilter: RecordFilter;

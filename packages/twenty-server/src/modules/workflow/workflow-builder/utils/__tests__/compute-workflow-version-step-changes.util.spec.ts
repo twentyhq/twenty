@@ -13,7 +13,6 @@ describe('computeWorkflowVersionStepChanges', () => {
     name: 'Test Manual Trigger',
     type: WorkflowTriggerType.MANUAL,
     settings: {
-      input: {},
       outputSchema: {},
     },
     nextStepIds: ['step-1'],

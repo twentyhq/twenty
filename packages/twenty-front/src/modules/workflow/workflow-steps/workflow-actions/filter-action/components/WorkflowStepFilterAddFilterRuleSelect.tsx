@@ -25,7 +25,7 @@ const BASE_NEW_STEP_FILTER = {
   type: 'unknown',
   label: '',
   value: '',
-  operand: ViewFilterOperand.Is,
+  operand: ViewFilterOperand.IS,
   displayValue: '',
   stepFilterGroupId: '',
   stepOutputKey: '',

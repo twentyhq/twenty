@@ -1,5 +1,3 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
@@ -14,7 +12,6 @@ import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -76,15 +73,13 @@ export const PageLayoutGridLayout = () => {
 
   const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
-
   const { currentPageLayout } = useCurrentPageLayout();
 
   if (!isDefined(activeTabId) || !isDefined(currentPageLayout)) {
     return null;
   }
 
-  const activeTabWidgets = currentPageLayout?.tabs.find(
+  const activeTabWidgets = currentPageLayout.tabs.find(
     (tab) => tab.id === activeTabId,
   )?.widgets;
 
@@ -129,19 +124,12 @@ export const PageLayoutGridLayout = () => {
         >
           {isLayoutEmpty ? (
             <div key="empty-placeholder" data-select-disable="true">
-              <WidgetPlaceholder
-                onClick={() => {
-                  navigatePageLayoutCommandMenu({
-                    commandMenuPage:
-                      CommandMenuPages.PageLayoutWidgetTypeSelect,
-                  });
-                }}
-              />
+              <WidgetPlaceholder />
             </div>
           ) : (
             activeTabWidgets?.map((widget) => (
               <div key={widget.id} data-select-disable="true">
-                <WidgetRenderer widget={widget as Widget} />
+                <WidgetRenderer widget={widget} />
               </div>
             ))
           )}

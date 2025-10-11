@@ -2,9 +2,10 @@ import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftS
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { type PageLayout } from '@/page-layout/types/pageLayoutTypes';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
@@ -48,35 +49,8 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
         const updatedPageLayout = data?.updatePageLayoutWithTabsAndWidgets;
 
         if (isDefined(updatedPageLayout)) {
-          const pageLayoutToPersist: PageLayout = {
-            id: updatedPageLayout.id,
-            name: updatedPageLayout.name,
-            type: updatedPageLayout.type,
-            objectMetadataId: updatedPageLayout.objectMetadataId,
-            tabs:
-              updatedPageLayout.tabs?.map((tab) => ({
-                id: tab.id,
-                title: tab.title,
-                position: tab.position,
-                pageLayoutId: tab.pageLayoutId,
-                createdAt: tab.createdAt,
-                updatedAt: tab.updatedAt,
-                widgets:
-                  tab.widgets?.map((widget) => ({
-                    id: widget.id,
-                    title: widget.title,
-                    type: widget.type,
-                    pageLayoutTabId: widget.pageLayoutTabId,
-                    objectMetadataId: widget.objectMetadataId,
-                    configuration: widget.configuration,
-                    gridPosition: widget.gridPosition,
-                    createdAt: widget.createdAt,
-                    updatedAt: widget.updatedAt,
-                  })) ?? [],
-              })) ?? [],
-            createdAt: updatedPageLayout.createdAt,
-            updatedAt: updatedPageLayout.updatedAt,
-          };
+          const pageLayoutToPersist: PageLayout =
+            transformPageLayout(updatedPageLayout);
 
           set(pageLayoutPersistedCallbackState, pageLayoutToPersist);
           set(

@@ -1,3 +1,4 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
@@ -9,7 +10,6 @@ import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOr
 import { type WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -203,7 +203,7 @@ export const WorkflowEditActionCreateRecord = ({
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
             return;

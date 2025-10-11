@@ -1,8 +1,17 @@
 {
-  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json",
-  "standardId": "550e8400-e29b-41d4-a716-446655440000",
-  "label": "Hello World 👋",
-  "description": "A friendly AI companion that greets users and helps them get started with Twenty CRM",
-  "icon": "🌟",
-  "version": "1.0.0"
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
+  "universalIdentifier": "4ec0391d-18d5-411c-b2f3-266ddc1c3ef7",
+  "name": "Hello world",
+  "description": "A hello-world application example",
+  "dependencies": {
+    "axios": "^1.12.2"
+  }
 }

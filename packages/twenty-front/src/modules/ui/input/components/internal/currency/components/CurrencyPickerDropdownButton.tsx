@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { CurrencyCode } from 'twenty-shared/constants';
 
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';

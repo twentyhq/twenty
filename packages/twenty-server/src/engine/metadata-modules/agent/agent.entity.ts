@@ -16,6 +16,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ModelConfiguration } from 'src/engine/metadata-modules/agent/types/modelConfiguration';
 
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentHandoffEntity } from './agent-handoff.entity';
@@ -69,8 +70,8 @@ export class AgentEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @ManyToOne(() => ApplicationEntity, {
-    onDelete: 'SET NULL',
+  @ManyToOne(() => ApplicationEntity, (application) => application.agents, {
+    onDelete: 'CASCADE',
     nullable: true,
   })
   @JoinColumn({ name: 'applicationId' })
@@ -93,4 +94,7 @@ export class AgentEntity {
 
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  modelConfiguration: ModelConfiguration;
 }

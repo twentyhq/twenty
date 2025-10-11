@@ -51,7 +51,7 @@ const CONFIGURED_ACTION: WorkflowFilterAction = {
           id: 'filter-1',
           stepFilterGroupId: 'filter-group-1',
           stepOutputKey: 'company.name',
-          operand: ViewFilterOperand.Contains,
+          operand: ViewFilterOperand.CONTAINS,
           value: 'Acme',
           type: 'string',
         },

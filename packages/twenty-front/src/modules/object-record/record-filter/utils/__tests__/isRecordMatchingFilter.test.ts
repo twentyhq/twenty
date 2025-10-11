@@ -1,4 +1,4 @@
-import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 

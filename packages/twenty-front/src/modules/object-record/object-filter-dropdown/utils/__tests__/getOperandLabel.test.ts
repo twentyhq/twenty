@@ -5,13 +5,13 @@ import { getOperandLabel, getOperandLabelShort } from '../getOperandLabel';
 
 describe('getOperandLabel', () => {
   const testCases = [
-    [ViewFilterOperand.Contains, 'Contains'],
-    [ViewFilterOperand.DoesNotContain, "Doesn't contain"],
-    [ViewFilterOperand.GreaterThanOrEqual, 'Greater than or equal'],
-    [ViewFilterOperand.LessThanOrEqual, 'Less than or equal'],
-    [ViewFilterOperand.Is, 'Is'],
-    [ViewFilterOperand.IsNot, 'Is not'],
-    [ViewFilterOperand.IsNotNull, 'Is not null'],
+    [ViewFilterOperand.CONTAINS, 'Contains'],
+    [ViewFilterOperand.DOES_NOT_CONTAIN, "Doesn't contain"],
+    [ViewFilterOperand.GREATER_THAN_OR_EQUAL, 'Greater than or equal'],
+    [ViewFilterOperand.LESS_THAN_OR_EQUAL, 'Less than or equal'],
+    [ViewFilterOperand.IS, 'Is'],
+    [ViewFilterOperand.IS_NOT, 'Is not'],
+    [ViewFilterOperand.IS_NOT_NULL, 'Is not null'],
     [undefined, ''], // undefined operand
   ];
 
@@ -27,13 +27,13 @@ describe('getOperandLabel', () => {
 
 describe('getOperandLabelShort', () => {
   const testCases = [
-    [ViewFilterOperand.Is, ': '],
-    [ViewFilterOperand.Contains, ': '],
-    [ViewFilterOperand.IsNot, ': Not'],
-    [ViewFilterOperand.DoesNotContain, ': Not'],
-    [ViewFilterOperand.IsNotNull, ': NotNull'],
-    [ViewFilterOperand.GreaterThanOrEqual, '\u00A0≥ '],
-    [ViewFilterOperand.LessThanOrEqual, '\u00A0≤ '],
+    [ViewFilterOperand.IS, ': '],
+    [ViewFilterOperand.CONTAINS, ': '],
+    [ViewFilterOperand.IS_NOT, ': Not'],
+    [ViewFilterOperand.DOES_NOT_CONTAIN, ': Not'],
+    [ViewFilterOperand.IS_NOT_NULL, ': NotNull'],
+    [ViewFilterOperand.GREATER_THAN_OR_EQUAL, '\u00A0≥ '],
+    [ViewFilterOperand.LESS_THAN_OR_EQUAL, '\u00A0≤ '],
     [undefined, ': '], // undefined operand
   ];
 

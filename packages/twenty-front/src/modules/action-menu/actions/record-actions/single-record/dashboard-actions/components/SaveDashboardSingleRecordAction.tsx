@@ -17,8 +17,8 @@ export const SaveDashboardSingleRecordAction = () => {
   const { setIsDashboardInEditMode } =
     useSetIsDashboardInEditMode(pageLayoutId);
 
-  const handleClick = () => {
-    savePageLayout();
+  const handleClick = async () => {
+    await savePageLayout();
     setIsDashboardInEditMode(false);
   };
 

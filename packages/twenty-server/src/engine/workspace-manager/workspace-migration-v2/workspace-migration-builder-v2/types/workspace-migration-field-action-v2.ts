@@ -4,12 +4,12 @@ import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migr
 
 export type CreateFieldAction = {
   type: 'create_field';
-  flatFieldMetadata: FlatFieldMetadata;
+  objectMetadataId: string;
+  flatFieldMetadatas: FlatFieldMetadata[];
 };
 
 export type UpdateFieldAction = {
   type: 'update_field';
-  workspaceId: string;
   fieldMetadataId: string;
   objectMetadataId: string;
   updates: Array<

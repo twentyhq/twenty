@@ -8,7 +8,6 @@ export const recordTableRowContextValue: RecordTableRowContextValue = {
   recordId: 'recordId',
   pathToShowPage: '/',
   objectNameSingular: 'objectNameSingular',
-  inView: true,
 };
 
 export const recordTableRowDraggableContextValue: RecordTableRowDraggableContextValue = {

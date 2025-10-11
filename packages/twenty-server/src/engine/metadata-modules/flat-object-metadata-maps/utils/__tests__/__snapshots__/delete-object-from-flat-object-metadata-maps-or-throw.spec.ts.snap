@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`deleteObjectFromFlatObjectMetadataMapsOrThrow should throw when object metadata to delete does not exist 1`] = `"deleteObjectFromFlatObjectMetadataMapsOrThrow: object to delete not found"`;

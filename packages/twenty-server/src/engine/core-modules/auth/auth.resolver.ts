@@ -61,7 +61,6 @@ import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -75,6 +74,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginToken } from './dto/login-token.entity';
@@ -99,8 +99,6 @@ import { AuthService } from './services/auth.service';
 )
 export class AuthResolver {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(AppToken)
@@ -345,7 +343,7 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.findUserByEmailOrThrow(email);
 
     await this.twoFactorAuthenticationService.validateStrategy(
       user.id,
@@ -430,11 +428,9 @@ export class AuthResolver {
           })
         : undefined;
 
-    const existingUser = await this.userRepository.findOne({
-      where: {
-        email: signUpInput.email,
-      },
-    });
+    const existingUser = await this.userService.findUserByEmail(
+      signUpInput.email,
+    );
 
     const { userData } = this.authService.formatUserDataPayload(
       {
@@ -490,6 +486,10 @@ export class AuthResolver {
     @AuthUser() currentUser: User,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpOutput> {
+    await this.signInUpService.checkWorkspaceCreationIsAllowedOrThrow(
+      currentUser,
+    );
+
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: currentUser },
     );
@@ -632,7 +632,7 @@ export class AuthResolver {
     email: string,
     workspaceId: string,
   ): Promise<{ user: User; userWorkspace: UserWorkspace }> {
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.findUserByEmailOrThrow(email);
 
     await this.authService.checkIsEmailVerified(user.isEmailVerified);
 
@@ -703,18 +703,33 @@ export class AuthResolver {
 
     const hasServerLevelImpersonatePermission =
       impersonatorUserWorkspace.user.canImpersonate === true &&
-      impersonatorUserWorkspace.workspace.allowImpersonation === true;
+      toImpersonateUserWorkspace.workspace.allowImpersonation === true;
 
-    if (isServerLevelImpersonation && !hasServerLevelImpersonatePermission) {
+    if (isServerLevelImpersonation) {
+      if (!hasServerLevelImpersonatePermission) {
+        await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+          eventName: 'server.impersonation.token_exchange_failed',
+          message: `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
+        });
+
+        throw new AuthException(
+          'Server level impersonation not allowed on this workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
       await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: 'server.impersonation.token_exchange_failed',
-        message: `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
+        eventName: `server.impersonation.token_exchange_success`,
+        message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
 
-      throw new AuthException(
-        'Server level impersonation not allowed on this workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+      return {
+        workspaceId: workspace.id,
+        impersonatorUserWorkspaceId: impersonatorUserWorkspace.id,
+        impersonatedUserWorkspaceId: toImpersonateUserWorkspace.id,
+        impersonatorUserId: impersonatorUserWorkspace.user.id,
+        impersonatedUserId: toImpersonateUserWorkspace.user.id,
+      };
     }
 
     const hasWorkspaceLevelImpersonatePermission =
@@ -724,12 +739,9 @@ export class AuthResolver {
         workspaceId: workspace.id,
       });
 
-    if (
-      !hasWorkspaceLevelImpersonatePermission &&
-      !hasServerLevelImpersonatePermission
-    ) {
+    if (!hasWorkspaceLevelImpersonatePermission) {
       await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.token_exchange_failed`,
+        eventName: 'workspace.impersonation.token_exchange_failed',
         message: `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
       throw new AuthException(
@@ -739,7 +751,7 @@ export class AuthResolver {
     }
 
     await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.token_exchange_success`,
+      eventName: 'workspace.impersonation.token_exchange_success',
       message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
     });
 

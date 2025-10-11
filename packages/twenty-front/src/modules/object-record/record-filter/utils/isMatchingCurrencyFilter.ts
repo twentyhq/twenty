@@ -1,5 +1,5 @@
-import { type CurrencyFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type CurrencyFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const isMatchingCurrencyCodeFilter = (

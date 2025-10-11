@@ -28,7 +28,11 @@ import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam'
 import { type ApolloError } from '@apollo/client';
 import { formatDistanceToNow } from 'date-fns';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  generateILikeFiltersForCompositeFields,
+  getSettingsPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import {
   AppTooltip,
   Avatar,
@@ -47,7 +51,6 @@ import {
   useImpersonateMutation,
 } from '~/generated-metadata/graphql';
 
-import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';

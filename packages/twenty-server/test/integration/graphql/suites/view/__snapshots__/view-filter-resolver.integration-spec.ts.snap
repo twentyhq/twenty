@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Filter Resolver deleteCoreViewFilter should throw an error when deleting non-existent view filter 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View filter to delete not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Filter Resolver destroyCoreViewFilter should throw an error when destroying non-existent view filter 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View filter to destroy not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Filter Resolver updateCoreViewFilter should throw an error when updating non-existent view filter 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View filter to update not found",
+  "name": "NotFoundError",
+}
+`;

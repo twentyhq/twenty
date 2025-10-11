@@ -1,3 +1,4 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
@@ -7,12 +8,11 @@ import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUp
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
-import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
+import { INDEX_FILE_NAME } from '@/serverless-functions/constants/IndexFileName';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
@@ -38,6 +38,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
+import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
@@ -159,7 +160,12 @@ export const WorkflowEditActionServerlessFunction = ({
     }
     setFormValues((prevState) => ({
       ...prevState,
-      code: { ...prevState.code, [INDEX_FILE_PATH]: newCode },
+      code: {
+        ...prevState.code,
+        [SOURCE_FOLDER_NAME]: {
+          [INDEX_FILE_NAME]: newCode,
+        },
+      },
     }));
     await handleSave();
     await handleUpdateFunctionInputSchema(newCode);
@@ -381,7 +387,7 @@ export const WorkflowEditActionServerlessFunction = ({
       <StyledFullScreenCodeEditorContainer>
         <CodeEditor
           height="100%"
-          value={formValues.code?.[INDEX_FILE_PATH]}
+          value={formValues.code?.[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME]}
           language="typescript"
           onChange={handleCodeChange}
           onMount={handleEditorDidMount}
@@ -408,7 +414,7 @@ export const WorkflowEditActionServerlessFunction = ({
             WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID
           }
         />
-        <WorkflowStepHeader
+        <SidePanelHeader
           onTitleChange={(newName: string) => {
             updateAction({ name: newName });
           }}
@@ -428,7 +434,7 @@ export const WorkflowEditActionServerlessFunction = ({
                 readonly={actionOptions.readonly}
               />
               <WorkflowServerlessFunctionCodeEditor
-                value={formValues.code?.[INDEX_FILE_PATH]}
+                value={formValues.code?.[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME]}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
                 options={{

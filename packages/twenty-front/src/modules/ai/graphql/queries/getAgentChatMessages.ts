@@ -7,13 +7,31 @@ export const GET_AGENT_CHAT_MESSAGES = gql`
       threadId
       role
       createdAt
-      rawContent
-      files {
+      parts {
         id
-        name
-        fullPath
-        size
+        messageId
+        orderIndex
         type
+        textContent
+        reasoningContent
+        toolName
+        toolCallId
+        toolInput
+        toolOutput
+        state
+        errorMessage
+        errorDetails
+        sourceUrlSourceId
+        sourceUrlUrl
+        sourceUrlTitle
+        sourceDocumentSourceId
+        sourceDocumentMediaType
+        sourceDocumentTitle
+        sourceDocumentFilename
+        fileMediaType
+        fileFilename
+        fileUrl
+        providerMetadata
         createdAt
       }
     }

@@ -1,13 +1,46 @@
-import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
+import {
+  type ApolloClient,
+  type NormalizedCacheObject,
+  useApolloClient,
+} from '@apollo/client';
+import { type MockedResponse } from '@apollo/client/testing';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { MemoryRouter } from 'react-router-dom';
 
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
+import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
-import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
-import { RecoilRoot } from 'recoil';
-import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
+import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
+import {
+  GraphOrderBy,
+  GraphType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
+import {
+  AxisNameDisplay,
+  type BarChartConfiguration,
+  ExtendedAggregateOperations,
+  PageLayoutType,
+  type PageLayoutWidget,
+} from '~/generated/graphql';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const mockPersonObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+const idField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: mockPersonObjectMetadataItem,
+  fieldName: 'id',
+});
+const nameField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: mockPersonObjectMetadataItem,
+  fieldName: 'name',
+});
+const createdAtField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: mockPersonObjectMetadataItem,
+  fieldName: 'createdAt',
+});
 
 const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
@@ -23,7 +56,7 @@ const mixedGraphsPageLayoutMocks = {
   id: 'mixed-graphs-layout',
   name: 'Mixed Graph Dashboard',
   type: PageLayoutType.DASHBOARD,
-  objectMetadataId: null,
+  objectMetadataId: mockPersonObjectMetadataItem.id,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
   deletedAt: null,
@@ -44,7 +77,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Revenue',
-          objectMetadataId: null,
+          objectMetadataId: mockPersonObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 0,
@@ -53,7 +86,10 @@ const mixedGraphsPageLayoutMocks = {
             columnSpan: 3,
           },
           configuration: {
+            __typename: 'NumberChartConfiguration',
             graphType: GraphType.NUMBER,
+            aggregateOperation: ExtendedAggregateOperations.COUNT,
+            aggregateFieldMetadataId: idField.id,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -65,7 +101,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Goal Progress',
-          objectMetadataId: null,
+          objectMetadataId: mockPersonObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 0,
@@ -74,7 +110,11 @@ const mixedGraphsPageLayoutMocks = {
             columnSpan: 3,
           },
           configuration: {
+            __typename: 'GaugeChartConfiguration',
             graphType: GraphType.GAUGE,
+            aggregateOperation: ExtendedAggregateOperations.COUNT,
+            aggregateFieldMetadataId: idField.id,
+            displayDataLabel: false,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -86,7 +126,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Revenue Sources',
-          objectMetadataId: null,
+          objectMetadataId: mockPersonObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 0,
@@ -95,7 +135,12 @@ const mixedGraphsPageLayoutMocks = {
             columnSpan: 3,
           },
           configuration: {
+            __typename: 'PieChartConfiguration',
             graphType: GraphType.PIE,
+            aggregateOperation: ExtendedAggregateOperations.COUNT,
+            aggregateFieldMetadataId: idField.id,
+            groupByFieldMetadataId: createdAtField.id,
+            orderBy: GraphOrderBy.VALUE_DESC,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -107,7 +152,7 @@ const mixedGraphsPageLayoutMocks = {
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Quarterly Comparison',
-          objectMetadataId: null,
+          objectMetadataId: mockPersonObjectMetadataItem.id,
           gridPosition: {
             __typename: 'GridPosition',
             row: 2,
@@ -116,8 +161,15 @@ const mixedGraphsPageLayoutMocks = {
             columnSpan: 6,
           },
           configuration: {
+            __typename: 'BarChartConfiguration',
             graphType: GraphType.BAR,
-          },
+            aggregateOperation: ExtendedAggregateOperations.COUNT,
+            aggregateFieldMetadataId: nameField.id,
+            groupByFieldMetadataIdX: createdAtField.id,
+            orderByX: GraphOrderBy.FIELD_ASC,
+            axisNameDisplay: AxisNameDisplay.BOTH,
+            displayDataLabel: false,
+          } satisfies BarChartConfiguration,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
@@ -126,6 +178,11 @@ const mixedGraphsPageLayoutMocks = {
     },
   ],
 };
+
+const barChartGroupByQuery = generateGroupByQuery({
+  objectMetadataItem: mockPersonObjectMetadataItem,
+  aggregateOperations: ['totalCount'],
+});
 
 const graphqlMocks: MockedResponse[] = [
   {
@@ -141,7 +198,69 @@ const graphqlMocks: MockedResponse[] = [
       },
     },
   },
+  {
+    request: {
+      query: barChartGroupByQuery,
+      variables: {
+        groupBy: [
+          {
+            createdAt: {
+              granularity: 'DAY',
+            },
+          },
+        ],
+      },
+    },
+    result: {
+      data: {
+        peopleGroupBy: [
+          {
+            groupByDimensionValues: ['2024-01-15T00:00:00.000Z'],
+            totalCount: 12,
+          },
+          {
+            groupByDimensionValues: ['2024-02-15T00:00:00.000Z'],
+            totalCount: 18,
+          },
+          {
+            groupByDimensionValues: ['2024-03-15T00:00:00.000Z'],
+            totalCount: 25,
+          },
+          {
+            groupByDimensionValues: ['2024-04-15T00:00:00.000Z'],
+            totalCount: 15,
+          },
+          {
+            groupByDimensionValues: ['2024-05-15T00:00:00.000Z'],
+            totalCount: 22,
+          },
+          {
+            groupByDimensionValues: ['2024-06-15T00:00:00.000Z'],
+            totalCount: 30,
+          },
+        ],
+      },
+    },
+  },
 ];
+
+const CoreClientProviderWrapper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>;
+
+  return (
+    <ApolloCoreClientContext.Provider value={apolloClient}>
+      {children}
+    </ApolloCoreClientContext.Provider>
+  );
+};
+
+const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: graphqlMocks,
+});
 
 const meta: Meta<typeof PageLayoutRenderer> = {
   title: 'Modules/PageLayout/PageLayoutRenderer',
@@ -149,11 +268,11 @@ const meta: Meta<typeof PageLayoutRenderer> = {
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <MockedProvider mocks={graphqlMocks} addTypename={false}>
-          <RecoilRoot>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
             <Story />
-          </RecoilRoot>
-        </MockedProvider>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
       </MemoryRouter>
     ),
   ],

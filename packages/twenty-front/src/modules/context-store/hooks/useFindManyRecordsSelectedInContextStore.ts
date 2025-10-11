@@ -63,7 +63,7 @@ export const useFindManyRecordsSelectedInContextStore = ({
 
     return (
       foundFieldMetadataItem?.name === 'deletedAt' &&
-      filter.operand === RecordFilterOperand.IsNotEmpty
+      filter.operand === RecordFilterOperand.IS_NOT_EMPTY
     );
   });
 

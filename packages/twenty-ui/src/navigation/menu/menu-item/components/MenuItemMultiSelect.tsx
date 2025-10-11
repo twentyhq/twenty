@@ -19,6 +19,7 @@ type MenuItemMultiSelectProps = {
   LeftIcon?: IconComponent;
   selected: boolean;
   isKeySelected?: boolean;
+  withIconContainer?: boolean;
   text: string;
   className: string;
   onSelectChange?: (selected: boolean) => void;
@@ -27,6 +28,7 @@ type MenuItemMultiSelectProps = {
 export const MenuItemMultiSelect = ({
   color,
   LeftIcon,
+  withIconContainer = false,
   text,
   selected,
   isKeySelected,
@@ -48,7 +50,11 @@ export const MenuItemMultiSelect = ({
         {color ? (
           <Tag color={color} text={text} Icon={LeftIcon} />
         ) : (
-          <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
+          <MenuItemLeftContent
+            LeftIcon={LeftIcon}
+            text={text}
+            withIconContainer={withIconContainer}
+          />
         )}
       </StyledLeftContentWithCheckboxContainer>
     </StyledMenuItemBase>

@@ -1,7 +1,7 @@
 import { WorkflowTextEditorVariableChip } from '@/workflow/workflow-variables/components/WorkflowTextEditorVariableChip';
-import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { Node } from '@tiptap/core';
 import { mergeAttributes, ReactNodeViewRenderer } from '@tiptap/react';
+import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {

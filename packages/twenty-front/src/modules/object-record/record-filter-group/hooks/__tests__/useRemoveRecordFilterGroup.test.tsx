@@ -2,9 +2,9 @@ import { renderHook } from '@testing-library/react';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act } from 'react';
+import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { useRemoveRecordFilterGroup } from '../useRemoveRecordFilterGroup';
 import { useUpsertRecordFilterGroup } from '../useUpsertRecordFilterGroup';

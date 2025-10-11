@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { type CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { currencyCodeSchema } from '@/object-record/record-field/ui/validation-schemas/currencyCodeSchema';
+import { type CurrencyCode } from 'twenty-shared/constants';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
 

@@ -55,80 +55,16 @@ export const getPageLayoutTabDataSeeds = (
   },
   {
     id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.TEAM_OVERVIEW),
-    title: 'Overview',
+    title: 'Team & People',
     position: 0,
     pageLayoutId: generateSeedId(workspaceId, PAGE_LAYOUT_SEEDS.TEAM_DASHBOARD),
     workspaceId,
   },
   {
     id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.TEAM_METRICS),
-    title: 'Metrics',
+    title: 'Tasks & Activity',
     position: 1,
     pageLayoutId: generateSeedId(workspaceId, PAGE_LAYOUT_SEEDS.TEAM_DASHBOARD),
-    workspaceId,
-  },
-  {
-    id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.REVENUE_MAIN),
-    title: 'Revenue',
-    position: 0,
-    pageLayoutId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_SEEDS.REVENUE_ANALYTICS,
-    ),
-    workspaceId,
-  },
-  {
-    id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.MARKETING_MAIN),
-    title: 'Marketing',
-    position: 0,
-    pageLayoutId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_SEEDS.MARKETING_METRICS,
-    ),
-    workspaceId,
-  },
-  {
-    id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.SUPPORT_MAIN),
-    title: 'Support',
-    position: 0,
-    pageLayoutId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_SEEDS.SUPPORT_DASHBOARD,
-    ),
-    workspaceId,
-  },
-  {
-    id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.PRODUCT_MAIN),
-    title: 'Product',
-    position: 0,
-    pageLayoutId: generateSeedId(workspaceId, PAGE_LAYOUT_SEEDS.PRODUCT_USAGE),
-    workspaceId,
-  },
-  {
-    id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.OPERATIONS_MAIN),
-    title: 'Operations',
-    position: 0,
-    pageLayoutId: generateSeedId(workspaceId, PAGE_LAYOUT_SEEDS.OPERATIONS_KPI),
-    workspaceId,
-  },
-  {
-    id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.FINANCE_MAIN),
-    title: 'Finance',
-    position: 0,
-    pageLayoutId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_SEEDS.FINANCE_OVERVIEW,
-    ),
-    workspaceId,
-  },
-  {
-    id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.EXECUTIVE_MAIN),
-    title: 'Executive',
-    position: 0,
-    pageLayoutId: generateSeedId(
-      workspaceId,
-      PAGE_LAYOUT_SEEDS.EXECUTIVE_SUMMARY,
-    ),
     workspaceId,
   },
 ];

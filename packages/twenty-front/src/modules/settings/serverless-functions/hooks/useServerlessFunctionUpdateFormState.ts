@@ -1,4 +1,4 @@
-import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
+import { INDEX_FILE_NAME } from '@/serverless-functions/constants/IndexFileName';
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
@@ -6,6 +6,7 @@ import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { type FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
+import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -13,7 +14,12 @@ export type ServerlessFunctionNewFormValues = {
 };
 
 export type ServerlessFunctionFormValues = ServerlessFunctionNewFormValues & {
-  code: { [filePath: string]: string } | undefined;
+  code: {
+    src: {
+      'index.ts': string;
+    } & { [key: string]: string };
+    '.env'?: string;
+  };
 };
 
 type SetServerlessFunctionFormValues = Dispatch<
@@ -34,7 +40,7 @@ export const useServerlessFunctionUpdateFormState = ({
   const [formValues, setFormValues] = useState<ServerlessFunctionFormValues>({
     name: '',
     description: '',
-    code: undefined,
+    code: { src: { 'index.ts': '' } },
   });
 
   const [serverlessFunctionTestData, setServerlessFunctionTestData] =
@@ -61,7 +67,9 @@ export const useServerlessFunctionUpdateFormState = ({
 
       if (serverlessFunctionTestData.shouldInitInput) {
         const sourceCode =
-          data?.getServerlessFunctionSourceCode?.[INDEX_FILE_PATH];
+          data?.getServerlessFunctionSourceCode?.[SOURCE_FOLDER_NAME]?.[
+            INDEX_FILE_NAME
+          ];
 
         const functionInput = await getFunctionInputFromSourceCode(sourceCode);
 

@@ -1,5 +1,6 @@
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
+import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
@@ -12,7 +13,10 @@ import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelect
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { emitSidePanelCloseEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -21,9 +25,12 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowServerlessFunctionTabListComponentId';
 import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuCloseAnimationCompleteCleanup = () => {
-  const { resetSelectedItem } = useSelectableList('command-menu-list');
+  const { resetSelectedItem } = useSelectableList(
+    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
+  );
 
   const { resetContextStoreStates } = useResetContextStoreStates();
 
@@ -36,6 +43,44 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
 
         resetContextStoreStates(COMMAND_MENU_COMPONENT_INSTANCE_ID);
         resetContextStoreStates(COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID);
+
+        const currentPage = snapshot
+          .getLoadable(commandMenuPageState)
+          .getValue();
+
+        const isPageLayoutEditingPage =
+          currentPage === CommandMenuPages.PageLayoutWidgetTypeSelect ||
+          currentPage === CommandMenuPages.PageLayoutGraphTypeSelect ||
+          currentPage === CommandMenuPages.PageLayoutIframeConfig;
+
+        if (isPageLayoutEditingPage) {
+          const targetedRecordsRule = snapshot
+            .getLoadable(
+              contextStoreTargetedRecordsRuleComponentState.atomFamily({
+                instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+              }),
+            )
+            .getValue();
+
+          if (
+            targetedRecordsRule.mode === 'selection' &&
+            targetedRecordsRule.selectedRecordIds.length === 1
+          ) {
+            const recordId = targetedRecordsRule.selectedRecordIds[0];
+            const record = snapshot
+              .getLoadable(recordStoreFamilyState(recordId))
+              .getValue();
+
+            if (isDefined(record) && isDefined(record.pageLayoutId)) {
+              set(
+                pageLayoutEditingWidgetIdComponentState.atomFamily({
+                  instanceId: record.pageLayoutId,
+                }),
+                null,
+              );
+            }
+          }
+        }
 
         set(viewableRecordIdState, null);
         set(commandMenuPageState, CommandMenuPages.Root);

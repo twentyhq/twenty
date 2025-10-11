@@ -5,13 +5,15 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+
 describe('people merge resolvers (integration)', () => {
-  let createdPersonIds: string[] = [];
+  let createdPersonIdsForCleaning: string[] = [];
 
   afterEach(async () => {
-    if (createdPersonIds.length > 0) {
-      await deleteRecordsByIds('person', createdPersonIds);
-      createdPersonIds = [];
+    if (createdPersonIdsForCleaning.length > 0) {
+      await deleteRecordsByIds('person', createdPersonIdsForCleaning);
+      createdPersonIdsForCleaning = [];
     }
   });
 
@@ -57,15 +59,16 @@ describe('people merge resolvers (integration)', () => {
 
       expect(createResponse.body.data.createPeople).toHaveLength(2);
 
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
+      const createdPersonIds = [...createResponse.body.data.createPeople].map(
+        ({ id }: { id: string }) => id,
+      );
 
-      createdPersonIds.push(person1Id, person2Id);
+      createdPersonIdsForCleaning.push(...createdPersonIds);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 0,
       });
 
@@ -122,15 +125,17 @@ describe('people merge resolvers (integration)', () => {
       const createResponse = await makeGraphqlAPIRequest(
         createPersonsOperation,
       );
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
 
-      createdPersonIds.push(person1Id, person2Id);
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 0,
       });
 
@@ -188,15 +193,17 @@ describe('people merge resolvers (integration)', () => {
       const createResponse = await makeGraphqlAPIRequest(
         createPersonsOperation,
       );
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
 
-      createdPersonIds.push(person1Id, person2Id);
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
 
       const mergeWithPriority1 = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 1,
       });
 
@@ -240,14 +247,20 @@ describe('people merge resolvers (integration)', () => {
           },
         ],
       });
-
       const createResponse = await makeGraphqlAPIRequest(
         createPersonsOperation,
       );
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
 
-      createdPersonIds.push(person1Id, person2Id);
+      const person1Id = createResponse.body.data.createPeople.find(
+        (people: PersonWorkspaceEntity) =>
+          people.emails.primaryEmail === 'test1@example.com',
+      ).id;
+      const person2Id = createResponse.body.data.createPeople.find(
+        (people: PersonWorkspaceEntity) =>
+          people.emails.primaryEmail === 'test2@example.com',
+      ).id;
+
+      createdPersonIdsForCleaning.push(person1Id, person2Id);
 
       const dryRunMergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
@@ -364,15 +377,16 @@ describe('people merge resolvers (integration)', () => {
 
       expect(createResponse.body.data.createPeople).toHaveLength(2);
 
-      const person1Id = createResponse.body.data.createPeople[0].id;
-      const person2Id = createResponse.body.data.createPeople[1].id;
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
 
-      createdPersonIds.push(person1Id, person2Id);
+      createdPersonIdsForCleaning.push(...createdPersonIds);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
-        ids: [person1Id, person2Id],
+        ids: createdPersonIds,
         conflictPriorityIndex: 0,
       });
 

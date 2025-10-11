@@ -3,9 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { getRelationTargetFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-morph-or-relation-target-flat-field-metadata-mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 
 export const PET_FLAT_FIELDS_MOCK = {
   noteTargets: getFlatFieldMetadataMock({
@@ -31,34 +29,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: 'd88d0737-e83a-47b1-b701-8edfe4a2ae2e',
     relationTargetObjectMetadataId: '12e3cb51-c3de-4192-b0d5-965d48d001c0',
     universalIdentifier: '20202020-01fd-4f37-99dc-9427a444018a',
-    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
-      id: 'd88d0737-e83a-47b1-b701-8edfe4a2ae2e',
-      standardId: '20202020-c54e-4804-8b0d-8795e5166432',
-      objectMetadataId: '12e3cb51-c3de-4192-b0d5-965d48d001c0',
-      type: FieldMetadataType.RELATION,
-      name: 'pet',
-      label: 'Pet',
-      defaultValue: null,
-      description: 'NoteTargets Pet',
-      icon: 'IconBuildingSkyscraper',
-      standardOverrides: null,
-      options: null,
-      settings: {
-        onDelete: RelationOnDeleteAction.CASCADE,
-        relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: 'petId',
-      },
-      isCustom: false,
-      isActive: true,
-      isSystem: true,
-      isNullable: true,
-      isUnique: false,
-      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-      isLabelSyncedWithName: false,
-      relationTargetFieldMetadataId: '98afd46e-0259-4c87-969d-16e7e660e007',
-      relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-      universalIdentifier: '20202020-c54e-4804-8b0d-8795e5166432',
-    }),
   }),
   id: getFlatFieldMetadataMock({
     id: 'ce25501a-1cc6-44c5-9158-b602db0efaca',
@@ -83,7 +53,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-eda0-4cee-9577-3eb357e3c22b',
-    flatRelationTargetFieldMetadata: null,
   }),
   name: getFlatFieldMetadataMock({
     id: '4311d4e0-ce63-479c-a4da-5b244e2348cc',
@@ -108,7 +77,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-ba07-4ffd-ba63-009491f5749c',
-    flatRelationTargetFieldMetadata: null,
   }),
   createdAt: getFlatFieldMetadataMock({
     id: '0bbe259b-0fd1-43ca-922f-1c0b7960efbe',
@@ -133,7 +101,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-66ac-4502-9975-e4d959c50311',
-    flatRelationTargetFieldMetadata: null,
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: 'c96d123d-4c13-47ee-85bf-00428ce5e242',
@@ -158,7 +125,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-d767-4622-bdcf-d8a084834d86',
-    flatRelationTargetFieldMetadata: null,
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: 'bbfd9b09-be13-4232-af2c-585a9137aa62',
@@ -183,7 +149,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-b9a7-48d8-8387-b9a3090a50ec',
-    flatRelationTargetFieldMetadata: null,
   }),
   createdBy: getFlatFieldMetadataMock({
     id: '2090b892-376c-4349-990d-6a789b53e31d',
@@ -208,7 +173,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-be0e-4971-865b-32ca87cbb315',
-    flatRelationTargetFieldMetadata: null,
   }),
   position: getFlatFieldMetadataMock({
     id: '3087f7da-f422-4b69-9b95-fadef79dd12a',
@@ -233,7 +197,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
-    flatRelationTargetFieldMetadata: null,
   }),
   timelineActivities: getFlatFieldMetadataMock({
     id: '4eb74f21-1cb4-46b5-b3bb-4e41108e70d9',
@@ -258,34 +221,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: '3cb86390-4ee7-42fa-bd1e-bd6326b47610',
     relationTargetObjectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     universalIdentifier: '20202020-f1ef-4ba4-8f33-1a4577afa477',
-    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
-      id: '3cb86390-4ee7-42fa-bd1e-bd6326b47610',
-      standardId: '20202020-d88f-4020-8c85-d6c600903762',
-      objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
-      type: FieldMetadataType.RELATION,
-      name: 'pet',
-      label: 'Pet',
-      defaultValue: null,
-      description: 'TimelineActivities Pet',
-      icon: 'IconBuildingSkyscraper',
-      standardOverrides: null,
-      options: null,
-      settings: {
-        onDelete: RelationOnDeleteAction.CASCADE,
-        relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: 'petId',
-      },
-      isCustom: false,
-      isActive: true,
-      isSystem: true,
-      isNullable: true,
-      isUnique: false,
-      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-      isLabelSyncedWithName: false,
-      relationTargetFieldMetadataId: '4eb74f21-1cb4-46b5-b3bb-4e41108e70d9',
-      relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-      universalIdentifier: '20202020-d88f-4020-8c85-d6c600903762',
-    }),
   }),
   favorites: getFlatFieldMetadataMock({
     id: '80bc4e7a-6bd1-4f2b-98b1-6333c631cc1a',
@@ -310,34 +245,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: 'd34b4048-bf0c-4c61-8ffe-59f1838a2cc4',
     relationTargetObjectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     universalIdentifier: '20202020-a4a7-4686-b296-1c6c3482ee21',
-    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
-      id: 'd34b4048-bf0c-4c61-8ffe-59f1838a2cc4',
-      standardId: '20202020-1bd7-4d10-80dc-968b9f5d1a8a',
-      objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
-      type: FieldMetadataType.RELATION,
-      name: 'pet',
-      label: 'Pet',
-      defaultValue: null,
-      description: 'Favorites Pet',
-      icon: 'IconBuildingSkyscraper',
-      standardOverrides: null,
-      options: null,
-      settings: {
-        onDelete: RelationOnDeleteAction.CASCADE,
-        relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: 'petId',
-      },
-      isCustom: false,
-      isActive: true,
-      isSystem: true,
-      isNullable: true,
-      isUnique: false,
-      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-      isLabelSyncedWithName: false,
-      relationTargetFieldMetadataId: '80bc4e7a-6bd1-4f2b-98b1-6333c631cc1a',
-      relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-      universalIdentifier: '20202020-1bd7-4d10-80dc-968b9f5d1a8a',
-    }),
   }),
   attachments: getFlatFieldMetadataMock({
     id: '231903d0-3b14-47ed-9a88-fbf11031c451',
@@ -362,34 +269,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: '317a33ef-117e-4953-86d4-c4a9670a2ce3',
     relationTargetObjectMetadataId: '819ed5ff-312f-4423-8e95-02a691cf5c27',
     universalIdentifier: '20202020-8d59-46ca-b7b2-73d167712134',
-    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
-      id: '317a33ef-117e-4953-86d4-c4a9670a2ce3',
-      standardId: '20202020-b715-4658-8b6a-5359824dbddd',
-      objectMetadataId: '819ed5ff-312f-4423-8e95-02a691cf5c27',
-      type: FieldMetadataType.RELATION,
-      name: 'pet',
-      label: 'Pet',
-      defaultValue: null,
-      description: 'Attachments Pet',
-      icon: 'IconBuildingSkyscraper',
-      standardOverrides: null,
-      options: null,
-      settings: {
-        onDelete: RelationOnDeleteAction.CASCADE,
-        relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: 'petId',
-      },
-      isCustom: false,
-      isActive: true,
-      isSystem: true,
-      isNullable: true,
-      isUnique: false,
-      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-      isLabelSyncedWithName: false,
-      relationTargetFieldMetadataId: '231903d0-3b14-47ed-9a88-fbf11031c451',
-      relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-      universalIdentifier: '20202020-b715-4658-8b6a-5359824dbddd',
-    }),
   }),
   taskTargets: getFlatFieldMetadataMock({
     id: '3cae8259-ece8-4b81-9044-f5abae5ff25c',
@@ -414,34 +293,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: '3955a4b4-1c10-4ce8-a92e-98e727ee7aec',
     relationTargetObjectMetadataId: 'bb2b29b8-7f46-4106-a8ae-3a32df9c9166',
     universalIdentifier: '20202020-0860-4566-b865-bff3c626c303',
-    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
-      id: '3955a4b4-1c10-4ce8-a92e-98e727ee7aec',
-      standardId: '20202020-07d9-4d04-8b73-a39ab65943f1',
-      objectMetadataId: 'bb2b29b8-7f46-4106-a8ae-3a32df9c9166',
-      type: FieldMetadataType.RELATION,
-      name: 'pet',
-      label: 'Pet',
-      defaultValue: null,
-      description: 'TaskTargets Pet',
-      icon: 'IconBuildingSkyscraper',
-      standardOverrides: null,
-      options: null,
-      settings: {
-        onDelete: RelationOnDeleteAction.CASCADE,
-        relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: 'petId',
-      },
-      isCustom: false,
-      isActive: true,
-      isSystem: true,
-      isNullable: true,
-      isUnique: false,
-      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-      isLabelSyncedWithName: false,
-      relationTargetFieldMetadataId: '3cae8259-ece8-4b81-9044-f5abae5ff25c',
-      relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-      universalIdentifier: '20202020-07d9-4d04-8b73-a39ab65943f1',
-    }),
   }),
   searchVector: getFlatFieldMetadataMock({
     id: '0db37175-e573-43e4-bd83-fa71923fde0c',
@@ -466,7 +317,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '70e56537-18ef-4811-b1c7-0a444006b815',
-    flatRelationTargetFieldMetadata: null,
   }),
   species: getFlatFieldMetadataMock({
     id: '0292cc51-246f-40b8-99e8-3345dac0e688',
@@ -534,7 +384,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '0292cc51-246f-40b8-99e8-3345dac0e688',
-    flatRelationTargetFieldMetadata: null,
   }),
   traits: getFlatFieldMetadataMock({
     id: '5aaf6be0-b9f5-4222-9810-941d5ab58527',
@@ -602,7 +451,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '5aaf6be0-b9f5-4222-9810-941d5ab58527',
-    flatRelationTargetFieldMetadata: null,
   }),
   comments: getFlatFieldMetadataMock({
     id: '2e726631-d80a-4594-9a5a-3cca0c2a50a9',
@@ -627,7 +475,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '2e726631-d80a-4594-9a5a-3cca0c2a50a9',
-    flatRelationTargetFieldMetadata: null,
   }),
   age: getFlatFieldMetadataMock({
     id: 'ed1573cf-b29e-4d4f-a8e3-19d472d28c0d',
@@ -652,7 +499,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: 'ed1573cf-b29e-4d4f-a8e3-19d472d28c0d',
-    flatRelationTargetFieldMetadata: null,
   }),
   location: getFlatFieldMetadataMock({
     id: '7b05e127-d0ea-422a-8f98-ef48f41d4388',
@@ -686,7 +532,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '7b05e127-d0ea-422a-8f98-ef48f41d4388',
-    flatRelationTargetFieldMetadata: null,
   }),
   vetPhone: getFlatFieldMetadataMock({
     id: '92c856ef-5b4b-4202-8c23-b2f22f959eda',
@@ -716,7 +561,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '92c856ef-5b4b-4202-8c23-b2f22f959eda',
-    flatRelationTargetFieldMetadata: null,
   }),
   vetEmail: getFlatFieldMetadataMock({
     id: '2c89697d-925a-485c-a0ed-adf2f1228e0f',
@@ -741,7 +585,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '2c89697d-925a-485c-a0ed-adf2f1228e0f',
-    flatRelationTargetFieldMetadata: null,
   }),
   birthday: getFlatFieldMetadataMock({
     id: '13c5b4ed-5746-494f-856b-081bdbb4a8ec',
@@ -766,7 +609,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '13c5b4ed-5746-494f-856b-081bdbb4a8ec',
-    flatRelationTargetFieldMetadata: null,
   }),
   isGoodWithKids: getFlatFieldMetadataMock({
     id: 'ec3bf27e-70e6-4d4a-932e-6ef026013603',
@@ -791,7 +633,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: 'ec3bf27e-70e6-4d4a-932e-6ef026013603',
-    flatRelationTargetFieldMetadata: null,
   }),
   pictures: getFlatFieldMetadataMock({
     id: '8aa0a700-c308-4d8b-8fbd-f545daa8980a',
@@ -820,7 +661,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '8aa0a700-c308-4d8b-8fbd-f545daa8980a',
-    flatRelationTargetFieldMetadata: null,
   }),
   averageCostOfKibblePerMonth: getFlatFieldMetadataMock({
     id: '37421848-b64d-4827-be33-da4e337acbb6',
@@ -845,7 +685,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '37421848-b64d-4827-be33-da4e337acbb6',
-    flatRelationTargetFieldMetadata: null,
   }),
   makesOwnerThinkOf: getFlatFieldMetadataMock({
     id: '84b874dc-983d-47eb-9c67-54f557a99f60',
@@ -870,7 +709,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '84b874dc-983d-47eb-9c67-54f557a99f60',
-    flatRelationTargetFieldMetadata: null,
   }),
   soundSwag: getFlatFieldMetadataMock({
     id: '42e6c0d2-6d00-4c77-b179-890af8c56236',
@@ -926,7 +764,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '42e6c0d2-6d00-4c77-b179-890af8c56236',
-    flatRelationTargetFieldMetadata: null,
   }),
   bio: getFlatFieldMetadataMock({
     id: 'fa0ec409-0f29-4b19-b304-31d1018a2344',
@@ -951,7 +788,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: 'fa0ec409-0f29-4b19-b304-31d1018a2344',
-    flatRelationTargetFieldMetadata: null,
   }),
   interestingFacts: getFlatFieldMetadataMock({
     id: '2b806a74-e7a5-4ec7-b902-67cf811e8bda',
@@ -976,7 +812,6 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '2b806a74-e7a5-4ec7-b902-67cf811e8bda',
-    flatRelationTargetFieldMetadata: null,
   }),
   extraData: getFlatFieldMetadataMock({
     id: 'a79bd7c8-c7ce-416a-9d12-a05335c9c596',
@@ -1001,6 +836,5 @@ export const PET_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: 'a79bd7c8-c7ce-416a-9d12-a05335c9c596',
-    flatRelationTargetFieldMetadata: null,
   }),
 } as const satisfies Record<string, FlatFieldMetadata>;

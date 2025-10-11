@@ -8,11 +8,11 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema
       eventName: z
         .string()
         .regex(
-          /^[a-z][a-zA-Z0-9_]*\.(created|updated|deleted)$/,
-          'Event name must follow the pattern: objectName.action (e.g., "company.created", "person.updated")',
+          /^[a-z][a-zA-Z0-9_]*\.(created|updated|deleted|upserted)$/,
+          'Event name must follow the pattern: objectName.action (e.g., "company.created", "person.updated", "company.upserted")',
         )
         .describe(
-          'Event name in format: objectName.action (e.g., "company.created", "person.updated", "task.deleted"). Use lowercase object names.',
+          'Event name in format: objectName.action (e.g., "company.created", "person.updated", "task.deleted", "company.upserted"). Use lowercase object names.',
         ),
       input: z.looseObject({}).optional(),
       outputSchema: z
@@ -25,5 +25,5 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema
     }),
   })
   .describe(
-    'Database event trigger that fires when a record is created, updated, or deleted. The triggered record is accessible in workflow steps via {{trigger.object.fieldName}}.',
+    'Database event trigger that fires when a record is created, updated, deleted, or upserted. The triggered record is accessible in workflow steps via {{trigger.object.fieldName}}.',
   );

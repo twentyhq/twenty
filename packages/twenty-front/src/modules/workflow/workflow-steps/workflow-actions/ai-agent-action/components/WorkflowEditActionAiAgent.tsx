@@ -1,11 +1,11 @@
 import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { type BaseOutputSchemaDeprecated } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
@@ -99,7 +99,7 @@ export const WorkflowEditActionAiAgent = ({
     <RightDrawerSkeletonLoader />
   ) : (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
             return;

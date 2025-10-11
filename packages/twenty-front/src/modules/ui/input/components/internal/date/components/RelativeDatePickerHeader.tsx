@@ -2,7 +2,6 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
-import { variableDateViewFilterValuePartsSchema } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import {
   type VariableDateViewFilterValueDirection,
   type VariableDateViewFilterValueUnit,
@@ -10,6 +9,7 @@ import {
 
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { variableDateViewFilterValuePartsSchema } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ noPadding: boolean }>`
   display: flex;
@@ -92,7 +92,8 @@ export const RelativeDatePickerHeader = (
           };
 
           if (
-            variableDateViewFilterValuePartsSchema.safeParse(valueParts).success
+            variableDateViewFilterValuePartsSchema.safeParse(valueParts)
+              .success === true
           ) {
             props.onChange?.(valueParts);
           }

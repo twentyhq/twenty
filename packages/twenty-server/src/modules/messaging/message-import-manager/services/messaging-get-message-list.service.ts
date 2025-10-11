@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageFolderImportPolicy,
+  type MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
 import { ImapGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service';
@@ -28,8 +31,14 @@ export class MessagingGetMessageListService {
 
   public async getMessageLists(
     messageChannel: MessageChannelWorkspaceEntity,
-    messageFoldersToSync: MessageFolder[],
+    messageFolders: MessageFolder[],
   ): Promise<GetMessageListsResponse> {
+    const messageFoldersToSync: MessageFolder[] =
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.ALL_FOLDERS
+        ? messageFolders
+        : messageFolders.filter((folder) => folder.isSynced);
+
     switch (messageChannel.connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
         return await this.gmailGetMessageListService.getMessageLists({

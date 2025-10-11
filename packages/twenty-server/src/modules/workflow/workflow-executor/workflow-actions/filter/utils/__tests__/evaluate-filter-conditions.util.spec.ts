@@ -48,7 +48,7 @@ describe('evaluateFilterConditions', () => {
     describe('Relation/UUID filter operands', () => {
       it('should return true when values are equal (RELATION)', () => {
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           'John',
           'John',
           'RELATION',
@@ -60,7 +60,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return false when values are not equal (RELATION)', () => {
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           'John',
           'Jane',
           'RELATION',
@@ -72,7 +72,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return false when values are equal (IsNot RELATION)', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           'John',
           'John',
           'RELATION',
@@ -84,7 +84,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return true when values are not equal (IsNot RELATION)', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           'John',
           'Jane',
           'RELATION',
@@ -101,7 +101,7 @@ describe('evaluateFilterConditions', () => {
         const rightValue = uuid1;
 
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           leftObject,
           rightValue,
           'RELATION',
@@ -117,7 +117,7 @@ describe('evaluateFilterConditions', () => {
         const rightObject = { id: uuid1, name: 'John Doe' };
 
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           leftValue,
           rightObject,
           'RELATION',
@@ -133,7 +133,7 @@ describe('evaluateFilterConditions', () => {
         const rightObject = { id: uuid1, title: 'Admin' };
 
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           leftObject,
           rightObject,
           'RELATION',
@@ -150,7 +150,7 @@ describe('evaluateFilterConditions', () => {
         const rightObject = { id: uuid2, name: 'Jane Smith' };
 
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           leftObject,
           rightObject,
           'RELATION',
@@ -167,7 +167,7 @@ describe('evaluateFilterConditions', () => {
         const rightObject = { id: uuid2, name: 'Jane Smith' };
 
         const filter = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           leftObject,
           rightObject,
           'RELATION',
@@ -182,7 +182,7 @@ describe('evaluateFilterConditions', () => {
         const rightObject = { name: 'John Doe' };
 
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           leftObject,
           rightObject,
           'RELATION',
@@ -196,14 +196,14 @@ describe('evaluateFilterConditions', () => {
         const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
         const uuid2 = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
         const filter = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           uuid1,
           uuid2,
           'RELATION',
         );
 
         expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
-          'Operand contains not supported for relation filter',
+          'Operand CONTAINS not supported for relation filter',
         );
       });
     });
@@ -213,14 +213,14 @@ describe('evaluateFilterConditions', () => {
       const uuid2 = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 
       it('should return true when UUIDs are equal (Is)', () => {
-        const filter = createFilter(ViewFilterOperand.Is, uuid1, uuid1, 'UUID');
+        const filter = createFilter(ViewFilterOperand.IS, uuid1, uuid1, 'UUID');
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(true);
       });
 
       it('should return false when UUIDs are not equal (Is)', () => {
-        const filter = createFilter(ViewFilterOperand.Is, uuid1, uuid2, 'UUID');
+        const filter = createFilter(ViewFilterOperand.IS, uuid1, uuid2, 'UUID');
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(false);
@@ -228,7 +228,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return false when UUIDs are equal (IsNot)', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           uuid1,
           uuid1,
           'UUID',
@@ -240,7 +240,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return true when UUIDs are not equal (IsNot)', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           uuid1,
           uuid2,
           'UUID',
@@ -251,14 +251,14 @@ describe('evaluateFilterConditions', () => {
       });
 
       it('should handle null/undefined UUIDs with Is operand', () => {
-        const filter1 = createFilter(ViewFilterOperand.Is, null, null, 'UUID');
+        const filter1 = createFilter(ViewFilterOperand.IS, null, null, 'UUID');
         const filter2 = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           undefined,
           undefined,
           'UUID',
         );
-        const filter3 = createFilter(ViewFilterOperand.Is, uuid1, null, 'UUID');
+        const filter3 = createFilter(ViewFilterOperand.IS, uuid1, null, 'UUID');
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
@@ -267,19 +267,19 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle null/undefined UUIDs with IsNot operand', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           null,
           null,
           'UUID',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           undefined,
           undefined,
           'UUID',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           uuid1,
           null,
           'UUID',
@@ -291,8 +291,8 @@ describe('evaluateFilterConditions', () => {
       });
 
       it('should handle empty string UUIDs', () => {
-        const filter1 = createFilter(ViewFilterOperand.Is, '', '', 'UUID');
-        const filter2 = createFilter(ViewFilterOperand.Is, uuid1, '', 'UUID');
+        const filter1 = createFilter(ViewFilterOperand.IS, '', '', 'UUID');
+        const filter2 = createFilter(ViewFilterOperand.IS, uuid1, '', 'UUID');
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
@@ -300,14 +300,14 @@ describe('evaluateFilterConditions', () => {
 
       it('should throw error for unsupported UUID filter operand', () => {
         const filter = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           uuid1,
           uuid2,
           'UUID',
         );
 
         expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
-          'Operand contains not supported for uuid filter',
+          'Operand CONTAINS not supported for uuid filter',
         );
       });
     });
@@ -315,7 +315,7 @@ describe('evaluateFilterConditions', () => {
     describe('Select filter operands', () => {
       it('should return true when there are common values (SELECT)', () => {
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           ['John'],
           ['John', 'Jane'],
           'SELECT',
@@ -327,7 +327,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return false when there are no common values (SELECT)', () => {
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           ['John'],
           ['Jane'],
           'SELECT',
@@ -339,7 +339,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return true when there are no common values (IsNot)', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           ['John'],
           ['Jane'],
           'SELECT',
@@ -351,7 +351,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return true when there are no values (IsEmpty)', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           [],
           '',
           'SELECT',
@@ -363,7 +363,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return false when there is a value (IsEmpty)', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           ['John'],
           '',
           'SELECT',
@@ -375,7 +375,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return true when there are values (IsNotEmpty)', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           ['John'],
           '',
           'SELECT',
@@ -389,7 +389,7 @@ describe('evaluateFilterConditions', () => {
     describe('Boolean filter operands', () => {
       it('should return true when boolean values are equal', () => {
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           true,
           true,
           'BOOLEAN',
@@ -401,7 +401,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should return false when boolean values are not equal', () => {
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           true,
           false,
           'BOOLEAN',
@@ -412,7 +412,7 @@ describe('evaluateFilterConditions', () => {
       });
 
       it('should handle truthy/falsy conversion', () => {
-        const filter = createFilter(ViewFilterOperand.Is, 1, true, 'BOOLEAN');
+        const filter = createFilter(ViewFilterOperand.IS, 1, true, 'BOOLEAN');
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(true);
@@ -422,19 +422,19 @@ describe('evaluateFilterConditions', () => {
     describe('numeric operands', () => {
       it('should handle GreaterThanOrEqual operand correctly', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.GreaterThanOrEqual,
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           25,
           25,
           'NUMBER',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.GreaterThanOrEqual,
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           30,
           25,
           'NUMBER',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.GreaterThanOrEqual,
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           20,
           25,
           'NUMBER',
@@ -447,19 +447,19 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle LessThanOrEqual operand correctly', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.LessThanOrEqual,
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
           25,
           25,
           'NUMBER',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.LessThanOrEqual,
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
           20,
           25,
           'NUMBER',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.LessThanOrEqual,
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
           30,
           25,
           'NUMBER',
@@ -474,13 +474,13 @@ describe('evaluateFilterConditions', () => {
     describe('string and array operands', () => {
       it('should handle Contains operand with strings', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           'Hello World',
           'World',
           'TEXT',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           'Hello',
           'World',
           'TEXT',
@@ -492,13 +492,13 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle DoesNotContain operand with strings', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           'Hello World',
           'World',
           'TEXT',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           'Hello',
           'World',
           'TEXT',
@@ -510,13 +510,13 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle Contains operand with arrays', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           ['apple', 'banana', 'cherry'],
           ['apple'],
           'ARRAY',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           ['apple', 'banana', 'cherry'],
           ['grape'],
           'ARRAY',
@@ -528,13 +528,13 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle DoesNotContain operand with arrays', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           ['apple', 'banana', 'cherry'],
           ['apple'],
           'ARRAY',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           ['apple', 'banana', 'cherry'],
           ['grape'],
           'ARRAY',
@@ -548,26 +548,31 @@ describe('evaluateFilterConditions', () => {
     describe('empty operands', () => {
       it('should handle IsEmpty operand correctly', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           null,
           '',
           'TEXT',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           undefined,
           '',
           'TEXT',
         );
-        const filter3 = createFilter(ViewFilterOperand.IsEmpty, '', '', 'TEXT');
+        const filter3 = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          '',
+          '',
+          'TEXT',
+        );
         const filter4 = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           [],
           '',
           'ARRAY',
         );
         const filter5 = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           'not empty',
           '',
           'TEXT',
@@ -582,31 +587,31 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle IsNotEmpty operand correctly', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           'not empty',
           '',
           'TEXT',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           ['item'],
           '',
           'ARRAY',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           null,
           '',
           'TEXT',
         );
         const filter4 = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           '',
           '',
           'TEXT',
         );
         const filter5 = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           [],
           '',
           'ARRAY',
@@ -628,7 +633,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle IsInPast operand correctly', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsInPast,
+          ViewFilterOperand.IS_IN_PAST,
           pastDate,
           null,
           'DATE',
@@ -637,7 +642,7 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
 
         const futureFilter = createFilter(
-          ViewFilterOperand.IsInPast,
+          ViewFilterOperand.IS_IN_PAST,
           futureDate,
           null,
           'DATE',
@@ -650,7 +655,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle IsInFuture operand correctly', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsInFuture,
+          ViewFilterOperand.IS_IN_FUTURE,
           futureDate,
           null,
           'DATE',
@@ -659,7 +664,7 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
 
         const pastFilter = createFilter(
-          ViewFilterOperand.IsInFuture,
+          ViewFilterOperand.IS_IN_FUTURE,
           pastDate,
           null,
           'DATE',
@@ -670,7 +675,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle IsToday operand correctly', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsToday,
+          ViewFilterOperand.IS_TODAY,
           today,
           null,
           'DATE',
@@ -679,7 +684,7 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
 
         const pastFilter = createFilter(
-          ViewFilterOperand.IsToday,
+          ViewFilterOperand.IS_TODAY,
           pastDate,
           null,
           'DATE',
@@ -690,7 +695,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle IsBefore operand correctly', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsBefore,
+          ViewFilterOperand.IS_BEFORE,
           pastDate,
           now,
           'DATE',
@@ -699,7 +704,7 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
 
         const futureFilter = createFilter(
-          ViewFilterOperand.IsBefore,
+          ViewFilterOperand.IS_BEFORE,
           futureDate,
           now,
           'DATE',
@@ -712,7 +717,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle IsAfter operand correctly', () => {
         const filter = createFilter(
-          ViewFilterOperand.IsAfter,
+          ViewFilterOperand.IS_AFTER,
           futureDate,
           now,
           'DATE',
@@ -721,7 +726,7 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
 
         const pastFilter = createFilter(
-          ViewFilterOperand.IsAfter,
+          ViewFilterOperand.IS_AFTER,
           pastDate,
           now,
           'DATE',
@@ -734,7 +739,7 @@ describe('evaluateFilterConditions', () => {
         const sameDate1 = new Date('2023-01-15');
         const sameDate2 = new Date('2023-01-15');
         const filter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           sameDate1,
           sameDate2,
           'DATE',
@@ -744,7 +749,7 @@ describe('evaluateFilterConditions', () => {
 
         const otherDate = new Date('2023-01-16');
         const differentFilter = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           sameDate1,
           otherDate,
           'DATE',
@@ -757,7 +762,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle date IsEmpty and IsNotEmpty operands', () => {
         const emptyFilter = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           null,
           null,
           'DATE',
@@ -766,7 +771,7 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [emptyFilter] })).toBe(true);
 
         const notEmptyFilter = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           now,
           null,
           'DATE',
@@ -784,7 +789,7 @@ describe('evaluateFilterConditions', () => {
           id: 'filter1',
           type: 'CURRENCY',
           rightOperand: 'USD',
-          operand: ViewFilterOperand.Is,
+          operand: ViewFilterOperand.IS,
           stepFilterGroupId: 'group1',
           leftOperand: 'USD',
           compositeFieldSubFieldName: 'currencyCode',
@@ -798,7 +803,7 @@ describe('evaluateFilterConditions', () => {
           id: 'filter1',
           type: 'CURRENCY',
           rightOperand: 100,
-          operand: ViewFilterOperand.GreaterThanOrEqual,
+          operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           stepFilterGroupId: 'group1',
           leftOperand: 150,
           compositeFieldSubFieldName: 'amountMicros',
@@ -822,7 +827,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle unsupported filter type with default filter logic', () => {
         const filter = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           'Hello World',
           'World',
           'UNSUPPORTED_TYPE',
@@ -836,25 +841,25 @@ describe('evaluateFilterConditions', () => {
     describe('unknown type filters', () => {
       it('should handle Is operand with unknown type', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           'test',
           'test',
           'unknown',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           'test',
           'different',
           'unknown',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           null,
           null,
           'unknown',
         );
         const filter4 = createFilter(
-          ViewFilterOperand.Is,
+          ViewFilterOperand.IS,
           undefined,
           undefined,
           'unknown',
@@ -868,25 +873,25 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle IsNot operand with unknown type', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           'test',
           'different',
           'unknown',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           'test',
           'test',
           'unknown',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           null,
           null,
           'unknown',
         );
         const filter4 = createFilter(
-          ViewFilterOperand.IsNot,
+          ViewFilterOperand.IS_NOT,
           undefined,
           undefined,
           'unknown',
@@ -900,62 +905,62 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle Contains operand with unknown type', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           'Hello World',
           'World',
           'unknown',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           'Hello',
           'World',
           'unknown',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           [1, 2, 3],
           2,
           'unknown',
         );
         const filter4 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           [1, 2, 3],
           4,
           'unknown',
         );
         const filter5 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           null,
           null,
           'unknown',
         );
         const filter6 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           undefined,
           undefined,
           'unknown',
         );
         const filter7 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           'Hello World',
           undefined,
           'unknown',
         );
 
         const filter8 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           'Hello World',
           null,
           'unknown',
         );
         const filter9 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           [1, 2, 3],
           null,
           'unknown',
         );
         const filter10 = createFilter(
-          ViewFilterOperand.Contains,
+          ViewFilterOperand.CONTAINS,
           [1, 2, 3],
           undefined,
           'unknown',
@@ -975,62 +980,62 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle DoesNotContain operand with unknown type', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           'Hello',
           'World',
           'unknown',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           'Hello World',
           'World',
           'unknown',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           [1, 2, 3],
           2,
           'unknown',
         );
         const filter4 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           [1, 2, 3],
           4,
           'unknown',
         );
         const filter5 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           null,
           null,
           'unknown',
         );
         const filter6 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           undefined,
           undefined,
           'unknown',
         );
         const filter7 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           'Hello World',
           undefined,
           'unknown',
         );
 
         const filter8 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           'Hello World',
           null,
           'unknown',
         );
         const filter9 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           [1, 2, 3],
           null,
           'unknown',
         );
         const filter10 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           [1, 2, 3],
           undefined,
           'unknown',
@@ -1050,31 +1055,31 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle IsEmpty operand with unknown type', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           null,
           '',
           'unknown',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           'not empty',
           '',
           'unknown',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           '',
           '',
           'unknown',
         );
         const filter4 = createFilter(
-          ViewFilterOperand.DoesNotContain,
+          ViewFilterOperand.DOES_NOT_CONTAIN,
           [],
           '',
           'unknown',
         );
         const filter5 = createFilter(
-          ViewFilterOperand.IsEmpty,
+          ViewFilterOperand.IS_EMPTY,
           undefined,
           undefined,
           'unknown',
@@ -1089,31 +1094,31 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle IsNotEmpty operand with unknown type', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           'not empty',
           '',
           'unknown',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           null,
           '',
           'unknown',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           [],
           '',
           'unknown',
         );
         const filter4 = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           '',
           '',
           'unknown',
         );
         const filter5 = createFilter(
-          ViewFilterOperand.IsNotEmpty,
+          ViewFilterOperand.IS_NOT_EMPTY,
           undefined,
           undefined,
           'unknown',
@@ -1128,26 +1133,26 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle GreaterThanOrEqual operand with unknown type', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.GreaterThanOrEqual,
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           100,
           50,
           'unknown',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.GreaterThanOrEqual,
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           30,
           50,
           'unknown',
         );
         // strings are converted to numbers
         const filter3 = createFilter(
-          ViewFilterOperand.GreaterThanOrEqual,
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           '1234',
           '123',
           'unknown',
         );
         const filter4 = createFilter(
-          ViewFilterOperand.GreaterThanOrEqual,
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           undefined,
           undefined,
           'unknown',
@@ -1161,25 +1166,25 @@ describe('evaluateFilterConditions', () => {
 
       it('should handle LessThanOrEqual operand with unknown type', () => {
         const filter1 = createFilter(
-          ViewFilterOperand.LessThanOrEqual,
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
           30,
           50,
           'unknown',
         );
         const filter2 = createFilter(
-          ViewFilterOperand.LessThanOrEqual,
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
           100,
           50,
           'unknown',
         );
         const filter3 = createFilter(
-          ViewFilterOperand.LessThanOrEqual,
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
           '1234',
           '123',
           'unknown',
         );
         const filter4 = createFilter(
-          ViewFilterOperand.LessThanOrEqual,
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
           undefined,
           undefined,
           'unknown',
@@ -1193,7 +1198,7 @@ describe('evaluateFilterConditions', () => {
 
       it('should throw error for unsupported operand with unknown type', () => {
         const filter = createFilter(
-          ViewFilterOperand.VectorSearch,
+          ViewFilterOperand.VECTOR_SEARCH,
           'test',
           'search term',
           'unknown',
@@ -1211,7 +1216,7 @@ describe('evaluateFilterConditions', () => {
           id: 'filter1',
           type: 'RELATION',
           rightOperand: 'John',
-          operand: ViewFilterOperand.Is,
+          operand: ViewFilterOperand.IS,
           stepFilterGroupId: 'group1',
           leftOperand: 'John',
         },
@@ -1219,7 +1224,7 @@ describe('evaluateFilterConditions', () => {
           id: 'filter2',
           type: 'NUMBER',
           rightOperand: 25,
-          operand: ViewFilterOperand.GreaterThanOrEqual,
+          operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           stepFilterGroupId: 'group1',
           leftOperand: 30,
         },
@@ -1236,7 +1241,7 @@ describe('evaluateFilterConditions', () => {
           id: 'filter1',
           type: 'RELATION',
           rightOperand: 'John',
-          operand: ViewFilterOperand.Is,
+          operand: ViewFilterOperand.IS,
           stepFilterGroupId: 'group1',
           leftOperand: 'John',
         },
@@ -1244,7 +1249,7 @@ describe('evaluateFilterConditions', () => {
           id: 'filter2',
           type: 'NUMBER',
           rightOperand: 25,
-          operand: ViewFilterOperand.GreaterThanOrEqual,
+          operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           stepFilterGroupId: 'group1',
           leftOperand: 20, // This will fail
         },
@@ -1271,7 +1276,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter1',
             type: 'RELATION',
             rightOperand: 'John',
-            operand: ViewFilterOperand.Is,
+            operand: ViewFilterOperand.IS,
             stepFilterGroupId: 'group1',
             leftOperand: 'John',
           },
@@ -1279,7 +1284,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter2',
             type: 'NUMBER',
             rightOperand: 25,
-            operand: ViewFilterOperand.GreaterThanOrEqual,
+            operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
             stepFilterGroupId: 'group1',
             leftOperand: 30,
           },
@@ -1303,7 +1308,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter1',
             type: 'RELATION',
             rightOperand: 'John',
-            operand: ViewFilterOperand.Is,
+            operand: ViewFilterOperand.IS,
             stepFilterGroupId: 'group1',
             leftOperand: 'Jane', // This will fail
           },
@@ -1311,7 +1316,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter2',
             type: 'NUMBER',
             rightOperand: 25,
-            operand: ViewFilterOperand.GreaterThanOrEqual,
+            operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
             stepFilterGroupId: 'group1',
             leftOperand: 30,
           },
@@ -1337,7 +1342,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter1',
             type: 'RELATION',
             rightOperand: 'John',
-            operand: ViewFilterOperand.Is,
+            operand: ViewFilterOperand.IS,
             stepFilterGroupId: 'group1',
             leftOperand: 'Jane', // This will fail
           },
@@ -1345,7 +1350,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter2',
             type: 'NUMBER',
             rightOperand: 25,
-            operand: ViewFilterOperand.GreaterThanOrEqual,
+            operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
             stepFilterGroupId: 'group1',
             leftOperand: 30, // This will pass
           },
@@ -1369,7 +1374,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter1',
             type: 'RELATION',
             rightOperand: 'John',
-            operand: ViewFilterOperand.Is,
+            operand: ViewFilterOperand.IS,
             stepFilterGroupId: 'group1',
             leftOperand: 'Jane', // This will fail
           },
@@ -1377,7 +1382,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter2',
             type: 'NUMBER',
             rightOperand: 25,
-            operand: ViewFilterOperand.GreaterThanOrEqual,
+            operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
             stepFilterGroupId: 'group1',
             leftOperand: 20, // This will fail
           },
@@ -1407,7 +1412,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter1',
             type: 'RELATION',
             rightOperand: 'John',
-            operand: ViewFilterOperand.Is,
+            operand: ViewFilterOperand.IS,
             stepFilterGroupId: 'group1',
             leftOperand: 'John',
           },
@@ -1415,7 +1420,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter2',
             type: 'NUMBER',
             rightOperand: 25,
-            operand: ViewFilterOperand.GreaterThanOrEqual,
+            operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
             stepFilterGroupId: 'group2',
             leftOperand: 30,
           },
@@ -1453,7 +1458,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter1',
             type: 'RELATION',
             rightOperand: 'John',
-            operand: ViewFilterOperand.Is,
+            operand: ViewFilterOperand.IS,
             stepFilterGroupId: 'child1',
             leftOperand: 'Jane', // This will fail
           },
@@ -1461,7 +1466,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter2',
             type: 'RELATION',
             rightOperand: 'Smith',
-            operand: ViewFilterOperand.Is,
+            operand: ViewFilterOperand.IS,
             stepFilterGroupId: 'child1',
             leftOperand: 'Smith', // This will pass (OR group passes)
           },
@@ -1469,7 +1474,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter3',
             type: 'NUMBER',
             rightOperand: 25,
-            operand: ViewFilterOperand.GreaterThanOrEqual,
+            operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
             stepFilterGroupId: 'child2',
             leftOperand: 30, // This will pass (AND group passes)
           },
@@ -1510,7 +1515,7 @@ describe('evaluateFilterConditions', () => {
             id: 'filter1',
             type: 'RELATION',
             rightOperand: 'John',
-            operand: ViewFilterOperand.Is,
+            operand: ViewFilterOperand.IS,
             stepFilterGroupId: 'nonexistent',
             leftOperand: 'John',
           },

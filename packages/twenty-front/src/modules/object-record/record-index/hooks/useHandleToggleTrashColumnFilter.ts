@@ -3,15 +3,14 @@ import { v4 } from 'uuid';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
 import { useRecoilCallback } from 'recoil';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 type UseHandleToggleTrashColumnFilterProps = {
   objectNameSingular: string;
@@ -58,7 +57,7 @@ export const useHandleToggleTrashColumnFilter = ({
     const newFilter: RecordFilter = {
       id: v4(),
       fieldMetadataId: trashFieldMetadata.id,
-      operand: ViewFilterOperand.IsNotEmpty,
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
       displayValue: '',
       type: filterType,
       label: `Deleted`,

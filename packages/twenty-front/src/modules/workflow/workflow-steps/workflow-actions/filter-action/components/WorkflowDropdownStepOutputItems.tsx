@@ -15,7 +15,6 @@ import { getStepFilterOperands } from '@/workflow/workflow-steps/workflow-action
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
-import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
@@ -25,6 +24,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useRecoilCallback } from 'recoil';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 import {
   IconChevronLeft,
   OverflowingTextWithTooltip,
@@ -229,28 +229,34 @@ export const WorkflowDropdownStepOutputItems = ({
         {filteredOptions.length > 0 && shouldDisplaySubStepObject && (
           <DropdownMenuSeparator />
         )}
-        {filteredOptions.map(([key, subStep]) => (
-          <MenuItemSelect
-            key={key}
-            selected={false}
-            focused={false}
-            onClick={() => handleSelectField(key)}
-            text={subStep.label || key}
-            hasSubMenu={!subStep.isLeaf}
-            LeftIcon={
-              subStep.icon
-                ? getIcon(subStep.icon)
-                : getIcon(
-                    getStepItemIcon({
-                      itemType: subStep.type,
-                    }),
-                  )
-            }
-            contextualText={
-              subStep.isLeaf ? subStep?.value?.toString() : undefined
-            }
-          />
-        ))}
+        {filteredOptions.map(([key, subStep]) => {
+          if (!isDefined(subStep)) {
+            return null;
+          }
+
+          return (
+            <MenuItemSelect
+              key={key}
+              selected={false}
+              focused={false}
+              onClick={() => handleSelectField(key)}
+              text={subStep.label || key}
+              hasSubMenu={!subStep.isLeaf}
+              LeftIcon={
+                subStep.icon
+                  ? getIcon(subStep.icon)
+                  : getIcon(
+                      getStepItemIcon({
+                        itemType: subStep.type,
+                      }),
+                    )
+              }
+              contextualText={
+                subStep.isLeaf ? subStep?.value?.toString() : undefined
+              }
+            />
+          );
+        })}
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

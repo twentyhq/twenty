@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 
 @ObjectType()
 class UserInfo {
@@ -34,6 +35,9 @@ class WorkspaceInfo {
 
   @Field(() => Number)
   totalUsers: number;
+
+  @Field(() => WorkspaceUrls)
+  workspaceUrls: WorkspaceUrls;
 
   @Field(() => [UserInfo])
   users: UserInfo[];

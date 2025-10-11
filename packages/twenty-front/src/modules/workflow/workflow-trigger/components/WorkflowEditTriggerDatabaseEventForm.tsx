@@ -1,3 +1,4 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -14,7 +15,6 @@ import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpd
 import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
@@ -82,6 +82,8 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     trigger.settings.eventName,
   );
   const isUpdateEvent = triggerEvent.event === 'updated';
+  const isUpsertEvent = triggerEvent.event === 'upserted';
+  const isFieldFilteringSupported = isUpdateEvent || isUpsertEvent;
 
   const regularObjects = objectMetadataItems
     .filter((item) => item.isActive && !item.isSystem)
@@ -170,7 +172,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (triggerOptions.readonly === true) {
             return;
@@ -271,7 +273,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
           />
         </StyledRecordTypeSelectContainer>
-        {isDefined(selectedObjectMetadataItem) && isUpdateEvent && (
+        {isDefined(selectedObjectMetadataItem) && isFieldFilteringSupported && (
           <WorkflowFieldsMultiSelect
             label="Fields (Optional)"
             placeholder="Select specific fields to listen to"

@@ -1,17 +1,16 @@
 import { isString } from '@sniptt/guards';
-import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
-import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
-import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
+import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
@@ -29,7 +28,6 @@ import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objec
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 
 type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;
@@ -176,9 +174,7 @@ const createCoreViews = async (
         viewDefinition.filters.map((filter) => ({
           fieldMetadataId: filter.fieldMetadataId,
           viewId: viewDefinition.id,
-          operand: convertViewFilterOperandToCoreOperand(
-            filter.operand as SharedViewFilterOperand,
-          ),
+          operand: filter.operand,
           value: filter.value,
           workspaceId,
         }));

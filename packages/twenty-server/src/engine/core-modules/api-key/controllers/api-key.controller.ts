@@ -10,6 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
@@ -65,7 +67,7 @@ export class ApiKeyController {
     @Body() updateApiKeyDto: UpdateApiKeyDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ApiKey | null> {
-    const updateData: Partial<ApiKey> = {};
+    const updateData: QueryDeepPartialEntity<ApiKey> = {};
 
     if (updateApiKeyDto.name !== undefined)
       updateData.name = updateApiKeyDto.name;

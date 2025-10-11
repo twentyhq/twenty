@@ -15,6 +15,7 @@ import { restorePageLayoutOperationFactory } from 'test/integration/graphql/util
 import { updatePageLayoutOperationFactory } from 'test/integration/graphql/utils/update-page-layout-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
   assertPageLayoutStructure,
   cleanupPageLayoutRecords,
@@ -49,6 +50,15 @@ describe('Page Layout Resolver', () => {
   });
 
   afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
@@ -122,6 +132,15 @@ describe('Page Layout Resolver', () => {
         objectMetadataId: testObjectMetadataId,
       });
 
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: objectMetadata2Id,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
       await deleteOneObjectMetadata({
         input: { idToDelete: objectMetadata2Id },
       });

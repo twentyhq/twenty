@@ -6,7 +6,8 @@ import { DataSource } from 'typeorm';
 
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -30,7 +31,8 @@ import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-
 export class DevSeederMetadataService {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly fieldMetadataService: FieldMetadataService,
+    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
+    private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -61,7 +63,10 @@ export class DevSeederMetadataService {
         { objectName: 'person', seeds: PERSON_CUSTOM_FIELD_SEEDS },
       ],
       relations: [
-        { objectName: 'pet', seeds: PET_CUSTOM_RELATION_FIELD_SEEDS },
+        {
+          objectName: PET_CUSTOM_OBJECT_SEED.nameSingular,
+          seeds: PET_CUSTOM_RELATION_FIELD_SEEDS,
+        },
       ],
     },
     [SEED_YCOMBINATOR_WORKSPACE_ID]: {
@@ -131,9 +136,11 @@ export class DevSeederMetadataService {
     workspaceId: string;
     objectMetadataSeed: ObjectMetadataSeed;
   }): Promise<void> {
-    await this.objectMetadataService.createOne({
-      ...objectMetadataSeed,
-      dataSourceId,
+    await this.objectMetadataServiceV2.createOne({
+      createObjectInput: {
+        ...objectMetadataSeed,
+        dataSourceId,
+      },
       workspaceId,
     });
   }
@@ -152,19 +159,20 @@ export class DevSeederMetadataService {
         where: { nameSingular: objectMetadataNameSingular },
       });
 
-    if (!objectMetadata) {
+    if (!isDefined(objectMetadata)) {
       throw new Error(
         `Object metadata not found for: ${objectMetadataNameSingular}`,
       );
     }
+    const createFieldInputs = fieldMetadataSeeds.map((fieldMetadataSeed) => ({
+      ...fieldMetadataSeed,
+      objectMetadataId: objectMetadata.id,
+    }));
 
-    await this.fieldMetadataService.createMany(
-      fieldMetadataSeeds.map((fieldMetadataSeed) => ({
-        ...fieldMetadataSeed,
-        objectMetadataId: objectMetadata.id,
-        workspaceId,
-      })),
-    );
+    await this.fieldMetadataServiceV2.createMany({
+      createFieldInputs,
+      workspaceId,
+    });
   }
 
   private async seedCoreViews({
@@ -226,27 +234,27 @@ export class DevSeederMetadataService {
         },
       );
 
-    const relationFieldInputs = this.createFieldInputs({
+    const createFieldInputs = this.createFieldInputs({
       relation,
       objectMetadataMaps,
-      workspaceId,
     });
 
-    await this.fieldMetadataService.createMany(relationFieldInputs);
+    await this.fieldMetadataServiceV2.createMany({
+      createFieldInputs,
+      workspaceId,
+    });
   }
 
   private createFieldInputs({
     relation,
     objectMetadataMaps,
-    workspaceId,
   }: {
     relation: {
       objectName: string;
       seeds: (FieldMetadataSeed & { targetObjectMetadataNames: string[] })[];
     };
     objectMetadataMaps: ObjectMetadataMaps;
-    workspaceId: string;
-  }): CreateFieldInput[] {
+  }): Omit<CreateFieldInput, 'workspaceId'>[] {
     const objectMetadataId =
       objectMetadataMaps.idByNameSingular[relation.objectName];
 
@@ -261,7 +269,6 @@ export class DevSeederMetadataService {
       label: seed.label,
       name: seed.name,
       objectMetadataId,
-      workspaceId,
       morphRelationsCreationPayload: seed.targetObjectMetadataNames.map(
         (targetObjectMetadataName) => {
           const targetObjectMetadataId =

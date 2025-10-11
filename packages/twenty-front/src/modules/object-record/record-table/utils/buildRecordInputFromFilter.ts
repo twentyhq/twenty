@@ -111,12 +111,12 @@ const computeValueFromFilterText = (
   value: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Contains:
+    case ViewFilterOperand.CONTAINS:
       return value;
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return value;
-    case ViewFilterOperand.IsEmpty:
-    case ViewFilterOperand.DoesNotContain:
+    case ViewFilterOperand.IS_EMPTY:
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
       return undefined;
     default:
       assertUnreachable(operand);
@@ -128,17 +128,17 @@ const computeValueFromFilterDate = (
   value: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Is:
-    case ViewFilterOperand.IsAfter:
-    case ViewFilterOperand.IsBefore:
+    case ViewFilterOperand.IS:
+    case ViewFilterOperand.IS_AFTER:
+    case ViewFilterOperand.IS_BEFORE:
       return new Date(value);
-    case ViewFilterOperand.IsToday:
-    case ViewFilterOperand.IsNotEmpty:
-    case ViewFilterOperand.IsInPast:
-    case ViewFilterOperand.IsInFuture:
-    case ViewFilterOperand.IsRelative:
+    case ViewFilterOperand.IS_TODAY:
+    case ViewFilterOperand.IS_NOT_EMPTY:
+    case ViewFilterOperand.IS_IN_PAST:
+    case ViewFilterOperand.IS_IN_FUTURE:
+    case ViewFilterOperand.IS_RELATIVE:
       return new Date();
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
       assertUnreachable(operand);
@@ -151,13 +151,13 @@ const computeValueFromFilterNumber = (
 ) => {
   switch (operand) {
     //TODO: we shouln't create values from those filters as it makes no sense for the user
-    case ViewFilterOperand.GreaterThanOrEqual:
+    case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
       return Number(value) + 1;
-    case ViewFilterOperand.LessThanOrEqual:
+    case ViewFilterOperand.LESS_THAN_OR_EQUAL:
       return Number(value) - 1;
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return Number(value);
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
       assertUnreachable(operand);
@@ -169,7 +169,7 @@ const computeValueFromFilterBoolean = (
   value: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return value === 'true';
     default:
       assertUnreachable(operand);
@@ -181,11 +181,11 @@ const computeValueFromFilterArray = (
   value: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Contains:
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.CONTAINS:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return value;
-    case ViewFilterOperand.DoesNotContain:
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
+    case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
       assertUnreachable(operand);
@@ -203,22 +203,22 @@ const computeValueFromFilterRating = (
   }
 
   switch (operand) {
-    case ViewFilterOperand.Is:
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return option.value;
-    case ViewFilterOperand.GreaterThanOrEqual: {
+    case ViewFilterOperand.GREATER_THAN_OR_EQUAL: {
       const plusOne = options?.find(
         (opt) => opt.position === option.position + 1,
       )?.value;
       return plusOne ? plusOne : option.value;
     }
-    case ViewFilterOperand.LessThanOrEqual: {
+    case ViewFilterOperand.LESS_THAN_OR_EQUAL: {
       const minusOne = options?.find(
         (opt) => opt.position === option.position - 1,
       )?.value;
       return minusOne ? minusOne : option.value;
     }
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
       assertUnreachable(operand);
@@ -231,8 +231,8 @@ const computeValueFromFilterSelect = (
   options?: FieldMetadataItemOption[],
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Is:
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       try {
         const valueParsed = parseJson<string[]>(value)?.[0];
         const option = options?.find((option) => option.value === valueParsed);
@@ -243,8 +243,8 @@ const computeValueFromFilterSelect = (
       } catch {
         return undefined;
       }
-    case ViewFilterOperand.IsNot:
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_NOT:
+    case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
       assertUnreachable(operand);
@@ -256,16 +256,16 @@ const computeValueFromFilterMultiSelect = (
   value: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Contains:
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.CONTAINS:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       try {
         const parsedValue = parseJson<string[]>(value);
         return parsedValue ? parsedValue : undefined;
       } catch {
         return undefined;
       }
-    case ViewFilterOperand.DoesNotContain:
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
+    case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
       assertUnreachable(operand);
@@ -280,7 +280,7 @@ const computeValueFromFilterRelation = (
   label?: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Is: {
+    case ViewFilterOperand.IS: {
       const parsedValue = parseJson<{
         isCurrentWorkspaceMemberSelected: boolean;
         selectedRecordIds: string[];
@@ -296,9 +296,9 @@ const computeValueFromFilterRelation = (
       }
       return undefined; //todo
     }
-    case ViewFilterOperand.IsNot:
-    case ViewFilterOperand.IsNotEmpty: // todo
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_NOT:
+    case ViewFilterOperand.IS_NOT_EMPTY: // todo
+    case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
       assertUnreachable(operand);
@@ -310,7 +310,7 @@ const computeValueFromFilterTSVector = (
   value: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.VectorSearch:
+    case ViewFilterOperand.VECTOR_SEARCH:
       return value;
     default:
       assertUnreachable(operand);
@@ -322,7 +322,7 @@ const computeValueFromFilterUUID = (
   value: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return value;
     default:
       assertUnreachable(operand);

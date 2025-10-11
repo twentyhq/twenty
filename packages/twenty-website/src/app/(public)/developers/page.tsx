@@ -6,7 +6,6 @@ export const metadata = {
   description: 'Twenty is a CRM designed to fit your unique business needs.',
   icons: '/images/core/logo.svg',
 };
-
 export default async function DocsHome() {
   const filePath = 'src/content/developers/';
   const docsArticleCards = getDocsArticles(filePath);

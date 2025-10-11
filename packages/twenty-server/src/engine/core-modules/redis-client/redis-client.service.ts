@@ -1,14 +1,34 @@
 import { Injectable, type OnModuleDestroy } from '@nestjs/common';
 
 import IORedis from 'ioredis';
+import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class RedisClientService implements OnModuleDestroy {
   private redisClient: IORedis | null = null;
+  private redisQueueClient: IORedis | null = null;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
+
+  getQueueClient() {
+    if (!this.redisQueueClient) {
+      const redisQueueUrl =
+        this.twentyConfigService.get('REDIS_QUEUE_URL') ??
+        this.twentyConfigService.get('REDIS_URL');
+
+      if (!redisQueueUrl) {
+        throw new Error('REDIS_QUEUE_URL or REDIS_URL must be defined');
+      }
+
+      this.redisQueueClient = new IORedis(redisQueueUrl, {
+        maxRetriesPerRequest: null,
+      });
+    }
+
+    return this.redisQueueClient;
+  }
 
   getClient() {
     if (!this.redisClient) {
@@ -27,7 +47,11 @@ export class RedisClientService implements OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    if (this.redisClient) {
+    if (isDefined(this.redisQueueClient)) {
+      await this.redisQueueClient.quit();
+      this.redisQueueClient = null;
+    }
+    if (isDefined(this.redisClient)) {
       await this.redisClient.quit();
       this.redisClient = null;
     }

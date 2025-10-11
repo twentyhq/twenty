@@ -1,9 +1,9 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
@@ -140,7 +140,7 @@ export const WorkflowEditActionHttpRequest = ({
         behaveAsLinks={false}
         componentInstanceId={WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID}
       />
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
             return;

@@ -1,10 +1,9 @@
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useVectorSearchFieldInRecordIndexContextOrThrow } from '@/views/hooks/useVectorSearchFieldInRecordIndexContextOrThrow';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { useVectorSearchFilterState } from './useVectorSearchFilterState';
 
@@ -27,7 +26,7 @@ export const useVectorSearchFilterActions = () => {
       fieldMetadataId: vectorSearchField.id,
       value: value,
       displayValue: value,
-      operand: ViewFilterOperand.VectorSearch,
+      operand: ViewFilterOperand.VECTOR_SEARCH,
       type: getFilterTypeFromFieldType(vectorSearchField.type),
       label: 'Search',
     };

@@ -21,6 +21,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
+import { AgentChatMessagePartEntity } from './agent-chat-message-part.entity';
 import { AgentChatMessageEntity } from './agent-chat-message.entity';
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentChatResolver } from './agent-chat.resolver';
@@ -30,6 +31,7 @@ import { AgentHandoffExecutorService } from './agent-handoff-executor.service';
 import { AgentHandoffToolService } from './agent-handoff-tool.service';
 import { AgentHandoffEntity } from './agent-handoff.entity';
 import { AgentHandoffService } from './agent-handoff.service';
+import { AgentModelConfigService } from './agent-model-config.service';
 import { AgentStreamingService } from './agent-streaming.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
@@ -45,6 +47,7 @@ import { AgentService } from './agent.service';
       RoleEntity,
       RoleTargetsEntity,
       AgentChatMessageEntity,
+      AgentChatMessagePartEntity,
       AgentChatThreadEntity,
       FileEntity,
       UserWorkspace,
@@ -70,6 +73,7 @@ import { AgentService } from './agent.service';
     AgentChatResolver,
     AgentService,
     AgentExecutionService,
+    AgentModelConfigService,
     AgentToolGeneratorService,
     AgentHandoffToolService,
     AgentChatService,
@@ -89,6 +93,7 @@ import { AgentService } from './agent.service';
     TypeOrmModule.forFeature([
       AgentEntity,
       AgentChatMessageEntity,
+      AgentChatMessagePartEntity,
       AgentChatThreadEntity,
     ]),
     AgentHandoffExecutorService,

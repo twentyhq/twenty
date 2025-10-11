@@ -12,6 +12,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -31,7 +32,6 @@ import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-meta
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
@@ -117,6 +117,7 @@ export class ObjectMetadataResolver {
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ) {
     try {
       return await this.objectMetadataService.deleteOneObject(
@@ -124,7 +125,10 @@ export class ObjectMetadataResolver {
         workspaceId,
       );
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
     }
   }
 
@@ -148,7 +152,10 @@ export class ObjectMetadataResolver {
           workspaceId,
         });
       } catch (error) {
-        objectMetadataGraphqlApiExceptionHandler(error);
+        objectMetadataGraphqlApiExceptionHandler(
+          error,
+          this.i18nService.getI18nInstance(context.req.locale),
+        );
       }
     }
 
@@ -166,7 +173,10 @@ export class ObjectMetadataResolver {
         workspaceId,
       );
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
     }
   }
 
@@ -187,7 +197,10 @@ export class ObjectMetadataResolver {
 
       return fieldMetadataItems;
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
 
       return [];
     }
@@ -197,7 +210,7 @@ export class ObjectMetadataResolver {
   async indexMetadataList(
     @AuthWorkspace() workspace: Workspace,
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<IndexMetadataDTO[]> {
     try {
       const indexMetadataItems = await context.loaders.indexMetadataLoader.load(
@@ -209,7 +222,10 @@ export class ObjectMetadataResolver {
 
       return indexMetadataItems;
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
 
       return [];
     }

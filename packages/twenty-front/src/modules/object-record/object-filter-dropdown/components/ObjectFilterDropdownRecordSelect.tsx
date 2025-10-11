@@ -14,9 +14,11 @@ import { type SelectableItem } from '@/object-record/select/types/SelectableItem
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
-import { arrayOfUuidOrVariableSchema } from '@/views/view-filter-value/validation-schemas/arrayOfUuidsOrVariablesSchema';
-import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  arrayOfUuidOrVariableSchema,
+  isDefined,
+  jsonRelationFilterValueSchema,
+} from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({

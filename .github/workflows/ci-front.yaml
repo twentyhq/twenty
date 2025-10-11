@@ -1,4 +1,5 @@
 name: CI Front
+
 on:
   push:
     branches:

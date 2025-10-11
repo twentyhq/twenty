@@ -18,9 +18,12 @@ import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflo
 import { WorkflowEditActionIterator } from '@/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
-import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
+import { WorkflowEditTriggerManual } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManual';
+import { WorkflowEditTriggerManualDeprecated } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated';
 import { WorkflowEditTriggerWebhookForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowRunStepNodeDetailProps = {
   stepId: string;
@@ -41,6 +44,10 @@ export const WorkflowRunStepNodeDetail = ({
     steps,
   });
 
+  const isIteratorEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+  );
+
   if (!isDefined(stepDefinition) || !isDefined(stepDefinition.definition)) {
     return null;
   }
@@ -60,8 +67,20 @@ export const WorkflowRunStepNodeDetail = ({
           );
         }
         case 'MANUAL': {
+          if (isIteratorEnabled) {
+            return (
+              <WorkflowEditTriggerManual
+                key={stepId}
+                trigger={stepDefinition.definition}
+                triggerOptions={{
+                  readonly: true,
+                }}
+              />
+            );
+          }
+
           return (
-            <WorkflowEditTriggerManualForm
+            <WorkflowEditTriggerManualDeprecated
               key={stepId}
               trigger={stepDefinition.definition}
               triggerOptions={{

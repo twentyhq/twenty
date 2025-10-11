@@ -24,6 +24,7 @@ export const forceCreateOneObjectMetadata = async ({
   input: CreateOneObjectFactoryInput;
 }) => {
   const result = await createOneObjectMetadata({
+    expectToFail: null,
     input: {
       labelSingular,
       labelPlural,

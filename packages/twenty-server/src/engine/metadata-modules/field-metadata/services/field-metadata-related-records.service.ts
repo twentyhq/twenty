@@ -4,13 +4,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import { settings } from 'src/engine/constants/settings';
-import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
-import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
-import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
-import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
-import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
@@ -22,6 +15,13 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { type SelectOrMultiSelectFieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
+import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
 
 type Differences<T> = {
@@ -116,6 +116,7 @@ export class FieldMetadataRelatedRecordsService {
 
       await this.syncNoValueViewGroup(newFieldMetadata, view);
     }
+    await this.viewService.flushGraphQLCache(newFieldMetadata.workspaceId);
   }
 
   public async resetViewKanbanAggregateOperation(
@@ -140,6 +141,7 @@ export class FieldMetadataRelatedRecordsService {
         kanbanAggregateOperation: null,
       });
     }
+    await this.viewService.flushGraphQLCache(fieldMetadata.workspaceId);
   }
 
   public async updateRelatedViewFilters(
@@ -247,6 +249,7 @@ export class FieldMetadataRelatedRecordsService {
         );
       }
     }
+    await this.viewService.flushGraphQLCache(newFieldMetadata.workspaceId);
   }
 
   async syncNoValueViewGroup(
@@ -274,6 +277,7 @@ export class FieldMetadataRelatedRecordsService {
         fieldMetadata.workspaceId,
       );
     }
+    await this.viewService.flushGraphQLCache(fieldMetadata.workspaceId);
   }
 
   public getOptionsDifferences(

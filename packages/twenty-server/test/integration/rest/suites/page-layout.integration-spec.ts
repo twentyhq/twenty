@@ -1,6 +1,7 @@
 import { TEST_NOT_EXISTING_PAGE_LAYOUT_ID } from 'test/integration/constants/test-page-layout-ids.constants';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   createTestPageLayoutWithRestApi,
@@ -44,6 +45,15 @@ describe('Page Layout REST API', () => {
   });
 
   afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
@@ -53,11 +63,11 @@ describe('Page Layout REST API', () => {
     await cleanupPageLayoutRecords();
   });
 
-  describe('GET /rest/metadata/page-layouts', () => {
+  describe('GET /rest/metadata/pageLayouts', () => {
     it('should return all page layouts for workspace', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: '/metadata/page-layouts',
+        path: '/metadata/pageLayouts',
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -74,7 +84,7 @@ describe('Page Layout REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layouts?objectMetadataId=${testObjectMetadataId}`,
+        path: `/metadata/pageLayouts?objectMetadataId=${testObjectMetadataId}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -90,7 +100,7 @@ describe('Page Layout REST API', () => {
     it('should return empty array when no page layouts match objectMetadataId', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/page-layouts?objectMetadataId=${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
+        path: `/metadata/pageLayouts?objectMetadataId=${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
         bearer: API_KEY_ACCESS_TOKEN,
       });
 
@@ -100,7 +110,7 @@ describe('Page Layout REST API', () => {
     });
   });
 
-  describe('POST /rest/metadata/page-layouts', () => {
+  describe('POST /rest/metadata/pageLayouts', () => {
     it('should create a new page layout with all properties', async () => {
       const pageLayoutName = generateRecordName('Dashboard Page Layout');
       const pageLayout = await createTestPageLayoutWithRestApi({
@@ -133,7 +143,7 @@ describe('Page Layout REST API', () => {
       await deleteTestPageLayoutWithRestApi(pageLayout.id);
     });
 
-    describe('GET /rest/metadata/page-layouts/:id', () => {
+    describe('GET /rest/metadata/pageLayouts/:id', () => {
       it('should return a page layout by id', async () => {
         const pageLayoutName = generateRecordName('Test Page Layout for Get');
         const pageLayout = await createTestPageLayoutWithRestApi({
@@ -144,7 +154,7 @@ describe('Page Layout REST API', () => {
 
         const response = await makeRestAPIRequest({
           method: 'get',
-          path: `/metadata/page-layouts/${pageLayout.id}`,
+          path: `/metadata/pageLayouts/${pageLayout.id}`,
           bearer: API_KEY_ACCESS_TOKEN,
         });
 
@@ -162,7 +172,7 @@ describe('Page Layout REST API', () => {
       it('should return {} for non-existent page layout', async () => {
         const response = await makeRestAPIRequest({
           method: 'get',
-          path: `/metadata/page-layouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
+          path: `/metadata/pageLayouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
           bearer: API_KEY_ACCESS_TOKEN,
         });
 
@@ -177,7 +187,7 @@ describe('Page Layout REST API', () => {
       });
     });
 
-    describe('PATCH /rest/metadata/page-layouts/:id', () => {
+    describe('PATCH /rest/metadata/pageLayouts/:id', () => {
       it('should update an existing page layout', async () => {
         const pageLayoutName = generateRecordName(
           'Test Page Layout for Update',
@@ -196,7 +206,7 @@ describe('Page Layout REST API', () => {
 
         const response = await makeRestAPIRequest({
           method: 'patch',
-          path: `/metadata/page-layouts/${pageLayout.id}`,
+          path: `/metadata/pageLayouts/${pageLayout.id}`,
           body: updateData,
           bearer: API_KEY_ACCESS_TOKEN,
         });
@@ -227,7 +237,7 @@ describe('Page Layout REST API', () => {
 
         const response = await makeRestAPIRequest({
           method: 'patch',
-          path: `/metadata/page-layouts/${pageLayout.id}`,
+          path: `/metadata/pageLayouts/${pageLayout.id}`,
           body: updateData,
           bearer: API_KEY_ACCESS_TOKEN,
         });
@@ -251,7 +261,7 @@ describe('Page Layout REST API', () => {
 
         const response = await makeRestAPIRequest({
           method: 'patch',
-          path: `/metadata/page-layouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
+          path: `/metadata/pageLayouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
           body: updateData,
           bearer: API_KEY_ACCESS_TOKEN,
         });
@@ -267,7 +277,7 @@ describe('Page Layout REST API', () => {
       });
     });
 
-    describe('DELETE /rest/metadata/page-layouts/:id', () => {
+    describe('DELETE /rest/metadata/pageLayouts/:id', () => {
       it('should delete an existing page layout', async () => {
         const pageLayoutName = generateRecordName(
           'Test Page Layout for Delete',
@@ -280,7 +290,7 @@ describe('Page Layout REST API', () => {
 
         const deleteResponse = await makeRestAPIRequest({
           method: 'delete',
-          path: `/metadata/page-layouts/${pageLayout.id}`,
+          path: `/metadata/pageLayouts/${pageLayout.id}`,
           bearer: API_KEY_ACCESS_TOKEN,
         });
 
@@ -289,7 +299,7 @@ describe('Page Layout REST API', () => {
 
         const getResponse = await makeRestAPIRequest({
           method: 'get',
-          path: `/metadata/page-layouts/${pageLayout.id}`,
+          path: `/metadata/pageLayouts/${pageLayout.id}`,
           bearer: API_KEY_ACCESS_TOKEN,
         });
 
@@ -306,7 +316,7 @@ describe('Page Layout REST API', () => {
       it('should return 404 error when deleting non-existent page layout', async () => {
         const response = await makeRestAPIRequest({
           method: 'delete',
-          path: `/metadata/page-layouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
+          path: `/metadata/pageLayouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
           bearer: API_KEY_ACCESS_TOKEN,
         });
 
@@ -337,7 +347,7 @@ describe('Page Layout REST API', () => {
 
         const response = await makeRestAPIRequest({
           method: 'get',
-          path: `/metadata/page-layouts?objectMetadataId=${testObjectMetadataId}`,
+          path: `/metadata/pageLayouts?objectMetadataId=${testObjectMetadataId}`,
           bearer: API_KEY_ACCESS_TOKEN,
         });
 

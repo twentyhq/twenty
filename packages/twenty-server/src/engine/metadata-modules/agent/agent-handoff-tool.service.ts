@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 
-import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
+import {
+  AgentExecutionContext,
+  AgentHandoffExecutorService,
+  HandoffRequest,
+} from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AGENT_HANDOFF_DESCRIPTION_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-description.const';
 import { AGENT_HANDOFF_SCHEMA } from 'src/engine/metadata-modules/agent/constants/agent-handoff-schema.const';
@@ -18,6 +22,7 @@ export class AgentHandoffToolService {
   public async generateHandoffTools(
     agentId: string,
     workspaceId: string,
+    executionContext: AgentExecutionContext,
   ): Promise<ToolSet> {
     const handoffs = await this.agentHandoffService.getAgentHandoffs({
       fromAgentId: agentId,
@@ -37,14 +42,18 @@ export class AgentHandoffToolService {
           ),
         inputSchema: AGENT_HANDOFF_SCHEMA,
         execute: async ({ input }) => {
-          const result = await this.agentHandoffExecutorService.executeHandoff({
+          const handoffRequest: HandoffRequest = {
             fromAgentId: agentId,
             toAgentId: handoff.toAgent.id,
             workspaceId,
             messages: input.messages,
-          });
+            isStreaming: true, // Tools are executed during streaming
+          };
 
-          return result;
+          return this.agentHandoffExecutorService.executeHandoff(
+            handoffRequest,
+            executionContext,
+          );
         },
       };
 

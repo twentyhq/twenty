@@ -32,12 +32,12 @@ export const MenuItemMultiSelectTag = ({
       onClick={onClick}
       className={className}
     >
-      <Checkbox
-        size={CheckboxSize.Small}
-        shape={CheckboxShape.Squared}
-        checked={selected}
-      />
       <StyledMenuItemLeftContent>
+        <Checkbox
+          size={CheckboxSize.Small}
+          shape={CheckboxShape.Squared}
+          checked={selected}
+        />
         <Tag color={color} text={text} Icon={Icon} />
       </StyledMenuItemLeftContent>
     </StyledMenuItemBase>

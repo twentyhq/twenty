@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
+import { CurrencyCode } from 'twenty-shared/constants';
 
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 

@@ -1,9 +1,9 @@
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
-import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 import { IconAlertTriangle, IconX } from 'twenty-ui/display';
 
 const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`

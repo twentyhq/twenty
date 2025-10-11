@@ -36,9 +36,9 @@ describe('extractRecordPositions', () => {
     const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
-      { recordId: 'record-1', position: 1 },
-      { recordId: 'record-2', position: 2 },
-      { recordId: 'record-3', position: 3 },
+      { id: 'record-1', position: 1 },
+      { id: 'record-2', position: 2 },
+      { id: 'record-3', position: 3 },
     ]);
   });
 
@@ -55,9 +55,9 @@ describe('extractRecordPositions', () => {
     const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
-      { recordId: 'record-1', position: 1 },
-      { recordId: 'record-2', position: undefined },
-      { recordId: 'record-3', position: undefined },
+      { id: 'record-1', position: 1 },
+      { id: 'record-2', position: undefined },
+      { id: 'record-3', position: undefined },
     ]);
   });
 
@@ -72,9 +72,9 @@ describe('extractRecordPositions', () => {
     const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
-      { recordId: 'record-1', position: 1 },
-      { recordId: 'record-2', position: undefined },
-      { recordId: 'non-existent', position: undefined },
+      { id: 'record-1', position: 1 },
+      { id: 'record-2', position: undefined },
+      { id: 'non-existent', position: undefined },
     ]);
   });
 
@@ -100,9 +100,9 @@ describe('extractRecordPositions', () => {
     const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
-      { recordId: 'record-3', position: 75 },
-      { recordId: 'record-1', position: 100 },
-      { recordId: 'record-2', position: 50 },
+      { id: 'record-3', position: 75 },
+      { id: 'record-1', position: 100 },
+      { id: 'record-2', position: 50 },
     ]);
   });
 
@@ -118,8 +118,8 @@ describe('extractRecordPositions', () => {
     const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
-      { recordId: 'record-1', position: null },
-      { recordId: 'record-2', position: 2 },
+      { id: 'record-1', position: null },
+      { id: 'record-2', position: 2 },
     ]);
   });
 
@@ -135,8 +135,8 @@ describe('extractRecordPositions', () => {
     const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
-      { recordId: 'record-1', position: -5 },
-      { recordId: 'record-2', position: -10 },
+      { id: 'record-1', position: -5 },
+      { id: 'record-2', position: -10 },
     ]);
   });
 
@@ -152,8 +152,8 @@ describe('extractRecordPositions', () => {
     const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
-      { recordId: 'record-1', position: 1.5 },
-      { recordId: 'record-2', position: 2.75 },
+      { id: 'record-1', position: 1.5 },
+      { id: 'record-2', position: 2.75 },
     ]);
   });
 });

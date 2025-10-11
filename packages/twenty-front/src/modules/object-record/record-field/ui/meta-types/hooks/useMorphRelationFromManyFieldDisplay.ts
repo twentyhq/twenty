@@ -36,7 +36,6 @@ export const useMorphRelationFromManyFieldDisplay = () => {
     recordStoreMorphOneToManyValueWithObjectNameFamilySelector({
       recordId,
       morphRelations: fieldDefinition.metadata.morphRelations,
-      fieldName: fieldDefinition.metadata.fieldName,
     }),
   );
 

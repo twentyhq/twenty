@@ -3,11 +3,11 @@ import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/f
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { type CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { type FormFieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useMemo } from 'react';
+import { type CurrencyCode } from 'twenty-shared/constants';
 import { IconCircleOff } from 'twenty-ui/display';
 
 type FormCurrencyFieldInputProps = {

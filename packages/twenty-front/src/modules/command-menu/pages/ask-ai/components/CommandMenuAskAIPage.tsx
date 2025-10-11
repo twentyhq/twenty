@@ -1,6 +1,7 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { AIChatTab } from '@/ai/components/AIChatTab';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 
 const StyledContainer = styled.div`
@@ -24,7 +25,7 @@ export const CommandMenuAskAIPage = () => {
   if (!agentId) {
     return (
       <StyledContainer>
-        <StyledEmptyState>No AI Agent found.</StyledEmptyState>
+        <StyledEmptyState>{t`No AI Agent found.`}</StyledEmptyState>
       </StyledContainer>
     );
   }

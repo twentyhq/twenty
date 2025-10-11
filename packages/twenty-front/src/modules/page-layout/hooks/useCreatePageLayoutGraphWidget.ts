@@ -1,9 +1,10 @@
-import { type GraphType } from '@/page-layout/mocks/mockWidgets';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
+import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 import {
   getWidgetSize,
   getWidgetTitle,
@@ -15,8 +16,10 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { type PageLayoutWidget, type WidgetType } from '~/generated/graphql';
+import { type GraphType } from '~/generated-metadata/graphql';
+import { WidgetType, type PageLayoutWidget } from '~/generated/graphql';
 
 export const useCreatePageLayoutGraphWidget = (
   pageLayoutIdFromProps?: string,
@@ -48,13 +51,21 @@ export const useCreatePageLayoutGraphWidget = (
     pageLayoutId,
   );
 
-  const createPageLayoutWidget = useRecoilCallback(
+  const createPageLayoutGraphWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (widgetType: WidgetType, graphType: GraphType) => {
+      ({
+        graphType,
+        fieldSelection,
+      }: {
+        graphType: GraphType;
+        fieldSelection?: GraphWidgetFieldSelection;
+      }): PageLayoutWidget => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 
-        if (!activeTabId) {
-          return;
+        if (!isDefined(activeTabId)) {
+          throw new Error(
+            'A tab must be selected to create a new graph widget',
+          );
         }
 
         const pageLayoutDraft = snapshot
@@ -72,7 +83,10 @@ export const useCreatePageLayoutGraphWidget = (
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const existingWidgetCount = allWidgets.filter(
           (w) =>
-            w.type === widgetType && w.configuration.graphType === graphType,
+            w.type === WidgetType.GRAPH &&
+            w.configuration &&
+            'graphType' in w.configuration &&
+            w.configuration.graphType === graphType,
         ).length;
         const title = getWidgetTitle(graphType, existingWidgetCount);
         const widgetId = uuidv4();
@@ -83,25 +97,19 @@ export const useCreatePageLayoutGraphWidget = (
           defaultSize,
         );
 
-        const newWidget: PageLayoutWidget = {
+        const newWidget = createDefaultGraphWidget({
           id: widgetId,
           pageLayoutTabId: activeTabId,
           title,
-          type: widgetType,
+          graphType,
           gridPosition: {
             row: position.y,
             column: position.x,
             rowSpan: position.h,
             columnSpan: position.w,
           },
-          configuration: {
-            graphType,
-          },
-          objectMetadataId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: null,
-        };
+          fieldSelection,
+        });
 
         const newLayout = {
           i: widgetId,
@@ -124,6 +132,8 @@ export const useCreatePageLayoutGraphWidget = (
         }));
 
         set(pageLayoutDraggedAreaState, null);
+
+        return newWidget;
       },
     [
       activeTabIdState,
@@ -133,5 +143,5 @@ export const useCreatePageLayoutGraphWidget = (
     ],
   );
 
-  return { createPageLayoutWidget };
+  return { createPageLayoutGraphWidget };
 };

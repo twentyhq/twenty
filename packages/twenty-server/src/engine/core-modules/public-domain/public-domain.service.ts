@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import {
   PublicDomainException,
   PublicDomainExceptionCode,
 } from 'src/engine/core-modules/public-domain/public-domain.exception';
-import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
 @Injectable()
 export class PublicDomainService {
@@ -60,7 +62,7 @@ export class PublicDomainService {
         'Domain already used for workspace custom domain',
         PublicDomainExceptionCode.DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN,
         {
-          userFriendlyMessage: t`Domain already used for workspace custom domain`,
+          userFriendlyMessage: msg`Domain already used for workspace custom domain`,
         },
       );
     }
@@ -75,7 +77,7 @@ export class PublicDomainService {
         'Public domain already registered',
         PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED,
         {
-          userFriendlyMessage: t`Public domain already registered`,
+          userFriendlyMessage: msg`Public domain already registered`,
         },
       );
     }
@@ -90,7 +92,9 @@ export class PublicDomainService {
     });
 
     try {
-      await this.publicDomainRepository.insert(publicDomain);
+      await this.publicDomainRepository.insert(
+        publicDomain as QueryDeepPartialEntity<PublicDomain>,
+      );
     } catch (error) {
       await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
         isPublicDomain: true,
@@ -102,17 +106,20 @@ export class PublicDomainService {
     return publicDomain;
   }
 
-  async checkPublicDomainValidRecords(publicDomain: PublicDomain) {
+  async checkPublicDomainValidRecords(
+    publicDomain: PublicDomain,
+    domainValidRecords?: DomainValidRecords,
+  ): Promise<DomainValidRecords | undefined> {
     const publicDomainWithRecords =
-      await this.dnsManagerService.getHostnameWithRecords(publicDomain.domain, {
-        isPublicDomain: true,
-      });
+      domainValidRecords ??
+      (await this.dnsManagerService.getHostnameWithRecords(
+        publicDomain.domain,
+        {
+          isPublicDomain: true,
+        },
+      ));
 
     if (!publicDomainWithRecords) return;
-
-    await this.dnsManagerService.refreshHostname(publicDomainWithRecords, {
-      isPublicDomain: true,
-    });
 
     const isCustomDomainWorking =
       await this.dnsManagerService.isHostnameWorking(publicDomain.domain, {
@@ -126,5 +133,9 @@ export class PublicDomainService {
     }
 
     return publicDomainWithRecords;
+  }
+
+  async findByDomain(domain: string) {
+    return this.publicDomainRepository.findOne({ where: { domain } });
   }
 }

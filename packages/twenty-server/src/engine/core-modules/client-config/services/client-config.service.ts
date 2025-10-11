@@ -46,6 +46,7 @@ export class ClientConfigService {
           modelId: registeredModel.modelId,
           label: builtInModel?.label || registeredModel.modelId,
           provider: registeredModel.provider,
+          nativeCapabilities: builtInModel?.nativeCapabilities,
           inputCostPer1kTokensInCredits: builtInModel
             ? convertCentsToBillingCredits(
                 builtInModel.inputCostPer1kTokensInCents,

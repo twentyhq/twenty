@@ -1,6 +1,5 @@
-import { parseISO, isEqual, isAfter, isBefore } from 'date-fns';
-
-import { type DateFilter } from '@/object-record//graphql/types/RecordGqlOperationFilter';
+import { isAfter, isBefore, isEqual, parseISO } from 'date-fns';
+import { type DateFilter } from 'twenty-shared/types';
 
 export const isMatchingDateFilter = ({
   dateFilter,

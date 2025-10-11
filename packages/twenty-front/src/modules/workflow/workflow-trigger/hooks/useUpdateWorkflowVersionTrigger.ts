@@ -28,6 +28,7 @@ export const useUpdateWorkflowVersionTrigger = () => {
       const outputSchema = (
         await computeStepOutputSchema({
           step: updatedTrigger,
+          workflowVersionId,
         })
       )?.data?.computeStepOutputSchema;
 

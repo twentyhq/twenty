@@ -13,6 +13,23 @@ export const workflowManualTriggerSchema = baseTriggerSchema
         ),
       icon: z.string().optional(),
       isPinned: z.boolean().optional(),
+      availability: z
+        .discriminatedUnion('type', [
+          z.object({
+            type: z.literal('GLOBAL'),
+            locations: z.array(z.string()).optional(),
+          }),
+          z.object({
+            type: z.literal('SINGLE_RECORD'),
+            objectNameSingular: z.string(),
+          }),
+          z.object({
+            type: z.literal('BULK_RECORDS'),
+            objectNameSingular: z.string(),
+          }),
+        ])
+        .optional()
+        .nullable(),
     }),
   })
   .describe(

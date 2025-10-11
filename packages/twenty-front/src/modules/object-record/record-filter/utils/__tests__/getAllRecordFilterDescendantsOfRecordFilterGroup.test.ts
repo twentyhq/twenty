@@ -1,7 +1,7 @@
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 import { getAllRecordFilterDescendantsOfRecordFilterGroup } from '../getAllRecordFilterDescendantsOfRecordFilterGroup';
 
@@ -9,7 +9,7 @@ const MOCK_RECORD_FILTER_FIELDS: RecordFilter = {
   id: 'filter-1',
   recordFilterGroupId: 'root-group',
   fieldMetadataId: 'field-1',
-  operand: RecordFilterOperand.Contains,
+  operand: RecordFilterOperand.CONTAINS,
   value: 'value-1',
   displayValue: 'Display Value 1',
   label: 'Label 1',

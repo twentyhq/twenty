@@ -25,7 +25,7 @@ export const ViewBarFilterDropdownContent = () => {
   );
 
   const isVectorSearchFilter =
-    selectedOperandInDropdown === ViewFilterOperand.VectorSearch;
+    selectedOperandInDropdown === ViewFilterOperand.VECTOR_SEARCH;
 
   const isAnyFieldSearchFilter = objectFilterDropdownAnyFieldSearchIsSelected;
 

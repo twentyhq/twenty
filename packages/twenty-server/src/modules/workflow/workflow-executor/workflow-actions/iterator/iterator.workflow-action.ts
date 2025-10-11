@@ -105,10 +105,11 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
       hasProcessedAllItems,
     };
 
-    if (!hasProcessedAllItems && currentItemIndex > 0) {
+    if (currentItemIndex > 0) {
       await this.resetStepsInLoop({
         iteratorStepId,
         initialLoopStepIds,
+        hasProcessedAllItems,
         workflowRunId: runInfo.workflowRunId,
         workspaceId: runInfo.workspaceId,
         steps,
@@ -124,21 +125,19 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
   private async resetStepsInLoop({
     iteratorStepId,
     initialLoopStepIds,
+    hasProcessedAllItems,
     workflowRunId,
     workspaceId,
     steps,
   }: {
     iteratorStepId: string;
     initialLoopStepIds: string[];
+    hasProcessedAllItems: boolean;
     workflowRunId: string;
     workspaceId: string;
     steps: WorkflowAction[];
   }) {
-    const stepIdsToReset = getAllStepIdsInLoop({
-      iteratorStepId,
-      initialLoopStepIds,
-      steps,
-    });
+    let stepInfosToUpdate: Record<string, WorkflowRunStepInfo> = {};
 
     const workflowRunToUpdate =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
@@ -148,29 +147,97 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
 
     const stepInfos = workflowRunToUpdate.state.stepInfos;
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
-      stepInfos: stepIdsToReset.reduce(
-        (acc, stepId) => {
-          acc[stepId] = {
-            status: StepStatus.NOT_STARTED,
-            result: undefined,
-            error: undefined,
-            history: [
-              ...(stepInfos[stepId]?.history ?? []),
-              {
-                result: stepInfos[stepId]?.result,
-                error: stepInfos[stepId]?.error,
-                status: stepInfos[stepId]?.status,
-              },
-            ],
-          };
+    if (!hasProcessedAllItems) {
+      const subStepsInfos = await this.buildSubStepInfosReset({
+        iteratorStepId,
+        initialLoopStepIds,
+        stepInfos,
+        steps,
+      });
 
-          return acc;
-        },
-        {} as Record<string, WorkflowRunStepInfo>,
-      ),
+      stepInfosToUpdate = {
+        ...stepInfosToUpdate,
+        ...subStepsInfos,
+      };
+    }
+
+    const iteratorStepInfo = await this.buildIteratorStepInfoReset({
+      iteratorStepId,
+      iteratorStepInfo: stepInfos[iteratorStepId],
+    });
+
+    stepInfosToUpdate = {
+      ...stepInfosToUpdate,
+      ...iteratorStepInfo,
+    };
+
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
+      stepInfos: stepInfosToUpdate,
       workflowRunId,
       workspaceId,
     });
+  }
+
+  private async buildSubStepInfosReset({
+    iteratorStepId,
+    initialLoopStepIds,
+    stepInfos,
+    steps,
+  }: {
+    iteratorStepId: string;
+    initialLoopStepIds: string[];
+    stepInfos: Record<string, WorkflowRunStepInfo>;
+    steps: WorkflowAction[];
+  }) {
+    const stepIdsToReset = getAllStepIdsInLoop({
+      iteratorStepId,
+      initialLoopStepIds,
+      steps,
+    });
+
+    return stepIdsToReset.reduce(
+      (acc, stepId) => {
+        acc[stepId] = {
+          status: StepStatus.NOT_STARTED,
+          result: undefined,
+          error: undefined,
+          history: [
+            ...(stepInfos[stepId]?.history ?? []),
+            {
+              result: stepInfos[stepId]?.result,
+              error: stepInfos[stepId]?.error,
+              status: stepInfos[stepId]?.status,
+            },
+          ],
+        };
+
+        return acc;
+      },
+      {} as Record<string, WorkflowRunStepInfo>,
+    );
+  }
+
+  private async buildIteratorStepInfoReset({
+    iteratorStepId,
+    iteratorStepInfo,
+  }: {
+    iteratorStepId: string;
+    iteratorStepInfo: WorkflowRunStepInfo;
+  }) {
+    return {
+      [iteratorStepId]: {
+        ...iteratorStepInfo,
+        result: undefined,
+        error: undefined,
+        history: [
+          ...(iteratorStepInfo?.history ?? []),
+          {
+            result: iteratorStepInfo?.result,
+            error: iteratorStepInfo?.error,
+            status: iteratorStepInfo?.status,
+          },
+        ],
+      },
+    };
   }
 }

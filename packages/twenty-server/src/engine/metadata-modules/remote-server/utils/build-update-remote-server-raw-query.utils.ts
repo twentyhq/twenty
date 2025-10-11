@@ -1,3 +1,5 @@
+import { type DeepPartial } from 'typeorm';
+
 import {
   type ForeignDataWrapperOptions,
   type RemoteServerEntity,
@@ -8,10 +10,6 @@ import {
   RemoteServerExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-server.exception';
 import { type UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
-
-export type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>;
-};
 
 export const buildUpdateRemoteServerRawQuery = (
   remoteServerToUpdate: DeepPartial<RemoteServerEntity<RemoteServerType>> &

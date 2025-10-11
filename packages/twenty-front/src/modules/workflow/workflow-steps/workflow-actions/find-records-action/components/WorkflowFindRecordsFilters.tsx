@@ -7,7 +7,6 @@ import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/adv
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -17,7 +16,10 @@ import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow
 import { WorkflowFindRecordsAddFilterButton } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsAddFilterButton';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRecordGqlOperationFilter,
+  isDefined,
+} from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   align-items: start;

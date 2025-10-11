@@ -8,11 +8,9 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
-import { findFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-with-flat-field-maps-in-flat-object-metadata-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type DeleteFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -38,18 +36,17 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     action,
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteFieldAction>): Partial<AllFlatEntityMaps> {
-    const { flatObjectMetadataMaps } = allFlatEntityMaps;
-    const { fieldMetadataId, objectMetadataId } = action;
+    const { flatFieldMetadataMaps } = allFlatEntityMaps;
+    const { fieldMetadataId } = action;
 
-    const updatedFlatObjectMetadataMaps =
-      deleteFieldFromFlatObjectMetadataMapsOrThrow({
-        fieldMetadataId,
-        flatObjectMetadataMaps,
-        objectMetadataId,
+    const updatedFlatFieldMetadataMaps =
+      deleteFlatEntityFromFlatEntityMapsOrThrow({
+        entityToDeleteId: fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
       });
 
     return {
-      flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
     };
   }
 
@@ -75,37 +72,29 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const {
       action,
       queryRunner,
-      allFlatEntityMaps: { flatObjectMetadataMaps },
+      allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
     const { objectMetadataId, fieldMetadataId } = action;
 
-    const flatObjectMetadataWithFlatFieldMaps =
-      findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps,
-        objectMetadataId,
-      });
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: objectMetadataId,
+    });
 
-    const fieldMetadata = findFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-      flatObjectMetadataMaps,
-      objectMetadataId,
-      fieldMetadataId,
+    const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: fieldMetadataId,
     });
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
-      flatObjectMetadata: flatObjectMetadataWithFlatFieldMaps,
+      flatObjectMetadata,
     });
-
-    const flatObjectMetadata =
-      findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps,
-        objectMetadataId,
-      });
 
     const columnDefinitions = generateColumnDefinitions({
       flatFieldMetadata: fieldMetadata,
-      flatObjectMetadataWithoutFields: flatObjectMetadata,
+      flatObjectMetadata: flatObjectMetadata,
     });
     const columnNamesToDrop = columnDefinitions.map((def) => def.name);
 

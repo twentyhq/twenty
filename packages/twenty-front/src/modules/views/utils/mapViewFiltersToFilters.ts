@@ -2,12 +2,9 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { convertViewFilterOperandFromCore } from '@/views/utils/convertViewFilterOperandFromCore';
-import { type ViewFilterOperand } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { type CoreViewFilter } from '~/generated/graphql';
 import { type ViewFilter } from '../types/ViewFilter';
 
@@ -35,10 +32,7 @@ export const mapViewFiltersToFilters = (
         ? 'Search'
         : availableFieldMetadataItem.label;
 
-      const operand =
-        viewFilter.__typename === 'CoreViewFilter'
-          ? convertViewFilterOperandFromCore(viewFilter.operand)
-          : (viewFilter.operand as ViewFilterOperand);
+      const operand = viewFilter.operand;
 
       return {
         id: viewFilter.id,

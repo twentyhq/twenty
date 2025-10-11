@@ -1,7 +1,8 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -12,7 +13,7 @@ type ValidateNoOtherObjectWithSameNameExistsOrThrowsParams = {
   objectMetadataNameSingular: string;
   objectMetadataNamePlural: string;
   existingObjectMetadataId?: string;
-  objectMetadataMaps: ObjectMetadataMaps | FlatObjectMetadataMaps;
+  objectMetadataMaps: ObjectMetadataMaps | FlatEntityMaps<FlatObjectMetadata>;
 };
 
 export const doesOtherObjectWithSameNameExists = ({
@@ -42,7 +43,7 @@ export const validatesNoOtherObjectWithSameNameExistsOrThrows = (
       'Object already exists',
       ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
       {
-        userFriendlyMessage: t`Object already exists`,
+        userFriendlyMessage: msg`Object already exists`,
       },
     );
   }

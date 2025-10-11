@@ -1,8 +1,10 @@
 import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { type RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
-import { ViewFilterOperand } from 'twenty-shared/types';
+import {
+  type RecordFilterValueDependencies,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 describe('computeContextStoreFilters', () => {
@@ -58,7 +60,7 @@ describe('computeContextStoreFilters', () => {
         value: 'John',
         displayValue: 'John',
         displayAvatarUrl: undefined,
-        operand: ViewFilterOperand.Contains,
+        operand: ViewFilterOperand.CONTAINS,
         type: 'TEXT',
         label: 'Name',
       },

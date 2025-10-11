@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -39,6 +40,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     TypeOrmModule.forFeature([Workspace, ObjectMetadataEntity]),
     ObjectPermissionModule,
     WorkspacePermissionsCacheModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMetadataCacheModule,
   ],
   exports: [DevSeederService],

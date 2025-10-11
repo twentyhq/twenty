@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
@@ -34,7 +35,7 @@ export const tasksAssignedToMeView = (
             (field) => field.standardId === TASK_STANDARD_FIELD_IDS.assignee,
           )?.id ?? '',
         displayValue: 'Me',
-        operand: 'is',
+        operand: ViewFilterOperand.IS,
         value: JSON.stringify({
           isCurrentWorkspaceMemberSelected: true,
           selectedRecordIds: [],

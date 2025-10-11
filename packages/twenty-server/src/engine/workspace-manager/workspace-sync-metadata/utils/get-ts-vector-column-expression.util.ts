@@ -55,7 +55,7 @@ const getColumnExpressionsFromField = (
       );
     }
 
-    return compositeType.properties
+    const baseExpressions = compositeType.properties
       .filter((property) =>
         isSearchableSubfield(compositeType.type, property.type, property.name),
       )
@@ -67,6 +67,21 @@ const getColumnExpressionsFromField = (
 
         return getColumnExpression(columnName, fieldMetadataTypeAndName.type);
       });
+
+    if (fieldMetadataTypeAndName.type === FieldMetadataType.PHONES) {
+      const phoneNumberColumn = `"${fieldMetadataTypeAndName.name}PrimaryPhoneNumber"`;
+      const callingCodeColumn = `"${fieldMetadataTypeAndName.name}PrimaryPhoneCallingCode"`;
+
+      const internationalFormats = [
+        `COALESCE(${callingCodeColumn} || ${phoneNumberColumn}, '')`,
+        `COALESCE(REPLACE(${callingCodeColumn}, '+', '') || ${phoneNumberColumn}, '')`,
+        `COALESCE('0' || ${phoneNumberColumn}, '')`,
+      ];
+
+      return [...baseExpressions, ...internationalFormats];
+    }
+
+    return baseExpressions;
   }
   const columnName = computeColumnName(fieldMetadataTypeAndName.name);
 
@@ -84,6 +99,9 @@ const getColumnExpression = (
       return `
       COALESCE(public.unaccent_immutable(${quotedColumnName}), '') || ' ' ||
       COALESCE(public.unaccent_immutable(SPLIT_PART(${quotedColumnName}, '@', 2)), '')`;
+
+    case FieldMetadataType.PHONES:
+      return `COALESCE(${quotedColumnName}, '')`;
 
     default:
       return `COALESCE(public.unaccent_immutable(${quotedColumnName}), '')`;

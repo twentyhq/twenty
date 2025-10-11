@@ -5,7 +5,7 @@ import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { type ReactNode } from 'react';
 import { IconArrowUpRight, type IconComponent } from 'twenty-ui/display';
-import { MenuItemCommand } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export type CommandMenuItemProps = {
   label: string;
@@ -16,17 +16,25 @@ export type CommandMenuItemProps = {
   Icon?: IconComponent;
   hotKeys?: string[];
   RightComponent?: ReactNode;
+  contextualTextPosition?: 'left' | 'right';
+  hasSubMenu?: boolean;
+  isSubMenuOpened?: boolean;
+  disabled?: boolean;
 };
 
 export const CommandMenuItem = ({
   label,
   description,
+  contextualTextPosition = 'left',
   to,
   id,
   onClick,
   Icon,
   hotKeys,
   RightComponent,
+  hasSubMenu = false,
+  isSubMenuOpened = false,
+  disabled = false,
 }: CommandMenuItemProps) => {
   const { onItemClick } = useCommandMenuOnItemClick();
 
@@ -40,19 +48,27 @@ export const CommandMenuItem = ({
   );
 
   return (
-    <MenuItemCommand
+    <MenuItem
+      withIconContainer={true}
       LeftIcon={Icon}
       text={label}
-      description={description}
+      contextualText={description}
+      contextualTextPosition={contextualTextPosition}
       hotKeys={hotKeys}
-      onClick={() =>
-        onItemClick({
-          onClick,
-          to,
-        })
+      onClick={
+        onClick || to
+          ? () =>
+              onItemClick({
+                onClick,
+                to,
+              })
+          : undefined
       }
-      isSelected={isSelectedItemId}
+      focused={isSelectedItemId}
       RightComponent={RightComponent}
+      hasSubMenu={hasSubMenu}
+      isSubMenuOpened={isSubMenuOpened}
+      disabled={disabled}
     />
   );
 };

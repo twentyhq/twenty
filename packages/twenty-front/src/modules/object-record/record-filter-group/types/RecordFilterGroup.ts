@@ -1,4 +1,4 @@
-import { type RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
+import { type RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 export type RecordFilterGroup = {
   id: string;

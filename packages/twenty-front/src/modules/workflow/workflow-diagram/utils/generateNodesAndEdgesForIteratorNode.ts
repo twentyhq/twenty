@@ -91,8 +91,12 @@ export const generateNodesAndEdgesForIteratorNode = ({
       source: step.id,
       sourceHandle: WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID,
       target: initialLoopStepId,
-      ...(edgeTypeBetweenTwoNodes.includes('editable')
-        ? { deletable: true, selectable: true }
+      ...(workflowContext === 'workflow'
+        ? {
+            deletable: true,
+            selectable: true,
+            reconnectable: 'target',
+          }
         : {}),
       targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
       data: {
@@ -115,8 +119,12 @@ export const generateNodesAndEdgesForIteratorNode = ({
         source: step.id,
         sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
         target: nextStepId,
-        ...(edgeTypeBetweenTwoNodes.includes('editable')
-          ? { deletable: true, selectable: true }
+        ...(workflowContext === 'workflow'
+          ? {
+              deletable: true,
+              selectable: true,
+              reconnectable: 'target',
+            }
           : {}),
         targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
         data: {

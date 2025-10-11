@@ -39,6 +39,13 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           pageTitle: t`Edit iFrame`,
         });
       }
+
+      if (widgetType === WidgetType.GRAPH) {
+        navigatePageLayoutCommandMenu({
+          commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
+          pageTitle: t`Edit Graph`,
+        });
+      }
     },
     [setPageLayoutEditingWidgetId, navigatePageLayoutCommandMenu],
   );

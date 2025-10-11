@@ -1,8 +1,10 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { type FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { ViewFilterOperand } from 'twenty-shared/types';
+import {
+  type FilterableFieldType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 import { buildValueFromFilter } from './buildRecordInputFromFilter';
 
@@ -36,22 +38,22 @@ describe('buildValueFromFilter', () => {
   describe('TEXT field type', () => {
     const testCases = [
       {
-        operand: ViewFilterOperand.Contains,
+        operand: ViewFilterOperand.CONTAINS,
         value: 'test',
         expected: 'test',
       },
       {
-        operand: ViewFilterOperand.DoesNotContain,
+        operand: ViewFilterOperand.DOES_NOT_CONTAIN,
         value: 'test',
         expected: undefined,
       },
       {
-        operand: ViewFilterOperand.IsNotEmpty,
+        operand: ViewFilterOperand.IS_NOT_EMPTY,
         value: 'test',
         expected: 'test',
       },
       {
-        operand: ViewFilterOperand.IsEmpty,
+        operand: ViewFilterOperand.IS_EMPTY,
         value: 'test',
         expected: undefined,
       },
@@ -69,47 +71,47 @@ describe('buildValueFromFilter', () => {
   describe('DATE_TIME field type', () => {
     const testCases = [
       {
-        operand: ViewFilterOperand.Is,
+        operand: ViewFilterOperand.IS,
         value: '2024-03-20T12:00:00Z',
         expected: mockDate,
       },
       {
-        operand: ViewFilterOperand.IsAfter,
+        operand: ViewFilterOperand.IS_AFTER,
         value: '2024-03-20T12:00:00Z',
         expected: mockDate,
       },
       {
-        operand: ViewFilterOperand.IsBefore,
+        operand: ViewFilterOperand.IS_BEFORE,
         value: '2024-03-20T12:00:00Z',
         expected: mockDate,
       },
       {
-        operand: ViewFilterOperand.IsInPast,
+        operand: ViewFilterOperand.IS_IN_PAST,
         value: '2024-03-20T12:00:00Z',
         expected: mockDate,
       },
       {
-        operand: ViewFilterOperand.IsInFuture,
+        operand: ViewFilterOperand.IS_IN_FUTURE,
         value: '2024-03-20T12:00:00Z',
         expected: mockDate,
       },
       {
-        operand: ViewFilterOperand.IsToday,
+        operand: ViewFilterOperand.IS_TODAY,
         value: '',
         expected: mockDate,
       },
       {
-        operand: ViewFilterOperand.IsRelative,
+        operand: ViewFilterOperand.IS_RELATIVE,
         value: '',
         expected: mockDate,
       },
       {
-        operand: ViewFilterOperand.IsEmpty,
+        operand: ViewFilterOperand.IS_EMPTY,
         value: '',
         expected: undefined,
       },
       {
-        operand: ViewFilterOperand.IsNotEmpty,
+        operand: ViewFilterOperand.IS_NOT_EMPTY,
         value: '2024-03-20T12:00:00Z',
         expected: mockDate,
       },
@@ -133,22 +135,22 @@ describe('buildValueFromFilter', () => {
   describe('NUMBER field type', () => {
     const testCases = [
       {
-        operand: ViewFilterOperand.GreaterThanOrEqual,
+        operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
         value: '5',
         expected: 6,
       },
       {
-        operand: ViewFilterOperand.LessThanOrEqual,
+        operand: ViewFilterOperand.LESS_THAN_OR_EQUAL,
         value: '5',
         expected: 4,
       },
       {
-        operand: ViewFilterOperand.IsNotEmpty,
+        operand: ViewFilterOperand.IS_NOT_EMPTY,
         value: '5',
         expected: 5,
       },
       {
-        operand: ViewFilterOperand.IsEmpty,
+        operand: ViewFilterOperand.IS_EMPTY,
         value: '5',
         expected: undefined,
       },
@@ -166,12 +168,12 @@ describe('buildValueFromFilter', () => {
   describe('BOOLEAN field type', () => {
     const testCases = [
       {
-        operand: ViewFilterOperand.Is,
+        operand: ViewFilterOperand.IS,
         value: 'true',
         expected: true,
       },
       {
-        operand: ViewFilterOperand.Is,
+        operand: ViewFilterOperand.IS,
         value: 'false',
         expected: false,
       },
@@ -189,22 +191,22 @@ describe('buildValueFromFilter', () => {
   describe('ARRAY field type', () => {
     const testCases = [
       {
-        operand: ViewFilterOperand.Contains,
+        operand: ViewFilterOperand.CONTAINS,
         value: 'test',
         expected: 'test',
       },
       {
-        operand: ViewFilterOperand.DoesNotContain,
+        operand: ViewFilterOperand.DOES_NOT_CONTAIN,
         value: 'test',
         expected: undefined,
       },
       {
-        operand: ViewFilterOperand.IsNotEmpty,
+        operand: ViewFilterOperand.IS_NOT_EMPTY,
         value: 'test',
         expected: 'test',
       },
       {
-        operand: ViewFilterOperand.IsEmpty,
+        operand: ViewFilterOperand.IS_EMPTY,
         value: 'test',
         expected: undefined,
       },
@@ -234,7 +236,7 @@ describe('buildValueFromFilter', () => {
 
     const testCases = [
       {
-        operand: ViewFilterOperand.Is,
+        operand: ViewFilterOperand.IS,
         value: JSON.stringify({
           isCurrentWorkspaceMemberSelected: false,
           selectedRecordIds: ['record-1'],
@@ -244,7 +246,7 @@ describe('buildValueFromFilter', () => {
         expected: 'record-1',
       },
       {
-        operand: ViewFilterOperand.Is,
+        operand: ViewFilterOperand.IS,
         value: JSON.stringify({
           isCurrentWorkspaceMemberSelected: true,
           selectedRecordIds: ['record-1'],
@@ -254,7 +256,7 @@ describe('buildValueFromFilter', () => {
         expected: 'current-workspace-member-id',
       },
       {
-        operand: ViewFilterOperand.Is,
+        operand: ViewFilterOperand.IS,
         value: JSON.stringify({
           isCurrentWorkspaceMemberSelected: false,
           selectedRecordIds: ['record-1', 'record-2'],
@@ -264,7 +266,7 @@ describe('buildValueFromFilter', () => {
         expected: undefined,
       },
       {
-        operand: ViewFilterOperand.IsNot,
+        operand: ViewFilterOperand.IS_NOT,
         value: JSON.stringify({
           isCurrentWorkspaceMemberSelected: false,
           selectedRecordIds: ['record-1'],
@@ -274,7 +276,7 @@ describe('buildValueFromFilter', () => {
         expected: undefined,
       },
       {
-        operand: ViewFilterOperand.IsEmpty,
+        operand: ViewFilterOperand.IS_EMPTY,
         value: JSON.stringify({
           isCurrentWorkspaceMemberSelected: false,
           selectedRecordIds: ['record-1'],
@@ -307,7 +309,7 @@ describe('buildValueFromFilter', () => {
     it.each(compositeTypes)(
       'should return undefined for composite type %s',
       (type) => {
-        const filter = createTestFilter(ViewFilterOperand.Is, 'test', type);
+        const filter = createTestFilter(ViewFilterOperand.IS, 'test', type);
         expect(buildValueFromFilter({ filter })).toBeUndefined();
       },
     );
@@ -315,7 +317,7 @@ describe('buildValueFromFilter', () => {
 
   describe('RAW_JSON field type', () => {
     it('should return undefined', () => {
-      const filter = createTestFilter(ViewFilterOperand.Is, 'test', 'RAW_JSON');
+      const filter = createTestFilter(ViewFilterOperand.IS, 'test', 'RAW_JSON');
       expect(buildValueFromFilter({ filter })).toBeUndefined();
     });
   });
@@ -344,27 +346,27 @@ describe('buildValueFromFilter', () => {
 
     const testCases = [
       {
-        operand: ViewFilterOperand.Is,
+        operand: ViewFilterOperand.IS,
         value: 'Rating 1',
         expected: 'RATING_1',
       },
       {
-        operand: ViewFilterOperand.IsNotEmpty,
+        operand: ViewFilterOperand.IS_NOT_EMPTY,
         value: 'Rating 2',
         expected: 'RATING_2',
       },
       {
-        operand: ViewFilterOperand.IsEmpty,
+        operand: ViewFilterOperand.IS_EMPTY,
         value: 'Rating 1',
         expected: undefined,
       },
       {
-        operand: ViewFilterOperand.GreaterThanOrEqual,
+        operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
         value: 'Rating 1',
         expected: 'RATING_2',
       },
       {
-        operand: ViewFilterOperand.LessThanOrEqual,
+        operand: ViewFilterOperand.LESS_THAN_OR_EQUAL,
         value: 'Rating 2',
         expected: 'RATING_1',
       },
@@ -385,7 +387,7 @@ describe('buildValueFromFilter', () => {
 
     it('should return undefined when option is not found', () => {
       const filter = createTestFilter(
-        ViewFilterOperand.Is,
+        ViewFilterOperand.IS,
         'Rating 4',
         'RATING',
       );
@@ -418,17 +420,17 @@ describe('buildValueFromFilter', () => {
 
     const testCases = [
       {
-        operand: ViewFilterOperand.Is,
+        operand: ViewFilterOperand.IS,
         value: JSON.stringify(['OPTION_1']),
         expected: 'OPTION_1',
       },
       {
-        operand: ViewFilterOperand.IsNot,
+        operand: ViewFilterOperand.IS_NOT,
         value: JSON.stringify(['OPTION_1']),
         expected: undefined,
       },
       {
-        operand: ViewFilterOperand.IsEmpty,
+        operand: ViewFilterOperand.IS_EMPTY,
         value: JSON.stringify(['OPTION_1']),
         expected: undefined,
       },
@@ -449,7 +451,7 @@ describe('buildValueFromFilter', () => {
 
     it('should handle invalid JSON', () => {
       const filter = createTestFilter(
-        ViewFilterOperand.Is,
+        ViewFilterOperand.IS,
         'invalid-json',
         'SELECT',
       );
@@ -465,17 +467,17 @@ describe('buildValueFromFilter', () => {
   describe('MULTI_SELECT field type', () => {
     const testCases = [
       {
-        operand: ViewFilterOperand.Contains,
+        operand: ViewFilterOperand.CONTAINS,
         value: JSON.stringify(['OPTION_1', 'OPTION_2']),
         expected: ['OPTION_1', 'OPTION_2'],
       },
       {
-        operand: ViewFilterOperand.DoesNotContain,
+        operand: ViewFilterOperand.DOES_NOT_CONTAIN,
         value: JSON.stringify(['OPTION_1']),
         expected: undefined,
       },
       {
-        operand: ViewFilterOperand.IsEmpty,
+        operand: ViewFilterOperand.IS_EMPTY,
         value: JSON.stringify(['OPTION_1']),
         expected: undefined,
       },
@@ -491,7 +493,7 @@ describe('buildValueFromFilter', () => {
 
     it('should handle invalid JSON', () => {
       const filter = createTestFilter(
-        ViewFilterOperand.Contains,
+        ViewFilterOperand.CONTAINS,
         'invalid-json',
         'MULTI_SELECT',
       );
@@ -502,7 +504,7 @@ describe('buildValueFromFilter', () => {
   describe('UUID field type', () => {
     it('should return the value', () => {
       const filter = createTestFilter(
-        ViewFilterOperand.Is,
+        ViewFilterOperand.IS,
         'test-uuid',
         'UUID',
       );

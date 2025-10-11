@@ -5,13 +5,14 @@ import { RecordCardHeaderContainer } from '@/object-record/record-card/component
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
+import { isRecordCalendarCardSelectedComponentFamilyState } from '../states/isRecordCalendarCardSelectedComponentFamilyState';
 
 const StyledCheckboxContainer = styled.div`
   margin-left: auto;
@@ -46,6 +47,12 @@ export const RecordCalendarCardHeader = ({
 
   const dragState = useRecordDragState('calendar', viewBarInstanceId);
 
+  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+    useRecoilComponentFamilyState(
+      isRecordCalendarCardSelectedComponentFamilyState,
+      recordId,
+    );
+
   const handleChipClick = () => {
     if (dragState.isDragging) {
       return;
@@ -75,8 +82,10 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <Checkbox
             hoverable
-            checked={false}
-            onChange={() => {}}
+            checked={isCurrentCardSelected}
+            onChange={(value) => {
+              setIsCurrentCardSelected(value.target.checked);
+            }}
             variant={CheckboxVariant.Secondary}
           />
         </StopPropagationContainer>

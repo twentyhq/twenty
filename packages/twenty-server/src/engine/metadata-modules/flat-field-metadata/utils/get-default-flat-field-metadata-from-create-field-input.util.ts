@@ -23,6 +23,7 @@ export const getDefaultFlatFieldMetadata = ({
   const createdAt = new Date();
 
   return {
+    viewFieldIds: [],
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,
     icon: createFieldInput.icon ?? null,
@@ -46,8 +47,6 @@ export const getDefaultFlatFieldMetadata = ({
     type: createFieldInput.type,
     universalIdentifier: fieldMetadataId,
     workspaceId,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
     defaultValue: defaultValue ?? generateDefaultValue(createFieldInput.type),
     settings: settings ?? null,

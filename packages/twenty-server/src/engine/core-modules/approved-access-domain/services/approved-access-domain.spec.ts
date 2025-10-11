@@ -12,6 +12,7 @@ import {
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -65,6 +66,14 @@ describe('ApprovedAccessDomainService', () => {
           provide: DomainManagerService,
           useValue: {
             buildWorkspaceURL: jest.fn(),
+          },
+        },
+        {
+          provide: FileService,
+          useValue: {
+            signFileUrl: jest
+              .fn()
+              .mockReturnValue('https://signed-url.com/logo.png'),
           },
         },
       ],

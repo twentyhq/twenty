@@ -1,15 +1,15 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { type RATING_VALUES } from '@/object-record/record-field/ui/meta-types/constants/RatingValues';
 import { type ZodHelperLiteral } from '@/object-record/record-field/ui/types/ZodHelperLiteral';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type CurrencyCode } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   type AllowedAddressSubField,
+  type FieldMetadataMultiItemSettings,
 } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';
-import { type CurrencyCode } from './CurrencyCode';
 
 type BaseFieldMetadata = {
   fieldName: string;
@@ -83,7 +83,7 @@ export type FieldLinkMetadata = BaseFieldMetadata & {
 };
 
 export type FieldLinksMetadata = BaseFieldMetadata & {
-  settings?: null;
+  settings?: FieldMetadataMultiItemSettings | null;
 };
 
 export type FieldCurrencyMetadata = BaseFieldMetadata & {
@@ -105,7 +105,7 @@ export type FieldEmailMetadata = BaseFieldMetadata & {
 };
 
 export type FieldEmailsMetadata = BaseFieldMetadata & {
-  settings?: null;
+  settings?: FieldMetadataMultiItemSettings | null;
 };
 
 export type FieldPhoneMetadata = BaseFieldMetadata & {
@@ -177,11 +177,11 @@ export type FieldActorMetadata = BaseFieldMetadata & {
 
 export type FieldArrayMetadata = BaseFieldMetadata & {
   values: { label: string; value: string }[];
-  settings?: null;
+  settings?: FieldMetadataMultiItemSettings | null;
 };
 
 export type FieldPhonesMetadata = BaseFieldMetadata & {
-  settings?: null;
+  settings?: FieldMetadataMultiItemSettings | null;
 };
 
 export type FieldTsVectorMetadata = BaseFieldMetadata & {
@@ -194,14 +194,16 @@ export type FieldMetadata =
   | FieldDateTimeMetadata
   | FieldDateMetadata
   | FieldEmailMetadata
+  | FieldEmailsMetadata
   | FieldFullNameMetadata
   | FieldLinkMetadata
+  | FieldLinksMetadata
   | FieldNumberMetadata
   | FieldPhoneMetadata
+  | FieldPhonesMetadata
   | FieldRatingMetadata
   | FieldRelationMetadata
   | FieldMorphRelationMetadata
-  | FieldRichTextMetadata
   | FieldSelectMetadata
   | FieldMultiSelectMetadata
   | FieldTextMetadata
@@ -251,7 +253,6 @@ export type FieldAddressValue = {
   addressLat: number | null;
   addressLng: number | null;
 };
-export type FieldRatingValue = (typeof RATING_VALUES)[number] | null;
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
@@ -282,6 +283,7 @@ const FieldActorSourceSchema = z.union([
   z.literal('SYSTEM'),
   z.literal('WORKFLOW'),
   z.literal('WEBHOOK'),
+  z.literal('AGENT'),
 ]);
 
 export const FieldActorValueSchema = z.object({

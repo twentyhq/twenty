@@ -25,13 +25,12 @@ export const useRecordBoardDragOperations = () => {
           result,
           snapshot,
           selectedRecordIds,
-          selectFieldName: selectFieldMetadataItem.name,
           recordIdsByGroupFamilyState: recordIndexRecordIdsByGroupFamilyState,
-          onUpdateRecord: ({ recordId, position, groupValue }) => {
+          onUpdateRecord: ({ recordId, position }, targetRecordGroupValue) => {
             updateOneRecord({
               idToUpdate: recordId,
               updateOneRecordInput: {
-                [selectFieldMetadataItem.name]: groupValue,
+                [selectFieldMetadataItem.name]: targetRecordGroupValue,
                 position,
               },
             });

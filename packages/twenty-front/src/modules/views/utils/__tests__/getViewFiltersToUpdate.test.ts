@@ -7,7 +7,7 @@ describe('getViewFiltersToUpdate', () => {
     __typename: 'ViewFilter',
     id: 'filter-1',
     fieldMetadataId: 'field-1',
-    operand: ViewFilterOperand.Contains,
+    operand: ViewFilterOperand.CONTAINS,
     value: 'test',
     displayValue: 'test',
     viewFilterGroupId: 'group-1',
@@ -73,7 +73,7 @@ describe('getViewFiltersToUpdate', () => {
     const existingFilter = { ...baseFilter } satisfies ViewFilter;
     const filterWithNewOperand = {
       ...baseFilter,
-      operand: ViewFilterOperand.DoesNotContain,
+      operand: ViewFilterOperand.DOES_NOT_CONTAIN,
     } satisfies ViewFilter;
 
     const currentViewFilters: ViewFilter[] = [existingFilter];

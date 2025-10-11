@@ -9,7 +9,7 @@ import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settin
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   useCreateOneRoleMutation,
   useUpdateOneRoleMutation,
@@ -20,7 +20,6 @@ import {
 import { type Role } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
-import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'label',
@@ -105,7 +104,7 @@ export const useSaveDraftRoleToDB = ({
     if (
       isNonEmptyArray(
         fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless,
-      )
+      ) === true
     ) {
       for (const fieldPermissionToRemoveInDraftRole of fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless) {
         removeFieldPermissionInDraftRole(
@@ -183,7 +182,7 @@ export const useSaveDraftRoleToDB = ({
         });
       }
 
-      if (isNonEmptyArray(fieldPermissionsToUpsert)) {
+      if (isNonEmptyArray(fieldPermissionsToUpsert) === true) {
         await upsertFieldPermissions({
           variables: {
             upsertFieldPermissionsInput: {
@@ -306,7 +305,7 @@ export const useSaveDraftRoleToDB = ({
         });
       }
 
-      if (isNonEmptyArray(fieldPermissionsToUpsert)) {
+      if (isNonEmptyArray(fieldPermissionsToUpsert) === true) {
         await upsertFieldPermissions({
           variables: {
             upsertFieldPermissionsInput: {

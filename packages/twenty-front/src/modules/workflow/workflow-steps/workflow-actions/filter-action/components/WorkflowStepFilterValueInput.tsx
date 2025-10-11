@@ -116,7 +116,7 @@ export const WorkflowStepFilterValueInput = ({
         defaultValue={stepFilter.value}
         onChange={handleValueChange}
         VariablePicker={WorkflowVariablePicker}
-        objectNameSingular={objectMetadataItem.nameSingular}
+        objectNameSingulars={[objectMetadataItem.nameSingular]}
         disabled={readonly}
       />
     );
@@ -163,7 +163,7 @@ export const WorkflowStepFilterValueInput = ({
     );
   }
 
-  if (isDateField && stepFilter.operand === ViewFilterOperand.IsRelative) {
+  if (isDateField && stepFilter.operand === ViewFilterOperand.IS_RELATIVE) {
     return (
       <FormRelativeDatePicker
         defaultValue={stepFilter.value}

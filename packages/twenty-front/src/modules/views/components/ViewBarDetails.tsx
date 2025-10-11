@@ -204,6 +204,7 @@ export const ViewBarDetails = ({
     viewFiltersAreDifferentFromRecordFilters ||
     viewSortsAreDifferentFromRecordSorts ||
     viewFilterGroupsAreDifferentFromRecordFilterGroups ||
+    viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter ||
     ((currentRecordSorts.length > 0 ||
       currentRecordFilters.length > 0 ||
       currentRecordFilterGroups.length > 0) &&

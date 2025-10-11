@@ -1,6 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { MessageChannelContactAutoCreationPolicy } from '@/accounts/types/MessageChannel';
+import {
+  MessageChannelContactAutoCreationPolicy,
+  MessageFolderImportPolicy,
+} from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MessageChannelVisibility } from '~/generated/graphql';
@@ -27,6 +30,7 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
       isSyncEnabled: true,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
       messageFolders: [],
+      messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
     },
   },
   argTypes: {

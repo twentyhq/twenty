@@ -2,9 +2,11 @@ import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRecordGqlOperationFilter,
+  isDefined,
+} from 'twenty-shared/utils';
 
 const DATE_RANGE_FILTER_AFTER_ID = 'DATE_RANGE_FILTER_AFTER_ID';
 const DATE_RANGE_FILTER_BEFORE_ID = 'DATE_RANGE_FILTER_BEFORE_ID';
@@ -31,7 +33,7 @@ export const useRecordCalendarQueryDateRangeFilter = (selectedDate: Date) => {
     id: DATE_RANGE_FILTER_AFTER_ID,
     fieldMetadataId: dateRangeFilterFieldMetadataId,
     value: `${firstDayOfFirstWeek.toISOString()}`,
-    operand: RecordFilterOperand.IsAfter,
+    operand: RecordFilterOperand.IS_AFTER,
     type: 'DATE',
     label: 'After',
     displayValue: `${firstDayOfFirstWeek.toISOString()}`,
@@ -41,7 +43,7 @@ export const useRecordCalendarQueryDateRangeFilter = (selectedDate: Date) => {
     id: DATE_RANGE_FILTER_BEFORE_ID,
     fieldMetadataId: dateRangeFilterFieldMetadataId,
     value: `${lastDayOfLastWeek.toISOString()}`,
-    operand: RecordFilterOperand.IsBefore,
+    operand: RecordFilterOperand.IS_BEFORE,
     type: 'DATE',
     label: 'Before',
     displayValue: `${lastDayOfLastWeek.toISOString()}`,

@@ -1,6 +1,9 @@
 import { gql } from '@apollo/client';
 
+import { PAGE_LAYOUT_WIDGET_FRAGMENT } from '../fragments/pageLayoutWidgetFragment';
+
 export const UPDATE_PAGE_LAYOUT_WITH_TABS_AND_WIDGETS = gql`
+  ${PAGE_LAYOUT_WIDGET_FRAGMENT}
   mutation UpdatePageLayoutWithTabsAndWidgets(
     $id: String!
     $input: UpdatePageLayoutWithTabsInput!
@@ -19,20 +22,7 @@ export const UPDATE_PAGE_LAYOUT_WITH_TABS_AND_WIDGETS = gql`
         position
         pageLayoutId
         widgets {
-          id
-          title
-          type
-          pageLayoutTabId
-          objectMetadataId
-          gridPosition {
-            row
-            column
-            rowSpan
-            columnSpan
-          }
-          configuration
-          createdAt
-          updatedAt
+          ...PageLayoutWidgetFragment
         }
         createdAt
         updatedAt
