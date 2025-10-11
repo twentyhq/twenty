@@ -142,22 +142,18 @@ export const AIChatMessage = ({
   message,
   isLastMessageStreaming,
   error,
-  onRetry,
   isRetrying,
 }: {
   message: UIMessageWithMetadata;
   isLastMessageStreaming: boolean;
   error?: Error | null;
-  onRetry?: () => void;
   isRetrying?: boolean;
 }) => {
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
 
   const showError =
-    isDefined(error) &&
-    message.role === AgentChatMessageRole.ASSISTANT &&
-    isDefined(onRetry);
+    isDefined(error) && message.role === AgentChatMessageRole.ASSISTANT;
 
   return (
     <StyledMessageBubble
@@ -200,11 +196,7 @@ export const AIChatMessage = ({
             </StyledFilesContainer>
           )}
           {showError && (
-            <AIChatErrorMessage
-              error={error}
-              onRetry={onRetry}
-              isRetrying={isRetrying}
-            />
+            <AIChatErrorMessage error={error} isRetrying={isRetrying} />
           )}
           {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">

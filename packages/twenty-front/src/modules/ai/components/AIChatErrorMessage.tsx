@@ -1,3 +1,4 @@
+import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -41,16 +42,15 @@ const StyledErrorMessage = styled.div`
 
 type AIChatErrorMessageProps = {
   error: Error;
-  onRetry: () => void;
   isRetrying?: boolean;
 };
 
 export const AIChatErrorMessage = ({
   error,
-  onRetry,
   isRetrying = false,
 }: AIChatErrorMessageProps) => {
   const theme = useTheme();
+  const { handleRetry } = useAgentChatContextOrThrow();
 
   return (
     <StyledErrorContainer>
@@ -67,7 +67,7 @@ export const AIChatErrorMessage = ({
         variant="secondary"
         size="small"
         Icon={IconRefresh}
-        onClick={onRetry}
+        onClick={handleRetry}
         disabled={isRetrying}
         title={t`Retry`}
       />

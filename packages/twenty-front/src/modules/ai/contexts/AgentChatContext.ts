@@ -19,7 +19,7 @@ export type AgentChatContextValue = {
 
   scrollWrapperId: string;
   context: Array<AIChatObjectMetadataAndRecordContext>;
-  onRetry: () => void;
+  handleRetry: () => void;
 };
 
 export const AgentChatContext = createContext<AgentChatContextValue | null>(

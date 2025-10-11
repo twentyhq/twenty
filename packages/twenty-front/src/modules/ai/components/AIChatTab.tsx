@@ -70,7 +70,6 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
     messages,
     isStreaming,
     error,
-    onRetry,
   } = useAgentChatContextOrThrow();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
@@ -107,7 +106,6 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
                     message={message}
                     key={message.id}
                     error={shouldShowError ? error : null}
-                    onRetry={shouldShowError ? onRetry : undefined}
                     isRetrying={isStreaming}
                   />
                 );

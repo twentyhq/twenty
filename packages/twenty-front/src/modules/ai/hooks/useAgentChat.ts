@@ -135,6 +135,6 @@ export const useAgentChat = (
     scrollWrapperId,
     isStreaming,
     error,
-    onRetry: regenerate,
+    handleRetry: regenerate,
   };
 };
