@@ -57,6 +57,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -100,6 +101,7 @@ import { FileModule } from './file/file.module';
     GeoMapModule,
     SubscriptionsModule,
     ImapSmtpCaldavModule,
+    ChannelSyncModule,
     FileStorageModule.forRoot(),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
