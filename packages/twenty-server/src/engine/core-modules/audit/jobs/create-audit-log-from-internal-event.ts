@@ -7,7 +7,7 @@ import { type ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/ty
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
@@ -37,25 +37,25 @@ export class CreateAuditLogFromInternalEvent {
         auditService.createObjectEvent(OBJECT_RECORD_UPDATED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
-          objectMetadataId: eventData.objectMetadata.id,
+          objectMetadataId: workspaceEventBatch.objectMetadata.id,
         });
       } else if (workspaceEventBatch.name.endsWith('.created')) {
         auditService.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
-          objectMetadataId: eventData.objectMetadata.id,
+          objectMetadataId: workspaceEventBatch.objectMetadata.id,
         });
       } else if (workspaceEventBatch.name.endsWith('.deleted')) {
         auditService.createObjectEvent(OBJECT_RECORD_DELETED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
-          objectMetadataId: eventData.objectMetadata.id,
+          objectMetadataId: workspaceEventBatch.objectMetadata.id,
         });
       } else if (workspaceEventBatch.name.endsWith('.upserted')) {
         auditService.createObjectEvent(OBJECT_RECORD_UPSERTED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
-          objectMetadataId: eventData.objectMetadata.id,
+          objectMetadataId: workspaceEventBatch.objectMetadata.id,
         });
       }
     }

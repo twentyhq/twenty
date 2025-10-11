@@ -44,5 +44,6 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: v4(),
     viewFieldIds: [],
+    viewFilterIds: [],
   };
 };

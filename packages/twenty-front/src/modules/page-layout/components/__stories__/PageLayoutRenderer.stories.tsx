@@ -25,9 +25,22 @@ import {
   type PageLayoutWidget,
 } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockPersonObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+const idField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: mockPersonObjectMetadataItem,
+  fieldName: 'id',
+});
+const nameField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: mockPersonObjectMetadataItem,
+  fieldName: 'name',
+});
+const createdAtField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: mockPersonObjectMetadataItem,
+  fieldName: 'createdAt',
+});
 
 const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
@@ -76,7 +89,7 @@ const mixedGraphsPageLayoutMocks = {
             __typename: 'NumberChartConfiguration',
             graphType: GraphType.NUMBER,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
-            aggregateFieldMetadataId: 'id',
+            aggregateFieldMetadataId: idField.id,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -100,7 +113,7 @@ const mixedGraphsPageLayoutMocks = {
             __typename: 'GaugeChartConfiguration',
             graphType: GraphType.GAUGE,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
-            aggregateFieldMetadataId: 'id',
+            aggregateFieldMetadataId: idField.id,
             displayDataLabel: false,
           },
           createdAt: '2024-01-01T00:00:00Z',
@@ -125,8 +138,8 @@ const mixedGraphsPageLayoutMocks = {
             __typename: 'PieChartConfiguration',
             graphType: GraphType.PIE,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
-            aggregateFieldMetadataId: 'id',
-            groupByFieldMetadataId: 'createdAt',
+            aggregateFieldMetadataId: idField.id,
+            groupByFieldMetadataId: createdAtField.id,
             orderBy: GraphOrderBy.VALUE_DESC,
           },
           createdAt: '2024-01-01T00:00:00Z',
@@ -151,12 +164,8 @@ const mixedGraphsPageLayoutMocks = {
             __typename: 'BarChartConfiguration',
             graphType: GraphType.BAR,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
-            aggregateFieldMetadataId: mockPersonObjectMetadataItem.fields.find(
-              (field) => field.name === 'name',
-            )?.id,
-            groupByFieldMetadataIdX: mockPersonObjectMetadataItem.fields.find(
-              (field) => field.name === 'createdAt',
-            )?.id,
+            aggregateFieldMetadataId: nameField.id,
+            groupByFieldMetadataIdX: createdAtField.id,
             orderByX: GraphOrderBy.FIELD_ASC,
             axisNameDisplay: AxisNameDisplay.BOTH,
             displayDataLabel: false,

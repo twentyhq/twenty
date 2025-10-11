@@ -38,6 +38,7 @@ export interface FindManyResolverArgs<
   after?: string;
   filter?: Filter;
   orderBy?: OrderBy;
+  offset?: number;
 }
 
 export interface FindOneResolverArgs<Filter = ObjectRecordFilter> {

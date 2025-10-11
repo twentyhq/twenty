@@ -7,10 +7,10 @@ import { Repository } from 'typeorm';
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 
 @Injectable()
 export class CalendarEventParticipantListener {
@@ -23,11 +23,15 @@ export class CalendarEventParticipantListener {
 
   @OnCustomBatchEvent('calendarEventParticipant_matched')
   public async handleCalendarEventParticipantMatchedEvent(
-    batchEvent: WorkspaceEventBatch<{
+    batchEvent: CustomWorkspaceEventBatch<{
       workspaceMemberId: string;
       participants: CalendarEventParticipantWorkspaceEntity[];
     }>,
   ): Promise<void> {
+    if (!isDefined(batchEvent.workspaceId)) {
+      return;
+    }
+
     const calendarEventObjectMetadata =
       await this.objectMetadataRepository.findOneOrFail({
         where: {

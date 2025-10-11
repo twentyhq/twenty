@@ -80,7 +80,6 @@ export const useRecordTableGroupDragOperations = () => {
           result,
           snapshot,
           selectedRecordIds,
-          selectFieldName: fieldMetadata.name,
           recordIdsByGroupFamilyState: recordIdsByGroupFamilyState,
           onUpdateRecord: ({ recordId, position }) => {
             updateOneRow({

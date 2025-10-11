@@ -19,7 +19,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import {
   AutomatedTriggerType,
   type WorkflowAutomatedTriggerWorkspaceEntity,
@@ -138,7 +138,7 @@ export class WorkflowDatabaseEventTriggerListener {
     const workspaceId = payload.workspaceId;
     const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        payload.events[0].objectMetadata.nameSingular,
+        payload.objectMetadata.nameSingular,
         workspaceId,
       );
 
@@ -156,7 +156,7 @@ export class WorkflowDatabaseEventTriggerListener {
     const workspaceId = payload.workspaceId;
     const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        payload.events[0].objectMetadata.nameSingular,
+        payload.objectMetadata.nameSingular,
         workspaceId,
       );
 
@@ -180,7 +180,7 @@ export class WorkflowDatabaseEventTriggerListener {
     const workspaceId = payload.workspaceId;
     const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        payload.events[0].objectMetadata.nameSingular,
+        payload.objectMetadata.nameSingular,
         workspaceId,
       );
 
@@ -198,7 +198,7 @@ export class WorkflowDatabaseEventTriggerListener {
     const workspaceId = payload.workspaceId;
     const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        payload.events[0].objectMetadata.nameSingular,
+        payload.objectMetadata.nameSingular,
         workspaceId,
       );
 
