@@ -22,17 +22,18 @@ import { lastRealIndexSetComponentState } from '@/object-record/record-table/vir
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
 import { scrollAtRealIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRealIndexComponentState';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useTriggerInitialRecordTableDataLoad = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
-  const currentUser = useRecoilValue(currentUserState);
 
   const { findManyRecordsLazy } =
     useRecordIndexTableFetchMore(objectNameSingular);
@@ -99,6 +100,8 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const triggerInitialRecordTableDataLoad = useRecoilCallback(
     ({ snapshot, set }) =>
       async () => {
+        const currentUser = getSnapshotValue(snapshot, currentUserState);
+
         const isInitializingVirtualTableDataLoading = getSnapshotValue(
           snapshot,
           isInitializingVirtualTableDataLoadingCallbackState,
@@ -129,27 +132,33 @@ export const useTriggerInitialRecordTableDataLoad = () => {
           recordIndexAllRecordIdsSelector,
         );
 
-        for (const [index] of currentRecordIds.entries()) {
-          set(
-            dataLoadingStatusByRealIndexCallbackState({
-              realIndex: index,
-            }),
-            null,
-          );
-
-          set(
-            recordIdByRealIndexCallbackState({
-              realIndex: index,
-            }),
-            null,
-          );
-        }
+        let records: ObjectRecord[] | null = null;
+        let totalCount = 0;
 
         if (isUndefinedOrNull(currentUser)) {
-          return;
-        }
+          records = SIGN_IN_BACKGROUND_MOCK_COMPANIES;
+          totalCount = SIGN_IN_BACKGROUND_MOCK_COMPANIES.length;
+        } else {
+          for (const [index] of currentRecordIds.entries()) {
+            set(
+              dataLoadingStatusByRealIndexCallbackState({
+                realIndex: index,
+              }),
+              null,
+            );
 
-        const { records, totalCount } = await findManyRecordsLazy();
+            set(
+              recordIdByRealIndexCallbackState({
+                realIndex: index,
+              }),
+              null,
+            );
+          }
+          const { records: findManyRecords, totalCount: findManyTotalCount } =
+            await findManyRecordsLazy();
+          records = findManyRecords;
+          totalCount = findManyTotalCount;
+        }
 
         if (isDefined(records)) {
           resetNumberOfRecordsToVirtualize({
@@ -189,7 +198,6 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       resetTableFocuses,
       resetVirtualizedRowTreadmill,
       recordIndexAllRecordIdsSelector,
-      currentUser,
       findManyRecordsLazy,
       dataPagesLoadedCallbackState,
       isRecordTableInitialLoadingCallbackState,
