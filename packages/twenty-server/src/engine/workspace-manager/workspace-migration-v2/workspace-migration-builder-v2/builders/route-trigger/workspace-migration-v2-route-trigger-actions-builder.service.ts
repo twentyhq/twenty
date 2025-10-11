@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
-import { compareTwoFlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/utils/compare-two-flat-route-trigger.util';
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { UpdateRouteTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/types/workspace-migration-route-trigger-action-v2.type';
 import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -9,36 +8,24 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatRouteTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service';
 
-const ROUTE_TRIGGER_METADATA_NAME =
-  'routeTrigger' as const satisfies AllMetadataName;
-
 @Injectable()
 export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  typeof ROUTE_TRIGGER_METADATA_NAME
+  typeof ALL_METADATA_NAME.routeTrigger
 > {
   constructor(
     private readonly flatRouteTriggerValidatorService: FlatRouteTriggerValidatorService,
   ) {
-    super(ROUTE_TRIGGER_METADATA_NAME);
+    super(ALL_METADATA_NAME.routeTrigger);
   }
 
-  protected async validateFlatEntityCreation({
-    flatEntityToValidate: flatRouteTriggerToValidate,
-    optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<typeof ROUTE_TRIGGER_METADATA_NAME>): Promise<
-    FlatEntityValidationReturnType<
-      typeof ROUTE_TRIGGER_METADATA_NAME,
-      'created'
-    >
+  protected async validateFlatEntityCreation(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
+  ): Promise<
+    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.routeTrigger, 'created'>
   > {
     const validationResult =
       await this.flatRouteTriggerValidatorService.validateFlatRouteTriggerCreation(
-        {
-          flatRouteTriggerToValidate,
-          optimisticFlatRouteTriggerMaps,
-          dependencyOptimisticFlatEntityMaps,
-        },
+        args,
       );
 
     if (validationResult.errors.length > 0) {
@@ -47,6 +34,11 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
         ...validationResult,
       };
     }
+
+    const {
+      flatEntityToValidate: flatRouteTriggerToValidate,
+      dependencyOptimisticFlatEntityMaps,
+    } = args;
 
     return {
       status: 'success',
@@ -58,22 +50,15 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     };
   }
 
-  protected async validateFlatEntityDeletion({
-    flatEntityToValidate: flatRouteTriggerToValidate,
-    optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<typeof ROUTE_TRIGGER_METADATA_NAME>): Promise<
-    FlatEntityValidationReturnType<
-      typeof ROUTE_TRIGGER_METADATA_NAME,
-      'deleted'
-    >
+  protected async validateFlatEntityDeletion(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
+  ): Promise<
+    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.routeTrigger, 'deleted'>
   > {
     const validationResult =
-      this.flatRouteTriggerValidatorService.validateFlatRouteTriggerDeletion({
-        flatRouteTriggerToValidate,
-        optimisticFlatRouteTriggerMaps,
-        dependencyOptimisticFlatEntityMaps,
-      });
+      this.flatRouteTriggerValidatorService.validateFlatRouteTriggerDeletion(
+        args,
+      );
 
     if (validationResult.errors.length > 0) {
       return {
@@ -81,6 +66,11 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
         ...validationResult,
       };
     }
+
+    const {
+      flatEntityToValidate: flatRouteTriggerToValidate,
+      dependencyOptimisticFlatEntityMaps,
+    } = args;
 
     return {
       status: 'success',
@@ -92,34 +82,13 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     };
   }
 
-  protected async validateFlatEntityUpdate({
-    flatEntityUpdate: { from: fromFlatRouteTrigger, to: toFlatRouteTrigger },
-    optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityUpdateValidationArgs<
-    typeof ROUTE_TRIGGER_METADATA_NAME
-  >): Promise<
-    | FlatEntityValidationReturnType<
-        typeof ROUTE_TRIGGER_METADATA_NAME,
-        'updated'
-      >
-    | undefined
+  protected async validateFlatEntityUpdate(
+    args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
+  ): Promise<
+    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.routeTrigger, 'updated'>
   > {
-    const routeTriggerUpdatedProperties = compareTwoFlatRouteTrigger({
-      fromFlatRouteTrigger,
-      toFlatRouteTrigger,
-    });
-
-    if (routeTriggerUpdatedProperties.length === 0) {
-      return undefined;
-    }
-
     const validationResult =
-      this.flatRouteTriggerValidatorService.validateFlatRouteTriggerUpdate({
-        flatRouteTriggerToValidate: toFlatRouteTrigger,
-        optimisticFlatRouteTriggerMaps,
-        dependencyOptimisticFlatEntityMaps,
-      });
+      this.flatRouteTriggerValidatorService.validateFlatRouteTriggerUpdate(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -128,10 +97,13 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
+    const { dependencyOptimisticFlatEntityMaps, flatEntityId, flatEntityUpdates } =
+      args;
+
     const updateRouteTriggerAction: UpdateRouteTriggerAction = {
       type: 'update_route_trigger',
-      routeTriggerId: toFlatRouteTrigger.id,
-      updates: routeTriggerUpdatedProperties,
+      routeTriggerId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {
