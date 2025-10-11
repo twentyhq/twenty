@@ -55,13 +55,7 @@ export const useAgentChat = (
   const { scrollWrapperHTMLElement } =
     useScrollWrapperHTMLElement(scrollWrapperId);
 
-  const {
-    sendMessage,
-    messages,
-    status,
-    error,
-    regenerate: retry,
-  } = useChat({
+  const { sendMessage, messages, status, error, regenerate } = useChat({
     transport: new DefaultChatTransport({
       api: `${REST_API_BASE_URL}/agent-chat/stream`,
       headers: () => ({
@@ -141,6 +135,6 @@ export const useAgentChat = (
     scrollWrapperId,
     isStreaming,
     error,
-    retry,
+    onRetry: regenerate,
   };
 };
