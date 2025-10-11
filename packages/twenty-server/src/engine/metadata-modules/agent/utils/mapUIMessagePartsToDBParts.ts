@@ -64,7 +64,7 @@ export const mapUIMessagePartsToDBParts = (
       default:
         {
           if (isToolPart(part)) {
-            const { toolCallId, input, output, errorText } = part;
+            const { toolCallId, input, output, errorText, state } = part;
 
             return {
               ...basePart,
@@ -72,6 +72,7 @@ export const mapUIMessagePartsToDBParts = (
               toolInput: input,
               toolOutput: output,
               errorMessage: errorText,
+              state,
             };
           }
         }

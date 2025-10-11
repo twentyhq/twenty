@@ -7,8 +7,10 @@ import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePrev
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
+import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
 import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
@@ -139,12 +141,19 @@ const StyledFilesContainer = styled.div`
 export const AIChatMessage = ({
   message,
   isLastMessageStreaming,
+  error,
+  isRetrying,
 }: {
   message: UIMessageWithMetadata;
   isLastMessageStreaming: boolean;
+  error?: Error | null;
+  isRetrying?: boolean;
 }) => {
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
+
+  const showError =
+    isDefined(error) && message.role === AgentChatMessageRole.ASSISTANT;
 
   return (
     <StyledMessageBubble
@@ -174,6 +183,7 @@ export const AIChatMessage = ({
             <AIChatAssistantMessageRenderer
               isLastMessageStreaming={isLastMessageStreaming}
               messageParts={message.parts}
+              hasError={showError}
             />
           </StyledMessageText>
           {message.parts.length > 0 && (
@@ -184,6 +194,9 @@ export const AIChatMessage = ({
                   <AgentChatFilePreview key={file.filename} file={file} />
                 ))}
             </StyledFilesContainer>
+          )}
+          {showError && (
+            <AIChatErrorMessage error={error} isRetrying={isRetrying} />
           )}
           {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">
