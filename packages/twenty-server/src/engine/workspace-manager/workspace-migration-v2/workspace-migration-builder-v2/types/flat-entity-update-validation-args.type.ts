@@ -11,6 +11,7 @@ export type FlatEntityUpdateValidationArgs<T extends AllMetadataName> = Omit<
   FlatEntityValidationArgs<T>,
   'flatEntityToValidate' | 'remainingFlatEntityMapsToValidate'
 > & {
+  flatEntityId: string
   flatEntityUpdates: FlatEntityPropertiesUpdates<T>;
   remainingFlatEntityMapsToValidate: FromTo<MetadataFlatEntityMaps<T>>;
 };

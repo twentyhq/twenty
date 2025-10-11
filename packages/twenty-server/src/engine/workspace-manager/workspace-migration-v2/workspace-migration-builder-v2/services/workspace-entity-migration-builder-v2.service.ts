@@ -242,6 +242,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
       const validationResult = await this.validateFlatEntityUpdate({
         flatEntityUpdates: flatEntityToUpdate.updates,
+        flatEntityId: flatEntityToUpdateId,
         dependencyOptimisticFlatEntityMaps,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
@@ -250,25 +251,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         buildOptions,
       });
 
-      if (validationResult === undefined) {
-        continue;
-      }
-
       if (validationResult.status === 'fail') {
         allValidationResult.push(validationResult);
         continue;
       }
 
-      // For my tomorrow self:
-      /*
-      - [ ] ~~refactor view filter integration tests suite~~
-      - [ ] refactor the builder to embbed flat entity comparison
-      - [ ] refactor the runner optimistic cache side effect on relation parent in order to ease cache invalidation instead of sending depdency as cache to invalidate
-      - [ ] reorganize integration testing file tree
-      - [ ] refactor optimistic to be centralized
-      - [ ] refactor validate build and run args type def
-      - [ ] Update validation should return optimistic updatedFlatEntity in case of success | or just handle as below tbh
-      */
       const existingFlatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: flatEntityToUpdateId,
         flatEntityMaps: optimisticFlatEntityMaps,
@@ -334,5 +321,5 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
   protected abstract validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<T>,
-  ): Promise<FlatEntityValidationReturnType<T, 'updated'> | undefined>;
+  ): Promise<FlatEntityValidationReturnType<T, 'updated'>>;
 }
