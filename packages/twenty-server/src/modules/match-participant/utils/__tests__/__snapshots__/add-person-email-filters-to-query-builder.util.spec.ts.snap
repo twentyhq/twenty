@@ -8,6 +8,7 @@ exports[`addPersonEmailFiltersToQueryBuilder case-insensitive email normalizatio
         "person.id",
         "person.emailsPrimaryEmail",
         "person.emailsAdditionalEmails",
+        "person.deletedAt",
       ],
     ],
     "method": "select",
@@ -23,6 +24,10 @@ exports[`addPersonEmailFiltersToQueryBuilder case-insensitive email normalizatio
       },
     ],
     "method": "where",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
   {
     "args": [
@@ -57,6 +62,7 @@ exports[`addPersonEmailFiltersToQueryBuilder emails with empty exclusion array: 
         "person.id",
         "person.emailsPrimaryEmail",
         "person.emailsAdditionalEmails",
+        "person.deletedAt",
       ],
     ],
     "method": "select",
@@ -71,6 +77,10 @@ exports[`addPersonEmailFiltersToQueryBuilder emails with empty exclusion array: 
       },
     ],
     "method": "where",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
   {
     "args": [
@@ -96,6 +106,7 @@ exports[`addPersonEmailFiltersToQueryBuilder empty emails array: should handle e
         "person.id",
         "person.emailsPrimaryEmail",
         "person.emailsAdditionalEmails",
+        "person.deletedAt",
       ],
     ],
     "method": "select",
@@ -113,6 +124,10 @@ exports[`addPersonEmailFiltersToQueryBuilder empty emails array: should handle e
     "args": [],
     "method": "withDeleted",
   },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
 ]
 `;
 
@@ -124,6 +139,7 @@ exports[`addPersonEmailFiltersToQueryBuilder multiple emails with exclusions: sh
         "person.id",
         "person.emailsPrimaryEmail",
         "person.emailsAdditionalEmails",
+        "person.deletedAt",
       ],
     ],
     "method": "select",
@@ -139,6 +155,10 @@ exports[`addPersonEmailFiltersToQueryBuilder multiple emails with exclusions: sh
       },
     ],
     "method": "where",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
   {
     "args": [
@@ -190,6 +210,7 @@ exports[`addPersonEmailFiltersToQueryBuilder multiple emails without exclusions:
         "person.id",
         "person.emailsPrimaryEmail",
         "person.emailsAdditionalEmails",
+        "person.deletedAt",
       ],
     ],
     "method": "select",
@@ -205,6 +226,10 @@ exports[`addPersonEmailFiltersToQueryBuilder multiple emails without exclusions:
       },
     ],
     "method": "where",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
   {
     "args": [
@@ -239,6 +264,7 @@ exports[`addPersonEmailFiltersToQueryBuilder single email with person ID exclusi
         "person.id",
         "person.emailsPrimaryEmail",
         "person.emailsAdditionalEmails",
+        "person.deletedAt",
       ],
     ],
     "method": "select",
@@ -253,6 +279,10 @@ exports[`addPersonEmailFiltersToQueryBuilder single email with person ID exclusi
       },
     ],
     "method": "where",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
   {
     "args": [
@@ -294,6 +324,7 @@ exports[`addPersonEmailFiltersToQueryBuilder single email without exclusions: sh
         "person.id",
         "person.emailsPrimaryEmail",
         "person.emailsAdditionalEmails",
+        "person.deletedAt",
       ],
     ],
     "method": "select",
@@ -308,6 +339,10 @@ exports[`addPersonEmailFiltersToQueryBuilder single email without exclusions: sh
       },
     ],
     "method": "where",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
   {
     "args": [
@@ -333,6 +368,7 @@ exports[`addPersonEmailFiltersToQueryBuilder three emails with unique parameter 
         "person.id",
         "person.emailsPrimaryEmail",
         "person.emailsAdditionalEmails",
+        "person.deletedAt",
       ],
     ],
     "method": "select",
@@ -349,6 +385,10 @@ exports[`addPersonEmailFiltersToQueryBuilder three emails with unique parameter 
       },
     ],
     "method": "where",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
   {
     "args": [
