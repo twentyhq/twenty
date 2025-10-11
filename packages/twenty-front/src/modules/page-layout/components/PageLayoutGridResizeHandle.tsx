@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconBorderCornerSquare } from 'twenty-ui/display';
 import { forwardRef } from 'react';
+import { IconBorderCornerSquare } from 'twenty-ui/display';
 
-type ModernResizeHandleProps = {
+type PageLayoutGridResizeHandleProps = {
   handleAxis?: string;
   onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
   onMouseUp?: React.MouseEventHandler<HTMLDivElement>;
@@ -21,7 +21,7 @@ const StyledIcon = styled(IconBorderCornerSquare)`
 
 export const PageLayoutGridResizeHandle = forwardRef<
   HTMLDivElement,
-  ModernResizeHandleProps
+  PageLayoutGridResizeHandleProps
 >((props, ref) => {
   const theme = useTheme();
   const {
@@ -51,4 +51,4 @@ export const PageLayoutGridResizeHandle = forwardRef<
   );
 });
 
-PageLayoutGridResizeHandle.displayName = 'ModernResizeHandle';
+PageLayoutGridResizeHandle.displayName = 'PageLayoutGridResizeHandle';
