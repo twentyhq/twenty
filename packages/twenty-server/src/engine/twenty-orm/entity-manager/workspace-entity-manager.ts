@@ -56,6 +56,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -1195,22 +1196,26 @@ export class WorkspaceEntityManager extends EntityManager {
         (entity) => !beforeUpdateMapById[entity.id],
       );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPDATED,
-        objectMetadataItem,
-        workspaceId: this.internalContext.workspaceId,
-        entities: updatedEntities,
-        beforeEntities: updatedEntities.map(
-          (entity) => beforeUpdateMapById[entity.id],
-        ),
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPDATED,
+          objectMetadataItem,
+          workspaceId: this.internalContext.workspaceId,
+          entities: updatedEntities,
+          beforeEntities: updatedEntities.map(
+            (entity) => beforeUpdateMapById[entity.id],
+          ),
+        }),
+      );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.CREATED,
-        objectMetadataItem,
-        workspaceId: this.internalContext.workspaceId,
-        entities: createdEntities,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.CREATED,
+          objectMetadataItem,
+          workspaceId: this.internalContext.workspaceId,
+          entities: createdEntities,
+        }),
+      );
 
       const permissionCheckApplies =
         permissionOptionsFromArgs?.shouldBypassPermissionChecks !== true &&
@@ -1387,12 +1392,14 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.objectMetadataMaps,
     );
 
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.DESTROYED,
-      objectMetadataItem,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedResult,
-    });
+    this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+      formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.DESTROYED,
+        objectMetadataItem,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedResult,
+      }),
+    );
 
     return isEntityArray ? formattedResult : formattedResult[0];
   }
@@ -1500,12 +1507,14 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.objectMetadataMaps,
     );
 
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.DELETED,
-      objectMetadataItem,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedResult,
-    });
+    this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+      formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.DELETED,
+        objectMetadataItem,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedResult,
+      }),
+    );
 
     return isEntityArray ? formattedResult : formattedResult[0];
   }
@@ -1609,12 +1618,14 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.objectMetadataMaps,
     );
 
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.RESTORED,
-      objectMetadataItem,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedResult,
-    });
+    this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+      formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.RESTORED,
+        objectMetadataItem,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedResult,
+      }),
+    );
 
     return isEntityArray ? formattedResult : formattedResult[0];
   }
