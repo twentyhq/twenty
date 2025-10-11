@@ -8,6 +8,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
@@ -33,10 +34,16 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
     .flatMap((tab) => tab.widgets)
     .find((widget) => widget.id === pageLayoutEditingWidgetId);
 
+  if (!isDefined(widgetInEditMode)) {
+    throw new Error(
+      `Widget with ID ${pageLayoutEditingWidgetId} not found in page layout`,
+    );
+  }
+
   const theme = useTheme();
 
   if (
-    !isDefined(widgetInEditMode?.configuration) ||
+    !isDefined(widgetInEditMode.configuration) ||
     !('graphType' in widgetInEditMode.configuration)
   ) {
     return null;
@@ -53,9 +60,11 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
         initialTitle={widgetInEditMode.title}
         headerType={t`${graphTypeLabel} Chart`}
         onTitleChange={(newTitle) => {
-          updatePageLayoutWidget(pageLayoutEditingWidgetId, {
-            title: newTitle,
-          });
+          if (isNonEmptyString(newTitle)) {
+            updatePageLayoutWidget(widgetInEditMode.id, {
+              title: newTitle,
+            });
+          }
         }}
       />
 
