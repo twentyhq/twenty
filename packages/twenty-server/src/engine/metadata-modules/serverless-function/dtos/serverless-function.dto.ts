@@ -13,10 +13,8 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 
 @ObjectType('ServerlessFunction')
 @Authorize({
@@ -59,9 +57,6 @@ export class ServerlessFunctionDTO {
   @IsArray()
   @Field(() => [String], { nullable: false })
   publishedVersions: string[];
-
-  @Field(() => GraphQLJSON, { nullable: true })
-  latestVersionInputSchema: InputSchema;
 
   @HideField()
   workspaceId: string;

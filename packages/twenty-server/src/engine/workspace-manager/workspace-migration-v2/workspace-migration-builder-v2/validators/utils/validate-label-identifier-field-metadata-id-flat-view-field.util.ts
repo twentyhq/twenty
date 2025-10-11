@@ -1,9 +1,9 @@
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-import { isViewFieldInLowestPosition } from 'src/engine/core-modules/view/flat-view/utils/is-view-field-in-lowest-position.util';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { isViewFieldInLowestPosition } from 'src/engine/metadata-modules/flat-view-field/utils/is-view-field-in-lowest-position.util';
+import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
 type ValidateLabelIdentifierFieldMetadataIdFlatViewFieldArgs = {
@@ -26,7 +26,7 @@ export const validateLabelIdentifierFieldMetadataIdFlatViewField = ({
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Label identifier view field has to be in the lowest position`,
-      userFriendlyMessage: t`Label identifier view field has to be in the lowest position`,
+      userFriendlyMessage: msg`Label identifier view field has to be in the lowest position`,
     });
   }
 
@@ -34,7 +34,7 @@ export const validateLabelIdentifierFieldMetadataIdFlatViewField = ({
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Label identifier view field has to be visible`,
-      userFriendlyMessage: t`Label identifier view field has to be visible`,
+      userFriendlyMessage: msg`Label identifier view field has to be visible`,
     });
   }
 
@@ -42,7 +42,7 @@ export const validateLabelIdentifierFieldMetadataIdFlatViewField = ({
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Label identifier view field cannot be deleted`,
-      userFriendlyMessage: t`Label identifier view field cannot be deleted`,
+      userFriendlyMessage: msg`Label identifier view field cannot be deleted`,
     });
   }
 

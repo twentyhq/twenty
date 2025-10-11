@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -30,7 +31,7 @@ export class ImpersonatePermissionGuard implements CanActivate {
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
         {
-          userFriendlyMessage: "Can't impersonate user via api key",
+          userFriendlyMessage: msg`Can't impersonate user via api key`,
         },
       );
     }
@@ -50,8 +51,7 @@ export class ImpersonatePermissionGuard implements CanActivate {
       PermissionsExceptionMessage.PERMISSION_DENIED,
       PermissionsExceptionCode.PERMISSION_DENIED,
       {
-        userFriendlyMessage:
-          'You do not have permission to impersonate users. Please contact your workspace administrator for access.',
+        userFriendlyMessage: msg`You do not have permission to impersonate users. Please contact your workspace administrator for access.`,
       },
     );
   }

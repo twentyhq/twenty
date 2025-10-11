@@ -414,10 +414,10 @@ export class ApplicationSyncService {
       };
 
       const createdServerlessFunction =
-        await this.serverlessFunctionV2Service.createOne(
+        await this.serverlessFunctionV2Service.createOne({
           createServerlessFunctionInput,
           workspaceId,
-        );
+        });
 
       await this.syncDatabaseEventTriggersForServerlessFunction({
         serverlessFunctionId: createdServerlessFunction.id,

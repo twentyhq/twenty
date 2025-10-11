@@ -8,6 +8,7 @@ import { WidgetHeader } from '@/page-layout/widgets/components/WidgetHeader';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { type MouseEvent } from 'react';
 import { type PageLayoutWidget } from '~/generated/graphql';
 
 type WidgetRendererProps = {
@@ -25,21 +26,34 @@ const StyledContent = styled.div`
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
-  const { hasAccess, restriction } = useWidgetPermissions(widget);
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
 
+  const { hasAccess, restriction } = useWidgetPermissions(widget);
+
+  const handleClick = () => {
+    handleEditWidget({
+      widgetId: widget.id,
+      widgetType: widget.type,
+    });
+  };
+
+  const handleRemove = (e?: MouseEvent) => {
+    e?.stopPropagation();
+    deletePageLayoutWidget(widget.id);
+  };
+
   return (
-    <WidgetContainer isRestricted={!hasAccess}>
+    <WidgetContainer
+      isRestricted={!hasAccess}
+      onClick={isPageLayoutInEditMode ? handleClick : undefined}
+    >
       <WidgetHeader
         isInEditMode={isPageLayoutInEditMode}
         title={widget.title}
-        onEdit={() =>
-          handleEditWidget({ widgetId: widget.id, widgetType: widget.type })
-        }
-        onRemove={() => deletePageLayoutWidget(widget.id)}
+        onRemove={handleRemove}
       />
       <StyledContent>
         {!hasAccess ? (

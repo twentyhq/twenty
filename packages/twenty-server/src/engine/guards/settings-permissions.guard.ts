@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { msg } from '@lingui/core/macro';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -56,8 +57,7 @@ export const SettingsPermissionsGuard = (
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
         {
-          userFriendlyMessage:
-            'You do not have permission to access this feature. Please contact your workspace administrator for access.',
+          userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
         },
       );
     }

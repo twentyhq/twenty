@@ -8,7 +8,6 @@ import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
@@ -28,7 +27,6 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     AuditModule,
     TelemetryModule,
     FileModule,
-    FeatureFlagModule,
     RecordTransformerModule,
     RecordPositionModule,
     SubscriptionsModule,

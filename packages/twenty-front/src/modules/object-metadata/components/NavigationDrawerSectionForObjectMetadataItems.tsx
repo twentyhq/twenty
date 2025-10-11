@@ -1,4 +1,5 @@
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -8,12 +9,12 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useRecoilValue } from 'recoil';
 
-const ORDERED_STANDARD_OBJECTS = [
-  'person',
-  'company',
-  'opportunity',
-  'task',
-  'note',
+const ORDERED_STANDARD_OBJECTS: string[] = [
+  CoreObjectNameSingular.Person,
+  CoreObjectNameSingular.Company,
+  CoreObjectNameSingular.Opportunity,
+  CoreObjectNameSingular.Task,
+  CoreObjectNameSingular.Note,
 ];
 
 type NavigationDrawerSectionForObjectMetadataItemsProps = {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityMapsExceptionCode } from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
@@ -75,7 +75,7 @@ export class FlatIndexValidatorService {
       validationResult.errors.push({
         code: IndexExceptionCode.INDEX_ALREADY_EXISTS,
         message: t`Index with same id already exists`,
-        userFriendlyMessage: t`Index already exists`,
+        userFriendlyMessage: msg`Index already exists`,
       });
     }
 
@@ -88,7 +88,7 @@ export class FlatIndexValidatorService {
       validationResult.errors.push({
         code: IndexExceptionCode.INDEX_OBJECT_NOT_FOUND,
         message: t`Could not find index related object metadata`,
-        userFriendlyMessage: t`Index related object not found`,
+        userFriendlyMessage: msg`Index related object not found`,
       });
     }
 
@@ -106,7 +106,7 @@ export class FlatIndexValidatorService {
       validationResult.errors.push({
         code: IndexExceptionCode.INDEX_ALREADY_EXISTS,
         message: t`Index with same name already exists`,
-        userFriendlyMessage: t`Index with same name already exists`,
+        userFriendlyMessage: msg`Index with same name already exists`,
       });
     }
 
@@ -114,7 +114,7 @@ export class FlatIndexValidatorService {
       validationResult.errors.push({
         code: IndexExceptionCode.INDEX_EMPTY_FIELDS,
         message: t`Index must have at least one field`,
-        userFriendlyMessage: t`An index must contain at least one field`,
+        userFriendlyMessage: msg`An index must contain at least one field`,
       });
     } else {
       flatIndexToValidate.flatIndexFieldMetadatas.forEach((flatIndexField) => {
@@ -127,7 +127,7 @@ export class FlatIndexValidatorService {
           validationResult.errors.push({
             code: IndexExceptionCode.INDEX_FIELD_NOT_FOUND,
             message: t`Could not find index field related field metadata`,
-            userFriendlyMessage: t`Field referenced in index does not exist`,
+            userFriendlyMessage: msg`Field referenced in index does not exist`,
           });
         } else {
           if (
@@ -137,7 +137,7 @@ export class FlatIndexValidatorService {
             validationResult.errors.push({
               code: IndexExceptionCode.INDEX_FIELD_WRONG_OBJECT,
               message: t`Field does not belong to the indexed object`,
-              userFriendlyMessage: t`Field cannot be indexed as it belongs to a different object`,
+              userFriendlyMessage: msg`Field cannot be indexed as it belongs to a different object`,
             });
           }
         }
@@ -146,7 +146,7 @@ export class FlatIndexValidatorService {
           validationResult.errors.push({
             code: IndexExceptionCode.INDEX_FIELD_INVALID_REFERENCE,
             message: t`Index field references incorrect index metadata`,
-            userFriendlyMessage: t`Index field has an invalid reference`,
+            userFriendlyMessage: msg`Index field has an invalid reference`,
           });
         }
 
@@ -158,7 +158,7 @@ export class FlatIndexValidatorService {
           validationResult.errors.push({
             code: IndexExceptionCode.INDEX_FIELD_ID_DUPLICATE,
             message: t`Index field ID already exists in another index`,
-            userFriendlyMessage: t`Field ID is already used in another index`,
+            userFriendlyMessage: msg`Field ID is already used in another index`,
           });
         }
       });
