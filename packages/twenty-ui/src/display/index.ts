@@ -94,6 +94,7 @@ export {
   IconBook2,
   IconBookmark,
   IconBookmarkPlus,
+  IconBorderCornerSquare,
   IconBox,
   IconBrackets,
   IconBracketsAngle,

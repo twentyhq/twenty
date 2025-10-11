@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconBorderCornerSquare } from '@tabler/icons-react';
+import { IconBorderCornerSquare } from 'twenty-ui/display';
 import { forwardRef } from 'react';
 
 type ModernResizeHandleProps = {
