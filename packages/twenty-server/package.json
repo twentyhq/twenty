@@ -173,7 +173,6 @@
     "type-fest": "4.10.1",
     "typeorm": "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch",
     "unzipper": "^0.12.3",
-    "uuid": "9.0.1",
     "vite-tsconfig-paths": "4.3.2",
     "zod": "^4.1.11"
   },

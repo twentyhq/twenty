@@ -4,7 +4,6 @@ import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permi
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 export const useRestrictReadOnAllFieldsOfObject = ({
   roleId,
@@ -38,7 +37,7 @@ export const useRestrictReadOnAllFieldsOfObject = ({
           objectMetadataId: objectMetadataItem.id,
           canUpdateFieldValue: false,
           canReadFieldValue: false,
-          id: v4(),
+          id: crypto.randomUUID(),
           roleId,
         });
       }
@@ -61,7 +60,7 @@ export const useRestrictReadOnAllFieldsOfObject = ({
             objectMetadataId: objectMetadataItem.id,
             canReadFieldValue: false,
             canUpdateFieldValue: false,
-            id: v4(),
+            id: crypto.randomUUID(),
             roleId,
           });
         }

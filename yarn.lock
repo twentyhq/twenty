@@ -22535,7 +22535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^9.0.1, @types/uuid@npm:^9.0.2":
+"@types/uuid@npm:^9.0.1":
   version: 9.0.8
   resolution: "@types/uuid@npm:9.0.8"
   checksum: 10c0/b411b93054cb1d4361919579ef3508a1f12bf15b5fdd97337d3d351bece6c921b52b6daeef89b62340fd73fd60da407878432a1af777f40648cbe53a01723489
@@ -53170,7 +53170,6 @@ __metadata:
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
     unzipper: "npm:^0.12.3"
-    uuid: "npm:9.0.1"
     vite-tsconfig-paths: "npm:4.3.2"
     zod: "npm:^4.1.11"
   languageName: unknown
@@ -53380,7 +53379,6 @@ __metadata:
     "@types/react-datepicker": "npm:^6.2.0"
     "@types/react-dom": "npm:^18.2.15"
     "@types/supertest": "npm:^2.0.11"
-    "@types/uuid": "npm:^9.0.2"
     "@typescript-eslint/eslint-plugin": "npm:^8.39.0"
     "@typescript-eslint/parser": "npm:^8.39.0"
     "@typescript-eslint/utils": "npm:^8.39.0"
@@ -53485,7 +53483,6 @@ __metadata:
     tsx: "npm:^4.17.0"
     type-fest: "npm:4.10.1"
     typescript: "npm:5.9.2"
-    uuid: "npm:^9.0.0"
     vite: "npm:^7.0.0"
     vite-plugin-checker: "npm:^0.10.2"
     vite-plugin-cjs-interop: "npm:^2.2.0"

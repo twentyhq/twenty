@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { type SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
-import { v4 } from 'uuid';
 import { type IdentityProviderType } from '~/generated/graphql';
 
 export const sSOIdentityProviderDefaultValues: Record<
@@ -12,7 +11,7 @@ export const sSOIdentityProviderDefaultValues: Record<
     type: 'SAML',
     ssoURL: '',
     name: '',
-    id: v4(),
+    id: crypto.randomUUID(),
     certificate: '',
     issuer: '',
   }),

@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { v4 } from 'uuid';
 import {
   AnalyticsType,
   type MutationTrackAnalyticsArgs,
@@ -17,7 +16,7 @@ export const getSessionId = (): string => {
 };
 
 export const setSessionId = (domain?: string): void => {
-  const sessionId = getSessionId() || v4();
+  const sessionId = getSessionId() || crypto.randomUUID();
   const baseCookie = `${ANALYTICS_COOKIE_NAME}=${sessionId}; Max-Age=1800; path=/; secure`;
   const cookie = domain ? baseCookie + `; domain=${domain}` : baseCookie;
 

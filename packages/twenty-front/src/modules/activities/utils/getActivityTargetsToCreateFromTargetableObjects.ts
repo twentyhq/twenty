@@ -1,5 +1,3 @@
-import { v4 } from 'uuid';
-
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type Note } from '@/activities/types/Note';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
@@ -31,7 +29,7 @@ export const makeActivityTargetsToCreateFromTargetableObjects = ({
       [targetableObjectFieldIdName]: targetableObject.id,
       activity,
       activityId: activity.id,
-      id: v4(),
+      id: crypto.randomUUID(),
       updatedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
     } as Partial<NoteTarget | TaskTarget>;

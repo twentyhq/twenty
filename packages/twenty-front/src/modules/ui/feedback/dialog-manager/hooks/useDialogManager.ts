@@ -1,5 +1,4 @@
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
 
 import { DIALOG_FOCUS_ID } from '@/ui/feedback/dialog-manager/constants/DialogFocusId';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -61,7 +60,7 @@ export const useDialogManager = () => {
 
   const enqueueDialog = (options?: Omit<DialogOptions, 'id'>) => {
     setDialogQueue({
-      id: v4(),
+      id: crypto.randomUUID(),
       ...options,
     });
   };

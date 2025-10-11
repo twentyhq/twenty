@@ -12,7 +12,6 @@ import { H2Title, IconPlus, IconSearch } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { v4 } from 'uuid';
 
 const StyledSearchInput = styled(SettingsTextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
@@ -49,7 +48,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
     ? dotenv.parse(formValues.code['.env'])
     : {};
   const environmentVariablesList = Object.entries(environmentVariables).map(
-    ([key, value]) => ({ id: v4(), key, value }),
+    ([key, value]) => ({ id: crypto.randomUUID(), key, value }),
   );
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -142,7 +141,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
           variant="secondary"
           onClick={() => {
             setEnvVariables((prevState) => {
-              return [...prevState, { id: v4(), key: '', value: '' }];
+              return [...prevState, { id: crypto.randomUUID(), key: '', value: '' }];
             });
             setNewEnvVarAdded(true);
           }}

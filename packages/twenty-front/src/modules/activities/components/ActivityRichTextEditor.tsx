@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
-import { v4 } from 'uuid';
 
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
@@ -342,7 +341,7 @@ export const ActivityRichTextEditor = ({
     keyboardEvent.stopPropagation();
     keyboardEvent.stopImmediatePropagation();
 
-    const newBlockId = v4();
+    const newBlockId = crypto.randomUUID();
     const newBlock = {
       id: newBlockId,
       type: 'paragraph' as const,

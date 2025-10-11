@@ -6,7 +6,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { Checkbox } from 'twenty-ui/input';
-import { v4 } from 'uuid';
 
 const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
   cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
@@ -83,7 +82,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
         permissionFlags: [
           ...currentPermissions,
           {
-            id: v4(),
+            id: crypto.randomUUID(),
             flag: permission.key,
             roleId,
           },

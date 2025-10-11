@@ -1,6 +1,5 @@
 import { type PartialFieldMetadataItem } from '@/types';
 import { type RecordFilter } from '@/utils/filter';
-import { v4 } from 'uuid';
 
 export const createAnyFieldRecordFilterBaseProperties = ({
   filterValue,
@@ -13,7 +12,7 @@ export const createAnyFieldRecordFilterBaseProperties = ({
   'id' | 'value' | 'fieldMetadataId'
 > => {
   return {
-    id: v4(),
+    id: crypto.randomUUID(),
     value: filterValue,
     fieldMetadataId: fieldMetadataItem.id,
   };

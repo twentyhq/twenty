@@ -12,7 +12,6 @@ import {
   type AvatarType,
   type IconComponent,
 } from 'twenty-ui/display';
-import { v4 as uuidV4 } from 'uuid';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
   beautifyExactDateTime,
@@ -127,7 +126,7 @@ export const ShowPageSummaryCard = ({
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date, localeCatalog) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
-  const dateElementId = `date-id-${uuidV4()}`;
+  const dateElementId = `date-id-${crypto.randomUUID()}`;
   const inputFileRef = useRef<HTMLInputElement>(null);
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) onUploadPicture?.(e.target.files[0]);

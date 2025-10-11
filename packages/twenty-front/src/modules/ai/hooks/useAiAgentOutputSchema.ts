@@ -4,7 +4,6 @@ import { type BaseOutputSchemaDeprecated } from '@/workflow/workflow-variables/t
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
-import { v4 } from 'uuid';
 
 export const useAiAgentOutputSchema = (
   outputSchema?: BaseOutputSchemaDeprecated,
@@ -14,7 +13,7 @@ export const useAiAgentOutputSchema = (
 ) => {
   const [outputFields, setOutputFields] = useState<OutputSchemaField[]>(
     Object.entries(outputSchema || {}).map(([name, field]) => ({
-      id: v4(),
+      id: crypto.randomUUID(),
       name,
       type: field.type,
     })),

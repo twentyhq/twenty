@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
@@ -77,7 +76,7 @@ export const useSnackBar = () => {
       options?: Omit<SnackBarOptions, 'message' | 'id'>;
     }) => {
       setSnackBarQueue({
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         message,
         ...options,
         variant: SnackBarVariant.Success,
@@ -95,7 +94,7 @@ export const useSnackBar = () => {
       options?: Omit<SnackBarOptions, 'message' | 'id'>;
     }) => {
       setSnackBarQueue({
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         message,
         ...options,
         variant: SnackBarVariant.Info,
@@ -113,7 +112,7 @@ export const useSnackBar = () => {
       options?: Omit<SnackBarOptions, 'message' | 'id'>;
     }) => {
       setSnackBarQueue({
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         message,
         ...options,
         variant: SnackBarVariant.Warning,
@@ -143,7 +142,7 @@ export const useSnackBar = () => {
           ? getErrorMessageFromApolloError(apolloError)
           : t`An error occurred.`;
       setSnackBarQueue({
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         message: errorMessage,
         ...options,
         variant: SnackBarVariant.Error,

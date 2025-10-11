@@ -12,7 +12,6 @@ import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workf
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 export const generateNodesAndEdgesForDefaultNode = ({
   step,
@@ -66,7 +65,7 @@ export const generateNodesAndEdgesForDefaultNode = ({
       updatedEdges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
         type: edgeTypeBetweenTwoNodes,
-        id: v4(),
+        id: crypto.randomUUID(),
         source: step.id,
         sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
         target: nextStepId,

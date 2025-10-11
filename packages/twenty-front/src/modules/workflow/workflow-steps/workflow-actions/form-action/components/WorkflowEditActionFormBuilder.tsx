@@ -33,7 +33,6 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
-import { v4 } from 'uuid';
 
 export type WorkflowEditActionFormBuilderProps = {
   action: WorkflowFormAction;
@@ -368,7 +367,7 @@ export const WorkflowEditActionFormBuilder = ({
                     );
 
                     const newField: WorkflowFormActionField = {
-                      id: v4(),
+                      id: crypto.randomUUID(),
                       name,
                       type: FieldMetadataType.TEXT,
                       label,

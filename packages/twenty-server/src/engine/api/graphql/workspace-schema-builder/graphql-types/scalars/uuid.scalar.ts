@@ -1,5 +1,5 @@
 import { GraphQLScalarType, Kind } from 'graphql';
-import { validate as uuidValidate } from 'uuid';
+import { randomUUID } from 'crypto';
 
 import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
@@ -8,7 +8,7 @@ const checkUUID = (value: any): string => {
   if (typeof value !== 'string') {
     throw new ValidationError('UUID must be a string');
   }
-  if (!uuidValidate(value)) {
+  if (!randomUUID(value)) {
     throw new ValidationError('Invalid UUID');
   }
 

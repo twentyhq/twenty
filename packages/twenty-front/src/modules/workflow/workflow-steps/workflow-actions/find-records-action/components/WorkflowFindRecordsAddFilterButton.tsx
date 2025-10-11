@@ -12,7 +12,7 @@ import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { v4 } from 'uuid';
+
 export const WorkflowFindRecordsAddFilterButton = ({
   defaultFieldMetadataItem,
 }: {
@@ -43,7 +43,7 @@ export const WorkflowFindRecordsAddFilterButton = ({
       setHasInitializedCurrentRecordFilters(false);
 
       const newRecordFilterGroup = {
-        id: v4(),
+        id: crypto.randomUUID(),
         logicalOperator: RecordFilterGroupLogicalOperator.AND,
       };
 
