@@ -4,14 +4,10 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
-/**
- * Do not use this key outside of this file.
- * This is a temporary key to store the record ids for the default record group.
- */
-const defaultFamilyKey = 'record-group-default-id';
+export const NO_RECORD_GROUP_FAMILY_KEY = 'record-group-default-id';
 
 export const recordIndexAllRecordIdsComponentSelector = createComponentSelector<
-  ObjectRecord['id'][]
+  string[]
 >({
   key: 'recordIndexAllRecordIdsComponentSelector',
   componentInstanceContext: ViewComponentInstanceContext,
@@ -28,7 +24,7 @@ export const recordIndexAllRecordIdsComponentSelector = createComponentSelector<
         return get(
           recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
             instanceId,
-            familyKey: defaultFamilyKey,
+            familyKey: NO_RECORD_GROUP_FAMILY_KEY,
           }),
         );
       }
@@ -53,7 +49,7 @@ export const recordIndexAllRecordIdsComponentSelector = createComponentSelector<
       set(
         recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
           instanceId,
-          familyKey: defaultFamilyKey,
+          familyKey: NO_RECORD_GROUP_FAMILY_KEY,
         }),
         recordIds,
       ),

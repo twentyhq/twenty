@@ -9,6 +9,7 @@ import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import styled from '@emotion/styled';
+import { isArray } from '@sniptt/guards';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -38,7 +39,15 @@ export const RelationFromManyFieldDisplay = () => {
     fieldValue as NoteTarget[] | TaskTarget[],
   );
 
-  if (!fieldValue || !relationObjectNameSingular) {
+  if (!isDefined(fieldValue)) {
+    return null;
+  }
+
+  if (!isArray(fieldValue)) {
+    return null;
+  }
+
+  if (!isDefined(!relationObjectNameSingular)) {
     return null;
   }
 
@@ -65,7 +74,7 @@ export const RelationFromManyFieldDisplay = () => {
     return isFocused ? (
       <ExpandableList isChipCountDisplayed={isFocused}>
         {fieldValue
-          .map((record) => {
+          ?.map((record) => {
             if (!isDefined(record) || !isDefined(record[relationFieldName])) {
               return undefined;
             }
@@ -83,7 +92,7 @@ export const RelationFromManyFieldDisplay = () => {
     ) : (
       <StyledContainer>
         {fieldValue
-          .map((record) => {
+          ?.map((record) => {
             if (!isDefined(record) || !isDefined(record[relationFieldName])) {
               return undefined;
             }
@@ -115,7 +124,7 @@ export const RelationFromManyFieldDisplay = () => {
   } else {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {fieldValue.filter(isDefined).map((record) => {
+        {fieldValue?.filter(isDefined).map((record) => {
           const recordChipData = generateRecordChipData(record);
           return (
             <RecordChip

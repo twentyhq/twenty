@@ -17,18 +17,18 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
     objectMetadataItem,
   });
 
-  const { records, hasNextPage, queryIdentifier, loading } = useFindManyRecords(
-    {
+  const { records, hasNextPage, queryIdentifier, loading, totalCount } =
+    useFindManyRecords({
       ...params,
       recordGqlFields,
       skip: showAuthModal,
-    },
-  );
+    });
 
   return {
     records: showAuthModal ? SIGN_IN_BACKGROUND_MOCK_COMPANIES : records,
     loading: showAuthModal ? false : loading,
     hasNextPage,
     queryIdentifier,
+    totalCount,
   };
 };

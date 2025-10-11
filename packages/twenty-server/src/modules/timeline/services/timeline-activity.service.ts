@@ -12,14 +12,9 @@ import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 type ActivityType = 'note' | 'task';
-
-type EventsWithNameAndWorkspaceId = {
-  events: ObjectRecordBaseEvent[];
-  eventName: string;
-  workspaceId: string;
-};
 
 @Injectable()
 export class TimelineActivityService {
@@ -36,16 +31,22 @@ export class TimelineActivityService {
 
   async upsertEvents({
     events,
-    eventName,
+    name,
+    objectMetadata,
     workspaceId,
-  }: EventsWithNameAndWorkspaceId) {
-    const { objectSingularName } = parseEventNameOrThrow(eventName);
+  }: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
+    if (!isDefined(workspaceId)) {
+      return;
+    }
+
+    const { objectSingularName } = parseEventNameOrThrow(name);
 
     const timelineActivitiesPayloads =
       await this.transformEventsToTimelineActivityPayloads({
         events,
+        objectMetadata,
         workspaceId,
-        eventName,
+        name,
       });
 
     if (
@@ -82,11 +83,12 @@ export class TimelineActivityService {
   private async transformEventsToTimelineActivityPayloads({
     events,
     workspaceId,
-    eventName,
-  }: EventsWithNameAndWorkspaceId): Promise<
+    objectMetadata,
+    name,
+  }: WorkspaceEventBatch<ObjectRecordBaseEvent>): Promise<
     TimelineActivityPayload[] | undefined
   > {
-    const { objectSingularName } = parseEventNameOrThrow(eventName);
+    const { objectSingularName } = parseEventNameOrThrow(name);
 
     if (objectSingularName === 'note') {
       const noteEventsTimelineActivities =
@@ -94,13 +96,14 @@ export class TimelineActivityService {
           events,
           activityType: 'note',
           workspaceId,
-          eventName,
+          objectMetadata,
+          name,
         });
 
       return [
         ...noteEventsTimelineActivities,
         ...(events.map((event) => ({
-          name: eventName,
+          name,
           objectSingularName,
           recordId: event.recordId,
           workspaceMemberId: event.workspaceMemberId,
@@ -115,13 +118,14 @@ export class TimelineActivityService {
           events,
           activityType: 'task',
           workspaceId,
-          eventName,
+          objectMetadata,
+          name,
         });
 
       return [
         ...taskEventsTimelineActivities,
         ...(events.map((event) => ({
-          name: eventName,
+          name,
           objectSingularName,
           recordId: event.recordId,
           workspaceMemberId: event.workspaceMemberId,
@@ -138,12 +142,13 @@ export class TimelineActivityService {
         events,
         activityType: objectSingularName === 'noteTarget' ? 'note' : 'task',
         workspaceId,
-        eventName,
+        objectMetadata,
+        name,
       });
     }
 
     return events.map((event) => ({
-      name: eventName,
+      name,
       objectSingularName,
       recordId: event.recordId,
       workspaceMemberId: event.workspaceMemberId,
@@ -154,12 +159,17 @@ export class TimelineActivityService {
   private async computeTimelineActivityPayloadsForActivities({
     events,
     activityType,
-    eventName,
+    name,
     workspaceId,
-  }: EventsWithNameAndWorkspaceId & { activityType: ActivityType }): Promise<
-    TimelineActivityPayload[]
-  > {
-    const { action } = parseEventNameOrThrow(eventName);
+    objectMetadata,
+  }: WorkspaceEventBatch<ObjectRecordBaseEvent> & {
+    activityType: ActivityType;
+  }): Promise<TimelineActivityPayload[]> {
+    if (!isDefined(workspaceId)) {
+      return [];
+    }
+
+    const { action } = parseEventNameOrThrow(name);
 
     const activityTargetRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -218,9 +228,9 @@ export class TimelineActivityService {
             recordId: activityTarget[targetColumn.replace(/Id$/, '')],
             linkedRecordCachedName: activityTitle,
             linkedRecordId: activityId,
-            linkedObjectMetadataId: event.objectMetadata.id,
+            linkedObjectMetadataId: objectMetadata.id,
             properties: event.properties,
-            overrideObjectSingularName: event.objectMetadata.nameSingular,
+            overrideObjectSingularName: objectMetadata.nameSingular,
           } satisfies TimelineActivityPayload;
         });
       })
@@ -230,12 +240,13 @@ export class TimelineActivityService {
   private async computeTimelineActivityPayloadsForActivityTargets({
     events,
     activityType,
-    eventName,
+    name,
+    objectMetadata,
     workspaceId,
-  }: EventsWithNameAndWorkspaceId & { activityType: ActivityType }): Promise<
-    TimelineActivityPayload[]
-  > {
-    const { action } = parseEventNameOrThrow(eventName);
+  }: WorkspaceEventBatch<ObjectRecordBaseEvent> & {
+    activityType: ActivityType;
+  }): Promise<TimelineActivityPayload[]> {
+    const { action } = parseEventNameOrThrow(name);
 
     const activityRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -277,7 +288,7 @@ export class TimelineActivityService {
           return;
         }
 
-        const activityObjectMetadataId = event.objectMetadata.fields.find(
+        const activityObjectMetadataId = objectMetadata.fields.find(
           (field) => field.name === activityType,
         )?.relationTargetObjectMetadataId;
 

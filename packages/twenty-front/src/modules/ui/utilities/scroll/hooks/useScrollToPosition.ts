@@ -6,7 +6,9 @@ export const useScrollToPosition = () => {
 
   const scrollToPosition = useCallback(
     (scrollPositionInPx: number) => {
-      scrollWrapperHTMLElement?.scrollTo({ top: scrollPositionInPx });
+      scrollWrapperHTMLElement?.scrollTo({
+        top: scrollPositionInPx,
+      });
     },
     [scrollWrapperHTMLElement],
   );
