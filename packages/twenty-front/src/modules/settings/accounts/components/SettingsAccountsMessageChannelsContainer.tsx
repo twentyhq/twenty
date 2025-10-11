@@ -7,9 +7,8 @@ import {
   MessageChannelSyncStage,
 } from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
@@ -35,10 +34,6 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     settingsAccountsSelectedMessageChannelState,
   );
 
-  const messageChannelObjectMetadataItem = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.MessageChannel,
-  });
-
   const { records: accounts } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
     filter: {
@@ -46,6 +41,11 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         eq: currentWorkspaceMember?.id,
       },
     },
+  });
+
+  const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
+    objectNameSingular: CoreObjectNameSingular.MessageChannel,
+    depth: 1,
   });
 
   const { records: messageChannels } = useFindManyRecords<
@@ -65,9 +65,7 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         neq: MessageChannelSyncStage.PENDING_CONFIGURATION,
       },
     },
-    recordGqlFields: generateDepthOneRecordGqlFields(
-      messageChannelObjectMetadataItem,
-    ),
+    recordGqlFields,
     onCompleted: (data) => {
       setSelectedMessageChannel(data[0]);
     },

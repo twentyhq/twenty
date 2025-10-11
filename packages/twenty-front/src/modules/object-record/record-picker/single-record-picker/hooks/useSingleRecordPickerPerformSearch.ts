@@ -2,7 +2,10 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
+import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
+import { singleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilCallback } from 'recoil';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { type SearchQuery } from '~/generated/graphql';
@@ -23,6 +26,12 @@ export const useSingleRecordPickerPerformSearch = ({
   pickableMorphItems: RecordPickerPickableMorphItem[];
   loading: boolean;
 } => {
+  const singleRecordPickerInstanceId = useAvailableComponentInstanceIdOrThrow(
+    SingleRecordPickerComponentInstanceContext,
+  );
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const onSearchRecordsCompleted = useRecoilCallback(
     ({ set }) =>
       (data: SearchQuery) => {
@@ -34,11 +43,17 @@ export const useSingleRecordPickerPerformSearch = ({
             record: undefined,
           });
         });
+
+        set(
+          singleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
+            { instanceId: singleRecordPickerInstanceId },
+          ),
+          objectMetadataItems,
+        );
       },
-    [],
+    [objectMetadataItems, singleRecordPickerInstanceId],
   );
 
-  const { objectMetadataItems } = useObjectMetadataItems();
   const selectedIdsFilter = { id: { in: selectedIds } };
 
   const { loading: selectedRecordsLoading, searchRecords: selectedRecords } =

@@ -15,13 +15,11 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import {
-  fromCreateServerlessFunctionInputToFlatServerlessFunction,
-  FromCreateServerlessFunctionInputToFlatServerlessFunctionArgs,
-} from 'src/engine/metadata-modules/serverless-function/utils/from-create-serverless-function-input-to-flat-serverless-function.util';
+import { fromCreateServerlessFunctionInputToFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/from-create-serverless-function-input-to-flat-serverless-function.util';
 import { fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import type { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 
 @Injectable()
 export class ServerlessFunctionV2Service {
@@ -33,7 +31,12 @@ export class ServerlessFunctionV2Service {
   async createOne({
     createServerlessFunctionInput,
     workspaceId,
-  }: FromCreateServerlessFunctionInputToFlatServerlessFunctionArgs) {
+  }: {
+    createServerlessFunctionInput: CreateServerlessFunctionInput & {
+      serverlessFunctionLayerId: string;
+    };
+    workspaceId: string;
+  }) {
     const flatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {

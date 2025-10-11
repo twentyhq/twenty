@@ -1,7 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { gql } from '@apollo/client';
 import { type ObjectPermissions } from 'twenty-shared/types';
@@ -25,7 +25,9 @@ export const generateUpdateOneRecordMutation = ({
 }) => {
   const appliedRecordGqlFields =
     recordGqlFields ??
-    generateDepthOneRecordGqlFields({
+    generateDepthRecordGqlFieldsFromObject({
+      depth: 1,
+      objectMetadataItems,
       objectMetadataItem,
     });
 

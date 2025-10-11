@@ -2,6 +2,8 @@ import { isNull, isUndefined } from '@sniptt/guards';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getFieldMetadataFromGqlField } from '@/object-record/cache/utils/getFieldMetadataFromGqlField';
+import { getFieldMetadataMorphRelationFromGqlField } from '@/object-record/cache/utils/getFieldMetadataMorphRelationFromGqlField';
 import {
   getRecordFromCache,
   type GetRecordFromCacheArgs,
@@ -51,16 +53,9 @@ export const computeOptimisticRecordFromInput = ({
         objectMetadataItem.fields.find((field) => {
           if (!isFieldMorphRelation(field)) return false;
 
-          return field.morphRelations?.some((morphRelation) => {
-            const computedFieldName = computeMorphRelationFieldName({
-              fieldName: field.name,
-              relationType: morphRelation.type,
-              targetObjectMetadataNameSingular:
-                morphRelation.targetObjectMetadata.nameSingular,
-              targetObjectMetadataNamePlural:
-                morphRelation.targetObjectMetadata.namePlural,
-            });
-            return computedFieldName === recordKey.replace('Id', '');
+          return getFieldMetadataFromGqlField({
+            objectMetadataItem,
+            gqlField: recordKey,
           });
         });
 
@@ -120,7 +115,8 @@ export const computeOptimisticRecordFromInput = ({
     }
 
     const isRelationField = isFieldRelation(fieldMetadataItem);
-    if (!isRelationField) {
+    const isMorphRelationField = isFieldMorphRelation(fieldMetadataItem);
+    if (!isRelationField && !isMorphRelationField) {
       if (!isDefined(recordInputFieldValue)) {
         continue;
       }
@@ -133,78 +129,183 @@ export const computeOptimisticRecordFromInput = ({
       continue;
     }
 
-    if (fieldMetadataItem.relation?.type === RelationType.ONE_TO_MANY) {
-      continue;
-    }
+    if (isRelationField) {
+      if (fieldMetadataItem.relation?.type === RelationType.ONE_TO_MANY) {
+        continue;
+      }
 
-    const isManyToOneRelation =
-      fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE;
-    if (!isManyToOneRelation) {
-      continue;
-    }
+      const isManyToOneRelation =
+        fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE;
+      if (!isManyToOneRelation) {
+        continue;
+      }
 
-    if (!isUndefined(recordInputFieldValue)) {
-      throw new Error(
-        `Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: ${fieldMetadataItem.name}`,
+      if (!isUndefined(recordInputFieldValue)) {
+        throw new Error(
+          `Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: ${fieldMetadataItem.name}`,
+        );
+      }
+
+      const relationFieldIdName = getForeignKeyNameFromRelationFieldName(
+        fieldMetadataItem.name,
       );
-    }
 
-    const relationFieldIdName = getForeignKeyNameFromRelationFieldName(
-      fieldMetadataItem.name,
-    );
+      const recordInputFieldIdValue: string | null | undefined =
+        recordInput[relationFieldIdName];
 
-    const recordInputFieldIdValue: string | null | undefined =
-      recordInput[relationFieldIdName];
+      if (isUndefined(recordInputFieldIdValue)) {
+        continue;
+      }
 
-    if (isUndefined(recordInputFieldIdValue)) {
-      continue;
-    }
-
-    const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
-      (field) => field.name === relationFieldIdName,
-    );
-
-    if (
-      !isDefined(relationIdFieldMetadataItem) &&
-      !isDefined(fieldMetadataItem.settings?.joinColumnName)
-    ) {
-      throw new Error(
-        'Should never occur, encountered unknown relationId within relations definitions',
+      const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
+        (field) => field.name === relationFieldIdName,
       );
-    }
 
-    if (isNull(recordInputFieldIdValue)) {
-      optimisticRecord[relationFieldIdName] = null;
-      optimisticRecord[fieldMetadataItem.name] = null;
-      continue;
-    }
+      if (
+        !isDefined(relationIdFieldMetadataItem) &&
+        !isDefined(fieldMetadataItem.settings?.joinColumnName)
+      ) {
+        throw new Error(
+          'Should never occur, encountered unknown relationId within relations definitions',
+        );
+      }
 
-    const targetNameSingular =
-      fieldMetadataItem.relation?.targetObjectMetadata.nameSingular;
-    const targetObjectMetataDataItem = objectMetadataItems.find(
-      ({ nameSingular }) => nameSingular === targetNameSingular,
-    );
-    if (!isDefined(targetObjectMetataDataItem)) {
-      throw new Error(
-        'Should never occur, encountered invalid relation definition',
+      if (isNull(recordInputFieldIdValue)) {
+        optimisticRecord[relationFieldIdName] = null;
+        optimisticRecord[fieldMetadataItem.name] = null;
+        continue;
+      }
+
+      const targetNameSingular =
+        fieldMetadataItem.relation?.targetObjectMetadata.nameSingular;
+      const targetObjectMetataDataItem = objectMetadataItems.find(
+        ({ nameSingular }) => nameSingular === targetNameSingular,
       );
+      if (!isDefined(targetObjectMetataDataItem)) {
+        throw new Error(
+          'Should never occur, encountered invalid relation definition',
+        );
+      }
+
+      const cachedRecord = getRecordFromCache({
+        cache,
+        objectMetadataItem: targetObjectMetataDataItem,
+        objectMetadataItems,
+        recordId: recordInputFieldIdValue as string,
+        objectPermissionsByObjectMetadataId,
+      });
+
+      optimisticRecord[relationFieldIdName] = recordInputFieldIdValue;
+
+      if (!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
+        continue;
+      }
+
+      optimisticRecord[fieldMetadataItem.name] = cachedRecord;
     }
 
-    const cachedRecord = getRecordFromCache({
-      cache,
-      objectMetadataItem: targetObjectMetataDataItem,
-      objectMetadataItems,
-      recordId: recordInputFieldIdValue as string,
-      objectPermissionsByObjectMetadataId,
-    });
+    if (isMorphRelationField) {
+      const relationType = fieldMetadataItem.settings?.relationType;
+      if (relationType === RelationType.ONE_TO_MANY) {
+        continue;
+      }
 
-    optimisticRecord[relationFieldIdName] = recordInputFieldIdValue;
+      const isManyToOneRelation = relationType === RelationType.MANY_TO_ONE;
+      if (!isManyToOneRelation) {
+        continue;
+      }
 
-    if (!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
-      continue;
+      if (!isUndefined(recordInputFieldValue)) {
+        throw new Error(
+          `Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: ${fieldMetadataItem.name}`,
+        );
+      }
+
+      const relationFieldIdNames = fieldMetadataItem.morphRelations?.map(
+        (morphRelation) => {
+          return computeMorphRelationFieldName({
+            fieldName: fieldMetadataItem.name,
+            relationType,
+            targetObjectMetadataNameSingular:
+              morphRelation.targetObjectMetadata.nameSingular,
+            targetObjectMetadataNamePlural:
+              morphRelation.targetObjectMetadata.namePlural,
+          });
+        },
+      );
+
+      const relationFieldName = relationFieldIdNames?.find(
+        (relationFieldIdName) => recordInput[`${relationFieldIdName}Id`],
+      );
+
+      const relationFieldIdName = `${relationFieldName}Id`;
+
+      if (isUndefined(relationFieldName)) {
+        continue;
+      }
+
+      const recordInputFieldIdValue: string | null | undefined =
+        recordInput[relationFieldIdName];
+
+      if (isUndefined(recordInputFieldIdValue)) {
+        continue;
+      }
+
+      const relationIdFieldMetadataItem = getFieldMetadataFromGqlField({
+        objectMetadataItem,
+        gqlField: relationFieldName,
+      });
+
+      if (
+        !isDefined(relationIdFieldMetadataItem) &&
+        !isDefined(fieldMetadataItem.settings?.joinColumnName)
+      ) {
+        throw new Error(
+          'Should never occur, encountered unknown relationId within relations definitions',
+        );
+      }
+
+      if (isNull(recordInputFieldIdValue)) {
+        optimisticRecord[relationFieldName] = null;
+        optimisticRecord[fieldMetadataItem.name] = null;
+        continue;
+      }
+
+      if (!isDefined(fieldMetadataItem.morphRelations)) {
+        throw new Error(
+          'Should never occur, encountered invalid relation definition',
+        );
+      }
+
+      const fieldMetadataMorphRelation =
+        getFieldMetadataMorphRelationFromGqlField({
+          objectMetadataItems,
+          fieldMetadata: { morphRelations: fieldMetadataItem.morphRelations },
+          gqlField: relationFieldName,
+        });
+
+      if (!isDefined(fieldMetadataMorphRelation?.targetObjectMetadata)) {
+        throw new Error(
+          'Should never occur, encountered invalid relation definition',
+        );
+      }
+
+      const cachedRecord = getRecordFromCache({
+        cache,
+        objectMetadataItem: fieldMetadataMorphRelation.targetObjectMetadata,
+        objectMetadataItems,
+        recordId: recordInputFieldIdValue as string,
+        objectPermissionsByObjectMetadataId,
+      });
+
+      optimisticRecord[relationFieldIdName] = recordInputFieldIdValue;
+
+      if (!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
+        continue;
+      }
+
+      optimisticRecord[relationFieldName] = cachedRecord;
     }
-
-    optimisticRecord[fieldMetadataItem.name] = cachedRecord;
   }
 
   return optimisticRecord;

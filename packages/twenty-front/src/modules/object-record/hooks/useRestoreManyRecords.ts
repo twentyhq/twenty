@@ -9,6 +9,7 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreManyRecordsMutation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
@@ -30,6 +31,8 @@ type RestoreManyRecordsProps = {
 export const useRestoreManyRecords = ({
   objectNameSingular,
 }: useRestoreManyRecordProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
+
   const apiConfig = useRecoilValue(apiConfigState);
 
   const mutationPageSize =
@@ -190,6 +193,10 @@ export const useRestoreManyRecords = ({
         restoredRecordsResponse.data?.[mutationResponseField] ?? [];
 
       restoredRecords.push(...restoredRecordsForThisBatch);
+
+      registerObjectOperation(objectMetadataItem.nameSingular, {
+        type: 'restore-many',
+      });
 
       if (isDefined(delayInMsBetweenRequests)) {
         await sleep(delayInMsBetweenRequests);
