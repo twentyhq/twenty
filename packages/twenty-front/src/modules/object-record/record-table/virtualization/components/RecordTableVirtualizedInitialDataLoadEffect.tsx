@@ -11,6 +11,7 @@ import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetch
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 // TODO: see if we can merge the initial and load more processes, to have only one load at scroll index effect
 export const RecordTableVirtualizedInitialDataLoadEffect = () => {
@@ -45,7 +46,10 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     }
 
     (async () => {
-      if (currentView?.id !== lastContextStoreVirtualizedViewId) {
+      if (
+        isDefined(currentView?.id) &&
+        currentView.id !== lastContextStoreVirtualizedViewId
+      ) {
         setLastContextStoreVirtualizedViewId(currentView?.id ?? null);
 
         await triggerInitialRecordTableDataLoad();
