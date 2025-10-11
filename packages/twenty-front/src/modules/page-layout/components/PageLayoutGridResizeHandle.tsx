@@ -9,6 +9,7 @@ type PageLayoutGridResizeHandleProps = {
   onMouseUp?: React.MouseEventHandler<HTMLDivElement>;
   onTouchEnd?: React.TouchEventHandler<HTMLDivElement>;
   className?: string;
+  style?: React.CSSProperties;
 };
 
 const StyledIcon = styled(IconBorderCornerSquare)`
@@ -30,6 +31,7 @@ export const PageLayoutGridResizeHandle = forwardRef<
     onMouseUp,
     onTouchEnd,
     className,
+    style,
   } = props;
 
   if (handleAxis !== 'se') return null;
@@ -41,6 +43,7 @@ export const PageLayoutGridResizeHandle = forwardRef<
       onMouseUp={onMouseUp}
       onTouchEnd={onTouchEnd}
       className={className}
+      style={style}
     >
       <StyledIcon
         size={theme.spacing(4)}
