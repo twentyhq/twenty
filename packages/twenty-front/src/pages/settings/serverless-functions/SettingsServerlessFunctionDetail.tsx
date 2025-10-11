@@ -3,47 +3,35 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
-import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
-import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { ApolloError } from '@apollo/client';
-import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
-import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 
 const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '' } = useParams();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [activeTabId, setActiveTabId] = useRecoilComponentState(
     activeTabIdComponentState,
     SERVERLESS_FUNCTION_DETAIL_ID,
   );
-  const [isCodeValid, setIsCodeValid] = useState(true);
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
-  const { publishOneServerlessFunction } = usePublishOneServerlessFunction();
+
   const { formValues, setFormValues, loading } =
     useServerlessFunctionUpdateFormState({ serverlessFunctionId });
-  const { testServerlessFunction } = useTestServerlessFunction({
+
+  const { testServerlessFunction, isTesting } = useTestServerlessFunction({
     serverlessFunctionId,
-  });
-  const { code: latestVersionCode } = useGetOneServerlessFunctionSourceCode({
-    id: serverlessFunctionId,
-    version: 'latest',
   });
 
   const handleSave = useDebouncedCallback(async () => {
@@ -52,7 +40,7 @@ export const SettingsServerlessFunctionDetail = () => {
       description: formValues.description,
       code: formValues.code,
     });
-  }, 1_000);
+  }, 500);
 
   const onChange = (key: string) => {
     return async (value: string) => {
@@ -67,50 +55,15 @@ export const SettingsServerlessFunctionDetail = () => {
   const onCodeChange = async (filePath: string, value: string) => {
     setFormValues((prevState) => ({
       ...prevState,
-      code: { ...prevState.code, [filePath]: value },
+      code: {
+        ...prevState.code,
+        [SOURCE_FOLDER_NAME]: {
+          ...prevState.code[SOURCE_FOLDER_NAME],
+          [filePath]: value,
+        },
+      },
     }));
     await handleSave();
-  };
-
-  const resetDisabled =
-    !isDefined(latestVersionCode) ||
-    isDeeplyEqual(latestVersionCode, formValues.code);
-  const publishDisabled =
-    !isCodeValid || isDeeplyEqual(latestVersionCode, formValues.code);
-
-  const handleReset = async () => {
-    try {
-      const newState = {
-        code: latestVersionCode || {},
-      };
-      setFormValues((prevState) => ({
-        ...prevState,
-        ...newState,
-      }));
-      await handleSave();
-    } catch (err) {
-      enqueueErrorSnackBar({
-        apolloError: err instanceof ApolloError ? err : undefined,
-      });
-    }
-  };
-
-  const handlePublish = async () => {
-    try {
-      await publishOneServerlessFunction({
-        id: serverlessFunctionId,
-      });
-      enqueueSuccessSnackBar({
-        message: `New function version has been published`,
-      });
-    } catch (err) {
-      enqueueErrorSnackBar({
-        message:
-          err instanceof ApolloError
-            ? getErrorMessageFromApolloError(err)
-            : 'An error occurred while publishing new version',
-      });
-    }
   };
 
   const handleTestFunction = async () => {
@@ -148,12 +101,8 @@ export const SettingsServerlessFunctionDetail = () => {
           <SettingsServerlessFunctionCodeEditorTab
             files={files}
             handleExecute={handleTestFunction}
-            handlePublish={handlePublish}
-            handleReset={handleReset}
-            resetDisabled={resetDisabled}
-            publishDisabled={publishDisabled}
             onChange={onCodeChange}
-            setIsCodeValid={setIsCodeValid}
+            isTesting={isTesting}
           />
         );
       case 'test':
@@ -161,6 +110,7 @@ export const SettingsServerlessFunctionDetail = () => {
           <SettingsServerlessFunctionTestTab
             serverlessFunctionId={serverlessFunctionId}
             handleExecute={handleTestFunction}
+            isTesting={isTesting}
           />
         );
       case 'settings':

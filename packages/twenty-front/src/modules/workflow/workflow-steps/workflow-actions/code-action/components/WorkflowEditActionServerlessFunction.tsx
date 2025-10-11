@@ -163,6 +163,7 @@ export const WorkflowEditActionServerlessFunction = ({
       code: {
         ...prevState.code,
         [SOURCE_FOLDER_NAME]: {
+          ...prevState.code[SOURCE_FOLDER_NAME],
           [INDEX_FILE_NAME]: newCode,
         },
       },

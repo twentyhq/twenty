@@ -5,7 +5,9 @@ export const FIND_MANY_APPLICATIONS = gql`
   ${APPLICATION_FRAGMENT}
   query FindManyApplications {
     findManyApplications {
-      ...ApplicationFields
+      id
+      name
+      description
     }
   }
 `;
