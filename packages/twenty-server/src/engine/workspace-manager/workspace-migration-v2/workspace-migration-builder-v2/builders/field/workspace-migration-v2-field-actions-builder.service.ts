@@ -2,39 +2,35 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
-import {
-  FlatEntityUpdateValidationArgs,
-  FlatEntityValidationArgs,
-  FlatEntityValidationReturnType,
-  WorkspaceEntityMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import {
-  UpdateFieldAction,
-  WorkspaceMigrationFieldActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
+import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
+import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service';
 
 export type FieldMetadataRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  'flatObjectMetadataMaps'
+  (typeof ALL_FLAT_ENTITY_CONFIGURATION.fieldMetadata.relatedFlatEntityMapsKeys)[number]
 >;
+const FIELD_METADATA_METADATA_NAME =
+  'fieldMetadata' as const satisfies AllMetadataName;
+
 @Injectable()
 export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  'fieldMetadata',
-  FlatFieldMetadata,
-  WorkspaceMigrationFieldActionV2,
-  FieldMetadataRelatedFlatEntityMaps
+  typeof FIELD_METADATA_METADATA_NAME
 > {
   constructor(
     private readonly flatFieldValidatorService: FlatFieldMetadataValidatorService,
   ) {
-    super('fieldMetadata');
+    super(FIELD_METADATA_METADATA_NAME);
   }
 
   protected async validateFlatEntityCreation({
@@ -43,14 +39,10 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     workspaceId,
     remainingFlatEntityMapsToValidate,
-  }: FlatEntityValidationArgs<
-    FlatFieldMetadata,
-    FieldMetadataRelatedFlatEntityMaps
-  >): Promise<
+  }: FlatEntityValidationArgs<typeof FIELD_METADATA_METADATA_NAME>): Promise<
     FlatEntityValidationReturnType<
-      WorkspaceMigrationFieldActionV2,
-      FlatFieldMetadata,
-      FieldMetadataRelatedFlatEntityMaps
+      typeof FIELD_METADATA_METADATA_NAME,
+      'created'
     >
   > {
     const validationResult =
@@ -105,14 +97,10 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     flatEntityToValidate: flatFieldMetadataToValidate,
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     workspaceId,
-  }: FlatEntityValidationArgs<
-    FlatFieldMetadata,
-    FieldMetadataRelatedFlatEntityMaps
-  >): Promise<
+  }: FlatEntityValidationArgs<typeof FIELD_METADATA_METADATA_NAME>): Promise<
     FlatEntityValidationReturnType<
-      WorkspaceMigrationFieldActionV2,
-      FlatFieldMetadata,
-      FieldMetadataRelatedFlatEntityMaps
+      typeof FIELD_METADATA_METADATA_NAME,
+      'deleted'
     >
   > {
     const validationResult =
@@ -167,13 +155,11 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     workspaceId,
   }: FlatEntityUpdateValidationArgs<
-    FlatFieldMetadata,
-    FieldMetadataRelatedFlatEntityMaps
+    typeof FIELD_METADATA_METADATA_NAME
   >): Promise<
     | FlatEntityValidationReturnType<
-        WorkspaceMigrationFieldActionV2,
-        FlatFieldMetadata,
-        FieldMetadataRelatedFlatEntityMaps
+        typeof FIELD_METADATA_METADATA_NAME,
+        'updated'
       >
     | undefined
   > {

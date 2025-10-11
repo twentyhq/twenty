@@ -3,9 +3,9 @@ import { DiscoveryService } from '@nestjs/core';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceMigrationRunnerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { BaseWorkspaceMigrationRunnerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import {
   type WorkspaceMigrationActionTypeV2,
   type WorkspaceMigrationActionV2,
@@ -24,7 +24,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
 {
   private readonly actionHandlers = new Map<
     WorkspaceMigrationActionTypeV2,
-    WorkspaceMigrationRunnerActionHandlerService<WorkspaceMigrationActionTypeV2>
+    InstanceType<typeof BaseWorkspaceMigrationRunnerActionHandlerService>
   >();
 
   constructor(private readonly discoveryService: DiscoveryService) {}

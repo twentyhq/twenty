@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-all-flat-entity-maps.constant';
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-all-flat-entity-maps.constant';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { EMPTY_ORCHESTRATOR_ACTIONS_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import {
   OrchestratorFailureReport,
@@ -458,7 +458,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.fieldMetadata.created,
           ...aggregatedOrchestratorActionsReport.fieldMetadata.updated,
           ...aggregatedOrchestratorActionsReport.index.created,
-          ...aggregatedOrchestratorActionsReport.index.updated,
+          ...aggregatedOrchestratorActionsReport.index.updated.flat(),
           ///
 
           // Views

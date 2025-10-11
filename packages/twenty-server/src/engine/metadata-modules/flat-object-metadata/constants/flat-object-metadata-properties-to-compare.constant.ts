@@ -1,14 +1,4 @@
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 
-export const FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE = [
-  'description',
-  'icon',
-  'isActive',
-  'isLabelSyncedWithName',
-  'labelPlural',
-  'labelSingular',
-  'namePlural',
-  'nameSingular',
-  'standardOverrides', // Only if standard
-  'labelIdentifierFieldMetadataId',
-] as const satisfies (keyof FlatObjectMetadata)[];
+export const FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE =
+  ALL_FLAT_ENTITY_CONFIGURATION.objectMetadata.propertiesToCompare;

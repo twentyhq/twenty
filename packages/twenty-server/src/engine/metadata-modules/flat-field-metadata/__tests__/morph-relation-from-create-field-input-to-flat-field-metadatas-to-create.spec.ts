@@ -1,12 +1,12 @@
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import {
   fromCreateFieldInputToFlatFieldMetadatasToCreate,
   type FromCreateFieldInputToFlatObjectMetadataArgs,

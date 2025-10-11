@@ -9,7 +9,7 @@ import { type FlatObjectMetadataEntityJsonbProperties } from 'src/engine/metadat
 import { type FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-properties-to-compare.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
-import { type FlatObjectPropertiesUpdates } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
+import { type FlatObjectPropertiesUpdates } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 export const compareTwoFlatObjectMetadata = ({

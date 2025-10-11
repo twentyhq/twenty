@@ -1,4 +1,4 @@
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type UpdateRouteTriggerInput } from 'src/engine/metadata-modules/route-trigger/dtos/update-route-trigger.input';
 import {
   RouteTriggerException,

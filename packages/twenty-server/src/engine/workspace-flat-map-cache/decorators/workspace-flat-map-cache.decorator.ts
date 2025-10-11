@@ -1,6 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
 
-import { type ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/core-modules/common/constant/all-flat-entity-maps-properties.constant';
+import { type ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 
 export const WORKSPACE_FLAT_MAP_CACHE_KEY = 'workspaceFlatMapCacheKey';
 

@@ -4,9 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
-} from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';

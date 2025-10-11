@@ -1,7 +1,4 @@
-import { FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/serverless-function/constants/flat-serverless-function-editable-properties.constant';
-import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 
-export const FLAT_SERVERLESS_FUNCTION_PROPERTIES_TO_COMPARE = [
-  ...FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES,
-  'deletedAt',
-] as const satisfies (keyof FlatServerlessFunction)[];
+export const FLAT_SERVERLESS_FUNCTION_PROPERTIES_TO_COMPARE =
+  ALL_FLAT_ENTITY_CONFIGURATION.serverlessFunction.propertiesToCompare;

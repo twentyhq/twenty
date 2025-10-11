@@ -1,23 +1,14 @@
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
-import { type CreatedDeletedUpdatedActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
+import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/get-metadata-empty-workspace-migration-action-record.util';
 
-const emptyCreatedDeletedUpdated: CreatedDeletedUpdatedActions<WorkspaceMigrationActionV2> =
-  {
-    created: [],
-    deleted: [],
-    updated: [],
-  };
-
-export const EMPTY_ORCHESTRATOR_ACTIONS_REPORT = {
-  index: emptyCreatedDeletedUpdated,
-  objectMetadata: emptyCreatedDeletedUpdated,
-  view: emptyCreatedDeletedUpdated,
-  viewField: emptyCreatedDeletedUpdated,
-  fieldMetadata: emptyCreatedDeletedUpdated,
-  serverlessFunction: emptyCreatedDeletedUpdated,
-  databaseEventTrigger: emptyCreatedDeletedUpdated,
-  cronTrigger: emptyCreatedDeletedUpdated,
-  routeTrigger: emptyCreatedDeletedUpdated,
-  viewFilter: emptyCreatedDeletedUpdated,
-} as const satisfies OrchestratorActionsReport;
+export const EMPTY_ORCHESTRATOR_ACTIONS_REPORT = (
+  Object.keys(ALL_METADATA_NAME) as (keyof typeof ALL_METADATA_NAME)[]
+).reduce(
+  (orchestratorReport, metadataName) => ({
+    ...orchestratorReport,
+    [metadataName]:
+      getMetadataEmptyWorkspaceMigrationActionRecord(metadataName),
+  }),
+  {} as OrchestratorActionsReport,
+);

@@ -8,7 +8,7 @@ import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataJsonbProperty } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-jsonb-property.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
-import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
+import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 type GetWorkspaceMigrationUpdateFieldActionArgs = FromTo<

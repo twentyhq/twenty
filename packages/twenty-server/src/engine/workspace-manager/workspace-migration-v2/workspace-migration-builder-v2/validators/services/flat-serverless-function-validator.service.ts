@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { t, msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { ServerlessFunctionExceptionCode } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
