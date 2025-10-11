@@ -15,7 +15,16 @@ export const useScrollWrapperHTMLElement = (
   const { element: scrollWrapperHTMLElement } =
     useHTMLElementByIdWhenAvailable(scrollWrapperId);
 
+  const getScrollWrapperElement = () => {
+    const scrollWrapperElement = document.getElementById(scrollWrapperId);
+
+    return {
+      scrollWrapperElement,
+    };
+  };
+
   return {
     scrollWrapperHTMLElement,
+    getScrollWrapperElement,
   };
 };

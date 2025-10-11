@@ -55,8 +55,9 @@ export const useLoadSelectedRecordsInContextStore = ({
           objectRecordIds.length,
         );
 
-        const records = await findManyRecordsLazy();
-        upsertRecords(records.records);
+        const { records } = await findManyRecordsLazy();
+
+        upsertRecords(records ?? []);
       };
     },
     [objectRecordIds, objectMetadataItemId, findManyRecordsLazy, upsertRecords],

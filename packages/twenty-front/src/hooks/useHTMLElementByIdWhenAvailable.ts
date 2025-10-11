@@ -14,6 +14,7 @@ export const useHTMLElementByIdWhenAvailable = (id: string) => {
 
     if (isDefined(elementFoundBeforeObservingMutation)) {
       setElement(elementFoundBeforeObservingMutation);
+
       return;
     }
 
