@@ -4,9 +4,11 @@ import { type DatabaseEventTrigger } from 'src/engine/metadata-modules/database-
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
+import { ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-many-to-one-relations.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FromMetadataNameToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-name-to-flat-entity-maps-key.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -167,10 +169,12 @@ export type AllFlatEntityConfigurationByMetadataName = {
 };
 
 export type MetadataFlatEntityMapsKey<T extends AllMetadataName> =
-  (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['flatEntityMapsKey'];
+  FromMetadataNameToFlatEntityMapsKey<T>;
 
 export type MetadataRelatedFlatEntityMapsKeys<T extends AllMetadataName> =
-  (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['relatedFlatEntityMapsKeys'][number];
+  FromMetadataNameToFlatEntityMapsKey<
+    Extract<keyof (typeof ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS)[T], AllMetadataName>
+  >;
 
 export type MetadataFlatEntityAndRelatedFlatEntityMaps<
   T extends AllMetadataName,

@@ -17,7 +17,7 @@ export type MetadataNameAndRelations = {
   [T in AllMetadataName]: Partial<ExtractEntityRelations<MetadataEntity<T>>>;
 };
 
-export const ALL_METADATA_NAME_AND_RELATIONS = {
+export const ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS = {
   fieldMetadata: {
     objectMetadata: 'objectMetadataId',
   },
