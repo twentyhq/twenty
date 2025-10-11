@@ -20,6 +20,10 @@ export const getResolverArgs = (
           type: GraphQLInt,
           isNullable: true,
         },
+        offset: {
+          type: GraphQLInt,
+          isNullable: true,
+        },
         before: {
           type: GraphQLString,
           isNullable: true,

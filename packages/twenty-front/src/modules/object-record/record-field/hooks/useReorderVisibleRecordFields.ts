@@ -2,7 +2,7 @@ import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpda
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { computeNewPositionOfRecordWithPosition } from '@/object-record/utils/computeNewPositionOfRecordWithPosition';
+import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
@@ -35,12 +35,11 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
 
         const recordToMove = visibleRecordFields[fromIndex];
 
-        const newPositionOfTargetRecord =
-          computeNewPositionOfRecordWithPosition({
-            arrayOfRecordsWithPosition: currentRecordFields,
-            idOfItemToMove: idOfRecordToMove,
-            idOfTargetItem: idOfTargetRecord,
-          });
+        const newPositionOfTargetRecord = computeNewPositionOfDraggedRecord({
+          arrayOfRecordsWithPosition: currentRecordFields,
+          idOfItemToMove: idOfRecordToMove,
+          idOfTargetItem: idOfTargetRecord,
+        });
 
         updateRecordField(recordToMove.fieldMetadataItemId, {
           position: newPositionOfTargetRecord,
