@@ -28,6 +28,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         orderByY
         omitNullValues
         axisNameDisplay
+        graphLayoutType
         displayDataLabel
         rangeMin
         rangeMax

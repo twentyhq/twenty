@@ -32,6 +32,7 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     orderByY
     omitNullValues
     axisNameDisplay
+    graphLayoutType
     displayDataLabel
     rangeMin
     rangeMax

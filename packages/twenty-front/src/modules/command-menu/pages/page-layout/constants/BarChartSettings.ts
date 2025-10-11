@@ -5,6 +5,7 @@ import { DATA_DISPLAY_X_SETTING } from '@/command-menu/pages/page-layout/constan
 import { DATA_DISPLAY_Y_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayYSetting';
 import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataLabelsSetting';
 import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
+import { GRAPH_LAYOUT_SETTING } from '@/command-menu/pages/page-layout/constants/settings/GraphLayoutSetting';
 import { GROUP_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/GroupBySetting';
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
 import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByXSetting';
@@ -29,6 +30,11 @@ export const BAR_CHART_SETTINGS: ChartSettingsGroup[] = [
   },
   {
     heading: 'Style',
-    items: [COLORS_SETTING, AXIS_NAME_SETTING, DATA_LABELS_SETTING],
+    items: [
+      COLORS_SETTING,
+      GRAPH_LAYOUT_SETTING,
+      AXIS_NAME_SETTING,
+      DATA_LABELS_SETTING,
+    ],
   },
 ];

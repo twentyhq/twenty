@@ -17,6 +17,7 @@ import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-build
 import { ExtendedAggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/extended-aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
+import { GraphLayoutType } from 'src/engine/core-modules/page-layout/enums/graph-layout-type.enum';
 import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
@@ -79,6 +80,14 @@ export class BarChartConfigurationDTO {
   @IsEnum(AxisNameDisplay)
   @IsOptional()
   axisNameDisplay?: AxisNameDisplay;
+
+  @Field(() => GraphLayoutType, {
+    nullable: true,
+    defaultValue: GraphLayoutType.HORIZONTAL,
+  })
+  @IsEnum(GraphLayoutType)
+  @IsOptional()
+  graphLayoutType?: GraphLayoutType;
 
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()

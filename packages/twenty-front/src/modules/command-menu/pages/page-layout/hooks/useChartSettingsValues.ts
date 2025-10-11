@@ -3,12 +3,14 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
+import { getChartGraphLayoutOptions } from '@/command-menu/pages/page-layout/utils/getChartGraphLayoutOptions';
 import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { useRecoilValue } from 'recoil';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { GraphLayoutType } from '~/generated/graphql';
 
 export const useChartSettingsValues = ({
   objectMetadataId,
@@ -138,6 +140,11 @@ export const useChartSettingsValues = ({
           isDefined(configuration.axisNameDisplay)
           ? getChartAxisNameDisplayOptions(configuration.axisNameDisplay)
           : undefined;
+      case CHART_CONFIGURATION_SETTING_IDS.GRAPH_LAYOUT:
+        return 'graphLayoutType' in configuration &&
+          isDefined(configuration.graphLayoutType)
+          ? getChartGraphLayoutOptions(configuration.graphLayoutType)
+          : getChartGraphLayoutOptions(GraphLayoutType.VERTICAL);
       case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X:
         return xAxisOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD:

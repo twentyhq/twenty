@@ -171,6 +171,7 @@ export const getPageLayoutWidgetDataSeeds = (
               groupByFieldMetadataIdX: opportunityStageFieldId,
               orderByX: 'FIELD_DESC',
               axisNameDisplay: AxisNameDisplay.NONE,
+
               displayDataLabel: false,
             }
           : null,

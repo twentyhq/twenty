@@ -7,6 +7,7 @@ import {
 } from '~/generated-metadata/graphql';
 import {
   AxisNameDisplay,
+  GraphLayoutType,
   type GridPosition,
   type PageLayoutWidget,
   type WidgetConfiguration,
@@ -52,6 +53,7 @@ const createDefaultGraphConfiguration = (
         aggregateOperation: ExtendedAggregateOperations.SUM,
         orderByX: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
+        graphLayoutType: GraphLayoutType.VERTICAL,
       };
 
     case GraphType.LINE:
