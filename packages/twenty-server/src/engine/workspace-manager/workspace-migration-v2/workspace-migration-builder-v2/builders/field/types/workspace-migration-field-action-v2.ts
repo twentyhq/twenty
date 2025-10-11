@@ -1,6 +1,5 @@
-import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
+import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 
 export type CreateFieldAction = {
   type: 'create_field';
@@ -12,14 +11,7 @@ export type UpdateFieldAction = {
   type: 'update_field';
   fieldMetadataId: string;
   objectMetadataId: string;
-  updates: Array<
-    {
-      [P in FlatFieldMetadataPropertiesToCompare]: PropertyUpdate<
-        FlatFieldMetadata,
-        P
-      >;
-    }[FlatFieldMetadataPropertiesToCompare]
-  >;
+  updates: FlatEntityPropertiesUpdates<'fieldMetadata'>;
 };
 
 export type DeleteFieldAction = {

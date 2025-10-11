@@ -1,7 +1,6 @@
+import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-properties-to-compare.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 
 export type CreateObjectAction = {
   type: 'create_object';
@@ -9,19 +8,10 @@ export type CreateObjectAction = {
   flatFieldMetadatas: FlatFieldMetadata[];
 };
 
-export type FlatObjectPropertiesUpdates = Array<
-  {
-    [P in FlatObjectMetadataPropertiesToCompare]: PropertyUpdate<
-      FlatObjectMetadata,
-      P
-    >;
-  }[FlatObjectMetadataPropertiesToCompare]
->;
-
 export type UpdateObjectAction = {
   type: 'update_object';
   objectMetadataId: string;
-  updates: FlatObjectPropertiesUpdates;
+  updates: FlatEntityPropertiesUpdates<'objectMetadata'>;
 };
 
 export type DeleteObjectAction = {

@@ -2,13 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
 import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -16,43 +13,28 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service';
 
-export type FieldMetadataRelatedFlatEntityMaps = Pick<
-  AllFlatEntityMaps,
-  (typeof ALL_FLAT_ENTITY_CONFIGURATION.fieldMetadata.relatedFlatEntityMapsKeys)[number]
->;
-const FIELD_METADATA_METADATA_NAME =
-  'fieldMetadata' as const satisfies AllMetadataName;
-
 @Injectable()
 export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  typeof FIELD_METADATA_METADATA_NAME
+  typeof ALL_METADATA_NAME.fieldMetadata
 > {
   constructor(
     private readonly flatFieldValidatorService: FlatFieldMetadataValidatorService,
   ) {
-    super(FIELD_METADATA_METADATA_NAME);
+    super(ALL_METADATA_NAME.fieldMetadata);
   }
 
-  protected async validateFlatEntityCreation({
-    dependencyOptimisticFlatEntityMaps,
-    flatEntityToValidate: flatFieldMetadataToValidate,
-    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    workspaceId,
-    remainingFlatEntityMapsToValidate,
-  }: FlatEntityValidationArgs<typeof FIELD_METADATA_METADATA_NAME>): Promise<
+  protected async validateFlatEntityCreation(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.fieldMetadata>,
+  ): Promise<
     FlatEntityValidationReturnType<
-      typeof FIELD_METADATA_METADATA_NAME,
+      typeof ALL_METADATA_NAME.fieldMetadata,
       'created'
     >
   > {
     const validationResult =
-      await this.flatFieldValidatorService.validateFlatFieldMetadataCreation({
-        dependencyOptimisticFlatEntityMaps,
-        flatFieldMetadataToValidate,
-        optimisticFlatFieldMetadataMaps,
-        workspaceId,
-        remainingFlatEntityMapsToValidate,
-      });
+      await this.flatFieldValidatorService.validateFlatFieldMetadataCreation(
+        args,
+      );
 
     if (validationResult.errors.length > 0) {
       return {
@@ -60,6 +42,11 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
         ...validationResult,
       };
     }
+
+    const {
+      flatEntityToValidate: flatFieldMetadataToValidate,
+      dependencyOptimisticFlatEntityMaps,
+    } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
@@ -92,24 +79,16 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     };
   }
 
-  protected async validateFlatEntityDeletion({
-    dependencyOptimisticFlatEntityMaps,
-    flatEntityToValidate: flatFieldMetadataToValidate,
-    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    workspaceId,
-  }: FlatEntityValidationArgs<typeof FIELD_METADATA_METADATA_NAME>): Promise<
+  protected async validateFlatEntityDeletion(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.fieldMetadata>,
+  ): Promise<
     FlatEntityValidationReturnType<
-      typeof FIELD_METADATA_METADATA_NAME,
+      typeof ALL_METADATA_NAME.fieldMetadata,
       'deleted'
     >
   > {
     const validationResult =
-      this.flatFieldValidatorService.validateFlatFieldMetadataDeletion({
-        dependencyOptimisticFlatEntityMaps,
-        flatFieldMetadataToValidate,
-        optimisticFlatFieldMetadataMaps,
-        workspaceId,
-      });
+      this.flatFieldValidatorService.validateFlatFieldMetadataDeletion(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -117,6 +96,11 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
         ...validationResult,
       };
     }
+
+    const {
+      flatEntityToValidate: flatFieldMetadataToValidate,
+      dependencyOptimisticFlatEntityMaps,
+    } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
@@ -149,36 +133,20 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     };
   }
 
-  protected async validateFlatEntityUpdate({
-    dependencyOptimisticFlatEntityMaps,
-    flatEntityUpdate: { from: fromFlatFieldMetadata, to: toFlatFieldMetadata },
-    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    workspaceId,
-  }: FlatEntityUpdateValidationArgs<
-    typeof FIELD_METADATA_METADATA_NAME
-  >): Promise<
-    | FlatEntityValidationReturnType<
-        typeof FIELD_METADATA_METADATA_NAME,
-        'updated'
-      >
-    | undefined
+  protected async validateFlatEntityUpdate(
+    args: FlatEntityUpdateValidationArgs<
+      typeof ALL_METADATA_NAME.fieldMetadata
+    >,
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.fieldMetadata,
+      'updated'
+    >
   > {
-    const flatFieldMetadataUpdatedProperties = compareTwoFlatFieldMetadata({
-      fromFlatFieldMetadata,
-      toFlatFieldMetadata,
-    });
-
-    if (flatFieldMetadataUpdatedProperties.length === 0) {
-      return undefined;
-    }
-
     const validationResult =
-      await this.flatFieldValidatorService.validateFlatFieldMetadataUpdate({
-        dependencyOptimisticFlatEntityMaps,
-        flatFieldMetadataToValidate: toFlatFieldMetadata,
-        optimisticFlatFieldMetadataMaps,
-        workspaceId,
-      });
+      await this.flatFieldValidatorService.validateFlatFieldMetadataUpdate(
+        args,
+      );
 
     if (validationResult.errors.length > 0) {
       return {
@@ -187,11 +155,23 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
       };
     }
 
+    const {
+      dependencyOptimisticFlatEntityMaps,
+      flatEntityId,
+      flatEntityUpdates,
+      optimisticFlatEntityMaps,
+    } = args;
+
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatEntityId,
+      flatEntityMaps: optimisticFlatEntityMaps,
+    });
+
     const updateFieldAction: UpdateFieldAction = {
       type: 'update_field',
-      fieldMetadataId: toFlatFieldMetadata.id,
-      objectMetadataId: toFlatFieldMetadata.objectMetadataId,
-      updates: flatFieldMetadataUpdatedProperties,
+      fieldMetadataId: flatEntityId,
+      objectMetadataId: flatFieldMetadata.objectMetadataId,
+      updates: flatEntityUpdates,
     };
 
     return {

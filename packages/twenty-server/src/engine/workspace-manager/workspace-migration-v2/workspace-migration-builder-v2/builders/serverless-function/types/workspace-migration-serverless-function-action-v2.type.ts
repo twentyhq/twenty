@@ -1,6 +1,5 @@
-import { type FlatServerlessFunctionPropertiesToCompare } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function-properties-to-compare.type';
+import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 import { type ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
 
 export type CreateServerlessFunctionAction = {
@@ -12,14 +11,7 @@ export type UpdateServerlessFunctionAction = {
   type: 'update_serverless_function';
   serverlessFunctionId: string;
   code?: ServerlessFunctionCode;
-  updates: Array<
-    {
-      [P in FlatServerlessFunctionPropertiesToCompare]: PropertyUpdate<
-        FlatServerlessFunction,
-        P
-      >;
-    }[FlatServerlessFunctionPropertiesToCompare]
-  >;
+  updates: FlatEntityPropertiesUpdates<'serverlessFunction'>;
 };
 
 export type DeleteServerlessFunctionAction = {
