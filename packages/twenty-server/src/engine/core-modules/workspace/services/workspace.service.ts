@@ -476,7 +476,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       'displayName' in payload ||
       'subdomain' in payload ||
       'customDomain' in payload ||
-      'logo' in payload
+      'logo' in payload ||
+      'trashRetentionDays' in payload
     ) {
       if (!userWorkspaceId) {
         throw new Error('Missing userWorkspaceId in authContext');

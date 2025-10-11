@@ -2,11 +2,13 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
+  IsInt,
   IsNotIn,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
+  Min,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -197,4 +199,10 @@ export class UpdateWorkspaceInput {
   @IsBoolean()
   @IsOptional()
   isTwoFactorAuthenticationEnforced?: boolean;
+
+  @Field({ nullable: true })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  trashRetentionDays?: number;
 }

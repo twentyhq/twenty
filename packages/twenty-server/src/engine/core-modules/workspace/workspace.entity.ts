@@ -52,6 +52,7 @@ registerEnumType(WorkspaceActivationStatus, {
   'onboarded_workspace_requires_default_role',
   `"activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "defaultRoleId" IS NOT NULL`,
 )
+@Check('trash_retention_positive', '"trashRetentionDays" >= 0')
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType()
 export class Workspace {
@@ -91,6 +92,10 @@ export class Workspace {
   @Field()
   @Column({ default: true })
   isPublicInviteLinkEnabled: boolean;
+
+  @Field()
+  @Column({ type: 'integer', default: 14 })
+  trashRetentionDays: number;
 
   // Relations
   @OneToMany(() => AppToken, (appToken) => appToken.workspace, {
