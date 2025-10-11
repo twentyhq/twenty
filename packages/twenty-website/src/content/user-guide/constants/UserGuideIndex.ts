@@ -34,6 +34,7 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'import-export-data' },
     ],
     Settings: [
+      { fileName: 'settings' },
       { fileName: 'permissions' },
       { fileName: 'settings-faq' },
     ],
