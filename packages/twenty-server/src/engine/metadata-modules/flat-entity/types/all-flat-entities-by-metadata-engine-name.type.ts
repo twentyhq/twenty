@@ -1,5 +1,8 @@
+import { type CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
+import { type DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
@@ -10,8 +13,15 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type RouteTrigger } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
+import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
+import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 import {
   type CreateCronTriggerAction,
@@ -71,6 +81,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteFieldAction;
     };
     flatEntity: FlatFieldMetadata;
+    entity: FieldMetadataEntity;
   };
   objectMetadata: {
     actions: {
@@ -79,6 +90,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteObjectAction;
     };
     flatEntity: FlatObjectMetadata;
+    entity: ObjectMetadataEntity;
   };
   view: {
     actions: {
@@ -87,6 +99,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteViewAction;
     };
     flatEntity: FlatView;
+    entity: ViewEntity;
   };
   viewField: {
     actions: {
@@ -95,6 +108,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteViewFieldAction;
     };
     flatEntity: FlatViewField;
+    entity: ViewFieldEntity;
   };
   index: {
     actions: {
@@ -103,6 +117,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteIndexAction;
     };
     flatEntity: FlatIndexMetadata;
+    entity: IndexMetadataEntity;
   };
   serverlessFunction: {
     actions: {
@@ -111,6 +126,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteServerlessFunctionAction;
     };
     flatEntity: FlatServerlessFunction;
+    entity: ServerlessFunctionEntity;
   };
   cronTrigger: {
     actions: {
@@ -119,6 +135,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteCronTriggerAction;
     };
     flatEntity: FlatCronTrigger;
+    entity: CronTrigger;
   };
   databaseEventTrigger: {
     actions: {
@@ -127,6 +144,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteDatabaseEventTriggerAction;
     };
     flatEntity: FlatDatabaseEventTrigger;
+    entity: DatabaseEventTrigger;
   };
   routeTrigger: {
     actions: {
@@ -135,6 +153,7 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteRouteTriggerAction;
     };
     flatEntity: FlatRouteTrigger;
+    entity: RouteTrigger;
   };
   viewFilter: {
     actions: {
@@ -143,11 +162,22 @@ export type AllFlatEntityConfigurationByMetadataName = {
       deleted: DeleteViewFilterAction;
     };
     flatEntity: FlatViewFilter;
+    entity: ViewFilterEntity;
   };
 };
 
+export type MetadataFlatEntityMapsKey<T extends AllMetadataName> =
+  (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['flatEntityMapsKey'];
+
 export type MetadataRelatedFlatEntityMapsKeys<T extends AllMetadataName> =
   (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['relatedFlatEntityMapsKeys'][number];
+
+export type MetadataFlatEntityAndRelatedFlatEntityMaps<
+  T extends AllMetadataName,
+> = Pick<
+  AllFlatEntityMaps,
+  MetadataRelatedFlatEntityMapsKeys<T> | MetadataFlatEntityMapsKey<T>
+>;
 
 export type MetadataRelatedFlatEntityMaps<T extends AllMetadataName> =
   MetadataRelatedFlatEntityMapsKeys<T> extends []
@@ -156,6 +186,9 @@ export type MetadataRelatedFlatEntityMaps<T extends AllMetadataName> =
 
 export type MetadataFlatEntity<T extends AllMetadataName> =
   AllFlatEntityConfigurationByMetadataName[T]['flatEntity'];
+
+export type MetadataEntity<T extends AllMetadataName> =
+  AllFlatEntityConfigurationByMetadataName[T]['entity'];
 
 export type MetadataFlatEntityMaps<T extends AllMetadataName> = FlatEntityMaps<
   MetadataFlatEntity<T>
