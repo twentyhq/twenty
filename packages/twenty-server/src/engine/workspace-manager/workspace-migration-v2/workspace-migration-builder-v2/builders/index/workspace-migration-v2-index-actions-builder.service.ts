@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -12,6 +15,7 @@ import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/wor
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service';
+import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 
 @Injectable()
 export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
@@ -125,19 +129,42 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     };
   }
 
-  protected async validateFlatEntityUpdate(
-    args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.index>,
-  ): Promise<
+  protected async validateFlatEntityUpdate({
+    flatEntityId,
+    flatEntityUpdates,
+    optimisticFlatEntityMaps: optimisticFlatIndexMaps,
+    dependencyOptimisticFlatEntityMaps,
+    buildOptions,
+    workspaceId,
+  }: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.index>): Promise<
     FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'updated'>
   > {
-    const {
-      optimisticFlatEntityMaps: optimisticFlatIndexMaps,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
-
-    // TODO prastoin handle this
+    const flatEntity = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatIndexMaps,
+    });
+    
+    if (!isDefined(flatEntity)) {
+      return {
+        status: 'fail',
+        type: 'delete_index',
+        flatEntityMinimalInformation: {},
+        errors: [
+          {
+            code: FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+            message: t`Index to delete not found`,
+          },
+        ],
+      };
+    }
     const deletionValidationResult =
       this.flatIndexValidatorService.validateFlatIndexDeletion({
+        buildOptions,
+        dependencyOptimisticFlatEntityMaps,
+        optimisticFlatEntityMaps: optimisticFlatIndexMaps,
+        workspaceId,
+        flatEntityToValidate: flatEntity,
+        remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS,
       });
 
     if (deletionValidationResult.errors.length > 0) {
@@ -147,13 +174,24 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       };
     }
 
+    const updatedFlatIndex = {
+      ...flatEntity,
+      ...fromWorkspaceMigrationUpdateActionToPartialEntity({
+        updates: flatEntityUpdates,
+      }),
+    };
+
     const creationValidationResult =
       this.flatIndexValidatorService.validateFlatIndexCreation({
-        ...args,
+        buildOptions,
+        dependencyOptimisticFlatEntityMaps,
+        workspaceId,
+        flatEntityToValidate: updatedFlatIndex,
         optimisticFlatEntityMaps: deleteFlatEntityFromFlatEntityMapsOrThrow({
-          entityToDeleteId: fromFlatIndex.id,
+          entityToDeleteId: flatEntity.id,
           flatEntityMaps: optimisticFlatIndexMaps,
         }),
+        remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS,
       });
 
     if (creationValidationResult.errors.length > 0) {
@@ -168,11 +206,11 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       action: [
         {
           type: 'delete_index',
-          flatIndexMetadataId: fromFlatIndex.id,
+          flatIndexMetadataId: flatEntity.id,
         },
         {
           type: 'create_index',
-          flatIndexMetadata: toFlatIndex,
+          flatIndexMetadata: updatedFlatIndex,
         },
       ],
       dependencyOptimisticFlatEntityMaps,

@@ -16,7 +16,7 @@ import {
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/get-metadata-empty-workspace-migration-action-record.util';
@@ -227,18 +227,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
       if (!isDefined(flatEntityToUpdate)) {
         throw new FlatEntityMapsException(
-          'Could not find flat entity to update in maps should never occur',
+          'Could not find flat entity updates in maps dispatcher should never occur',
           FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
         );
       }
-
-      // TODO
-      // remainingFlatEntityMapsToUpdate.to =
-      //   deleteFlatEntityFromFlatEntityMapsOrThrow({
-      //     entityToDeleteId: flatEntityToUpdateId,
-      //     flatEntityMaps: remainingFlatEntityMapsToUpdate.to,
-      // });
-      ///
 
       const validationResult = await this.validateFlatEntityUpdate({
         flatEntityUpdates: flatEntityToUpdate.updates,
@@ -246,8 +238,6 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         dependencyOptimisticFlatEntityMaps,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
-        // @ts-expect-error TODO
-        remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToUpdate,
         buildOptions,
       });
 
@@ -256,10 +246,18 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         continue;
       }
 
-      const existingFlatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      const existingFlatEntity = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: flatEntityToUpdateId,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
+
+      if (!isDefined(existingFlatEntity)) {
+        throw new FlatEntityMapsException(
+          'Existing flat entity to update post successful validation is not defined, should never occur',
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
       const updatedFlatEntity = {
         ...existingFlatEntity,
         ...fromWorkspaceMigrationUpdateActionToPartialEntity({

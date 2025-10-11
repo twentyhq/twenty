@@ -73,8 +73,7 @@ export class FlatIndexValidatorService {
 
     const relatedObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps:
-        dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (!isDefined(relatedObjectMetadata)) {
@@ -113,7 +112,8 @@ export class FlatIndexValidatorService {
       flatIndexToValidate.flatIndexFieldMetadatas.forEach((flatIndexField) => {
         const relatedFlatField = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: flatIndexField.fieldMetadataId,
-          flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         });
 
         if (!isDefined(relatedFlatField)) {

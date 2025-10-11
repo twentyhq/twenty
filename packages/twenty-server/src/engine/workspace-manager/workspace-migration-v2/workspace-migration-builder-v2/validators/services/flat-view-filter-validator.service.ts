@@ -125,10 +125,7 @@ export class FlatViewFilterValidatorService {
       },
     };
 
-    const existingViewFilter = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
-      flatEntityMaps: optimisticFlatViewFilterMaps,
-    });
+    const existingViewFilter = optimisticFlatViewFilterMaps.byId[flatEntityId];
 
     if (!isDefined(existingViewFilter)) {
       validationResult.errors.push({
