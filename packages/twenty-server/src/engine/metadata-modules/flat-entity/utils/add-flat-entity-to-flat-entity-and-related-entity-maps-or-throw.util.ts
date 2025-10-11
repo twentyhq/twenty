@@ -54,6 +54,7 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow = <
       });
 
       const foreignKeyAggregatorProperty = `${metadataName}Ids`;
+
       if (
         !Object.prototype.hasOwnProperty.call(
           relatedFlatEntity,

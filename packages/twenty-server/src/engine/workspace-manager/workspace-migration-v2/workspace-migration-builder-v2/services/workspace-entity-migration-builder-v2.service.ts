@@ -266,6 +266,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
           updates: flatEntityToUpdate.updates,
         }),
       };
+
       optimisticFlatEntityMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
         flatEntity: updatedFlatEntity,
         flatEntityMaps: optimisticFlatEntityMaps,

@@ -1,6 +1,7 @@
-import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
-import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
-import { ExtractPropertiesThatEndsWithId } from 'twenty-shared/types';
+import { type ExtractPropertiesThatEndsWithId } from 'twenty-shared/types';
+
+import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 
 type PropertyNameToRelationName<T extends string> = T extends `${infer Name}Id`
   ? Name

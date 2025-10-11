@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import {
-  FlatEntityPropertiesUpdates,
+  type FlatEntityPropertiesUpdates,
   type MetadataFlatEntity,
   type MetadataFlatEntityMaps,
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';

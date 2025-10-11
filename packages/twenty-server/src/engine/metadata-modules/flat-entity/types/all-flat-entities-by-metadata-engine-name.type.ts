@@ -4,7 +4,7 @@ import { type DatabaseEventTrigger } from 'src/engine/metadata-modules/database-
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
-import { ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-many-to-one-relations.constant';
+import { type ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-many-to-one-relations.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -24,7 +24,7 @@ import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverl
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
+import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 import {
   type CreateCronTriggerAction,
   type DeleteCronTriggerAction,
@@ -173,7 +173,10 @@ export type MetadataFlatEntityMapsKey<T extends AllMetadataName> =
 
 export type MetadataRelatedFlatEntityMapsKeys<T extends AllMetadataName> =
   FromMetadataNameToFlatEntityMapsKey<
-    Extract<keyof (typeof ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS)[T], AllMetadataName>
+    Extract<
+      keyof (typeof ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS)[T],
+      AllMetadataName
+    >
   >;
 
 export type MetadataFlatEntityAndRelatedFlatEntityMaps<

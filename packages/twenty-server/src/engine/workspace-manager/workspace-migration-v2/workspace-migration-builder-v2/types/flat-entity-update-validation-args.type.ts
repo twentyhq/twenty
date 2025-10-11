@@ -1,7 +1,7 @@
 import { type FromTo } from 'twenty-shared/types';
 
 import {
-  FlatEntityPropertiesUpdates,
+  type FlatEntityPropertiesUpdates,
   type MetadataFlatEntityMaps,
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
@@ -11,7 +11,7 @@ export type FlatEntityUpdateValidationArgs<T extends AllMetadataName> = Omit<
   FlatEntityValidationArgs<T>,
   'flatEntityToValidate' | 'remainingFlatEntityMapsToValidate'
 > & {
-  flatEntityId: string
+  flatEntityId: string;
   flatEntityUpdates: FlatEntityPropertiesUpdates<T>;
   remainingFlatEntityMapsToValidate: FromTo<MetadataFlatEntityMaps<T>>;
 };
