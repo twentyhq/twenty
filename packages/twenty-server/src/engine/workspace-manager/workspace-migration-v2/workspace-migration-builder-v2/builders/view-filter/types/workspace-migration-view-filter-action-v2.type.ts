@@ -1,6 +1,5 @@
-import { type FlatViewFilterPropertiesToCompare } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-properties-to-compare.type';
+import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
-import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 
 export type CreateViewFilterAction = {
   type: 'create_view_filter';
@@ -10,14 +9,7 @@ export type CreateViewFilterAction = {
 export type UpdateViewFilterAction = {
   type: 'update_view_filter';
   viewFilterId: string;
-  updates: Array<
-    {
-      [P in FlatViewFilterPropertiesToCompare]: PropertyUpdate<
-        FlatViewFilter,
-        P
-      >;
-    }[FlatViewFilterPropertiesToCompare]
-  >;
+  updates: FlatEntityPropertiesUpdates<'viewFilter'>;
 };
 
 export type DeleteViewFilterAction = {

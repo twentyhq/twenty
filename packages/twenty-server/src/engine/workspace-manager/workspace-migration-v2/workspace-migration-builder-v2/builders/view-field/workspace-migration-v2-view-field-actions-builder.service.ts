@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { compareTwoFlatViewField } from 'src/engine/metadata-modules/flat-view-field/utils/compare-two-flat-view-field.util';
 import { UpdateViewFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/workspace-migration-view-field-action-v2.type';
 import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -14,31 +13,23 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
 
-const VIEW_FIELD_METADATA_NAME = 'viewField' as const satisfies AllMetadataName;
-
 @Injectable()
 export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  typeof VIEW_FIELD_METADATA_NAME
+  typeof ALL_METADATA_NAME.viewField
 > {
   constructor(
     private readonly flatViewFieldValidatorService: FlatViewFieldValidatorService,
   ) {
-    super(VIEW_FIELD_METADATA_NAME);
+    super(ALL_METADATA_NAME.viewField);
   }
 
-  protected async validateFlatEntityCreation({
-    dependencyOptimisticFlatEntityMaps,
-    flatEntityToValidate: flatViewFieldToValidate,
-    optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
-  }: FlatEntityValidationArgs<typeof VIEW_FIELD_METADATA_NAME>): Promise<
-    FlatEntityValidationReturnType<typeof VIEW_FIELD_METADATA_NAME, 'created'>
+  protected async validateFlatEntityCreation(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewField>,
+  ): Promise<
+    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.viewField, 'created'>
   > {
     const validationResult =
-      this.flatViewFieldValidatorService.validateFlatViewFieldCreation({
-        dependencyOptimisticFlatEntityMaps,
-        flatViewFieldToValidate,
-        optimisticFlatViewFieldMaps,
-      });
+      this.flatViewFieldValidatorService.validateFlatViewFieldCreation(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -46,6 +37,11 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
         ...validationResult,
       };
     }
+
+    const {
+      flatEntityToValidate: flatViewFieldToValidate,
+      dependencyOptimisticFlatEntityMaps,
+    } = args;
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewFieldToValidate.fieldMetadataId,
@@ -92,19 +88,13 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     };
   }
 
-  protected async validateFlatEntityDeletion({
-    dependencyOptimisticFlatEntityMaps,
-    flatEntityToValidate: flatViewFieldToValidate,
-    optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
-  }: FlatEntityValidationArgs<typeof VIEW_FIELD_METADATA_NAME>): Promise<
-    FlatEntityValidationReturnType<typeof VIEW_FIELD_METADATA_NAME, 'deleted'>
+  protected async validateFlatEntityDeletion(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewField>,
+  ): Promise<
+    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.viewField, 'deleted'>
   > {
     const validationResult =
-      this.flatViewFieldValidatorService.validateFlatViewFieldDeletion({
-        dependencyOptimisticFlatEntityMaps,
-        flatViewFieldToValidate,
-        optimisticFlatViewFieldMaps,
-      });
+      this.flatViewFieldValidatorService.validateFlatViewFieldDeletion(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -112,6 +102,11 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
         ...validationResult,
       };
     }
+
+    const {
+      flatEntityToValidate: flatViewFieldToValidate,
+      dependencyOptimisticFlatEntityMaps,
+    } = args;
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFieldToValidate.fieldMetadataId,
@@ -162,29 +157,13 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     };
   }
 
-  protected async validateFlatEntityUpdate({
-    dependencyOptimisticFlatEntityMaps,
-    flatEntityUpdate: { from: fromFlatViewField, to: toFlatViewField },
-    optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
-  }: FlatEntityUpdateValidationArgs<typeof VIEW_FIELD_METADATA_NAME>): Promise<
-    | FlatEntityValidationReturnType<typeof VIEW_FIELD_METADATA_NAME, 'updated'>
-    | undefined
+  protected async validateFlatEntityUpdate(
+    args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.viewField>,
+  ): Promise<
+    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.viewField, 'updated'>
   > {
-    const viewFieldUpdatedProperties = compareTwoFlatViewField({
-      fromFlatViewField,
-      toFlatViewField,
-    });
-
-    if (viewFieldUpdatedProperties.length === 0) {
-      return undefined;
-    }
-
     const validationResult =
-      this.flatViewFieldValidatorService.validateFlatViewFieldUpdate({
-        dependencyOptimisticFlatEntityMaps,
-        flatViewFieldToValidate: toFlatViewField,
-        optimisticFlatViewFieldMaps,
-      });
+      this.flatViewFieldValidatorService.validateFlatViewFieldUpdate(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -193,10 +172,12 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       };
     }
 
+    const { dependencyOptimisticFlatEntityMaps, flatEntityId, flatEntityUpdates } = args;
+
     const updateViewFieldAction: UpdateViewFieldAction = {
       type: 'update_view_field',
-      viewFieldId: toFlatViewField.id,
-      updates: viewFieldUpdatedProperties,
+      viewFieldId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {

@@ -1,5 +1,6 @@
 import { type FromTo } from 'twenty-shared/types';
 
+import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type FlatViewPropertiesToCompare } from 'src/engine/metadata-modules/flat-view/types/flat-view-properties-to-compare.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -16,11 +17,7 @@ export type CreateViewAction = {
 export type UpdateViewAction = {
   type: 'update_view';
   viewId: string;
-  updates: Array<
-    {
-      [P in FlatViewPropertiesToCompare]: FlatViewPropertyUpdate<P>;
-    }[FlatViewPropertiesToCompare]
-  >;
+  updates: FlatEntityPropertiesUpdates<'view'>;
 };
 
 export type DeleteViewAction = {

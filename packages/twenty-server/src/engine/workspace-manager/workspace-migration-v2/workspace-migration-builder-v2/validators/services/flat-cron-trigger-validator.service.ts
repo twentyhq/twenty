@@ -23,46 +23,48 @@ export class FlatCronTriggerValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.cronTrigger
   >): FailedFlatEntityValidation<FlatCronTrigger> {
-    const errors = [];
+    const validationResult: FailedFlatEntityValidation<FlatCronTrigger> = {
+      type: 'update_cron_trigger',
+      errors: [],
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+      },
+    };
 
     const existingFlatCronTrigger =
       optimisticFlatCronTriggerMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatCronTrigger)) {
-      errors.push({
+      validationResult.errors.push({
         code: CronTriggerExceptionCode.CRON_TRIGGER_NOT_FOUND,
         message: t`Cron trigger not found`,
         userFriendlyMessage: msg`Cron trigger not found`,
       });
-    } else {
-      const updatedFlatCronTrigger = {
-        ...existingFlatCronTrigger,
-        ...fromWorkspaceMigrationUpdateActionToPartialEntity({
-          updates: flatEntityUpdates,
-        }),
-      };
 
-      const serverlessFunction =
-        dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
-          updatedFlatCronTrigger.serverlessFunctionId
-        ];
-
-      if (!isDefined(serverlessFunction)) {
-        errors.push({
-          code: CronTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-          message: t`Serverless function not found`,
-          userFriendlyMessage: msg`Serverless function not found`,
-        });
-      }
+      return validationResult;
     }
 
-    return {
-      type: 'update_cron_trigger',
-      errors,
-      flatEntityMinimalInformation: {
-        id: flatEntityId,
-      },
+    const updatedFlatCronTrigger = {
+      ...existingFlatCronTrigger,
+      ...fromWorkspaceMigrationUpdateActionToPartialEntity({
+        updates: flatEntityUpdates,
+      }),
     };
+
+    const serverlessFunction =
+      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
+        updatedFlatCronTrigger.serverlessFunctionId
+      ];
+
+    if (!isDefined(serverlessFunction)) {
+      validationResult.errors.push({
+        code: CronTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        message: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
+      });
+    }
+
+    return validationResult;
   }
 
   public validateFlatCronTriggerDeletion({
@@ -71,26 +73,26 @@ export class FlatCronTriggerValidatorService {
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.cronTrigger
   >): FailedFlatEntityValidation<FlatCronTrigger> {
-    const errors = [];
+    const validationResult: FailedFlatEntityValidation<FlatCronTrigger> = {
+      type: 'delete_cron_trigger',
+      errors: [],
+      flatEntityMinimalInformation: {
+        id: cronTriggerIdToDelete,
+      },
+    };
 
     const existingFlatCronTrigger =
       optimisticFlatCronTriggerMaps.byId[cronTriggerIdToDelete];
 
     if (!isDefined(existingFlatCronTrigger)) {
-      errors.push({
+      validationResult.errors.push({
         code: CronTriggerExceptionCode.CRON_TRIGGER_NOT_FOUND,
         message: t`Cron trigger not found`,
         userFriendlyMessage: msg`Cron trigger not found`,
       });
     }
 
-    return {
-      type: 'delete_cron_trigger',
-      errors,
-      flatEntityMinimalInformation: {
-        id: cronTriggerIdToDelete,
-      },
-    };
+    return validationResult;
   }
 
   public async validateFlatCronTriggerCreation({
@@ -100,14 +102,20 @@ export class FlatCronTriggerValidatorService {
   }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>): Promise<
     FailedFlatEntityValidation<FlatCronTrigger>
   > {
-    const errors = [];
+    const validationResult: FailedFlatEntityValidation<FlatCronTrigger> = {
+      type: 'create_cron_trigger',
+      errors: [],
+      flatEntityMinimalInformation: {
+        id: flatCronTriggerToValidate.id,
+      },
+    };
 
     if (
       isDefined(
         optimisticFlatCronTriggerMaps.byId[flatCronTriggerToValidate.id],
       )
     ) {
-      errors.push({
+      validationResult.errors.push({
         code: CronTriggerExceptionCode.CRON_TRIGGER_ALREADY_EXIST,
         message: t`Cron trigger with same id already exists`,
         userFriendlyMessage: msg`Cron trigger already exists`,
@@ -120,19 +128,13 @@ export class FlatCronTriggerValidatorService {
       ];
 
     if (!isDefined(serverlessFunction)) {
-      errors.push({
+      validationResult.errors.push({
         code: CronTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
         userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 
-    return {
-      type: 'create_cron_trigger',
-      errors,
-      flatEntityMinimalInformation: {
-        id: flatCronTriggerToValidate.id,
-      },
-    };
+    return validationResult;
   }
 }
