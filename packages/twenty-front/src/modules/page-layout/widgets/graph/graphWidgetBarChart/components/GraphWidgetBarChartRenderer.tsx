@@ -54,6 +54,7 @@ export const GraphWidgetBarChartRenderer = ({
         yAxisLabel={yAxisLabel}
         showValues={showDataLabels}
         id={widget.id}
+        displayType="shortNumber"
       />
     </Suspense>
   );

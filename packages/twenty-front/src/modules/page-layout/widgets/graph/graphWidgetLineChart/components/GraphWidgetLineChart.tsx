@@ -144,6 +144,7 @@ export const GraphWidgetLineChart = ({
       <GraphWidgetTooltip
         items={tooltipData.items}
         showClickHint={tooltipData.showClickHint}
+        title={tooltipData.title}
       />
     );
   };
@@ -157,6 +158,7 @@ export const GraphWidgetLineChart = ({
       <GraphWidgetTooltip
         items={tooltipData.items}
         showClickHint={tooltipData.showClickHint}
+        title={tooltipData.title}
       />
     );
   };

@@ -61,7 +61,11 @@ export const computeAggregateNumericValueForGraph = ({
   }
 
   switch (field.type) {
-    case FieldMetadataType.CURRENCY:
+    case FieldMetadataType.CURRENCY: {
+      // Convert from micros (millionths) to actual currency amount
+      return Number(aggregateValue) / 1_000_000;
+    }
+
     case FieldMetadataType.NUMBER: {
       return Number(aggregateValue);
     }

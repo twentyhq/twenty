@@ -27,6 +27,14 @@ export const useLineChartTooltip = ({
   );
 
   const createSliceTooltipData = ({ slice }: SliceTooltipProps<LineSeries>) => {
+    if (!isDefined(slice.points) || slice.points.length === 0) {
+      return {
+        items: [],
+        showClickHint: false,
+        title: undefined,
+      };
+    }
+
     const tooltipItems = slice.points
       .map((point) => {
         const enrichedSeriesItem = enrichedSeriesMap.get(
@@ -54,9 +62,12 @@ export const useLineChartTooltip = ({
       return false;
     });
 
+    const xValue = slice.points[0]?.data?.x;
+
     return {
       items: tooltipItems,
       showClickHint: hasClickablePoint,
+      title: isDefined(xValue) ? String(xValue) : undefined,
     };
   };
 
@@ -79,6 +90,7 @@ export const useLineChartTooltip = ({
         },
       ],
       showClickHint: isDefined(dataPoint?.to),
+      title: isDefined(point.data.x) ? String(point.data.x) : undefined,
     };
   };
 

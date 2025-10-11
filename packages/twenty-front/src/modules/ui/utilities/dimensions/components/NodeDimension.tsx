@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
+import { type ReactNode, useRef } from 'react';
 
 type NodeDimensionProps = {
   children: ReactNode;
@@ -12,23 +12,13 @@ export const NodeDimension = ({
 }: NodeDimensionProps) => {
   const elementRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!elementRef.current) return;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (isDefined(entry)) {
-        onDimensionChange({
-          width: entry.contentRect.width,
-          height: entry.contentRect.height,
-        });
-      }
-    });
-
-    resizeObserver.observe(elementRef.current);
-
-    return () => resizeObserver.disconnect();
-  }, [onDimensionChange]);
-
-  return <div ref={elementRef}>{children}</div>;
+  return (
+    <>
+      <NodeDimensionEffect
+        elementRef={elementRef}
+        onDimensionChange={onDimensionChange}
+      />
+      <div ref={elementRef}>{children}</div>
+    </>
+  );
 };

@@ -10,8 +10,8 @@ const StyledTooltipContent = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(3)};
   pointer-events: none;
 `;
 
@@ -43,6 +43,12 @@ const StyledTooltipLink = styled.div`
   display: flex;
 `;
 
+const StyledTooltipHeader = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
 export type GraphWidgetTooltipItem = {
   label: string;
   formattedValue: string;
@@ -52,16 +58,19 @@ export type GraphWidgetTooltipItem = {
 type GraphWidgetTooltipProps = {
   items: GraphWidgetTooltipItem[];
   showClickHint?: boolean;
+  title?: string;
 };
 
 export const GraphWidgetTooltip = ({
   items,
   showClickHint = false,
+  title,
 }: GraphWidgetTooltipProps) => {
   const theme = useTheme();
 
   return (
     <StyledTooltipContent>
+      {title && <StyledTooltipHeader>{title}</StyledTooltipHeader>}
       {items.map((item, index) => (
         <StyledTooltipRow key={index}>
           <StyledDot $color={item.dotColor} />
