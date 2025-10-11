@@ -1,4 +1,3 @@
-import { currentUserState } from '@/auth/states/currentUserState';
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCssVariableName';
@@ -24,16 +23,18 @@ import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-
 import { scrollAtRealIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRealIndexComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
+import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useTriggerInitialRecordTableDataLoad = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
+
+  const showAuthModal = useShowAuthModal();
 
   const { findManyRecordsLazy } =
     useRecordIndexTableFetchMore(objectNameSingular);
@@ -100,8 +101,6 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const triggerInitialRecordTableDataLoad = useRecoilCallback(
     ({ snapshot, set }) =>
       async () => {
-        const currentUser = getSnapshotValue(snapshot, currentUserState);
-
         const isInitializingVirtualTableDataLoading = getSnapshotValue(
           snapshot,
           isInitializingVirtualTableDataLoadingCallbackState,
@@ -135,7 +134,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         let records: ObjectRecord[] | null = null;
         let totalCount = 0;
 
-        if (isUndefinedOrNull(currentUser)) {
+        if (showAuthModal) {
           records = SIGN_IN_BACKGROUND_MOCK_COMPANIES;
           totalCount = SIGN_IN_BACKGROUND_MOCK_COMPANIES.length;
         } else {
@@ -198,7 +197,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       resetTableFocuses,
       resetVirtualizedRowTreadmill,
       recordIndexAllRecordIdsSelector,
-      findManyRecordsLazy,
+      showAuthModal,
       dataPagesLoadedCallbackState,
       isRecordTableInitialLoadingCallbackState,
       lastScrollPositionCallbackState,
@@ -207,6 +206,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       setIsRecordTableScrolledHorizontally,
       setIsRecordTableScrolledVertically,
       scrollTableToPosition,
+      findManyRecordsLazy,
       dataLoadingStatusByRealIndexCallbackState,
       recordIdByRealIndexCallbackState,
       resetNumberOfRecordsToVirtualize,
