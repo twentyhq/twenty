@@ -64,8 +64,7 @@ export const getCursor = (
 };
 
 export const getPaginationInfo = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  objectRecords: any[],
+  objectRecords: ObjectRecord[],
   limit: number,
   isForwardPagination: boolean,
 ) => {

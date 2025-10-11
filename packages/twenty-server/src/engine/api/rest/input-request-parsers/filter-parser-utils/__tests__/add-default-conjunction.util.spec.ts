@@ -1,4 +1,4 @@
-import { addDefaultConjunctionIfMissing } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/add-default-conjunction.utils';
+import { addDefaultConjunctionIfMissing } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/add-default-conjunction.util';
 
 describe('addDefaultConjunctionIfMissing', () => {
   it('should add default conjunction if missing', () => {

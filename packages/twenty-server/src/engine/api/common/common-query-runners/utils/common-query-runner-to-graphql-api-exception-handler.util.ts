@@ -16,6 +16,9 @@ export const commonQueryRunnerToGraphqlApiExceptionHandler = (
   switch (error.code) {
     case CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundError(error);
+    case CommonQueryRunnerExceptionCode.ARGS_CONFLICT:
+    case CommonQueryRunnerExceptionCode.INVALID_ARGS_FIRST:
+    case CommonQueryRunnerExceptionCode.INVALID_ARGS_LAST:
     case CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
       throw new UserInputError(error);
     case CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT:

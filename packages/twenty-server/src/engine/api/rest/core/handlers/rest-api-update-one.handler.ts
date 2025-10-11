@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
@@ -62,7 +63,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       recordIds: [updatedRecordId],
       repository,
       objectMetadata,
-      depth: this.depthInputFactory.create(request),
+      depth: parseDepthRestRequest(request),
       restrictedFields,
     });
 

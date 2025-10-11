@@ -127,7 +127,7 @@ describe('parseFilter', () => {
     });
   });
 
-  it('should handler not', () => {
+  it('should handle not', () => {
     expect(
       parseFilter(
         'and(fieldNumber[eq]:1,not(fieldNumber[eq]:2))',

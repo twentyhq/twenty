@@ -7,6 +7,7 @@ import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api
 
 import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 
@@ -95,29 +96,11 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
   private async parseRequestArgs(request: AuthenticatedRequest) {
     const { id: recordId } = parseCorePath(request);
     const filter = { id: { eq: recordId } };
-    const depth = this.depthInputFactory.create(request);
+    const depth = parseDepthRestRequest(request);
 
     return {
       filter,
       depth,
-    };
-  }
-
-  private async buildCommonOptions(request: AuthenticatedRequest) {
-    const { object: parsedObject } = parseCorePath(request);
-
-    const { objectMetadataMaps, objectMetadataMapItem } =
-      await this.coreQueryBuilderFactory.getObjectMetadata(
-        request,
-        parsedObject,
-      );
-
-    const authContext = this.getAuthContextFromRequest(request);
-
-    return {
-      authContext: authContext,
-      objectMetadataItemWithFieldMaps: objectMetadataMapItem,
-      objectMetadataMaps: objectMetadataMaps,
     };
   }
 }
