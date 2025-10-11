@@ -10,6 +10,7 @@ import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantM
 import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
 import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
@@ -154,7 +155,9 @@ export const AIChatMessage = ({
   const { localeCatalog } = useRecoilValue(dateLocaleState);
 
   const showError =
-    error && message.role === AgentChatMessageRole.ASSISTANT && onRetry;
+    isDefined(error) &&
+    message.role === AgentChatMessageRole.ASSISTANT &&
+    isDefined(onRetry);
 
   return (
     <StyledMessageBubble
@@ -184,7 +187,7 @@ export const AIChatMessage = ({
             <AIChatAssistantMessageRenderer
               isLastMessageStreaming={isLastMessageStreaming}
               messageParts={message.parts}
-              hasError={Boolean(showError)}
+              hasError={showError}
             />
           </StyledMessageText>
           {message.parts.length > 0 && (
