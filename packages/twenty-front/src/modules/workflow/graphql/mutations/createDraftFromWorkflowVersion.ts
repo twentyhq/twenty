@@ -6,6 +6,12 @@ export const CREATE_DRAFT_FROM_WORKFLOW_VERSION = gql`
   ) {
     createDraftFromWorkflowVersion(input: $input) {
       id
+      name
+      status
+      trigger
+      steps
+      createdAt
+      updatedAt
     }
   }
 `;
