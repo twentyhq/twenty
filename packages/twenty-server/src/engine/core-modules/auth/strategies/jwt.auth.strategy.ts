@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { Strategy } from 'passport-jwt';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -124,10 +124,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     if (payload.isImpersonating === true) {
-      context.impersonationContext = await this.validateImpersonation(
-        payload,
-        workspace,
-      );
+      context.impersonationContext = await this.validateImpersonation(payload);
     }
 
     const userId = payload.sub ?? payload.userId;
@@ -161,7 +158,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         'UserWorkspace not found',
         AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
         {
-          userFriendlyMessage: t`User does not have access to this workspace`,
+          userFriendlyMessage: msg`User does not have access to this workspace`,
         },
       ),
     );
@@ -179,10 +176,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     return context;
   }
 
-  private async validateImpersonation(
-    payload: AccessTokenJwtPayload,
-    workspace: Workspace,
-  ) {
+  private async validateImpersonation(payload: AccessTokenJwtPayload) {
     // Validate required impersonation fields
     if (
       !payload.impersonatorUserWorkspaceId ||
@@ -239,7 +233,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     const hasServerLevelImpersonatePermission =
       impersonatorUserWorkspace.user.canImpersonate === true &&
-      workspace.allowImpersonation === true;
+      impersonatedUserWorkspace.workspace.allowImpersonation === true;
 
     if (isServerLevelImpersonation) {
       if (!hasServerLevelImpersonatePermission)

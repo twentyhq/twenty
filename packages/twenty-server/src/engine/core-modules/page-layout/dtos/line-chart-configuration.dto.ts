@@ -42,15 +42,28 @@ export class LineChartConfigurationDTO {
   @IsNotEmpty()
   groupByFieldMetadataIdX: string;
 
-  @Field(() => GraphOrderBy)
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  groupBySubFieldNameX?: string;
+
+  @Field(() => GraphOrderBy, {
+    nullable: true,
+    defaultValue: GraphOrderBy.FIELD_ASC,
+  })
   @IsEnum(GraphOrderBy)
-  @IsNotEmpty()
-  orderByX: GraphOrderBy;
+  @IsOptional()
+  orderByX?: GraphOrderBy;
 
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
   groupByFieldMetadataIdY?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  groupBySubFieldNameY?: string;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
@@ -62,15 +75,18 @@ export class LineChartConfigurationDTO {
   @IsOptional()
   omitNullValues?: boolean;
 
-  @Field(() => AxisNameDisplay)
+  @Field(() => AxisNameDisplay, {
+    nullable: true,
+    defaultValue: AxisNameDisplay.BOTH,
+  })
   @IsEnum(AxisNameDisplay)
-  @IsNotEmpty()
-  axisNameDisplay: AxisNameDisplay;
+  @IsOptional()
+  axisNameDisplay?: AxisNameDisplay;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
-  @IsNotEmpty()
-  displayDataLabel: boolean;
+  @IsOptional()
+  displayDataLabel?: boolean;
 
   @Field(() => Number, { nullable: true })
   @IsNumber()

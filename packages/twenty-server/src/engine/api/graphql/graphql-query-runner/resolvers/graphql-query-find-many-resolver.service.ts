@@ -129,6 +129,10 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       objectMetadataMaps,
     });
 
+    if (isDefined(executionArgs.args.offset)) {
+      queryBuilder.skip(executionArgs.args.offset);
+    }
+
     const objectRecords = (await queryBuilder
       .setFindOptions({
         select: columnsToSelect,

@@ -1,4 +1,8 @@
 name: CI Emails
+
+permissions:
+  contents: read
+
 on:
   push:
     branches:

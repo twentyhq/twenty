@@ -359,6 +359,15 @@ export class ConfigVariables {
   EMAIL_SMTP_PASSWORD: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description:
+      'When enabled, only server admins can create new workspaces. Ignored during initial setup when no workspace exists.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
     description: 'Type of storage to use (local or S3)',
     type: ConfigVariableType.ENUM,

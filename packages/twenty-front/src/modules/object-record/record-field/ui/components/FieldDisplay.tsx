@@ -19,8 +19,6 @@ import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFieldRating';
-import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/types/guards/isFieldRelationFromManyObjects';
-import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 
@@ -28,6 +26,8 @@ import { MorphRelationManyToOneFieldDisplay } from '@/object-record/record-field
 import { MorphRelationOneToManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/MorphRelationOneToManyFieldDisplay';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
+import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
@@ -74,9 +74,9 @@ export const FieldDisplay = () => {
 
   return isChipDisplay ? (
     <ChipFieldDisplay />
-  ) : isFieldRelationToOneObject(fieldDefinition) ? (
+  ) : isFieldRelationManyToOne(fieldDefinition) ? (
     <RelationToOneFieldDisplay />
-  ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
+  ) : isFieldRelationOneToMany(fieldDefinition) ? (
     <RelationFromManyFieldDisplay />
   ) : isFieldMorphRelationManyToOne(fieldDefinition) ? (
     <MorphRelationManyToOneFieldDisplay />

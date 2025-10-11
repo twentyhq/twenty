@@ -1,4 +1,12 @@
-import { type CompositeFieldSubFieldName, type FilterableAndTSVectorFieldType, type PartialFieldMetadataItem, RecordFilterGroupLogicalOperator, type RecordFilterValueDependencies, type RecordGqlOperationFilter, type ViewFilterOperand } from '@/types';
+import {
+  type CompositeFieldSubFieldName,
+  type FilterableAndTSVectorFieldType,
+  type PartialFieldMetadataItem,
+  RecordFilterGroupLogicalOperator,
+  type RecordFilterValueDependencies,
+  type RecordGqlOperationFilter,
+  type ViewFilterOperand,
+} from '@/types';
 
 import { isDefined } from '@/utils';
 import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
@@ -17,7 +25,7 @@ export type RecordFilterGroup = {
   id: string;
   parentRecordFilterGroupId?: string | null;
   logicalOperator: RecordFilterGroupLogicalOperator;
-}
+};
 
 export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
   filterValueDependencies,
@@ -26,11 +34,11 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
   recordFilterGroups,
   currentRecordFilterGroupId,
 }: {
-  filterValueDependencies: RecordFilterValueDependencies,
-  filters: RecordFilter[],
-  fields: PartialFieldMetadataItem[],
-  recordFilterGroups: RecordFilterGroup[],
-  currentRecordFilterGroupId?: string,
+  filterValueDependencies: RecordFilterValueDependencies;
+  filters: RecordFilter[];
+  fields: PartialFieldMetadataItem[];
+  recordFilterGroups: RecordFilterGroup[];
+  currentRecordFilterGroupId?: string;
 }): RecordGqlOperationFilter | undefined => {
   const currentRecordFilterGroup = recordFilterGroups.find(
     (recordFilterGroup) => recordFilterGroup.id === currentRecordFilterGroupId,
@@ -45,7 +53,7 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
   );
 
   const groupRecordGqlOperationFilters = recordFiltersInGroup
-    .map((recordFilter) => 
+    .map((recordFilter) =>
       turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
         recordFilter: recordFilter,

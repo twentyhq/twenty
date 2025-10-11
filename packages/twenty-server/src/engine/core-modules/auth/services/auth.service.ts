@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto, { randomUUID } from 'node:crypto';
 
-import { msg, t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -57,12 +57,12 @@ import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/ser
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -163,7 +163,7 @@ export class AuthService {
         'Incorrect login method',
         AuthExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage: t`User was not created with email/password`,
+          userFriendlyMessage: msg`User was not created with email/password`,
         },
       );
     }
@@ -175,7 +175,7 @@ export class AuthService {
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: t`Wrong password`,
+          userFriendlyMessage: msg`Wrong password`,
         },
       );
     }
@@ -280,9 +280,7 @@ export class AuthService {
       );
     }
 
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
+    const user = await this.userService.findUserByEmail(email);
 
     assertIsDefinedOrThrow(
       user,
@@ -378,9 +376,7 @@ export class AuthService {
   }
 
   async checkUserExists(email: string): Promise<CheckUserExistOutput> {
-    const user = await this.userRepository.findOneBy({
-      email,
-    });
+    const user = await this.userService.findUserByEmail(email);
 
     const isUserExist = isDefined(user);
 
@@ -750,7 +746,7 @@ export class AuthService {
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: t`User does not have access to this workspace`,
+          userFriendlyMessage: msg`User does not have access to this workspace`,
         },
       );
     }
@@ -777,9 +773,7 @@ export class AuthService {
         ? await this.countAvailableWorkspacesByEmail(email)
         : 0;
 
-    const existingUser = await this.userRepository.findOne({
-      where: { email },
-    });
+    const existingUser = await this.userService.findUserByEmail(email);
 
     if (
       !workspaceId &&

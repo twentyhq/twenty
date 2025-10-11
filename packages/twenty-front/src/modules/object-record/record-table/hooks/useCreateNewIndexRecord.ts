@@ -48,11 +48,12 @@ export const useCreateNewIndexRecord = ({
           .getLoadable(recordIndexOpenRecordInState)
           .getValue();
 
-        await createOneRecord({
+        const createdRecord = await createOneRecord({
           id: recordId,
           ...recordInputFromFilters,
           ...recordInput,
         });
+
         if (
           recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
           canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
@@ -83,6 +84,8 @@ export const useCreateNewIndexRecord = ({
             objectRecordId: recordId,
           });
         }
+
+        return createdRecord;
       },
     [
       buildRecordInputFromFilters,

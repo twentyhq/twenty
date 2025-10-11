@@ -1,4 +1,8 @@
 name: CI Website
+
+permissions:
+  contents: read
+
 on:
   push:
     branches:

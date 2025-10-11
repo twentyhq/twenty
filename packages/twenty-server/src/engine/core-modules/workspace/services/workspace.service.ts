@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -49,6 +49,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -135,7 +136,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         'Domain is already registered as public domain',
         WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
         {
-          userFriendlyMessage: t`Domain is already registered as public domain`,
+          userFriendlyMessage: msg`Domain is already registered as public domain`,
         },
       );
     }
@@ -451,8 +452,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
           {
-            userFriendlyMessage:
-              'You do not have permission to manage security settings. Please contact your workspace administrator.',
+            userFriendlyMessage: msg`You do not have permission to manage security settings. Please contact your workspace administrator.`,
           },
         );
       }
@@ -501,25 +501,26 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
           {
-            userFriendlyMessage:
-              'You do not have permission to manage workspace settings. Please contact your workspace administrator.',
+            userFriendlyMessage: msg`You do not have permission to manage workspace settings. Please contact your workspace administrator.`,
           },
         );
       }
     }
   }
 
-  async checkCustomDomainValidRecords(workspace: Workspace) {
-    if (!workspace.customDomain) return;
+  async checkCustomDomainValidRecords(
+    workspace: Workspace,
+    domainValidRecord?: DomainValidRecords,
+  ) {
+    assertIsDefinedOrThrow(workspace.customDomain);
 
     const customDomainWithRecords =
-      await this.dnsManagerService.getHostnameWithRecords(
+      domainValidRecord ??
+      (await this.dnsManagerService.getHostnameWithRecords(
         workspace.customDomain,
-      );
+      ));
 
-    if (!customDomainWithRecords) return;
-
-    await this.dnsManagerService.refreshHostname(customDomainWithRecords);
+    assertIsDefinedOrThrow(customDomainWithRecords);
 
     const isCustomDomainWorking =
       await this.dnsManagerService.isHostnameWorking(workspace.customDomain);
@@ -542,5 +543,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     return customDomainWithRecords;
+  }
+
+  async findByCustomDomain(customDomain: string) {
+    return this.workspaceRepository.findOne({ where: { customDomain } });
   }
 }

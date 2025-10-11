@@ -15,6 +15,15 @@ import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { messages } from '../../../../locales/generated/en';
+
+i18n.load({
+  [SOURCE_LOCALE]: messages,
+});
+i18n.activate(SOURCE_LOCALE);
 
 const mockCurrentUser = {
   id: 'fake-user-id',
@@ -45,11 +54,13 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider>
     <RecoilRoot initializeState={initializeState}>
       <MemoryRouter>
-        <SnackBarComponentInstanceContext.Provider
-          value={{ instanceId: 'test-scope-id' }}
-        >
-          {children}
-        </SnackBarComponentInstanceContext.Provider>
+        <I18nProvider i18n={i18n}>
+          <SnackBarComponentInstanceContext.Provider
+            value={{ instanceId: 'test-scope-id' }}
+          >
+            {children}
+          </SnackBarComponentInstanceContext.Provider>
+        </I18nProvider>
       </MemoryRouter>
     </RecoilRoot>
   </MockedProvider>

@@ -1,9 +1,6 @@
-import { type CurrencyCode } from "@/constants/CurrencyCode";
+import { type CurrencyCode } from '@/constants/CurrencyCode';
 
-export const CURRENCY_CODE_LABELS: Record<
-  CurrencyCode,
-  { label: string }
-> = {
+export const CURRENCY_CODE_LABELS: Record<CurrencyCode, { label: string }> = {
   AED: { label: 'UAE dirham' },
   AFN: { label: 'Afghan afghani' },
   ALL: { label: 'Albanian lek' },

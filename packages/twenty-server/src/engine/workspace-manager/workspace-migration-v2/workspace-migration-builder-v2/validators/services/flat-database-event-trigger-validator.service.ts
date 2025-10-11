@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
@@ -35,7 +35,7 @@ export class FlatDatabaseEventTriggerValidatorService {
       errors.push({
         code: DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_NOT_FOUND,
         message: t`Database event trigger not found`,
-        userFriendlyMessage: t`Database event trigger not found`,
+        userFriendlyMessage: msg`Database event trigger not found`,
       });
     }
 
@@ -48,7 +48,7 @@ export class FlatDatabaseEventTriggerValidatorService {
       errors.push({
         code: DatabaseEventTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
-        userFriendlyMessage: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 
@@ -76,7 +76,7 @@ export class FlatDatabaseEventTriggerValidatorService {
       errors.push({
         code: DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_NOT_FOUND,
         message: t`Database event trigger not found`,
-        userFriendlyMessage: t`Database event trigger not found`,
+        userFriendlyMessage: msg`Database event trigger not found`,
       });
     }
 
@@ -108,7 +108,7 @@ export class FlatDatabaseEventTriggerValidatorService {
       errors.push({
         code: DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_ALREADY_EXIST,
         message: t`Database event trigger with same id already exists`,
-        userFriendlyMessage: t`Database event trigger already exists`,
+        userFriendlyMessage: msg`Database event trigger already exists`,
       });
     }
 
@@ -121,7 +121,7 @@ export class FlatDatabaseEventTriggerValidatorService {
       errors.push({
         code: DatabaseEventTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
-        userFriendlyMessage: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 

@@ -41,7 +41,7 @@ export const FormRelationToOneFieldInput = ({
             : defaultValue
         }
         onChange={onChange}
-        objectNameSingular={objectNameSingular}
+        objectNameSingulars={[objectNameSingular]}
         disabled={readonly}
         VariablePicker={VariablePicker}
       />

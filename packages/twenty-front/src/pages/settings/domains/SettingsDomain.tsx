@@ -24,12 +24,14 @@ import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdoma
 import { useState } from 'react';
 import { getSubdomainValidationSchema } from '@/settings/domains/utils/get-subdomain-validation-schema';
 import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
+import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
 
 export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
   'subdomain-change-confirmation-modal';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
+  const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
   const { t } = useLingui();
 
   const validationSchema = z
@@ -93,6 +95,7 @@ export const SettingsDomain = () => {
           message: t`Custom domain updated`,
         });
         setIsSubmitting(false);
+        checkCustomDomainRecords();
       },
       onError: (error: ApolloError) => {
         if (
@@ -217,6 +220,7 @@ export const SettingsDomain = () => {
               <SaveAndCancelButtons
                 onCancel={() => navigate(SettingsPath.Domains)}
                 isSaveDisabled={isSubmitting}
+                onSave={handleSave}
               />
             }
           >
