@@ -16,7 +16,7 @@ const StyledTableBody = styled(TableBody)`
 `;
 
 const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 444px 68px;
 `;
 
 export const SettingsWebhooksTable = () => {

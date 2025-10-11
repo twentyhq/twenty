@@ -4,8 +4,15 @@ import styled from '@emotion/styled';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
-import { IconChevronRight } from 'twenty-ui/display';
+import {
+  IconChevronRight,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 import { type Webhook } from '~/generated-metadata/graphql';
+
+export const StyledApisFieldTableRow = styled(TableRow)`
+  grid-template-columns: 1fr 28px;
+`;
 
 const StyledIconTableCell = styled(TableCell)`
   justify-content: center;
@@ -15,9 +22,6 @@ const StyledIconTableCell = styled(TableCell)`
 
 const StyledUrlTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
-  overflow: auto;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
@@ -37,11 +41,15 @@ export const SettingsDevelopersWebhookTableRow = ({
   const theme = useTheme();
 
   return (
-    <TableRow to={to}>
+    <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>
-        {isValidUrl(webhook.targetUrl)
-          ? getUrlHostnameOrThrow(webhook.targetUrl)
-          : webhook.targetUrl}
+        <OverflowingTextWithTooltip
+          text={
+            isValidUrl(webhook.targetUrl)
+              ? getUrlHostnameOrThrow(webhook.targetUrl)
+              : webhook.targetUrl
+          }
+        />
       </StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
@@ -49,6 +57,6 @@ export const SettingsDevelopersWebhookTableRow = ({
           stroke={theme.icon.stroke.sm}
         />
       </StyledIconTableCell>
-    </TableRow>
+    </StyledApisFieldTableRow>
   );
 };
