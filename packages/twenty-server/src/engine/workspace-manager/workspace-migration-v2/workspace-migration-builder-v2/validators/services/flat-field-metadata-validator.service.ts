@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
@@ -31,6 +32,7 @@ export class FlatFieldMetadataValidatorService {
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     dependencyOptimisticFlatEntityMaps,
     workspaceId,
+    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): Promise<FailedFlatEntityValidation<FlatFieldMetadata>> {
@@ -137,8 +139,10 @@ export class FlatFieldMetadataValidatorService {
             flatObjectMetadataMaps:
               dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
           },
-          optimisticFlatFieldMetadataMaps,
-          flatFieldMetadataToValidate,
+          optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
+          flatEntityToValidate: flatFieldMetadataToValidate,
+          buildOptions,
+          remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS,
           workspaceId,
         },
       );
@@ -246,6 +250,7 @@ export class FlatFieldMetadataValidatorService {
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     dependencyOptimisticFlatEntityMaps,
     workspaceId,
+    buildOptions,
     remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.fieldMetadata>): Promise<
     FailedFlatEntityValidation<FlatFieldMetadata>
@@ -322,8 +327,9 @@ export class FlatFieldMetadataValidatorService {
       ...(await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
           dependencyOptimisticFlatEntityMaps,
-          flatFieldMetadataToValidate,
-          optimisticFlatFieldMetadataMaps,
+          flatEntityToValidate: flatFieldMetadataToValidate,
+          buildOptions,
+          optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
           workspaceId,
           remainingFlatEntityMapsToValidate,
         },

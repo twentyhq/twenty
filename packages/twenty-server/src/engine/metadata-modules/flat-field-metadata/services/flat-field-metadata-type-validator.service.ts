@@ -32,6 +32,17 @@ export class FlatFieldMetadataTypeValidatorService {
       EMAILS: DEFAULT_NO_VALIDATION,
       FULL_NAME: DEFAULT_NO_VALIDATION,
       LINKS: DEFAULT_NO_VALIDATION,
+      NUMBER: DEFAULT_NO_VALIDATION,
+      NUMERIC: DEFAULT_NO_VALIDATION,
+      PHONES: DEFAULT_NO_VALIDATION,
+      POSITION: DEFAULT_NO_VALIDATION,
+      RAW_JSON: DEFAULT_NO_VALIDATION,
+      RICH_TEXT: DEFAULT_NO_VALIDATION,
+      RICH_TEXT_V2: DEFAULT_NO_VALIDATION,
+      TEXT: DEFAULT_NO_VALIDATION,
+      TS_VECTOR: DEFAULT_NO_VALIDATION,
+      UUID: DEFAULT_NO_VALIDATION,
+
       MORPH_RELATION: async (args) => {
         const isMorphRelationEnabled =
           await this.featureFlagService.isFeatureEnabled(
@@ -52,19 +63,9 @@ export class FlatFieldMetadataTypeValidatorService {
         return validateMorphOrRelationFlatFieldMetadata(args);
       },
       MULTI_SELECT: validateEnumSelectFlatFieldMetadata,
-      NUMBER: DEFAULT_NO_VALIDATION,
-      NUMERIC: DEFAULT_NO_VALIDATION,
-      PHONES: DEFAULT_NO_VALIDATION,
-      POSITION: DEFAULT_NO_VALIDATION,
       RATING: validateEnumSelectFlatFieldMetadata,
-      RAW_JSON: DEFAULT_NO_VALIDATION,
       RELATION: validateMorphOrRelationFlatFieldMetadata,
-      RICH_TEXT: DEFAULT_NO_VALIDATION,
-      RICH_TEXT_V2: DEFAULT_NO_VALIDATION,
       SELECT: validateEnumSelectFlatFieldMetadata,
-      TEXT: DEFAULT_NO_VALIDATION,
-      TS_VECTOR: DEFAULT_NO_VALIDATION,
-      UUID: DEFAULT_NO_VALIDATION,
     };
 
   public async validateFlatFieldMetadataTypeSpecificities(
@@ -75,18 +76,19 @@ export class FlatFieldMetadataTypeValidatorService {
       this.FIELD_METADATA_TYPE_VALIDATOR_HASHMAP[flatEntityToValidate.type];
 
     if (!isDefined(fieldMetadataTypeValidator)) {
-      const fieldType = flatEntityToValidate.type;
-
       return [
         {
           code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
-          message: `Unsupported field metadata type ${fieldType}`,
-          value: fieldType,
-          userFriendlyMessage: msg`Unsupported field metadata type ${fieldType}`,
+          message: `Unsupported field metadata type ${flatEntityToValidate.type}`,
+          value: flatEntityToValidate.type,
+          userFriendlyMessage: msg`Unsupported field metadata type ${flatEntityToValidate.type}`,
         },
       ];
     }
 
-    return await fieldMetadataTypeValidator(args);
+    return await fieldMetadataTypeValidator(
+      // @ts-expect-error TODO could be improved
+      args,
+    );
   }
 }
