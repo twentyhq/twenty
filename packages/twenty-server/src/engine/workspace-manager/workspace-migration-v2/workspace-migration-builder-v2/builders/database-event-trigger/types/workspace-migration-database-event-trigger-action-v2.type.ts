@@ -1,6 +1,5 @@
-import { type FlatDatabaseEventTriggerPropertiesToCompare } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger-properties-to-compare.type';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
+import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 
 export type CreateDatabaseEventTriggerAction = {
   type: 'create_database_event_trigger';
@@ -10,14 +9,7 @@ export type CreateDatabaseEventTriggerAction = {
 export type UpdateDatabaseEventTriggerAction = {
   type: 'update_database_event_trigger';
   databaseEventTriggerId: string;
-  updates: Array<
-    {
-      [P in FlatDatabaseEventTriggerPropertiesToCompare]: PropertyUpdate<
-        FlatDatabaseEventTrigger,
-        P
-      >;
-    }[FlatDatabaseEventTriggerPropertiesToCompare]
-  >;
+  updates: FlatEntityPropertiesUpdates<'databaseEventTrigger'>;
 };
 
 export type DeleteDatabaseEventTriggerAction = {

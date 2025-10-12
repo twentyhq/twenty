@@ -1,13 +1,5 @@
-import { type FromTo } from 'twenty-shared/types';
-
 import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type FlatViewPropertiesToCompare } from 'src/engine/metadata-modules/flat-view/types/flat-view-properties-to-compare.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-
-export type FlatViewPropertyUpdate<P extends FlatViewPropertiesToCompare> = {
-  property: P;
-} & FromTo<ViewEntity[P]>;
 
 export type CreateViewAction = {
   type: 'create_view';
