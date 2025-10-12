@@ -11,9 +11,11 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
@@ -23,6 +25,7 @@ import {
   EnumOperation,
   executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/workspace-schema-enum-operations.util';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -101,14 +104,14 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
         flatObjectMetadata: flatObjectMetadata,
       });
 
-    for (const update of updates) {
-      if (update.property !== 'nameSingular') {
-        continue;
-      }
-
-      const updatedObjectMetadata = {
+    const nameSingularUpdate = updates.find(
+      (update): update is PropertyUpdate<FlatObjectMetadata, 'nameSingular'> =>
+        update.property === 'nameSingular',
+    );
+    if (isDefined(nameSingularUpdate)) {
+      const updatedObjectMetadata: FlatObjectMetadata = {
         ...flatObjectMetadata,
-        [update.property]: update.to,
+        nameSingular: nameSingularUpdate.to,
       };
 
       const newTableName = computeObjectTargetTable(updatedObjectMetadata);
