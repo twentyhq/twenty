@@ -9,6 +9,7 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getDestroyOneRecordMutationResponseField } from '@/object-record/utils/getDestroyOneRecordMutationResponseField';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -21,6 +22,7 @@ export const useDestroyOneRecord = ({
   objectNameSingular,
 }: useDestroyOneRecordProps) => {
   const { registerObjectOperation } = useRegisterObjectOperation();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const apolloCoreClient = useApolloCoreClient();
 
@@ -67,6 +69,8 @@ export const useDestroyOneRecord = ({
               objectMetadataItem,
               recordsToDestroy: [cachedRecord],
               objectMetadataItems,
+              upsertRecordsInStore,
+              objectPermissionsByObjectMetadataId,
             });
           },
         })
@@ -78,6 +82,7 @@ export const useDestroyOneRecord = ({
               recordsToCreate: [originalRecord],
               objectMetadataItems,
               objectPermissionsByObjectMetadataId,
+              upsertRecordsInStore,
             });
           }
 
@@ -91,15 +96,16 @@ export const useDestroyOneRecord = ({
       return deletedRecord.data?.[mutationResponseField] ?? null;
     },
     [
+      getRecordFromCache,
       apolloCoreClient,
       destroyOneRecordMutation,
-      getRecordFromCache,
       mutationResponseField,
-      objectMetadataItem,
       objectNameSingular,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
       registerObjectOperation,
+      objectMetadataItem,
+      objectMetadataItems,
+      upsertRecordsInStore,
+      objectPermissionsByObjectMetadataId,
     ],
   );
 

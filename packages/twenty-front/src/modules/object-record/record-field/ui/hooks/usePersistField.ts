@@ -30,6 +30,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
@@ -74,7 +75,7 @@ export const usePersistField = ({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
   });
 
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const persistField = useRecoilCallback(
@@ -213,7 +214,11 @@ export const usePersistField = ({
               },
             });
 
-            upsertRecords([newRecord]);
+            upsertRecordsInStore([
+              getRecordFromRecordNode({
+                recordNode: newRecord,
+              }),
+            ]);
             return;
           }
 
@@ -269,7 +274,11 @@ export const usePersistField = ({
                     [`${computedFieldName}Id`]: valueToPersist.id,
                   },
                 });
-                upsertRecords([newRecord]);
+                upsertRecordsInStore([
+                  getRecordFromRecordNode({
+                    recordNode: newRecord,
+                  }),
+                ]);
                 return;
               }
             }
@@ -304,6 +313,7 @@ export const usePersistField = ({
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       updateOneRecord,
+      upsertRecordsInStore,
     ],
   );
 

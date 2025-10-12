@@ -34,7 +34,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
   );
 
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const handleButtonClick = useRecoilCallback(
     () => async () => {
@@ -42,7 +42,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
         position: 'last',
       });
 
-      upsertRecords([createdRecord]);
+      upsertRecordsInStore([createdRecord]);
 
       if (isDefined(totalNumberOfRecordsToVirtualize)) {
         loadRecordsToVirtualRows({
@@ -53,7 +53,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
     },
     [
       createNewIndexRecord,
-      upsertRecords,
+      upsertRecordsInStore,
       loadRecordsToVirtualRows,
       totalNumberOfRecordsToVirtualize,
     ],

@@ -30,7 +30,7 @@ export const useTriggerFetchPages = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
 
@@ -193,7 +193,7 @@ export const useTriggerFetchPages = () => {
                   startingRealIndex: startingRealIndexInThisUIPage,
                 });
 
-                upsertRecords(recordsSlice);
+                upsertRecordsInStore(recordsSlice);
               }
             }
 
@@ -210,7 +210,7 @@ export const useTriggerFetchPages = () => {
       findManyRecordsLazyWithOffset,
       totalNumberOfRecordsToVirtualizeCallbackState,
       loadRecordsToVirtualRows,
-      upsertRecords,
+      upsertRecordsInStore,
       lastScrollPositionCallbackState,
       scrollWrapperHTMLElement,
       lowDetailsActivatedCallbackState,

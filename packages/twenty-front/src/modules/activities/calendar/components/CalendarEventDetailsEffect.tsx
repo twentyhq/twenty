@@ -9,15 +9,15 @@ type CalendarEventDetailsEffectProps = {
 export const CalendarEventDetailsEffect = ({
   record,
 }: CalendarEventDetailsEffectProps) => {
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   useEffect(() => {
     if (!record) {
       return;
     }
 
-    upsertRecords([record]);
-  }, [record, upsertRecords]);
+    upsertRecordsInStore([record]);
+  }, [record, upsertRecordsInStore]);
 
   return <></>;
 };

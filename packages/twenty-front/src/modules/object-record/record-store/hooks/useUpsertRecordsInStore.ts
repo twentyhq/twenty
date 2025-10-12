@@ -5,7 +5,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useUpsertRecordsInStore = () => {
-  const upsertRecords = useRecoilCallback(
+  const upsertRecordsInStore = useRecoilCallback(
     ({ set, snapshot }) =>
       (records: ObjectRecord[]) => {
         for (const record of records) {
@@ -25,6 +25,6 @@ export const useUpsertRecordsInStore = () => {
   );
 
   return {
-    upsertRecords,
+    upsertRecordsInStore,
   };
 };

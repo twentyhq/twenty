@@ -5,6 +5,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { ACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/activateWorkflowVersion';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,6 +13,7 @@ import {
   type ActivateWorkflowVersionMutation,
   type ActivateWorkflowVersionMutationVariables,
 } from '~/generated-metadata/graphql';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 
 export const useActivateWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -21,11 +23,14 @@ export const useActivateWorkflowVersion = () => {
   >(ACTIVATE_WORKFLOW_VERSION, {
     client: apolloCoreClient,
   });
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const activateWorkflowVersion = async ({
     workflowVersionId,
@@ -76,6 +81,8 @@ export const useActivateWorkflowVersion = () => {
               status: 'ACTIVE',
             },
             objectMetadataItems: [objectMetadataItemWorkflowVersion],
+            objectPermissionsByObjectMetadataId,
+            upsertRecordsInStore,
           });
         }
 
@@ -101,6 +108,8 @@ export const useActivateWorkflowVersion = () => {
               status: 'ARCHIVED',
             },
             objectMetadataItems: [objectMetadataItemWorkflowVersion],
+            objectPermissionsByObjectMetadataId,
+            upsertRecordsInStore,
           });
         }
       },

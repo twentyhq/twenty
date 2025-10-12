@@ -92,7 +92,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
     useResetNumberOfRecordsToVirtualize();
 
   const { resetTableFocuses } = useResetTableFocuses(recordTableId);
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
 
@@ -165,7 +165,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
             totalCount,
           });
 
-          upsertRecords(records);
+          upsertRecordsInStore(records);
 
           loadRecordsToVirtualRows({
             records,
@@ -210,7 +210,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       dataLoadingStatusByRealIndexCallbackState,
       recordIdByRealIndexCallbackState,
       resetNumberOfRecordsToVirtualize,
-      upsertRecords,
+      upsertRecordsInStore,
       loadRecordsToVirtualRows,
       reapplyRowSelection,
     ],

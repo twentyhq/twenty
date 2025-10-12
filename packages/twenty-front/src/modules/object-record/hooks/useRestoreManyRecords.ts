@@ -11,6 +11,7 @@ import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMu
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreManyRecordsMutation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
@@ -32,6 +33,7 @@ export const useRestoreManyRecords = ({
   objectNameSingular,
 }: useRestoreManyRecordProps) => {
   const { registerObjectOperation } = useRegisterObjectOperation();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const apiConfig = useRecoilValue(apiConfigState);
 
@@ -122,6 +124,8 @@ export const useRestoreManyRecords = ({
               currentRecord: cachedRecordWithConnection,
               updatedRecord: optimisticRecordWithConnection,
               objectMetadataItems,
+              objectPermissionsByObjectMetadataId,
+              upsertRecordsInStore,
             });
           }
         });
@@ -182,6 +186,8 @@ export const useRestoreManyRecords = ({
                 currentRecord: optimisticRecordWithConnection,
                 updatedRecord: cachedRecordWithConnection,
                 objectMetadataItems,
+                objectPermissionsByObjectMetadataId,
+                upsertRecordsInStore,
               });
             }
           });
