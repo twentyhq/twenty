@@ -7,9 +7,8 @@ import { type ObjectRecordProperties } from 'src/engine/core-modules/record-crud
 
 export type WorkflowCreateRecordActionInput = {
   objectName: string;
-  objectRecord: ObjectRecord;
-  upsert?: boolean;
   objectRecord: ObjectRecordProperties;
+  upsert?: boolean;
 };
 
 export type WorkflowUpdateRecordActionInput = {
@@ -40,7 +39,7 @@ export type WorkflowFindRecordsActionInput = {
 
 export type WorkflowUpsertRecordActionInput = {
   objectName: string;
-  objectRecord: ObjectRecord;
+  objectRecord: ObjectRecordProperties;
   upsertCriteria: {
     matchFields: string[];
   };

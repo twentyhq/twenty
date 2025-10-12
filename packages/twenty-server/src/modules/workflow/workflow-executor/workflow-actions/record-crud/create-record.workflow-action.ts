@@ -20,10 +20,6 @@ import {
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import {
-  RecordCRUDActionException,
-  RecordCRUDActionExceptionCode,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
 import { isWorkflowCreateRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-create-record-action.guard';
 import {
   type WorkflowCreateRecordActionInput,
@@ -34,7 +30,7 @@ import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workf
 @Injectable()
 export class CreateRecordWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly createRecordService: CreateRecordService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly recordInputTransformerService: RecordInputTransformerService,
@@ -99,7 +95,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
 
       return { result: createdRecord };
     } catch (error) {
-      if (error instanceof RecordCRUDActionException) {
+      if (error instanceof WorkflowStepExecutorException) {
         return { error: error.message };
       }
 
@@ -114,9 +110,9 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
     if (!workspaceId) {
-      throw new RecordCRUDActionException(
+      throw new WorkflowStepExecutorException(
         'Workspace ID is required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+        WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
       );
     }
 
@@ -131,9 +127,9 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
   }> {
     if (!isDefined(objectName)) {
-      throw new RecordCRUDActionException(
+      throw new WorkflowStepExecutorException(
         'Object name is required',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }
 
@@ -151,9 +147,9 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       );
 
     if (!objectMetadataItemWithFieldsMaps) {
-      throw new RecordCRUDActionException(
+      throw new WorkflowStepExecutorException(
         `Object "${objectName}" not found`,
-        RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
+        WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
       );
     }
 
@@ -163,9 +159,9 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
         isSystem: objectMetadataItemWithFieldsMaps.isSystem,
       })
     ) {
-      throw new RecordCRUDActionException(
+      throw new WorkflowStepExecutorException(
         'Object cannot be managed by workflow',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }
 
@@ -220,9 +216,9 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       const createdRecord = insertResult.generatedMaps[0] as ObjectLiteral;
 
       if (!createdRecord) {
-        throw new RecordCRUDActionException(
+        throw new WorkflowStepExecutorException(
           'Failed to upsert record',
-          RecordCRUDActionExceptionCode.INVALID_REQUEST,
+          WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
         );
       }
 
@@ -232,9 +228,9 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       const createdRecord = insertResult.generatedMaps[0] as ObjectLiteral;
 
       if (!createdRecord) {
-        throw new RecordCRUDActionException(
+        throw new WorkflowStepExecutorException(
           'Failed to create record',
-          RecordCRUDActionExceptionCode.INVALID_REQUEST,
+          WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
         );
       }
 
