@@ -88,7 +88,9 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
   }
 
   protected async validateFlatEntityUpdate(
-    args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.objectMetadata>,
+    args: FlatEntityUpdateValidationArgs<
+      typeof ALL_METADATA_NAME.objectMetadata
+    >,
   ): Promise<
     FlatEntityValidationReturnType<
       typeof ALL_METADATA_NAME.objectMetadata,
@@ -105,8 +107,11 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       };
     }
 
-    const { dependencyOptimisticFlatEntityMaps, flatEntityId, flatEntityUpdates } =
-      args;
+    const {
+      dependencyOptimisticFlatEntityMaps,
+      flatEntityId,
+      flatEntityUpdates,
+    } = args;
 
     const updateObjectAction: UpdateObjectAction = {
       type: 'update_object',

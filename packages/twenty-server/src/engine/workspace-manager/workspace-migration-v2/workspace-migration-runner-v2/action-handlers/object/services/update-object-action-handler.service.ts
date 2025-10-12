@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
   WorkspaceMigrationRunnerActionHandler,
@@ -25,7 +27,6 @@ import {
   EnumOperation,
   executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/workspace-schema-enum-operations.util';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -108,6 +109,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       (update): update is PropertyUpdate<FlatObjectMetadata, 'nameSingular'> =>
         update.property === 'nameSingular',
     );
+
     if (isDefined(nameSingularUpdate)) {
       const updatedObjectMetadata: FlatObjectMetadata = {
         ...flatObjectMetadata,

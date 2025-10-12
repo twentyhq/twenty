@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-
 import { t } from '@lingui/core/macro';
+
 import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
@@ -143,7 +143,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       flatEntityId,
       flatEntityMaps: optimisticFlatIndexMaps,
     });
-    
+
     if (!isDefined(flatEntity)) {
       return {
         status: 'fail',

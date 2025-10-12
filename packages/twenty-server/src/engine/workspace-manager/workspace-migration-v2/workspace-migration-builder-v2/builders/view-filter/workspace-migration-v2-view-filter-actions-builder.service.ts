@@ -26,7 +26,10 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
   protected async validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
   ): Promise<
-    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.viewFilter, 'created'>
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.viewFilter,
+      'created'
+    >
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterCreation(args);
@@ -72,7 +75,10 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
   protected async validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
   ): Promise<
-    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.viewFilter, 'deleted'>
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.viewFilter,
+      'deleted'
+    >
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterDeletion(args);
@@ -122,7 +128,10 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
   protected async validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
   ): Promise<
-    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.viewFilter, 'updated'>
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.viewFilter,
+      'updated'
+    >
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterUpdate(args);
@@ -134,7 +143,11 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
       };
     }
 
-    const { dependencyOptimisticFlatEntityMaps, flatEntityId, flatEntityUpdates } = args;
+    const {
+      dependencyOptimisticFlatEntityMaps,
+      flatEntityId,
+      flatEntityUpdates,
+    } = args;
 
     const updateViewFilterAction: UpdateViewFilterAction = {
       type: 'update_view_filter',

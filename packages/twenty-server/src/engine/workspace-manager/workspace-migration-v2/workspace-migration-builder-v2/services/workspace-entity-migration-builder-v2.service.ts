@@ -217,10 +217,6 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     );
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'update validation');
 
-    let remainingFlatEntityMapsToUpdate = structuredClone(
-      updatedFlatEntityMaps,
-    );
-
     for (const flatEntityToUpdateId in updatedFlatEntityMaps.byId) {
       const flatEntityToUpdate =
         updatedFlatEntityMaps.byId[flatEntityToUpdateId];

@@ -35,7 +35,8 @@ export class FlatViewFieldValidatorService {
       },
     };
 
-    const existingFlatViewField = optimisticFlatViewFieldMaps.byId[flatEntityId];
+    const existingFlatViewField =
+      optimisticFlatViewFieldMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatViewField)) {
       validationResult.errors.push({
@@ -193,7 +194,10 @@ export class FlatViewFieldValidatorService {
       });
     }
 
-    const flatView = dependencyOptimisticFlatEntityMaps.flatViewMaps.byId[flatViewFieldToValidate.viewId];
+    const flatView =
+      dependencyOptimisticFlatEntityMaps.flatViewMaps.byId[
+        flatViewFieldToValidate.viewId
+      ];
 
     if (!isDefined(flatView)) {
       validationResult.errors.push({

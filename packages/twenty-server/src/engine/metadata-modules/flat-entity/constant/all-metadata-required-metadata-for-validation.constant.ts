@@ -1,6 +1,7 @@
-import { MetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { type IsEmptyRecord } from 'twenty-shared/types';
+
+import { type MetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
-import { IsEmptyRecord } from 'twenty-shared/types';
 
 type MetadataRequiredForValidation = {
   [T in AllMetadataName]: Record<MetadataRelatedMetadataNames<T>, true> & {

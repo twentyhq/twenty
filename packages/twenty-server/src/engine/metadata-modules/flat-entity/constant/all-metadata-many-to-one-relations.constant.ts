@@ -23,7 +23,10 @@ type MetadataNameAndRelations = {
   [T in AllMetadataName]: MetadataRelatedMetadataNames<T> extends never
     ? Record<string, never>
     : Record<MetadataRelatedMetadataNames<T>, string> & {
-        [K in Exclude<AllMetadataName, MetadataRelatedMetadataNames<T>>]?: string;
+        [K in Exclude<
+          AllMetadataName,
+          MetadataRelatedMetadataNames<T>
+        >]?: string;
       };
 };
 

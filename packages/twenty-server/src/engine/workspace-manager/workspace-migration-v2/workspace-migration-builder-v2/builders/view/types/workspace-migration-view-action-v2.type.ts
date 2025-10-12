@@ -1,6 +1,6 @@
 import { type FromTo } from 'twenty-shared/types';
 
-import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type FlatViewPropertiesToCompare } from 'src/engine/metadata-modules/flat-view/types/flat-view-properties-to-compare.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';

@@ -21,7 +21,10 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
   protected async validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
   ): Promise<
-    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.routeTrigger, 'created'>
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.routeTrigger,
+      'created'
+    >
   > {
     const validationResult =
       await this.flatRouteTriggerValidatorService.validateFlatRouteTriggerCreation(
@@ -53,7 +56,10 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
   protected async validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
   ): Promise<
-    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.routeTrigger, 'deleted'>
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.routeTrigger,
+      'deleted'
+    >
   > {
     const validationResult =
       this.flatRouteTriggerValidatorService.validateFlatRouteTriggerDeletion(
@@ -85,10 +91,15 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
   protected async validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
   ): Promise<
-    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.routeTrigger, 'updated'>
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.routeTrigger,
+      'updated'
+    >
   > {
     const validationResult =
-      this.flatRouteTriggerValidatorService.validateFlatRouteTriggerUpdate(args);
+      this.flatRouteTriggerValidatorService.validateFlatRouteTriggerUpdate(
+        args,
+      );
 
     if (validationResult.errors.length > 0) {
       return {
@@ -97,8 +108,11 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
-    const { dependencyOptimisticFlatEntityMaps, flatEntityId, flatEntityUpdates } =
-      args;
+    const {
+      dependencyOptimisticFlatEntityMaps,
+      flatEntityId,
+      flatEntityUpdates,
+    } = args;
 
     const updateRouteTriggerAction: UpdateRouteTriggerAction = {
       type: 'update_route_trigger',

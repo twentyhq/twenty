@@ -134,7 +134,11 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
       };
     }
 
-    const { dependencyOptimisticFlatEntityMaps, flatEntityId, flatEntityUpdates } = args;
+    const {
+      dependencyOptimisticFlatEntityMaps,
+      flatEntityId,
+      flatEntityUpdates,
+    } = args;
 
     const updateViewAction: UpdateViewAction = {
       type: 'update_view',

@@ -19,7 +19,9 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
   }
 
   protected async validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.databaseEventTrigger>,
+    args: FlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.databaseEventTrigger
+    >,
   ): Promise<
     FlatEntityValidationReturnType<
       typeof ALL_METADATA_NAME.databaseEventTrigger,
@@ -54,7 +56,9 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
   }
 
   protected async validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.databaseEventTrigger>,
+    args: FlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.databaseEventTrigger
+    >,
   ): Promise<
     FlatEntityValidationReturnType<
       typeof ALL_METADATA_NAME.databaseEventTrigger,
@@ -110,8 +114,11 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
       };
     }
 
-    const { dependencyOptimisticFlatEntityMaps, flatEntityId, flatEntityUpdates } =
-      args;
+    const {
+      dependencyOptimisticFlatEntityMaps,
+      flatEntityId,
+      flatEntityUpdates,
+    } = args;
 
     const updateDatabaseEventTriggerAction: UpdateDatabaseEventTriggerAction = {
       type: 'update_database_event_trigger',

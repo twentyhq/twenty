@@ -1,4 +1,4 @@
-import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
+import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 
 export type CreateViewFilterAction = {
