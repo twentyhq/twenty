@@ -7,8 +7,10 @@ import {
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
-type WorkflowWithAllVersions = Workflow & {
-  versions: Array<Pick<WorkflowVersion, 'id' | 'status' | 'name'>>;
+type WorkflowWithAllVersions = Omit<Workflow, 'versions'> & {
+  versions: Array<
+    Pick<WorkflowVersion, 'id' | 'status' | 'name' | 'createdAt'>
+  >;
 };
 
 export const useWorkflowWithCurrentVersion = (
@@ -26,6 +28,7 @@ export const useWorkflowWithCurrentVersion = (
         id: true,
         status: true,
         name: true,
+        createdAt: true,
       },
     },
     skip: !isDefined(workflowId),
@@ -36,6 +39,7 @@ export const useWorkflowWithCurrentVersion = (
   );
 
   const workflowVersions = [...(workflow?.versions ?? [])];
+  console.log('workflowVersions', workflowVersions);
 
   workflowVersions.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
 

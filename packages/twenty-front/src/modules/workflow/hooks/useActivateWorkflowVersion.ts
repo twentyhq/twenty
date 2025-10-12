@@ -3,8 +3,10 @@ import { useMutation } from '@apollo/client';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { ACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/activateWorkflowVersion';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
@@ -13,7 +15,6 @@ import {
   type ActivateWorkflowVersionMutation,
   type ActivateWorkflowVersionMutationVariables,
 } from '~/generated-metadata/graphql';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 
 export const useActivateWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -29,6 +30,7 @@ export const useActivateWorkflowVersion = () => {
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
@@ -80,7 +82,7 @@ export const useActivateWorkflowVersion = () => {
               ...newlyActiveWorkflowVersion,
               status: 'ACTIVE',
             },
-            objectMetadataItems: [objectMetadataItemWorkflowVersion],
+            objectMetadataItems: objectMetadataItems,
             objectPermissionsByObjectMetadataId,
             upsertRecordsInStore,
           });
@@ -107,7 +109,7 @@ export const useActivateWorkflowVersion = () => {
               ...workflowVersion,
               status: 'ARCHIVED',
             },
-            objectMetadataItems: [objectMetadataItemWorkflowVersion],
+            objectMetadataItems,
             objectPermissionsByObjectMetadataId,
             upsertRecordsInStore,
           });

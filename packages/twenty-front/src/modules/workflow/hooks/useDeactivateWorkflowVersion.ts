@@ -14,10 +14,12 @@ import {
   type DeactivateWorkflowVersionMutation,
   type DeactivateWorkflowVersionMutationVariables,
 } from '~/generated-metadata/graphql';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
 export const useDeactivateWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const [mutate] = useMutation<
     DeactivateWorkflowVersionMutation,
     DeactivateWorkflowVersionMutationVariables
@@ -72,7 +74,7 @@ export const useDeactivateWorkflowVersion = () => {
             ...workflowVersion,
             status: 'DEACTIVATED',
           },
-          objectMetadataItems: [objectMetadataItemWorkflowVersion],
+          objectMetadataItems,
           objectPermissionsByObjectMetadataId,
           upsertRecordsInStore,
         });
