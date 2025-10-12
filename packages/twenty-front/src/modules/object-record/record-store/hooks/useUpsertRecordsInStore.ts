@@ -2,6 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useUpsertRecordsInStore = () => {
   const upsertRecords = useRecoilCallback(
@@ -12,7 +13,7 @@ export const useUpsertRecordsInStore = () => {
             .getLoadable(recordStoreFamilyState(record.id))
             .getValue();
 
-          if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
+          if (!isDeeplyEqual(currentRecord, record)) {
             set(recordStoreFamilyState(record.id), {
               ...currentRecord,
               ...record,

@@ -7,10 +7,14 @@ import {
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
+type WorkflowWithAllVersions = Workflow & {
+  versions: Array<Pick<WorkflowVersion, 'id' | 'status' | 'name'>>;
+};
+
 export const useWorkflowWithCurrentVersion = (
   workflowId: string | undefined,
 ): WorkflowWithCurrentVersion | undefined => {
-  const { record: workflow } = useFindOneRecord<Workflow>({
+  const { record: workflow } = useFindOneRecord<WorkflowWithAllVersions>({
     objectNameSingular: CoreObjectNameSingular.Workflow,
     objectRecordId: workflowId,
     recordGqlFields: {
@@ -22,10 +26,6 @@ export const useWorkflowWithCurrentVersion = (
         id: true,
         status: true,
         name: true,
-        workflowId: true,
-        deletedAt: true,
-        createdAt: true,
-        updatedAt: true,
       },
     },
     skip: !isDefined(workflowId),
@@ -51,14 +51,12 @@ export const useWorkflowWithCurrentVersion = (
     },
   );
 
-  const currentVersion = currentVersionWithSteps ?? currentVersionWithoutSteps;
-
-  if (!isDefined(workflow) || !isDefined(currentVersion)) {
+  if (!isDefined(workflow) || !isDefined(currentVersionWithSteps)) {
     return undefined;
   }
 
   return {
     ...workflow,
-    currentVersion,
+    currentVersion: currentVersionWithSteps,
   };
 };

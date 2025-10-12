@@ -3,7 +3,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
-import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
@@ -26,10 +25,6 @@ export const WorkflowDiagramEffect = () => {
     workflowVisualizerWorkflowId,
   );
 
-  const currentVersion = useWorkflowVersion(
-    workflowWithCurrentVersion?.currentVersion?.id,
-  );
-
   const workflowDiagramState = useRecoilComponentCallbackState(
     workflowDiagramComponentState,
   );
@@ -42,6 +37,8 @@ export const WorkflowDiagramEffect = () => {
   const workflowLastCreatedStepIdState = useRecoilComponentCallbackState(
     workflowLastCreatedStepIdComponentState,
   );
+
+  const currentVersion = workflowWithCurrentVersion?.currentVersion;
 
   const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
     ({ snapshot, set }) => {
@@ -91,9 +88,8 @@ export const WorkflowDiagramEffect = () => {
 
   useEffect(() => {
     if (!isDefined(currentVersion)) {
-      setFlow(undefined);
-      setWorkflowDiagram(undefined);
-
+      // setFlow(undefined);
+      // setWorkflowDiagram(undefined);
       return;
     }
 
