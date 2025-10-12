@@ -42,6 +42,7 @@ export class WorkflowActionFactory {
       case WorkflowActionType.SEND_EMAIL:
         return this.toolExecutorWorkflowAction;
       case WorkflowActionType.CREATE_RECORD:
+      case WorkflowActionType.UPSERT_RECORD:
         return this.createRecordWorkflowAction;
       case WorkflowActionType.UPDATE_RECORD:
         return this.updateRecordWorkflowAction;

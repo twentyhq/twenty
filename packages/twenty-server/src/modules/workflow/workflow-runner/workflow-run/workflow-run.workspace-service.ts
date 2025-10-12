@@ -341,9 +341,65 @@ export class WorkflowRunWorkspaceService {
         { shouldBypassPermissionChecks: true },
       );
 
-    return await workflowRunRepository.findOne({
+    const workflowRun = await workflowRunRepository.findOne({
       where: { id: workflowRunId },
     });
+
+    if (workflowRun?.state?.flow?.steps) {
+      const hasInvalidUpsertSteps = workflowRun.state.flow.steps.some(
+        (step) =>
+          step.type === 'UPSERT_RECORD' &&
+          step.settings?.input?.upsertCriteria?.matchFields?.length === 0,
+      );
+
+      if (hasInvalidUpsertSteps) {
+        const fixedSteps = workflowRun.state.flow.steps.map((step) => {
+          if (
+            step.type === 'UPSERT_RECORD' &&
+            step.settings?.input?.upsertCriteria?.matchFields?.length === 0
+          ) {
+            return {
+              ...step,
+              settings: {
+                ...step.settings,
+                input: {
+                  ...step.settings.input,
+                  upsertCriteria: {
+                    ...step.settings.input.upsertCriteria,
+                    matchFields: ['id'],
+                  },
+                },
+              },
+            };
+          }
+
+          return step;
+        });
+
+        await workflowRunRepository.update(workflowRunId, {
+          state: {
+            ...workflowRun.state,
+            flow: {
+              ...workflowRun.state.flow,
+              steps: fixedSteps,
+            },
+          },
+        });
+
+        return {
+          ...workflowRun,
+          state: {
+            ...workflowRun.state,
+            flow: {
+              ...workflowRun.state.flow,
+              steps: fixedSteps,
+            },
+          },
+        };
+      }
+    }
+
+    return workflowRun;
   }
 
   async getWorkflowRunOrFail({

@@ -262,7 +262,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 objectName: activeObjectMetadataItem?.nameSingular || '',
                 objectRecord: {},
                 upsertCriteria: {
-                  matchFields: [],
+                  matchFields: ['id'],
                 },
                 fieldsToUpdate: [],
               },
