@@ -14,8 +14,17 @@ type ExtractEntityRelations<TEntity extends MetadataEntity<AllMetadataName>> = {
   > as PropertyNameToRelationName<K>]: K;
 };
 
-export type MetadataNameAndRelations = {
-  [T in AllMetadataName]: Partial<ExtractEntityRelations<MetadataEntity<T>>>;
+type MetadataRelatedMetadataNames<T extends AllMetadataName> = Extract<
+  keyof ExtractEntityRelations<MetadataEntity<T>>,
+  AllMetadataName
+>;
+
+type MetadataNameAndRelations = {
+  [T in AllMetadataName]: MetadataRelatedMetadataNames<T> extends never
+    ? Record<string, never>
+    : Record<MetadataRelatedMetadataNames<T>, string> & {
+        [K in Exclude<AllMetadataName, MetadataRelatedMetadataNames<T>>]?: string;
+      };
 };
 
 export const ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS = {

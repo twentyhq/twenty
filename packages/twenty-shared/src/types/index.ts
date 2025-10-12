@@ -27,6 +27,7 @@ export type {
 } from './FilterableFieldType';
 export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export type { FromTo } from './FromToType';
+export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';

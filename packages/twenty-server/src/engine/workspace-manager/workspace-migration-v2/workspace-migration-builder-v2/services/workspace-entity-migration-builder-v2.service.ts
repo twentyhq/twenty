@@ -11,7 +11,7 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import {
   MetadataFlatEntityMaps,
-  MetadataRelatedFlatEntityMaps,
+  MetadataValidationRelatedFlatEntityMaps,
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -30,7 +30,7 @@ import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/wo
 
 export type ValidateAndBuildArgs<T extends AllMetadataName> = {
   buildOptions: WorkspaceMigrationBuilderOptions;
-  dependencyOptimisticFlatEntityMaps: MetadataRelatedFlatEntityMaps<T>;
+  dependencyOptimisticFlatEntityMaps: MetadataValidationRelatedFlatEntityMaps<T>;
   workspaceId: string;
 } & FromTo<MetadataFlatEntityMaps<T>>;
 

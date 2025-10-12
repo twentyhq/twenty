@@ -5,6 +5,7 @@ import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/datab
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
 import { type ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-many-to-one-relations.constant';
+import { MetadataValidationRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -171,13 +172,13 @@ export type AllFlatEntityConfigurationByMetadataName = {
 export type MetadataFlatEntityMapsKey<T extends AllMetadataName> =
   FromMetadataNameToFlatEntityMapsKey<T>;
 
+export type MetadataRelatedMetadataNames<T extends AllMetadataName> = Extract<
+  keyof (typeof ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS)[T],
+  AllMetadataName
+>;
+
 export type MetadataRelatedFlatEntityMapsKeys<T extends AllMetadataName> =
-  FromMetadataNameToFlatEntityMapsKey<
-    Extract<
-      keyof (typeof ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS)[T],
-      AllMetadataName
-    >
-  >;
+  FromMetadataNameToFlatEntityMapsKey<MetadataRelatedMetadataNames<T>>;
 
 export type MetadataFlatEntityAndRelatedFlatEntityMaps<
   T extends AllMetadataName,
@@ -186,10 +187,15 @@ export type MetadataFlatEntityAndRelatedFlatEntityMaps<
   MetadataRelatedFlatEntityMapsKeys<T> | MetadataFlatEntityMapsKey<T>
 >;
 
-export type MetadataRelatedFlatEntityMaps<T extends AllMetadataName> =
-  MetadataRelatedFlatEntityMapsKeys<T> extends []
+export type MetadataValidationRelatedFlatEntityMaps<T extends AllMetadataName> =
+  MetadataValidationRelatedMetadataNames<T> extends undefined
     ? undefined
-    : Pick<AllFlatEntityMaps, MetadataRelatedFlatEntityMapsKeys<T>>;
+    : Pick<
+        AllFlatEntityMaps,
+        FromMetadataNameToFlatEntityMapsKey<
+          NonNullable<MetadataValidationRelatedMetadataNames<T>>
+        >
+      >;
 
 export type MetadataFlatEntity<T extends AllMetadataName> =
   AllFlatEntityConfigurationByMetadataName[T]['flatEntity'];
