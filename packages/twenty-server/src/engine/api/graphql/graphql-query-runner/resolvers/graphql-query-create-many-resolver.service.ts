@@ -388,7 +388,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const savedRecords = await repository.updateMany(
       partialRecordsToUpdateWithoutCreatedByUpdate.map((record) => ({
         criteria: record.id,
-        partialEntity: record,
+        partialEntity: { ...record, deletedAt: null },
       })),
       undefined,
       columnsToReturn,
