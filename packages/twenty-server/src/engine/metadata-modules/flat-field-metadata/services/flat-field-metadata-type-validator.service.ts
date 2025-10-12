@@ -72,16 +72,17 @@ export class FlatFieldMetadataTypeValidatorService {
     args: FlatEntityValidationArgs<'fieldMetadata'>,
   ): Promise<FlatFieldMetadataValidationError[]> {
     const { flatEntityToValidate } = args;
+    const fieldType = flatEntityToValidate.type;
     const fieldMetadataTypeValidator =
-      this.FIELD_METADATA_TYPE_VALIDATOR_HASHMAP[flatEntityToValidate.type];
+      this.FIELD_METADATA_TYPE_VALIDATOR_HASHMAP[fieldType];
 
     if (!isDefined(fieldMetadataTypeValidator)) {
       return [
         {
           code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
-          message: `Unsupported field metadata type ${flatEntityToValidate.type}`,
-          value: flatEntityToValidate.type,
-          userFriendlyMessage: msg`Unsupported field metadata type ${flatEntityToValidate.type}`,
+          message: `Unsupported field metadata type ${fieldType}`,
+          value: fieldType,
+          userFriendlyMessage: msg`Unsupported field metadata type ${fieldType}`,
         },
       ];
     }
