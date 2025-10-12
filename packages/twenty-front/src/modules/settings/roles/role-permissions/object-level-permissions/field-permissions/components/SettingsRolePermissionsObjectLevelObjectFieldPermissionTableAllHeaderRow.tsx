@@ -26,8 +26,8 @@ const StyledSectionHeader = styled.div`
 
 const StyledCheckboxContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  justify-content: flex-start;
+  padding-0: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow =
