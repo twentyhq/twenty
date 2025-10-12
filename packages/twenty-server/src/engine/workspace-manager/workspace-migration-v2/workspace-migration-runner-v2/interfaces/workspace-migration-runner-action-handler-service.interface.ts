@@ -1,13 +1,11 @@
 import { Inject, SetMetadata } from '@nestjs/common';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import {
-  FromWorkspaceMigrationActionToMetadataName,
-  MetadataRelatedFlatEntityMapsKeys,
-} from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities-by-metadata-engine-name.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { FromMetadataNameToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-name-to-flat-entity-maps-key.type';
+import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
+import { FromWorkspaceMigrationActionToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import {
   type ExtractAction,
   type WorkspaceMigrationActionTypeV2,
