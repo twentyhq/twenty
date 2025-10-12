@@ -17,7 +17,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
+import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/is-property-update.type';
 import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
@@ -105,9 +105,8 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
         flatObjectMetadata: flatObjectMetadata,
       });
 
-    const nameSingularUpdate = updates.find(
-      (update): update is PropertyUpdate<FlatObjectMetadata, 'nameSingular'> =>
-        update.property === 'nameSingular',
+    const nameSingularUpdate = updates.find((update) =>
+      isPropertyUpdate(update, 'nameSingular'),
     );
 
     if (isDefined(nameSingularUpdate)) {

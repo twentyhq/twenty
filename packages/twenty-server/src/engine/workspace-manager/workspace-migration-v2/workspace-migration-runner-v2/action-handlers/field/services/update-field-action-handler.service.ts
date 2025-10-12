@@ -26,6 +26,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
+import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/is-property-update.type';
 import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
 import { serializeDefaultValueV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/serialize-default-value-v2.util';
@@ -147,7 +148,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     let optimisticFlatFieldMetadata = structuredClone(currentFlatFieldMetadata);
 
     for (const update of updates) {
-      if (update.property === 'name') {
+      if (isPropertyUpdate(update, 'name')) {
         await this.handleFieldNameUpdate({
           queryRunner,
           schemaName,
@@ -157,7 +158,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
         optimisticFlatFieldMetadata.name = update.to;
       }
-      if (update.property === 'defaultValue') {
+      if (isPropertyUpdate(update, 'defaultValue')) {
         await this.handleFieldDefaultValueUpdate({
           queryRunner,
           schemaName,
@@ -168,7 +169,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         optimisticFlatFieldMetadata.defaultValue = update.to;
       }
       if (
-        update.property === 'options' &&
+        isPropertyUpdate(update, 'options') &&
         isEnumFlatFieldMetadata(optimisticFlatFieldMetadata)
       ) {
         await this.handleFieldOptionsUpdate({
