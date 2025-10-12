@@ -7,27 +7,21 @@ import { formatSlug } from '@/shared-utils/formatSlug';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
-  const formattedSlug = formatSlug(params.slug);
+export async function generateMetadata(props: PageProps<'/twenty-ui/[slug]'>): Promise<Metadata> {
+  const { slug } = await props.params;
+  const formattedSlug = formatSlug(slug);
   const basePath = '/src/content/twenty-ui';
-  const mainPost = await fetchArticleFromSlug(params.slug, basePath);
+  const mainPost = await fetchArticleFromSlug(slug, basePath);
   return {
     title: 'Twenty - ' + formattedSlug,
     description: mainPost?.itemInfo?.info,
   };
 }
 
-export default async function TwentyUISlug({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default async function TwentyUISlug(props: PageProps<'/twenty-ui/[slug]'>) {
+  const { slug } = await props.params;
   const basePath = '/src/content/twenty-ui';
-  const mainPost = await fetchArticleFromSlug(params.slug, basePath);
+  const mainPost = await fetchArticleFromSlug(slug, basePath);
   if (!mainPost) {
     notFound();
   }

@@ -53,7 +53,7 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
   const { records } = useFindManyRecords<
     Pick<
       ManualTriggerWorkflowVersion,
-      'id' | '__typename' | 'trigger' | 'status' | 'workflowId'
+      'id' | '__typename' | 'status' | 'workflowId' | 'trigger'
     > & {
       workflow: Workflow;
     }

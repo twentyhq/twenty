@@ -40,15 +40,23 @@ export class PieChartConfigurationDTO {
   @IsNotEmpty()
   groupByFieldMetadataId: string;
 
-  @Field(() => GraphOrderBy)
-  @IsEnum(GraphOrderBy)
-  @IsNotEmpty()
-  orderBy: GraphOrderBy;
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  groupBySubFieldName?: string;
 
-  @Field(() => Boolean)
+  @Field(() => GraphOrderBy, {
+    nullable: true,
+    defaultValue: GraphOrderBy.VALUE_DESC,
+  })
+  @IsEnum(GraphOrderBy)
+  @IsOptional()
+  orderBy?: GraphOrderBy;
+
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
-  @IsNotEmpty()
-  displayDataLabel: boolean;
+  @IsOptional()
+  displayDataLabel?: boolean;
 
   @Field(() => String, { nullable: true })
   @IsString()

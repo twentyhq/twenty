@@ -13,9 +13,10 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
@@ -52,6 +53,7 @@ export const RecordTableContent = ({
 
   const handleDragEnd = () => {
     setIsDragging(false);
+
     handleDragSelectionEnd();
   };
 
@@ -76,15 +78,24 @@ export const RecordTableContent = ({
     recordTableHoverPositionComponentState,
   );
 
-  const isSomeCellInEditMode = useRecoilComponentValue(
+  const isSomeCellInEditModeCallbackState = useRecoilComponentCallbackState(
     isSomeCellInEditModeComponentSelector,
   );
 
-  const handleMouseLeave = () => {
-    if (!isSomeCellInEditMode) {
-      setRecordTableHoverPosition(null);
-    }
-  };
+  const handleMouseLeave = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const isSomeCellInEditMode = getSnapshotValue(
+          snapshot,
+          isSomeCellInEditModeCallbackState,
+        );
+
+        if (!isSomeCellInEditMode) {
+          setRecordTableHoverPosition(null);
+        }
+      },
+    [isSomeCellInEditModeCallbackState, setRecordTableHoverPosition],
+  );
 
   return (
     <StyledTableContainer ref={containerRef}>

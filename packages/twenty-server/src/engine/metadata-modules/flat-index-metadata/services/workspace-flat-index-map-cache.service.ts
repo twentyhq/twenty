@@ -8,6 +8,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { fromIndexMetadataEntityToFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-index-metadata-entity-to-flat-index-metadata.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -38,27 +39,20 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceFlatMapCacheServ
         workspaceId,
       },
       withDeleted: true,
+      select: {
+        // Note: We need all IndexFieldMetadataEntity in order to build a FlatIndex
+        indexFieldMetadatas: true,
+      },
       relations: ['indexFieldMetadatas'],
     });
 
-    const flatIndexMaps = indexes.reduce<FlatEntityMaps<FlatIndexMetadata>>(
-      (flatEntityMaps, index) => {
-        const flatIndex = fromIndexMetadataEntityToFlatIndexMetadata(index);
+    return indexes.reduce((flatIndexMaps, indexEntity) => {
+      const flatIndex = fromIndexMetadataEntityToFlatIndexMetadata(indexEntity);
 
-        return {
-          byId: {
-            ...flatEntityMaps.byId,
-            [flatIndex.id]: flatIndex,
-          },
-          idByUniversalIdentifier: {
-            ...flatEntityMaps.idByUniversalIdentifier,
-            [flatIndex.universalIdentifier]: flatIndex.id,
-          },
-        };
-      },
-      EMPTY_FLAT_ENTITY_MAPS,
-    );
-
-    return flatIndexMaps;
+      return addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: flatIndex,
+        flatEntityMaps: flatIndexMaps,
+      });
+    }, EMPTY_FLAT_ENTITY_MAPS);
   }
 }

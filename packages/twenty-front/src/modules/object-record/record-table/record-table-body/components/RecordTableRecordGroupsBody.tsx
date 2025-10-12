@@ -3,9 +3,9 @@ import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/re
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableRecordGroupBodyContextProvider';
 import { RecordTableRecordGroupRows } from '@/object-record/record-table/components/RecordTableRecordGroupRows';
-import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableBodyRecordGroupDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDragDropContextProvider';
+import { RecordTableBodyRecordGroupDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDroppable';
 import { RecordTableCellPortals } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortals';
 import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
@@ -40,11 +40,13 @@ export const RecordTableRecordGroupsBody = () => {
             recordGroupId={recordGroupId}
           >
             <RecordGroupContext.Provider value={{ recordGroupId }}>
-              <RecordTableBodyDroppable recordGroupId={recordGroupId}>
+              <RecordTableBodyRecordGroupDroppable
+                recordGroupId={recordGroupId}
+              >
                 <RecordTableRecordGroupSection />
                 <RecordTableRecordGroupRows />
                 {index === 0 && <RecordTableCellPortals />}
-              </RecordTableBodyDroppable>
+              </RecordTableBodyRecordGroupDroppable>
             </RecordGroupContext.Provider>
           </RecordTableRecordGroupBodyContextProvider>
         ))}

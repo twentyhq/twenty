@@ -1,7 +1,6 @@
 import { addDays } from 'date-fns';
 import { useState } from 'react';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -12,7 +11,7 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -29,21 +28,16 @@ export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const navigateSettings = useNavigateSettings();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { data: rolesData, loading: rolesLoading } = useGetRolesQuery({
     onCompleted: (data) => {
       if (isDefined(data?.getRoles)) {
-        const defaultRole = data.getRoles.find(
-          (role) => role.id === currentWorkspace?.defaultRole?.id,
+        const apiKeyAssignableRoles = data.getRoles.filter(
+          (role) => role.canBeAssignedToApiKeys,
         );
-        if (
-          isDefined(defaultRole) &&
-          defaultRole.canBeAssignedToApiKeys &&
-          !formValues.roleId
-        ) {
+        if (!formValues.roleId && apiKeyAssignableRoles.length > 0) {
           setFormValues((prev) => ({
             ...prev,
-            roleId: defaultRole.id,
+            roleId: apiKeyAssignableRoles[0].id,
           }));
         }
       }

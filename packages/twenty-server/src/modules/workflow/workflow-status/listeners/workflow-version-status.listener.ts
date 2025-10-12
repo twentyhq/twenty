@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { type ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -20,6 +21,7 @@ import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runne
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-status/constants/workflow-version-status-updated.constants';
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
+import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 
 @Injectable()
 export class WorkflowVersionStatusListener {
@@ -30,10 +32,14 @@ export class WorkflowVersionStatusListener {
 
   @OnDatabaseBatchEvent('workflowVersion', DatabaseEventAction.CREATED)
   async handleWorkflowVersionCreated(
-    batchEvent: WorkspaceEventBatch<
+    batchEvent: CustomWorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkflowVersionWorkspaceEntity>
     >,
   ): Promise<void> {
+    if (!isDefined(batchEvent.workspaceId)) {
+      return;
+    }
+
     const workflowIds = batchEvent.events
       .filter(
         (event) =>
@@ -58,8 +64,12 @@ export class WorkflowVersionStatusListener {
 
   @OnCustomBatchEvent(WORKFLOW_VERSION_STATUS_UPDATED)
   async handleWorkflowVersionUpdated(
-    batchEvent: WorkspaceEventBatch<WorkflowVersionStatusUpdate>,
+    batchEvent: CustomWorkspaceEventBatch<WorkflowVersionStatusUpdate>,
   ): Promise<void> {
+    if (!isDefined(batchEvent.workspaceId)) {
+      return;
+    }
+
     await this.messageQueueService.add<WorkflowVersionBatchEvent>(
       WorkflowStatusesUpdateJob.name,
       {
@@ -72,10 +82,14 @@ export class WorkflowVersionStatusListener {
 
   @OnDatabaseBatchEvent('workflowVersion', DatabaseEventAction.DELETED)
   async handleWorkflowVersionDeleted(
-    batchEvent: WorkspaceEventBatch<
+    batchEvent: CustomWorkspaceEventBatch<
       ObjectRecordDeleteEvent<WorkflowVersionWorkspaceEntity>
     >,
   ): Promise<void> {
+    if (!isDefined(batchEvent.workspaceId)) {
+      return;
+    }
+
     const workflowIds = batchEvent.events
       .filter(
         (event) =>

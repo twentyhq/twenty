@@ -29,7 +29,8 @@ import {
   convertGreaterThanOrEqualRatingToArrayOfRatingValues,
   convertLessThanOrEqualRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
-  generateILikeFiltersForCompositeFields, getEmptyRecordGqlOperationFilter,
+  generateILikeFiltersForCompositeFields,
+  getEmptyRecordGqlOperationFilter,
   isExpectedSubFieldName,
 } from '@/utils/filter';
 
@@ -37,7 +38,14 @@ import { resolveDateViewFilterValue } from '@/utils/filter/utils/resolveDateView
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
-import { checkIfShouldComputeEmptinessFilter, checkIfShouldSkipFiltering, CustomError, getFilterTypeFromFieldType, isDefined, type RecordFilter } from '@/utils';
+import {
+  checkIfShouldComputeEmptinessFilter,
+  checkIfShouldSkipFiltering,
+  CustomError,
+  getFilterTypeFromFieldType,
+  isDefined,
+  type RecordFilter,
+} from '@/utils';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 import { arrayOfUuidOrVariableSchema } from '@/utils/filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/utils/filter/utils/validation-schemas/jsonRelationFilterValueSchema';
@@ -47,7 +55,7 @@ type FieldShared = {
   name: string;
   type: FieldMetadataType;
   label: string;
-}
+};
 
 type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   filterValueDependencies?: RecordFilterValueDependencies;
@@ -55,7 +63,6 @@ type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   fieldMetadataItems: FieldShared[];
   recordIdsForUuid?: string[];
 };
-
 
 export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   recordFilter,
@@ -337,7 +344,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           ]
         : selectedRecordIds;
 
-      if (!isDefined (recordIds) || recordIds.length === 0) return;
+      if (!isDefined(recordIds) || recordIds.length === 0) return;
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS:
@@ -347,7 +354,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             } as RelationFilter,
           };
         case RecordFilterOperand.IS_NOT: {
-          if (!isDefined (recordIds) || recordIds.length === 0) return;
+          if (!isDefined(recordIds) || recordIds.length === 0) return;
           return {
             or: [
               {
@@ -1201,7 +1208,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     case 'UUID': {
       const recordIds = recordIdsForUuid;
 
-      if (!isDefined (recordIds) || recordIds.length === 0) return;
+      if (!isDefined(recordIds) || recordIds.length === 0) return;
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS:

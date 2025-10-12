@@ -1,4 +1,9 @@
-import { ViewFilterOperand as RecordFilterOperand, type CompositeFieldSubFieldName, type LinksFilter, type PartialFieldMetadataItem } from '@/types';
+import {
+  ViewFilterOperand as RecordFilterOperand,
+  type CompositeFieldSubFieldName,
+  type LinksFilter,
+  type PartialFieldMetadataItem,
+} from '@/types';
 import { CustomError } from '@/utils/errors';
 import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -9,7 +14,10 @@ export const computeGqlOperationFilterForLinks = ({
   subFieldName,
 }: {
   recordFilter: RecordFilter;
-  correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name' | 'type'>
+  correspondingFieldMetadataItem: Pick<
+    PartialFieldMetadataItem,
+    'name' | 'type'
+  >;
   subFieldName: CompositeFieldSubFieldName | null | undefined;
 }) => {
   const isSubFieldFilter = isNonEmptyString(subFieldName);

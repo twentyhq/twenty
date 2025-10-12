@@ -27,7 +27,6 @@ import {
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
@@ -134,11 +133,7 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   private getLayerName(serverlessFunction: ServerlessFunctionEntity) {
-    if (isDefined(serverlessFunction?.serverlessFunctionLayer)) {
-      return serverlessFunction?.serverlessFunctionLayer.checksum;
-    }
-
-    return COMMON_LAYER_NAME;
+    return serverlessFunction.serverlessFunctionLayer.checksum;
   }
 
   private async createLayerIfNotExists(

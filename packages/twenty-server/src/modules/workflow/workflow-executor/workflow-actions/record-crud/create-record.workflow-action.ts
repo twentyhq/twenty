@@ -34,7 +34,7 @@ import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workf
 @Injectable()
 export class CreateRecordWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly createRecordService: CreateRecordService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly recordInputTransformerService: RecordInputTransformerService,

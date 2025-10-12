@@ -25,6 +25,7 @@ import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type User } from 'src/engine/core-modules/user/user.entity';
@@ -49,6 +50,7 @@ export class GraphQLConfigService
     private readonly metricsService: MetricsService,
     private readonly dataloaderService: DataloaderService,
     private readonly graphQLSchemaHost: GraphQLSchemaHost,
+    private readonly i18nService: I18nService,
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
@@ -65,6 +67,7 @@ export class GraphQLConfigService
       useGraphQLErrorHandlerHook({
         metricsService: this.metricsService,
         exceptionHandlerService: this.exceptionHandlerService,
+        i18nService: this.i18nService,
         twentyConfigService: this.twentyConfigService,
       }),
     ];

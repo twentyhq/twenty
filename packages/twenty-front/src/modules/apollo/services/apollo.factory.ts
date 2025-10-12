@@ -96,11 +96,14 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       const authLink = setContext(async (_, { headers }) => {
         const tokenPair = getTokenPair();
 
+        const locale = this.currentWorkspaceMember?.locale ?? i18n.locale;
+
         if (isUndefinedOrNull(tokenPair)) {
           return {
             headers: {
               ...headers,
               ...options.headers,
+              'x-locale': locale,
             },
           };
         }
@@ -112,9 +115,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             ...headers,
             ...options.headers,
             authorization: token ? `Bearer ${token}` : '',
-            ...(this.currentWorkspaceMember?.locale
-              ? { 'x-locale': this.currentWorkspaceMember.locale }
-              : { 'x-locale': i18n.locale }),
+            'x-locale': locale,
             ...(this.currentWorkspace?.metadataVersion && {
               'X-Schema-Version': `${this.currentWorkspace.metadataVersion}`,
             }),

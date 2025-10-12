@@ -10,8 +10,12 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
+
+import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type SearchRecord } from '~/generated-metadata/graphql';
 
 export const StyledSelectableItem = styled(SelectableListItem)`
@@ -62,6 +66,13 @@ export const MultipleRecordPickerMenuItemContent = ({
     searchRecord.label?.trim() ||
     `Untitled ${objectMetadataItem.labelSingular}`;
 
+  const searchableObjectMetadataItems = useRecoilComponentValue(
+    multipleRecordPickerSearchableObjectMetadataItemsComponentState,
+    componentInstanceId,
+  );
+
+  const showObjectName = searchableObjectMetadataItems.length > 1;
+
   return (
     <StyledSelectableItem
       itemId={searchRecord.recordId}
@@ -82,6 +93,11 @@ export const MultipleRecordPickerMenuItemContent = ({
           />
         }
         text={displayText}
+        contextualText={
+          showObjectName
+            ? capitalize(searchRecord.objectNameSingular)
+            : undefined
+        }
       />
     </StyledSelectableItem>
   );

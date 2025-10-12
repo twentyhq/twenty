@@ -41,12 +41,14 @@ const mocks = [
           $orderBy: [MessageOrderByInput]
           $lastCursor: String
           $limit: Int
+          $offset: Int
         ) {
           messages(
             filter: $filter
             orderBy: $orderBy
             first: $limit
             after: $lastCursor
+            offset: $offset
           ) {
             edges {
               node {
@@ -209,12 +211,14 @@ const mocks = [
           $orderBy: [MessageParticipantOrderByInput]
           $lastCursor: String
           $limit: Int
+          $offset: Int
         ) {
           messageParticipants(
             filter: $filter
             orderBy: $orderBy
             first: $limit
             after: $lastCursor
+            offset: $offset
           ) {
             edges {
               node {

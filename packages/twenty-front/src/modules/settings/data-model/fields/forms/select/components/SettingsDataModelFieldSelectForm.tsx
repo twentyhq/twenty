@@ -20,7 +20,10 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { t } from '@lingui/core/macro';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconPoint } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/layout';
@@ -114,7 +117,10 @@ export const SettingsDataModelFieldSelectForm = ({
     useSelectSettingsFormInitialValues({
       fieldMetadataId: existingFieldMetadataId,
     });
+
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+
+  const [searchParams] = useSearchParams();
 
   const {
     control,
@@ -122,6 +128,21 @@ export const SettingsDataModelFieldSelectForm = ({
     watch: watchFormValue,
     getValues,
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
+
+  const [hasAppliedNewOption, setHasAppliedNewOption] = useState(false);
+
+  useEffect(() => {
+    const newOptionValue = searchParams.get('newOption');
+
+    if (isDefined(newOptionValue) && !hasAppliedNewOption) {
+      const newOption = generateNewSelectOption(initialOptions, newOptionValue);
+
+      const optionsWithNew = [...initialOptions, newOption];
+
+      setFormValue('options', optionsWithNew, { shouldDirty: true });
+      setHasAppliedNewOption(true);
+    }
+  }, [searchParams, hasAppliedNewOption, initialOptions, setFormValue]);
 
   const handleDragEnd = (
     values: FieldMetadataItemOption[],

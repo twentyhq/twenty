@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { allCardsSelectedStatusComponentSelector } from '@/object-record/record-board/states/selectors/allCardsSelectedStatusComponentSelector';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { allRecordIdsOfAllRecordGroupsComponentSelector } from '@/object-record/record-index/states/selectors/allRecordIdsOfAllRecordGroupsComponentSelector';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
@@ -16,10 +16,11 @@ export const useSelectAllCards = (recordBoardId?: string) => {
     isRecordBoardCardSelectedComponentFamilyState,
     recordBoardId,
   );
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
-    recordIndexAllRecordIdsComponentSelector,
-    recordBoardId,
-  );
+  const allRecordIdsOfAllRecordGroupsCallbackSelector =
+    useRecoilComponentCallbackState(
+      allRecordIdsOfAllRecordGroupsComponentSelector,
+      recordBoardId,
+    );
 
   const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
 
@@ -33,7 +34,7 @@ export const useSelectAllCards = (recordBoardId?: string) => {
 
         const allRecordIds = getSnapshotValue(
           snapshot,
-          recordIndexAllRecordIdsSelector,
+          allRecordIdsOfAllRecordGroupsCallbackSelector,
         );
 
         if (allCardsSelectedStatus === 'all') {
@@ -50,7 +51,7 @@ export const useSelectAllCards = (recordBoardId?: string) => {
       },
     [
       allCardsSelectedStatusSelector,
-      recordIndexAllRecordIdsSelector,
+      allRecordIdsOfAllRecordGroupsCallbackSelector,
       resetRecordSelection,
       isRecordBoardCardSelectedFamilyState,
     ],

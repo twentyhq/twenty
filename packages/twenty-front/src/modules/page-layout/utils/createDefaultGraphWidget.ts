@@ -1,83 +1,78 @@
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { v4 as uuidv4 } from 'uuid';
-import { GraphOrderBy, GraphType } from '~/generated-metadata/graphql';
+import {
+  ExtendedAggregateOperations,
+  GraphOrderBy,
+  GraphType,
+} from '~/generated-metadata/graphql';
 import {
   AxisNameDisplay,
-  ExtendedAggregateOperations,
   type GridPosition,
   type PageLayoutWidget,
   type WidgetConfiguration,
   WidgetType,
 } from '~/generated/graphql';
 
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
+
 const createDefaultGraphConfiguration = (
   graphType: GraphType,
-): WidgetConfiguration => {
-  const placeholderFieldId1 = uuidv4();
-  const placeholderFieldId2 = uuidv4();
-
+  fieldSelection?: GraphWidgetFieldSelection,
+): WidgetConfiguration | null => {
   switch (graphType) {
     case GraphType.NUMBER:
+      if (!isDefined(fieldSelection?.aggregateFieldMetadataId)) {
+        return null;
+      }
       return {
         __typename: 'NumberChartConfiguration',
         graphType: GraphType.NUMBER,
+        aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        displayDataLabel: false,
+        displayDataLabel: true,
       };
 
     case GraphType.PIE:
-      return {
-        __typename: 'PieChartConfiguration',
-        graphType: GraphType.PIE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        groupByFieldMetadataId: placeholderFieldId2,
-        orderBy: GraphOrderBy.VALUE_DESC,
-        displayDataLabel: false,
-        color: 'blue' satisfies ThemeColor,
-      };
+      return null;
 
     case GraphType.BAR:
+      if (
+        !isDefined(fieldSelection?.aggregateFieldMetadataId) ||
+        !isDefined(fieldSelection?.groupByFieldMetadataIdX)
+      ) {
+        return null;
+      }
       return {
         __typename: 'BarChartConfiguration',
         graphType: GraphType.BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        groupByFieldMetadataIdX: placeholderFieldId2,
-        orderByX: GraphOrderBy.FIELD_ASC,
         displayDataLabel: false,
-        axisNameDisplay: AxisNameDisplay.BOTH,
         color: 'blue' satisfies ThemeColor,
+        groupByFieldMetadataIdX: fieldSelection.groupByFieldMetadataIdX,
+        aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
+        aggregateOperation: ExtendedAggregateOperations.SUM,
+        orderByX: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
       };
 
     case GraphType.LINE:
-      return {
-        __typename: 'LineChartConfiguration',
-        graphType: GraphType.LINE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        groupByFieldMetadataIdX: placeholderFieldId2,
-        orderByX: GraphOrderBy.FIELD_ASC,
-        displayDataLabel: false,
-        axisNameDisplay: AxisNameDisplay.BOTH,
-        color: 'blue' satisfies ThemeColor,
-      };
+      return null;
 
     case GraphType.GAUGE:
-      return {
-        __typename: 'GaugeChartConfiguration',
-        graphType: GraphType.GAUGE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        displayDataLabel: false,
-        color: 'blue' satisfies ThemeColor,
-      };
+      return null;
 
     default:
       assertUnreachable(graphType);
   }
+};
+
+type CreateDefaultGraphWidgetParams = {
+  id: string;
+  pageLayoutTabId: string;
+  title: string;
+  graphType: GraphType;
+  gridPosition: GridPosition;
+  objectMetadataId?: string | null;
+  fieldSelection?: GraphWidgetFieldSelection;
 };
 
 export const createDefaultGraphWidget = ({
@@ -87,23 +82,25 @@ export const createDefaultGraphWidget = ({
   graphType,
   gridPosition,
   objectMetadataId,
-}: {
-  id: string;
-  pageLayoutTabId: string;
-  title: string;
-  graphType: GraphType;
-  gridPosition: GridPosition;
-  objectMetadataId?: string | null;
-}): PageLayoutWidget => {
+  fieldSelection,
+}: CreateDefaultGraphWidgetParams): PageLayoutWidget => {
+  const resolvedObjectMetadataId =
+    fieldSelection?.objectMetadataId ?? objectMetadataId ?? null;
+
+  const configuration = createDefaultGraphConfiguration(
+    graphType,
+    fieldSelection,
+  );
+
   return {
     __typename: 'PageLayoutWidget',
     id,
     pageLayoutTabId,
     title,
     type: WidgetType.GRAPH,
-    configuration: createDefaultGraphConfiguration(graphType),
+    configuration,
     gridPosition,
-    objectMetadataId: objectMetadataId ?? null,
+    objectMetadataId: resolvedObjectMetadataId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,
