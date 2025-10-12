@@ -77,7 +77,8 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       buildOptions,
       comparisonOptions: {
         propertiesToCompare:
-          ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[this.metadataName].propertiesToCompare,
+          ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[this.metadataName]
+            .propertiesToCompare,
         propertiesToStringify:
           ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[this.metadataName]
             .propertiesToStringify,
