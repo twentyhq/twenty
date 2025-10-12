@@ -11,7 +11,6 @@ import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workfl
 import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
-import { WorkflowEditActionUpsertRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord';
 import { WorkflowEditActionFilter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionFormFiller } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFiller';
@@ -193,12 +192,13 @@ export const WorkflowRunStepNodeDetail = ({
 
         case 'UPSERT_RECORD': {
           return (
-            <WorkflowEditActionUpsertRecord
+            <WorkflowEditActionCreateRecord
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{
                 readonly: true,
               }}
+              mode="upsert"
             />
           );
         }

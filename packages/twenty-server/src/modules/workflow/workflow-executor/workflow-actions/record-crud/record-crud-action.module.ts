@@ -12,7 +12,6 @@ import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
-import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record-workflow-action';
 
 @Module({
   imports: [
@@ -25,14 +24,12 @@ import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
   providers: [
     ScopedWorkspaceContextFactory,
     CreateRecordWorkflowAction,
-    UpsertRecordWorkflowAction,
     UpdateRecordWorkflowAction,
     DeleteRecordWorkflowAction,
     FindRecordsWorkflowAction,
   ],
   exports: [
     CreateRecordWorkflowAction,
-    UpsertRecordWorkflowAction,
     UpdateRecordWorkflowAction,
     DeleteRecordWorkflowAction,
     FindRecordsWorkflowAction,

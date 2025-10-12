@@ -18,14 +18,12 @@ import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executo
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 import { ToolExecutorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-executor-workflow-action';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record-workflow-action';
 
 @Injectable()
 export class WorkflowActionFactory {
   constructor(
     private readonly codeWorkflowAction: CodeWorkflowAction,
     private readonly createRecordWorkflowAction: CreateRecordWorkflowAction,
-    private readonly upsertRecordWorkflowAction: UpsertRecordWorkflowAction,
     private readonly updateRecordWorkflowAction: UpdateRecordWorkflowAction,
     private readonly deleteRecordWorkflowAction: DeleteRecordWorkflowAction,
     private readonly findRecordsWorkflowAction: FindRecordsWorkflowAction,
@@ -49,8 +47,6 @@ export class WorkflowActionFactory {
         return this.updateRecordWorkflowAction;
       case WorkflowActionType.DELETE_RECORD:
         return this.deleteRecordWorkflowAction;
-      case WorkflowActionType.UPSERT_RECORD:
-        return this.upsertRecordWorkflowAction;
       case WorkflowActionType.FIND_RECORDS:
         return this.findRecordsWorkflowAction;
       case WorkflowActionType.FORM:
