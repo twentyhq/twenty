@@ -17,6 +17,7 @@ import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRe
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
@@ -39,6 +40,7 @@ export const useCreateOneRecord = <
   skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
 }: useCreateOneRecordProps) => {
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { registerObjectOperation } = useRegisterObjectOperation();
   const apolloCoreClient = useApolloCoreClient();
   const [loading, setLoading] = useState(false);
@@ -123,6 +125,7 @@ export const useCreateOneRecord = <
           objectMetadataItems,
           shouldMatchRootQueryFilter,
           objectPermissionsByObjectMetadataId,
+          upsertRecordsInStore,
         });
       }
     }
@@ -147,6 +150,7 @@ export const useCreateOneRecord = <
               shouldMatchRootQueryFilter,
               checkForRecordInCache: true,
               objectPermissionsByObjectMetadataId,
+              upsertRecordsInStore,
             });
           }
 
@@ -163,6 +167,8 @@ export const useCreateOneRecord = <
           objectMetadataItem,
           cache: apolloCoreClient.cache,
           recordToDestroy: recordCreatedInCache,
+          upsertRecordsInStore,
+          objectPermissionsByObjectMetadataId,
         });
 
         triggerDestroyRecordsOptimisticEffect({
@@ -170,6 +176,8 @@ export const useCreateOneRecord = <
           objectMetadataItem,
           recordsToDestroy: [recordCreatedInCache],
           objectMetadataItems,
+          upsertRecordsInStore,
+          objectPermissionsByObjectMetadataId,
         });
 
         throw error;

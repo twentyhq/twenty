@@ -1,7 +1,7 @@
 import { useLazyFindManyRecordsWithOffset } from '@/object-record/hooks/useLazyFindManyRecordsWithOffset';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useAssignRecordsToStore } from '@/object-record/record-table/virtualization/hooks/useAssignRecordsToStore';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 
 import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
@@ -30,7 +30,7 @@ export const useTriggerFetchPages = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const { assignRecordsToStore } = useAssignRecordsToStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
 
@@ -193,7 +193,7 @@ export const useTriggerFetchPages = () => {
                   startingRealIndex: startingRealIndexInThisUIPage,
                 });
 
-                assignRecordsToStore({ records: recordsSlice });
+                upsertRecordsInStore(recordsSlice);
               }
             }
 
@@ -210,7 +210,7 @@ export const useTriggerFetchPages = () => {
       findManyRecordsLazyWithOffset,
       totalNumberOfRecordsToVirtualizeCallbackState,
       loadRecordsToVirtualRows,
-      assignRecordsToStore,
+      upsertRecordsInStore,
       lastScrollPositionCallbackState,
       scrollWrapperHTMLElement,
       lowDetailsActivatedCallbackState,

@@ -12,9 +12,10 @@ import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGq
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ApolloCache } from '@apollo/client';
 import { isArray } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 import {
   computeMorphRelationFieldName,
   CustomError,
@@ -28,13 +29,21 @@ type TriggerUpdateRelationsOptimisticEffectArgs = {
   currentSourceRecord: RecordGqlNode | null;
   updatedSourceRecord: RecordGqlNode | null;
   objectMetadataItems: ObjectMetadataItem[];
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
+  upsertRecordsInStore: (records: ObjectRecord[]) => void;
 };
+
 export const triggerUpdateRelationsOptimisticEffect = ({
   cache,
   sourceObjectMetadataItem,
   currentSourceRecord,
   updatedSourceRecord,
   objectMetadataItems,
+  objectPermissionsByObjectMetadataId,
+  upsertRecordsInStore,
 }: TriggerUpdateRelationsOptimisticEffectArgs) => {
   const isDeletion =
     isDefined(updatedSourceRecord) &&
@@ -57,6 +66,8 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         sourceObjectMetadataItem,
         cache,
         isDeletion,
+        upsertRecordsInStore,
+        objectPermissionsByObjectMetadataId,
       });
     }
 
@@ -69,6 +80,8 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         sourceObjectMetadataItem,
         cache,
         isDeletion,
+        upsertRecordsInStore,
+        objectPermissionsByObjectMetadataId,
       });
     }
   });
@@ -82,6 +95,8 @@ const triggerUpdateRelationOptimisticEffect = ({
   sourceObjectMetadataItem,
   cache,
   isDeletion,
+  upsertRecordsInStore,
+  objectPermissionsByObjectMetadataId,
 }: {
   fieldMetadataItemOnSourceRecord: FieldMetadataItem;
   updatedSourceRecord: RecordGqlNode | null;
@@ -90,6 +105,11 @@ const triggerUpdateRelationOptimisticEffect = ({
   sourceObjectMetadataItem: ObjectMetadataItem;
   cache: ApolloCache<unknown>;
   isDeletion: boolean;
+  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
 }) => {
   const fieldDoesNotExist =
     isDefined(updatedSourceRecord) &&
@@ -175,6 +195,8 @@ const triggerUpdateRelationOptimisticEffect = ({
       objectMetadataItem: fullTargetObjectMetadataItem,
       recordsToDestroy: targetRecordsToDetachFrom,
       objectMetadataItems,
+      upsertRecordsInStore,
+      objectPermissionsByObjectMetadataId,
     });
   } else if (isDefined(currentSourceRecord)) {
     targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
@@ -183,8 +205,11 @@ const triggerUpdateRelationOptimisticEffect = ({
         sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
         sourceRecordId: currentSourceRecord.id,
         fieldNameOnTargetRecord: gqlFieldNameOnTargetRecord,
-        targetObjectNameSingular: targetObjectMetadata.nameSingular,
+        targetObjectMetadataItem: fullTargetObjectMetadataItem,
         targetRecordId: targetRecordToDetachFrom.id,
+        objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+        upsertRecordsInStore,
       });
     });
   }
@@ -201,8 +226,11 @@ const triggerUpdateRelationOptimisticEffect = ({
         sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
         sourceRecordId: updatedSourceRecord.id,
         fieldNameOnTargetRecord: gqlFieldNameOnTargetRecord,
-        targetObjectNameSingular: targetObjectMetadata.nameSingular,
+        targetObjectMetadataItem: fullTargetObjectMetadataItem,
         targetRecordId: targetRecordToAttachTo.id,
+        objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+        upsertRecordsInStore,
       }),
     );
   }
@@ -216,6 +244,8 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   sourceObjectMetadataItem,
   cache,
   isDeletion,
+  objectPermissionsByObjectMetadataId,
+  upsertRecordsInStore,
 }: {
   fieldMetadataItemOnSourceRecord: FieldMetadataItem;
   updatedSourceRecord: RecordGqlNode | null;
@@ -224,6 +254,11 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   sourceObjectMetadataItem: ObjectMetadataItem;
   cache: ApolloCache<unknown>;
   isDeletion: boolean;
+  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
 }) => {
   const morphRelations = fieldMetadataItemOnSourceRecord.morphRelations;
   if (!morphRelations) {
@@ -309,6 +344,8 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
         objectMetadataItem: fullTargetObjectMetadataItem,
         recordsToDestroy: targetRecordsToDetachFrom,
         objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+        upsertRecordsInStore,
       });
     } else if (isDefined(currentSourceRecord)) {
       targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
@@ -317,8 +354,11 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
           sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
           sourceRecordId: currentSourceRecord.id,
           fieldNameOnTargetRecord: targetFieldMetadata.name,
-          targetObjectNameSingular: targetObjectMetadata.nameSingular,
+          targetObjectMetadataItem: fullTargetObjectMetadataItem,
+          objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
           targetRecordId: targetRecordToDetachFrom.id,
+          upsertRecordsInStore,
         });
       });
     }
@@ -335,8 +375,11 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
           sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
           sourceRecordId: updatedSourceRecord.id,
           fieldNameOnTargetRecord: targetFieldMetadata.name,
-          targetObjectNameSingular: targetObjectMetadata.nameSingular,
+          targetObjectMetadataItem: fullTargetObjectMetadataItem,
+          objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
           targetRecordId: targetRecordToAttachTo.id,
+          upsertRecordsInStore,
         }),
       );
     }

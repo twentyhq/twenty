@@ -18,6 +18,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
@@ -51,6 +52,7 @@ export const useCreateManyRecords = <
   shouldRefetchAggregateQueries = true,
 }: useCreateManyRecordsProps) => {
   const { registerObjectOperation } = useRegisterObjectOperation();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const apolloCoreClient = useApolloCoreClient();
 
@@ -171,6 +173,7 @@ export const useCreateManyRecords = <
         objectMetadataItems,
         shouldMatchRootQueryFilter,
         objectPermissionsByObjectMetadataId,
+        upsertRecordsInStore,
       });
     }
 
@@ -208,6 +211,7 @@ export const useCreateManyRecords = <
             shouldMatchRootQueryFilter,
             checkForRecordInCache: true,
             objectPermissionsByObjectMetadataId,
+            upsertRecordsInStore,
           });
         },
       })
@@ -218,6 +222,8 @@ export const useCreateManyRecords = <
             objectMetadataItem,
             cache: apolloCoreClient.cache,
             recordToDestroy,
+            upsertRecordsInStore,
+            objectPermissionsByObjectMetadataId,
           });
         });
 
@@ -226,6 +232,8 @@ export const useCreateManyRecords = <
           objectMetadataItem,
           recordsToDestroy: recordsCreatedInCache,
           objectMetadataItems,
+          upsertRecordsInStore,
+          objectPermissionsByObjectMetadataId,
         });
 
         throw error;

@@ -30,6 +30,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
@@ -42,6 +43,7 @@ import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 import { isFieldRichTextValue } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValue';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValueV2';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -72,11 +74,13 @@ export const usePersistField = ({
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
   });
+
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const persistField = useRecoilCallback(
     ({ set, snapshot }) =>
-      ({
+      async ({
         recordId,
         fieldDefinition,
         valueToPersist,
@@ -202,7 +206,7 @@ export const usePersistField = ({
               return;
             }
 
-            updateOneRecord?.({
+            const newRecord = await updateOneRecord?.({
               idToUpdate: recordId,
               updateOneRecordInput: {
                 [getForeignKeyNameFromRelationFieldName(fieldName)]:
@@ -210,10 +214,11 @@ export const usePersistField = ({
               },
             });
 
-            set(
-              recordStoreFamilySelector({ recordId, fieldName }),
-              valueToPersist,
-            );
+            upsertRecordsInStore([
+              getRecordFromRecordNode({
+                recordNode: newRecord,
+              }),
+            ]);
             return;
           }
 
@@ -263,19 +268,17 @@ export const usePersistField = ({
                     candidateObjectMetadataItem.namePlural,
                 });
 
-                updateOneRecord?.({
+                const newRecord = await updateOneRecord?.({
                   idToUpdate: recordId,
                   updateOneRecordInput: {
                     [`${computedFieldName}Id`]: valueToPersist.id,
                   },
                 });
-                set(
-                  recordStoreFamilySelector({
-                    recordId,
-                    fieldName: computedFieldName,
+                upsertRecordsInStore([
+                  getRecordFromRecordNode({
+                    recordNode: newRecord,
                   }),
-                  valueToPersist,
-                );
+                ]);
                 return;
               }
             }
@@ -310,6 +313,7 @@ export const usePersistField = ({
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       updateOneRecord,
+      upsertRecordsInStore,
     ],
   );
 

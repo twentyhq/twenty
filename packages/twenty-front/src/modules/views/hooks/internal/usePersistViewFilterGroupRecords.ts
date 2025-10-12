@@ -1,34 +1,15 @@
 import { useCallback } from 'react';
 
-import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
-import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { CREATE_CORE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/createCoreViewFilterGroup';
 import { DESTROY_CORE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/destroyCoreViewFilterGroup';
 import { UPDATE_CORE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/updateCoreViewFilterGroup';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { useApolloClient } from '@apollo/client';
-import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewFilterGroup } from '~/generated/graphql';
 
 export const usePersistViewFilterGroupRecords = () => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.ViewFilterGroup,
-  });
-
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular: CoreObjectNameSingular.ViewFilterGroup,
-  });
-
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const apolloClient = useApolloClient();
 
   const createCoreViewFilterGroupRecord = useCallback(
@@ -47,18 +28,6 @@ export const usePersistViewFilterGroupRecords = () => {
               viewFilterGroup.positionInViewFilterGroup,
           } satisfies Partial<CoreViewFilterGroup>,
         },
-        update: (cache, { data }) => {
-          const record = data?.createCoreViewFilterGroup;
-          if (!isDefined(record)) return;
-
-          triggerCreateRecordsOptimisticEffect({
-            cache,
-            objectMetadataItem,
-            recordsToCreate: [record],
-            objectMetadataItems,
-            objectPermissionsByObjectMetadataId,
-          });
-        },
       });
 
       if (!result.data) {
@@ -67,12 +36,7 @@ export const usePersistViewFilterGroupRecords = () => {
 
       return { newRecordId: result.data.createCoreViewFilterGroup.id };
     },
-    [
-      apolloClient,
-      objectMetadataItem,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-    ],
+    [apolloClient],
   );
 
   const createCoreViewFilterGroupRecords = useCallback(
@@ -133,29 +97,11 @@ export const usePersistViewFilterGroupRecords = () => {
                   viewFilterGroup.positionInViewFilterGroup,
               } satisfies Partial<CoreViewFilterGroup>,
             },
-            update: (cache, { data }) => {
-              const record = data?.updateCoreViewFilterGroup;
-              if (!isDefined(record)) return;
-
-              const cachedRecord = getRecordFromCache<ViewFilterGroup>(
-                record.id,
-                cache,
-              );
-              if (isNull(cachedRecord)) return;
-
-              triggerUpdateRecordOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                currentRecord: cachedRecord,
-                updatedRecord: record,
-                objectMetadataItems,
-              });
-            },
           }),
         ),
       );
     },
-    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
+    [apolloClient],
   );
 
   const deleteCoreViewFilterGroupRecords = useCallback(
@@ -168,25 +114,11 @@ export const usePersistViewFilterGroupRecords = () => {
             variables: {
               id: viewFilterGroupId,
             },
-            update: (cache, { data }) => {
-              const record = data?.destroyCoreViewFilterGroup;
-              if (!isDefined(record)) return;
-
-              const cachedRecord = getRecordFromCache(record.id, cache);
-              if (isNull(cachedRecord)) return;
-
-              triggerDestroyRecordsOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                recordsToDestroy: [cachedRecord],
-                objectMetadataItems,
-              });
-            },
           }),
         ),
       );
     },
-    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
+    [apolloClient],
   );
 
   return {
