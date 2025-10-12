@@ -9,6 +9,7 @@ type ObjectRecord = Record<string, any>;
 export type WorkflowCreateRecordActionInput = {
   objectName: string;
   objectRecord: ObjectRecord;
+  upsert?: boolean;
 };
 
 export type WorkflowUpdateRecordActionInput = {
@@ -35,13 +36,4 @@ export type WorkflowFindRecordsActionInput = {
   };
   orderBy?: Partial<ObjectRecordOrderBy>;
   limit?: number;
-};
-
-export type WorkflowUpsertRecordActionInput = {
-  objectName: string;
-  objectRecord: ObjectRecord;
-  upsertCriteria: {
-    matchFields: string[];
-  };
-  fieldsToUpdate?: string[];
 };
