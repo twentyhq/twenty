@@ -118,14 +118,14 @@ export const useMergeManyRecords = <
       }
     },
     [
-      apolloCoreClient,
-      findDuplicateRecordsQuery,
-      findOneRecordQuery,
-      mergeManyRecordsMutation,
       objectMetadataItem.namePlural,
-      refetchAggregateQueries,
-      upsertRecordsInStore,
+      apolloCoreClient,
+      mergeManyRecordsMutation,
+      findOneRecordQuery,
+      findDuplicateRecordsQuery,
+      registerObjectOperation,
       objectNameSingular,
+      refetchAggregateQueries,
     ],
   );
 

@@ -39,7 +39,6 @@ export const useWorkflowWithCurrentVersion = (
   );
 
   const workflowVersions = [...(workflow?.versions ?? [])];
-  console.log('workflowVersions', workflowVersions);
 
   workflowVersions.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
 

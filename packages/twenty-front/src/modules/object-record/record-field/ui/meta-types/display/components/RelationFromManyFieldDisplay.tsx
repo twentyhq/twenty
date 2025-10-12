@@ -5,7 +5,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
-import { fieldValue } from '@/object-record/record-field/ui/meta-types/display/components/__stories__/perf/relationFromManyFieldDisplayMock';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
@@ -34,7 +33,6 @@ export const RelationFromManyFieldDisplay = () => {
 
   const relationObjectNameSingular =
     fieldDefinition?.metadata.relationObjectMetadataNameSingular;
-  console.log(fieldValue);
 
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
     '',

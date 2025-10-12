@@ -172,15 +172,16 @@ export const useDeleteOneRecord = ({
       return deletedRecord.data?.[mutationResponseField] ?? null;
     },
     [
-      apolloCoreClient,
-      deleteOneRecordMutation,
       getRecordFromCache,
-      mutationResponseField,
+      apolloCoreClient,
       objectMetadataItem,
       objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
+      deleteOneRecordMutation,
       refetchAggregateQueries,
+      registerObjectOperation,
       objectNameSingular,
+      mutationResponseField,
+      objectPermissionsByObjectMetadataId,
       upsertRecordsInStore,
     ],
   );

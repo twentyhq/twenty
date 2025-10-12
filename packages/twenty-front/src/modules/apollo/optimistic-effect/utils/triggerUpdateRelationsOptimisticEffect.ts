@@ -132,7 +132,6 @@ const triggerUpdateRelationOptimisticEffect = ({
       objectMetadataItems,
     });
   if (!targetFieldMetadataFullObject) {
-    debugger;
     throw new CustomError(
       'Target field metadata full object not found',
       'TARGET_FIELD_METADATA_FULL_OBJECT_NOT_FOUND',
@@ -282,7 +281,6 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
         objectMetadataItems,
       });
     if (!targetFieldMetadataFullObject) {
-      debugger;
       throw new CustomError(
         'Target field metadata full object not found',
         'TARGET_FIELD_METADATA_FULL_OBJECT_NOT_FOUND',
