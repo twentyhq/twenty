@@ -2,8 +2,8 @@ import diff from 'microdiff';
 import { type FromTo } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
 
-import { type ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-and-stringify.constant';
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { transformFlatEntityForComparison } from 'src/engine/metadata-modules/flat-entity/utils/transform-flat-entity-for-comparison.util';
@@ -11,7 +11,7 @@ import { transformFlatEntityForComparison } from 'src/engine/metadata-modules/fl
 export const compareTwoFlatEntity = <
   T extends AllMetadataName,
   PToCompare extends Extract<
-    (typeof ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY)[T]['propertiesToCompare'][number],
+    FlatEntityPropertiesToCompare<T>,
     keyof MetadataFlatEntity<T>
   >,
   PJsonB extends PToCompare = PToCompare,
