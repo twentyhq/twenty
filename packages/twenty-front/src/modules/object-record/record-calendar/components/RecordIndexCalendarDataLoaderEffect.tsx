@@ -26,7 +26,7 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
 
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
-  const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const setRecordIndexAllRecordIdsSelector = useSetRecoilComponentState(
     recordIndexAllRecordIdsComponentSelector,

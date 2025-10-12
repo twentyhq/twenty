@@ -19,7 +19,9 @@ import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upg
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
 import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
+import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-deduplicate-unique-fields.command';
 import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-workflow-step-filter-operand-value';
+import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-person-search-vector-with-phones.command';
 import { AddEnqueuedStatusToWorkflowRunV2Command } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run-v2.command';
 import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
 import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
@@ -87,6 +89,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.10 Commands
     protected readonly migrateWorkflowStepFilterOperandValueCommand: MigrateWorkflowStepFilterOperandValueCommand,
+    protected readonly deduplicateUniqueFieldsCommand: DeduplicateUniqueFieldsCommand,
+    protected readonly regeneratePersonSearchVectorWithPhonesCommand: RegeneratePersonSearchVectorWithPhonesCommand,
   ) {
     super(
       workspaceRepository,
@@ -181,7 +185,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1100: VersionCommands = {
-      beforeSyncMetadata: [this.migrateWorkflowStepFilterOperandValueCommand],
+      beforeSyncMetadata: [
+        this.migrateWorkflowStepFilterOperandValueCommand,
+        this.deduplicateUniqueFieldsCommand,
+        this.regeneratePersonSearchVectorWithPhonesCommand,
+      ],
       afterSyncMetadata: [],
     };
 

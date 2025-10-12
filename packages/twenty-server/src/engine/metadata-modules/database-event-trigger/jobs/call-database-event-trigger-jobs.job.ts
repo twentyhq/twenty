@@ -13,7 +13,7 @@ import {
   ServerlessFunctionTriggerJob,
   ServerlessFunctionTriggerJobData,
 } from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
