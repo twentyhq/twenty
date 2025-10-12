@@ -9,7 +9,6 @@ import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQue
 import { useMergeManyRecordsMutation } from '@/object-record/hooks/useMergeManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getMergeManyRecordsMutationResponseField } from '@/object-record/utils/getMergeManyRecordsMutationResponseField';
 import { getOperationName } from '@apollo/client/utilities';
@@ -30,7 +29,6 @@ export const useMergeManyRecords = <
   recordGqlFields,
 }: UseMergeManyRecordsProps) => {
   const { registerObjectOperation } = useRegisterObjectOperation();
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const apolloCoreClient = useApolloCoreClient();
   const [loading, setLoading] = useState(false);
 
