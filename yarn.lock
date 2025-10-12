@@ -29331,6 +29331,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cronstrue@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "cronstrue@npm:3.3.0"
+  bin:
+    cronstrue: bin/cli.js
+  checksum: 10c0/d7da954d72595a905da85a48fa46f147cb3be45b0ddcff5a01d112f4e416673f550fa7469b10aca645386b96848c604f108e653b43214ef924be6f9c0e0d805c
+  languageName: node
+  linkType: hard
+
 "cross-fetch@npm:4.1.0":
   version: 4.1.0
   resolution: "cross-fetch@npm:4.1.0"
@@ -52909,6 +52918,7 @@ __metadata:
     apollo-upload-client: "npm:^17.0.0"
     buffer: "npm:^6.0.3"
     cron-parser: "npm:5.1.1"
+    cronstrue: "npm:^3.3.0"
     date-fns: "npm:^2.30.0"
     docx: "npm:^9.1.0"
     eslint: "npm:^9.32.0"

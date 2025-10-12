@@ -1,6 +1,5 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { InputHint } from '@/ui/input/components/InputHint';
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import type { WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { describeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression';
 import styled from '@emotion/styled';
@@ -63,6 +62,10 @@ const getNextExecutions = (cronExpression: string): Date[] => {
 };
 
 const StyledContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  padding: ${({ theme }) => theme.spacing(4)};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
@@ -72,24 +75,20 @@ const StyledContainer = styled.div`
 const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledScheduleDescription = styled.div`
+const StyledUpcomingTime = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
-const StyledScheduleSubtext = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledExecutionItem = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
-  font-family: monospace;
-  font-size: ${({ theme }) => theme.font.size.xs};
+  font-family: ${({ theme }) => theme.font.family};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-size: ${({ theme }) => theme.font.size.md};
   margin-bottom: ${({ theme }) => theme.spacing(0.5)};
 `;
 
@@ -143,19 +142,9 @@ export const CronExpressionHelper = ({
 
   return (
     <StyledContainer>
-      <StyledSection>
-        <InputLabel>{t`Schedule`}</InputLabel>
-        <StyledScheduleDescription>
-          {customDescription}
-        </StyledScheduleDescription>
-        <StyledScheduleSubtext>
-          {t`Schedule runs in UTC timezone.`}
-        </StyledScheduleSubtext>
-      </StyledSection>
-
       {nextExecutions.length > 0 && (
         <StyledSection>
-          <InputLabel>{t`Upcoming execution times (${timeZone})`}</InputLabel>
+          <StyledUpcomingTime>{t`Upcoming execution times (${timeZone})`}</StyledUpcomingTime>
           {nextExecutions.slice(0, 3).map((execution, index) => (
             <StyledExecutionItem key={index}>
               {formatDateTimeString({

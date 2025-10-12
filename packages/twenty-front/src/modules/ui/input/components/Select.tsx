@@ -6,6 +6,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
+import { InputHint } from '@/ui/input/components/InputHint';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -229,6 +230,12 @@ export const Select = <Value extends SelectValue>({
           }
         />
       )}
+      {value === 'CUSTOM' ? (
+        <InputHint>Cron will be triggered at UTC time</InputHint>
+      ) : (
+        <></>
+      )}
+
       {!!description && <StyledDescription>{description}</StyledDescription>}
     </StyledContainer>
   );

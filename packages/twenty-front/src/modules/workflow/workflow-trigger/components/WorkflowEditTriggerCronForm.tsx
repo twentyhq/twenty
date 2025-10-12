@@ -15,6 +15,7 @@ import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTrigge
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { isNumber } from '@sniptt/guards';
+import cronstrue from 'cronstrue';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -49,6 +50,7 @@ export const WorkflowEditTriggerCronForm = ({
   const theme = useTheme();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
+  const [dynamicHint, setDynamicHint] = useState('');
 
   const { getIcon } = useIcons();
 
@@ -114,7 +116,12 @@ export const WorkflowEditTriggerCronForm = ({
               placeholder="0 */1 * * *"
               error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
               onBlur={onBlur}
-              hint={t`Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]`}
+              hint={
+                !errorMessages.CUSTOM
+                  ? dynamicHint ||
+                    t`Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]`
+                  : undefined
+              }
               readonly={triggerOptions.readonly}
               defaultValue={trigger.settings.pattern}
               onChange={async (newPattern: string) => {
@@ -126,10 +133,21 @@ export const WorkflowEditTriggerCronForm = ({
 
                 try {
                   CronExpressionParser.parse(newPattern);
+
+                  const humanReadable = cronstrue.toString(newPattern, {
+                    use24HourTimeFormat: true,
+                  });
+                  setDynamicHint(humanReadable);
+
+                  setErrorMessages((prev) => ({
+                    ...prev,
+                    CUSTOM: undefined,
+                  }));
                 } catch (error) {
                   setErrorMessages({
                     CUSTOM: `Invalid cron pattern: ${error instanceof Error ? error.message : 'Unknown error'}`,
                   });
+                  setDynamicHint('');
                   return;
                 }
 
