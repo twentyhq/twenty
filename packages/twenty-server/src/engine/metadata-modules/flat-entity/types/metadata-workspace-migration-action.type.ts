@@ -16,8 +16,7 @@ export type MetadataWorkspaceMigrationAction<
     | 'deleted'
     | 'updated',
 > = AllFlatEntityTypesByMetadataName[T]['actions'][TOperation] extends infer Action
-  ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Action extends Array<unknown>
+  ? Action extends Array<unknown>
     ? Action[number]
     : Action
   : never;
