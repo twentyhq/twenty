@@ -1,9 +1,9 @@
 import { capitalize } from 'twenty-shared/utils';
 
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
-import { type MetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
+import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 
 export const getMetadataFlatEntityMapsKey = <T extends AllMetadataName>(
   metadataName: T,
-): MetadataFlatEntityMapsKey<T> =>
-  `flat${capitalize(metadataName)}Maps` as MetadataFlatEntityMapsKey<T>;
+): MetadataToFlatEntityMapsKey<T> =>
+  `flat${capitalize(metadataName)}Maps` as MetadataToFlatEntityMapsKey<T>;

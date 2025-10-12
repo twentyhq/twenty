@@ -1,6 +1,6 @@
 import { type Expect } from 'twenty-shared/testing';
 
-import { type AllFlatEntityConfigurationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-configuration-by-metadata-name.type';
+import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 
@@ -14,13 +14,13 @@ type ExpectedGenericFlatEntityInformation = {
 };
 
 type ExpectedGenericAllFlatEntityInformationByMetadataEngine = {
-  [P in keyof AllFlatEntityConfigurationByMetadataName]: ExpectedGenericFlatEntityInformation;
+  [P in keyof AllFlatEntityTypesByMetadataName]: ExpectedGenericFlatEntityInformation;
 };
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
-    AllFlatEntityConfigurationByMetadataName extends ExpectedGenericAllFlatEntityInformationByMetadataEngine
+    AllFlatEntityTypesByMetadataName extends ExpectedGenericAllFlatEntityInformationByMetadataEngine
       ? true
       : false
   >,

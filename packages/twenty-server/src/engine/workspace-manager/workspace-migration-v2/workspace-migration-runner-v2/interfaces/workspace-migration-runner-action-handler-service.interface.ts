@@ -3,8 +3,8 @@ import { Inject, SetMetadata } from '@nestjs/common';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
-import { FromMetadataNameToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-name-to-flat-entity-maps-key.type';
-import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
+import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
+import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { FromWorkspaceMigrationActionToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import {
   type ExtractAction,
@@ -52,7 +52,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   ): Pick<
     AllFlatEntityMaps,
     | MetadataRelatedFlatEntityMapsKeys<TMetadataName>
-    | FromMetadataNameToFlatEntityMapsKey<TMetadataName>
+    | MetadataToFlatEntityMapsKey<TMetadataName>
   > {
     return args.allFlatEntityMaps;
   }
@@ -69,7 +69,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     Pick<
       AllFlatEntityMaps,
       | MetadataRelatedFlatEntityMapsKeys<TMetadataName>
-      | FromMetadataNameToFlatEntityMapsKey<TMetadataName>
+      | MetadataToFlatEntityMapsKey<TMetadataName>
     >
   > {
     await Promise.all([

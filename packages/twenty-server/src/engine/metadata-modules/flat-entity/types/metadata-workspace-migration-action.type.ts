@@ -1,4 +1,4 @@
-import { type AllFlatEntityConfigurationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-configuration-by-metadata-name.type';
+import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 
 export type MetadataWorkspaceMigrationActionsRecord<T extends AllMetadataName> =
@@ -15,7 +15,7 @@ export type MetadataWorkspaceMigrationAction<
     | 'created'
     | 'deleted'
     | 'updated',
-> = AllFlatEntityConfigurationByMetadataName[T]['actions'][TOperation] extends infer Action
+> = AllFlatEntityTypesByMetadataName[T]['actions'][TOperation] extends infer Action
   ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Action extends any[]
     ? Action[number]
@@ -23,7 +23,7 @@ export type MetadataWorkspaceMigrationAction<
   : never;
 
 export type FromWorkspaceMigrationActionToMetadataName<TAction> = {
-  [K in AllMetadataName]: TAction extends AllFlatEntityConfigurationByMetadataName[K]['actions'][
+  [K in AllMetadataName]: TAction extends AllFlatEntityTypesByMetadataName[K]['actions'][
     | 'created'
     | 'deleted'
     | 'updated']

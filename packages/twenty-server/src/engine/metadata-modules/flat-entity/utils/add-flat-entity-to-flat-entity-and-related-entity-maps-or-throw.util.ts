@@ -86,9 +86,3 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow = <
     },
   );
 };
-
-// const tmp = addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow({
-//   metadataName: 'view',
-//   flatEntity: {},
-//   flatEntityAndRelatedMaps: {},
-// });
