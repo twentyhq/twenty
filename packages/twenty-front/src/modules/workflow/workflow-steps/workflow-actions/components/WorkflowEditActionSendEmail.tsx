@@ -45,6 +45,7 @@ type SendEmailFormData = {
   email: string;
   subject: string;
   body: string;
+  attachmentIds: string[];
 };
 
 export const WorkflowEditActionSendEmail = ({
@@ -66,6 +67,7 @@ export const WorkflowEditActionSendEmail = ({
     email: action.settings.input.email,
     subject: action.settings.input.subject ?? '',
     body: action.settings.input.body ?? '',
+    attachmentIds: action.settings.input.attachmentIds ?? [],
   });
 
   const checkConnectedAccountScopes = async (
@@ -125,6 +127,7 @@ export const WorkflowEditActionSendEmail = ({
             email: formData.email,
             subject: formData.subject,
             body: formData.body,
+            attachmentIds: formData.attachmentIds,
           },
         },
       });
