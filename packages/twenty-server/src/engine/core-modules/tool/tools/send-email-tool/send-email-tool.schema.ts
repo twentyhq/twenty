@@ -1,3 +1,4 @@
+import { isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 export const SendEmailInputZodSchema = z.object({
@@ -5,11 +6,17 @@ export const SendEmailInputZodSchema = z.object({
   subject: z.string().describe('The email subject line'),
   body: z.string().describe('The email body content (HTML or plain text)'),
   connectedAccountId: z
-    .uuid()
+    .string()
+    .refine((val) => isValidUuid(val))
     .describe(
       'The UUID of the connected account to send the email from. Provide this only if you have it; otherwise, leave blank.',
     )
     .optional(),
+  attachmentIds: z
+    .array(z.string().refine((val) => isValidUuid(val)))
+    .describe('Array of file UUIDs to attach to the email')
+    .optional()
+    .default([]),
 });
 
 export const SendEmailToolParametersZodSchema = z.object({

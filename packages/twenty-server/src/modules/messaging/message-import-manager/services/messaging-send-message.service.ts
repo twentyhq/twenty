@@ -18,11 +18,18 @@ import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-impo
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
+export interface MessageAttachment {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+}
+
 interface SendMessageInput {
   body: string;
   subject: string;
   to: string;
   html: string;
+  attachments?: MessageAttachment[];
 }
 
 @Injectable()
@@ -149,6 +156,15 @@ export class MessagingSendMessageService {
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
           html: sendMessageInput.html,
+          ...(sendMessageInput.attachments && sendMessageInput.attachments.length > 0
+            ? {
+                attachments: sendMessageInput.attachments.map((attachment) => ({
+                  filename: attachment.filename,
+                  content: attachment.content,
+                  contentType: attachment.contentType,
+                })),
+              }
+            : {}),
         });
 
         const messageBuffer = await mail.compile().build();
