@@ -1,7 +1,7 @@
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ALL_FLAT_ENTITY_CONFIGURATION } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-configuration.constant';
+import { type ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-and-stringify.constant';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
@@ -33,7 +33,7 @@ type FlatEntityDeletedCreatedUpdatedMatrixDispatcherArgs<
 > = FromTo<MetadataFlatEntity<T>[]> & {
   buildOptions: WorkspaceMigrationBuilderOptions;
   comparisonOptions: Pick<
-    (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T],
+    (typeof ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY)[T],
     'propertiesToCompare' | 'propertiesToStringify'
   >;
 };
@@ -89,11 +89,11 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
       fromFlatEntity,
       toFlatEntity,
       propertiesToCompare: propertiesToCompare as unknown as Extract<
-        (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['propertiesToCompare'][number],
+        (typeof ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY)[T]['propertiesToCompare'][number],
         keyof MetadataFlatEntity<T>
       >[],
       propertiesToStringify: propertiesToStringify as unknown as Extract<
-        (typeof ALL_FLAT_ENTITY_CONFIGURATION)[T]['propertiesToStringify'][number],
+        (typeof ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY)[T]['propertiesToStringify'][number],
         keyof MetadataFlatEntity<T>
       >[],
     });

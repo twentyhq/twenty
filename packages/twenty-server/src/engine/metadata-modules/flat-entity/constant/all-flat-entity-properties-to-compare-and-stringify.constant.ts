@@ -13,7 +13,7 @@ type OneFlatEntityConfiguration<T extends AllMetadataName> = {
   propertiesToCompare: (keyof MetadataFlatEntity<T>)[];
   propertiesToStringify: (keyof MetadataFlatEntity<T>)[];
 };
-export const ALL_FLAT_ENTITY_CONFIGURATION = {
+export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
   fieldMetadata: {
     propertiesToCompare: [
       ...FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
