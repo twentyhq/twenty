@@ -22,6 +22,7 @@ const StyledIconTableCell = styled(TableCell)`
 
 const StyledUrlTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
+  overflow: hidden;
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
