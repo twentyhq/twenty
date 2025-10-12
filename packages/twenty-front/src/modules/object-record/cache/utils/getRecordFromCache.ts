@@ -3,8 +3,8 @@ import { type ApolloCache, gql } from '@apollo/client';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
-import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
@@ -12,10 +12,13 @@ import { isEmptyObject } from '~/utils/isEmptyObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export type GetRecordFromCacheArgs = {
-  cache: ApolloCache<object>;
+  cache: ApolloCache<unknown>;
   recordId: string;
   objectMetadataItems: ObjectMetadataItem[];
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'fields' | 'nameSingular' | 'id' | 'readableFields'
+  >;
   recordGqlFields?: RecordGqlFields;
   objectPermissionsByObjectMetadataId: Record<
     string,
@@ -35,7 +38,12 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   }
 
   const appliedRecordGqlFields =
-    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+    recordGqlFields ??
+    generateDepthRecordGqlFieldsFromObject({
+      objectMetadataItem,
+      depth: 1,
+      objectMetadataItems,
+    });
 
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 

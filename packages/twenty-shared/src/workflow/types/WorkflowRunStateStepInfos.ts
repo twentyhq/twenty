@@ -9,6 +9,7 @@ export enum StepStatus {
   STOPPED = 'STOPPED',
   FAILED = 'FAILED',
   PENDING = 'PENDING',
+  SKIPPED = 'SKIPPED',
 }
 
 export type WorkflowRunStepInfo = z.infer<

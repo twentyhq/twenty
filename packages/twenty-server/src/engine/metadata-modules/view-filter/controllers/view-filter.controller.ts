@@ -89,10 +89,15 @@ export class ViewFilterController {
     @Body() input: UpdateViewFilterInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewFilterDTO> {
-    const updatedViewFilter = await this.viewFilterService.update(
+    const updateInput: UpdateViewFilterInput = {
       id,
+      update: input.update ?? input,
+    };
+
+    const updatedViewFilter = await this.viewFilterService.update(
+      updateInput.id,
       workspace.id,
-      input,
+      updateInput.update,
     );
 
     return updatedViewFilter;

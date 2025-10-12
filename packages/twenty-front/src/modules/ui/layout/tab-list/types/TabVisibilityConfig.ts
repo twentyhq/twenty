@@ -9,4 +9,5 @@ export type TabVisibilityConfig = {
   ifRequiredObjectsInactive: CoreObjectNameSingular[];
   ifRelationsMissing: string[];
   ifNoReadPermission?: boolean;
+  ifNoReadPermissionObject?: CoreObjectNameSingular;
 };

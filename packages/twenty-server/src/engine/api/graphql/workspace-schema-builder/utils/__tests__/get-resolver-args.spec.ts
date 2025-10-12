@@ -19,6 +19,7 @@ describe('getResolverArgs', () => {
         isNullable: true,
         isArray: true,
       },
+      offset: { type: GraphQLInt, isNullable: true },
     },
     findOne: {
       filter: { kind: GqlInputTypeDefinitionKind.Filter, isNullable: false },

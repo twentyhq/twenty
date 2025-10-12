@@ -5,6 +5,8 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { DEACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/deactivateWorkflowVersion';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,15 +14,20 @@ import {
   type DeactivateWorkflowVersionMutation,
   type DeactivateWorkflowVersionMutationVariables,
 } from '~/generated-metadata/graphql';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
 export const useDeactivateWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const [mutate] = useMutation<
     DeactivateWorkflowVersionMutation,
     DeactivateWorkflowVersionMutationVariables
   >(DEACTIVATE_WORKFLOW_VERSION, {
     client: apolloCoreClient,
   });
+
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
     useObjectMetadataItem({
@@ -67,7 +74,9 @@ export const useDeactivateWorkflowVersion = () => {
             ...workflowVersion,
             status: 'DEACTIVATED',
           },
-          objectMetadataItems: [objectMetadataItemWorkflowVersion],
+          objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
+          upsertRecordsInStore,
         });
       },
     });

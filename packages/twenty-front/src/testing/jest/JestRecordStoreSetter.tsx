@@ -10,10 +10,10 @@ export const JestRecordStoreSetter = ({
   children: ReactNode;
   records: ObjectRecord[];
 }) => {
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   useEffect(() => {
-    upsertRecords(records);
+    upsertRecordsInStore(records);
   });
 
   return <>{children}</>;

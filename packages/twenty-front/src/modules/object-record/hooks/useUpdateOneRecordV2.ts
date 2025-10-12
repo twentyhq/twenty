@@ -7,10 +7,12 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
-import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
@@ -29,6 +31,8 @@ type UpdateOneRecordArgs<UpdatedObjectRecord> = {
 };
 export const useUpdateOneRecordV2 = () => {
   const apolloCoreClient = useApolloCoreClient();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { registerObjectOperation } = useRegisterObjectOperation();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -57,7 +61,11 @@ export const useUpdateOneRecordV2 = () => {
 
     const computedRecordGqlFields =
       recordGqlFields ??
-      generateDepthOneRecordGqlFields({ objectMetadataItem });
+      generateDepthRecordGqlFieldsFromObject({
+        objectMetadataItem,
+        objectMetadataItems,
+        depth: 1,
+      });
 
     const optimisticRecordInput =
       optimisticRecord ??
@@ -107,9 +115,11 @@ export const useUpdateOneRecordV2 = () => {
       isDefined(cachedRecordWithConnection);
 
     if (shouldHandleOptimisticCache) {
-      const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
+      const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
         objectMetadataItem,
+        objectMetadataItems,
         record: optimisticRecordInput,
+        depth: 1,
       });
 
       updateRecordFromCache({
@@ -127,6 +137,8 @@ export const useUpdateOneRecordV2 = () => {
         currentRecord: cachedRecordWithConnection,
         updatedRecord: optimisticRecordWithConnection,
         objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+        upsertRecordsInStore,
       });
     }
 
@@ -165,6 +177,8 @@ export const useUpdateOneRecordV2 = () => {
             currentRecord: computedOptimisticRecord,
             updatedRecord: record,
             objectMetadataItems,
+            objectPermissionsByObjectMetadataId,
+            upsertRecordsInStore,
           });
         },
       })
@@ -178,9 +192,11 @@ export const useUpdateOneRecordV2 = () => {
         ).filter((diffKey) => !cachedRecordKeys.has(diffKey));
 
         const recordGqlFields = {
-          ...computeDepthOneRecordGqlFieldsFromRecord({
+          ...generateDepthRecordGqlFieldsFromRecord({
             objectMetadataItem,
+            objectMetadataItems,
             record: cachedRecord,
+            depth: 1,
           }),
           ...buildRecordFromKeysWithSameValue(
             recordKeysAddedByOptimisticCache,
@@ -209,11 +225,17 @@ export const useUpdateOneRecordV2 = () => {
           currentRecord: optimisticRecordWithConnection,
           updatedRecord: cachedRecordWithConnection,
           objectMetadataItems,
+          upsertRecordsInStore,
+          objectPermissionsByObjectMetadataId,
         });
 
         throw error;
       });
 
+    registerObjectOperation(objectMetadataItem.nameSingular, {
+      type: 'update-one',
+      result: { updatedRecord, updateInput: updateOneRecordInput },
+    });
     return updatedRecord?.data?.[mutationResponseField] ?? null;
   };
 

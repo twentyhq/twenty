@@ -12,6 +12,7 @@ export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
 export { findOrThrow } from './array/findOrThrow';
+export { getContiguousIncrementalValues } from './array/getContiguousIncrementalValues';
 export { isNonEmptyArray } from './array/isNonEmptyArray';
 export { sumByProperty } from './array/sumByProperty';
 export { assertUnreachable } from './assertUnreachable';

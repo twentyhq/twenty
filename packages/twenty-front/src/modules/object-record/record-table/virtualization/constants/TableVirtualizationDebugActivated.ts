@@ -1,0 +1,1 @@
+export const TABLE_VIRTUALIZATION_DEBUG_ACTIVATED = false;
