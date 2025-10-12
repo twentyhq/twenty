@@ -5,4 +5,3 @@ import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity
 export type MetadataFlatEntityMaps<T extends AllMetadataName> = FlatEntityMaps<
   MetadataFlatEntity<T>
 >;
-

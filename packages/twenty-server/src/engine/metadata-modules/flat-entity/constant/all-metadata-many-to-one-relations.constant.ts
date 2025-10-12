@@ -1,7 +1,7 @@
 import { type ExtractPropertiesThatEndsWithId } from 'twenty-shared/types';
 
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
-import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
+import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 
 type PropertyNameToRelationName<T extends string> = T extends `${infer Name}Id`
   ? Name

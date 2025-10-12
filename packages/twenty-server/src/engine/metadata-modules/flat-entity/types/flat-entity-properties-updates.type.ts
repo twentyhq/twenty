@@ -12,4 +12,3 @@ export type FlatEntityPropertiesUpdates<T extends AllMetadataName> = Array<
     >
   >
 >;
-

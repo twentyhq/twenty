@@ -30,4 +30,3 @@ export type FromWorkspaceMigrationActionToMetadataName<TAction> = {
     ? K
     : never;
 }[AllMetadataName];
-

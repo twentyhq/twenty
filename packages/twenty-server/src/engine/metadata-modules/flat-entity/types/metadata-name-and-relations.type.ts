@@ -1,5 +1,5 @@
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
-import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
+import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 
 type ExtractRelationIdProperties<T> = {
   [K in keyof T]: K extends `${infer _}Id`

@@ -3,4 +3,3 @@ import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/ty
 
 export type MetadataEntity<T extends AllMetadataName> =
   AllFlatEntityTypesByMetadataName[T]['entity'];
-
