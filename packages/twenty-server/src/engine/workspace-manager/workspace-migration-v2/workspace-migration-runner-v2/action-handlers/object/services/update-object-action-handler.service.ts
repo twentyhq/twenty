@@ -20,7 +20,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/is-property-update.type';
 import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
-import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/get-workspace-schema-context-for-migration.util';
 import {
   collectEnumOperationsForObject,
@@ -53,7 +53,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
 
     const updatedFlatObjectMetadata = {
       ...existingFlatObjectMetadata,
-      ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     };
 
     const updatedFlatObjectMetadataMaps =
@@ -79,7 +79,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
 
     await objectMetadataRepository.update(
       action.objectMetadataId,
-      fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
   }
 

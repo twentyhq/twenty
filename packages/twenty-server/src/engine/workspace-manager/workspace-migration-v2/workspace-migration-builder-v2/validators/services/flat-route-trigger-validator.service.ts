@@ -9,7 +9,7 @@ import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/type
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
-import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatRouteTriggerValidatorService {
@@ -46,7 +46,7 @@ export class FlatRouteTriggerValidatorService {
 
     const updatedFlatRouteTrigger = {
       ...existingFlatRouteTrigger,
-      ...fromWorkspaceMigrationUpdateActionToPartialEntity({
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
         updates: flatEntityUpdates,
       }),
     };

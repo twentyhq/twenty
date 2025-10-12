@@ -13,7 +13,7 @@ import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-f
 import { ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
 import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
-import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -39,7 +39,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
 
     await serverlessFunctionRepository.update(
       serverlessFunctionId,
-      fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
 
     const serverlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({

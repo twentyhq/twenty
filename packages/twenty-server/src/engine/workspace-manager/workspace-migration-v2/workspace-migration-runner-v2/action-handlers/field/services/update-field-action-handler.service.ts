@@ -35,7 +35,7 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
-import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -88,7 +88,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const updatedFlatFieldMetadata = {
       ...existingFlatFieldMetadata,
-      ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     };
 
     const updatedFlatFieldMetadataMaps =
@@ -115,7 +115,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     await fieldMetadataRepository.update(
       fieldMetadataId,
-      fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
   }
 

@@ -1,4 +1,4 @@
-export const fromWorkspaceMigrationUpdateActionToPartialEntity = <
+export const fromFlatEntityPropertiesUpdatesToPartialFlatEntity = <
   T extends { updates: Array<{ property: string; to: unknown }> },
 >(
   action: T,

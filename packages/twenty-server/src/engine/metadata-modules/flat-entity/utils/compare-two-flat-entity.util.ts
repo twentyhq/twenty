@@ -67,7 +67,7 @@ export const compareTwoFlatEntity = <
         case 'CREATE':
         case 'REMOVE':
         default: {
-          // Should never occurs, we should only provide null never undefined and so on
+          // Should never occur, we should only provide null never undefined and so on
           return [];
         }
       }

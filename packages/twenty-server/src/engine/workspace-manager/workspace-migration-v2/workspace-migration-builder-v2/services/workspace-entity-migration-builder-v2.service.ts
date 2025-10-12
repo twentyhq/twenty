@@ -24,7 +24,7 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { SuccessfulFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/successful-flat-entity-validate-and-build.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
-import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 export type ValidateAndBuildArgs<T extends AllMetadataName> = {
   buildOptions: WorkspaceMigrationBuilderOptions;
@@ -255,7 +255,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
       const updatedFlatEntity = {
         ...existingFlatEntity,
-        ...fromWorkspaceMigrationUpdateActionToPartialEntity({
+        ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
           updates: flatEntityToUpdate.updates,
         }),
       };
@@ -266,7 +266,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       });
       dependencyOptimisticFlatEntityMaps =
         validationResult.dependencyOptimisticFlatEntityMaps;
-      validationResult.action;
+
       actionsResult.updated.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action

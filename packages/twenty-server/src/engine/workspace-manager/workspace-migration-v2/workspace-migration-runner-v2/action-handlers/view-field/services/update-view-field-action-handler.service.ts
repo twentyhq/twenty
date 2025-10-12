@@ -11,7 +11,7 @@ import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-mo
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { UpdateViewFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/workspace-migration-view-field-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
-import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -35,7 +35,7 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
 
     const updatedViewField = {
       ...existingViewField,
-      ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     };
 
     const updatedFlatViewFieldMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
@@ -57,7 +57,7 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
     const viewFieldRepository =
       queryRunner.manager.getRepository<ViewFieldEntity>(ViewFieldEntity);
 
-    const update = fromWorkspaceMigrationUpdateActionToPartialEntity(action);
+    const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action);
 
     await viewFieldRepository.update(viewFieldId, update);
   }
