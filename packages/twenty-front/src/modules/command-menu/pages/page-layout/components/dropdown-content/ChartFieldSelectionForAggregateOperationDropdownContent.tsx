@@ -1,6 +1,7 @@
 import { ChartAggregateOperationSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { getYAxisSortConfiguration } from '@/command-menu/pages/page-layout/utils/getYAxisSortConfiguration';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -17,7 +18,6 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { type LineChartConfiguration } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
@@ -37,10 +37,8 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
-  const currentFieldMetadataId =
-    configuration.__typename === 'BarChartConfiguration'
-      ? configuration.secondaryAxisGroup
-      : (configuration as LineChartConfiguration).groupByFieldMetadataIdY;
+  const { groupByFieldMetadataIdY: currentFieldMetadataId } =
+    getYAxisSortConfiguration(configuration);
 
   const [selectedFieldMetadataId, setSelectedFieldMetadataId] = useState(
     currentFieldMetadataId,

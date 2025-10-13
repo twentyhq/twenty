@@ -3,6 +3,7 @@ import { useGraphGroupBySortOptionLabels } from '@/command-menu/pages/page-layou
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { getYAxisSortConfiguration } from '@/command-menu/pages/page-layout/utils/getYAxisSortConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -13,10 +14,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  type GraphOrderBy,
-  type LineChartConfiguration,
-} from '~/generated/graphql';
+import { type GraphOrderBy } from '~/generated/graphql';
 
 export const ChartSortByGroupByFieldDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -31,10 +29,8 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
-  const currentOrderBy =
-    configuration.__typename === 'BarChartConfiguration'
-      ? configuration.secondaryAxisOrderBy
-      : (configuration as LineChartConfiguration).orderByY;
+  const { currentOrderBy, groupByFieldMetadataIdY, getUpdateConfig } =
+    getYAxisSortConfiguration(configuration);
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -51,13 +47,8 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
   const { closeDropdown } = useCloseDropdown();
 
   const handleSelectSortOption = (orderBy: GraphOrderBy) => {
-    const configToUpdate =
-      configuration.__typename === 'BarChartConfiguration'
-        ? { secondaryAxisOrderBy: orderBy }
-        : { orderByY: orderBy };
-
     updateCurrentWidgetConfig({
-      configToUpdate,
+      configToUpdate: getUpdateConfig(orderBy),
     });
     closeDropdown();
   };
@@ -87,11 +78,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
               <MenuItemSelect
                 text={getGroupBySortOptionLabel({
                   graphOrderBy: sortOption.value,
-                  groupByFieldMetadataId:
-                    configuration.__typename === 'BarChartConfiguration'
-                      ? configuration.secondaryAxisGroup
-                      : (configuration as LineChartConfiguration)
-                          .groupByFieldMetadataIdY,
+                  groupByFieldMetadataId: groupByFieldMetadataIdY,
                 })}
                 selected={currentOrderBy === sortOption.value}
                 focused={selectedItemId === sortOption.value}
