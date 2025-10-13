@@ -31,6 +31,7 @@ import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor
 import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
@@ -38,6 +39,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly billingService: BillingService,
   ) {}
 
@@ -46,6 +48,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     shouldComputeWorkflowRunStatus = true,
+    currentStepCount = 0,
   }: WorkflowExecutorInput) {
     await Promise.all(
       stepIds.map(async (stepIdToExecute) => {
@@ -53,6 +56,7 @@ export class WorkflowExecutorWorkspaceService {
           stepId: stepIdToExecute,
           workflowRunId,
           workspaceId,
+          currentStepCount,
         });
       }),
     );
@@ -69,6 +73,7 @@ export class WorkflowExecutorWorkspaceService {
     stepId,
     workflowRunId,
     workspaceId,
+    currentStepCount,
   }: WorkflowBranchExecutorInput) {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
@@ -137,20 +142,35 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
-    if (shouldProcessNextSteps) {
-      const nextStepIdsToExecute = await this.getNextStepIdsToExecute({
-        executedStep: stepToExecute,
-        executedStepResult: actionOutput,
-      });
+    if (!shouldProcessNextSteps) {
+      return;
+    }
 
-      if (isDefined(nextStepIdsToExecute) && nextStepIdsToExecute.length > 0) {
-        await this.executeFromSteps({
-          stepIds: nextStepIdsToExecute,
-          workflowRunId,
-          workspaceId,
-          shouldComputeWorkflowRunStatus: false,
-        });
-      }
+    const shouldRunAnotherJob = currentStepCount && currentStepCount > 100;
+
+    if (shouldRunAnotherJob) {
+      await this.workflowRunnerWorkspaceService.enqueueWorkflowRun(
+        workspaceId,
+        workflowRunId,
+        stepId,
+      );
+
+      return;
+    }
+
+    const nextStepIdsToExecute = await this.getNextStepIdsToExecute({
+      executedStep: stepToExecute,
+      executedStepResult: actionOutput,
+    });
+
+    if (isDefined(nextStepIdsToExecute) && nextStepIdsToExecute.length > 0) {
+      await this.executeFromSteps({
+        stepIds: nextStepIdsToExecute,
+        workflowRunId,
+        workspaceId,
+        shouldComputeWorkflowRunStatus: false,
+        currentStepCount: (currentStepCount ?? 0) + 1,
+      });
     }
   }
 

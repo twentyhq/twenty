@@ -16,6 +16,7 @@ import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/w
 import { ToolExecutorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-executor-workflow-action';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
+import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     EmptyActionModule,
     FeatureFlagModule,
     AiModule,
+    WorkflowRunnerModule,
   ],
   providers: [
     WorkflowExecutorWorkspaceService,

@@ -176,7 +176,7 @@ export class WorkflowRunnerWorkspaceService {
     });
   }
 
-  private async enqueueWorkflowRun(
+  async enqueueWorkflowRun(
     workspaceId: string,
     workflowRunId: string,
     lastExecutedStepId?: string,
