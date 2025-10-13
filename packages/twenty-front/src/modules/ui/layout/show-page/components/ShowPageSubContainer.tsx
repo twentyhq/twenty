@@ -5,12 +5,10 @@ import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { type RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import { getCardComponent } from '@/object-record/record-show/utils/getCardComponent';
-import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { PageLayoutType } from '~/generated/graphql';
 
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -115,55 +113,43 @@ export const ShowPageSubContainer = ({
     layout && !layout.hideSummaryAndFields && !isMobile && !isInRightDrawer;
 
   return (
-    <LayoutRenderingProvider
-      value={{
-        targetRecordIdentifier: {
-          id: targetRecordIdentifier.id,
-          targetObjectNameSingular:
-            targetRecordIdentifier.targetObjectNameSingular,
-        },
-        layoutType: PageLayoutType.RECORD_PAGE,
-        isInRightDrawer,
-      }}
+    <TabListComponentInstanceContext.Provider
+      value={{ instanceId: tabListComponentId }}
     >
-      <TabListComponentInstanceContext.Provider
-        value={{ instanceId: tabListComponentId }}
-      >
-        {displaySummaryAndFields && (
-          <ShowPageLeftContainer forceMobile={isMobile}>
-            {summaryCard}
-            {fieldsCard}
-          </ShowPageLeftContainer>
+      {displaySummaryAndFields && (
+        <ShowPageLeftContainer forceMobile={isMobile}>
+          {summaryCard}
+          {fieldsCard}
+        </ShowPageLeftContainer>
+      )}
+      <StyledShowPageRightContainer isMobile={isMobile}>
+        <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
+          <StyledTabList
+            behaveAsLinks={!isInRightDrawer}
+            loading={loading}
+            tabs={tabs}
+            isInRightDrawer={isInRightDrawer}
+            componentInstanceId={tabListComponentId}
+          />
+        </StyledTabListContainer>
+        {(isMobile || isInRightDrawer) && summaryCard}
+        <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+          {renderActiveTabContent()}
+        </StyledContentContainer>
+        {isInRightDrawer && (
+          <RightDrawerFooter
+            actions={[
+              <RecordShowRightDrawerActionMenu />,
+              <RecordShowRightDrawerOpenRecordButton
+                objectNameSingular={
+                  targetRecordIdentifier.targetObjectNameSingular
+                }
+                recordId={targetRecordIdentifier.id}
+              />,
+            ]}
+          />
         )}
-        <StyledShowPageRightContainer isMobile={isMobile}>
-          <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
-            <StyledTabList
-              behaveAsLinks={!isInRightDrawer}
-              loading={loading}
-              tabs={tabs}
-              isInRightDrawer={isInRightDrawer}
-              componentInstanceId={tabListComponentId}
-            />
-          </StyledTabListContainer>
-          {(isMobile || isInRightDrawer) && summaryCard}
-          <StyledContentContainer isInRightDrawer={isInRightDrawer}>
-            {renderActiveTabContent()}
-          </StyledContentContainer>
-          {isInRightDrawer && (
-            <RightDrawerFooter
-              actions={[
-                <RecordShowRightDrawerActionMenu />,
-                <RecordShowRightDrawerOpenRecordButton
-                  objectNameSingular={
-                    targetRecordIdentifier.targetObjectNameSingular
-                  }
-                  recordId={targetRecordIdentifier.id}
-                />,
-              ]}
-            />
-          )}
-        </StyledShowPageRightContainer>
-      </TabListComponentInstanceContext.Provider>
-    </LayoutRenderingProvider>
+      </StyledShowPageRightContainer>
+    </TabListComponentInstanceContext.Provider>
   );
 };
