@@ -63,6 +63,7 @@ const generateSourceFlatFieldMetadata = ({
   }
 
   return {
+    viewFiltersIds: [],
     viewFieldIds: [],
     createdAt,
     updatedAt: createdAt,
@@ -129,6 +130,7 @@ const generateTargetFlatFieldMetadata = ({
   return {
     morphId: null,
     viewFieldIds: [],
+    viewFiltersIds: [],
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
     name: sourceFlatObjectMetadata.nameSingular,
     label: sourceFlatObjectMetadata.labelSingular,

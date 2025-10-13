@@ -26,6 +26,7 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 
 @Entity('fieldMetadata')
 @Check(
@@ -190,4 +191,7 @@ export class FieldMetadataEntity<
 
   @OneToMany(() => ViewFieldEntity, (viewField) => viewField.fieldMetadata)
   viewFields: Relation<ViewFieldEntity[]>;
+
+  @OneToMany(() => ViewFilterEntity, (viewField) => viewField.fieldMetadata)
+  viewFilters: Relation<ViewFilterEntity[]>;
 }

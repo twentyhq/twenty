@@ -47,6 +47,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: 'uuid',
+    viewFiltersIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -81,6 +82,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: false,
     defaultValue: "''",
+    viewFiltersIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -115,6 +117,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: 'now',
+    viewFiltersIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -149,6 +152,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: 'now',
+    viewFiltersIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -183,6 +187,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: null,
+    viewFiltersIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -217,7 +222,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: { name: "''", source: "'MANUAL'" },
-
+    viewFiltersIds: [],
     createdAt,
     updatedAt: createdAt,
     options: null,
@@ -251,6 +256,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: 0,
+    viewFiltersIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -285,6 +291,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: null,
+    viewFiltersIds: [],
 
     createdAt,
     updatedAt: createdAt,
