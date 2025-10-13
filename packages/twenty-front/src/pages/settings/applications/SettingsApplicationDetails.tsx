@@ -41,9 +41,11 @@ export const SettingsApplicationDetails = () => {
   const shouldDisplayObjects =
     !loading && isDefined(objects) && objects.length > 0;
 
+  const objectIds = objects.map((object) => object.id);
+
   const applicationObjectMetadataItems = shouldDisplayObjects
     ? objectMetadataItems.filter((objectMetadataItem) =>
-        objects.map((object) => object.id).includes(objectMetadataItem.id),
+        objectIds.includes(objectMetadataItem.id),
       )
     : [];
 
@@ -52,58 +54,56 @@ export const SettingsApplicationDetails = () => {
     : data?.findOneApplication?.name;
 
   return (
-    <>
-      <SubMenuTopBarContainer
-        title={title}
-        links={[
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          {
-            children: t`Applications`,
-            href: getSettingsPath(SettingsPath.Applications),
-          },
-          { children: t`Application` },
-        ]}
-      >
-        <SettingsPageContainer>
-          {loading && <SettingsApplicationDetailSkeletonLoader />}
-          {shouldDisplayServerlessFunctions && (
-            <Section>
-              <H2Title
-                title={t`Application serverless functions`}
-                description={t`Serverless functions created by application`}
-              />
-              <SettingsServerlessFunctionsTable
-                serverlessFunctions={serverlessFunctions}
-              />
-            </Section>
-          )}
-          {shouldDisplayAgents && (
-            <Section>
-              <H2Title
-                title={t`Application agents`}
-                description={t`Agents created by application`}
-              />
-              <SettingsAIAgentsTable agents={agents} withSearchBar={false} />
-            </Section>
-          )}
-          {shouldDisplayObjects && (
-            <Section>
-              <H2Title
-                title={t`Application objects`}
-                description={t`Objects created by application`}
-              />
-              <SettingsObjectTable
-                activeObjects={applicationObjectMetadataItems}
-                inactiveObjects={[]}
-                withSearchBar={false}
-              />
-            </Section>
-          )}
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </>
+    <SubMenuTopBarContainer
+      title={title}
+      links={[
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.Workspace),
+        },
+        {
+          children: t`Applications`,
+          href: getSettingsPath(SettingsPath.Applications),
+        },
+        { children: t`Application` },
+      ]}
+    >
+      <SettingsPageContainer>
+        {loading && <SettingsApplicationDetailSkeletonLoader />}
+        {shouldDisplayServerlessFunctions && (
+          <Section>
+            <H2Title
+              title={t`Application serverless functions`}
+              description={t`Serverless functions created by application`}
+            />
+            <SettingsServerlessFunctionsTable
+              serverlessFunctions={serverlessFunctions}
+            />
+          </Section>
+        )}
+        {shouldDisplayAgents && (
+          <Section>
+            <H2Title
+              title={t`Application agents`}
+              description={t`Agents created by application`}
+            />
+            <SettingsAIAgentsTable agents={agents} withSearchBar={false} />
+          </Section>
+        )}
+        {shouldDisplayObjects && (
+          <Section>
+            <H2Title
+              title={t`Application objects`}
+              description={t`Objects created by application`}
+            />
+            <SettingsObjectTable
+              activeObjects={applicationObjectMetadataItems}
+              inactiveObjects={[]}
+              withSearchBar={false}
+            />
+          </Section>
+        )}
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
   );
 };

@@ -14,9 +14,6 @@ export class ApplicationDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  universalIdentifier?: string;
-
   @IsString()
   @Field()
   name: string;

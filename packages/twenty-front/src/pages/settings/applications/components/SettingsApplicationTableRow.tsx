@@ -4,11 +4,11 @@ import { type ReactNode } from 'react';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { type Application } from '~/generated/graphql';
+import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 
 export type SettingsApplicationTableRowProps = {
   action: ReactNode;
-  application: Application;
+  application: ApplicationWithoutRelation;
   link?: string;
 };
 

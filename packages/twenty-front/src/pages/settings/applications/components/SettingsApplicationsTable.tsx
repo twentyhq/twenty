@@ -16,7 +16,7 @@ import {
   StyledApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { useTheme } from '@emotion/react';
-import { type Application } from '~/generated/graphql';
+import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 
 const StyledSearchInput = styled(SettingsTextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
@@ -34,7 +34,7 @@ const StyledTableHeaderRow = styled(StyledApplicationTableRow)`
 export const SettingsApplicationsTable = ({
   applications,
 }: {
-  applications: Application[];
+  applications: ApplicationWithoutRelation[];
 }) => {
   const { t } = useLingui();
   const theme = useTheme();

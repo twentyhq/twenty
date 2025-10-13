@@ -183,7 +183,7 @@ export const SettingsObjectTable = ({
             ))}
           </TableSection>
         )}
-        {isNonEmptyArray(inactiveObjects) && (
+        {isNonEmptyArray(sortedInactiveObjectSettingsItems) && (
           <TableSection title={t`Inactive`}>
             {filteredInactiveObjectSettingsItems.map((objectSettingsItem) => (
               <SettingsObjectMetadataItemTableRow

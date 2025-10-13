@@ -34,7 +34,7 @@ export class ApplicationService {
     workspaceId: string,
   ): Promise<ApplicationEntity> {
     const application = await this.applicationRepository.findOne({
-      where: { workspaceId },
+      where: { workspaceId, id: applicationId },
       relations: ['serverlessFunctions', 'agents', 'objects'],
     });
 

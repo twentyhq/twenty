@@ -1,25 +1,26 @@
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { msg } from '@lingui/core/macro';
-import { type Application } from '~/generated/graphql';
+import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 
-export const SETTINGS_APPLICATION_TABLE_METADATA: TableMetadata<Application> = {
-  tableId: 'settingsApplication',
-  fields: [
-    {
-      fieldLabel: msg`Name`,
+export const SETTINGS_APPLICATION_TABLE_METADATA: TableMetadata<ApplicationWithoutRelation> =
+  {
+    tableId: 'settingsApplication',
+    fields: [
+      {
+        fieldLabel: msg`Name`,
+        fieldName: 'name',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: msg`Description`,
+        fieldName: 'description',
+        fieldType: 'string',
+        align: 'left',
+      },
+    ],
+    initialSort: {
       fieldName: 'name',
-      fieldType: 'string',
-      align: 'left',
+      orderBy: 'AscNullsLast',
     },
-    {
-      fieldLabel: msg`Description`,
-      fieldName: 'description',
-      fieldType: 'string',
-      align: 'left',
-    },
-  ],
-  initialSort: {
-    fieldName: 'name',
-    orderBy: 'AscNullsLast',
-  },
-};
+  };

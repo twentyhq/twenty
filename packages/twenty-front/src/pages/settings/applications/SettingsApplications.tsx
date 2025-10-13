@@ -7,7 +7,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { Section } from 'twenty-ui/layout';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
-import { type Application } from '~/generated/graphql';
 
 export const SettingsApplications = () => {
   const { data } = useFindManyApplicationsQuery();
@@ -30,7 +29,7 @@ export const SettingsApplications = () => {
             description={t`Installed applications`}
           />
           <SettingsApplicationsTable
-            applications={(data?.findManyApplications || []) as Application[]}
+            applications={data?.findManyApplications ?? []}
           />
         </Section>
       </SettingsPageContainer>

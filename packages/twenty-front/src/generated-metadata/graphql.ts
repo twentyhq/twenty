@@ -208,7 +208,6 @@ export type Application = {
   name: Scalars['String'];
   objects: Array<Object>;
   serverlessFunctions: Array<ServerlessFunction>;
-  universalIdentifier?: Maybe<Scalars['UUID']>;
 };
 
 export type ApprovedAccessDomain = {
