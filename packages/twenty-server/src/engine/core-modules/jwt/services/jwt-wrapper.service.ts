@@ -16,16 +16,16 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
-  type JwtPayload,
-  JwtTokenTypeEnum,
-  type TransientTokenJwtPayload,
-  type RefreshTokenJwtPayload,
-  type WorkspaceAgnosticTokenJwtPayload,
   type AccessTokenJwtPayload,
   type FileTokenJwtPayload,
+  type JwtPayload,
+  JwtTokenTypeEnum,
+  type RefreshTokenJwtPayload,
+  type TransientTokenJwtPayload,
+  type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class JwtWrapperService {
@@ -166,5 +166,27 @@ export class JwtWrapperService {
       // (e.g. the REST API playground)
       return ExtractJwt.fromUrlQueryParameter('token')(request);
     };
+  }
+
+  isTokenExpired(accessToken: string, bufferSeconds = 300): boolean {
+    if (!accessToken) {
+      return true;
+    }
+
+    try {
+      const decoded = this.decode<jwt.JwtPayload>(accessToken);
+
+      if (!isDefined(decoded)) return true;
+      const exp = decoded.exp;
+
+      if (!isDefined(exp)) return true;
+      const expiresAt = new Date(exp * 1000);
+      const now = new Date();
+      const expiresInSeconds = (expiresAt.getTime() - now.getTime()) / 1000;
+
+      return expiresInSeconds <= bufferSeconds;
+    } catch {
+      return true;
+    }
   }
 }

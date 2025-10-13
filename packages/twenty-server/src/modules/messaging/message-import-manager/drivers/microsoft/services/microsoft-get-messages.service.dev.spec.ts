@@ -17,6 +17,7 @@ const mockMessageIds = [
 ];
 
 const refreshToken = 'replace-with-your-refresh-token';
+const accessToken = 'replace-with-your-access-token';
 
 xdescribe('Microsoft dev tests : get messages service', () => {
   let service: MicrosoftGetMessagesService;
@@ -45,6 +46,7 @@ xdescribe('Microsoft dev tests : get messages service', () => {
     handle: 'John.Walker@outlook.fr',
     handleAliases: '',
     refreshToken: refreshToken,
+    accessToken: accessToken,
   };
 
   it('should fetch and format messages successfully', async () => {

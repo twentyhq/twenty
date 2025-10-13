@@ -55,6 +55,7 @@ describe('Microsoft get messages service', () => {
       id: 'connected-account-id',
       provider: ConnectedAccountProvider.MICROSOFT,
       refreshToken: 'refresh-token',
+      accessToken: 'acccess-token',
       handle: 'John.l@outlook.fr',
       handleAliases: '',
     };
@@ -149,6 +150,7 @@ describe('Microsoft get messages service', () => {
       id: 'connected-account-id',
       provider: ConnectedAccountProvider.MICROSOFT,
       refreshToken: 'refresh-token',
+      accessToken: 'access-token',
       handle: 'John.l@outlook.fr',
       handleAliases: '',
     };

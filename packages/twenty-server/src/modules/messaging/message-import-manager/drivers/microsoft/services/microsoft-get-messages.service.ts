@@ -17,7 +17,12 @@ import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
 
 type ConnectedAccountType = Pick<
   ConnectedAccountWorkspaceEntity,
-  'refreshToken' | 'id' | 'provider' | 'handle' | 'handleAliases'
+  | 'refreshToken'
+  | 'accessToken'
+  | 'id'
+  | 'provider'
+  | 'handle'
+  | 'handleAliases'
 >;
 
 @Injectable()
