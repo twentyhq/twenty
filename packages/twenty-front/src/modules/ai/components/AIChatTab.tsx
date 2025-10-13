@@ -106,7 +106,6 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
                     message={message}
                     key={message.id}
                     error={shouldShowError ? error : null}
-                    isRetrying={isStreaming}
                   />
                 );
               })}

@@ -145,12 +145,10 @@ export const AIChatMessage = ({
   message,
   isLastMessageStreaming,
   error,
-  isRetrying,
 }: {
   message: UIMessageWithMetadata;
   isLastMessageStreaming: boolean;
   error?: Error | null;
-  isRetrying?: boolean;
 }) => {
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
@@ -204,12 +202,9 @@ export const AIChatMessage = ({
           )}
           {showError &&
             (contextStoreCurrentObjectMetadataItemId ? (
-              <AIChatErrorMessageWithRecordsContext
-                error={error}
-                isRetrying={isRetrying}
-              />
+              <AIChatErrorMessageWithRecordsContext error={error} />
             ) : (
-              <AIChatErrorMessage error={error} isRetrying={isRetrying} />
+              <AIChatErrorMessage error={error} />
             ))}
           {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">

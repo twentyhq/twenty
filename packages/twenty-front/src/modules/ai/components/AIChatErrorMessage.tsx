@@ -45,19 +45,17 @@ const StyledErrorMessage = styled.div`
 
 type AIChatErrorMessageProps = {
   error: Error;
-  isRetrying?: boolean;
   records?: ObjectRecord[];
 };
 
 export const AIChatErrorMessage = ({
   error,
-  isRetrying = false,
   records,
 }: AIChatErrorMessageProps) => {
   const theme = useTheme();
   const { chat } = useAgentChatContextOrThrow();
   const { buildRequestBody } = useAgentChatRequestBody();
-  const { regenerate } = useChat({ chat });
+  const { regenerate, status } = useChat({ chat });
 
   const handleRetry = () => {
     regenerate({
@@ -81,7 +79,7 @@ export const AIChatErrorMessage = ({
         size="small"
         Icon={IconRefresh}
         onClick={handleRetry}
-        disabled={isRetrying}
+        disabled={status === 'streaming'}
         title={t`Retry`}
       />
     </StyledErrorContainer>
