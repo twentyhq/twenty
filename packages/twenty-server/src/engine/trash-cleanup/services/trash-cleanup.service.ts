@@ -3,12 +3,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { In, LessThan } from 'typeorm';
 
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   TRASH_CLEANUP_BATCH_SIZE,
   TRASH_CLEANUP_MAX_RECORDS_PER_WORKSPACE,
 } from 'src/engine/trash-cleanup/constants/trash-cleanup.constants';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export type TrashCleanupInput = {
   workspaceId: string;
