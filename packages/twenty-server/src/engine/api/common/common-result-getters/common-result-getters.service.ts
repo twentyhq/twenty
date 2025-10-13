@@ -7,7 +7,6 @@ import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/int
 import { type QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
-import { isQueryResultFieldValueARecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-record-array.guard';
 import { ActivityQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/activity-query-result-getter.handler';
 import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler';
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
@@ -137,20 +136,12 @@ export class CommonResultGettersService {
     objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
   ): Promise<ObjectRecord[]> {
-    if (isQueryResultFieldValueARecordArray(queryResultField)) {
-      return await this.processRecordArray(
-        queryResultField,
-        objectMetadataItemId,
-        objectMetadataMaps,
-        workspaceId,
-      );
-    } else {
-      this.logger.warn(
-        `Query result field is not a record array. This is an undetected case in query result getter that should be implemented !!`,
-      );
-
-      return queryResultField;
-    }
+    return await this.processRecordArray(
+      queryResultField,
+      objectMetadataItemId,
+      objectMetadataMaps,
+      workspaceId,
+    );
   }
 
   private getHandler(objectType: string): QueryResultGetterHandlerInterface {
