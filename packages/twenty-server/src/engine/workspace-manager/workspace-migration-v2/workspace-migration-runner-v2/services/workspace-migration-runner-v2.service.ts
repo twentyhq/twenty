@@ -97,11 +97,25 @@ export class WorkspaceMigrationRunnerV2Service {
         'Runner',
         `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,
       );
-      if (
-        flatEntitiesCacheToInvalidate.includes('flatObjectMetadataMaps') ||
-        flatEntitiesCacheToInvalidate.includes('flatFieldMetadataMaps')
-      ) {
-        // Temporarily invalidation old cache too until it's deprecated
+      const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
+        (action) => {
+          switch (action.type) {
+            case 'delete_field':
+            case 'create_field':
+            case 'update_field':
+            case 'delete_object':
+            case 'create_object':
+            case 'update_object': {
+              return true;
+            }
+            default: {
+              return false;
+            }
+          }
+        },
+      );
+
+      if (shouldIncrementMetadataGraphqlSchemaVersion) {
         await this.workspaceMetadataVersionService.incrementMetadataVersion(
           workspaceId,
         );
