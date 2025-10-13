@@ -22,7 +22,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 type SanitizedUpdateFieldInput = ReturnType<
@@ -138,6 +138,7 @@ type FlatFieldMetadataRelatedEntities = {
   flatViewFilterToDelete: FlatViewFilter[];
   flatViewFilterToUpdate: FlatViewFilter[];
 };
+
 type FlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadatasToUpdate: FlatFieldMetadata[];
 } & FlatFieldMetadataRelatedEntities;

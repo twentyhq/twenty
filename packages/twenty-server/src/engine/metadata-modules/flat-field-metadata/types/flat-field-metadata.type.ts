@@ -9,7 +9,7 @@ export const FIELD_METADATA_RELATION_PROPERTIES = [
   'indexFieldMetadatas',
   'object',
   'viewFields',
-  'viewFilters'
+  'viewFilters',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 
 export type FieldMetadataEntityRelationProperties =
