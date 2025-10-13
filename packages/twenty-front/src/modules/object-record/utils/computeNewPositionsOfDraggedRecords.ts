@@ -26,12 +26,6 @@ export const computeNewPositionsOfDraggedRecords = ({
     return null;
   }
 
-  const targetIsInSourceRecordIds = sourceRecordIds.includes(targetRecordId);
-
-  if (targetIsInSourceRecordIds) {
-    return null;
-  }
-
   const targetPosition = targetItem.position;
 
   const indexOfItemToMove = arrayOfRecordsWithPosition.findIndex(
