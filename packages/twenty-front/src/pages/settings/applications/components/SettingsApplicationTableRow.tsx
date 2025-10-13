@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 
@@ -29,17 +28,11 @@ const StyledActionTableCell = styled(TableCell)`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledIconContainer = styled.div`
-  flex-shrink: 0;
-`;
-
 export const SettingsApplicationTableRow = ({
   action,
   application,
   link,
 }: SettingsApplicationTableRowProps) => {
-  const theme = useTheme();
-
   return (
     <StyledApplicationTableRow key={application.id} to={link}>
       <StyledNameTableCell>
