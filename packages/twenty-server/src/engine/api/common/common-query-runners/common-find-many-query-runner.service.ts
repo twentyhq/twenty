@@ -174,6 +174,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       objectRecords.pop();
     }
 
+    if (!isForwardPagination) {
+      objectRecords.reverse();
+    }
+
     const parentObjectRecordsAggregatedValues =
       await aggregateQueryBuilder.getRawOne();
 

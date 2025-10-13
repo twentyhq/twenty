@@ -135,7 +135,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
   ) {
     return {
       data: {
-        [objectNamePlural]: records.reverse(),
+        [objectNamePlural]: records,
       },
       totalCount: aggregatedValues.totalCount,
       pageInfo,
