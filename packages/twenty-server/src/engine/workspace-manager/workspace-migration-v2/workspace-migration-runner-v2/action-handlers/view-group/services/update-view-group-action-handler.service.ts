@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-    OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-    WorkspaceMigrationRunnerActionHandler,
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -68,4 +68,3 @@ export class UpdateViewGroupActionHandlerService extends WorkspaceMigrationRunne
     return;
   }
 }
-

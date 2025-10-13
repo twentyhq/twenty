@@ -19,4 +19,3 @@ export const updateCoreViewGroupQueryFactory = ({
     input,
   },
 });
-
