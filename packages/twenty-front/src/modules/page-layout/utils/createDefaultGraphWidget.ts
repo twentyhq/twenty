@@ -47,7 +47,8 @@ const createDefaultGraphConfiguration = (
         graphType: GraphType.VERTICAL_BAR,
         displayDataLabel: false,
         color: 'blue' satisfies ThemeColor,
-        primaryAxisGroupByFieldMetadataId: fieldSelection.groupByFieldMetadataIdX,
+        primaryAxisGroupByFieldMetadataId:
+          fieldSelection.groupByFieldMetadataIdX,
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: ExtendedAggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
@@ -66,7 +67,8 @@ const createDefaultGraphConfiguration = (
         graphType: GraphType.HORIZONTAL_BAR,
         displayDataLabel: false,
         color: 'blue' satisfies ThemeColor,
-        primaryAxisGroupByFieldMetadataId: fieldSelection.groupByFieldMetadataIdX,
+        primaryAxisGroupByFieldMetadataId:
+          fieldSelection.groupByFieldMetadataIdX,
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: ExtendedAggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
