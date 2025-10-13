@@ -1,4 +1,4 @@
-import { parseBaseFilter } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-base-filter.utils';
+import { parseBaseFilter } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-base-filter.util';
 
 describe('parseBaseFilter', () => {
   it('should parse simple filter string test 1', () => {

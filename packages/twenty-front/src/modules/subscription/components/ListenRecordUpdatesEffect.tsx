@@ -38,10 +38,11 @@ export const ListenRecordUpdatesEffect = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const computedRecordGqlFields = useGenerateDepthRecordGqlFieldsFromObject({
-    depth: 1,
-    objectNameSingular,
-  });
+  const { recordGqlFields: computedRecordGqlFields } =
+    useGenerateDepthRecordGqlFieldsFromObject({
+      depth: 1,
+      objectNameSingular,
+    });
 
   const setRecordInStore = useRecoilCallback(
     ({ set }) =>
