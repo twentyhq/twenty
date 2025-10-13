@@ -137,8 +137,6 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       }
     });
 
-    let forwardPagination; // TODO
-
     executionArgs.graphqlQueryParser.applyGroupByOrderToBuilder(
       queryBuilder,
       executionArgs.args.orderBy ?? [],

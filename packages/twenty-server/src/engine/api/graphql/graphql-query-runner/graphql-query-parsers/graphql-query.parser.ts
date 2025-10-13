@@ -1,9 +1,9 @@
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
 import {
-  OrderByWithGroupBy,
   type ObjectRecordFilter,
-  type ObjectRecordOrderBy
+  type ObjectRecordOrderBy,
+  type OrderByWithGroupBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
@@ -104,39 +104,39 @@ export class GraphqlQueryParser {
     isForwardPagination = true,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): WorkspaceSelectQueryBuilder<any> {
-      const parsedOrderBys = this.orderFieldParser.parse(
-        orderBy as ObjectRecordOrderBy,
-        objectNameSingular,
-        isForwardPagination,
-      );
+    const parsedOrderBys = this.orderFieldParser.parse(
+      orderBy as ObjectRecordOrderBy,
+      objectNameSingular,
+      isForwardPagination,
+    );
 
-      return queryBuilder.orderBy(parsedOrderBys);
+    return queryBuilder.orderBy(parsedOrderBys);
   }
 
-  public applyGroupByOrderToBuilder(queryBuilder: WorkspaceSelectQueryBuilder<any>,
+  public applyGroupByOrderToBuilder(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryBuilder: WorkspaceSelectQueryBuilder<any>,
     orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
-    groupByFields: GroupByField[]) {
-      const parsedOrderBys = this.orderFieldParser.parseForGroupBy({
-        orderBy,
-        groupByFields,
-      });
+    groupByFields: GroupByField[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): WorkspaceSelectQueryBuilder<any> {
+    const parsedOrderBys = this.orderFieldParser.parseForGroupBy({
+      orderBy,
+      groupByFields,
+    });
 
-      parsedOrderBys.forEach((orderByField, index) => {
-        Object.entries(orderByField).forEach(([expression, direction]) => {
-          if (index === 0) {
-            queryBuilder.orderBy(expression, direction.order, direction.nulls);
-          } else {
-            queryBuilder.addOrderBy(
-              expression,
-              direction.order,
-              direction.nulls,
-            );
-          }
-        });
+    parsedOrderBys.forEach((orderByField, index) => {
+      Object.entries(orderByField).forEach(([expression, direction]) => {
+        if (index === 0) {
+          queryBuilder.orderBy(expression, direction.order, direction.nulls);
+        } else {
+          queryBuilder.addOrderBy(expression, direction.order, direction.nulls);
+        }
       });
+    });
 
-      return queryBuilder;
-    }
+    return queryBuilder;
+  }
 
   public parseSelectedFields(
     parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
