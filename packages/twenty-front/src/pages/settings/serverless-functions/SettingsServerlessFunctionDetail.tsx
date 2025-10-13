@@ -3,6 +3,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
+import { SettingsServerlessFunctionTriggersTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -12,7 +13,12 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui/display';
+import {
+  IconCode,
+  IconSettings,
+  IconTestPipe,
+  IconBolt,
+} from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 
@@ -27,7 +33,7 @@ export const SettingsServerlessFunctionDetail = () => {
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
 
-  const { formValues, setFormValues, loading } =
+  const { formValues, setFormValues, serverlessFunction, loading } =
     useServerlessFunctionUpdateFormState({ serverlessFunctionId });
 
   const { testServerlessFunction, isTesting } = useTestServerlessFunction({
@@ -73,6 +79,7 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const tabs = [
     { id: 'editor', title: 'Editor', Icon: IconCode },
+    { id: 'triggers', title: 'Triggers', Icon: IconBolt },
     { id: 'test', title: 'Test', Icon: IconTestPipe },
     { id: 'settings', title: 'Settings', Icon: IconSettings },
   ];
@@ -105,6 +112,12 @@ export const SettingsServerlessFunctionDetail = () => {
             isTesting={isTesting}
           />
         );
+      case 'triggers':
+        return serverlessFunction ? (
+          <SettingsServerlessFunctionTriggersTab
+            serverlessFunction={serverlessFunction}
+          />
+        ) : null;
       case 'test':
         return (
           <SettingsServerlessFunctionTestTab

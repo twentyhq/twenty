@@ -946,7 +946,6 @@ export type CronTrigger = {
   __typename?: 'CronTrigger';
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
-  serverlessFunctionId: Scalars['String'];
   settings: Scalars['JSON'];
   updatedAt: Scalars['DateTime'];
 };
@@ -980,7 +979,6 @@ export type DatabaseEventTrigger = {
   __typename?: 'DatabaseEventTrigger';
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
-  serverlessFunctionId: Scalars['String'];
   settings: Scalars['JSON'];
   updatedAt: Scalars['DateTime'];
 };
@@ -3460,9 +3458,7 @@ export type RouteTrigger = {
   id: Scalars['ID'];
   isAuthRequired: Scalars['Boolean'];
   path: Scalars['String'];
-  serverlessFunctionId: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  workspaceId: Scalars['String'];
 };
 
 export type RouteTriggerIdInput = {
@@ -3548,11 +3544,14 @@ export type Sentry = {
 export type ServerlessFunction = {
   __typename?: 'ServerlessFunction';
   createdAt: Scalars['DateTime'];
+  cronTriggers?: Maybe<Array<CronTrigger>>;
+  databaseEventTriggers?: Maybe<Array<DatabaseEventTrigger>>;
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   latestVersion?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   publishedVersions: Array<Scalars['String']>;
+  routeTriggers?: Maybe<Array<RouteTrigger>>;
   runtime: Scalars['String'];
   timeoutSeconds: Scalars['Float'];
   updatedAt: Scalars['DateTime'];

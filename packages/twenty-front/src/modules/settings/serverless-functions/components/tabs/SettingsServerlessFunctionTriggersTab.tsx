@@ -1,78 +1,125 @@
-import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
-import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/serverlessFunctionTestDataFamilyState';
-import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
-import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
-import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
+import { H2Title, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { type ServerlessFunction } from '~/generated/graphql';
+import { useLingui } from '@lingui/react/macro';
+import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import styled from '@emotion/styled';
+import { SETTINGS_ROUTE_TRIGGER_TABLE_METADATA } from '@/settings/serverless-functions/constants/settingsRouteTriggerTableMetadata';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { Tag } from 'twenty-ui/components';
+import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 
-const StyledInputsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+export const StyledRouteTriggerTableRow = styled(TableRow)`
+  grid-template-columns: 1fr 120px 120px;
 `;
 
-const StyledCodeEditorContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+const StyledTableCell = styled(TableCell)`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  gap: ${({ theme }) => theme.spacing(2)};
+  min-width: 0;
+  overflow: hidden;
 `;
 
-export const SettingsServerlessFunctionTestTab = ({
-  handleExecute,
-  serverlessFunctionId,
-  isTesting = false,
+const StyledRouteTriggerTableHeaderRow = styled(StyledRouteTriggerTableRow)`
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+export const SettingsServerlessFunctionTriggersTab = ({
+  serverlessFunction,
 }: {
-  handleExecute: () => void;
-  serverlessFunctionId: string;
-  isTesting?: boolean;
+  serverlessFunction: ServerlessFunction;
 }) => {
   const { t } = useLingui();
-  const [serverlessFunctionTestData, setServerlessFunctionTestData] =
-    useRecoilState(serverlessFunctionTestDataFamilyState(serverlessFunctionId));
 
-  const onChange = (newInput: string) => {
-    setServerlessFunctionTestData((prev) => ({
-      ...prev,
-      input: JSON.parse(newInput),
-    }));
-  };
+  const databaseEventTriggers = serverlessFunction.databaseEventTriggers ?? [];
+
+  const cronTriggers = serverlessFunction.cronTriggers ?? [];
+
+  const routeTriggers = serverlessFunction.routeTriggers ?? [];
+
+  const databaseEvents = databaseEventTriggers?.map((event) => {
+    const [object, action]: [string, string] =
+      event.settings.eventName.split('.');
+
+    return { object, action };
+  });
 
   return (
-    <Section>
-      <H2Title
-        title={t`Test your function`}
-        description={t`Insert a JSON input, then press "Run" to test your function.`}
-      />
-      <StyledInputsContainer>
-        <StyledCodeEditorContainer>
-          <CoreEditorHeader
-            title={t`Input`}
-            rightNodes={[
-              <Button
-                title={t`Run Function`}
-                variant="primary"
-                accent="blue"
-                size="small"
-                Icon={IconPlayerPlay}
-                onClick={handleExecute}
-                disabled={isTesting}
-              />,
-            ]}
+    <>
+      {databaseEvents.length > 0 && (
+        <Section>
+          <H2Title
+            title={t`Database event triggers`}
+            description={t`Select the events that should trigger the function`}
           />
-          <CodeEditor
-            value={JSON.stringify(serverlessFunctionTestData.input, null, 4)}
-            language="json"
-            height={200}
-            onChange={onChange}
-            variant="with-header"
+          <SettingsDatabaseEventsForm events={databaseEvents} disabled />
+        </Section>
+      )}
+
+      {cronTriggers.length > 0 && (
+        <Section>
+          <H2Title
+            title={t`Cron triggers`}
+            description={t`Triggers the function at regular intervals`}
           />
-        </StyledCodeEditorContainer>
-        <ServerlessFunctionExecutionResult
-          serverlessFunctionTestData={serverlessFunctionTestData}
-          isTesting={isTesting}
-        />
-      </StyledInputsContainer>
-    </Section>
+          {cronTriggers.map((cronTrigger, index) => (
+            <FormTextFieldInput
+              key={index}
+              label={t`Expression`}
+              placeholder="0 */1 * * *"
+              hint={t`Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]`}
+              onChange={() => {}}
+              readonly
+              defaultValue={cronTrigger.settings.pattern}
+            />
+          ))}
+        </Section>
+      )}
+
+      {routeTriggers.length > 0 && (
+        <Section>
+          <H2Title
+            title={t`Http triggers`}
+            description={t`Triggers the function with Http request`}
+          />
+          <Table>
+            <StyledRouteTriggerTableHeaderRow>
+              {SETTINGS_ROUTE_TRIGGER_TABLE_METADATA.fields.map(
+                (settingsRouteTriggerTableMetadataField) => (
+                  <SortableTableHeader
+                    key={settingsRouteTriggerTableMetadataField.fieldName}
+                    fieldName={settingsRouteTriggerTableMetadataField.fieldName}
+                    label={t(settingsRouteTriggerTableMetadataField.fieldLabel)}
+                    tableId={SETTINGS_ROUTE_TRIGGER_TABLE_METADATA.tableId}
+                    align={settingsRouteTriggerTableMetadataField.align}
+                    initialSort={
+                      SETTINGS_ROUTE_TRIGGER_TABLE_METADATA.initialSort
+                    }
+                  />
+                ),
+              )}
+            </StyledRouteTriggerTableHeaderRow>
+            {routeTriggers.map((routeTrigger, index) => (
+              <StyledRouteTriggerTableRow key={index}>
+                <StyledTableCell>
+                  <OverflowingTextWithTooltip text={routeTrigger.path} />
+                </StyledTableCell>
+                <StyledTableCell>{routeTrigger.httpMethod}</StyledTableCell>
+                <StyledTableCell>
+                  <Tag
+                    text={routeTrigger.isAuthRequired ? 'True' : 'False'}
+                    color={routeTrigger.isAuthRequired ? 'green' : 'orange'}
+                    weight="medium"
+                  />
+                </StyledTableCell>
+              </StyledRouteTriggerTableRow>
+            ))}
+          </Table>
+        </Section>
+      )}
+    </>
   );
 };

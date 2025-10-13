@@ -982,7 +982,6 @@ export type CronTrigger = {
   __typename?: 'CronTrigger';
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
-  serverlessFunctionId: Scalars['String'];
   settings: Scalars['JSON'];
   updatedAt: Scalars['DateTime'];
 };
@@ -1016,7 +1015,6 @@ export type DatabaseEventTrigger = {
   __typename?: 'DatabaseEventTrigger';
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
-  serverlessFunctionId: Scalars['String'];
   settings: Scalars['JSON'];
   updatedAt: Scalars['DateTime'];
 };
@@ -3614,9 +3612,7 @@ export type RouteTrigger = {
   id: Scalars['ID'];
   isAuthRequired: Scalars['Boolean'];
   path: Scalars['String'];
-  serverlessFunctionId: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  workspaceId: Scalars['String'];
 };
 
 export type RouteTriggerIdInput = {
@@ -3702,11 +3698,14 @@ export type Sentry = {
 export type ServerlessFunction = {
   __typename?: 'ServerlessFunction';
   createdAt: Scalars['DateTime'];
+  cronTriggers?: Maybe<Array<CronTrigger>>;
+  databaseEventTriggers?: Maybe<Array<DatabaseEventTrigger>>;
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   latestVersion?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   publishedVersions: Array<Scalars['String']>;
+  routeTriggers?: Maybe<Array<RouteTrigger>>;
   runtime: Scalars['String'];
   timeoutSeconds: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
@@ -4775,7 +4774,7 @@ export type TrackAnalyticsMutationVariables = Exact<{
 
 export type TrackAnalyticsMutation = { __typename?: 'Mutation', trackAnalytics: { __typename?: 'Analytics', success: boolean } };
 
-export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string }> };
+export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null }> };
 
 export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4787,7 +4786,7 @@ export type FindOneApplicationQueryVariables = Exact<{
 }>;
 
 
-export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string }> } };
+export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null }> } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -5587,21 +5586,21 @@ export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never
 
 export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
 
-export type ServerlessFunctionFieldsFragment = { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string };
+export type ServerlessFunctionFieldsFragment = { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null };
 
 export type CreateOneServerlessFunctionItemMutationVariables = Exact<{
   input: CreateServerlessFunctionInput;
 }>;
 
 
-export type CreateOneServerlessFunctionItemMutation = { __typename?: 'Mutation', createOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string } };
+export type CreateOneServerlessFunctionItemMutation = { __typename?: 'Mutation', createOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null } };
 
 export type DeleteOneServerlessFunctionMutationVariables = Exact<{
   input: ServerlessFunctionIdInput;
 }>;
 
 
-export type DeleteOneServerlessFunctionMutation = { __typename?: 'Mutation', deleteOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string } };
+export type DeleteOneServerlessFunctionMutation = { __typename?: 'Mutation', deleteOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null } };
 
 export type ExecuteOneServerlessFunctionMutationVariables = Exact<{
   input: ExecuteServerlessFunctionInput;
@@ -5615,14 +5614,14 @@ export type PublishOneServerlessFunctionMutationVariables = Exact<{
 }>;
 
 
-export type PublishOneServerlessFunctionMutation = { __typename?: 'Mutation', publishServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string } };
+export type PublishOneServerlessFunctionMutation = { __typename?: 'Mutation', publishServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null } };
 
 export type UpdateOneServerlessFunctionMutationVariables = Exact<{
   input: UpdateServerlessFunctionInput;
 }>;
 
 
-export type UpdateOneServerlessFunctionMutation = { __typename?: 'Mutation', updateOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string } };
+export type UpdateOneServerlessFunctionMutation = { __typename?: 'Mutation', updateOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null } };
 
 export type FindManyAvailablePackagesQueryVariables = Exact<{
   input: ServerlessFunctionIdInput;
@@ -5634,14 +5633,14 @@ export type FindManyAvailablePackagesQuery = { __typename?: 'Query', getAvailabl
 export type GetManyServerlessFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetManyServerlessFunctionsQuery = { __typename?: 'Query', findManyServerlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string }> };
+export type GetManyServerlessFunctionsQuery = { __typename?: 'Query', findManyServerlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null }> };
 
 export type GetOneServerlessFunctionQueryVariables = Exact<{
   input: ServerlessFunctionIdInput;
 }>;
 
 
-export type GetOneServerlessFunctionQuery = { __typename?: 'Query', findOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string } };
+export type GetOneServerlessFunctionQuery = { __typename?: 'Query', findOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null } };
 
 export type FindOneServerlessFunctionSourceCodeQueryVariables = Exact<{
   input: GetServerlessFunctionSourceCodeInput;
@@ -6253,6 +6252,26 @@ export const ServerlessFunctionFieldsFragmentDoc = gql`
   timeoutSeconds
   latestVersion
   publishedVersions
+  cronTriggers {
+    id
+    settings
+    createdAt
+    updatedAt
+  }
+  databaseEventTriggers {
+    id
+    settings
+    createdAt
+    updatedAt
+  }
+  routeTriggers {
+    id
+    path
+    isAuthRequired
+    httpMethod
+    createdAt
+    updatedAt
+  }
   createdAt
   updatedAt
 }

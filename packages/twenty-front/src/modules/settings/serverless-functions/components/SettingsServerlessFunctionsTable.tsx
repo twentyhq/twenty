@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { type ServerlessFunction } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTableRow = styled(TableRow)`
   grid-template-columns: 312px 132px 68px;
@@ -22,12 +23,14 @@ export const SettingsServerlessFunctionsTable = ({
 }: {
   serverlessFunctions: ServerlessFunction[];
 }) => {
+  const { t } = useLingui();
+
   return (
     <>
       {serverlessFunctions.length ? (
         <Table>
           <StyledTableRow>
-            <TableHeader>Name</TableHeader>
+            <TableHeader>{t`Name`}</TableHeader>
             <TableHeader>Runtime</TableHeader>
             <TableHeader></TableHeader>
           </StyledTableRow>
