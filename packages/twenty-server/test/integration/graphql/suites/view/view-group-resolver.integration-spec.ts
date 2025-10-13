@@ -268,6 +268,13 @@ describe('View Group Resolver', () => {
       });
       const viewGroup = createData.createCoreViewGroup;
 
+      await deleteOneCoreViewGroup({
+        input: {
+          id: viewGroup.id,
+        },
+        expectToFail: false,
+      });
+
       const { data } = await destroyOneCoreViewGroup({
         expectToFail: false,
         input: {
