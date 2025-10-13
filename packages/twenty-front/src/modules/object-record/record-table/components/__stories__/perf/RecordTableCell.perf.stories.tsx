@@ -188,7 +188,6 @@ const meta: Meta = {
                             mockPerformance.entityValue.__typename.toLocaleLowerCase(),
                         }) + mockPerformance.recordId,
                       isSelected: false,
-                      inView: true,
                     }}
                   >
                     <RecordTableRowDraggableContextProvider

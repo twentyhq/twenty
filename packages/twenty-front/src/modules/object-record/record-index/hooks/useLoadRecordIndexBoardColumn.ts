@@ -9,12 +9,13 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
+import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
+import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import {
@@ -41,7 +42,7 @@ export const useLoadRecordIndexBoardColumn = ({
     objectNameSingular,
   });
   const { setRecordIdsForColumn } = useSetRecordIdsForColumn(recordBoardId);
-  const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const recordGroupDefinition = useRecoilValue(
     recordGroupDefinitionFamilyState(columnId),
@@ -79,10 +80,14 @@ export const useLoadRecordIndexBoardColumn = ({
     });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
-
-  const recordGqlFields = useRecordBoardRecordGqlFields({
-    objectMetadataItem,
+  const recordGroupFieldMetadata = useRecoilComponentValue(
+    recordGroupFieldMetadataComponentState,
     recordBoardId,
+  );
+
+  const recordGqlFields = useRecordsFieldVisibleGqlFields({
+    objectMetadataItem,
+    additionalFieldMetadataId: recordGroupFieldMetadata?.id,
   });
 
   const recordIndexKanbanFieldMetadataFilterValue = isDefined(

@@ -1,43 +1,57 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { DatabaseEventTriggerExceptionCode } from 'src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { DatabaseEventTriggerRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/database-event-trigger-related-flat-entity-maps.type';
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
-type DatabaseEventTriggerValidationArgs = {
-  flatDatabaseEventTriggerToValidate: FlatDatabaseEventTrigger;
-  optimisticFlatDatabaseEventTriggerMaps: FlatEntityMaps<FlatDatabaseEventTrigger>;
-  dependencyOptimisticFlatEntityMaps: DatabaseEventTriggerRelatedFlatEntityMaps;
-};
 // TODO: validate settings integrity
 @Injectable()
 export class FlatDatabaseEventTriggerValidatorService {
   constructor() {}
 
   public validateFlatDatabaseEventTriggerUpdate({
-    flatDatabaseEventTriggerToValidate: updatedFlatDatabaseEventTrigger,
-    optimisticFlatDatabaseEventTriggerMaps,
+    flatEntityId,
+    flatEntityUpdates,
+    optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: DatabaseEventTriggerValidationArgs): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
-    const errors = [];
+  }: FlatEntityUpdateValidationArgs<
+    typeof ALL_METADATA_NAME.databaseEventTrigger
+  >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
+    const validationResult: FailedFlatEntityValidation<FlatDatabaseEventTrigger> =
+      {
+        type: 'update_database_event_trigger',
+        errors: [],
+        flatEntityMinimalInformation: {
+          id: flatEntityId,
+        },
+      };
 
     const existingFlatDatabaseEventTrigger =
-      optimisticFlatDatabaseEventTriggerMaps.byId[
-        updatedFlatDatabaseEventTrigger.id
-      ];
+      optimisticFlatDatabaseEventTriggerMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatDatabaseEventTrigger)) {
-      errors.push({
+      validationResult.errors.push({
         code: DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_NOT_FOUND,
         message: t`Database event trigger not found`,
-        userFriendlyMessage: t`Database event trigger not found`,
+        userFriendlyMessage: msg`Database event trigger not found`,
       });
+
+      return validationResult;
     }
+
+    const updatedFlatDatabaseEventTrigger = {
+      ...existingFlatDatabaseEventTrigger,
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+        updates: flatEntityUpdates,
+      }),
+    };
 
     const serverlessFunction =
       dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps?.byId?.[
@@ -45,27 +59,30 @@ export class FlatDatabaseEventTriggerValidatorService {
       ];
 
     if (!isDefined(serverlessFunction)) {
-      errors.push({
+      validationResult.errors.push({
         code: DatabaseEventTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
-        userFriendlyMessage: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 
-    return {
-      type: 'update_database_event_trigger',
-      errors,
-      flatEntityMinimalInformation: {
-        id: updatedFlatDatabaseEventTrigger.id,
-      },
-    };
+    return validationResult;
   }
 
   public validateFlatDatabaseEventTriggerDeletion({
-    flatDatabaseEventTriggerToValidate: { id: databaseEventTriggerIdToDelete },
-    optimisticFlatDatabaseEventTriggerMaps,
-  }: DatabaseEventTriggerValidationArgs): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
-    const errors = [];
+    flatEntityToValidate: { id: databaseEventTriggerIdToDelete },
+    optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.databaseEventTrigger
+  >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
+    const validationResult: FailedFlatEntityValidation<FlatDatabaseEventTrigger> =
+      {
+        type: 'delete_database_event_trigger',
+        errors: [],
+        flatEntityMinimalInformation: {
+          id: databaseEventTriggerIdToDelete,
+        },
+      };
 
     const existingFlatDatabaseEventTrigger =
       optimisticFlatDatabaseEventTriggerMaps.byId[
@@ -73,30 +90,31 @@ export class FlatDatabaseEventTriggerValidatorService {
       ];
 
     if (!isDefined(existingFlatDatabaseEventTrigger)) {
-      errors.push({
+      validationResult.errors.push({
         code: DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_NOT_FOUND,
         message: t`Database event trigger not found`,
-        userFriendlyMessage: t`Database event trigger not found`,
+        userFriendlyMessage: msg`Database event trigger not found`,
       });
     }
 
-    return {
-      type: 'delete_database_event_trigger',
-      errors,
-      flatEntityMinimalInformation: {
-        id: databaseEventTriggerIdToDelete,
-      },
-    };
+    return validationResult;
   }
 
   public async validateFlatDatabaseEventTriggerCreation({
-    flatDatabaseEventTriggerToValidate,
-    optimisticFlatDatabaseEventTriggerMaps,
+    flatEntityToValidate: flatDatabaseEventTriggerToValidate,
+    optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
     dependencyOptimisticFlatEntityMaps,
-  }: DatabaseEventTriggerValidationArgs): Promise<
-    FailedFlatEntityValidation<FlatDatabaseEventTrigger>
-  > {
-    const errors = [];
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.databaseEventTrigger
+  >): Promise<FailedFlatEntityValidation<FlatDatabaseEventTrigger>> {
+    const validationResult: FailedFlatEntityValidation<FlatDatabaseEventTrigger> =
+      {
+        type: 'create_database_event_trigger',
+        errors: [],
+        flatEntityMinimalInformation: {
+          id: flatDatabaseEventTriggerToValidate.id,
+        },
+      };
 
     if (
       isDefined(
@@ -105,10 +123,10 @@ export class FlatDatabaseEventTriggerValidatorService {
         ],
       )
     ) {
-      errors.push({
+      validationResult.errors.push({
         code: DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_ALREADY_EXIST,
         message: t`Database event trigger with same id already exists`,
-        userFriendlyMessage: t`Database event trigger already exists`,
+        userFriendlyMessage: msg`Database event trigger already exists`,
       });
     }
 
@@ -118,19 +136,13 @@ export class FlatDatabaseEventTriggerValidatorService {
       ];
 
     if (!isDefined(serverlessFunction)) {
-      errors.push({
+      validationResult.errors.push({
         code: DatabaseEventTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
-        userFriendlyMessage: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 
-    return {
-      type: 'create_database_event_trigger',
-      errors,
-      flatEntityMinimalInformation: {
-        id: flatDatabaseEventTriggerToValidate.id,
-      },
-    };
+    return validationResult;
   }
 }

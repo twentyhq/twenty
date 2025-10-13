@@ -1,36 +1,24 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-
-export type ValidateOneFieldMetadataArgs<
-  T extends FieldMetadataType = FieldMetadataType,
-> = {
-  dependencyOptimisticFlatEntityMaps: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
-  >;
-  remainingFlatEntityMapsToValidate?: FlatEntityMaps<FlatFieldMetadata>;
-  flatFieldMetadataToValidate: FlatFieldMetadata<T>;
-  optimisticFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  workspaceId: string;
-};
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatFieldMetadataValidatorService {
@@ -38,31 +26,58 @@ export class FlatFieldMetadataValidatorService {
     private readonly flatFieldMetadataTypeValidatorService: FlatFieldMetadataTypeValidatorService,
   ) {}
 
-  async validateFlatFieldMetadataUpdate<T extends FieldMetadataType>({
-    dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
-    flatFieldMetadataToValidate,
-    optimisticFlatFieldMetadataMaps,
+  async validateFlatFieldMetadataUpdate({
+    flatEntityId,
+    flatEntityUpdates: updates,
+    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
+    dependencyOptimisticFlatEntityMaps,
     workspaceId,
-  }: ValidateOneFieldMetadataArgs<T>): Promise<
-    FailedFlatEntityValidation<FlatFieldMetadata>
-  > {
+    buildOptions,
+  }: FlatEntityUpdateValidationArgs<
+    typeof ALL_METADATA_NAME.fieldMetadata
+  >): Promise<FailedFlatEntityValidation<FlatFieldMetadata>> {
     const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
       type: 'update_field',
       errors: [],
       flatEntityMinimalInformation: {
-        id: flatFieldMetadataToValidate.id,
-        name: flatFieldMetadataToValidate.name,
-        objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
+        id: flatEntityId,
       },
     };
+
+    const existingFlatFieldMetadataToUpdate =
+      optimisticFlatFieldMetadataMaps.byId[flatEntityId];
+
+    if (!isDefined(existingFlatFieldMetadataToUpdate)) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        message: 'field metadata to update not found',
+        userFriendlyMessage: msg`Field to update not found`,
+      });
+
+      return validationResult;
+    }
+
+    const flatFieldMetadataToValidate = {
+      ...existingFlatFieldMetadataToUpdate,
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({ updates }),
+    };
+
+    validationResult.flatEntityMinimalInformation = {
+      id: flatFieldMetadataToValidate.id,
+      name: flatFieldMetadataToValidate.name,
+      objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
+    };
+
     const flatObjectMetadata =
-      flatObjectMetadataMaps.byId[flatFieldMetadataToValidate.objectMetadataId];
+      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+        flatFieldMetadataToValidate.objectMetadataId
+      ];
 
     if (!isDefined(flatObjectMetadata)) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: 'field metadata to update object metadata not found',
-        userFriendlyMessage: t`Object related to field to update not found`,
+        userFriendlyMessage: msg`Object related to field to update not found`,
       });
 
       return validationResult;
@@ -72,27 +87,9 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
         message: 'Label identifier field metadata id does not exist',
-        userFriendlyMessage: t`Object related to updated field does not have a label identifier`,
+        userFriendlyMessage: msg`Object related to updated field does not have a label identifier`,
       });
     }
-
-    const existingFlatFieldMetadataToUpdate =
-      optimisticFlatFieldMetadataMaps.byId[flatFieldMetadataToValidate.id];
-
-    if (!isDefined(existingFlatFieldMetadataToUpdate)) {
-      validationResult.errors.push({
-        code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
-        message: 'field metadata to update not found',
-        userFriendlyMessage: t`Field to update not found`,
-      });
-
-      return validationResult;
-    }
-
-    const updates = compareTwoFlatFieldMetadata({
-      fromFlatFieldMetadata: existingFlatFieldMetadataToUpdate,
-      toFlatFieldMetadata: flatFieldMetadataToValidate,
-    });
 
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToValidate)) {
       const relationNonEditableUpdatedProperties = updates.flatMap(
@@ -108,7 +105,7 @@ export class FlatFieldMetadataValidatorService {
         validationResult.errors.push({
           code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
           message: `Forbidden updated properties for relation field metadata: ${relationNonEditableUpdatedProperties.join(', ')}`,
-          userFriendlyMessage: t`Forbidden updated properties for relation field metadata`,
+          userFriendlyMessage: msg`Forbidden updated properties for relation field metadata`,
         });
       }
     }
@@ -131,16 +128,21 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         message: `Name is not synced with label.`,
-        userFriendlyMessage: t`Updated field name is not synced with label`,
+        userFriendlyMessage: msg`Updated field name is not synced with label`,
       });
     }
 
     const fieldMetadataTypeValidationErrors =
       await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
-          optimisticFlatFieldMetadataMaps,
-          flatFieldMetadataToValidate,
+          dependencyOptimisticFlatEntityMaps: {
+            flatObjectMetadataMaps:
+              dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+          },
+          optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
+          flatEntityToValidate: flatFieldMetadataToValidate,
+          buildOptions,
+          remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS,
           workspaceId,
         },
       );
@@ -153,10 +155,12 @@ export class FlatFieldMetadataValidatorService {
   }
 
   validateFlatFieldMetadataDeletion({
-    dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
-    flatFieldMetadataToValidate: { id: flatFieldMetadataToDeleteId },
-    optimisticFlatFieldMetadataMaps,
-  }: ValidateOneFieldMetadataArgs): FailedFlatEntityValidation<FlatFieldMetadata> {
+    flatEntityToValidate: { id: flatFieldMetadataToDeleteId },
+    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.fieldMetadata
+  >): FailedFlatEntityValidation<FlatFieldMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
       type: 'delete_field',
       errors: [],
@@ -172,7 +176,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
         message: 'Field metadata to delete not found',
-        userFriendlyMessage: t`Field metadata to delete not found`,
+        userFriendlyMessage: msg`Field metadata to delete not found`,
       });
 
       return validationResult;
@@ -184,7 +188,9 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const relatedFlatObjectMetadata =
-      flatObjectMetadataMaps.byId[flatFieldMetadataToDelete.objectMetadataId];
+      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+        flatFieldMetadataToDelete.objectMetadataId
+      ];
 
     if (
       isDefined(relatedFlatObjectMetadata) &&
@@ -195,19 +201,21 @@ export class FlatFieldMetadataValidatorService {
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         message:
           'Cannot delete, please update the label identifier field first',
-        userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
+        userFriendlyMessage: msg`Cannot delete, please update the label identifier field first`,
       });
     }
 
     const relationTargetObjectMetadataHasBeenDeleted =
       isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
       !isDefined(
-        flatObjectMetadataMaps.byId[
+        dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
         ],
       );
     const parentObjectMetadataHasBeenDeleted = !isDefined(
-      flatObjectMetadataMaps.byId[flatFieldMetadataToDelete.objectMetadataId],
+      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+        flatFieldMetadataToDelete.objectMetadataId
+      ],
     );
 
     if (
@@ -218,7 +226,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: "Standard Fields can't be deleted",
-        userFriendlyMessage: t`Standard fields cannot be deleted`,
+        userFriendlyMessage: msg`Standard fields cannot be deleted`,
       });
     }
 
@@ -230,22 +238,21 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: "Active fields can't be deleted",
-        userFriendlyMessage: t`Active fields cannot be deleted`,
+        userFriendlyMessage: msg`Active fields cannot be deleted`,
       });
     }
 
     return validationResult;
   }
 
-  async validateFlatFieldMetadataCreation<
-    T extends FieldMetadataType = FieldMetadataType,
-  >({
-    dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
-    flatFieldMetadataToValidate,
-    optimisticFlatFieldMetadataMaps,
+  async validateFlatFieldMetadataCreation({
+    flatEntityToValidate: flatFieldMetadataToValidate,
+    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
+    dependencyOptimisticFlatEntityMaps,
     workspaceId,
+    buildOptions,
     remainingFlatEntityMapsToValidate,
-  }: ValidateOneFieldMetadataArgs<T>): Promise<
+  }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.fieldMetadata>): Promise<
     FailedFlatEntityValidation<FlatFieldMetadata>
   > {
     const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
@@ -259,13 +266,15 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const parentFlatObjectMetadata =
-      flatObjectMetadataMaps.byId[flatFieldMetadataToValidate.objectMetadataId];
+      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+        flatFieldMetadataToValidate.objectMetadataId
+      ];
 
     if (!isDefined(parentFlatObjectMetadata)) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: 'Object metadata not found',
-        userFriendlyMessage: t`Field to create related object not found`,
+        userFriendlyMessage: msg`Field to create related object not found`,
       });
     } else {
       if (
@@ -276,7 +285,7 @@ export class FlatFieldMetadataValidatorService {
         validationResult.errors.push({
           code: FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS,
           message: 'Field with same id already exists in object',
-          userFriendlyMessage: t`Field already exists`,
+          userFriendlyMessage: msg`Field already exists`,
         });
       }
 
@@ -284,7 +293,7 @@ export class FlatFieldMetadataValidatorService {
         validationResult.errors.push({
           code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
           message: 'Remote objects are read-only',
-          userFriendlyMessage: t`Remote objects are not production ready yet`,
+          userFriendlyMessage: msg`Remote objects are not production ready yet`,
         });
       }
 
@@ -305,7 +314,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
         message: `Name is not synced with label`,
-        userFriendlyMessage: t`Field name is not synced with field label`,
+        userFriendlyMessage: msg`Field name is not synced with field label`,
         value: flatFieldMetadataToValidate.label,
       });
     }
@@ -317,9 +326,10 @@ export class FlatFieldMetadataValidatorService {
     validationResult.errors.push(
       ...(await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
-          flatFieldMetadataToValidate,
-          optimisticFlatFieldMetadataMaps,
+          dependencyOptimisticFlatEntityMaps,
+          flatEntityToValidate: flatFieldMetadataToValidate,
+          buildOptions,
+          optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
           workspaceId,
           remainingFlatEntityMapsToValidate,
         },

@@ -6,7 +6,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -21,6 +21,18 @@ export class UpsertTimelineActivityFromInternalEvent {
   async handle(
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
   ): Promise<void> {
+    if (workspaceEventBatch.events.length === 0) {
+      return;
+    }
+
+    if (
+      workspaceEventBatch.objectMetadata.isSystem &&
+      workspaceEventBatch.objectMetadata.nameSingular !== 'noteTarget' &&
+      workspaceEventBatch.objectMetadata.nameSingular !== 'taskTarget'
+    ) {
+      return;
+    }
+
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceEventBatch.workspaceId,
@@ -48,35 +60,22 @@ export class UpsertTimelineActivityFromInternalEvent {
       }
     }
 
-    const filteredEvents = workspaceEventBatch.events
-      .filter((event) => {
-        return (
-          !event.objectMetadata.isSystem ||
-          event.objectMetadata.nameSingular === 'noteTarget' ||
-          event.objectMetadata.nameSingular === 'taskTarget'
-        );
-      })
-      .map((event) => {
-        if ('diff' in event.properties && event.properties.diff) {
-          return {
-            ...event,
-            properties: {
-              diff: event.properties.diff,
-            },
-          };
-        }
+    const formattedEvents = workspaceEventBatch.events.map((event) => {
+      if ('diff' in event.properties && event.properties.diff) {
+        return {
+          ...event,
+          properties: {
+            diff: event.properties.diff,
+          },
+        };
+      }
 
-        return event;
-      });
-
-    if (filteredEvents.length === 0) {
-      return;
-    }
+      return event;
+    });
 
     await this.timelineActivityService.upsertEvents({
-      events: filteredEvents,
-      eventName: workspaceEventBatch.name,
-      workspaceId: workspaceEventBatch.workspaceId,
+      ...workspaceEventBatch,
+      events: formattedEvents,
     });
   }
 }

@@ -124,7 +124,6 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       objectMetadataNameSingular,
     });
 
-    // todo: the limit from the graphql query is not used here
     const limit =
       executionArgs.args.first ?? executionArgs.args.last ?? QUERY_MAX_RECORDS;
 
@@ -135,10 +134,13 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       objectMetadataMaps,
     });
 
-    // Apply select columns via findOptions first
-    queryBuilder.setFindOptions({
-      select: columnsToSelect,
-    });
+    if (isDefined(executionArgs.args.offset)) {
+      queryBuilder.skip(executionArgs.args.offset);
+    }
+
+     queryBuilder.setFindOptions({
+        select: columnsToSelect,
+      });
 
     // Now compute and add redis-backed fields (e.g., lastViewedAt) to the SQL select
     await executionArgs.graphqlQueryParser.computeRedisFields(
@@ -148,9 +150,9 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       this.redisFieldSqlFactory,
     );
 
-    const objectRecords = (await queryBuilder
-      .take(limit + 1)
-      .getMany()) as ObjectRecord[];
+
+    const objectRecords = (await queryBuilder.take(limit + 1)
+      .getMany())as ObjectRecord[];
 
     const { hasNextPage, hasPreviousPage } = getPaginationInfo(
       objectRecords,
@@ -187,7 +189,9 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.createConnection({
-      objectRecords,
+      objectRecords: isForwardPagination
+        ? objectRecords
+        : objectRecords.reverse(),
       objectRecordsAggregatedValues: parentObjectRecordsAggregatedValues,
       selectedAggregatedFields:
         executionArgs.graphqlQuerySelectedFieldsResult.aggregate,

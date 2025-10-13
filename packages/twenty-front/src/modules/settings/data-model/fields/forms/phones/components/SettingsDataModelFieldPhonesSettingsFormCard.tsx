@@ -1,11 +1,13 @@
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
+import { SettingsDataModelFieldMaxValuesForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm';
 import {
   SettingsDataModelFieldPhonesForm,
   type SettingsDataModelFieldPhonesFormValues,
 } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
+import { Separator } from '@/settings/components/Separator';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
@@ -34,6 +36,7 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
             type: FieldMetadataType.PHONES,
             label: watch('label'),
             icon: watch('icon'),
+            settings: watch('settings') ?? null,
           }}
           objectNameSingular={objectNameSingular}
         />
@@ -44,6 +47,13 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
             disabled={disabled}
             existingFieldMetadataId={existingFieldMetadataId}
           />
+          <Separator />
+          <SettingsDataModelFieldMaxValuesForm
+            disabled={disabled}
+            existingFieldMetadataId={existingFieldMetadataId}
+            fieldType={FieldMetadataType.PHONES}
+          />
+          <Separator />
           <SettingsDataModelFieldIsUniqueForm
             fieldType={FieldMetadataType.PHONES}
             existingFieldMetadataId={existingFieldMetadataId}

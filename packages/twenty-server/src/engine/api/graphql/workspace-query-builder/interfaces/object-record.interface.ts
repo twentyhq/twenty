@@ -1,3 +1,5 @@
+import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+
 //TODO : Refacto-common - Should be moved to common api layer
 export interface ObjectRecord {
   id: string;
@@ -40,19 +42,28 @@ export enum OrderByDirection {
   DescNullsLast = 'DescNullsLast',
 }
 
-export enum ObjectRecordGroupByDateGranularity {
-  DAY = 'DAY',
-  MONTH = 'MONTH',
-  QUARTER = 'QUARTER',
-  YEAR = 'YEAR',
-  DAY_OF_THE_WEEK = 'DAY_OF_THE_WEEK',
-  QUARTER_OF_THE_YEAR = 'QUARTER_OF_THE_YEAR',
-  MONTH_OF_THE_YEAR = 'MONTH_OF_THE_YEAR',
-  NONE = 'NONE',
-}
-
 export type ObjectRecordOrderBy = Array<
   ObjectRecordOrderByForScalarField | ObjectRecordOrderByForCompositeField
+>;
+
+export type AggregateOrderByWithGroupByField = {
+  aggregate: {
+    [x: string]: OrderByDirection;
+  };
+};
+
+export type ObjectRecordOrderByWithGroupByDateField = {
+  [Property in keyof ObjectRecord]?: {
+    orderBy: OrderByDirection;
+    granularity: ObjectRecordGroupByDateGranularity;
+  };
+};
+
+export type OrderByWithGroupBy = Array<
+  | ObjectRecordOrderByForScalarField
+  | ObjectRecordOrderByForCompositeField
+  | ObjectRecordOrderByWithGroupByDateField
+  | AggregateOrderByWithGroupByField
 >;
 
 export type ObjectRecordOrderByForScalarField = {

@@ -34,12 +34,12 @@ import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/gr
 import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
-import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
-import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
+import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 @Injectable()
 export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolverService<
@@ -137,15 +137,10 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       }
     });
 
-    let forwardPagination; // TODO
-    const isGroupBy = true;
-
-    executionArgs.graphqlQueryParser.applyOrderToBuilder(
+    executionArgs.graphqlQueryParser.applyGroupByOrderToBuilder(
       queryBuilder,
       executionArgs.args.orderBy ?? [],
-      objectMetadataNameSingular,
-      forwardPagination,
-      isGroupBy,
+      groupByFields,
     );
 
     const result = await queryBuilder.getRawMany();

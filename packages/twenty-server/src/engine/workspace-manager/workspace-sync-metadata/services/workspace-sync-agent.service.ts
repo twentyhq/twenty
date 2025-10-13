@@ -6,7 +6,6 @@ import { IsNull, Not, type EntityManager } from 'typeorm';
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { transformAgentEntityToFlatAgent } from 'src/engine/metadata-modules/flat-agent/utils/transform-agent-entity-to-flat-agent.util';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -27,7 +26,6 @@ export class WorkspaceSyncAgentService {
   constructor(
     private readonly standardAgentFactory: StandardAgentFactory,
     private readonly workspaceAgentComparator: WorkspaceAgentComparator,
-    private readonly agentRoleService: AgentRoleService,
   ) {}
 
   async synchronize(

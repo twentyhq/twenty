@@ -9,8 +9,10 @@ import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
-import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 // TODO: add extensive unit tests for this function
 // That will also serve as documentation
@@ -20,12 +22,19 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
   currentRecords,
   updatedRecords,
   objectMetadataItems,
+  objectPermissionsByObjectMetadataId,
+  upsertRecordsInStore,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
   currentRecords: RecordGqlNode[];
   updatedRecords: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
+  upsertRecordsInStore: (records: ObjectRecord[]) => void;
 }) => {
   for (const [index, currentRecord] of currentRecords.entries()) {
     triggerUpdateRelationsOptimisticEffect({
@@ -34,6 +43,8 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
       currentSourceRecord: currentRecord,
       updatedSourceRecord: updatedRecords[index],
       objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+      upsertRecordsInStore,
     });
   }
 

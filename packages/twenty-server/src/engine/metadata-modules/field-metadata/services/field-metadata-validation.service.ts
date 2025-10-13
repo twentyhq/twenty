@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { type ClassConstructor, plainToInstance } from 'class-transformer';
 import {
   IsArray,
@@ -12,6 +12,7 @@ import {
   type ValidationError,
   validateOrReject,
 } from 'class-validator';
+import { MULTI_ITEM_FIELD_MIN_MAX_VALUES } from 'twenty-shared/constants';
 import {
   ALLOWED_ADDRESS_SUBFIELDS,
   type AllowedAddressSubField,
@@ -72,6 +73,13 @@ class AddressSettingsValidation {
   @IsEnum(ALLOWED_ADDRESS_SUBFIELDS, { each: true })
   subFields?: AllowedAddressSubField[];
 }
+
+class MultipleValuesSettingsValidation {
+  @IsOptional()
+  @IsInt()
+  @Min(MULTI_ITEM_FIELD_MIN_MAX_VALUES)
+  maxNumberOfValues?: number;
+}
 @Injectable()
 export class FieldMetadataValidationService {
   constructor(
@@ -104,6 +112,16 @@ export class FieldMetadataValidationService {
         await this.validateSettings({
           type: FieldMetadataType.ADDRESS,
           validator: AddressSettingsValidation,
+          settings,
+        });
+        break;
+      case FieldMetadataType.PHONES:
+      case FieldMetadataType.EMAILS:
+      case FieldMetadataType.LINKS:
+      case FieldMetadataType.ARRAY:
+        await this.validateSettings({
+          type: fieldType,
+          validator: MultipleValuesSettingsValidation,
           settings,
         });
         break;
@@ -178,7 +196,7 @@ export class FieldMetadataValidationService {
             `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
             {
-              userFriendlyMessage: t`Name is not available, it may be duplicating another field's name.`,
+              userFriendlyMessage: msg`Name is not available, it may be duplicating another field's name.`,
             },
           );
         }

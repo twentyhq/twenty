@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -15,7 +15,7 @@ import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/u
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -38,6 +38,7 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
@@ -49,7 +50,6 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
-import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -136,7 +136,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         'Domain is already registered as public domain',
         WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
         {
-          userFriendlyMessage: t`Domain is already registered as public domain`,
+          userFriendlyMessage: msg`Domain is already registered as public domain`,
         },
       );
     }
@@ -452,8 +452,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
           {
-            userFriendlyMessage:
-              'You do not have permission to manage security settings. Please contact your workspace administrator.',
+            userFriendlyMessage: msg`You do not have permission to manage security settings. Please contact your workspace administrator.`,
           },
         );
       }
@@ -502,8 +501,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
           {
-            userFriendlyMessage:
-              'You do not have permission to manage workspace settings. Please contact your workspace administrator.',
+            userFriendlyMessage: msg`You do not have permission to manage workspace settings. Please contact your workspace administrator.`,
           },
         );
       }

@@ -36,6 +36,7 @@ export const useBarChartData = ({
     () => new Map<string, BarChartSeries>(series?.map((s) => [s.key, s]) || []),
     [series],
   );
+
   const barConfigs = useMemo((): BarChartConfig[] => {
     return data.flatMap((dataPoint, dataIndex) => {
       const indexValue = dataPoint[indexBy];
@@ -46,7 +47,8 @@ export const useBarChartData = ({
           seriesConfig?.color,
           keyIndex,
         );
-        const gradientId = `gradient-${id}-${instanceId}-${key}-${dataIndex}-${keyIndex}`;
+        const sanitizedKey = key.replace(/\s+/g, '-');
+        const gradientId = `gradient-${id}-${instanceId}-${sanitizedKey}-${dataIndex}-${keyIndex}`;
 
         return {
           key,

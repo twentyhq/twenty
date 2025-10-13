@@ -24,13 +24,13 @@ export const RecordDetailRelationRecordsListItemEffect = ({
     objectRecordId: relationRecordId,
   });
 
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   useEffect(() => {
     if (isDefined(record)) {
-      upsertRecords([record]);
+      upsertRecordsInStore([record]);
     }
-  }, [record, upsertRecords]);
+  }, [record, upsertRecordsInStore]);
 
   return null;
 };

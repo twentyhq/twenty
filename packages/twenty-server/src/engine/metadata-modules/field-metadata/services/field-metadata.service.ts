@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,7 +15,6 @@ import {
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -50,6 +49,7 @@ import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/
 import { isValidUniqueFieldDefaultValueCombination } from 'src/engine/metadata-modules/field-metadata/utils/is-valid-unique-input.util';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
 import { validateCanCreateUniqueIndex } from 'src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util';
@@ -190,7 +190,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         'Unique field cannot have a default value',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         {
-          userFriendlyMessage: t`Unique field cannot have a default value`,
+          userFriendlyMessage: msg`Unique field cannot have a default value`,
         },
       );
     }
@@ -469,7 +469,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           'Cannot delete, please update the label identifier field first',
           FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
           {
-            userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
+            userFriendlyMessage: msg`Cannot delete, please update the label identifier field first`,
           },
         );
       }
@@ -830,7 +830,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         'Unique field cannot have a default value',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         {
-          userFriendlyMessage: t`Unique field cannot have a default value`,
+          userFriendlyMessage: msg`Unique field cannot have a default value`,
         },
       );
 

@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryFailedError } from 'typeorm';
 
@@ -42,7 +43,7 @@ export const handleDuplicateKeyError = (
         `A duplicate entry was detected`,
         TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED,
         {
-          userFriendlyMessage: `This record already exists. Please check your data and try again.`,
+          userFriendlyMessage: msg`This record already exists. Please check your data and try again.`,
         },
       );
     }
@@ -50,20 +51,26 @@ export const handleDuplicateKeyError = (
     const columnNames = affectedColumns.join(', ');
 
     if (affectedColumns?.length === 1) {
+      const fieldName = columnNames.toLowerCase();
+
       throw new UserInputError(
         `Duplicate ${columnNames} ${duplicatedValues ? `with value ${duplicatedValues}` : ''}. Please set a unique one.`,
         {
-          userFriendlyMessage: `This ${columnNames.toLowerCase()} ${duplicatedValues ? `with value ${duplicatedValues}` : ''} is already taken. Please choose a different value.`,
+          userFriendlyMessage: duplicatedValues
+            ? msg`This ${fieldName} with value ${duplicatedValues} is already taken. Please choose a different value.`
+            : msg`This ${fieldName} is already taken. Please choose a different value.`,
           isExpected: true,
         },
       );
     }
 
+    const fieldNames = columnNames.toLowerCase();
+
     throw new TwentyORMException(
       `A duplicate entry was detected. The combination of ${columnNames} must be unique.`,
       TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED,
       {
-        userFriendlyMessage: `This combination of ${columnNames.toLowerCase()} already exists. Please use different values.`,
+        userFriendlyMessage: msg`This combination of ${fieldNames} already exists. Please use different values.`,
       },
     );
   }
