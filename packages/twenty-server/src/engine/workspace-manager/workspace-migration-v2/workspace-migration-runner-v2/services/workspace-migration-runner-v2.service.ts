@@ -109,7 +109,7 @@ export class WorkspaceMigrationRunnerV2Service {
               return true;
             }
             default: {
-              false;
+              return false;
             }
           }
         },
