@@ -38,7 +38,7 @@ ssh root@YOUR_SERVER_IP
 
 Run the setup script:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/twentyhq/twenty/main/deployment/hetzner/scripts/setup-server.sh -o setup.sh
+curl -fsSL https://raw.githubusercontent.com/timberline-tech/twenty/main/deployment/hetzner/scripts/setup-server.sh -o setup.sh
 chmod +x setup.sh
 ./setup.sh
 ```
@@ -48,7 +48,7 @@ This installs: Docker, Nginx, UFW firewall, fail2ban, swap space
 ### 4. Clone Repository (2 minutes)
 
 ```bash
-git clone https://github.com/twentyhq/twenty.git
+git clone https://github.com/timberline-tech/twenty.git
 cd twenty/deployment/hetzner
 ```
 
@@ -223,7 +223,7 @@ certbot renew --force-renewal
 ## Support
 
 - **Documentation**: https://twenty.com/developers
-- **GitHub**: https://github.com/twentyhq/twenty/issues
+- **GitHub**: https://github.com/timberline-tech/twenty/issues
 - **Discord**: https://twenty.com/discord
 
 ## Security Notes
