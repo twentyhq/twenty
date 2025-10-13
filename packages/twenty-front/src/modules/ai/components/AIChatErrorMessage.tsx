@@ -1,4 +1,7 @@
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
+import { useAgentChatRequestBody } from '@/ai/hooks/useAgentChatRequestBody';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useChat } from '@ai-sdk/react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -43,14 +46,24 @@ const StyledErrorMessage = styled.div`
 type AIChatErrorMessageProps = {
   error: Error;
   isRetrying?: boolean;
+  records?: ObjectRecord[];
 };
 
 export const AIChatErrorMessage = ({
   error,
   isRetrying = false,
+  records,
 }: AIChatErrorMessageProps) => {
   const theme = useTheme();
-  const { handleRetry } = useAgentChatContextOrThrow();
+  const { chat } = useAgentChatContextOrThrow();
+  const { buildRequestBody } = useAgentChatRequestBody();
+  const { regenerate } = useChat({ chat });
+
+  const handleRetry = () => {
+    regenerate({
+      body: buildRequestBody(records),
+    });
+  };
 
   return (
     <StyledErrorContainer>

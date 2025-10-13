@@ -8,8 +8,11 @@ import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
+import { AIChatErrorMessageWithRecordsContext } from '@/ai/components/internal/AIChatErrorMessageWithRecordsContext';
 import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
@@ -152,6 +155,10 @@ export const AIChatMessage = ({
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
 
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
   const showError =
     isDefined(error) && message.role === AgentChatMessageRole.ASSISTANT;
 
@@ -195,9 +202,15 @@ export const AIChatMessage = ({
                 ))}
             </StyledFilesContainer>
           )}
-          {showError && (
-            <AIChatErrorMessage error={error} isRetrying={isRetrying} />
-          )}
+          {showError &&
+            (contextStoreCurrentObjectMetadataItemId ? (
+              <AIChatErrorMessageWithRecordsContext
+                error={error}
+                isRetrying={isRetrying}
+              />
+            ) : (
+              <AIChatErrorMessage error={error} isRetrying={isRetrying} />
+            ))}
           {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">
               <span>

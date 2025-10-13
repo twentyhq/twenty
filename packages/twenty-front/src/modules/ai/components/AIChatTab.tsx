@@ -17,7 +17,7 @@ import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
-import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
+import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
@@ -70,7 +70,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
     messages,
     isStreaming,
     error,
-  } = useAgentChatContextOrThrow();
+  } = useAgentChat(agentId);
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -146,9 +146,9 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
               />
               <AgentChatFileUploadButton />
               {contextStoreCurrentObjectMetadataItemId ? (
-                <SendMessageWithRecordsContextButton />
+                <SendMessageWithRecordsContextButton agentId={agentId} />
               ) : (
-                <SendMessageButton />
+                <SendMessageButton agentId={agentId} />
               )}
             </StyledButtonsContainer>
           </StyledInputArea>
