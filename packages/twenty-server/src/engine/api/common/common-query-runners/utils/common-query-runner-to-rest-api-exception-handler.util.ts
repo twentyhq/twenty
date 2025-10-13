@@ -15,6 +15,9 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
   error: CommonQueryRunnerException,
 ): never => {
   switch (error.code) {
+    case CommonQueryRunnerExceptionCode.ARGS_CONFLICT:
+    case CommonQueryRunnerExceptionCode.INVALID_ARGS_FIRST:
+    case CommonQueryRunnerExceptionCode.INVALID_ARGS_LAST:
     case CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
       throw new BadRequestException(error.message);
     case CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND:

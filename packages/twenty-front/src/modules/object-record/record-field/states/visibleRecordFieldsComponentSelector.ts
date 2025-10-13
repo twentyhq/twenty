@@ -3,6 +3,7 @@ import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveField
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
+import { findById } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const visibleRecordFieldsComponentSelector = createComponentSelector({
@@ -47,10 +48,16 @@ export const visibleRecordFieldsComponentSelector = createComponentSelector({
             return false;
           }
 
-          return isActiveFieldMetadataItem({
+          const isActive = isActiveFieldMetadataItem({
             objectNameSingular: objectMetadataItem.nameSingular,
             fieldMetadata: fieldMetadataItem,
           });
+
+          const isReadable = objectMetadataItem.readableFields.some(
+            findById(fieldMetadataItem.id),
+          );
+
+          return isReadable && isActive;
         },
       );
 

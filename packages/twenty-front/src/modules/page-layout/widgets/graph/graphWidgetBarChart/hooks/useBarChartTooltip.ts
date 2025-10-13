@@ -40,6 +40,7 @@ export const useBarChartTooltip = ({
     return {
       tooltipItem,
       showClickHint: isDefined(dataItem?.to),
+      title: String(datum.indexValue),
     };
   };
 

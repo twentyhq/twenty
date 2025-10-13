@@ -5,6 +5,7 @@ import {
   type ObjectRecordFilter,
   type ObjectRecordGroupBy,
   type ObjectRecordOrderBy,
+  type OrderByWithGroupBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
@@ -70,7 +71,7 @@ export interface GroupByResolverArgs<Filter = ObjectRecordFilter> {
   filter?: Filter;
   groupBy: ObjectRecordGroupBy;
   viewId?: string;
-  orderBy?: ObjectRecordOrderBy;
+  orderBy?: OrderByWithGroupBy;
 }
 
 export interface UpdateOneResolverArgs<
