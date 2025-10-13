@@ -162,4 +162,3 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     };
   }
 }
-

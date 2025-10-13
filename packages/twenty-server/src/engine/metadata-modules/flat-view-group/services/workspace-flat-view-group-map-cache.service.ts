@@ -48,4 +48,3 @@ export class WorkspaceFlatViewGroupMapCacheService extends WorkspaceFlatMapCache
     }, EMPTY_FLAT_ENTITY_MAPS);
   }
 }
-

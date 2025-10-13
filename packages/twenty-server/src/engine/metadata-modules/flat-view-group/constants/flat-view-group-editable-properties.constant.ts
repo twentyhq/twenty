@@ -5,4 +5,3 @@ export const FLAT_VIEW_GROUP_EDITABLE_PROPERTIES = [
   'fieldValue',
   'position',
 ] as const satisfies (keyof FlatViewGroup)[];
-

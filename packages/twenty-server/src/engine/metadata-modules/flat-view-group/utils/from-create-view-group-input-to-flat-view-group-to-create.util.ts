@@ -34,4 +34,3 @@ export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
     position: createViewGroupInput.position ?? 0,
   };
 };
-

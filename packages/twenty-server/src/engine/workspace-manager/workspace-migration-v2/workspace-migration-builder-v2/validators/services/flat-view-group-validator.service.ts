@@ -173,4 +173,3 @@ export class FlatViewGroupValidatorService {
     return validationResult;
   }
 }
-

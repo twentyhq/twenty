@@ -24,4 +24,3 @@ export type WorkspaceMigrationViewGroupActionV2 =
 
 export type WorkspaceMigrationViewGroupActionTypeV2 =
   WorkspaceMigrationViewGroupActionV2['type'];
-

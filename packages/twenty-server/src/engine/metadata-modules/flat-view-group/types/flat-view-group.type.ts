@@ -16,4 +16,3 @@ export type FlatViewGroup = Omit<
 > & {
   universalIdentifier: string;
 };
-
