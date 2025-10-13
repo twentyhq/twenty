@@ -29,7 +29,8 @@ export const parseOrderByRestRequest = (
   for (const orderByItem of orderByItems) {
     // orderByItem -> field_1[AscNullsFirst]
     if (orderByItem.includes('[') && orderByItem.includes(']')) {
-      const [fieldsString, direction] = orderByItem.replace(']', '').split('[');
+      const [fieldName, directionWithRightBracket] = orderByItem.split('[');
+      const direction = directionWithRightBracket.replace(']', '');
 
       // fields -> [field_1] ; direction -> AscNullsFirst
       if (!(direction in OrderByDirection)) {
@@ -43,7 +44,7 @@ export const parseOrderByRestRequest = (
       }
 
       itemDirection = direction;
-      itemFields = fieldsString;
+      itemFields = fieldName;
     } else {
       // orderByItem -> field_3
       itemDirection = DEFAULT_ORDER_DIRECTION;
