@@ -26,15 +26,15 @@ echo ""
 # Change to deployment directory
 cd "$DEPLOYMENT_DIR"
 
-# Check if .env.production exists
-if [ ! -f .env.production ]; then
-    echo -e "${RED}Error: .env.production not found${NC}"
-    echo -e "Please create .env.production from .env.production.example"
+# Check if .env exists
+if [ ! -f .env ]; then
+    echo -e "${RED}Error: .env not found${NC}"
+    echo -e "Please create .env from .env.example"
     exit 1
 fi
 
 echo -e "${BLUE}[1/7] Loading environment variables...${NC}"
-source .env.production
+source .env
 
 # Validate required environment variables
 REQUIRED_VARS=("SERVER_URL" "APP_SECRET" "PG_DATABASE_PASSWORD")

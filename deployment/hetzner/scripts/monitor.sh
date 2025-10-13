@@ -188,8 +188,8 @@ echo ""
 # ========================================
 echo -e "${BLUE}[6/7] Application Health:${NC}"
 
-if [ -f .env.production ]; then
-    source .env.production
+if [ -f .env ]; then
+    source .env
 
     # Check if SERVER_URL is set
     if [ -n "$SERVER_URL" ]; then
@@ -207,7 +207,7 @@ if [ -f .env.production ]; then
         echo -e "  ${YELLOW}⚠ SERVER_URL not configured${NC}"
     fi
 else
-    echo -e "  ${YELLOW}⚠ .env.production not found${NC}"
+    echo -e "  ${YELLOW}⚠ .env not found${NC}"
 fi
 echo ""
 

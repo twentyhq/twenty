@@ -33,8 +33,8 @@ git clone https://github.com/YOUR_ORG/twenty.git
 cd twenty/deployment/hetzner
 
 # 5. Configure environment
-cp .env.production.example .env.production
-nano .env.production  # Edit with your values
+cp .env.example .env
+nano .env  # Edit with your values
 
 # 6. Deploy
 ./scripts/deploy.sh
@@ -116,8 +116,8 @@ git clone https://github.com/timberline-tech/twenty.git
 cd twenty/deployment/hetzner
 
 # Copy and configure environment
-cp .env.production.example .env.production
-nano .env.production
+cp .env.example .env
+nano .env
 ```
 
 **Required Environment Variables:**
@@ -346,7 +346,7 @@ du -sh /var/lib/docker
 docker compose -f docker-compose.prod.yml logs server
 
 # Check environment variables
-cat .env.production
+cat .env
 
 # Restart services
 docker compose -f docker-compose.prod.yml restart

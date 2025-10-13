@@ -133,7 +133,7 @@ free -h
 Free up local storage and memory:
 
 ```bash
-# In .env.production
+# In .env
 STORAGE_TYPE=s3
 STORAGE_S3_REGION=auto
 STORAGE_S3_NAME=your-bucket
@@ -145,7 +145,7 @@ Cloudflare R2 offers 10GB free.
 ### 2. Disable Features You Don't Need
 
 ```bash
-# In .env.production
+# In .env
 CALENDAR_PROVIDER_GOOGLE_ENABLED=false
 MESSAGING_PROVIDER_GMAIL_ENABLED=false
 CALENDAR_PROVIDER_MICROSOFT_ENABLED=false
