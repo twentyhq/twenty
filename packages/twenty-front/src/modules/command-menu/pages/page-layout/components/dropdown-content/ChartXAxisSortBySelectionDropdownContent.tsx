@@ -3,6 +3,7 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { getXAxisSortConfiguration } from '@/command-menu/pages/page-layout/utils/getXAxisSortConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -12,11 +13,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  type GraphOrderBy,
-  type LineChartConfiguration,
-} from '~/generated/graphql';
-import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
+import { type GraphOrderBy } from '~/generated/graphql';
 
 export const ChartXAxisSortBySelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -47,31 +44,16 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
     objectMetadataId: widgetInEditMode?.objectMetadataId,
   });
 
-  // Determine current order by and field metadata based on chart type
-  let currentOrderBy: GraphOrderBy | null | undefined;
-  let groupByFieldMetadataIdX: string;
-  let groupBySubFieldNameX: string | null | undefined;
-
-  if (configuration.__typename === 'BarChartConfiguration') {
-    currentOrderBy = configuration.primaryAxisOrderBy;
-    groupByFieldMetadataIdX = configuration.primaryAxisGroup ?? '';
-    groupBySubFieldNameX = configuration.primaryAxisSubFieldName;
-  } else {
-    // LineChartConfiguration
-    const lineConfig = configuration as LineChartConfiguration;
-    currentOrderBy = lineConfig.orderByX;
-    groupByFieldMetadataIdX = lineConfig.groupByFieldMetadataIdX ?? '';
-    groupBySubFieldNameX = lineConfig.groupBySubFieldNameX;
-  }
+  const {
+    currentOrderBy,
+    groupByFieldMetadataIdX,
+    groupBySubFieldNameX,
+    getUpdateConfig,
+  } = getXAxisSortConfiguration(configuration);
 
   const handleSelect = (orderBy: GraphOrderBy) => {
-    const configToUpdate =
-      configuration.__typename === 'BarChartConfiguration'
-        ? { primaryAxisOrderBy: orderBy }
-        : { orderByX: orderBy };
-
     updateCurrentWidgetConfig({
-      configToUpdate,
+      configToUpdate: getUpdateConfig(orderBy),
     });
     closeDropdown();
   };
@@ -95,10 +77,7 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
               text={getXSortOptionLabel({
                 graphOrderBy: sortOption.value,
                 groupByFieldMetadataIdX,
-                groupBySubFieldNameX:
-                  (groupBySubFieldNameX as
-                    | CompositeFieldSubFieldName
-                    | undefined) ?? undefined,
+                groupBySubFieldNameX,
                 aggregateFieldMetadataId:
                   configuration.aggregateFieldMetadataId ?? undefined,
                 aggregateOperation:
