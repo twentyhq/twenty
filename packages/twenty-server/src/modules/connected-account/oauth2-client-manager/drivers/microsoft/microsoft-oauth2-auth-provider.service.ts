@@ -63,52 +63,48 @@ export class MicrosoftOAuth2AuthProviderService {
   }
 
   private getAccessTokenByRefreshToken = async (refreshToken: string) => {
-    try {
-      const urlData = new URLSearchParams();
+    const urlData = new URLSearchParams();
 
-      urlData.append(
-        'client_id',
-        this.twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
-      );
-      urlData.append('scope', 'https://graph.microsoft.com/.default');
-      urlData.append('refresh_token', refreshToken);
-      urlData.append(
-        'client_secret',
-        this.twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
-      );
-      urlData.append('grant_type', 'refresh_token');
+    urlData.append(
+      'client_id',
+      this.twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
+    );
+    urlData.append('scope', 'https://graph.microsoft.com/.default');
+    urlData.append('refresh_token', refreshToken);
+    urlData.append(
+      'client_secret',
+      this.twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
+    );
+    urlData.append('grant_type', 'refresh_token');
 
-      const res = await fetch(
-        `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
-        {
-          method: 'POST',
-          body: urlData,
-        },
-      );
+    const res = await fetch(
+      `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
+      {
+        method: 'POST',
+        body: urlData,
+      },
+    );
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        if (data) {
-          const accessTokenSliced = data?.access_token?.slice(0, 10);
-          const refreshTokenSliced = data?.refresh_token?.slice(0, 10);
+    if (!res.ok) {
+      if (data) {
+        const accessTokenSliced = data?.access_token?.slice(0, 10);
+        const refreshTokenSliced = data?.refresh_token?.slice(0, 10);
 
-          delete data.access_token;
-          delete data.refresh_token;
-          this.logger.error(data);
-          this.logger.error(`accessTokenSliced: ${accessTokenSliced}`);
-          this.logger.error(`refreshTokenSliced: ${refreshTokenSliced}`);
-        }
-
-        this.logger.error(res);
-        throw new Error(
-          `${MicrosoftOAuth2AuthProviderService.name} error: ${ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED}`,
-        );
+        delete data.access_token;
+        delete data.refresh_token;
+        this.logger.error(data);
+        this.logger.error(`accessTokenSliced: ${accessTokenSliced}`);
+        this.logger.error(`refreshTokenSliced: ${refreshTokenSliced}`);
       }
 
-      return data.access_token;
-    } catch (error) {
-      return error;
+      this.logger.error(res);
+      throw new Error(
+        `${MicrosoftOAuth2AuthProviderService.name} error: ${ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED}`,
+      );
     }
+
+    return data.access_token;
   };
 }

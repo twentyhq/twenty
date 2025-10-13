@@ -16,7 +16,7 @@ import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-impo
 @Injectable()
 export class MicrosoftCalendarImportEventsService {
   constructor(
-    private readonly MicrosoftClientProvider: MicrosoftClientProvider,
+    private readonly microsoftClientProvider: MicrosoftClientProvider,
   ) {}
 
   public async getCalendarEvents(
@@ -28,7 +28,7 @@ export class MicrosoftCalendarImportEventsService {
   ): Promise<FetchedCalendarEvent[]> {
     try {
       const microsoftClient =
-        await this.MicrosoftClientProvider.getMicrosoftClient(connectedAccount);
+        await this.microsoftClientProvider.getMicrosoftClient(connectedAccount);
       const events: Event[] = [];
 
       for (const changedEventId of changedEventIds) {

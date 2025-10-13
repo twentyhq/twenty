@@ -1,4 +1,3 @@
-//
 import { Injectable } from '@nestjs/common';
 
 import { type Client } from '@microsoft/microsoft-graph-client';
