@@ -5,6 +5,7 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type QueryBuilderCteOptions } from 'typeorm/query-builder/QueryBuilderCte';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -53,6 +54,20 @@ export class WorkspaceSelectQueryBuilder<
 
   getFindOptions() {
     return this.findOptions;
+  }
+
+  addCommonTableExpression(
+    query: string,
+    alias: string,
+    options?: QueryBuilderCteOptions,
+  ): this {
+    try {
+      super.addCommonTableExpression(query, alias, options);
+
+      return this;
+    } catch (error) {
+      throw computeTwentyORMException(error);
+    }
   }
 
   override clone(): this {

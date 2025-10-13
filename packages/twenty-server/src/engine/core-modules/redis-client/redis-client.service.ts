@@ -12,7 +12,7 @@ export class RedisClientService implements OnModuleDestroy {
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  getQueueClient() {
+  getNoevictionClient() {
     if (!this.redisQueueClient) {
       const redisQueueUrl =
         this.twentyConfigService.get('REDIS_QUEUE_URL') ??

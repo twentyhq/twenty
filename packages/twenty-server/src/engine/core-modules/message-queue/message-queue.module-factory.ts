@@ -22,7 +22,7 @@ export const messageQueueModuleFactory = async (
       return {
         type: MessageQueueDriverType.BullMQ,
         options: {
-          connection: redisClientService.getQueueClient(),
+          connection: redisClientService.getNoevictionClient(),
         },
       } satisfies BullMQDriverFactoryOptions;
     }

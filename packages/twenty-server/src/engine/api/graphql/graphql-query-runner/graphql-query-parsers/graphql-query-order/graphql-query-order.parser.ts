@@ -22,6 +22,7 @@ import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-meta
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+import { wrapperWithDoubleQuoteWhenUpperCase } from 'src/engine/api/graphql/graphql-query-runner/utils/wrapper-with-double-quote-when-uppercase';
 
 type OrderByCondition = {
   order: 'ASC' | 'DESC';
@@ -76,7 +77,9 @@ export class GraphqlQueryOrderFieldParser {
             const orderByCasting =
               this.getOptionalOrderByCasting(fieldMetadata);
 
-            acc[`"${objectNameSingular}"."${key}"${orderByCasting}`] =
+            const selector = `${wrapperWithDoubleQuoteWhenUpperCase(objectNameSingular)}.${wrapperWithDoubleQuoteWhenUpperCase(key)}`;
+
+            acc[`${selector}${orderByCasting}`] =
               this.convertOrderByToFindOptionsOrder(
                 value as OrderByDirection,
                 isForwardPagination,

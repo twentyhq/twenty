@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type IResolvers } from '@graphql-tools/utils';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
@@ -91,17 +91,15 @@ export class WorkspaceResolverFactory {
       Mutation: {},
     };
 
-    const workspaceId = authContext.workspace?.id;
-
-    if (!workspaceId) {
-      throw new AuthException(
-        'Unauthenticated',
-        AuthExceptionCode.UNAUTHENTICATED,
-      );
-    }
+    assertIsDefinedOrThrow(
+      authContext.workspace?.id,
+      new AuthException('Unauthenticated', AuthExceptionCode.UNAUTHENTICATED),
+    );
 
     const workspaceFeatureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        authContext.workspace.id,
+      );
 
     for (const objectMetadata of Object.values(objectMetadataMaps.byId).filter(
       isDefined,

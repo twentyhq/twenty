@@ -137,6 +137,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   attachments: '20202020-c1b5-4120-b0f0-987ca401ed53',
   timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
+  lastViewedAt: '20202020-0119-41db-bebd-854ddb42def7',
 } as const;
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {

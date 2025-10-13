@@ -29,13 +29,18 @@ import {
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { RedisFieldRepository } from 'src/engine/twenty-orm/repository/redis-fields.repository';
+import { RedisFieldSqlFactory } from 'src/engine/twenty-orm/factories/redis-field-sql.factory';
 
 @Injectable()
 export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolverService<
   FindManyResolverArgs,
   IConnection<ObjectRecord>
 > {
-  constructor() {
+  constructor(
+    private readonly redisFieldRepository: RedisFieldRepository,
+    private readonly redisFieldSqlFactory: RedisFieldSqlFactory,
+  ) {
     super();
   }
 
@@ -119,6 +124,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       objectMetadataNameSingular,
     });
 
+    // todo: the limit from the graphql query is not used here
     const limit =
       executionArgs.args.first ?? executionArgs.args.last ?? QUERY_MAX_RECORDS;
 
@@ -129,10 +135,20 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       objectMetadataMaps,
     });
 
+    // Apply select columns via findOptions first
+    queryBuilder.setFindOptions({
+      select: columnsToSelect,
+    });
+
+    // Now compute and add redis-backed fields (e.g., lastViewedAt) to the SQL select
+    await executionArgs.graphqlQueryParser.computeRedisFields(
+      objectMetadataItemWithFieldMaps,
+      queryBuilder,
+      this.redisFieldRepository,
+      this.redisFieldSqlFactory,
+    );
+
     const objectRecords = (await queryBuilder
-      .setFindOptions({
-        select: columnsToSelect,
-      })
       .take(limit + 1)
       .getMany()) as ObjectRecord[];
 
