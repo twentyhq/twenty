@@ -12,5 +12,6 @@ import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands
     TypeOrmModule.forFeature([Workspace, ObjectMetadataEntity], 'core'),
   ],
   providers: [MigrateAttachmentAuthorToCreatedByCommand],
+  exports: [MigrateAttachmentAuthorToCreatedByCommand],
 })
-export class UpgradeVersion1_8CommandModule {}
+export class V1_8_UpgradeVersionCommandModule {}
