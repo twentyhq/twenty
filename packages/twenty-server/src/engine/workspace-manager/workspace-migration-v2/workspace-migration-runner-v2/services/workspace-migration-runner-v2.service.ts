@@ -114,6 +114,7 @@ export class WorkspaceMigrationRunnerV2Service {
           }
         },
       );
+
       if (shouldIncrementMetadataGraphqlSchemaVersion) {
         await this.workspaceMetadataVersionService.incrementMetadataVersion(
           workspaceId,
