@@ -25,6 +25,10 @@ export const useRecordsFieldVisibleGqlFields = ({
     visibleRecordFieldsComponentSelector,
   );
 
+  console.log({
+    visibleRecordFields,
+  });
+
   const { fieldMetadataItemByFieldMetadataItemId } =
     useRecordIndexContextOrThrow();
 

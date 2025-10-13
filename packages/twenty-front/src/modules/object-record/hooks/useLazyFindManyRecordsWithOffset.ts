@@ -34,6 +34,10 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
+  console.log({
+    recordGqlFields,
+  });
+
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
     recordGqlFields,
