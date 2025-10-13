@@ -10,6 +10,8 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
+import { fromDeleteViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util';
+import { fromDestroyViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util';
 import { fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util';
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
 import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/delete-view-group.input';
@@ -198,15 +200,11 @@ export class ViewGroupV2Service {
       },
     );
 
-    const existingFlatViewGroup = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: deleteViewGroupInput.id,
-      flatEntityMaps: existingFlatViewGroupMaps,
-    });
-
-    const optimisticallyUpdatedFlatViewGroupWithDeletedAt = {
-      ...existingFlatViewGroup,
-      deletedAt: new Date(),
-    };
+    const optimisticallyUpdatedFlatViewGroupWithDeletedAt =
+      fromDeleteViewGroupInputToFlatViewGroupOrThrow({
+        flatViewGroupMaps: existingFlatViewGroupMaps,
+        deleteViewGroupInput,
+      });
 
     const toFlatViewGroupMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
       flatEntity: optimisticallyUpdatedFlatViewGroupWithDeletedAt,
@@ -277,12 +275,11 @@ export class ViewGroupV2Service {
       },
     );
 
-    const existingViewGroupToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow(
-      {
-        flatEntityId: destroyViewGroupInput.id,
-        flatEntityMaps: existingFlatViewGroupMaps,
-      },
-    );
+    const existingViewGroupToDelete =
+      fromDestroyViewGroupInputToFlatViewGroupOrThrow({
+        destroyViewGroupInput,
+        flatViewGroupMaps: existingFlatViewGroupMaps,
+      });
 
     const fromFlatViewGroupMaps = getSubFlatEntityMapsOrThrow({
       flatEntityIds: [existingViewGroupToDelete.id],
