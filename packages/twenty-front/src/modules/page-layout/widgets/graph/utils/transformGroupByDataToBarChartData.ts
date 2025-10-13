@@ -13,7 +13,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   AxisNameDisplay,
   type BarChartConfiguration,
-  GraphLayoutType,
 } from '~/generated/graphql';
 
 type TransformGroupByDataToBarChartDataParams = {
@@ -31,7 +30,6 @@ type TransformGroupByDataToBarChartDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
-  layout?: 'vertical' | 'horizontal';
 };
 
 const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
@@ -42,7 +40,6 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
   xAxisLabel: undefined,
   yAxisLabel: undefined,
   showDataLabels: false,
-  layout: 'vertical',
 };
 
 export const transformGroupByDataToBarChartData = ({
@@ -127,16 +124,10 @@ export const transformGroupByDataToBarChartData = ({
         objectMetadataItem,
       });
 
-  const layout =
-    configuration.graphLayoutType === GraphLayoutType.HORIZONTAL
-      ? 'horizontal'
-      : 'vertical';
-
   return {
     ...baseResult,
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
-    layout,
   };
 };

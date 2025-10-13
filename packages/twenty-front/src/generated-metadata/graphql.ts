@@ -286,7 +286,6 @@ export type BarChartConfiguration = {
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
-  graphLayoutType?: Maybe<GraphLayoutType>;
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
   groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
@@ -1421,12 +1420,6 @@ export type GetServerlessFunctionSourceCodeInput = {
 export type GetWebhookDto = {
   id: Scalars['UUID'];
 };
-
-/** Layout for the graph charts */
-export enum GraphLayoutType {
-  HORIZONTAL = 'HORIZONTAL',
-  VERTICAL = 'VERTICAL'
-}
 
 /** Order by options for graph widgets */
 export enum GraphOrderBy {

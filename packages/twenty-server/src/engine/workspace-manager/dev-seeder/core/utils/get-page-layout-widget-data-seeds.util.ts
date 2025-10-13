@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
+import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
@@ -165,13 +166,12 @@ export const getPageLayoutWidgetDataSeeds = (
         isDefined(opportunityAmountFieldId) &&
         isDefined(opportunityStageFieldId)
           ? {
-              graphType: 'BAR',
+              graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: opportunityAmountFieldId,
               aggregateOperation: AggregateOperations.SUM,
-              groupByFieldMetadataIdX: opportunityStageFieldId,
-              orderByX: 'FIELD_DESC',
+              primaryAxisGroup: opportunityStageFieldId,
+              primaryAxisOrderBy: 'FIELD_DESC',
               axisNameDisplay: AxisNameDisplay.NONE,
-
               displayDataLabel: false,
             }
           : null,
@@ -194,11 +194,11 @@ export const getPageLayoutWidgetDataSeeds = (
       configuration:
         isDefined(rocketIdFieldId) && isDefined(rocketCreatedAtFieldId)
           ? {
-              graphType: 'BAR',
+              graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: rocketIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              groupByFieldMetadataIdX: rocketCreatedAtFieldId,
-              orderByX: 'FIELD_ASC',
+              primaryAxisGroup: rocketCreatedAtFieldId,
+              primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
             }
@@ -292,11 +292,11 @@ export const getPageLayoutWidgetDataSeeds = (
       configuration:
         isDefined(companyIdFieldId) && isDefined(companyEmployeesFieldId)
           ? {
-              graphType: 'BAR',
+              graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: companyIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              groupByFieldMetadataIdX: companyEmployeesFieldId,
-              orderByX: 'FIELD_ASC',
+              primaryAxisGroup: companyEmployeesFieldId,
+              primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
             }
@@ -457,11 +457,11 @@ export const getPageLayoutWidgetDataSeeds = (
       configuration:
         isDefined(personIdFieldId) && isDefined(personCityFieldId)
           ? {
-              graphType: 'BAR',
+              graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: personIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              groupByFieldMetadataIdX: personCityFieldId,
-              orderByX: 'FIELD_DESC',
+              primaryAxisGroup: personCityFieldId,
+              primaryAxisOrderBy: 'FIELD_DESC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
             }
