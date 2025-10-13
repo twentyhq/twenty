@@ -1,5 +1,4 @@
 # Environment files with sensitive data
-.env.production
 .env.local
 .env
 

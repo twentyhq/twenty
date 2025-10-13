@@ -55,8 +55,8 @@ cd twenty/deployment/hetzner
 ### 5. Configure Environment (5 minutes)
 
 ```bash
-cp .env.production.example .env.production
-nano .env.production
+cp .env.example .env
+nano .env
 ```
 
 **Minimum required configuration:**

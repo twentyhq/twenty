@@ -36,14 +36,14 @@ mkdir -p "$BACKUP_DIR"
 # Change to deployment directory
 cd "$DEPLOYMENT_DIR"
 
-# Check if .env.production exists
-if [ ! -f .env.production ]; then
-    echo -e "${RED}Error: .env.production not found${NC}"
+# Check if .env exists
+if [ ! -f .env ]; then
+    echo -e "${RED}Error: .env not found${NC}"
     exit 1
 fi
 
 # Load environment variables
-source .env.production
+source .env
 
 echo -e "${BLUE}[1/4] Starting database backup...${NC}"
 echo -e "Backup file: ${YELLOW}$BACKUP_FILE${NC}"
