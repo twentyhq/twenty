@@ -161,7 +161,7 @@ export const SettingsObjectNewFieldConfigure = () => {
           });
         } else {
           throw new CustomError(
-            'Relations must have at least 1 destination object',
+            'Please select at least one destination object for this relation.',
             'FIELD_METADATA_RELATION_MALFORMED',
           );
         }

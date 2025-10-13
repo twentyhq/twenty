@@ -133,6 +133,7 @@ export const SettingsObjectNewFieldSelector = ({
                   {fieldTypeConfigs
                     .filter(([, config]) => config.category === category)
                     // by default, we hide the relation type and create only the morph relation type
+                    // on submit the new field, we choose the relation type based on the amount of target object
                     .filter(([key]) => key !== FieldMetadataType.RELATION)
                     .map(
                       ([key, config]) =>

@@ -31,7 +31,7 @@ export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
   }
 
   if (isDefined(fieldMetadataItem) && isDefined(fieldMetadataItem.relation)) {
-    return [fieldMetadataItem.relation?.targetObjectMetadata];
+    return [fieldMetadataItem.relation.targetObjectMetadata];
   }
 
   const availableItems = activeObjectMetadataItems
