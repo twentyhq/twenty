@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ViewGroupController } from 'src/engine/metadata-modules/view-group/controllers/view-group.controller';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewGroupResolver } from 'src/engine/metadata-modules/view-group/resolvers/view-group.resolver';
@@ -16,6 +17,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     WorkspaceCacheStorageModule,
     FeatureFlagModule,
     WorkspaceMigrationV2Module,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule
   ],
   controllers: [ViewGroupController],
   providers: [ViewGroupService, ViewGroupV2Service, ViewGroupResolver],
