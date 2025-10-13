@@ -26,13 +26,14 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     graphType
     aggregateFieldMetadataId
     aggregateOperation
-    groupByFieldMetadataIdX
-    orderByX
-    groupByFieldMetadataIdY
-    orderByY
+    primaryAxisGroup
+    primaryAxisSubFieldName
+    primaryAxisOrderBy
+    secondaryAxisGroup
+    secondaryAxisSubFieldName
+    secondaryAxisOrderBy
     omitNullValues
     axisNameDisplay
-    graphLayoutType
     displayDataLabel
     rangeMin
     rangeMax
@@ -44,10 +45,12 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     graphType
     aggregateFieldMetadataId
     aggregateOperation
-    groupByFieldMetadataIdX
-    orderByX
-    groupByFieldMetadataIdY
-    orderByY
+    primaryAxisGroup
+    primaryAxisSubFieldName
+    primaryAxisOrderBy
+    secondaryAxisGroup
+    secondaryAxisSubFieldName
+    secondaryAxisOrderBy
     omitNullValues
     axisNameDisplay
     displayDataLabel
