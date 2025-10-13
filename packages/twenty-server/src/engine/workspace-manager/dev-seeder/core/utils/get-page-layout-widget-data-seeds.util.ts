@@ -142,8 +142,8 @@ export const getPageLayoutWidgetDataSeeds = (
               graphType: 'LINE',
               aggregateFieldMetadataId: opportunityAmountFieldId,
               aggregateOperation: AggregateOperations.SUM,
-              groupByFieldMetadataIdX: opportunityCloseDateFieldId,
-              orderByX: 'FIELD_ASC',
+              primaryAxisGroup: opportunityCloseDateFieldId,
+              primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
             }
@@ -269,8 +269,8 @@ export const getPageLayoutWidgetDataSeeds = (
               graphType: 'LINE',
               aggregateFieldMetadataId: companyIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              groupByFieldMetadataIdX: companyCreatedAtFieldId,
-              orderByX: 'FIELD_ASC',
+              primaryAxisGroup: companyCreatedAtFieldId,
+              primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
             }

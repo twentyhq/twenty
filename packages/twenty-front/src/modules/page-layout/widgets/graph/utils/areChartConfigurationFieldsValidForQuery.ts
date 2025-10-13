@@ -42,12 +42,11 @@ export const areChartConfigurationFieldsValidForQuery = (
         fieldExists(
           configuration.aggregateFieldMetadataId,
           objectMetadataItem,
-        ) &&
-        fieldExists(configuration.groupByFieldMetadataIdX, objectMetadataItem);
+        ) && fieldExists(configuration.primaryAxisGroup, objectMetadataItem);
 
       const hasValidYField =
-        !isDefined(configuration.groupByFieldMetadataIdY) ||
-        fieldExists(configuration.groupByFieldMetadataIdY, objectMetadataItem);
+        !isDefined(configuration.secondaryAxisGroup) ||
+        fieldExists(configuration.secondaryAxisGroup, objectMetadataItem);
 
       return hasRequiredXFields && hasValidYField;
     }

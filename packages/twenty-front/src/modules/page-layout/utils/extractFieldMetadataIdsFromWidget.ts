@@ -24,8 +24,8 @@ export const extractFieldMetadataIdsFromWidget = (
     case 'LineChartConfiguration':
       return [
         config.aggregateFieldMetadataId,
-        config.groupByFieldMetadataIdX,
-        config.groupByFieldMetadataIdY,
+        config.primaryAxisGroup,
+        config.secondaryAxisGroup,
       ].filter(isDefined);
 
     case 'PieChartConfiguration':

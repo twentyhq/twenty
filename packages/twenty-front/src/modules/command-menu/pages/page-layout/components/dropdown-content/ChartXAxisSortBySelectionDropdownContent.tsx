@@ -3,7 +3,6 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { getXAxisSortConfiguration } from '@/command-menu/pages/page-layout/utils/getXAxisSortConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -12,6 +11,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type GraphOrderBy } from '~/generated/graphql';
 
@@ -44,16 +44,9 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
     objectMetadataId: widgetInEditMode?.objectMetadataId,
   });
 
-  const {
-    currentOrderBy,
-    groupByFieldMetadataIdX,
-    groupBySubFieldNameX,
-    getUpdateConfig,
-  } = getXAxisSortConfiguration(configuration);
-
   const handleSelect = (orderBy: GraphOrderBy) => {
     updateCurrentWidgetConfig({
-      configToUpdate: getUpdateConfig(orderBy),
+      configToUpdate: { primaryAxisOrderBy: orderBy },
     });
     closeDropdown();
   };
@@ -76,14 +69,16 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
             <MenuItemSelect
               text={getXSortOptionLabel({
                 graphOrderBy: sortOption.value,
-                groupByFieldMetadataIdX,
-                groupBySubFieldNameX,
+                groupByFieldMetadataIdX: configuration.primaryAxisGroup ?? '',
+                groupBySubFieldNameX: configuration.primaryAxisSubFieldName as
+                  | CompositeFieldSubFieldName
+                  | undefined,
                 aggregateFieldMetadataId:
                   configuration.aggregateFieldMetadataId ?? undefined,
                 aggregateOperation:
                   configuration.aggregateOperation ?? undefined,
               })}
-              selected={currentOrderBy === sortOption.value}
+              selected={configuration.primaryAxisOrderBy === sortOption.value}
               focused={selectedItemId === sortOption.value}
               LeftIcon={sortOption.icon}
               onClick={() => {

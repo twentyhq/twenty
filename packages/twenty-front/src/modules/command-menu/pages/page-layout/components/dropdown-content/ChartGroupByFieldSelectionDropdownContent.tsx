@@ -24,8 +24,8 @@ export const ChartGroupByFieldSelectionDropdownContent = () => {
   if (configuration?.__typename === 'LineChartConfiguration') {
     return (
       <ChartGroupByFieldSelectionDropdownContentBase<LineChartConfiguration>
-        fieldMetadataIdKey="groupByFieldMetadataIdY"
-        subFieldNameKey="groupBySubFieldNameY"
+        fieldMetadataIdKey="secondaryAxisGroup"
+        subFieldNameKey="secondaryAxisSubFieldName"
       />
     );
   }

@@ -3,7 +3,6 @@ import { useGraphGroupBySortOptionLabels } from '@/command-menu/pages/page-layou
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { getYAxisSortConfiguration } from '@/command-menu/pages/page-layout/utils/getYAxisSortConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -29,9 +28,6 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
-  const { currentOrderBy, groupByFieldMetadataIdY, getUpdateConfig } =
-    getYAxisSortConfiguration(configuration);
-
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
@@ -48,7 +44,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
 
   const handleSelectSortOption = (orderBy: GraphOrderBy) => {
     updateCurrentWidgetConfig({
-      configToUpdate: getUpdateConfig(orderBy),
+      configToUpdate: { secondaryAxisOrderBy: orderBy },
     });
     closeDropdown();
   };
@@ -78,9 +74,12 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
               <MenuItemSelect
                 text={getGroupBySortOptionLabel({
                   graphOrderBy: sortOption.value,
-                  groupByFieldMetadataId: groupByFieldMetadataIdY,
+                  groupByFieldMetadataId:
+                    configuration.secondaryAxisGroup ?? '',
                 })}
-                selected={currentOrderBy === sortOption.value}
+                selected={
+                  configuration.secondaryAxisOrderBy === sortOption.value
+                }
                 focused={selectedItemId === sortOption.value}
                 LeftIcon={sortOption.icon}
                 onClick={() => {

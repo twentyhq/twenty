@@ -1,7 +1,6 @@
 import { ChartAggregateOperationSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { getYAxisSortConfiguration } from '@/command-menu/pages/page-layout/utils/getYAxisSortConfiguration';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -37,8 +36,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
-  const { groupByFieldMetadataIdY: currentFieldMetadataId } =
-    getYAxisSortConfiguration(configuration);
+  const currentFieldMetadataId = configuration.secondaryAxisGroup;
 
   const [selectedFieldMetadataId, setSelectedFieldMetadataId] = useState(
     currentFieldMetadataId,

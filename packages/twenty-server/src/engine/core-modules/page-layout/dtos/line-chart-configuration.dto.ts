@@ -40,12 +40,12 @@ export class LineChartConfigurationDTO {
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  groupByFieldMetadataIdX: string;
+  primaryAxisGroup: string;
 
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  groupBySubFieldNameX?: string;
+  primaryAxisSubFieldName?: string;
 
   @Field(() => GraphOrderBy, {
     nullable: true,
@@ -53,22 +53,22 @@ export class LineChartConfigurationDTO {
   })
   @IsEnum(GraphOrderBy)
   @IsOptional()
-  orderByX?: GraphOrderBy;
+  primaryAxisOrderBy?: GraphOrderBy;
 
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
-  groupByFieldMetadataIdY?: string;
+  secondaryAxisGroup?: string;
 
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  groupBySubFieldNameY?: string;
+  secondaryAxisSubFieldName?: string;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
   @IsOptional()
-  orderByY?: GraphOrderBy;
+  secondaryAxisOrderBy?: GraphOrderBy;
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()

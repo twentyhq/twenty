@@ -84,14 +84,8 @@ export const ChartDataSourceDropdownContent = () => {
     if (currentSource !== objectMetadataId) {
       updateCurrentWidgetConfig({
         objectMetadataId,
-        // TODO: Consolidate field names when LINE charts are enabled
-        // Currently BAR uses primaryAxis/secondaryAxis, LINE uses groupByFieldMetadataIdX/Y
         configToUpdate: {
           aggregateFieldMetadataId: null,
-          groupByFieldMetadataIdX: null,
-          groupByFieldMetadataIdY: null,
-          groupBySubFieldNameX: null,
-          groupBySubFieldNameY: null,
           primaryAxisGroup: null,
           primaryAxisSubFieldName: null,
           secondaryAxisGroup: null,

@@ -23,8 +23,8 @@ export const ChartXAxisFieldSelectionDropdownContent = () => {
   if (configuration?.__typename === 'LineChartConfiguration') {
     return (
       <ChartGroupByFieldSelectionDropdownContentBase<LineChartConfiguration>
-        fieldMetadataIdKey="groupByFieldMetadataIdX"
-        subFieldNameKey="groupBySubFieldNameX"
+        fieldMetadataIdKey="primaryAxisGroup"
+        subFieldNameKey="primaryAxisSubFieldName"
       />
     );
   }
