@@ -5,8 +5,8 @@ import { StyledContainer } from '@/keyboard-shortcut-menu/components/KeyboardSho
 import { SettingsMorphRelationMultiSelect } from '@/settings/components/SettingsMorphRelationMultiSelect';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
-import { useMorphRelationSettingsFormDefaultValuesOnDestination } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormDefaultValuesOnDestination';
-import { useMorphRelationSettingsFormInitialTargetMetadatas } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialTargetMetadatas';
+import { useRelationSettingsFormDefaultValuesTargetFieldMetadata } from '@/settings/data-model/fields/forms/morph-relation/hooks/useRelationSettingsFormDefaultValuesTargetFieldMetadata';
+import { useRelationSettingsFormInitialTargetObjectMetadatas } from '@/settings/data-model/fields/forms/morph-relation/hooks/useRelationSettingsFormInitialTargetObjectMetadatas';
 import { useFieldMetadataItemDisableFieldEdition } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemDisableFieldEdition';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
@@ -85,7 +85,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
   );
 
   const initialRelationObjectMetadataItems =
-    useMorphRelationSettingsFormInitialTargetMetadatas({
+    useRelationSettingsFormInitialTargetObjectMetadatas({
       fieldMetadataItem: existingFieldMetadataItem,
     });
 
@@ -94,7 +94,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
     RelationType.ONE_TO_MANY;
 
   const { label: defaultLabelOnDestination, icon: defaultIconOnDestination } =
-    useMorphRelationSettingsFormDefaultValuesOnDestination({
+    useRelationSettingsFormDefaultValuesTargetFieldMetadata({
       fieldMetadataItem: existingFieldMetadataItem,
       objectMetadataItem: initialRelationObjectMetadataItems[0],
       relationType: initialRelationType,

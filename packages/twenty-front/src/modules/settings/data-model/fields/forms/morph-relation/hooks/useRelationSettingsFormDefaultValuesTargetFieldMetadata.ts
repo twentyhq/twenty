@@ -6,7 +6,7 @@ import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
-export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
+export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
   fieldMetadataItem,
   objectMetadataItem,
   relationType,
@@ -26,8 +26,15 @@ export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
 } => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
+  if (!isDefined(fieldMetadataItem)) {
+    return {
+      icon: 'IconUsers',
+      label: '',
+    };
+  }
+
   if (
-    isDefined(fieldMetadataItem) &&
+    fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION &&
     fieldMetadataItemHasMorphRelations(fieldMetadataItem)
   ) {
     const firstMorphRelation = fieldMetadataItem.morphRelations?.[0];
@@ -48,7 +55,6 @@ export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
   }
 
   if (
-    isDefined(fieldMetadataItem) &&
     fieldMetadataItem.type === FieldMetadataType.RELATION &&
     isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id)
   ) {

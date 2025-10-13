@@ -4,7 +4,7 @@ import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/is
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useMorphRelationSettingsFormInitialTargetMetadatas = ({
+export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
   fieldMetadataItem,
 }: {
   fieldMetadataItem?: Pick<
