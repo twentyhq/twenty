@@ -39,8 +39,8 @@ echo -e "${YELLOW}Domain:${NC} $DOMAIN"
 echo -e "${YELLOW}Email:${NC} $EMAIL"
 echo ""
 
-# Validate domain format
-if [[ ! $DOMAIN =~ ^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$ ]]; then
+# Validate domain format (supports subdomains)
+if [[ ! $DOMAIN =~ ^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$ ]]; then
     echo -e "${RED}Error: Invalid domain format${NC}"
     exit 1
 fi
