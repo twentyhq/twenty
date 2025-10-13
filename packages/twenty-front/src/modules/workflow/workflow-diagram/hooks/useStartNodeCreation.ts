@@ -6,6 +6,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { useStoreApi } from '@xyflow/react';
 import { useCallback, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,6 +27,8 @@ export const useStartNodeCreation = () => {
     commandMenuNavigationStackState,
   );
 
+  const reactFlowStoreApi = useStoreApi();
+
   /**
    * This function is used in a context where dependencies shouldn't change much.
    * That's why its wrapped in a `useCallback` hook. Removing memoization might break the app unexpectedly.
@@ -36,17 +39,30 @@ export const useStartNodeCreation = () => {
       nextStepId,
       position,
       connectionOptions,
+      sourceHandleId,
     }: {
       parentStepId: string | undefined;
       nextStepId: string | undefined;
       position?: { x: number; y: number };
       connectionOptions?: WorkflowStepConnectionOptions;
+      sourceHandleId?: string;
     }) => {
+      reactFlowStoreApi.getState().cancelConnection?.();
+
+      if (
+        typeof document !== 'undefined' &&
+        typeof PointerEvent !== 'undefined'
+      ) {
+        document.dispatchEvent(
+          new PointerEvent('pointerup', { bubbles: true }),
+        );
+      }
       setWorkflowInsertStepIds({
         parentStepId,
         nextStepId,
         position,
         connectionOptions,
+        sourceHandleId,
       });
 
       if (!isDefined(workflowVisualizerWorkflowId)) {
@@ -65,19 +81,25 @@ export const useStartNodeCreation = () => {
       isInRightDrawer,
       openWorkflowCreateStepInCommandMenu,
       setCommandMenuNavigationStack,
+      reactFlowStoreApi,
     ],
   );
 
   const isNodeCreationStarted = ({
     parentStepId,
     nextStepId,
+    sourceHandleId,
   }: {
     parentStepId?: string;
     nextStepId?: string;
+    sourceHandleId?: string;
   }) => {
     return (
       workflowInsertStepIds.parentStepId === parentStepId &&
-      workflowInsertStepIds.nextStepId === nextStepId
+      workflowInsertStepIds.nextStepId === nextStepId &&
+      (isDefined(sourceHandleId)
+        ? workflowInsertStepIds.sourceHandleId === sourceHandleId
+        : true)
     );
   };
 

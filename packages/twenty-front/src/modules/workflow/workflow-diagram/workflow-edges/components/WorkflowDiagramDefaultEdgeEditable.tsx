@@ -61,6 +61,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   const nodeCreationStarted = isNodeCreationStarted({
     parentStepId: source,
     nextStepId: target,
+    sourceHandleId,
   });
 
   const handleNodeButtonClick = () => {
@@ -71,6 +72,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
       connectionOptions: getConnectionOptionsForSourceHandle({
         sourceHandleId,
       }),
+      sourceHandleId,
     });
   };
 

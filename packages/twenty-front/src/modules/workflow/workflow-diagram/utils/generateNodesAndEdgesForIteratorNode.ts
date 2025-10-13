@@ -83,7 +83,12 @@ export const generateNodesAndEdgesForIteratorNode = ({
       ? [step.settings.input.initialLoopStepIds]
       : [];
 
+  const stepsById = new Map(steps.map((s) => [s.id, s]));
+
   for (const initialLoopStepId of initialLoopStepIds) {
+    if (!stepsById.has(initialLoopStepId)) {
+      continue;
+    }
     updatedEdges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       type: edgeTypeBetweenTwoNodes,
@@ -112,6 +117,10 @@ export const generateNodesAndEdgesForIteratorNode = ({
 
   if (isNonEmptyArray(step.nextStepIds)) {
     for (const nextStepId of step.nextStepIds) {
+      if (!stepsById.has(nextStepId)) {
+        continue;
+      }
+
       updatedEdges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
         type: edgeTypeBetweenTwoNodes,

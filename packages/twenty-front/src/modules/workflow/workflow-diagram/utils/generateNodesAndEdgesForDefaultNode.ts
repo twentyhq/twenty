@@ -62,7 +62,13 @@ export const generateNodesAndEdgesForDefaultNode = ({
   });
 
   if (isNonEmptyArray(step.nextStepIds)) {
+    const nextStepsById = new Map(steps.map((s) => [s.id, s]));
+
     for (const nextStepId of step.nextStepIds) {
+      if (!nextStepsById.has(nextStepId)) {
+        continue;
+      }
+
       updatedEdges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
         type: edgeTypeBetweenTwoNodes,

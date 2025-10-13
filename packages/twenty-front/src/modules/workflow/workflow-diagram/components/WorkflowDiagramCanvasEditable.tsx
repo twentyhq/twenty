@@ -4,6 +4,8 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect';
+import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
 import {
@@ -18,7 +20,9 @@ import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-e
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
 import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
+import { WorkflowDiagramPlaceholderNode } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramPlaceholderNode';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditable';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
@@ -28,11 +32,12 @@ import {
   ReactFlowProvider,
   type Connection,
   type Edge,
+  type FinalConnectionState,
 } from '@xyflow/react';
 import React, { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const WorkflowDiagramCanvasEditable = () => {
+const WorkflowDiagramCanvasEditableInner = () => {
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
@@ -49,6 +54,9 @@ export const WorkflowDiagramCanvasEditable = () => {
     workflowDiagramRightClickMenuPositionState,
   );
 
+  const { workflowDiagramScreenToFlowPosition } =
+    useWorkflowDiagramScreenToFlowPosition();
+
   const { createEdge } = useCreateEdge();
 
   const { deleteEdge } = useDeleteEdge();
@@ -57,11 +65,13 @@ export const WorkflowDiagramCanvasEditable = () => {
 
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
 
+  const { startNodeCreation } = useStartNodeCreation();
+
   const onConnect = (edgeConnect: WorkflowConnection) => {
     setWorkflowDiagram((diagram) => {
-      if (isDefined(diagram) === false) {
+      if (!isDefined(diagram)) {
         throw new Error(
-          'It must be impossible for the edges to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
+          'Workflow diagram must be defined before edges can be updated.',
         );
       }
 
@@ -79,6 +89,69 @@ export const WorkflowDiagramCanvasEditable = () => {
       }),
     });
   };
+
+  const handleConnectEnd = useCallback(
+    (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
+      if (
+        isDefined(connectionState.toNode) ||
+        isDefined(connectionState.toHandle)
+      ) {
+        return;
+      }
+
+      const { fromNode, fromHandle } = connectionState;
+
+      if (!isDefined(fromNode) || !isDefined(fromHandle)) {
+        return;
+      }
+
+      const sourceHandleId =
+        fromHandle.id ?? WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID;
+
+      const pointerPosition = (() => {
+        if ('clientX' in event) {
+          return { x: event.clientX, y: event.clientY };
+        }
+
+        const touch = event.changedTouches?.[0];
+
+        if (isDefined(touch)) {
+          return { x: touch.clientX, y: touch.clientY };
+        }
+
+        return undefined;
+      })();
+
+      const dropPosition = isDefined(pointerPosition)
+        ? workflowDiagramScreenToFlowPosition(pointerPosition)
+        : connectionState.to;
+
+      if (!isDefined(dropPosition)) {
+        return;
+      }
+
+      const nodeWidth = fromNode.measured?.width ?? 150;
+      const nodeHeight = fromNode.measured?.height ?? 32;
+
+      const centeredPosition = {
+        x: dropPosition.x - nodeWidth / 2,
+        y: dropPosition.y - nodeHeight / 2,
+      };
+
+      setTimeout(() => {
+        startNodeCreation({
+          parentStepId: fromNode.id,
+          nextStepId: undefined,
+          position: centeredPosition,
+          sourceHandleId,
+          connectionOptions: getConnectionOptionsForSourceHandle({
+            sourceHandleId,
+          }),
+        });
+      }, 0);
+    },
+    [startNodeCreation, workflowDiagramScreenToFlowPosition],
+  );
 
   const handleReconnect = useCallback(
     async (oldEdge: Edge, connection: Connection) => {
@@ -136,8 +209,6 @@ export const WorkflowDiagramCanvasEditable = () => {
         ...triggerToUpdate,
         position: node.position,
       });
-
-      return;
     }
   };
 
@@ -157,11 +228,12 @@ export const WorkflowDiagramCanvasEditable = () => {
   };
 
   return (
-    <ReactFlowProvider>
+    <>
       <WorkflowDiagramCanvasBase
         nodeTypes={{
           default: WorkflowDiagramStepNodeEditable,
           'empty-trigger': WorkflowDiagramEmptyTriggerEditable,
+          placeholder: WorkflowDiagramPlaceholderNode,
         }}
         edgeTypes={{
           blank: WorkflowDiagramBlankEdge,
@@ -172,6 +244,7 @@ export const WorkflowDiagramCanvasEditable = () => {
         tagText={tagProps.text}
         onConnect={onConnect}
         onReconnect={handleReconnect}
+        onConnectEnd={handleConnectEnd}
         onNodeDragStop={onNodeDragStop}
         handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable
@@ -180,6 +253,14 @@ export const WorkflowDiagramCanvasEditable = () => {
       />
 
       <WorkflowDiagramCanvasEditableEffect />
+    </>
+  );
+};
+
+export const WorkflowDiagramCanvasEditable = () => {
+  return (
+    <ReactFlowProvider>
+      <WorkflowDiagramCanvasEditableInner />
     </ReactFlowProvider>
   );
 };

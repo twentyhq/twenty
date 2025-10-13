@@ -93,6 +93,16 @@ export const WorkflowDiagramStepNodeEditableContent = ({
     actionType: data.nodeType === 'action' ? data.actionType : undefined,
   });
 
+  const isCreationInProgressForDefaultHandle = isNodeCreationStarted({
+    parentStepId: data.stepId,
+    sourceHandleId: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+  });
+
+  const shouldRenderAddStepButton =
+    !data.hasNextStepIds &&
+    !isConnectionInProgress &&
+    !isCreationInProgressForDefaultHandle;
+
   return (
     <>
       <WorkflowNodeContainer
@@ -129,13 +139,9 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         )}
       </WorkflowNodeContainer>
 
-      {!data.hasNextStepIds && !isConnectionInProgress && (
+      {shouldRenderAddStepButton && (
         <StyledAddStepButtonContainer
-          shouldDisplay={
-            isHovered ||
-            selected ||
-            isNodeCreationStarted({ parentStepId: data.stepId })
-          }
+          shouldDisplay={isHovered || selected}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleAddStepButtonContainerClick}

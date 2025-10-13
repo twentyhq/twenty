@@ -23,8 +23,11 @@ import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/uti
 import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramConnection';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
+import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -92,6 +95,17 @@ const defaultFitViewOptions = {
   maxZoom: 1,
 } satisfies FitViewOptions;
 
+const WORKFLOW_PLACEHOLDER_NODE_ID = 'workflow-diagram-placeholder-node';
+const WORKFLOW_PLACEHOLDER_EDGE_ID = 'workflow-diagram-placeholder-edge';
+
+const DEFAULT_WORKFLOW_INSERT_STEP_IDS_STATE = {
+  parentStepId: undefined,
+  nextStepId: undefined,
+  position: undefined,
+  connectionOptions: undefined,
+  sourceHandleId: undefined,
+} as const;
+
 export const WorkflowDiagramCanvasBase = ({
   nodeTypes,
   edgeTypes,
@@ -106,6 +120,7 @@ export const WorkflowDiagramCanvasBase = ({
   onReconnect,
   onReconnectStart,
   onReconnectEnd,
+  onConnectEnd,
   handlePaneContextMenu,
   nodesConnectable = false,
   nodesDraggable = false,
@@ -143,6 +158,7 @@ export const WorkflowDiagramCanvasBase = ({
   onReconnect?: OnReconnect;
   onReconnectStart?: () => void;
   onReconnectEnd?: () => void;
+  onConnectEnd?: React.ComponentProps<typeof ReactFlow>['onConnectEnd'];
   nodesConnectable?: boolean;
   nodesDraggable?: boolean;
   handlePaneContextMenu?: ({
@@ -174,6 +190,9 @@ export const WorkflowDiagramCanvasBase = ({
   const setWorkflowInsertStepIds = useSetRecoilComponentState(
     workflowInsertStepIdsComponentState,
   );
+  const workflowInsertStepIds = useRecoilComponentValue(
+    workflowInsertStepIdsComponentState,
+  );
   const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
@@ -186,19 +205,96 @@ export const WorkflowDiagramCanvasBase = ({
   );
 
   const { setEdgeHovered, clearEdgeHover } = useEdgeState();
+  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { rightDrawerState } = useRightDrawerState();
 
   const [workflowDiagramFlowInitialized, setWorkflowDiagramFlowInitialized] =
     useState<boolean>(false);
+  const baseNodes = useMemo(
+    () => (isDefined(workflowDiagram) ? workflowDiagram.nodes : []),
+    [workflowDiagram],
+  );
+  const baseEdges = useMemo(
+    () => (isDefined(workflowDiagram) ? workflowDiagram.edges : []),
+    [workflowDiagram],
+  );
 
-  const { nodes, edges } = useMemo(() => {
-    if (isDefined(workflowDiagram)) {
-      return workflowDiagram;
+  const placeholderNode = useMemo<WorkflowDiagramNode | undefined>(() => {
+    if (!isDefined(workflowInsertStepIds.position)) {
+      return undefined;
     }
-    return { nodes: [], edges: [] };
-  }, [workflowDiagram]);
 
-  const { rightDrawerState } = useRightDrawerState();
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+    return {
+      id: 'placeholder',
+      type: 'placeholder',
+      position: workflowInsertStepIds.position,
+      data: {
+        nodeType: 'placeholder',
+        position: workflowInsertStepIds.position,
+      },
+      draggable: false,
+      selectable: false,
+      focusable: false,
+    };
+  }, [workflowInsertStepIds.position]);
+
+  const nodes = useMemo(() => {
+    if (!isDefined(placeholderNode)) {
+      return baseNodes;
+    }
+
+    return [
+      ...baseNodes.filter((node) => node.id !== WORKFLOW_PLACEHOLDER_NODE_ID),
+      placeholderNode,
+    ];
+  }, [baseNodes, placeholderNode]);
+
+  const placeholderEdge = useMemo<WorkflowDiagramEdge | undefined>(() => {
+    if (!isDefined(placeholderNode)) {
+      return undefined;
+    }
+
+    const parentStepId = workflowInsertStepIds.parentStepId;
+
+    if (!isDefined(parentStepId)) {
+      return undefined;
+    }
+
+    const sourceHandleId =
+      workflowInsertStepIds.sourceHandleId ??
+      WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID;
+
+    return {
+      id: WORKFLOW_PLACEHOLDER_EDGE_ID,
+      type: 'blank',
+      source: parentStepId,
+      sourceHandle: sourceHandleId,
+      target: placeholderNode.id,
+      targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
+      markerEnd: EDGE_BRANCH_ARROW_MARKER.Default.markerEnd,
+      zIndex: EDGE_BRANCH_ARROW_MARKER.Default.zIndex,
+      selectable: false,
+      focusable: false,
+      data: {
+        edgeType: 'default',
+      },
+    };
+  }, [
+    placeholderNode,
+    workflowInsertStepIds.parentStepId,
+    workflowInsertStepIds.sourceHandleId,
+  ]);
+
+  const edges = useMemo(() => {
+    if (!isDefined(placeholderEdge)) {
+      return baseEdges;
+    }
+
+    return [
+      ...baseEdges.filter((edge) => edge.id !== WORKFLOW_PLACEHOLDER_EDGE_ID),
+      placeholderEdge,
+    ];
+  }, [baseEdges, placeholderEdge]);
 
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
@@ -225,9 +321,7 @@ export const WorkflowDiagramCanvasBase = ({
       edges.map((edge) => ({ ...edge, selected: false })),
     );
     setWorkflowInsertStepIds({
-      parentStepId: undefined,
-      nextStepId: undefined,
-      position: undefined,
+      ...DEFAULT_WORKFLOW_INSERT_STEP_IDS_STATE,
     });
     setWorkflowSelectedNode(undefined);
   });
@@ -486,6 +580,7 @@ export const WorkflowDiagramCanvasBase = ({
         onReconnect={onReconnect}
         onReconnectStart={onReconnectStart}
         onReconnectEnd={onReconnectEnd}
+        onConnectEnd={onConnectEnd}
         onNodeDragStop={onNodeDragStop}
         onBeforeDelete={onBeforeDelete}
         onDelete={onDelete}
