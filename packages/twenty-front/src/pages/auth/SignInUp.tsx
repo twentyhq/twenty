@@ -33,9 +33,9 @@ import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { type PublicWorkspaceDataOutput } from '~/generated/graphql';
-import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { Loader } from 'twenty-ui/feedback';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { captchaState } from '@/client-config/states/captchaState';
 
 const StyledLoaderContainer = styled.div`
   align-items: center;
@@ -83,7 +83,7 @@ const StandardContent = ({
 export const SignInUp = () => {
   const { t } = useLingui();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const captchaToken = useRecoilValue(captchaTokenState);
+  const captcha = useRecoilValue(captchaState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
@@ -135,7 +135,7 @@ export const SignInUp = () => {
   ]);
 
   const signInUpForm = useMemo(() => {
-    if (loading || !isUndefinedOrNull(captchaToken)) {
+    if (loading || isUndefinedOrNull(captcha?.siteKey)) {
       return (
         <StyledLoaderContainer>
           <Loader color="gray" />
@@ -183,7 +183,7 @@ export const SignInUp = () => {
       </>
     );
   }, [
-    captchaToken,
+    captcha,
     isDefaultDomain,
     isMultiWorkspaceEnabled,
     isOnAWorkspace,
