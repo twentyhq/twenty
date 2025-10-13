@@ -106,7 +106,7 @@ describe('usePageLayoutDraftState', () => {
                   graphType: GraphType.VERTICAL_BAR,
                   aggregateOperation: ExtendedAggregateOperations.COUNT,
                   aggregateFieldMetadataId: 'id',
-                  primaryAxisGroup: 'createdAt',
+                  primaryAxisGroupByFieldMetadataId: 'createdAt',
                   primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
                   displayDataLabel: false,
                 },

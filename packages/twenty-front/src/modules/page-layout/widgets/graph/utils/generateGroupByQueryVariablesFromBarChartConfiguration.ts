@@ -25,15 +25,17 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
   objectMetadataItem: ObjectMetadataItem;
   barChartConfiguration: BarChartConfiguration;
 }) => {
-  const groupByFieldXId = barChartConfiguration.primaryAxisGroup;
+  const groupByFieldXId =
+    barChartConfiguration.primaryAxisGroupByFieldMetadataId;
 
-  const groupByFieldYId = barChartConfiguration.secondaryAxisGroup;
+  const groupByFieldYId =
+    barChartConfiguration.secondaryAxisGroupByFieldMetadataId;
 
   const groupBySubFieldNameX =
-    barChartConfiguration.primaryAxisSubFieldName ?? undefined;
+    barChartConfiguration.primaryAxisGroupBySubFieldName ?? undefined;
 
   const groupBySubFieldNameY =
-    barChartConfiguration.secondaryAxisSubFieldName ?? undefined;
+    barChartConfiguration.secondaryAxisGroupBySubFieldName ?? undefined;
 
   const groupByFieldX = objectMetadataItem.fields.find(
     (field) => field.id === groupByFieldXId,

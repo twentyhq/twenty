@@ -9,11 +9,11 @@ import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToBarChartData';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToBarChartData';
 import { isDefined } from 'twenty-shared/utils';
+import { GraphType } from '~/generated-metadata/graphql';
 import {
   AxisNameDisplay,
   type BarChartConfiguration,
 } from '~/generated/graphql';
-import { GraphType } from '~/generated-metadata/graphql';
 
 type TransformGroupByDataToBarChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;
@@ -55,13 +55,16 @@ export const transformGroupByDataToBarChartData = ({
   }
 
   const groupByFieldX = objectMetadataItem.fields.find(
-    (field: FieldMetadataItem) => field.id === configuration.primaryAxisGroup,
+    (field: FieldMetadataItem) =>
+      field.id === configuration.primaryAxisGroupByFieldMetadataId,
   );
 
-  const groupByFieldY = isDefined(configuration.secondaryAxisGroup)
+  const groupByFieldY = isDefined(
+    configuration.secondaryAxisGroupByFieldMetadataId,
+  )
     ? objectMetadataItem.fields.find(
         (field: FieldMetadataItem) =>
-          field.id === configuration.secondaryAxisGroup,
+          field.id === configuration.secondaryAxisGroupByFieldMetadataId,
       )
     : undefined;
 
@@ -80,12 +83,12 @@ export const transformGroupByDataToBarChartData = ({
     };
   }
 
-  const groupBySubFieldNameX =
-    configuration.primaryAxisSubFieldName ?? undefined;
+  const primaryAxisSubFieldName =
+    configuration.primaryAxisGroupBySubFieldName ?? undefined;
 
   const indexByKey = getFieldKey({
     field: groupByFieldX,
-    subFieldName: groupBySubFieldNameX,
+    subFieldName: primaryAxisSubFieldName,
   });
 
   const queryName = getGroupByQueryName(objectMetadataItem);
@@ -127,7 +130,7 @@ export const transformGroupByDataToBarChartData = ({
         configuration,
         aggregateOperation,
         objectMetadataItem,
-        groupBySubFieldNameX,
+        primaryAxisSubFieldName,
       })
     : transformOneDimensionalGroupByToBarChartData({
         rawResults,
@@ -136,7 +139,7 @@ export const transformGroupByDataToBarChartData = ({
         configuration,
         aggregateOperation,
         objectMetadataItem,
-        groupBySubFieldNameX,
+        primaryAxisSubFieldName,
       });
 
   const layout =

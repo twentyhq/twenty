@@ -17,15 +17,15 @@ export const extractFieldMetadataIdsFromWidget = (
     case 'BarChartConfiguration':
       return [
         config.aggregateFieldMetadataId,
-        config.primaryAxisGroup,
-        config.secondaryAxisGroup,
+        config.primaryAxisGroupByFieldMetadataId,
+        config.secondaryAxisGroupByFieldMetadataId,
       ].filter(isDefined);
 
     case 'LineChartConfiguration':
       return [
         config.aggregateFieldMetadataId,
-        config.primaryAxisGroup,
-        config.secondaryAxisGroup,
+        config.primaryAxisGroupByFieldMetadataId,
+        config.secondaryAxisGroupByFieldMetadataId,
       ].filter(isDefined);
 
     case 'PieChartConfiguration':

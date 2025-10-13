@@ -44,7 +44,7 @@ describe('generateGroupByQueryVariablesFromBarChartConfiguration', () => {
       aggregateFieldMetadataId: 'aggregate-field',
       aggregateOperation: ExtendedAggregateOperations.COUNT,
       graphType: GraphType.VERTICAL_BAR,
-      primaryAxisGroup: 'field-1',
+      primaryAxisGroupByFieldMetadataId: 'field-1',
       ...overrides,
     }) as BarChartConfiguration;
 
@@ -54,8 +54,8 @@ describe('generateGroupByQueryVariablesFromBarChartConfiguration', () => {
         objectMetadataItem: mockObjectMetadataItem,
         barChartConfiguration: buildConfiguration({
           graphType: GraphType.VERTICAL_BAR,
-          primaryAxisGroup: 'field-1',
-          primaryAxisSubFieldName: null,
+          primaryAxisGroupByFieldMetadataId: 'field-1',
+          primaryAxisGroupBySubFieldName: null,
         }),
       });
 
@@ -67,10 +67,10 @@ describe('generateGroupByQueryVariablesFromBarChartConfiguration', () => {
         objectMetadataItem: mockObjectMetadataItem,
         barChartConfiguration: buildConfiguration({
           graphType: GraphType.VERTICAL_BAR,
-          primaryAxisGroup: 'field-1',
-          primaryAxisSubFieldName: null,
-          secondaryAxisGroup: 'field-2',
-          secondaryAxisSubFieldName: null,
+          primaryAxisGroupByFieldMetadataId: 'field-1',
+          primaryAxisGroupBySubFieldName: null,
+          secondaryAxisGroupByFieldMetadataId: 'field-2',
+          secondaryAxisGroupBySubFieldName: null,
         }),
       });
 
@@ -82,8 +82,8 @@ describe('generateGroupByQueryVariablesFromBarChartConfiguration', () => {
         objectMetadataItem: mockObjectMetadataItem,
         barChartConfiguration: buildConfiguration({
           graphType: GraphType.VERTICAL_BAR,
-          primaryAxisGroup: 'field-4',
-          primaryAxisSubFieldName: 'firstName',
+          primaryAxisGroupByFieldMetadataId: 'field-4',
+          primaryAxisGroupBySubFieldName: 'firstName',
         }),
       });
 
@@ -97,8 +97,8 @@ describe('generateGroupByQueryVariablesFromBarChartConfiguration', () => {
         objectMetadataItem: mockObjectMetadataItem,
         barChartConfiguration: buildConfiguration({
           graphType: GraphType.HORIZONTAL_BAR,
-          primaryAxisGroup: 'field-1',
-          primaryAxisSubFieldName: null,
+          primaryAxisGroupByFieldMetadataId: 'field-1',
+          primaryAxisGroupBySubFieldName: null,
         }),
       });
 
@@ -110,8 +110,8 @@ describe('generateGroupByQueryVariablesFromBarChartConfiguration', () => {
         objectMetadataItem: mockObjectMetadataItem,
         barChartConfiguration: buildConfiguration({
           graphType: GraphType.HORIZONTAL_BAR,
-          primaryAxisGroup: 'field-1',
-          secondaryAxisGroup: 'field-2',
+          primaryAxisGroupByFieldMetadataId: 'field-1',
+          secondaryAxisGroupByFieldMetadataId: 'field-2',
         }),
       });
 
@@ -124,7 +124,7 @@ describe('generateGroupByQueryVariablesFromBarChartConfiguration', () => {
       generateGroupByQueryVariablesFromBarChartConfiguration({
         objectMetadataItem: mockObjectMetadataItem,
         barChartConfiguration: buildConfiguration({
-          primaryAxisGroup: 'invalid-field',
+          primaryAxisGroupByFieldMetadataId: 'invalid-field',
         }),
       }),
     ).toThrow('Field with id invalid-field not found in object metadata');

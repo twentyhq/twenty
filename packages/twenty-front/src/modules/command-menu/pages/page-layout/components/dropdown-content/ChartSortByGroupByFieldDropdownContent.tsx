@@ -75,7 +75,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
                 text={getGroupBySortOptionLabel({
                   graphOrderBy: sortOption.value,
                   groupByFieldMetadataId:
-                    configuration.secondaryAxisGroup ?? '',
+                    configuration.secondaryAxisGroupByFieldMetadataId,
                 })}
                 selected={
                   configuration.secondaryAxisOrderBy === sortOption.value

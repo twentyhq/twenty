@@ -26,11 +26,11 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     graphType
     aggregateFieldMetadataId
     aggregateOperation
-    primaryAxisGroup
-    primaryAxisSubFieldName
+    primaryAxisGroupByFieldMetadataId
+    primaryAxisGroupBySubFieldName
     primaryAxisOrderBy
-    secondaryAxisGroup
-    secondaryAxisSubFieldName
+    secondaryAxisGroupByFieldMetadataId
+    secondaryAxisGroupBySubFieldName
     secondaryAxisOrderBy
     omitNullValues
     axisNameDisplay
@@ -45,11 +45,11 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     graphType
     aggregateFieldMetadataId
     aggregateOperation
-    primaryAxisGroup
-    primaryAxisSubFieldName
+    primaryAxisGroupByFieldMetadataId
+    primaryAxisGroupBySubFieldName
     primaryAxisOrderBy
-    secondaryAxisGroup
-    secondaryAxisSubFieldName
+    secondaryAxisGroupByFieldMetadataId
+    secondaryAxisGroupBySubFieldName
     secondaryAxisOrderBy
     omitNullValues
     axisNameDisplay

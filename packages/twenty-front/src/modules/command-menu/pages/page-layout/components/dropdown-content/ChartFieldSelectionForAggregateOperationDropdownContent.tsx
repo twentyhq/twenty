@@ -36,7 +36,8 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
-  const currentFieldMetadataId = configuration.secondaryAxisGroup;
+  const currentFieldMetadataId =
+    configuration.secondaryAxisGroupByFieldMetadataId;
 
   const [selectedFieldMetadataId, setSelectedFieldMetadataId] = useState(
     currentFieldMetadataId,

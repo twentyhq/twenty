@@ -32,9 +32,15 @@ export const areChartConfigurationFieldsValidForQuery = (
           configuration.aggregateFieldMetadataId,
           objectMetadataItem,
         ) &&
-        fieldExists(configuration.primaryAxisGroup, objectMetadataItem) &&
-        (!isDefined(configuration.secondaryAxisGroup) ||
-          fieldExists(configuration.secondaryAxisGroup, objectMetadataItem))
+        fieldExists(
+          configuration.primaryAxisGroupByFieldMetadataId,
+          objectMetadataItem,
+        ) &&
+        (!isDefined(configuration.secondaryAxisGroupByFieldMetadataId) ||
+          fieldExists(
+            configuration.secondaryAxisGroupByFieldMetadataId,
+            objectMetadataItem,
+          ))
       );
 
     case 'LineChartConfiguration': {
@@ -42,11 +48,18 @@ export const areChartConfigurationFieldsValidForQuery = (
         fieldExists(
           configuration.aggregateFieldMetadataId,
           objectMetadataItem,
-        ) && fieldExists(configuration.primaryAxisGroup, objectMetadataItem);
+        ) &&
+        fieldExists(
+          configuration.primaryAxisGroupByFieldMetadataId,
+          objectMetadataItem,
+        );
 
       const hasValidYField =
-        !isDefined(configuration.secondaryAxisGroup) ||
-        fieldExists(configuration.secondaryAxisGroup, objectMetadataItem);
+        !isDefined(configuration.secondaryAxisGroupByFieldMetadataId) ||
+        fieldExists(
+          configuration.secondaryAxisGroupByFieldMetadataId,
+          objectMetadataItem,
+        );
 
       return hasRequiredXFields && hasValidYField;
     }

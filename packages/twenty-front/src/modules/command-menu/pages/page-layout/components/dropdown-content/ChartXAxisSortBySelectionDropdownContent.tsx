@@ -69,10 +69,12 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
             <MenuItemSelect
               text={getXSortOptionLabel({
                 graphOrderBy: sortOption.value,
-                groupByFieldMetadataIdX: configuration.primaryAxisGroup ?? '',
-                groupBySubFieldNameX: configuration.primaryAxisSubFieldName as
-                  | CompositeFieldSubFieldName
-                  | undefined,
+                groupByFieldMetadataIdX:
+                  configuration.primaryAxisGroupByFieldMetadataId,
+                groupBySubFieldNameX:
+                  configuration.primaryAxisGroupBySubFieldName as
+                    | CompositeFieldSubFieldName
+                    | undefined,
                 aggregateFieldMetadataId:
                   configuration.aggregateFieldMetadataId ?? undefined,
                 aggregateOperation:

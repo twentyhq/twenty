@@ -165,7 +165,7 @@ const mixedGraphsPageLayoutMocks = {
             graphType: GraphType.VERTICAL_BAR,
             aggregateOperation: ExtendedAggregateOperations.COUNT,
             aggregateFieldMetadataId: nameField.id,
-            primaryAxisGroup: createdAtField.id,
+            primaryAxisGroupByFieldMetadataId: createdAtField.id,
             primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
             axisNameDisplay: AxisNameDisplay.BOTH,
             displayDataLabel: false,

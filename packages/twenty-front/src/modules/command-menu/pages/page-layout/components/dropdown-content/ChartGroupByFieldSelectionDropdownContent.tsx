@@ -9,8 +9,8 @@ export const ChartGroupByFieldSelectionDropdownContent = () => {
     <ChartGroupByFieldSelectionDropdownContentBase<
       BarChartConfiguration | LineChartConfiguration
     >
-      fieldMetadataIdKey="secondaryAxisGroup"
-      subFieldNameKey="secondaryAxisSubFieldName"
+      fieldMetadataIdKey="secondaryAxisGroupByFieldMetadataId"
+      subFieldNameKey="secondaryAxisGroupBySubFieldName"
     />
   );
 };

@@ -45,30 +45,34 @@ export const useChartSettingsValues = ({
 
   const barPrimaryField =
     configuration.__typename === 'BarChartConfiguration' &&
-    isDefined(configuration.primaryAxisGroup)
+    isDefined(configuration.primaryAxisGroupByFieldMetadataId)
       ? objectMetadataItem?.fields.find(
-          (field) => field.id === configuration.primaryAxisGroup,
+          (field) =>
+            field.id === configuration.primaryAxisGroupByFieldMetadataId,
         )
       : undefined;
 
   const barSecondaryField =
     configuration.__typename === 'BarChartConfiguration' &&
-    isDefined(configuration.secondaryAxisGroup)
+    isDefined(configuration.secondaryAxisGroupByFieldMetadataId)
       ? objectMetadataItem?.fields.find(
-          (field) => field.id === configuration.secondaryAxisGroup,
+          (field) =>
+            field.id === configuration.secondaryAxisGroupByFieldMetadataId,
         )
       : undefined;
 
   const barXField =
     configuration.__typename === 'BarChartConfiguration'
-      ? barAxisFields?.xFieldId === configuration.primaryAxisGroup
+      ? barAxisFields?.xFieldId ===
+        configuration.primaryAxisGroupByFieldMetadataId
         ? (barPrimaryField ?? barSecondaryField)
         : (barSecondaryField ?? barPrimaryField)
       : undefined;
 
   const barYField =
     configuration.__typename === 'BarChartConfiguration'
-      ? barAxisFields?.yFieldId === configuration.secondaryAxisGroup
+      ? barAxisFields?.yFieldId ===
+        configuration.secondaryAxisGroupByFieldMetadataId
         ? (barSecondaryField ?? barPrimaryField)
         : (barPrimaryField ?? barSecondaryField)
       : undefined;
@@ -85,17 +89,19 @@ export const useChartSettingsValues = ({
 
   const linePrimaryField =
     configuration.__typename === 'LineChartConfiguration' &&
-    isDefined(configuration.primaryAxisGroup)
+    isDefined(configuration.primaryAxisGroupByFieldMetadataId)
       ? objectMetadataItem?.fields.find(
-          (field) => field.id === configuration.primaryAxisGroup,
+          (field) =>
+            field.id === configuration.primaryAxisGroupByFieldMetadataId,
         )
       : undefined;
 
   const lineSecondaryField =
     configuration.__typename === 'LineChartConfiguration' &&
-    isDefined(configuration.secondaryAxisGroup)
+    isDefined(configuration.secondaryAxisGroupByFieldMetadataId)
       ? objectMetadataItem?.fields.find(
-          (field) => field.id === configuration.secondaryAxisGroup,
+          (field) =>
+            field.id === configuration.secondaryAxisGroupByFieldMetadataId,
         )
       : undefined;
 
@@ -108,14 +114,14 @@ export const useChartSettingsValues = ({
     configuration.__typename === 'BarChartConfiguration'
       ? barAxisFields?.xFieldId
       : configuration.__typename === 'LineChartConfiguration'
-        ? configuration.primaryAxisGroup
+        ? configuration.primaryAxisGroupByFieldMetadataId
         : undefined;
 
   const groupBySubFieldNameX = (
     configuration.__typename === 'BarChartConfiguration'
       ? barAxisFields?.xSubFieldName
       : configuration.__typename === 'LineChartConfiguration'
-        ? configuration.primaryAxisSubFieldName
+        ? configuration.primaryAxisGroupBySubFieldName
         : undefined
   ) as CompositeFieldSubFieldName | undefined;
 
@@ -143,14 +149,14 @@ export const useChartSettingsValues = ({
     configuration.__typename === 'BarChartConfiguration'
       ? barAxisFields?.yFieldId
       : configuration.__typename === 'LineChartConfiguration'
-        ? configuration.secondaryAxisGroup
+        ? configuration.secondaryAxisGroupByFieldMetadataId
         : undefined;
 
   const groupBySubFieldNameY = (
     configuration.__typename === 'BarChartConfiguration'
       ? barAxisFields?.ySubFieldName
       : configuration.__typename === 'LineChartConfiguration'
-        ? configuration.secondaryAxisSubFieldName
+        ? configuration.secondaryAxisGroupBySubFieldName
         : undefined
   ) as CompositeFieldSubFieldName | undefined;
 

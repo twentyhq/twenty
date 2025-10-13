@@ -23,27 +23,31 @@ export const getBarChartAxisFields = (
   const isVertical = configuration.graphType === GraphType.VERTICAL_BAR;
 
   const xFieldId = isVertical
-    ? (configuration.primaryAxisGroup ?? configuration.secondaryAxisGroup)
-    : (configuration.secondaryAxisGroup ?? configuration.primaryAxisGroup);
+    ? (configuration.primaryAxisGroupByFieldMetadataId ??
+      configuration.secondaryAxisGroupByFieldMetadataId)
+    : (configuration.secondaryAxisGroupByFieldMetadataId ??
+      configuration.primaryAxisGroupByFieldMetadataId);
 
   const yFieldId = isVertical
-    ? (configuration.secondaryAxisGroup ?? configuration.primaryAxisGroup)
-    : (configuration.primaryAxisGroup ?? configuration.secondaryAxisGroup);
+    ? (configuration.secondaryAxisGroupByFieldMetadataId ??
+      configuration.primaryAxisGroupByFieldMetadataId)
+    : (configuration.primaryAxisGroupByFieldMetadataId ??
+      configuration.secondaryAxisGroupByFieldMetadataId);
 
   const xSubFieldName = (
     isVertical
-      ? (configuration.primaryAxisSubFieldName ??
-        configuration.secondaryAxisSubFieldName)
-      : (configuration.secondaryAxisSubFieldName ??
-        configuration.primaryAxisSubFieldName)
+      ? (configuration.primaryAxisGroupBySubFieldName ??
+        configuration.secondaryAxisGroupBySubFieldName)
+      : (configuration.secondaryAxisGroupBySubFieldName ??
+        configuration.primaryAxisGroupBySubFieldName)
   ) as CompositeFieldSubFieldName | undefined;
 
   const ySubFieldName = (
     isVertical
-      ? (configuration.secondaryAxisSubFieldName ??
-        configuration.primaryAxisSubFieldName)
-      : (configuration.primaryAxisSubFieldName ??
-        configuration.secondaryAxisSubFieldName)
+      ? (configuration.secondaryAxisGroupBySubFieldName ??
+        configuration.primaryAxisGroupBySubFieldName)
+      : (configuration.primaryAxisGroupBySubFieldName ??
+        configuration.secondaryAxisGroupBySubFieldName)
   ) as CompositeFieldSubFieldName | undefined;
 
   return {

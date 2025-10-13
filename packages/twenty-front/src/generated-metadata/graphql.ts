@@ -288,14 +288,14 @@ export type BarChartConfiguration = {
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   omitNullValues?: Maybe<Scalars['Boolean']>;
-  primaryAxisGroup: Scalars['UUID'];
+  primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
+  primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   primaryAxisOrderBy?: Maybe<GraphOrderBy>;
-  primaryAxisSubFieldName?: Maybe<Scalars['String']>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
-  secondaryAxisGroup?: Maybe<Scalars['UUID']>;
+  secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
+  secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
-  secondaryAxisSubFieldName?: Maybe<Scalars['String']>;
 };
 
 export type Billing = {
@@ -1617,14 +1617,14 @@ export type LineChartConfiguration = {
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   omitNullValues?: Maybe<Scalars['Boolean']>;
-  primaryAxisGroup: Scalars['UUID'];
+  primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
+  primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   primaryAxisOrderBy?: Maybe<GraphOrderBy>;
-  primaryAxisSubFieldName?: Maybe<Scalars['String']>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
-  secondaryAxisGroup?: Maybe<Scalars['UUID']>;
+  secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
+  secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
-  secondaryAxisSubFieldName?: Maybe<Scalars['String']>;
 };
 
 export type LinkMetadata = {

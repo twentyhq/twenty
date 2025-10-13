@@ -126,7 +126,7 @@ describe('validateAndTransformWidgetConfiguration', () => {
             WidgetType.GRAPH,
             INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
           ),
-        ).toThrow(/primaryAxisGroup/);
+        ).toThrow(/primaryAxisGroupByFieldMetadataId/);
       });
     });
 
