@@ -321,4 +321,3 @@ export class ViewGroupV2Service {
     return existingViewGroupToDelete;
   }
 }
-

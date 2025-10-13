@@ -71,7 +71,6 @@ export class FlatViewGroupValidatorService {
       });
     }
 
-
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updatedFlatViewGroup.fieldMetadataId,
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,

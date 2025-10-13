@@ -13,4 +13,3 @@ export class DeleteViewGroupInput {
   @IsUUID()
   id: string;
 }
-

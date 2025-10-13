@@ -3,14 +3,14 @@ import { useCallback } from 'react';
 import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    type CreateCoreViewGroupMutationVariables,
-    type DeleteCoreViewGroupMutationVariables,
-    type DestroyCoreViewGroupMutationVariables,
-    type UpdateCoreViewGroupMutationVariables,
-    useCreateCoreViewGroupMutation,
-    useDeleteCoreViewGroupMutation,
-    useDestroyCoreViewGroupMutation,
-    useUpdateCoreViewGroupMutation,
+  type CreateCoreViewGroupMutationVariables,
+  type DeleteCoreViewGroupMutationVariables,
+  type DestroyCoreViewGroupMutationVariables,
+  type UpdateCoreViewGroupMutationVariables,
+  useCreateCoreViewGroupMutation,
+  useDeleteCoreViewGroupMutation,
+  useDestroyCoreViewGroupMutation,
+  useUpdateCoreViewGroupMutation,
 } from '~/generated/graphql';
 
 export const usePersistViewGroupRecords = () => {

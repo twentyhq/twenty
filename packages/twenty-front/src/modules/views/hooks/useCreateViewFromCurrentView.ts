@@ -29,8 +29,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 import {
-    type CreateCoreViewFieldMutationVariables,
-    useCreateCoreViewMutation,
+  type CreateCoreViewFieldMutationVariables,
+  useCreateCoreViewMutation,
 } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 

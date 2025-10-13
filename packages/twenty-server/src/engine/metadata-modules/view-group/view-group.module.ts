@@ -17,7 +17,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     WorkspaceCacheStorageModule,
     FeatureFlagModule,
     WorkspaceMigrationV2Module,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   controllers: [ViewGroupController],
   providers: [ViewGroupService, ViewGroupV2Service, ViewGroupResolver],

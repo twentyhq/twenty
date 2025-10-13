@@ -1,15 +1,15 @@
 import { t } from '@lingui/core/macro';
 import {
-    extractAndSanitizeObjectStringFields,
-    isDefined,
+  extractAndSanitizeObjectStringFields,
+  isDefined,
 } from 'twenty-shared/utils';
 
 import { type FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
 import {
-    ViewGroupException,
-    ViewGroupExceptionCode,
+  ViewGroupException,
+  ViewGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 
 export const fromDestroyViewGroupInputToFlatViewGroupOrThrow = ({
@@ -35,4 +35,3 @@ export const fromDestroyViewGroupInputToFlatViewGroupOrThrow = ({
 
   return existingFlatViewGroupToDestroy;
 };
-
