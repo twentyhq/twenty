@@ -29,8 +29,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 import {
-  type CreateCoreViewFieldMutationVariables,
-  useCreateCoreViewMutation,
+    type CreateCoreViewFieldMutationVariables,
+    useCreateCoreViewMutation,
 } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -194,10 +194,14 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             fieldMetadataId: kanbanFieldMetadataId,
           } satisfies ViewGroup);
 
-          await createViewGroupRecords({
-            viewGroupsToCreate,
-            viewId: newViewId,
-          });
+          await createViewGroupRecords(
+            viewGroupsToCreate.map((viewGroup) => ({
+              input: {
+                ...viewGroup,
+                viewId: newViewId,
+              },
+            })),
+          );
         }
 
         if (shouldCopyFiltersAndSortsAndAggregate === true) {

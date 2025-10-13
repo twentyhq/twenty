@@ -58,10 +58,14 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         fieldMetadataId: randomFieldForKanban,
       } satisfies ViewGroup);
 
-      await createViewGroupRecords({
-        viewGroupsToCreate,
-        viewId: currentViewId,
-      });
+      await createViewGroupRecords(
+        viewGroupsToCreate.map((viewGroup) => ({
+          input: {
+            ...viewGroup,
+            viewId: currentViewId,
+          },
+        })),
+      );
 
       return viewGroupsToCreate;
     },

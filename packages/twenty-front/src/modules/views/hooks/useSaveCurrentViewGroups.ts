@@ -63,7 +63,17 @@ export const useSaveCurrentViewGroups = () => {
         }
 
         await updateViewGroupRecords([
-          { ...viewGroupToSave, id: existingField.id },
+          {
+            input: {
+              id: existingField.id,
+              update: {
+                isVisible: viewGroupToSave.isVisible,
+                position: viewGroupToSave.position,
+                fieldMetadataId: viewGroupToSave.fieldMetadataId,
+                fieldValue: viewGroupToSave.fieldValue,
+              },
+            },
+          },
         ]);
       },
     [
@@ -118,7 +128,17 @@ export const useSaveCurrentViewGroups = () => {
               return undefined;
             }
 
-            return { ...viewGroupToSave, id: existingField.id };
+            return {
+              input: {
+                id: existingField.id,
+                update: {
+                  isVisible: viewGroupToSave.isVisible,
+                  position: viewGroupToSave.position,
+                  fieldMetadataId: viewGroupToSave.fieldMetadataId,
+                  fieldValue: viewGroupToSave.fieldValue,
+                },
+              },
+            };
           })
           .filter(isDefined);
 
@@ -131,7 +151,14 @@ export const useSaveCurrentViewGroups = () => {
         );
 
         await Promise.all([
-          createViewGroupRecords({ viewGroupsToCreate, viewId: view.id }),
+          createViewGroupRecords(
+            viewGroupsToCreate.map((viewGroup) => ({
+              input: {
+                ...viewGroup,
+                viewId: view.id,
+              },
+            })),
+          ),
           updateViewGroupRecords(viewGroupsToUpdate),
         ]);
       },
