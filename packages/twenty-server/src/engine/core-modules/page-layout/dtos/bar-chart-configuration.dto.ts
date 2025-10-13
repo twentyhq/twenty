@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   IsBoolean,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -23,7 +24,7 @@ import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.
 @ObjectType('BarChartConfiguration')
 export class BarChartConfigurationDTO {
   @Field(() => GraphType)
-  @IsEnum(GraphType)
+  @IsIn([GraphType.VERTICAL_BAR, GraphType.HORIZONTAL_BAR])
   @IsNotEmpty()
   graphType: GraphType.VERTICAL_BAR | GraphType.HORIZONTAL_BAR;
 
