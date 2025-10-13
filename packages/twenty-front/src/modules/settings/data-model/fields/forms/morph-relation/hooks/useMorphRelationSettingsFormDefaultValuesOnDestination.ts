@@ -1,8 +1,9 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
-import { RelationType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
@@ -10,7 +11,10 @@ export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
   objectMetadataItem,
   relationType,
 }: {
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'morphRelations'>;
+  fieldMetadataItem?: Pick<
+    FieldMetadataItem,
+    'type' | 'morphRelations' | 'relation'
+  >;
   objectMetadataItem?: Pick<
     ObjectMetadataItem,
     'id' | 'namePlural' | 'nameSingular' | 'icon'
@@ -41,6 +45,25 @@ export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
         label: capitalize(targetFieldMetadata?.label ?? ''),
       };
     }
+  }
+
+  if (
+    isDefined(fieldMetadataItem) &&
+    fieldMetadataItem.type === FieldMetadataType.RELATION &&
+    isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id)
+  ) {
+    const { fieldMetadataItem: targetFieldMetadata } = getFieldMetadataItemById(
+      {
+        fieldMetadataId: fieldMetadataItem.relation?.targetFieldMetadata.id,
+        objectMetadataItems: activeObjectMetadataItems,
+      },
+    );
+    return {
+      icon: targetFieldMetadata?.icon ?? 'IconUsers',
+      label: capitalize(
+        fieldMetadataItem.relation?.targetFieldMetadata?.name ?? '',
+      ),
+    };
   }
 
   if (isDefined(objectMetadataItem)) {

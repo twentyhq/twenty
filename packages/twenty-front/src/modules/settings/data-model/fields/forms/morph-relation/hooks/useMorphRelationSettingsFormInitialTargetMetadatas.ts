@@ -7,7 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 export const useMorphRelationSettingsFormInitialTargetMetadatas = ({
   fieldMetadataItem,
 }: {
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'morphRelations'>;
+  fieldMetadataItem?: Pick<
+    FieldMetadataItem,
+    'type' | 'morphRelations' | 'relation'
+  >;
 }) => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -25,6 +28,10 @@ export const useMorphRelationSettingsFormInitialTargetMetadatas = ({
         };
       }) ?? []
     );
+  }
+
+  if (isDefined(fieldMetadataItem) && isDefined(fieldMetadataItem.relation)) {
+    return [fieldMetadataItem.relation?.targetObjectMetadata];
   }
 
   const availableItems = activeObjectMetadataItems
