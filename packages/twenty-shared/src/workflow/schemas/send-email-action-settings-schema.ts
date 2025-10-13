@@ -1,6 +1,6 @@
-import { isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { workflowFileSchema } from './workflow-file-action-schema';
 
 export const workflowSendEmailActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
@@ -9,6 +9,6 @@ export const workflowSendEmailActionSettingsSchema =
       email: z.string(),
       subject: z.string().optional(),
       body: z.string().optional(),
-      attachmentIds: z.array(z.string().refine((val) => isValidUuid(val))).optional().default([]),
+      files: z.array(workflowFileSchema).optional().default([]),
     }),
   });

@@ -14,6 +14,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowSendEmailAttachments } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailAttachments';
 import { WorkflowSendEmailBody } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -40,12 +41,20 @@ type WorkflowEditActionSendEmailProps = {
       };
 };
 
+type WorkflowFile = {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  createdAt: string;
+};
+
 type SendEmailFormData = {
   connectedAccountId: string;
   email: string;
   subject: string;
   body: string;
-  attachmentIds: string[];
+  files: WorkflowFile[];
 };
 
 export const WorkflowEditActionSendEmail = ({
@@ -67,7 +76,7 @@ export const WorkflowEditActionSendEmail = ({
     email: action.settings.input.email,
     subject: action.settings.input.subject ?? '',
     body: action.settings.input.body ?? '',
-    attachmentIds: action.settings.input.attachmentIds ?? [],
+    files: action.settings.input.files ?? [],
   });
 
   const checkConnectedAccountScopes = async (
@@ -127,7 +136,7 @@ export const WorkflowEditActionSendEmail = ({
             email: formData.email,
             subject: formData.subject,
             body: formData.body,
-            attachmentIds: formData.attachmentIds,
+            files: formData.files,
           },
         },
       });
@@ -298,6 +307,13 @@ export const WorkflowEditActionSendEmail = ({
               handleFieldChange('body', body);
             }}
             VariablePicker={WorkflowVariablePicker}
+          />
+          <WorkflowSendEmailAttachments
+            files={formData.files}
+            onChange={(files) => {
+              handleFieldChange('files', files);
+            }}
+            readonly={actionOptions.readonly}
           />
         </WorkflowStepBody>
         {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}

@@ -156,7 +156,8 @@ export class MessagingSendMessageService {
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
           html: sendMessageInput.html,
-          ...(sendMessageInput.attachments && sendMessageInput.attachments.length > 0
+          ...(sendMessageInput.attachments &&
+          sendMessageInput.attachments.length > 0
             ? {
                 attachments: sendMessageInput.attachments.map((attachment) => ({
                   filename: attachment.filename,
