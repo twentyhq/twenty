@@ -65,7 +65,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
             fieldMetadataItem={{
               icon: watch('icon'),
               label: watch('label'),
-              type: FieldMetadataType.MORPH_RELATION,
+              type: FieldMetadataType.RELATION,
               settings: {
                 relationType,
               },

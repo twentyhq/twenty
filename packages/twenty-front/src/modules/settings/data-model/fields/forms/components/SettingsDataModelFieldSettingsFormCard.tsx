@@ -226,25 +226,10 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     );
   }
 
-  if (fieldType === FieldMetadataType.RELATION) {
-    return (
-      <>relation to be implemented with new morph relation form</>
-      // <SettingsDataModelFieldMorphRelationFormCard
-      //   existingFieldMetadataId={existingFieldMetadataId}
-      //   objectNameSingular={objectNameSingular}
-      // />
-    );
-  }
-
-  if (fieldType === FieldMetadataType.MORPH_RELATION) {
-    // if (!isMorphRelationEnabled) {
-    //   return (
-    //     <SettingsDataModelFieldRelationSettingsFormCard
-    //       existingFieldMetadataId={existingFieldMetadataId}
-    //       objectNameSingular={objectNameSingular}
-    //     />
-    //   );
-    // }
+  if (
+    fieldType === FieldMetadataType.RELATION ||
+    fieldType === FieldMetadataType.MORPH_RELATION
+  ) {
     return (
       <SettingsDataModelFieldMorphRelationFormCard
         existingFieldMetadataId={existingFieldMetadataId}
