@@ -1,6 +1,5 @@
 import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
 import { RecordShowRightDrawerOpenRecordButton } from '@/action-menu/components/RecordShowRightDrawerOpenRecordButton';
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
@@ -13,6 +12,7 @@ import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getSh
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { PageLayoutType } from '~/generated/graphql';
 
+import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
@@ -57,10 +57,7 @@ const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
 type ShowPageSubContainerProps = {
   layout?: RecordLayout;
   tabs: SingleTabProps[];
-  targetableObject: Pick<
-    ActivityTargetableObject,
-    'targetObjectNameSingular' | 'id'
-  >;
+  targetRecordIdentifier: TargetRecordIdentifier;
   isInRightDrawer?: boolean;
   loading: boolean;
 };
@@ -68,7 +65,7 @@ type ShowPageSubContainerProps = {
 export const ShowPageSubContainer = ({
   tabs,
   layout,
-  targetableObject,
+  targetRecordIdentifier,
   loading,
   isInRightDrawer = false,
 }: ShowPageSubContainerProps) => {
@@ -78,7 +75,7 @@ export const ShowPageSubContainer = ({
 
   const tabListComponentId = getShowPageTabListComponentId({
     pageId: commandMenuPageComponentInstance?.instanceId,
-    targetObjectId: targetableObject.id,
+    targetObjectId: targetRecordIdentifier.id,
   });
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
@@ -89,8 +86,8 @@ export const ShowPageSubContainer = ({
 
   const summaryCard = (
     <SummaryCard
-      objectNameSingular={targetableObject.targetObjectNameSingular}
-      objectRecordId={targetableObject.id}
+      objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
+      objectRecordId={targetRecordIdentifier.id}
       isInRightDrawer={isInRightDrawer}
     />
   );
@@ -121,8 +118,9 @@ export const ShowPageSubContainer = ({
     <LayoutRenderingProvider
       value={{
         targetRecordIdentifier: {
-          id: targetableObject.id,
-          targetObjectNameSingular: targetableObject.targetObjectNameSingular,
+          id: targetRecordIdentifier.id,
+          targetObjectNameSingular:
+            targetRecordIdentifier.targetObjectNameSingular,
         },
         layoutType: PageLayoutType.RECORD_PAGE,
         isInRightDrawer,
@@ -156,8 +154,10 @@ export const ShowPageSubContainer = ({
               actions={[
                 <RecordShowRightDrawerActionMenu />,
                 <RecordShowRightDrawerOpenRecordButton
-                  objectNameSingular={targetableObject.targetObjectNameSingular}
-                  recordId={targetableObject.id}
+                  objectNameSingular={
+                    targetRecordIdentifier.targetObjectNameSingular
+                  }
+                  recordId={targetRecordIdentifier.id}
                 />,
               ]}
             />

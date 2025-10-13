@@ -70,7 +70,7 @@ export const RecordShowContainer = ({
         <ShowPageSubContainer
           tabs={tabs}
           layout={layout}
-          targetableObject={{
+          targetRecordIdentifier={{
             id: objectRecordId,
             targetObjectNameSingular: objectMetadataItem?.nameSingular,
           }}
