@@ -94,7 +94,7 @@ ssh root@YOUR_SERVER_IP
 Run the automated setup script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/twentyhq/twenty/main/deployment/hetzner/scripts/setup-server.sh -o setup-server.sh
+curl -fsSL https://raw.githubusercontent.com/timberline-tech/twenty/main/deployment/hetzner/scripts/setup-server.sh -o setup-server.sh
 chmod +x setup-server.sh
 ./setup-server.sh
 ```
@@ -112,7 +112,7 @@ This script will:
 
 ```bash
 # Clone the repository
-git clone https://github.com/twentyhq/twenty.git
+git clone https://github.com/timberline-tech/twenty.git
 cd twenty/deployment/hetzner
 
 # Copy and configure environment
@@ -496,7 +496,7 @@ When you need more resources:
 ## Support
 
 - **Twenty Documentation**: https://twenty.com/developers
-- **GitHub Issues**: https://github.com/twentyhq/twenty/issues
+- **GitHub Issues**: https://github.com/timberline-tech/twenty/issues
 - **Community Discord**: https://twenty.com/discord
 - **Hetzner Support**: https://docs.hetzner.com/
 
