@@ -34,46 +34,53 @@ export class MigrateAttachmentAuthorToCreatedByCommand extends ActiveOrSuspended
     workspaceId,
   }: RunOnWorkspaceArgs): Promise<void> {
     const schemaName = getWorkspaceSchemaName(workspaceId);
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
-    this.logger.log(
-      `Migrating attachment author to createdBy for workspace ${workspaceId}`,
-    );
+    await queryRunner.connect();
 
-    // Get workspace member repository to fetch workspace member details
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
+    try {
+      await queryRunner.startTransaction();
+
+      this.logger.log(
+        `Migrating attachment author to createdBy for workspace ${workspaceId}`,
       );
 
-    // Get all attachments that have an authorId but no createdBy set
-    const attachments = await this.coreDataSource.query(
-      `
-      SELECT id, "authorId"
-      FROM ${schemaName}."attachment"
-      WHERE "authorId" IS NOT NULL
-        AND ("createdBySource" IS NULL OR "createdByName" IS NULL)
-      `,
-    );
+      // Get workspace member repository to fetch workspace member details
+      const workspaceMemberRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+          workspaceId,
+          'workspaceMember',
+        );
 
-    this.logger.log(
-      `Found ${attachments.length} attachments to migrate for workspace ${workspaceId}`,
-    );
+      // Get all attachments that have an authorId but no createdBy set
+      const attachments = await queryRunner.query(
+        `
+        SELECT id, "authorId"
+        FROM ${schemaName}."attachment"
+        WHERE "authorId" IS NOT NULL
+          AND ("createdBySource" IS NULL OR "createdByName" IS NULL)
+        `,
+      );
 
-    // Process attachments in batches to avoid memory issues
-    const batchSize = 100;
+      this.logger.log(
+        `Found ${attachments.length} attachments to migrate for workspace ${workspaceId}`,
+      );
 
-    for (let i = 0; i < attachments.length; i += batchSize) {
-      const batch = attachments.slice(i, i + batchSize);
+      let migratedCount = 0;
 
-      for (const attachment of batch) {
-        const { id, authorId } = attachment;
+      // Process attachments in batches to avoid memory issues
+      const batchSize = 100;
 
-        if (!isDefined(authorId)) {
-          continue;
-        }
+      for (let i = 0; i < attachments.length; i += batchSize) {
+        const batch = attachments.slice(i, i + batchSize);
 
-        try {
+        for (const attachment of batch) {
+          const { id, authorId } = attachment;
+
+          if (!isDefined(authorId)) {
+            continue;
+          }
+
           // Fetch workspace member details
           const workspaceMember = await workspaceMemberRepository.findOne({
             where: { id: authorId },
@@ -95,7 +102,7 @@ export class MigrateAttachmentAuthorToCreatedByCommand extends ActiveOrSuspended
               : 'Unknown';
 
           // Update attachment with createdBy data
-          await this.coreDataSource.query(
+          await queryRunner.query(
             `
             UPDATE ${schemaName}."attachment"
             SET
@@ -114,19 +121,26 @@ export class MigrateAttachmentAuthorToCreatedByCommand extends ActiveOrSuspended
             ],
           );
 
-          this.logger.log(
-            `Migrated attachment ${id} with author ${authorId} to createdBy`,
-          );
-        } catch (error) {
-          this.logger.error(
-            `Error migrating attachment ${id}: ${error.message}`,
-          );
+          migratedCount++;
         }
       }
-    }
 
-    this.logger.log(
-      `Completed migration for workspace ${workspaceId}, migrated ${attachments.length} attachments`,
-    );
+      await queryRunner.commitTransaction();
+
+      this.logger.log(
+        `Successfully migrated ${migratedCount} attachments for workspace ${workspaceId}`,
+      );
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+        this.logger.error(
+          `Transaction rolled back for workspace ${workspaceId} due to error: ${error.message}`,
+        );
+      }
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
