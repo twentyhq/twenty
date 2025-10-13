@@ -69,8 +69,20 @@ export class FlatViewGroupValidatorService {
         message: t`View group to update parent view not found`,
         userFriendlyMessage: msg`View group to update parent view not found`,
       });
+    }
 
-      return validationResult;
+
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: updatedFlatViewGroup.fieldMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(flatFieldMetadata)) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View group to update parent field not found`,
+        userFriendlyMessage: msg`View group to update parent field not found`,
+      });
     }
 
     return validationResult;

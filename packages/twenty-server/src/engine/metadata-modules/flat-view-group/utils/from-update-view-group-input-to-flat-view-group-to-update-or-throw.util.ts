@@ -22,7 +22,7 @@ export const fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow = ({
   updateViewGroupInput: UpdateViewGroupInput;
   flatViewGroupMaps: FlatEntityMaps<FlatViewGroup>;
 }): FlatViewGroup => {
-  const { id: viewGroupToUpdateId } =
+  const { id: viewGroupToUpdateId, update } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawUpdateViewGroupInput,
       ['id'],
@@ -38,7 +38,7 @@ export const fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow = ({
     );
   }
   const updatedEditableGroupProperties = extractAndSanitizeObjectStringFields(
-    rawUpdateViewGroupInput,
+    update,
     FLAT_VIEW_GROUP_EDITABLE_PROPERTIES,
   );
 
