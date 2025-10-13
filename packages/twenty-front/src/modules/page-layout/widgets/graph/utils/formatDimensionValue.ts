@@ -45,7 +45,7 @@ export const formatDimensionValue = ({
   subFieldName,
 }: FormatDimensionValueParams): string => {
   if (!isDefined(value)) {
-    return 'Not Set';
+    return t`Not Set`;
   }
 
   switch (fieldMetadata.type) {
@@ -96,7 +96,7 @@ export const formatDimensionValue = ({
         subFieldName === 'currencyCode'
       ) {
         if (!isNonEmptyString(value)) {
-          return 'Not Set';
+          return t`Not Set`;
         }
 
         return String(value);
