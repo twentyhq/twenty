@@ -53,5 +53,3 @@ export const PageLayoutGridResizeHandle = forwardRef<
     </div>
   );
 });
-
-PageLayoutGridResizeHandle.displayName = 'PageLayoutGridResizeHandle';
