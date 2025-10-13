@@ -1,65 +1,71 @@
 import { Injectable } from '@nestjs/common';
 
-import { t, msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-import { ViewRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 
-type ViewValidationArgs = {
-  flatViewToValidate: FlatView;
-  optimisticFlatViewMaps: FlatViewMaps;
-  dependencyOptimisticFlatEntityMaps: ViewRelatedFlatEntityMaps;
-};
 @Injectable()
 export class FlatViewValidatorService {
   constructor() {}
 
   public validateFlatViewUpdate({
-    flatViewToValidate: updatedFlatView,
-    optimisticFlatViewMaps,
-  }: ViewValidationArgs): FailedFlatEntityValidation<FlatView> {
-    const errors = [];
+    flatEntityId,
+    optimisticFlatEntityMaps: optimisticFlatViewMaps,
+  }: FlatEntityUpdateValidationArgs<
+    typeof ALL_METADATA_NAME.view
+  >): FailedFlatEntityValidation<FlatView> {
+    const validationResult: FailedFlatEntityValidation<FlatView> = {
+      type: 'update_view',
+      errors: [],
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+      },
+    };
 
-    const existingFlatView = optimisticFlatViewMaps.byId[updatedFlatView.id];
+    const existingFlatView = optimisticFlatViewMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatView)) {
-      errors.push({
+      validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View not found`,
         userFriendlyMessage: msg`View not found`,
       });
     }
 
-    return {
-      type: 'update_view',
-      errors,
-      flatEntityMinimalInformation: {
-        id: updatedFlatView.id,
-      },
-    };
+    return validationResult;
   }
 
   public validateFlatViewDeletion({
-    flatViewToValidate: { id: viewIdToDelete },
-    optimisticFlatViewMaps,
-  }: ViewValidationArgs): FailedFlatEntityValidation<FlatView> {
-    const errors = [];
+    flatEntityToValidate: { id: viewIdToDelete },
+    optimisticFlatEntityMaps: optimisticFlatViewMaps,
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.view
+  >): FailedFlatEntityValidation<FlatView> {
+    const validationResult: FailedFlatEntityValidation<FlatView> = {
+      type: 'delete_view',
+      errors: [],
+      flatEntityMinimalInformation: {
+        id: viewIdToDelete,
+      },
+    };
 
     const existingFlatView = optimisticFlatViewMaps.byId[viewIdToDelete];
 
     if (!isDefined(existingFlatView)) {
-      errors.push({
+      validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View not found`,
         userFriendlyMessage: msg`View not found`,
       });
     } else {
       if (!isDefined(existingFlatView.deletedAt)) {
-        errors.push({
+        validationResult.errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
           message: t`View to delete has not been soft deleted`,
           userFriendlyMessage: msg`View to delete has not been soft deleted`,
@@ -67,27 +73,31 @@ export class FlatViewValidatorService {
       }
     }
 
-    return {
-      type: 'delete_view',
-      errors,
-      flatEntityMinimalInformation: {
-        id: viewIdToDelete,
-      },
-    };
+    return validationResult;
   }
 
   public async validateFlatViewCreation({
-    dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
-    flatViewToValidate,
-    optimisticFlatViewMaps,
-  }: ViewValidationArgs): Promise<FailedFlatEntityValidation<FlatView>> {
-    const optimisticFlatObjectMetadata =
-      flatObjectMetadataMaps.byId[flatViewToValidate.objectMetadataId];
+    flatEntityToValidate: flatViewToValidate,
+    optimisticFlatEntityMaps: optimisticFlatViewMaps,
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.view>): Promise<
+    FailedFlatEntityValidation<FlatView>
+  > {
+    const validationResult: FailedFlatEntityValidation<FlatView> = {
+      type: 'create_view',
+      errors: [],
+      flatEntityMinimalInformation: {
+        id: flatViewToValidate.id,
+      },
+    };
 
-    const errors = [];
+    const optimisticFlatObjectMetadata =
+      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+        flatViewToValidate.objectMetadataId
+      ];
 
     if (!isDefined(optimisticFlatObjectMetadata)) {
-      errors.push({
+      validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`Object metadata not found`,
         userFriendlyMessage: msg`Object metadata not found`,
@@ -95,19 +105,13 @@ export class FlatViewValidatorService {
     }
 
     if (isDefined(optimisticFlatViewMaps.byId[flatViewToValidate.id])) {
-      errors.push({
+      validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View with same id is already exists`,
         userFriendlyMessage: msg`View already exists`,
       });
     }
 
-    return {
-      type: 'create_view',
-      errors,
-      flatEntityMinimalInformation: {
-        id: flatViewToValidate.id,
-      },
-    };
+    return validationResult;
   }
 }
