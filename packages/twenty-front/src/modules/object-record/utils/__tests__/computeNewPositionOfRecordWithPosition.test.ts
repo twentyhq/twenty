@@ -1,7 +1,7 @@
 import {
-  computeNewPositionOfRecordWithPosition,
+  computeNewPositionOfDraggedRecord,
   type RecordWithPosition,
-} from '@/object-record/utils/computeNewPositionOfRecordWithPosition';
+} from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 
 const mockRecordsWithPosition: RecordWithPosition[] = [
   {
@@ -24,7 +24,7 @@ const mockRecordsWithPosition: RecordWithPosition[] = [
 
 describe('computeNewPositionOfRecordWithPosition', () => {
   it('should compute first position', () => {
-    const newPosition = computeNewPositionOfRecordWithPosition({
+    const newPosition = computeNewPositionOfDraggedRecord({
       arrayOfRecordsWithPosition: mockRecordsWithPosition,
       idOfItemToMove: 'B',
       idOfTargetItem: 'A',
@@ -34,7 +34,7 @@ describe('computeNewPositionOfRecordWithPosition', () => {
   });
 
   it('should compute last position', () => {
-    const newPosition = computeNewPositionOfRecordWithPosition({
+    const newPosition = computeNewPositionOfDraggedRecord({
       arrayOfRecordsWithPosition: mockRecordsWithPosition,
       idOfItemToMove: 'B',
       idOfTargetItem: 'D',
@@ -44,7 +44,7 @@ describe('computeNewPositionOfRecordWithPosition', () => {
   });
 
   it('should compute intermediary position after target item', () => {
-    const newPosition = computeNewPositionOfRecordWithPosition({
+    const newPosition = computeNewPositionOfDraggedRecord({
       arrayOfRecordsWithPosition: mockRecordsWithPosition,
       idOfItemToMove: 'A',
       idOfTargetItem: 'B',
@@ -54,7 +54,7 @@ describe('computeNewPositionOfRecordWithPosition', () => {
   });
 
   it('should compute intermediary position before target item', () => {
-    const newPosition = computeNewPositionOfRecordWithPosition({
+    const newPosition = computeNewPositionOfDraggedRecord({
       arrayOfRecordsWithPosition: mockRecordsWithPosition,
       idOfItemToMove: 'A',
       idOfTargetItem: 'C',

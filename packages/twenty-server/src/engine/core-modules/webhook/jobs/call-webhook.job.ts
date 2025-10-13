@@ -42,7 +42,15 @@ export class CallWebhookJob {
   }
 
   @Process(CallWebhookJob.name)
-  async handle(data: CallWebhookJobData): Promise<void> {
+  async handle(webhookJobEvents: CallWebhookJobData[]): Promise<void> {
+    await Promise.all(
+      webhookJobEvents.map(
+        async (webhookJobEvent) => await this.callWebhook(webhookJobEvent),
+      ),
+    );
+  }
+
+  private async callWebhook(data: CallWebhookJobData): Promise<void> {
     const commonPayload = {
       url: data.targetUrl,
       webhookId: data.webhookId,

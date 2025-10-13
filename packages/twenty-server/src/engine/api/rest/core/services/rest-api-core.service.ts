@@ -27,6 +27,13 @@ export class RestApiCoreService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
+  private async isCommonApiEnabled(request: AuthenticatedRequest) {
+    return await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_COMMON_API_ENABLED,
+      request.workspace.id,
+    );
+  }
+
   async delete(request: AuthenticatedRequest) {
     return await this.restApiDeleteOneHandler.handle(request);
   }
@@ -49,20 +56,20 @@ export class RestApiCoreService {
 
   async get(request: AuthenticatedRequest) {
     const { id: recordId } = parseCorePath(request);
+    const isCommonApiEnabled = await this.isCommonApiEnabled(request);
 
-    if (isDefined(recordId)) {
-      const isCommonApiEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_COMMON_API_ENABLED,
-        request.workspace.id,
-      );
-
-      if (isCommonApiEnabled) {
+    if (isCommonApiEnabled) {
+      if (isDefined(recordId)) {
         return await this.restApiFindOneHandler.commonHandle(request);
+      } else {
+        return await this.restApiFindManyHandler.commonHandle(request);
       }
-
-      return await this.restApiFindOneHandler.handle(request);
     } else {
-      return await this.restApiFindManyHandler.handle(request);
+      if (isDefined(recordId)) {
+        return await this.restApiFindOneHandler.handle(request);
+      } else {
+        return await this.restApiFindManyHandler.handle(request);
+      }
     }
   }
 }

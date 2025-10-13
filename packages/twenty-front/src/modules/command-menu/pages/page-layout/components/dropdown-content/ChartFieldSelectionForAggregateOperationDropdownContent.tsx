@@ -14,7 +14,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
@@ -59,7 +59,12 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     searchQuery,
     getSearchableValues: (item) => [item.label, item.name],
     // TODO: remove the relation filter once group by is supported for relation fields
-  }).filter((field) => !isFieldRelation(field) && !field.isSystem);
+  }).filter(
+    (field) =>
+      !isFieldRelation(field) &&
+      !field.isSystem &&
+      !isFieldMetadataDateKind(field.type),
+  );
 
   const { getIcon } = useIcons();
 

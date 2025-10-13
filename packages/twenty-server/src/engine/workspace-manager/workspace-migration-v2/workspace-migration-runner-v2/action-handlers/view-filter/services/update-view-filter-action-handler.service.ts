@@ -5,13 +5,13 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
-import { UpdateViewFilterAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-filter-action-v2.type';
+import { UpdateViewFilterAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/types/workspace-migration-view-filter-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
-import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class UpdateViewFilterActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -35,7 +35,7 @@ export class UpdateViewFilterActionHandlerService extends WorkspaceMigrationRunn
 
     const updatedViewFilter = {
       ...existingViewFilter,
-      ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     };
 
     const updatedFlatViewFilterMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
@@ -57,7 +57,7 @@ export class UpdateViewFilterActionHandlerService extends WorkspaceMigrationRunn
     const viewFilterRepository =
       queryRunner.manager.getRepository<ViewFilterEntity>(ViewFilterEntity);
 
-    const update = fromWorkspaceMigrationUpdateActionToPartialEntity(action);
+    const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action);
 
     await viewFilterRepository.update(viewFilterId, update);
   }

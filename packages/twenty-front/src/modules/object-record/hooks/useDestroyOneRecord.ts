@@ -8,6 +8,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getDestroyOneRecordMutationResponseField } from '@/object-record/utils/getDestroyOneRecordMutationResponseField';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -19,6 +21,9 @@ type useDestroyOneRecordProps = {
 export const useDestroyOneRecord = ({
   objectNameSingular,
 }: useDestroyOneRecordProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -64,6 +69,8 @@ export const useDestroyOneRecord = ({
               objectMetadataItem,
               recordsToDestroy: [cachedRecord],
               objectMetadataItems,
+              upsertRecordsInStore,
+              objectPermissionsByObjectMetadataId,
             });
           },
         })
@@ -75,22 +82,29 @@ export const useDestroyOneRecord = ({
               recordsToCreate: [originalRecord],
               objectMetadataItems,
               objectPermissionsByObjectMetadataId,
+              upsertRecordsInStore,
             });
           }
 
           throw error;
         });
 
+      registerObjectOperation(objectMetadataItem.nameSingular, {
+        type: 'destroy-one',
+      });
+
       return deletedRecord.data?.[mutationResponseField] ?? null;
     },
     [
+      getRecordFromCache,
       apolloCoreClient,
       destroyOneRecordMutation,
-      getRecordFromCache,
       mutationResponseField,
-      objectMetadataItem,
       objectNameSingular,
+      registerObjectOperation,
+      objectMetadataItem,
       objectMetadataItems,
+      upsertRecordsInStore,
       objectPermissionsByObjectMetadataId,
     ],
   );

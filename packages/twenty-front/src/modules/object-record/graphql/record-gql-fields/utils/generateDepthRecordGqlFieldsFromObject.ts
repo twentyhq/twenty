@@ -3,7 +3,7 @@ import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/
 
 export type GenerateDepthRecordGqlFields = {
   objectMetadataItems: ObjectMetadataItem[];
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: Pick<ObjectMetadataItem, 'fields'>;
   depth: 0 | 1;
   shouldOnlyLoadRelationIdentifiers?: boolean;
 };

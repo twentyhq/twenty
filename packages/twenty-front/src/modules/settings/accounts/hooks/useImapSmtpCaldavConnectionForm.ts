@@ -132,7 +132,7 @@ export const useImapSmtpCaldavConnectionForm = ({
       });
 
       try {
-        await saveConnection({
+        const { data } = await saveConnection({
           variables: {
             ...(isEditing && connectedAccountId
               ? { id: connectedAccountId }
@@ -142,13 +142,20 @@ export const useImapSmtpCaldavConnectionForm = ({
             connectionParameters,
           },
         });
+        if (!isDefined(data)) return;
 
         const successMessage = isEditing
           ? t`Connection successfully updated`
           : t`Connection successfully created`;
 
         enqueueSuccessSnackBar({ message: successMessage });
-        navigate(SettingsPath.Accounts);
+
+        const { connectedAccountId: returnedConnectedAccountId } =
+          data?.saveImapSmtpCaldavAccount || {};
+
+        navigate(SettingsPath.AccountsConfiguration, {
+          connectedAccountId: returnedConnectedAccountId,
+        });
       } catch (error) {
         enqueueErrorSnackBar({
           apolloError: error instanceof ApolloError ? error : undefined,
