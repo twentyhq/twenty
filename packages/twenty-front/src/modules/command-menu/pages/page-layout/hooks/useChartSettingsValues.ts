@@ -47,9 +47,7 @@ export const useChartSettingsValues = ({
 
   const groupByFieldX = fieldMappings?.xField;
   const groupByFieldXId = fieldMappings?.xFieldId;
-  const groupBySubFieldNameX = fieldMappings?.xSubFieldName as
-    | CompositeFieldSubFieldName
-    | undefined;
+  const groupBySubFieldNameX = fieldMappings?.xSubFieldName;
 
   const groupBySubFieldNameXLabel =
     isDefined(groupBySubFieldNameX) && isDefined(groupByFieldX)
@@ -68,9 +66,7 @@ export const useChartSettingsValues = ({
 
   const groupByFieldY = fieldMappings?.yField;
   const groupByFieldYId = fieldMappings?.yFieldId;
-  const groupBySubFieldNameY = fieldMappings?.ySubFieldName as
-    | CompositeFieldSubFieldName
-    | undefined;
+  const groupBySubFieldNameY = fieldMappings?.ySubFieldName;
 
   const xAxisOrderBy = fieldMappings?.xOrderBy;
 

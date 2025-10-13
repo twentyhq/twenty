@@ -13,8 +13,8 @@ type ChartFieldMappings = {
   yField: FieldMetadataItem | undefined;
   xFieldId: BarChartConfiguration['primaryAxisGroupByFieldMetadataId'];
   yFieldId: BarChartConfiguration['secondaryAxisGroupByFieldMetadataId'];
-  xSubFieldName: BarChartConfiguration['primaryAxisGroupBySubFieldName'];
-  ySubFieldName: BarChartConfiguration['secondaryAxisGroupBySubFieldName'];
+  xSubFieldName: CompositeFieldSubFieldName | undefined;
+  ySubFieldName: CompositeFieldSubFieldName | undefined;
   xOrderBy: BarChartConfiguration['primaryAxisOrderBy'];
   yOrderBy: BarChartConfiguration['secondaryAxisOrderBy'];
 };
