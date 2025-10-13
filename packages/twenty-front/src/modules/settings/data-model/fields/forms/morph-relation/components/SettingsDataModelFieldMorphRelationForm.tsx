@@ -153,7 +153,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
                 dropdownId="object-destination-select"
                 fullWidth
                 disabled={disableRelationEdition}
-                value={value}
+                value={value[0]}
                 options={activeObjectMetadataItems
                   .filter(isObjectMetadataAvailableForRelation)
                   .sort((item1, item2) =>
@@ -164,7 +164,9 @@ export const SettingsDataModelFieldMorphRelationForm = ({
                     value: objectMetadataItem.id,
                     Icon: getIcon(objectMetadataItem.icon),
                   }))}
-                onChange={onChange}
+                onChange={(value) => {
+                  onChange([value]);
+                }}
               />
             )
           }
