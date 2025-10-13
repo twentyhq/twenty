@@ -1,16 +1,34 @@
 import { ChartGroupByFieldSelectionDropdownContentBase } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import {
   type BarChartConfiguration,
   type LineChartConfiguration,
 } from '~/generated/graphql';
 
 export const ChartGroupByFieldSelectionDropdownContent = () => {
-  return (
-    <ChartGroupByFieldSelectionDropdownContentBase<
-      BarChartConfiguration | LineChartConfiguration
-    >
-      fieldMetadataIdKey="groupByFieldMetadataIdY"
-      subFieldNameKey="groupBySubFieldNameY"
-    />
-  );
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+  const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
+
+  const configuration = widgetInEditMode?.configuration;
+
+  if (configuration?.__typename === 'BarChartConfiguration') {
+    return (
+      <ChartGroupByFieldSelectionDropdownContentBase<BarChartConfiguration>
+        fieldMetadataIdKey="secondaryAxisGroup"
+        subFieldNameKey="secondaryAxisSubFieldName"
+      />
+    );
+  }
+
+  if (configuration?.__typename === 'LineChartConfiguration') {
+    return (
+      <ChartGroupByFieldSelectionDropdownContentBase<LineChartConfiguration>
+        fieldMetadataIdKey="groupByFieldMetadataIdY"
+        subFieldNameKey="groupBySubFieldNameY"
+      />
+    );
+  }
+
+  throw new Error('Invalid configuration type');
 };

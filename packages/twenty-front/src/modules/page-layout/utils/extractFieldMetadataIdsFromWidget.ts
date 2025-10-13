@@ -15,6 +15,12 @@ export const extractFieldMetadataIdsFromWidget = (
 
   switch (config.__typename) {
     case 'BarChartConfiguration':
+      return [
+        config.aggregateFieldMetadataId,
+        config.primaryAxisGroup,
+        config.secondaryAxisGroup,
+      ].filter(isDefined);
+
     case 'LineChartConfiguration':
       return [
         config.aggregateFieldMetadataId,

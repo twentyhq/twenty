@@ -1,7 +1,9 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   type BarChartConfiguration,
+  ExtendedAggregateOperations,
   FieldMetadataType,
+  GraphType,
 } from '~/generated-metadata/graphql';
 import { generateGroupByQueryVariablesFromBarChartConfiguration } from '../generateGroupByQueryVariablesFromBarChartConfiguration';
 
@@ -34,52 +36,96 @@ describe('generateGroupByQueryVariablesFromBarChartConfiguration', () => {
     ],
   } as ObjectMetadataItem;
 
-  it('should generate variables with single groupBy field', () => {
-    const result = generateGroupByQueryVariablesFromBarChartConfiguration({
-      objectMetadataItem: mockObjectMetadataItem,
-      barChartConfiguration: {
-        groupByFieldMetadataIdX: 'field-1',
-        groupBySubFieldNameX: null,
-      } as BarChartConfiguration,
+  const buildConfiguration = (
+    overrides: Partial<BarChartConfiguration>,
+  ): BarChartConfiguration =>
+    ({
+      __typename: 'BarChartConfiguration',
+      aggregateFieldMetadataId: 'aggregate-field',
+      aggregateOperation: ExtendedAggregateOperations.COUNT,
+      graphType: GraphType.VERTICAL_BAR,
+      primaryAxisGroup: 'field-1',
+      ...overrides,
+    }) as BarChartConfiguration;
+
+  describe('Vertical bar configuration', () => {
+    it('should generate variables with single groupBy field', () => {
+      const result = generateGroupByQueryVariablesFromBarChartConfiguration({
+        objectMetadataItem: mockObjectMetadataItem,
+        barChartConfiguration: buildConfiguration({
+          graphType: GraphType.VERTICAL_BAR,
+          primaryAxisGroup: 'field-1',
+          primaryAxisSubFieldName: null,
+        }),
+      });
+
+      expect(result).toMatchSnapshot();
     });
 
-    expect(result).toMatchSnapshot();
-  });
+    it('should generate variables with two groupBy fields', () => {
+      const result = generateGroupByQueryVariablesFromBarChartConfiguration({
+        objectMetadataItem: mockObjectMetadataItem,
+        barChartConfiguration: buildConfiguration({
+          graphType: GraphType.VERTICAL_BAR,
+          primaryAxisGroup: 'field-1',
+          primaryAxisSubFieldName: null,
+          secondaryAxisGroup: 'field-2',
+          secondaryAxisSubFieldName: null,
+        }),
+      });
 
-  it('should generate variables with two groupBy fields', () => {
-    const result = generateGroupByQueryVariablesFromBarChartConfiguration({
-      objectMetadataItem: mockObjectMetadataItem,
-      barChartConfiguration: {
-        groupByFieldMetadataIdX: 'field-1',
-        groupBySubFieldNameX: null,
-        groupByFieldMetadataIdY: 'field-2',
-        groupBySubFieldNameY: null,
-      } as BarChartConfiguration,
+      expect(result).toMatchSnapshot();
     });
 
-    expect(result).toMatchSnapshot();
+    it('should generate variables with composite field', () => {
+      const result = generateGroupByQueryVariablesFromBarChartConfiguration({
+        objectMetadataItem: mockObjectMetadataItem,
+        barChartConfiguration: buildConfiguration({
+          graphType: GraphType.VERTICAL_BAR,
+          primaryAxisGroup: 'field-4',
+          primaryAxisSubFieldName: 'firstName',
+        }),
+      });
+
+      expect(result).toMatchSnapshot();
+    });
   });
 
-  it('should generate variables with composite field', () => {
-    const result = generateGroupByQueryVariablesFromBarChartConfiguration({
-      objectMetadataItem: mockObjectMetadataItem,
-      barChartConfiguration: {
-        groupByFieldMetadataIdX: 'field-4',
-        groupBySubFieldNameX: 'firstName',
-      } as BarChartConfiguration,
+  describe('Horizontal bar configuration', () => {
+    it('should generate variables with single groupBy field', () => {
+      const result = generateGroupByQueryVariablesFromBarChartConfiguration({
+        objectMetadataItem: mockObjectMetadataItem,
+        barChartConfiguration: buildConfiguration({
+          graphType: GraphType.HORIZONTAL_BAR,
+          primaryAxisGroup: 'field-1',
+          primaryAxisSubFieldName: null,
+        }),
+      });
+
+      expect(result).toMatchSnapshot();
     });
 
-    expect(result).toMatchSnapshot();
+    it('should generate variables with secondary axis', () => {
+      const result = generateGroupByQueryVariablesFromBarChartConfiguration({
+        objectMetadataItem: mockObjectMetadataItem,
+        barChartConfiguration: buildConfiguration({
+          graphType: GraphType.HORIZONTAL_BAR,
+          primaryAxisGroup: 'field-1',
+          secondaryAxisGroup: 'field-2',
+        }),
+      });
+
+      expect(result).toMatchSnapshot();
+    });
   });
 
-  it('should throw error when groupBy field X not found', () => {
+  it('should throw error when primary axis field not found', () => {
     expect(() =>
       generateGroupByQueryVariablesFromBarChartConfiguration({
         objectMetadataItem: mockObjectMetadataItem,
-        barChartConfiguration: {
-          groupByFieldMetadataIdX: 'invalid-field',
-          groupBySubFieldNameX: null,
-        } as BarChartConfiguration,
+        barChartConfiguration: buildConfiguration({
+          primaryAxisGroup: 'invalid-field',
+        }),
       }),
     ).toThrow('Field with id invalid-field not found in object metadata');
   });

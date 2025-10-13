@@ -18,6 +18,7 @@ type TransformTwoDimensionalGroupByToBarChartDataParams = {
   configuration: BarChartConfiguration;
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
+  groupBySubFieldNameX?: string | null;
 };
 
 type TransformTwoDimensionalGroupByToBarChartDataResult = {
@@ -35,10 +36,11 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   configuration,
   aggregateOperation,
   objectMetadataItem,
+  groupBySubFieldNameX,
 }: TransformTwoDimensionalGroupByToBarChartDataParams): TransformTwoDimensionalGroupByToBarChartDataResult => {
   const indexByKey = getFieldKey({
     field: groupByFieldX,
-    subFieldName: configuration.groupBySubFieldNameX,
+    subFieldName: groupBySubFieldNameX ?? undefined,
   });
 
   const dataMap = new Map<string, BarChartDataItem>();

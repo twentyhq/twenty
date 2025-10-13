@@ -287,15 +287,15 @@ export type BarChartConfiguration = {
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
-  groupByFieldMetadataIdX: Scalars['UUID'];
-  groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
-  groupBySubFieldNameX?: Maybe<Scalars['String']>;
-  groupBySubFieldNameY?: Maybe<Scalars['String']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
-  orderByX?: Maybe<GraphOrderBy>;
-  orderByY?: Maybe<GraphOrderBy>;
+  primaryAxisGroup: Scalars['UUID'];
+  primaryAxisOrderBy?: Maybe<GraphOrderBy>;
+  primaryAxisSubFieldName?: Maybe<Scalars['String']>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
+  secondaryAxisGroup?: Maybe<Scalars['UUID']>;
+  secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
+  secondaryAxisSubFieldName?: Maybe<Scalars['String']>;
 };
 
 export type Billing = {
@@ -1431,11 +1431,12 @@ export enum GraphOrderBy {
 
 /** Type of graph widget */
 export enum GraphType {
-  BAR = 'BAR',
   GAUGE = 'GAUGE',
+  HORIZONTAL_BAR = 'HORIZONTAL_BAR',
   LINE = 'LINE',
   NUMBER = 'NUMBER',
-  PIE = 'PIE'
+  PIE = 'PIE',
+  VERTICAL_BAR = 'VERTICAL_BAR'
 }
 
 export type GridPosition = {

@@ -20,12 +20,12 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         graphType
         aggregateFieldMetadataId
         aggregateOperation
-        groupByFieldMetadataIdX
-        groupBySubFieldNameX
-        orderByX
-        groupByFieldMetadataIdY
-        groupBySubFieldNameY
-        orderByY
+        primaryAxisGroup
+        primaryAxisSubFieldName
+        primaryAxisOrderBy
+        secondaryAxisGroup
+        secondaryAxisSubFieldName
+        secondaryAxisOrderBy
         omitNullValues
         axisNameDisplay
         displayDataLabel

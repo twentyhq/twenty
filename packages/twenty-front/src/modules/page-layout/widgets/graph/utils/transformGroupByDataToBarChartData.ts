@@ -14,6 +14,7 @@ import {
   AxisNameDisplay,
   type BarChartConfiguration,
 } from '~/generated/graphql';
+import { GraphType } from '~/generated-metadata/graphql';
 
 type TransformGroupByDataToBarChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;
@@ -30,6 +31,7 @@ type TransformGroupByDataToBarChartDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  layout?: 'vertical' | 'horizontal';
 };
 
 const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
@@ -40,6 +42,7 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
   xAxisLabel: undefined,
   yAxisLabel: undefined,
   showDataLabels: false,
+  layout: 'vertical',
 };
 
 export const transformGroupByDataToBarChartData = ({
@@ -53,14 +56,15 @@ export const transformGroupByDataToBarChartData = ({
   }
 
   const groupByFieldX = objectMetadataItem.fields.find(
-    (field: FieldMetadataItem) =>
-      field.id === configuration.groupByFieldMetadataIdX,
+    (field: FieldMetadataItem) => field.id === configuration.primaryAxisGroup,
   );
 
-  const groupByFieldY = objectMetadataItem.fields.find(
-    (field: FieldMetadataItem) =>
-      field.id === configuration.groupByFieldMetadataIdY,
-  );
+  const groupByFieldY = isDefined(configuration.secondaryAxisGroup)
+    ? objectMetadataItem.fields.find(
+        (field: FieldMetadataItem) =>
+          field.id === configuration.secondaryAxisGroup,
+      )
+    : undefined;
 
   const aggregateField = objectMetadataItem.fields.find(
     (field: FieldMetadataItem) =>
@@ -68,12 +72,21 @@ export const transformGroupByDataToBarChartData = ({
   );
 
   if (!isDefined(groupByFieldX) || !isDefined(aggregateField)) {
-    return EMPTY_BAR_CHART_RESULT;
+    return {
+      ...EMPTY_BAR_CHART_RESULT,
+      layout:
+        configuration.graphType === GraphType.HORIZONTAL_BAR
+          ? 'horizontal'
+          : 'vertical',
+    };
   }
+
+  const groupBySubFieldNameX =
+    configuration.primaryAxisSubFieldName ?? undefined;
 
   const indexByKey = getFieldKey({
     field: groupByFieldX,
-    subFieldName: configuration.groupBySubFieldNameX,
+    subFieldName: groupBySubFieldNameX,
   });
 
   const queryName = getGroupByQueryName(objectMetadataItem);
@@ -83,6 +96,10 @@ export const transformGroupByDataToBarChartData = ({
     return {
       ...EMPTY_BAR_CHART_RESULT,
       indexBy: indexByKey,
+      layout:
+        configuration.graphType === GraphType.HORIZONTAL_BAR
+          ? 'horizontal'
+          : 'vertical',
     };
   }
 
@@ -114,6 +131,7 @@ export const transformGroupByDataToBarChartData = ({
         configuration,
         aggregateOperation,
         objectMetadataItem,
+        groupBySubFieldNameX,
       })
     : transformOneDimensionalGroupByToBarChartData({
         rawResults,
@@ -122,12 +140,19 @@ export const transformGroupByDataToBarChartData = ({
         configuration,
         aggregateOperation,
         objectMetadataItem,
+        groupBySubFieldNameX,
       });
+
+  const layout =
+    configuration.graphType === GraphType.HORIZONTAL_BAR
+      ? 'horizontal'
+      : 'vertical';
 
   return {
     ...baseResult,
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
+    layout,
   };
 };

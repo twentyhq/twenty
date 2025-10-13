@@ -14,7 +14,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
-  type BarChartConfiguration,
   type GraphOrderBy,
   type LineChartConfiguration,
 } from '~/generated/graphql';
@@ -23,11 +22,19 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const configuration = widgetInEditMode?.configuration as
-    | BarChartConfiguration
-    | LineChartConfiguration;
+  const configuration = widgetInEditMode?.configuration;
 
-  const currentOrderBy = configuration.orderByY;
+  if (
+    configuration?.__typename !== 'BarChartConfiguration' &&
+    configuration?.__typename !== 'LineChartConfiguration'
+  ) {
+    throw new Error('Invalid configuration type');
+  }
+
+  const currentOrderBy =
+    configuration.__typename === 'BarChartConfiguration'
+      ? configuration.secondaryAxisOrderBy
+      : (configuration as LineChartConfiguration).orderByY;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -44,10 +51,13 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
   const { closeDropdown } = useCloseDropdown();
 
   const handleSelectSortOption = (orderBy: GraphOrderBy) => {
+    const configToUpdate =
+      configuration.__typename === 'BarChartConfiguration'
+        ? { secondaryAxisOrderBy: orderBy }
+        : { orderByY: orderBy };
+
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        orderByY: orderBy,
-      },
+      configToUpdate,
     });
     closeDropdown();
   };
@@ -78,11 +88,10 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
                 text={getGroupBySortOptionLabel({
                   graphOrderBy: sortOption.value,
                   groupByFieldMetadataId:
-                    'groupByFieldMetadataIdY' in configuration
-                      ? configuration.groupByFieldMetadataIdY
-                      : 'groupByFieldMetadataId' in configuration
-                        ? configuration.groupByFieldMetadataId
-                        : undefined,
+                    configuration.__typename === 'BarChartConfiguration'
+                      ? configuration.secondaryAxisGroup
+                      : (configuration as LineChartConfiguration)
+                          .groupByFieldMetadataIdY,
                 })}
                 selected={currentOrderBy === sortOption.value}
                 focused={selectedItemId === sortOption.value}

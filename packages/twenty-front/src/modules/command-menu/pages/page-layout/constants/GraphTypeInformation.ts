@@ -1,4 +1,4 @@
-import { BAR_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/BarChartSettings';
+import { getBarChartSettings } from '@/command-menu/pages/page-layout/utils/getBarChartSettings';
 import { GAUGE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/GaugeChartSettings';
 import { LINE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/LineChartSettings';
 import { NUMBER_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/NumberChartSettings';
@@ -24,10 +24,15 @@ export const GRAPH_TYPE_INFORMATION: Record<
     settings: ChartSettingsGroup[];
   }
 > = {
-  [GraphType.BAR]: {
-    label: msg`Bar`,
+  [GraphType.VERTICAL_BAR]: {
+    label: msg`Vertical Bar`,
     icon: IconChartBar,
-    settings: BAR_CHART_SETTINGS,
+    settings: getBarChartSettings(GraphType.VERTICAL_BAR),
+  },
+  [GraphType.HORIZONTAL_BAR]: {
+    label: msg`Horizontal Bar`,
+    icon: IconChartBar,
+    settings: getBarChartSettings(GraphType.HORIZONTAL_BAR),
   },
   [GraphType.PIE]: {
     label: msg`Pie`,

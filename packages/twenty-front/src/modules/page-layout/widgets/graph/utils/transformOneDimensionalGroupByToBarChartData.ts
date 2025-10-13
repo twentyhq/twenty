@@ -19,6 +19,7 @@ type TransformOneDimensionalGroupByToBarChartDataParams = {
   configuration: BarChartConfiguration;
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
+  groupBySubFieldNameX?: string | null;
 };
 
 type TransformOneDimensionalGroupByToBarChartDataResult = {
@@ -35,10 +36,11 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   configuration,
   aggregateOperation,
   objectMetadataItem,
+  groupBySubFieldNameX,
 }: TransformOneDimensionalGroupByToBarChartDataParams): TransformOneDimensionalGroupByToBarChartDataResult => {
   const indexByKey = getFieldKey({
     field: groupByFieldX,
-    subFieldName: configuration.groupBySubFieldNameX,
+    subFieldName: groupBySubFieldNameX ?? undefined,
   });
 
   const data: BarChartDataItem[] = rawResults.map((result) => {

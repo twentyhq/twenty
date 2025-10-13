@@ -27,6 +27,16 @@ export const areChartConfigurationFieldsValidForQuery = (
 
   switch (configuration.__typename) {
     case 'BarChartConfiguration':
+      return (
+        fieldExists(
+          configuration.aggregateFieldMetadataId,
+          objectMetadataItem,
+        ) &&
+        fieldExists(configuration.primaryAxisGroup, objectMetadataItem) &&
+        (!isDefined(configuration.secondaryAxisGroup) ||
+          fieldExists(configuration.secondaryAxisGroup, objectMetadataItem))
+      );
+
     case 'LineChartConfiguration': {
       const hasRequiredXFields =
         fieldExists(
