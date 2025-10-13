@@ -180,6 +180,8 @@ export class FieldMetadataServiceV2 {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatViewFilterMaps: existingFlatViewFilterMaps,
+      flatViewGroupMaps: existingFlatViewGroupMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -187,6 +189,8 @@ export class FieldMetadataServiceV2 {
           'flatObjectMetadataMaps',
           'flatIndexMaps',
           'flatFieldMetadataMaps',
+          'flatViewFilterMaps',
+          'flatViewGroupMaps',
         ],
       },
     );
@@ -196,6 +200,8 @@ export class FieldMetadataServiceV2 {
       flatIndexMaps: existingFlatIndexMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       updateFieldInput,
+      flatViewFilterMaps: existingFlatViewFilterMaps,
+      flatViewGroupMaps: existingFlatViewGroupMaps,
     });
 
     if (inputTranspilationResult.status === 'fail') {
@@ -207,6 +213,9 @@ export class FieldMetadataServiceV2 {
       flatIndexMetadatasToUpdate,
       flatIndexMetadatasToDelete,
       flatIndexMetadatasToCreate,
+      flatViewGroupsToCreate,
+      flatViewGroupsToDelete,
+      flatViewGroupsToUpdate,
     } = inputTranspilationResult.result;
 
     const toFlatFieldMetadataMaps =
@@ -258,6 +267,65 @@ export class FieldMetadataServiceV2 {
       toFlatIndexMapsWithUpdatedFlatIndex,
     );
 
+    const fromFlatViewFiltersMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: [...flatViewFilterToDelete, ...flatViewFilterToUpdate].map(
+        ({ id }) => id,
+      ),
+      flatEntityMaps: existingFlatViewFilterMaps,
+    });
+
+    const flatViewFilterWithDeleted = flatViewFilterToDelete.reduce(
+      (flatViewFilterMaps, { id: entityToDeleteId }) =>
+        deleteFlatEntityFromFlatEntityMapsOrThrow({
+          flatEntityMaps: flatViewFilterMaps,
+          entityToDeleteId,
+        }),
+      fromFlatViewFiltersMaps,
+    );
+
+    const toFlatViewFitlerMaps = flatViewFilterToUpdate.reduce(
+      (flatViewFilterMaps, flatViewFilter) =>
+        replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: flatViewFilter,
+          flatEntityMaps: flatViewFilterMaps,
+        }),
+      flatViewFilterWithDeleted,
+    );
+
+    const fromFlatViewGroupMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: [...flatViewGroupsToUpdate, ...flatViewGroupsToUpdate].map(
+        ({ id }) => id,
+      ),
+      flatEntityMaps: existingFlatViewGroupMaps,
+    });
+
+    const toFlatViewGroupMapsWithDeleted = flatViewGroupsToDelete.reduce(
+      (flatViewGroupMaps, flatViewGroup) =>
+        deleteFlatEntityFromFlatEntityMapsOrThrow({
+          entityToDeleteId: flatViewGroup.id,
+          flatEntityMaps: flatViewGroupMaps,
+        }),
+      fromFlatViewGroupMaps,
+    );
+
+    const toFlatViewGroupMapsWithUpdated = flatViewGroupsToUpdate.reduce(
+      (flatViewGroupMaps, flatViewGroup) =>
+        replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: flatViewGroup,
+          flatEntityMaps: flatViewGroupMaps,
+        }),
+      toFlatViewGroupMapsWithDeleted,
+    );
+
+    const toFlatViewGroupMaps = flatViewGroupsToCreate.reduce(
+      (flatViewGroupMaps, flatViewGroup) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatViewGroup,
+          flatEntityMaps: flatViewGroupMaps,
+        }),
+      toFlatViewGroupMapsWithUpdated,
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -273,9 +341,18 @@ export class FieldMetadataServiceV2 {
               from: fromFlatIndexMaps,
               to: toFlatIndexMaps,
             },
+            flatViewFilterMaps: {
+              from: fromFlatViewFiltersMaps,
+              to: toFlatViewFitlerMaps,
+            },
+            flatViewGroupMaps: {
+              from: fromFlatViewGroupMaps,
+              to: toFlatViewGroupMaps,
+            },
           },
           buildOptions: {
             isSystemBuild: false,
+            // TODO PRASTOIN
             inferDeletionFromMissingEntities: {
               index: true,
             },

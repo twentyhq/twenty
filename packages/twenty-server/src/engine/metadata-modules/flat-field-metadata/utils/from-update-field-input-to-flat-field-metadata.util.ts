@@ -19,9 +19,14 @@ import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
+import {
+  type FlatFieldMetadataUpdateSideEffects,
+  handleFlatFieldMetadataUpdateSideEffect,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-flat-field-metadata-update-side-effect.util';
 import { handleIndexChangesDuringFieldUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 type UpdatedFlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadata: FlatFieldMetadata;
@@ -106,20 +111,23 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   updateFieldInput: UpdateFieldInput;
 } & Pick<
   AllFlatEntityMaps,
-  'flatObjectMetadataMaps' | 'flatIndexMaps' | 'flatFieldMetadataMaps'
+  | 'flatObjectMetadataMaps'
+  | 'flatIndexMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatViewFilterMaps'
+  | 'flatViewGroupMaps'
 >;
 
 type FlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadatasToUpdate: FlatFieldMetadata[];
-  flatIndexMetadatasToUpdate: FlatIndexMetadata[];
-  flatIndexMetadatasToDelete: FlatIndexMetadata[];
-  flatIndexMetadatasToCreate: FlatIndexMetadata[];
-};
+} & FlatFieldMetadataUpdateSideEffects;
 export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatIndexMaps,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   flatFieldMetadataMaps,
   updateFieldInput: rawUpdateFieldInput,
+  flatViewFilterMaps,
+  flatViewGroupMaps,
 }: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadataAndIndexToUpdate> => {
   const updateFieldInputInformalProperties =
     extractAndSanitizeObjectStringFields(rawUpdateFieldInput, [
@@ -188,10 +196,15 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     return {
       status: 'success',
       result: {
+        flatViewGroupsToCreate: [],
+        flatViewGroupsToDelete: [],
+        flatViewGroupsToUpdate: [],
         flatFieldMetadatasToUpdate: [updatedStandardFlatFieldMetadata],
         flatIndexMetadatasToUpdate: [],
         flatIndexMetadatasToDelete: [],
         flatIndexMetadatasToCreate: [],
+        flatViewFiltersToDelete: [],
+        flatViewFiltersToUpdate: [],
       },
     };
   }
@@ -220,47 +233,93 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     ...relatedFlatFieldMetadatasToUpdate,
   ];
 
+  const initialAccumulator: FlatFieldMetadataAndIndexToUpdate = {
+    flatFieldMetadatasToUpdate: [],
+    flatIndexMetadatasToUpdate: [],
+    flatViewFiltersToDelete: [],
+    flatViewFiltersToUpdate: [],
+    flatViewGroupsToCreate: [],
+    flatViewGroupsToDelete: [],
+    flatIndexMetadatasToCreate: [],
+    flatIndexMetadatasToDelete: [],
+    flatViewGroupsToUpdate: [],
+  };
+
   const optimisticiallyUpdatedFlatFieldMetadatas =
     flatFieldMetadatasToUpdate.reduce<FlatFieldMetadataAndIndexToUpdate>(
-      (acc, fromFlatFieldMetadata) => {
+      (accumulator, fromFlatFieldMetadata) => {
+        updatedEditableFieldProperties.options = !isDefined(
+          updatedEditableFieldProperties.options,
+        )
+          ? updatedEditableFieldProperties.options
+          : updatedEditableFieldProperties.options.map((option) => ({
+              id: v4(),
+              ...option,
+            }));
+
+        const toFlatFieldMetadata = mergeUpdateInExistingRecord({
+          existing: fromFlatFieldMetadata,
+          properties: FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
+          update: updatedEditableFieldProperties,
+        });
+
         const {
-          flatFieldMetadata,
-          flatIndexMetadataToUpdate,
-          flatIndexMetadatasToDelete,
-          flatIndexMetadatasToCreate,
-        } = applyUpdatesToFlatFieldMetadata({
+          flatViewGroupsToCreate,
+          flatViewGroupsToDelete,
+          flatViewGroupsToUpdate,
+          flatIndexMetadatasToUpdate,
+          flatViewFiltersToDelete,
+          flatViewFiltersToUpdate,
+        } = handleFlatFieldMetadataUpdateSideEffect({
+          flatViewFilterMaps,
+          flatViewGroupMaps,
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           fromFlatFieldMetadata,
           flatFieldMetadataMaps,
           flatIndexMaps,
-          updatedEditableFieldProperties,
+          toFlatFieldMetadata,
         });
 
         return {
           flatFieldMetadatasToUpdate: [
-            ...acc.flatFieldMetadatasToUpdate,
-            flatFieldMetadata,
+            ...accumulator.flatFieldMetadatasToUpdate,
+            toFlatFieldMetadata,
           ],
           flatIndexMetadatasToUpdate: [
-            ...acc.flatIndexMetadatasToUpdate,
-            ...flatIndexMetadataToUpdate,
+            ...accumulator.flatIndexMetadatasToUpdate,
+            ...flatIndexMetadatasToUpdate,
+          ],
+          flatViewFiltersToDelete: [
+            ...accumulator.flatViewFiltersToDelete,
+            ...flatViewFiltersToDelete,
+          ],
+          flatViewFiltersToUpdate: [
+            ...accumulator.flatViewFiltersToUpdate,
+            ...flatViewFiltersToUpdate,
+          ],
+          flatViewGroupsToCreate: [
+            ...accumulator.flatViewGroupsToCreate,
+            ...flatViewGroupsToCreate,
+          ],
+          flatViewGroupsToDelete: [
+            ...accumulator.flatViewGroupsToDelete,
+            ...flatViewGroupsToDelete,
+          ],
+          flatViewGroupsToUpdate: [
+            ...accumulator.flatViewGroupsToUpdate,
+            ...flatViewGroupsToUpdate,
           ],
           flatIndexMetadatasToDelete: [
-            ...acc.flatIndexMetadatasToDelete,
+            ...accumulator.flatIndexMetadatasToDelete,
             ...flatIndexMetadatasToDelete,
           ],
           flatIndexMetadatasToCreate: [
-            ...acc.flatIndexMetadatasToCreate,
+            ...accumulator.flatIndexMetadatasToCreate,
             ...flatIndexMetadatasToCreate,
           ],
         };
       },
-      {
-        flatFieldMetadatasToUpdate: [],
-        flatIndexMetadatasToUpdate: [],
-        flatIndexMetadatasToDelete: [],
-        flatIndexMetadatasToCreate: [],
-      },
+      initialAccumulator,
     );
 
   return {
