@@ -1,6 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { TrashCleanupService } from 'src/engine/trash-cleanup/services/trash-cleanup.service';
@@ -9,7 +8,6 @@ describe('TrashCleanupService', () => {
   let service: TrashCleanupService;
   let mockFlatEntityMapsCacheService: any;
   let mockTwentyORMGlobalManager: any;
-  let mockConfigService: { get: jest.Mock };
 
   beforeEach(async () => {
     mockFlatEntityMapsCacheService = {
@@ -20,17 +18,9 @@ describe('TrashCleanupService', () => {
       getRepositoryForWorkspace: jest.fn(),
     };
 
-    mockConfigService = {
-      get: jest.fn().mockReturnValue(100000),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TrashCleanupService,
-        {
-          provide: TwentyConfigService,
-          useValue: mockConfigService,
-        },
         {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: mockFlatEntityMapsCacheService,
@@ -145,7 +135,6 @@ describe('TrashCleanupService', () => {
     });
 
     it('should respect max records limit across objects', async () => {
-      mockConfigService.get.mockReturnValue(3);
       (service as any).maxRecordsPerWorkspace = 3;
       (service as any).batchSize = 3;
       setObjectMetadataCache([
