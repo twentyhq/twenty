@@ -6,7 +6,7 @@ import { AuditService } from 'src/engine/core-modules/audit/services/audit.servi
 import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/user/user-signup';
 import { type ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 
 @Injectable()
 export class TelemetryListener {
@@ -17,7 +17,7 @@ export class TelemetryListener {
 
   @OnCustomBatchEvent(USER_SIGNUP_EVENT_NAME)
   async handleUserSignup(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
+    payload: CustomWorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
     await Promise.all(
       payload.events.map(async (eventPayload) => {

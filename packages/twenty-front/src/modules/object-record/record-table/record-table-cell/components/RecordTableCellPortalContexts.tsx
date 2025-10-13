@@ -50,7 +50,6 @@ export const RecordTableCellPortalContexts = ({
         recordId,
         rowIndex: position.row,
         isSelected: false,
-        inView: true,
         pathToShowPage:
           getBasePathToShowPage({
             objectNameSingular: objectMetadataItem.nameSingular,

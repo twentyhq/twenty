@@ -94,7 +94,7 @@ export const EventCardCalendarEvent = ({
 }: {
   calendarEventId: string;
 }) => {
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { openCalendarEventInCommandMenu } =
     useOpenCalendarEventInCommandMenu();
 
@@ -118,7 +118,7 @@ export const EventCardCalendarEvent = ({
       },
     },
     onCompleted: (data) => {
-      upsertRecords([data]);
+      upsertRecordsInStore([data]);
     },
   });
 

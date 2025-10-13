@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
@@ -33,7 +33,7 @@ export class FlatRouteTriggerValidatorService {
       errors.push({
         code: RouteTriggerExceptionCode.ROUTE_NOT_FOUND,
         message: t`Route not found`,
-        userFriendlyMessage: t`Route not found`,
+        userFriendlyMessage: msg`Route not found`,
       });
     }
 
@@ -46,7 +46,7 @@ export class FlatRouteTriggerValidatorService {
       errors.push({
         code: RouteTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
-        userFriendlyMessage: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 
@@ -72,7 +72,7 @@ export class FlatRouteTriggerValidatorService {
       errors.push({
         code: RouteTriggerExceptionCode.ROUTE_NOT_FOUND,
         message: t`Route not found`,
-        userFriendlyMessage: t`Route not found`,
+        userFriendlyMessage: msg`Route not found`,
       });
     }
 
@@ -102,7 +102,7 @@ export class FlatRouteTriggerValidatorService {
       errors.push({
         code: RouteTriggerExceptionCode.ROUTE_ALREADY_EXIST,
         message: t`Route with same id already exists`,
-        userFriendlyMessage: t`Route already exists`,
+        userFriendlyMessage: msg`Route already exists`,
       });
     }
 
@@ -119,7 +119,7 @@ export class FlatRouteTriggerValidatorService {
       errors.push({
         code: RouteTriggerExceptionCode.ROUTE_PATH_ALREADY_EXIST,
         message: t`Route with same path already exists`,
-        userFriendlyMessage: t`Route path already exists`,
+        userFriendlyMessage: msg`Route path already exists`,
       });
     }
 
@@ -132,7 +132,7 @@ export class FlatRouteTriggerValidatorService {
       errors.push({
         code: RouteTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
         message: t`Serverless function not found`,
-        userFriendlyMessage: t`Serverless function not found`,
+        userFriendlyMessage: msg`Serverless function not found`,
       });
     }
 

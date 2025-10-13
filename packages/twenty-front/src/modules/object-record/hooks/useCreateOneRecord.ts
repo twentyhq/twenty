@@ -11,11 +11,13 @@ import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreate
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
@@ -23,7 +25,6 @@ import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/g
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-
 type useCreateOneRecordProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
@@ -39,6 +40,8 @@ export const useCreateOneRecord = <
   skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
 }: useCreateOneRecordProps) => {
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { registerObjectOperation } = useRegisterObjectOperation();
   const apolloCoreClient = useApolloCoreClient();
   const [loading, setLoading] = useState(false);
 
@@ -46,8 +49,13 @@ export const useCreateOneRecord = <
     objectNameSingular,
   });
 
-  const computedRecordGqlFields =
-    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+  const { recordGqlFields: depthOneRecordGqlFields } =
+    useGenerateDepthRecordGqlFieldsFromObject({
+      objectNameSingular,
+      depth: 1,
+    });
+
+  const computedRecordGqlFields = recordGqlFields ?? depthOneRecordGqlFields;
 
   const { createOneRecordMutation } = useCreateOneRecordMutation({
     objectNameSingular,
@@ -117,6 +125,7 @@ export const useCreateOneRecord = <
           objectMetadataItems,
           shouldMatchRootQueryFilter,
           objectPermissionsByObjectMetadataId,
+          upsertRecordsInStore,
         });
       }
     }
@@ -141,6 +150,7 @@ export const useCreateOneRecord = <
               shouldMatchRootQueryFilter,
               checkForRecordInCache: true,
               objectPermissionsByObjectMetadataId,
+              upsertRecordsInStore,
             });
           }
 
@@ -157,6 +167,8 @@ export const useCreateOneRecord = <
           objectMetadataItem,
           cache: apolloCoreClient.cache,
           recordToDestroy: recordCreatedInCache,
+          upsertRecordsInStore,
+          objectPermissionsByObjectMetadataId,
         });
 
         triggerDestroyRecordsOptimisticEffect({
@@ -164,12 +176,17 @@ export const useCreateOneRecord = <
           objectMetadataItem,
           recordsToDestroy: [recordCreatedInCache],
           objectMetadataItems,
+          upsertRecordsInStore,
+          objectPermissionsByObjectMetadataId,
         });
 
         throw error;
       });
 
     await refetchAggregateQueries();
+
+    registerObjectOperation(objectNameSingular, { type: 'create-one' });
+
     return createdObject.data?.[mutationResponseField] ?? null;
   };
 

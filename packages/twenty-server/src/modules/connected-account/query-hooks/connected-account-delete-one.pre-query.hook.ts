@@ -57,9 +57,9 @@ export class ConnectedAccountDeleteOnePreQueryHook
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: 'messageChannel',
       action: DatabaseEventAction.DESTROYED,
+      objectMetadata,
       events: messageChannels.map((messageChannel) => ({
         recordId: messageChannel.id,
-        objectMetadata,
         properties: {
           before: messageChannel,
         },

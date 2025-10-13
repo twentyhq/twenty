@@ -1,6 +1,6 @@
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { allRecordIdsOfAllRecordGroupsComponentSelector } from '@/object-record/record-index/states/selectors/allRecordIdsOfAllRecordGroupsComponentSelector';
 import { type AllRowsSelectedStatus } from '@/object-record/record-table/types/AllRowSelectedStatus';
 import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
@@ -12,7 +12,7 @@ export const allCardsSelectedStatusComponentSelector =
       ({ instanceId }) =>
       ({ get }) => {
         const allRecordIds = get(
-          recordIndexAllRecordIdsComponentSelector.selectorFamily({
+          allRecordIdsOfAllRecordGroupsComponentSelector.selectorFamily({
             instanceId,
           }),
         );

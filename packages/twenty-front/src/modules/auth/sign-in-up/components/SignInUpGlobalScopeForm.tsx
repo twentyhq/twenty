@@ -173,7 +173,7 @@ export const SignInUpGlobalScopeForm = () => {
       return;
     }
 
-    continueWithCredentials();
+    await continueWithCredentials();
   };
 
   const onEmailChange = (email: string) => {

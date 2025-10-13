@@ -30,6 +30,7 @@ import { type WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/reposito
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 
 export class WorkspaceInsertQueryBuilder<
   T extends ObjectLiteral,
@@ -160,21 +161,25 @@ export class WorkspaceInsertQueryBuilder<
         this.internalContext.objectMetadataMaps,
       );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.CREATED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedResultForEvent,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.CREATED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedResultForEvent,
+          authContext: this.authContext,
+        }),
+      );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPSERTED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedResultForEvent,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPSERTED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedResultForEvent,
+          authContext: this.authContext,
+        }),
+      );
 
       // TypeORM returns all entity columns for insertions
       const resultWithoutInsertionExtraColumns = !isDefined(result.raw)
