@@ -177,6 +177,7 @@ export class FieldMetadataServiceV2 {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatViewFilterMaps: existingFlatViewFilterMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -184,6 +185,7 @@ export class FieldMetadataServiceV2 {
           'flatObjectMetadataMaps',
           'flatIndexMaps',
           'flatFieldMetadataMaps',
+          'flatViewFilterMaps',
         ],
       },
     );
@@ -202,6 +204,8 @@ export class FieldMetadataServiceV2 {
     const {
       flatFieldMetadatasToUpdate: optimisticallyUpdatedFlatFieldMetadatas,
       flatIndexMetadatasToUpdate,
+      flatViewFilterToDelete,
+      flatViewFilterToUpdate,
     } = inputTranspilationResult.result;
 
     const toFlatFieldMetadataMaps =
@@ -231,6 +235,31 @@ export class FieldMetadataServiceV2 {
       }),
     );
 
+    const fromFlatViewFiltersMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: [...flatViewFilterToDelete, ...flatViewFilterToUpdate].map(
+        ({ id }) => id,
+      ),
+      flatEntityMaps: existingFlatViewFilterMaps,
+    });
+
+    const flatViewFilterWithDeleted = flatViewFilterToDelete.reduce(
+      (flatViewFilterMaps, { id: entityToDeleteId }) =>
+        deleteFlatEntityFromFlatEntityMapsOrThrow({
+          flatEntityMaps: flatViewFilterMaps,
+          entityToDeleteId,
+        }),
+      fromFlatViewFiltersMaps,
+    );
+
+    const toFlatViewFitlerMaps = flatViewFilterToUpdate.reduce(
+      (flatViewFilterMaps, flatViewFilter) =>
+        replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: flatViewFilter,
+          flatEntityMaps: flatViewFilterMaps,
+        }),
+      flatViewFilterWithDeleted,
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -246,9 +275,14 @@ export class FieldMetadataServiceV2 {
               from: existingFlatIndexMaps,
               to: toFlatIndexMaps,
             },
+            flatViewFilterMaps: {
+              from: fromFlatViewFiltersMaps,
+              to: toFlatViewFitlerMaps,
+            },
           },
           buildOptions: {
             isSystemBuild: false,
+            // TODO toggle to true for view filter once coco merged enhancement
             inferDeletionFromMissingEntities: false,
           },
           workspaceId,

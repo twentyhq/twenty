@@ -22,12 +22,8 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
-
-type UpdatedFlatFieldMetadataAndIndexToUpdate = {
-  flatFieldMetadata: FlatFieldMetadata;
-  flatIndexMetadataToUpdate: FlatIndexMetadata[];
-};
 
 type SanitizedUpdateFieldInput = ReturnType<
   typeof extractAndSanitizeObjectStringFields<
@@ -44,6 +40,10 @@ type ApplyUpdatesToFlatFieldMetadataArgs = {
   'flatIndexMaps' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
 >;
 
+type UpdatedFlatFieldMetadataAndRelatedEntities =
+  FlatFieldMetadataRelatedEntities & {
+    flatFieldMetadata: FlatFieldMetadata;
+  };
 const applyUpdatesToFlatFieldMetadata = ({
   updatedEditableFieldProperties,
   fromFlatFieldMetadata,
@@ -51,8 +51,16 @@ const applyUpdatesToFlatFieldMetadata = ({
   flatIndexMaps,
   flatFieldMetadataMaps,
 }: ApplyUpdatesToFlatFieldMetadataArgs) => {
-  return FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.reduce<UpdatedFlatFieldMetadataAndIndexToUpdate>(
-    ({ flatFieldMetadata, flatIndexMetadataToUpdate }, property) => {
+  return FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.reduce<UpdatedFlatFieldMetadataAndRelatedEntities>(
+    (
+      {
+        flatFieldMetadata,
+        flatIndexMetadatasToUpdate,
+        flatViewFilterToDelete,
+        flatViewFilterToUpdate,
+      },
+      property,
+    ) => {
       const updatedPropertyValue = updatedEditableFieldProperties[property];
       const isPropertyUpdated =
         updatedPropertyValue !== undefined &&
@@ -61,8 +69,10 @@ const applyUpdatesToFlatFieldMetadata = ({
       if (!isPropertyUpdated) {
         return {
           flatFieldMetadata,
-          flatIndexMetadataToUpdate,
-        };
+          flatIndexMetadatasToUpdate,
+          flatViewFilterToDelete,
+          flatViewFilterToUpdate,
+        } satisfies UpdatedFlatFieldMetadataAndRelatedEntities;
       }
       const updatedFlatFieldMetadata = {
         ...flatFieldMetadata,
@@ -99,16 +109,20 @@ const applyUpdatesToFlatFieldMetadata = ({
 
       return {
         flatFieldMetadata: updatedFlatFieldMetadata,
-        flatIndexMetadataToUpdate: [
-          ...flatIndexMetadataToUpdate,
+        flatIndexMetadatasToUpdate: [
+          ...flatIndexMetadatasToUpdate,
           ...newFlatIndexMetadataToUpdate,
         ],
-      };
+        flatViewFilterToDelete,
+        flatViewFilterToUpdate,
+      } satisfies UpdatedFlatFieldMetadataAndRelatedEntities;
     },
     {
       flatFieldMetadata: structuredClone(fromFlatFieldMetadata),
-      flatIndexMetadataToUpdate: [],
-    },
+      flatViewFilterToUpdate: [],
+      flatIndexMetadatasToUpdate: [],
+      flatViewFilterToDelete: [],
+    } satisfies UpdatedFlatFieldMetadataAndRelatedEntities,
   );
 };
 
@@ -119,10 +133,14 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   'flatObjectMetadataMaps' | 'flatIndexMaps' | 'flatFieldMetadataMaps'
 >;
 
+type FlatFieldMetadataRelatedEntities = {
+  flatIndexMetadatasToUpdate: FlatIndexMetadata[];
+  flatViewFilterToDelete: FlatViewFilter[];
+  flatViewFilterToUpdate: FlatViewFilter[];
+};
 type FlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadatasToUpdate: FlatFieldMetadata[];
-  flatIndexMetadatasToUpdate: FlatIndexMetadata[];
-};
+} & FlatFieldMetadataRelatedEntities;
 export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatIndexMaps,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -198,6 +216,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       result: {
         flatFieldMetadatasToUpdate: [updatedStandardFlatFieldMetadata],
         flatIndexMetadatasToUpdate: [],
+        flatViewFilterToDelete: [],
+        flatViewFilterToUpdate: [],
       },
     };
   }
@@ -229,14 +249,18 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   const optimisticiallyUpdatedFlatFieldMetadatas =
     flatFieldMetadatasToUpdate.reduce<FlatFieldMetadataAndIndexToUpdate>(
       (acc, fromFlatFieldMetadata) => {
-        const { flatFieldMetadata, flatIndexMetadataToUpdate } =
-          applyUpdatesToFlatFieldMetadata({
-            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-            fromFlatFieldMetadata,
-            flatFieldMetadataMaps,
-            flatIndexMaps,
-            updatedEditableFieldProperties,
-          });
+        const {
+          flatFieldMetadata,
+          flatIndexMetadatasToUpdate,
+          flatViewFilterToDelete,
+          flatViewFilterToUpdate,
+        } = applyUpdatesToFlatFieldMetadata({
+          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+          fromFlatFieldMetadata,
+          flatFieldMetadataMaps,
+          flatIndexMaps,
+          updatedEditableFieldProperties,
+        });
 
         return {
           flatFieldMetadatasToUpdate: [
@@ -245,13 +269,23 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           ],
           flatIndexMetadatasToUpdate: [
             ...acc.flatIndexMetadatasToUpdate,
-            ...flatIndexMetadataToUpdate,
+            ...flatIndexMetadatasToUpdate,
+          ],
+          flatViewFilterToDelete: [
+            ...acc.flatViewFilterToDelete,
+            ...flatViewFilterToDelete,
+          ],
+          flatViewFilterToUpdate: [
+            ...acc.flatViewFilterToUpdate,
+            ...flatViewFilterToUpdate,
           ],
         };
       },
       {
         flatFieldMetadatasToUpdate: [],
         flatIndexMetadatasToUpdate: [],
+        flatViewFilterToDelete: [],
+        flatViewFilterToUpdate: [],
       },
     );
 
