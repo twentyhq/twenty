@@ -6,6 +6,7 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import styled from '@emotion/styled';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -32,6 +33,18 @@ import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { type PublicWorkspaceDataOutput } from '~/generated/graphql';
+import { captchaTokenState } from '@/captcha/states/captchaTokenState';
+import { Loader } from 'twenty-ui/feedback';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+
+const StyledLoaderContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing(8)};
+  width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+`;
 
 const StandardContent = ({
   workspacePublicData,
@@ -70,6 +83,7 @@ const StandardContent = ({
 export const SignInUp = () => {
   const { t } = useLingui();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const captchaToken = useRecoilValue(captchaTokenState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
@@ -121,7 +135,13 @@ export const SignInUp = () => {
   ]);
 
   const signInUpForm = useMemo(() => {
-    if (loading) return null;
+    if (loading || !isUndefinedOrNull(captchaToken)) {
+      return (
+        <StyledLoaderContainer>
+          <Loader color="gray" />
+        </StyledLoaderContainer>
+      );
+    }
 
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
       return (
@@ -163,6 +183,7 @@ export const SignInUp = () => {
       </>
     );
   }, [
+    captchaToken,
     isDefaultDomain,
     isMultiWorkspaceEnabled,
     isOnAWorkspace,

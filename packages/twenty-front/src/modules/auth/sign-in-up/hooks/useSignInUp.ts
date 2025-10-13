@@ -20,6 +20,7 @@ import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '../../hooks/useAuth';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -64,12 +65,16 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       return;
     }
     try {
-      const { data } = await checkUserExistsQuery({
+      const { data, error } = await checkUserExistsQuery({
         variables: {
           email: form.getValues('email').toLowerCase().trim(),
           captchaToken: token,
         },
       });
+
+      if (isDefined(error)) {
+        return enqueueErrorSnackBar({ apolloError: error });
+      }
 
       setSignInUpMode(
         data?.checkUserExists.exists
@@ -77,12 +82,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           : SignInUpMode.SignUp,
       );
       setSignInUpStep(SignInUpStep.Password);
-    } catch (error) {
-      enqueueErrorSnackBar({
-        ...(error instanceof ApolloError
-          ? { apolloError: error }
-          : { message: errorMsgUserAlreadyExist }),
-      });
+    } catch {
+      enqueueErrorSnackBar({ message: errorMsgUserAlreadyExist });
     }
   }, [
     readCaptchaToken,
