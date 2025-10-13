@@ -11,7 +11,7 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
@@ -22,10 +22,10 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
       ObjectMetadataEntity,
       IndexMetadataEntity,
     ]),
-    WorkspaceDataSourceModule,
     IndexMetadataModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceMigrationModule,
+    WorkspaceSchemaManagerModule,
   ],
   providers: [
     MigrateWorkflowStepFilterOperandValueCommand,

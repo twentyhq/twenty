@@ -38,6 +38,8 @@ export const WorkflowDiagramEffect = () => {
     workflowLastCreatedStepIdComponentState,
   );
 
+  const currentVersion = workflowWithCurrentVersion?.currentVersion;
+
   const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
     ({ snapshot, set }) => {
       return (currentVersion: WorkflowVersion) => {
@@ -84,13 +86,10 @@ export const WorkflowDiagramEffect = () => {
     [workflowDiagramState, workflowLastCreatedStepIdState],
   );
 
-  const currentVersion = workflowWithCurrentVersion?.currentVersion;
-
   useEffect(() => {
     if (!isDefined(currentVersion)) {
-      setFlow(undefined);
-      setWorkflowDiagram(undefined);
-
+      // setFlow(undefined);
+      // setWorkflowDiagram(undefined);
       return;
     }
 

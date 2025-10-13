@@ -157,19 +157,6 @@ export const computeOptimisticRecordFromInput = ({
         continue;
       }
 
-      const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
-        (field) => field.name === relationFieldIdName,
-      );
-
-      if (
-        !isDefined(relationIdFieldMetadataItem) &&
-        !isDefined(fieldMetadataItem.settings?.joinColumnName)
-      ) {
-        throw new Error(
-          'Should never occur, encountered unknown relationId within relations definitions',
-        );
-      }
-
       if (isNull(recordInputFieldIdValue)) {
         optimisticRecord[relationFieldIdName] = null;
         optimisticRecord[fieldMetadataItem.name] = null;

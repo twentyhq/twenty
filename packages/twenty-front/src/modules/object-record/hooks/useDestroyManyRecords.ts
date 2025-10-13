@@ -10,6 +10,7 @@ import { useDestroyManyRecordsMutation } from '@/object-record/hooks/useDestroyM
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
@@ -31,6 +32,7 @@ export const useDestroyManyRecords = ({
   objectNameSingular,
 }: useDestroyManyRecordProps) => {
   const { registerObjectOperation } = useRegisterObjectOperation();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const apiConfig = useRecoilValue(apiConfigState);
 
   const mutationPageSize =
@@ -112,6 +114,8 @@ export const useDestroyManyRecords = ({
               objectMetadataItem,
               recordsToDestroy: cachedRecords,
               objectMetadataItems,
+              upsertRecordsInStore,
+              objectPermissionsByObjectMetadataId,
             });
           },
         })
@@ -123,6 +127,7 @@ export const useDestroyManyRecords = ({
               recordsToCreate: cachedRecords,
               objectMetadataItems,
               objectPermissionsByObjectMetadataId,
+              upsertRecordsInStore,
             });
           }
           throw error;

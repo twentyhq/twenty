@@ -4,7 +4,10 @@ import styled from '@emotion/styled';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
-import { IconChevronRight } from 'twenty-ui/display';
+import {
+  IconChevronRight,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 import { type Webhook } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
@@ -19,8 +22,7 @@ const StyledIconTableCell = styled(TableCell)`
 
 const StyledUrlTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
-  overflow-x: scroll;
-  white-space: nowrap;
+  overflow: hidden;
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
@@ -42,9 +44,13 @@ export const SettingsDevelopersWebhookTableRow = ({
   return (
     <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>
-        {isValidUrl(webhook.targetUrl)
-          ? getUrlHostnameOrThrow(webhook.targetUrl)
-          : webhook.targetUrl}
+        <OverflowingTextWithTooltip
+          text={
+            isValidUrl(webhook.targetUrl)
+              ? getUrlHostnameOrThrow(webhook.targetUrl)
+              : webhook.targetUrl
+          }
+        />
       </StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
