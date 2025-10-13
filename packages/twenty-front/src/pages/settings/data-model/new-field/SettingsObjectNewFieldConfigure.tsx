@@ -137,13 +137,12 @@ export const SettingsObjectNewFieldConfigure = () => {
             type: FieldMetadataType.MORPH_RELATION,
             objectMetadataId: activeObjectMetadataItem.id,
             morphRelationsCreationPayload: morphRelationObjectMetadataIds.map(
-              (morphRelationObjectMetadataId: string) =>
-                ({
-                  type: relationType,
-                  targetObjectMetadataId: morphRelationObjectMetadataId,
-                  targetFieldLabel,
-                  targetFieldIcon: iconOnDestination,
-                }) satisfies RelationCreationPayload,
+              (morphRelationObjectMetadataId: string) => ({
+                type: relationType,
+                targetObjectMetadataId: morphRelationObjectMetadataId,
+                targetFieldLabel,
+                targetFieldIcon: iconOnDestination,
+              }),
             ),
           });
         } else if (morphRelationObjectMetadataIds.length === 1) {
