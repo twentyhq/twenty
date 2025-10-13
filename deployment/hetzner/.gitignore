@@ -1,0 +1,22 @@
+# Environment files with sensitive data
+.env.production
+.env.local
+.env
+
+# Backup files
+*.sql
+*.sql.gz
+*.dump
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
