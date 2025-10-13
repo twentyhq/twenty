@@ -5,7 +5,7 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
-import { PermissionFlagType } from '~/generated/graphql';
+import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import(
@@ -415,10 +415,7 @@ type SettingsRoutesProps = {
   isAdminPageEnabled?: boolean;
 };
 
-export const SettingsRoutes = ({
-  isFunctionSettingsEnabled,
-  isAdminPageEnabled,
-}: SettingsRoutesProps) => (
+export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
@@ -470,14 +467,6 @@ export const SettingsRoutes = ({
         <Route
           path={SettingsPath.AIAgentDetail}
           element={<SettingsAgentForm mode="edit" />}
-        />
-        <Route
-          path={SettingsPath.Applications}
-          element={<SettingsApplications />}
-        />
-        <Route
-          path={SettingsPath.ApplicationDetail}
-          element={<SettingsApplicationDetails />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
@@ -614,23 +603,37 @@ export const SettingsRoutes = ({
           element={<SettingsIntegrationMCP />}
         />
       </Route>
-      {isFunctionSettingsEnabled && (
-        <>
-          <Route
-            path={SettingsPath.ServerlessFunctions}
-            element={<SettingsServerlessFunctions />}
-          />
-          <Route
-            path={SettingsPath.NewServerlessFunction}
-            element={<SettingsServerlessFunctionsNew />}
-          />
-        </>
-      )}
 
       <Route
-        path={SettingsPath.ServerlessFunctionDetail}
-        element={<SettingsServerlessFunctionDetail />}
-      />
+        element={
+          <SettingsProtectedRouteWrapper
+            requiredFeatureFlag={FeatureFlagKey.IS_APPLICATION_ENABLED}
+          />
+        }
+      >
+        <Route
+          path={SettingsPath.Applications}
+          element={<SettingsApplications />}
+        />
+        <Route
+          path={SettingsPath.ApplicationDetail}
+          element={<SettingsApplicationDetails />}
+        />
+
+        <Route
+          path={SettingsPath.ServerlessFunctions}
+          element={<SettingsServerlessFunctions />}
+        />
+        <Route
+          path={SettingsPath.NewServerlessFunction}
+          element={<SettingsServerlessFunctionsNew />}
+        />
+
+        <Route
+          path={SettingsPath.ServerlessFunctionDetail}
+          element={<SettingsServerlessFunctionDetail />}
+        />
+      </Route>
 
       <Route
         element={
