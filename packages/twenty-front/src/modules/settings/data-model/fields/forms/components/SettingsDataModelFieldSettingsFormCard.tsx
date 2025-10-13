@@ -58,7 +58,6 @@ const dateTimeFieldFormSchema = z
   .extend(settingsDataModelFieldDateFormSchema.shape)
   .extend(isUniqueFieldFormSchema.shape);
 
-// todo @guillim : remove this once we have a proper morph relation form
 const morphRelationFieldFormSchema = z
   .object({
     type: z.literal(FieldMetadataType.MORPH_RELATION),
@@ -188,9 +187,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
 }: SettingsDataModelFieldSettingsFormCardProps) => {
   const { watch } = useFormContext<SettingsDataModelFieldEditFormValues>();
 
-  // const isMorphRelationEnabled = useIsFeatureEnabled(
-  //   FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
-  // );
   if (!previewableTypes.includes(fieldType)) {
     return null;
   }

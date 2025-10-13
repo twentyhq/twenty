@@ -7,7 +7,7 @@ import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/Field
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { useMorphRelationSettingsFormDefaultValuesOnDestination } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormDefaultValuesOnDestination';
 import { useMorphRelationSettingsFormInitialTargetMetadatas } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialTargetMetadatas';
-import { fieldMetadataItemDisableFieldEdition } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemDisableFieldEdition';
+import { useFieldMetadataItemDisableFieldEdition } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemDisableFieldEdition';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 
@@ -80,9 +80,9 @@ export const SettingsDataModelFieldMorphRelationForm = ({
     useFieldMetadataItemById(existingFieldMetadataId);
 
   const disableRelationEdition = isDefined(existingFieldMetadataItem);
-  const disableFieldEdition = isDefined(existingFieldMetadataItem)
-    ? fieldMetadataItemDisableFieldEdition(existingFieldMetadataItem)
-    : false;
+  const disableFieldEdition = useFieldMetadataItemDisableFieldEdition(
+    existingFieldMetadataItem,
+  );
 
   const initialRelationObjectMetadataItems =
     useMorphRelationSettingsFormInitialTargetMetadatas({
