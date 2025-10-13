@@ -25,6 +25,7 @@ import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modu
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { isPlainObject } from 'src/utils/is-plain-object';
 
+// TODO: Refacto-common - Rename CommonRecordsToGraphqlConnectionHelper
 export class ObjectRecordsToGraphqlConnectionHelper {
   private objectMetadataMaps: ObjectMetadataMaps;
 

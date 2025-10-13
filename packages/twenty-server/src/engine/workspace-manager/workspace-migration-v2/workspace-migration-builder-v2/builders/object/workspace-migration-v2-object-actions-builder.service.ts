@@ -1,59 +1,35 @@
 import { Injectable } from '@nestjs/common';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { compareTwoFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
-import {
-  FlatEntityUpdateValidationArgs,
-  FlatEntityValidationArgs,
-  FlatEntityValidationReturnType,
-  WorkspaceEntityMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import {
-  UpdateObjectAction,
-  WorkspaceMigrationObjectActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
+import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatObjectMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service';
-export type ObjectMetadataRelatedFlatEntityMaps = Pick<
-  AllFlatEntityMaps,
-  'flatFieldMetadataMaps'
->;
 
 @Injectable()
 export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  'objectMetadata',
-  FlatObjectMetadata,
-  WorkspaceMigrationObjectActionV2,
-  ObjectMetadataRelatedFlatEntityMaps
+  typeof ALL_METADATA_NAME.objectMetadata
 > {
   constructor(
     private readonly flatObjectValidatorService: FlatObjectMetadataValidatorService,
   ) {
-    super('objectMetadata');
+    super(ALL_METADATA_NAME.objectMetadata);
   }
 
-  protected async validateFlatEntityCreation({
-    flatEntityToValidate: flatObjectMetadataToValidate,
-    optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-    buildOptions,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<
-    FlatObjectMetadata,
-    ObjectMetadataRelatedFlatEntityMaps
-  >): Promise<
+  protected async validateFlatEntityCreation(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.objectMetadata>,
+  ): Promise<
     FlatEntityValidationReturnType<
-      WorkspaceMigrationObjectActionV2,
-      FlatObjectMetadata,
-      ObjectMetadataRelatedFlatEntityMaps
+      typeof ALL_METADATA_NAME.objectMetadata,
+      'created'
     >
   > {
     const validationResult =
-      await this.flatObjectValidatorService.validateFlatObjectMetadataCreation({
-        buildOptions,
-        flatObjectMetadataToValidate,
-        optimisticFlatObjectMetadataMaps,
-        dependencyOptimisticFlatEntityMaps,
-      });
+      await this.flatObjectValidatorService.validateFlatObjectMetadataCreation(
+        args,
+      );
 
     if (validationResult.errors.length > 0) {
       return {
@@ -61,6 +37,11 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         ...validationResult,
       };
     }
+
+    const {
+      flatEntityToValidate: flatObjectMetadataToValidate,
+      dependencyOptimisticFlatEntityMaps,
+    } = args;
 
     return {
       status: 'success',
@@ -73,28 +54,16 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     };
   }
 
-  protected async validateFlatEntityDeletion({
-    buildOptions,
-    flatEntityToValidate: flatObjectMetadataToValidate,
-    optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<
-    FlatObjectMetadata,
-    ObjectMetadataRelatedFlatEntityMaps
-  >): Promise<
+  protected async validateFlatEntityDeletion(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.objectMetadata>,
+  ): Promise<
     FlatEntityValidationReturnType<
-      WorkspaceMigrationObjectActionV2,
-      FlatObjectMetadata,
-      ObjectMetadataRelatedFlatEntityMaps
+      typeof ALL_METADATA_NAME.objectMetadata,
+      'deleted'
     >
   > {
     const validationResult =
-      this.flatObjectValidatorService.validateFlatObjectMetadataDeletion({
-        buildOptions,
-        flatObjectMetadataToValidate,
-        optimisticFlatObjectMetadataMaps,
-        dependencyOptimisticFlatEntityMaps,
-      });
+      this.flatObjectValidatorService.validateFlatObjectMetadataDeletion(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -102,6 +71,11 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         ...validationResult,
       };
     }
+
+    const {
+      flatEntityToValidate: flatObjectMetadataToValidate,
+      dependencyOptimisticFlatEntityMaps,
+    } = args;
 
     return {
       status: 'success',
@@ -113,42 +87,18 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     };
   }
 
-  protected async validateFlatEntityUpdate({
-    buildOptions,
-    flatEntityUpdate: {
-      from: fromFlatObjectMetadata,
-      to: toFlatObjectMetadata,
-    },
-    optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityUpdateValidationArgs<
-    FlatObjectMetadata,
-    ObjectMetadataRelatedFlatEntityMaps
-  >): Promise<
-    | FlatEntityValidationReturnType<
-        WorkspaceMigrationObjectActionV2,
-        FlatObjectMetadata,
-        ObjectMetadataRelatedFlatEntityMaps
-      >
-    | undefined
+  protected async validateFlatEntityUpdate(
+    args: FlatEntityUpdateValidationArgs<
+      typeof ALL_METADATA_NAME.objectMetadata
+    >,
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.objectMetadata,
+      'updated'
+    >
   > {
-    const flatObjectPropertiesUpdates = compareTwoFlatObjectMetadata({
-      fromFlatObjectMetadata,
-      toFlatObjectMetadata,
-    });
-
-    if (flatObjectPropertiesUpdates.length === 0) {
-      return undefined;
-    }
-
     const validationResult =
-      this.flatObjectValidatorService.validateFlatObjectMetadataUpdate({
-        buildOptions,
-        flatObjectMetadataToValidate: toFlatObjectMetadata,
-        optimisticFlatObjectMetadataMaps,
-        dependencyOptimisticFlatEntityMaps,
-        flatObjectPropertiesUpdates: flatObjectPropertiesUpdates,
-      });
+      this.flatObjectValidatorService.validateFlatObjectMetadataUpdate(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -157,10 +107,16 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       };
     }
 
+    const {
+      dependencyOptimisticFlatEntityMaps,
+      flatEntityId,
+      flatEntityUpdates,
+    } = args;
+
     const updateObjectAction: UpdateObjectAction = {
       type: 'update_object',
-      objectMetadataId: toFlatObjectMetadata.id,
-      updates: flatObjectPropertiesUpdates,
+      objectMetadataId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {

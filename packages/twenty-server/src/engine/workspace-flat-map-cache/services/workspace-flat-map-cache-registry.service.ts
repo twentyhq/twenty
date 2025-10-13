@@ -3,7 +3,7 @@ import { DiscoveryService } from '@nestjs/core';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { WORKSPACE_FLAT_MAP_CACHE_KEY } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import {
   WorkspaceFlatMapCacheException,

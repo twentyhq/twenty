@@ -131,7 +131,9 @@ export type Workflow = {
   __typename: 'Workflow';
   id: string;
   name: string;
-  versions: Array<WorkflowVersion>;
+  versions: Array<
+    Pick<WorkflowVersion, 'id' | 'status' | 'name' | 'createdAt'>
+  >;
   lastPublishedVersionId: string;
   statuses: Array<WorkflowStatus> | null;
 };

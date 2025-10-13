@@ -5,6 +5,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const triggerDestroyRecordsOptimisticEffect = ({
@@ -12,11 +14,18 @@ export const triggerDestroyRecordsOptimisticEffect = ({
   objectMetadataItem,
   recordsToDestroy,
   objectMetadataItems,
+  upsertRecordsInStore,
+  objectPermissionsByObjectMetadataId,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
   recordsToDestroy: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
+  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
 }) => {
   cache.modify<StoreObject>({
     fields: {
@@ -75,6 +84,8 @@ export const triggerDestroyRecordsOptimisticEffect = ({
       currentSourceRecord: recordToDestroy,
       updatedSourceRecord: null,
       objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+      upsertRecordsInStore,
     });
 
     cache.evict({ id: cache.identify(recordToDestroy) });

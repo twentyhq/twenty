@@ -1,9 +1,9 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { useAssignRecordsToStore } from '@/object-record/record-table/virtualization/hooks/useAssignRecordsToStore';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -34,7 +34,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
   );
 
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
-  const { assignRecordsToStore } = useAssignRecordsToStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const handleButtonClick = useRecoilCallback(
     () => async () => {
@@ -42,7 +42,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
         position: 'last',
       });
 
-      assignRecordsToStore({ records: [createdRecord] });
+      upsertRecordsInStore([createdRecord]);
 
       if (isDefined(totalNumberOfRecordsToVirtualize)) {
         loadRecordsToVirtualRows({
@@ -53,7 +53,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
     },
     [
       createNewIndexRecord,
-      assignRecordsToStore,
+      upsertRecordsInStore,
       loadRecordsToVirtualRows,
       totalNumberOfRecordsToVirtualize,
     ],
