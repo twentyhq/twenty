@@ -10,7 +10,7 @@ import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-mo
 type RecomputeIndexOnFlatFieldMetadataNameUpdateArgs = {
   flatObjectMetadata: FlatObjectMetadata;
   fromFlatFieldMetadata: FlatFieldMetadata;
-  toFlatFieldMetadata: Pick<FlatFieldMetadata, 'name'>;
+  toFlatFieldMetadata: Pick<FlatFieldMetadata, 'name' | 'isUnique'>;
 } & Pick<AllFlatEntityMaps, 'flatIndexMaps' | 'flatFieldMetadataMaps'>;
 
 export const recomputeIndexOnFlatFieldMetadataNameUpdate = ({
@@ -46,6 +46,7 @@ export const recomputeIndexOnFlatFieldMetadataNameUpdate = ({
         return {
           ...flatFieldMetadata,
           name: toFlatFieldMetadata.name,
+          isUnique: toFlatFieldMetadata.isUnique,
         };
       }
 

@@ -219,16 +219,18 @@ export class FieldMetadataServiceV2 {
         }),
       );
 
+    const fromFlatIndexMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: flatIndexMetadatasToUpdate.map(({ id }) => id),
+      flatEntityMaps: existingFlatIndexMaps,
+    });
+
     const toFlatIndexMaps = flatIndexMetadatasToUpdate.reduce(
       (flatIndexMaps, flatIndexMetadata) =>
         replaceFlatEntityInFlatEntityMapsOrThrow({
           flatEntity: flatIndexMetadata,
           flatEntityMaps: flatIndexMaps,
         }),
-      getSubFlatEntityMapsOrThrow({
-        flatEntityIds: flatIndexMetadatasToUpdate.map(({ id }) => id),
-        flatEntityMaps: existingFlatIndexMaps,
-      }),
+      fromFlatIndexMaps,
     );
 
     const validateAndBuildResult =
@@ -243,7 +245,7 @@ export class FieldMetadataServiceV2 {
               to: toFlatFieldMetadataMaps,
             },
             flatIndexMaps: {
-              from: existingFlatIndexMaps,
+              from: fromFlatIndexMaps,
               to: toFlatIndexMaps,
             },
           },

@@ -79,7 +79,10 @@ const applyUpdatesToFlatFieldMetadata = ({
 
       let newFlatIndexMetadataToUpdate: FlatIndexMetadata[] = [];
 
-      if (property === 'name') {
+      if (
+        property === 'name' ||
+        (property === 'isUnique' && updatedFlatFieldMetadata.isUnique === true)
+      ) {
         const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityMaps: flatObjectMetadataMaps,
           flatEntityId: flatFieldMetadata.objectMetadataId,
@@ -92,6 +95,7 @@ const applyUpdatesToFlatFieldMetadata = ({
             fromFlatFieldMetadata,
             toFlatFieldMetadata: {
               name: updatedFlatFieldMetadata.name,
+              isUnique: updatedFlatFieldMetadata.isUnique,
             },
             flatIndexMaps,
           });
