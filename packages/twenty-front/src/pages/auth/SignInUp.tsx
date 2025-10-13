@@ -135,7 +135,7 @@ export const SignInUp = () => {
   ]);
 
   const signInUpForm = useMemo(() => {
-    if (loading || isUndefinedOrNull(captcha?.siteKey)) {
+    if (loading || isUndefinedOrNull(captcha)) {
       return (
         <StyledLoaderContainer>
           <Loader color="gray" />
