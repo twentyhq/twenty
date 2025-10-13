@@ -137,15 +137,10 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       }
     });
 
-    let forwardPagination; // TODO
-    const isGroupBy = true;
-
-    executionArgs.graphqlQueryParser.applyOrderToBuilder(
+    executionArgs.graphqlQueryParser.applyGroupByOrderToBuilder(
       queryBuilder,
       executionArgs.args.orderBy ?? [],
-      objectMetadataNameSingular,
-      forwardPagination,
-      isGroupBy,
+      groupByFields,
     );
 
     const result = await queryBuilder.getRawMany();
