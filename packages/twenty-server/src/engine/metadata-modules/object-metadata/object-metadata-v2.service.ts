@@ -162,7 +162,6 @@ export class ObjectMetadataServiceV2 {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -307,7 +306,9 @@ export class ObjectMetadataServiceV2 {
             },
           },
           buildOptions: {
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              objectMetadata: true,
+            },
             isSystemBuild,
           },
           workspaceId,
@@ -449,7 +450,6 @@ export class ObjectMetadataServiceV2 {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },

@@ -70,7 +70,6 @@ export class CronTriggerV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
         },
       );
@@ -141,7 +140,6 @@ export class CronTriggerV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
         },
       );
@@ -218,7 +216,9 @@ export class CronTriggerV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              cronTrigger: true,
+            },
           },
           workspaceId,
         },

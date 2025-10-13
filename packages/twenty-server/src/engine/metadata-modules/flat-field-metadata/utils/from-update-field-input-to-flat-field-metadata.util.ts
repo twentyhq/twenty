@@ -20,6 +20,7 @@ import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
+import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
@@ -27,6 +28,8 @@ import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standar
 type UpdatedFlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadata: FlatFieldMetadata;
   flatIndexMetadataToUpdate: FlatIndexMetadata[];
+  flatIndexMetadatasToDelete: FlatIndexMetadata[];
+  flatIndexMetadatasToCreate: FlatIndexMetadata[];
 };
 
 type SanitizedUpdateFieldInput = ReturnType<
@@ -52,7 +55,15 @@ const applyUpdatesToFlatFieldMetadata = ({
   flatFieldMetadataMaps,
 }: ApplyUpdatesToFlatFieldMetadataArgs) => {
   return FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.reduce<UpdatedFlatFieldMetadataAndIndexToUpdate>(
-    ({ flatFieldMetadata, flatIndexMetadataToUpdate }, property) => {
+    (
+      {
+        flatFieldMetadata,
+        flatIndexMetadataToUpdate,
+        flatIndexMetadatasToDelete,
+        flatIndexMetadatasToCreate,
+      },
+      property,
+    ) => {
       const updatedPropertyValue = updatedEditableFieldProperties[property];
       const isPropertyUpdated =
         updatedPropertyValue !== undefined &&
@@ -62,6 +73,8 @@ const applyUpdatesToFlatFieldMetadata = ({
         return {
           flatFieldMetadata,
           flatIndexMetadataToUpdate,
+          flatIndexMetadatasToDelete,
+          flatIndexMetadatasToCreate,
         };
       }
       const updatedFlatFieldMetadata = {
@@ -78,27 +91,54 @@ const applyUpdatesToFlatFieldMetadata = ({
       }
 
       let newFlatIndexMetadataToUpdate: FlatIndexMetadata[] = [];
+      let newFlatIndexMetadatasToDelete: FlatIndexMetadata[] = [];
+      let newFlatIndexMetadatasToCreate: FlatIndexMetadata[] = [];
 
-      if (
-        property === 'name' ||
-        (property === 'isUnique' && updatedFlatFieldMetadata.isUnique === true)
-      ) {
+      if (property === 'name' || property === 'isUnique') {
         const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityMaps: flatObjectMetadataMaps,
           flatEntityId: flatFieldMetadata.objectMetadataId,
         });
 
-        newFlatIndexMetadataToUpdate =
-          recomputeIndexOnFlatFieldMetadataNameUpdate({
-            flatFieldMetadataMaps,
+        const relatedFlatIndexMetadata = Object.values(
+          flatIndexMaps.byId,
+        ).filter(
+          (flatIndexMetadata): flatIndexMetadata is FlatIndexMetadata =>
+            isDefined(flatIndexMetadata) &&
+            flatIndexMetadata.objectMetadataId ===
+              fromFlatFieldMetadata.objectMetadataId &&
+            flatIndexMetadata.flatIndexFieldMetadatas.some(
+              (flatIndexField) =>
+                flatIndexField.fieldMetadataId === fromFlatFieldMetadata.id,
+            ),
+        );
+
+        if (relatedFlatIndexMetadata.length === 0) {
+          const newIndex = generateIndexForFlatFieldMetadata({
+            flatFieldMetadata: updatedFlatFieldMetadata,
             flatObjectMetadata,
-            fromFlatFieldMetadata,
-            toFlatFieldMetadata: {
-              name: updatedFlatFieldMetadata.name,
-              isUnique: updatedFlatFieldMetadata.isUnique,
-            },
-            flatIndexMaps,
+            workspaceId: flatObjectMetadata.workspaceId,
           });
+
+          newFlatIndexMetadatasToCreate = [newIndex];
+        } else if (
+          property === 'isUnique' &&
+          updatedFlatFieldMetadata.isUnique === false
+        ) {
+          newFlatIndexMetadatasToDelete = relatedFlatIndexMetadata;
+        } else {
+          newFlatIndexMetadataToUpdate =
+            recomputeIndexOnFlatFieldMetadataNameUpdate({
+              flatFieldMetadataMaps,
+              flatObjectMetadata,
+              fromFlatFieldMetadata,
+              toFlatFieldMetadata: {
+                name: updatedFlatFieldMetadata.name,
+                isUnique: updatedFlatFieldMetadata.isUnique,
+              },
+              relatedFlatIndexMetadata,
+            });
+        }
       }
 
       return {
@@ -107,11 +147,21 @@ const applyUpdatesToFlatFieldMetadata = ({
           ...flatIndexMetadataToUpdate,
           ...newFlatIndexMetadataToUpdate,
         ],
+        flatIndexMetadatasToDelete: [
+          ...flatIndexMetadatasToDelete,
+          ...newFlatIndexMetadatasToDelete,
+        ],
+        flatIndexMetadatasToCreate: [
+          ...flatIndexMetadatasToCreate,
+          ...newFlatIndexMetadatasToCreate,
+        ],
       };
     },
     {
       flatFieldMetadata: structuredClone(fromFlatFieldMetadata),
       flatIndexMetadataToUpdate: [],
+      flatIndexMetadatasToDelete: [],
+      flatIndexMetadatasToCreate: [],
     },
   );
 };
@@ -126,6 +176,8 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
 type FlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadatasToUpdate: FlatFieldMetadata[];
   flatIndexMetadatasToUpdate: FlatIndexMetadata[];
+  flatIndexMetadatasToDelete: FlatIndexMetadata[];
+  flatIndexMetadatasToCreate: FlatIndexMetadata[];
 };
 export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatIndexMaps,
@@ -202,6 +254,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       result: {
         flatFieldMetadatasToUpdate: [updatedStandardFlatFieldMetadata],
         flatIndexMetadatasToUpdate: [],
+        flatIndexMetadatasToDelete: [],
+        flatIndexMetadatasToCreate: [],
       },
     };
   }
@@ -233,14 +287,18 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   const optimisticiallyUpdatedFlatFieldMetadatas =
     flatFieldMetadatasToUpdate.reduce<FlatFieldMetadataAndIndexToUpdate>(
       (acc, fromFlatFieldMetadata) => {
-        const { flatFieldMetadata, flatIndexMetadataToUpdate } =
-          applyUpdatesToFlatFieldMetadata({
-            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-            fromFlatFieldMetadata,
-            flatFieldMetadataMaps,
-            flatIndexMaps,
-            updatedEditableFieldProperties,
-          });
+        const {
+          flatFieldMetadata,
+          flatIndexMetadataToUpdate,
+          flatIndexMetadatasToDelete,
+          flatIndexMetadatasToCreate,
+        } = applyUpdatesToFlatFieldMetadata({
+          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+          fromFlatFieldMetadata,
+          flatFieldMetadataMaps,
+          flatIndexMaps,
+          updatedEditableFieldProperties,
+        });
 
         return {
           flatFieldMetadatasToUpdate: [
@@ -251,11 +309,21 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
             ...acc.flatIndexMetadatasToUpdate,
             ...flatIndexMetadataToUpdate,
           ],
+          flatIndexMetadatasToDelete: [
+            ...acc.flatIndexMetadatasToDelete,
+            ...flatIndexMetadatasToDelete,
+          ],
+          flatIndexMetadatasToCreate: [
+            ...acc.flatIndexMetadatasToCreate,
+            ...flatIndexMetadatasToCreate,
+          ],
         };
       },
       {
         flatFieldMetadatasToUpdate: [],
         flatIndexMetadatasToUpdate: [],
+        flatIndexMetadatasToDelete: [],
+        flatIndexMetadatasToCreate: [],
       },
     );
 
