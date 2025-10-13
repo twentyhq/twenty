@@ -17,10 +17,6 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 export class UpdateViewGroupActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'update_view_group',
 ) {
-  constructor() {
-    super();
-  }
-
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,

@@ -15,10 +15,6 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 export class DeleteViewGroupActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'delete_view_group',
 ) {
-  constructor() {
-    super();
-  }
-
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,

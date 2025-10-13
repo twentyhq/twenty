@@ -14,8 +14,6 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class FlatViewGroupValidatorService {
-  constructor() {}
-
   public validateFlatViewGroupUpdate({
     flatEntityId,
     flatEntityUpdates,
