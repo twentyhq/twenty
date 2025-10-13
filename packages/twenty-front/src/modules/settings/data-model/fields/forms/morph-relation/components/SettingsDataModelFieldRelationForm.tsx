@@ -65,13 +65,13 @@ export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
   typeof settingsDataModelFieldMorphRelationFormSchema
 >;
 
-type SettingsDataModelFieldMorphRelationFormProps = {
+type SettingsDataModelFieldRelationFormProps = {
   existingFieldMetadataId: string;
 };
 
-export const SettingsDataModelFieldMorphRelationForm = ({
+export const SettingsDataModelFieldRelationForm = ({
   existingFieldMetadataId,
-}: SettingsDataModelFieldMorphRelationFormProps) => {
+}: SettingsDataModelFieldRelationFormProps) => {
   const { t } = useLingui();
   const { control } =
     useFormContext<SettingsDataModelFieldMorphRelationFormValues>();

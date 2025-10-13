@@ -4,9 +4,9 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
-  SettingsDataModelFieldMorphRelationForm,
+  SettingsDataModelFieldRelationForm,
   type SettingsDataModelFieldMorphRelationFormValues,
-} from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
+} from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm';
 import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewContent';
 import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewImageCard';
 import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewSubWidget';
@@ -15,15 +15,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
-type SettingsDataModelFieldMorphRelationFormCardProps = {
+type SettingsDataModelFieldRelationFormCardProps = {
   existingFieldMetadataId: string;
   objectNameSingular: string;
 };
 
-export const SettingsDataModelFieldMorphRelationFormCard = ({
+export const SettingsDataModelFieldRelationFormCard = ({
   existingFieldMetadataId,
   objectNameSingular,
-}: SettingsDataModelFieldMorphRelationFormCardProps) => {
+}: SettingsDataModelFieldRelationFormCardProps) => {
   const { watch } = useFormContext<
     SettingsDataModelFieldMorphRelationFormValues &
       SettingsDataModelFieldEditFormValues
@@ -105,7 +105,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
         </SettingsDataModelFieldRelationPreviewContent>
       }
       form={
-        <SettingsDataModelFieldMorphRelationForm
+        <SettingsDataModelFieldRelationForm
           existingFieldMetadataId={existingFieldMetadataId}
         />
       }
