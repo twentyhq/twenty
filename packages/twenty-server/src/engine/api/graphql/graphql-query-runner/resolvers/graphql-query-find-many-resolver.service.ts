@@ -175,7 +175,9 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.createConnection({
-      objectRecords,
+      objectRecords: isForwardPagination
+        ? objectRecords
+        : objectRecords.reverse(),
       objectRecordsAggregatedValues: parentObjectRecordsAggregatedValues,
       selectedAggregatedFields:
         executionArgs.graphqlQuerySelectedFieldsResult.aggregate,

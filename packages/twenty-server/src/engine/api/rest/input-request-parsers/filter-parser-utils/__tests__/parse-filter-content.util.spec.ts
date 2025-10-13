@@ -1,4 +1,4 @@
-import { parseFilterContent } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter-content.utils';
+import { parseFilterContent } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-content.util';
 
 describe('parseFilterContent', () => {
   it('should parse query filter test 1', () => {
