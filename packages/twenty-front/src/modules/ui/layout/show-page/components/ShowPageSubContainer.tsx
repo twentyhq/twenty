@@ -120,7 +120,7 @@ export const ShowPageSubContainer = ({
   return (
     <LayoutRenderingProvider
       value={{
-        targetRecord: {
+        targetRecordIdentifier: {
           id: targetableObject.id,
           targetObjectNameSingular: targetableObject.targetObjectNameSingular,
         },

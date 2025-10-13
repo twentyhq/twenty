@@ -26,9 +26,9 @@ const CardRenderer = <T extends CardConfiguration>({
   Component: React.ComponentType<{ configuration?: T }> | React.ComponentType;
   configuration?: T;
 }) => {
-  const { targetRecord } = useLayoutRenderingContext();
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
 
-  if (!targetRecord) {
+  if (!targetRecordIdentifier) {
     return null;
   }
 
