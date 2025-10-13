@@ -1,5 +1,5 @@
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import {
   type ObjectRecordFilter,
@@ -20,7 +20,6 @@ import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-module
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { COMPANY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { type RedisFieldRepository } from 'src/engine/twenty-orm/repository/redis-fields.repository';
 import { type RedisFieldSqlFactory } from 'src/engine/twenty-orm/factories/redis-field-sql.factory';
 import { redisKeyBuilder } from 'src/engine/twenty-orm/utils/redis-key-builder.util';
@@ -182,13 +181,6 @@ export class GraphqlQueryParser {
         `Could not find object metadata for ${parentObjectMetadata.nameSingular}`,
         GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
-    }
-
-    const lastViewAtField =
-      objectMetadataMapItem.fieldsById[COMPANY_STANDARD_FIELD_IDS.lastViewedAt];
-
-    if (!isDefined(lastViewAtField)) {
-      return;
     }
 
     assertIsDefinedOrThrow(queryBuilder.authContext?.user?.id);

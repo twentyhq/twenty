@@ -7,6 +7,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useEventTracker } from '@/analytics/hooks/useEventTracker';
+import { AnalyticsType } from '~/generated-metadata/graphql';
 
 type RecordShowEffectProps = {
   objectNameSingular: string;
@@ -17,6 +19,8 @@ export const RecordShowEffect = ({
   objectNameSingular,
   recordId,
 }: RecordShowEffectProps) => {
+  const eventTracker = useEventTracker();
+
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -52,6 +56,16 @@ export const RecordShowEffect = ({
       setRecordStore(record);
     }
   }, [record, setRecordStore, loading]);
+
+  useEffect(() => {
+    eventTracker(AnalyticsType.TRACK, {
+      event: 'Object Record Viewed',
+      properties: {
+        recordId: recordId,
+        objectMetadataId: objectMetadataItem.id,
+      },
+    });
+  }, [objectMetadataItem, recordId, eventTracker]);
 
   return <></>;
 };

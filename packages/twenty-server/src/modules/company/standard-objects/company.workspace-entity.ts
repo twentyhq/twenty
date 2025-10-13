@@ -296,8 +296,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.lastViewedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: msg`Last view date`,
-    description: msg`Last view date`,
+    label: msg`Last view at`,
+    description: msg`Last view at`,
     icon: 'IconCalendar',
     defaultValue: null,
     settings: {

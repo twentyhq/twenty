@@ -2,13 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { In, Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import {
@@ -16,8 +14,6 @@ import {
   WorkspaceMetadataVersionExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { COMPANY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 type GetExistingOrRecomputeMetadataMapsResult = {
   objectMetadataMaps: ObjectMetadataMaps;
@@ -105,52 +101,6 @@ export class WorkspaceMetadataCacheService {
       where: { workspaceId },
       relations: ['fields'],
     });
-
-    // Inject non-persisted redis-backed field(s) into metadata so they appear in listings
-    const companyObject = objectMetadataItems.find(
-      (obj) => obj.standardId === STANDARD_OBJECT_IDS.company,
-    );
-
-    if (companyObject) {
-      const hasLastViewedAt = companyObject.fields?.some(
-        (f) =>
-          f.standardId === COMPANY_STANDARD_FIELD_IDS.lastViewedAt ||
-          f.name === 'lastViewedAt',
-      );
-
-      if (!hasLastViewedAt) {
-        const synthetic = new FieldMetadataEntity();
-
-        synthetic.id = COMPANY_STANDARD_FIELD_IDS.lastViewedAt; // in-memory identifier
-        synthetic.standardId = COMPANY_STANDARD_FIELD_IDS.lastViewedAt;
-        synthetic.objectMetadataId = companyObject.id;
-        synthetic.object = companyObject;
-        synthetic.type =
-          FieldMetadataType.DATE_TIME as unknown as typeof synthetic.type;
-        synthetic.name = 'lastViewedAt';
-        synthetic.label = 'Last view date';
-        synthetic.description = 'Last view date';
-        synthetic.icon = 'IconCalendar';
-        synthetic.defaultValue = null;
-        synthetic.options = null;
-        synthetic.settings = null;
-        synthetic.isCustom = false;
-        synthetic.isActive = true;
-        synthetic.isSystem = false;
-        synthetic.isUIReadOnly = true;
-        synthetic.isNullable = true;
-        synthetic.isUnique = false;
-        synthetic.workspaceId = workspaceId;
-        synthetic.isLabelSyncedWithName = true;
-        synthetic.relationTargetFieldMetadata = null as unknown as never;
-        synthetic.relationTargetFieldMetadataId = null as unknown as never;
-        synthetic.relationTargetObjectMetadata = null as unknown as never;
-        synthetic.relationTargetObjectMetadataId = null as unknown as never;
-        synthetic.morphId = null as unknown as never;
-
-        companyObject.fields = [...(companyObject.fields ?? []), synthetic];
-      }
-    }
 
     const objectMetadataItemsIds = objectMetadataItems.map(
       (objectMetadataItem) => objectMetadataItem.id,

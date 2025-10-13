@@ -30,7 +30,7 @@ export class RedisFieldSqlFactory {
     };
 
     const joinOn = `rf."${idCol}"::uuid = ${tableAlias}.id::uuid`;
-    const selectExpr = `rf."${valueCol}"`;
+    const selectExpr = `to_timestamp(rf."${valueCol}" / 1000)::timestamptz`;
 
     return {
       cteName: cte.cteName,
