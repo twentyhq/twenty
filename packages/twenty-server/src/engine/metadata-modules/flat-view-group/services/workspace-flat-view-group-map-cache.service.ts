@@ -8,20 +8,20 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
-import { fromViewEntityToFlatView } from 'src/engine/metadata-modules/flat-view/utils/from-view-entity-to-flat-view.util';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
+import { fromViewGroupEntityToFlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/utils/from-view-group-entity-to-flat-view-group.util';
+import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
 @Injectable()
-@WorkspaceFlatMapCache('flatViewMaps')
-export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheService<FlatViewMaps> {
+@WorkspaceFlatMapCache('flatViewGroupMaps')
+export class WorkspaceFlatViewGroupMapCacheService extends WorkspaceFlatMapCacheService<FlatViewGroupMaps> {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     cacheStorageService: CacheStorageService,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
+    @InjectRepository(ViewGroupEntity)
+    private readonly viewGroupRepository: Repository<ViewGroupEntity>,
   ) {
     super(cacheStorageService);
   }
@@ -30,30 +30,22 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheServi
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<FlatViewMaps> {
-    const views = await this.viewRepository.find({
+  }): Promise<FlatViewGroupMaps> {
+    const existingViewGroups = await this.viewGroupRepository.find({
       where: {
         workspaceId,
       },
-      select: {
-        viewFields: {
-          id: true,
-        },
-        viewFilters: {
-          id: true,
-        },
-      },
-      relations: ['viewFields', 'viewFilters', 'viewGroups'],
       withDeleted: true,
     });
 
-    return views.reduce((flatViewMaps, viewEntity) => {
-      const flatView = fromViewEntityToFlatView(viewEntity);
+    return existingViewGroups.reduce((flatViewGroupMaps, viewGroupEntity) => {
+      const flatViewGroup = fromViewGroupEntityToFlatViewGroup(viewGroupEntity);
 
       return addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: flatView,
-        flatEntityMaps: flatViewMaps,
+        flatEntity: flatViewGroup,
+        flatEntityMaps: flatViewGroupMaps,
       });
     }, EMPTY_FLAT_ENTITY_MAPS);
   }
 }
+
