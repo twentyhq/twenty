@@ -1,5 +1,6 @@
 import { isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
+import { workflowFileSchema } from 'twenty-shared/workflow';
 
 export const SendEmailInputZodSchema = z.object({
   email: z.email().describe('The recipient email address'),
@@ -12,9 +13,9 @@ export const SendEmailInputZodSchema = z.object({
       'The UUID of the connected account to send the email from. Provide this only if you have it; otherwise, leave blank.',
     )
     .optional(),
-  attachmentIds: z
-    .array(z.string().refine((val) => isValidUuid(val)))
-    .describe('Array of file UUIDs to attach to the email')
+  files: z
+    .array(workflowFileSchema)
+    .describe('Array of file objects to attach to the email')
     .optional()
     .default([]),
 });

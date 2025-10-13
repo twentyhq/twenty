@@ -1,4 +1,4 @@
-import { isValidUuid } from 'dist/utils/validation/isValidUuid';
+import { isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 export const workflowFileSchema = z.object({
