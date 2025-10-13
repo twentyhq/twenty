@@ -124,7 +124,6 @@ describe('GraphqlQueryParser', () => {
         { name: 'AscNullsLast' } as any,
         objectMetadataItem.nameSingular,
         true,
-        false,
       );
 
       expect(orderSpy).toHaveBeenCalledWith(
@@ -157,7 +156,6 @@ describe('GraphqlQueryParser', () => {
         qb as any,
         { name: 'AscNullsLast' } as any,
         objectMetadataItem.nameSingular,
-        true,
         true,
       );
 

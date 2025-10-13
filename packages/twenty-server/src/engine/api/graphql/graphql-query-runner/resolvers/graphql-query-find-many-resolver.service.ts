@@ -138,9 +138,9 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       queryBuilder.skip(executionArgs.args.offset);
     }
 
-     queryBuilder.setFindOptions({
-        select: columnsToSelect,
-      });
+    queryBuilder.setFindOptions({
+      select: columnsToSelect,
+    });
 
     // Now compute and add redis-backed fields (e.g., lastViewedAt) to the SQL select
     await executionArgs.graphqlQueryParser.computeRedisFields(
@@ -150,9 +150,9 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       this.redisFieldSqlFactory,
     );
 
-
-    const objectRecords = (await queryBuilder.take(limit + 1)
-      .getMany())as ObjectRecord[];
+    const objectRecords = (await queryBuilder
+      .take(limit + 1)
+      .getMany()) as ObjectRecord[];
 
     const { hasNextPage, hasPreviousPage } = getPaginationInfo(
       objectRecords,
