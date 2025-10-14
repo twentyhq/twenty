@@ -17,14 +17,20 @@ import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-mod
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
-import { FlatFieldMetadataRelatedEntities, handleFlatFieldMetadataUpdateSideEffect } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-flat-field-metadata-update-side-effect.util';
+import {
+  FlatFieldMetadataRelatedEntities,
+  handleFlatFieldMetadataUpdateSideEffect,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-flat-field-metadata-update-side-effect.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   updateFieldInput: UpdateFieldInput;
 } & Pick<
   AllFlatEntityMaps,
-  'flatObjectMetadataMaps' | 'flatIndexMaps' | 'flatFieldMetadataMaps'
+  | 'flatObjectMetadataMaps'
+  | 'flatIndexMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatViewFilterMaps'
 >;
 
 type FlatFieldMetadataAndIndexToUpdate = {
@@ -35,6 +41,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   flatFieldMetadataMaps,
   updateFieldInput: rawUpdateFieldInput,
+  flatViewFilterMaps,
 }: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadataAndIndexToUpdate> => {
   const updateFieldInputInformalProperties =
     extractAndSanitizeObjectStringFields(rawUpdateFieldInput, [
@@ -144,6 +151,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           flatViewFilterToDelete,
           flatViewFilterToUpdate,
         } = handleFlatFieldMetadataUpdateSideEffect({
+          flatViewFilterMaps,
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           fromFlatFieldMetadata,
           flatFieldMetadataMaps,

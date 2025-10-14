@@ -195,6 +195,7 @@ export class FieldMetadataServiceV2 {
       flatIndexMaps: existingFlatIndexMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       updateFieldInput,
+      flatViewFilterMaps: existingFlatViewFilterMaps,
     });
 
     if (inputTranspilationResult.status === 'fail') {

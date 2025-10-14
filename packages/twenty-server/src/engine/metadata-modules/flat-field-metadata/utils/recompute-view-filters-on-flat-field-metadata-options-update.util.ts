@@ -17,9 +17,9 @@ type RecomputeViewFiltersOnFlatFieldMetadataOptionsUpdateArgs = {
   update: PropertyUpdate<FlatFieldMetadata<EnumFieldMetadataType>, 'options'>;
 } & Pick<AllFlatEntityMaps, 'flatViewFilterMaps'>;
 
-type FlatViewFiltersToDeleteAndUpdate = {
-  viewFiltersToDelete: FlatViewFilter[];
-  viewFitlersToUpdate: FlatViewFilter[];
+export type FlatViewFiltersToDeleteAndUpdate = {
+  flatViewFiltersToDelete: FlatViewFilter[];
+  flatViewFitlersToUpdate: FlatViewFilter[];
 };
 export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
   flatViewFilterMaps,
@@ -27,8 +27,8 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
   update,
 }: RecomputeViewFiltersOnFlatFieldMetadataOptionsUpdateArgs): FlatViewFiltersToDeleteAndUpdate => {
   const flatViewFiltersToCreateAndUpdate: FlatViewFiltersToDeleteAndUpdate = {
-    viewFiltersToDelete: [],
-    viewFitlersToUpdate: [],
+    flatViewFiltersToDelete: [],
+    flatViewFitlersToUpdate: [],
   };
 
   const {
@@ -92,7 +92,7 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
     );
 
     if (afterDeleteViewFilterOptions.length === 0) {
-      flatViewFiltersToCreateAndUpdate.viewFiltersToDelete.push(viewFilter);
+      flatViewFiltersToCreateAndUpdate.flatViewFiltersToDelete.push(viewFilter);
       continue;
     }
 
@@ -109,7 +109,7 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
       (option) => option.value,
     );
 
-    flatViewFiltersToCreateAndUpdate.viewFitlersToUpdate.push({
+    flatViewFiltersToCreateAndUpdate.flatViewFitlersToUpdate.push({
       ...viewFilter,
       value: optionsValues,
     });

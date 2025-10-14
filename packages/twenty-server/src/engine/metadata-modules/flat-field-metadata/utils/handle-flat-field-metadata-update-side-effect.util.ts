@@ -4,7 +4,9 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
+import { recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-filters-on-flat-field-metadata-options-update.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
@@ -28,7 +30,10 @@ type HandleFlatFieldMetadataUpdateSideEffectArgs = {
   fromFlatFieldMetadata: FlatFieldMetadata;
 } & Pick<
   AllFlatEntityMaps,
-  'flatIndexMaps' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+  | 'flatIndexMaps'
+  | 'flatObjectMetadataMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatViewFilterMaps'
 >;
 
 type UpdatedFlatFieldMetadataAndRelatedEntities =
@@ -37,79 +42,99 @@ type UpdatedFlatFieldMetadataAndRelatedEntities =
   };
 export const handleFlatFieldMetadataUpdateSideEffect = ({
   updatedEditableFieldProperties,
-  fromFlatFieldMetadata,
+  fromFlatFieldMetadata: initialFromFlatFieldMetadata,
   flatObjectMetadataMaps,
   flatIndexMaps,
   flatFieldMetadataMaps,
+  flatViewFilterMaps,
 }: HandleFlatFieldMetadataUpdateSideEffectArgs) => {
   return FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.reduce<UpdatedFlatFieldMetadataAndRelatedEntities>(
-    (
-      {
-        flatFieldMetadata,
-        flatIndexMetadatasToUpdate,
-        flatViewFilterToDelete,
-        flatViewFilterToUpdate,
-      },
-      property,
-    ) => {
+    (accumulator, property) => {
       const updatedPropertyValue = updatedEditableFieldProperties[property];
       const isPropertyUpdated =
         updatedPropertyValue !== undefined &&
-        flatFieldMetadata[property] !== updatedPropertyValue;
+        accumulator.flatFieldMetadata[property] !== updatedPropertyValue;
 
       if (!isPropertyUpdated) {
-        return {
-          flatFieldMetadata,
-          flatIndexMetadatasToUpdate,
-          flatViewFilterToDelete,
-          flatViewFilterToUpdate,
-        } satisfies UpdatedFlatFieldMetadataAndRelatedEntities;
+        return accumulator;
       }
       const updatedFlatFieldMetadata = {
-        ...flatFieldMetadata,
+        ...accumulator.flatFieldMetadata,
         [property]: updatedPropertyValue,
       };
 
-      if (property === 'options') {
+      const sideEffectResult: UpdatedFlatFieldMetadataAndRelatedEntities = {
+        flatIndexMetadatasToUpdate: [],
+        flatFieldMetadata: accumulator.flatFieldMetadata,
+        flatViewFilterToDelete: [],
+        flatViewFilterToUpdate: [],
+      };
+      // Note: Not really comparing options integrity here, will be improved once side effects are handled within the builder
+      if (
+        property === 'options' &&
+        isEnumFlatFieldMetadata(accumulator.flatFieldMetadata)
+      ) {
         updatedFlatFieldMetadata.options =
           updatedEditableFieldProperties[property]?.map((option) => ({
             id: v4(),
             ...option,
           })) ?? [];
-      }
 
-      let newFlatIndexMetadataToUpdate: FlatIndexMetadata[] = [];
+        const { flatViewFiltersToDelete, flatViewFitlersToUpdate } =
+          recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate({
+            flatViewFilterMaps,
+            fromFlatFieldMetadata: accumulator.flatFieldMetadata,
+            update: {
+              from: accumulator.flatFieldMetadata.options,
+              property,
+              to: updatedFlatFieldMetadata.options,
+            },
+          });
+        sideEffectResult.flatViewFilterToDelete.push(
+          ...flatViewFiltersToDelete,
+        );
+        sideEffectResult.flatViewFilterToUpdate.push(
+          ...flatViewFitlersToUpdate,
+        );
+      }
 
       if (property === 'name') {
         const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityMaps: flatObjectMetadataMaps,
-          flatEntityId: flatFieldMetadata.objectMetadataId,
+          flatEntityId: accumulator.flatFieldMetadata.objectMetadataId,
         });
 
-        newFlatIndexMetadataToUpdate =
-          recomputeIndexOnFlatFieldMetadataNameUpdate({
+        sideEffectResult.flatIndexMetadatasToUpdate.push(
+          ...recomputeIndexOnFlatFieldMetadataNameUpdate({
             flatFieldMetadataMaps,
             flatObjectMetadata,
-            fromFlatFieldMetadata,
+            fromFlatFieldMetadata: accumulator.flatFieldMetadata,
             toFlatFieldMetadata: {
               name: updatedFlatFieldMetadata.name,
             },
             flatIndexMaps,
-          });
+          }),
+        );
       }
 
       return {
         flatFieldMetadata: updatedFlatFieldMetadata,
         flatIndexMetadatasToUpdate: [
-          ...flatIndexMetadatasToUpdate,
-          ...newFlatIndexMetadataToUpdate,
+          ...accumulator.flatIndexMetadatasToUpdate,
+          ...sideEffectResult.flatIndexMetadatasToUpdate,
         ],
-        flatViewFilterToDelete,
-        flatViewFilterToUpdate,
+        flatViewFilterToDelete: [
+          ...accumulator.flatViewFilterToDelete,
+          ...sideEffectResult.flatViewFilterToDelete,
+        ],
+        flatViewFilterToUpdate: [
+          ...accumulator.flatViewFilterToUpdate,
+          ...sideEffectResult.flatViewFilterToUpdate,
+        ],
       } satisfies UpdatedFlatFieldMetadataAndRelatedEntities;
     },
     {
-      flatFieldMetadata: structuredClone(fromFlatFieldMetadata),
+      flatFieldMetadata: structuredClone(initialFromFlatFieldMetadata),
       flatViewFilterToUpdate: [],
       flatIndexMetadatasToUpdate: [],
       flatViewFilterToDelete: [],
