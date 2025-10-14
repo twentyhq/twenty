@@ -97,6 +97,7 @@ const defaultFitViewOptions = {
 
 const WORKFLOW_PLACEHOLDER_NODE_ID = 'workflow-diagram-placeholder-node';
 const WORKFLOW_PLACEHOLDER_EDGE_ID = 'workflow-diagram-placeholder-edge';
+const PENDING_PLACEHOLDER_TIMEOUT_MS = 150;
 
 const DEFAULT_WORKFLOW_INSERT_STEP_IDS_STATE = {
   parentStepId: undefined,
@@ -219,24 +220,142 @@ export const WorkflowDiagramCanvasBase = ({
     [workflowDiagram],
   );
 
+  type PendingPlaceholder = {
+    parentStepId: string;
+    position: { x: number; y: number };
+    sourceHandleId: string;
+    existingTargets: string[];
+  };
+
+  const [pendingPlaceholder, setPendingPlaceholder] = useState<
+    PendingPlaceholder | undefined
+  >(undefined);
+  const [previousRightDrawerState, setPreviousRightDrawerState] =
+    useState<CommandMenuAnimationVariant>(rightDrawerState);
+
+  useEffect(() => {
+    if (
+      isDefined(workflowInsertStepIds.parentStepId) &&
+      isDefined(workflowInsertStepIds.position)
+    ) {
+      const sourceHandleId =
+        workflowInsertStepIds.sourceHandleId ??
+        WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID;
+
+      const existingTargets = baseEdges
+        .filter(
+          (edge) =>
+            edge.source === workflowInsertStepIds.parentStepId &&
+            edge.sourceHandle === sourceHandleId,
+        )
+        .map((edge) => edge.target);
+
+      setPendingPlaceholder({
+        parentStepId: workflowInsertStepIds.parentStepId,
+        position: workflowInsertStepIds.position,
+        sourceHandleId,
+        existingTargets,
+      });
+    }
+  }, [
+    workflowInsertStepIds.parentStepId,
+    workflowInsertStepIds.position,
+    workflowInsertStepIds.sourceHandleId,
+    setPendingPlaceholder,
+    baseEdges,
+  ]);
+
+  useEffect(() => {
+    if (
+      !isDefined(workflowInsertStepIds.parentStepId) &&
+      isDefined(pendingPlaceholder)
+    ) {
+      const timeoutId = setTimeout(() => {
+        setPendingPlaceholder(undefined);
+      }, PENDING_PLACEHOLDER_TIMEOUT_MS);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [
+    workflowInsertStepIds.parentStepId,
+    pendingPlaceholder,
+    setPendingPlaceholder,
+  ]);
+
+  const activePlaceholderEvaluation = useMemo<{
+    placeholder: PendingPlaceholder | undefined;
+    shouldClearPending: boolean;
+  }>(() => {
+    if (
+      isDefined(workflowInsertStepIds.parentStepId) &&
+      isDefined(workflowInsertStepIds.position)
+    ) {
+      const placeholderFromState: PendingPlaceholder = {
+        parentStepId: workflowInsertStepIds.parentStepId,
+        position: workflowInsertStepIds.position,
+        sourceHandleId:
+          workflowInsertStepIds.sourceHandleId ??
+          WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+        existingTargets: [],
+      };
+
+      return {
+        placeholder: placeholderFromState,
+        shouldClearPending: false,
+      };
+    }
+
+    if (!isDefined(pendingPlaceholder)) {
+      return { placeholder: undefined, shouldClearPending: false };
+    }
+
+    const hasNewEdge = baseEdges.some(
+      (edge) =>
+        edge.source === pendingPlaceholder.parentStepId &&
+        edge.sourceHandle === pendingPlaceholder.sourceHandleId &&
+        !pendingPlaceholder.existingTargets.includes(edge.target),
+    );
+
+    return {
+      placeholder: hasNewEdge ? undefined : pendingPlaceholder,
+      shouldClearPending: hasNewEdge,
+    };
+  }, [
+    workflowInsertStepIds.parentStepId,
+    workflowInsertStepIds.position,
+    workflowInsertStepIds.sourceHandleId,
+    pendingPlaceholder,
+    baseEdges,
+  ]);
+
+  const activePlaceholder = activePlaceholderEvaluation.placeholder;
+
+  useEffect(() => {
+    if (activePlaceholderEvaluation.shouldClearPending) {
+      setPendingPlaceholder(undefined);
+    }
+  }, [activePlaceholderEvaluation.shouldClearPending, setPendingPlaceholder]);
+
   const placeholderNode = useMemo<WorkflowDiagramNode | undefined>(() => {
-    if (!isDefined(workflowInsertStepIds.position)) {
+    if (!isDefined(activePlaceholder)) {
       return undefined;
     }
 
     return {
       id: 'placeholder',
       type: 'placeholder',
-      position: workflowInsertStepIds.position,
+      position: activePlaceholder.position,
       data: {
         nodeType: 'placeholder',
-        position: workflowInsertStepIds.position,
+        position: activePlaceholder.position,
       },
       draggable: false,
       selectable: false,
       focusable: false,
     };
-  }, [workflowInsertStepIds.position]);
+  }, [activePlaceholder]);
 
   const nodes = useMemo(() => {
     if (!isDefined(placeholderNode)) {
@@ -250,19 +369,11 @@ export const WorkflowDiagramCanvasBase = ({
   }, [baseNodes, placeholderNode]);
 
   const placeholderEdge = useMemo<WorkflowDiagramEdge | undefined>(() => {
-    if (!isDefined(placeholderNode)) {
+    if (!isDefined(placeholderNode) || !isDefined(activePlaceholder)) {
       return undefined;
     }
 
-    const parentStepId = workflowInsertStepIds.parentStepId;
-
-    if (!isDefined(parentStepId)) {
-      return undefined;
-    }
-
-    const sourceHandleId =
-      workflowInsertStepIds.sourceHandleId ??
-      WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID;
+    const { parentStepId, sourceHandleId } = activePlaceholder;
 
     return {
       id: WORKFLOW_PLACEHOLDER_EDGE_ID,
@@ -279,11 +390,7 @@ export const WorkflowDiagramCanvasBase = ({
         edgeType: 'default',
       },
     };
-  }, [
-    placeholderNode,
-    workflowInsertStepIds.parentStepId,
-    workflowInsertStepIds.sourceHandleId,
-  ]);
+  }, [placeholderNode, activePlaceholder]);
 
   const edges = useMemo(() => {
     if (!isDefined(placeholderEdge)) {
@@ -325,6 +432,62 @@ export const WorkflowDiagramCanvasBase = ({
     });
     setWorkflowSelectedNode(undefined);
   });
+
+  useEffect(() => {
+    if (!isDefined(activePlaceholder)) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!isDefined(containerRef.current)) {
+        return;
+      }
+
+      if (containerRef.current.contains(event.target as Node)) {
+        return;
+      }
+
+      const commandMenuElement = document.querySelector(
+        '[data-testid="command-menu"]',
+      );
+
+      if (
+        isDefined(commandMenuElement) &&
+        commandMenuElement.contains(event.target as Node)
+      ) {
+        return;
+      }
+
+      setWorkflowInsertStepIds({
+        ...DEFAULT_WORKFLOW_INSERT_STEP_IDS_STATE,
+      });
+      setPendingPlaceholder(undefined);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, [activePlaceholder, setWorkflowInsertStepIds, setPendingPlaceholder]);
+
+  useEffect(() => {
+    if (
+      previousRightDrawerState !== 'closed' &&
+      rightDrawerState === 'closed'
+    ) {
+      setWorkflowInsertStepIds({
+        ...DEFAULT_WORKFLOW_INSERT_STEP_IDS_STATE,
+      });
+      setPendingPlaceholder(undefined);
+    }
+    setPreviousRightDrawerState(rightDrawerState);
+  }, [
+    previousRightDrawerState,
+    rightDrawerState,
+    setWorkflowInsertStepIds,
+    setPendingPlaceholder,
+  ]);
 
   const containerRef = useRef<HTMLDivElement>(null);
 

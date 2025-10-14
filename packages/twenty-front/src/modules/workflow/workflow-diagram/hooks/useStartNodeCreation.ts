@@ -29,6 +29,30 @@ export const useStartNodeCreation = () => {
 
   const reactFlowStoreApi = useStoreApi();
 
+  const scheduleConnectionReset = useCallback(() => {
+    const run = () => {
+      reactFlowStoreApi.getState().cancelConnection?.();
+
+      if (
+        typeof document !== 'undefined' &&
+        typeof PointerEvent !== 'undefined'
+      ) {
+        document.dispatchEvent(
+          new PointerEvent('pointerup', { bubbles: true }),
+        );
+      }
+    };
+
+    if (
+      typeof window !== 'undefined' &&
+      typeof window.requestAnimationFrame === 'function'
+    ) {
+      window.requestAnimationFrame(run);
+    } else {
+      run();
+    }
+  }, [reactFlowStoreApi]);
+
   /**
    * This function is used in a context where dependencies shouldn't change much.
    * That's why its wrapped in a `useCallback` hook. Removing memoization might break the app unexpectedly.
@@ -47,16 +71,6 @@ export const useStartNodeCreation = () => {
       connectionOptions?: WorkflowStepConnectionOptions;
       sourceHandleId?: string;
     }) => {
-      reactFlowStoreApi.getState().cancelConnection?.();
-
-      if (
-        typeof document !== 'undefined' &&
-        typeof PointerEvent !== 'undefined'
-      ) {
-        document.dispatchEvent(
-          new PointerEvent('pointerup', { bubbles: true }),
-        );
-      }
       setWorkflowInsertStepIds({
         parentStepId,
         nextStepId,
@@ -64,6 +78,8 @@ export const useStartNodeCreation = () => {
         connectionOptions,
         sourceHandleId,
       });
+
+      scheduleConnectionReset();
 
       if (!isDefined(workflowVisualizerWorkflowId)) {
         return;
@@ -81,7 +97,7 @@ export const useStartNodeCreation = () => {
       isInRightDrawer,
       openWorkflowCreateStepInCommandMenu,
       setCommandMenuNavigationStack,
-      reactFlowStoreApi,
+      scheduleConnectionReset,
     ],
   );
 
