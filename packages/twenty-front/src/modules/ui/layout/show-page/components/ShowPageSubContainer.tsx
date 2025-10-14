@@ -17,10 +17,11 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import React from 'react';
 
-const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
+const StyledShowPageRightContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -33,11 +34,11 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
 const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
   ${({ shouldDisplay }) =>
     !shouldDisplay &&
-    `
-    visibility: hidden;
-    height: 0;
-    overflow: hidden;
-  `}
+    css`
+      height: 0;
+      overflow: hidden;
+      visibility: hidden;
+    `}
 `;
 
 const StyledTabList = styled(TabList)`
@@ -122,7 +123,7 @@ export const ShowPageSubContainer = ({
           {fieldsCard}
         </ShowPageLeftContainer>
       )}
-      <StyledShowPageRightContainer isMobile={isMobile}>
+      <StyledShowPageRightContainer>
         <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
           <StyledTabList
             behaveAsLinks={!isInRightDrawer}
