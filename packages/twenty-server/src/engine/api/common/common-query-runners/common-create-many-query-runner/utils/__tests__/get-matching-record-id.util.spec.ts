@@ -1,9 +1,6 @@
 import { type PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { getMatchingRecordId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util';
-import {
-  type CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonQueryRunnerExceptionCode } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 describe('getMatchingRecordId', () => {
   const existingRecords: PartialObjectRecordWithId[] = [
@@ -86,12 +83,14 @@ describe('getMatchingRecordId', () => {
       },
     ];
 
+    expect(() =>
+      getMatchingRecordId(record, conflictingFields, existingRecords),
+    ).toThrow();
+
     try {
       getMatchingRecordId(record, conflictingFields, existingRecords);
     } catch (error) {
-      const e = error as CommonQueryRunnerException;
-
-      expect(e.code).toBe(
+      expect(error.code).toBe(
         CommonQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT,
       );
     }

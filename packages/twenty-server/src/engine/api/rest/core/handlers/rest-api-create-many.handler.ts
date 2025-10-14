@@ -54,7 +54,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
         objectMetadataItemWithFieldMaps.namePlural,
       );
     } catch (error) {
-      workspaceQueryRunnerRestApiExceptionHandler(error);
+      return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
@@ -65,7 +65,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
     return { data: { [objectNamePlural]: records } };
   }
 
-  parseRequestArgs(request: AuthenticatedRequest) {
+  private parseRequestArgs(request: AuthenticatedRequest) {
     return {
       data: request.body,
       depth: parseDepthRestRequest(request),

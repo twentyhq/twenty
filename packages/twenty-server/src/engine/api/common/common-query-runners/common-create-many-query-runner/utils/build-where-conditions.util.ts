@@ -13,7 +13,7 @@ export const buildWhereConditions = (
     column: string;
   }[],
 ): Record<string, FindOperator<string>>[] => {
-  const whereConditions = [];
+  const whereConditions: Record<string, FindOperator<string>>[] = [];
 
   for (const field of conflictingFields) {
     const fieldValues = records

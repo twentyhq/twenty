@@ -54,7 +54,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
         objectMetadataItemWithFieldMaps.nameSingular,
       );
     } catch (error) {
-      workspaceQueryRunnerRestApiExceptionHandler(error);
+      return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
@@ -62,7 +62,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
     return { data: { [objectNameSingular]: record } };
   }
 
-  parseRequestArgs(request: AuthenticatedRequest) {
+  private parseRequestArgs(request: AuthenticatedRequest) {
     return {
       data: request.body,
       depth: parseDepthRestRequest(request),

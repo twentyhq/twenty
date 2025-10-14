@@ -123,7 +123,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
         pageInfo,
       );
     } catch (error) {
-      workspaceQueryRunnerRestApiExceptionHandler(error);
+      return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 

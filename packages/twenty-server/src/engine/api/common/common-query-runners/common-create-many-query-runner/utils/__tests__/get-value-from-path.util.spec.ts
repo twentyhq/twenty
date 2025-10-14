@@ -8,7 +8,7 @@ describe('getValueFromPath', () => {
     name: 'John Doe',
     parent: { child: 'nested-value', empty: '' },
     emailsField: { primaryEmail: 'john@example.com' },
-  } as const;
+  };
 
   it('returns direct field value for single-level path', () => {
     const value = getValueFromPath(baseRecord, 'name');
