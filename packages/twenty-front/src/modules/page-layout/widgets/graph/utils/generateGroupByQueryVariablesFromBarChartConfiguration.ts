@@ -1,29 +1,23 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { type BarChartConfiguration, GraphOrderBy } from '~/generated/graphql';
+import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
+import {
+  type AggregateOrderByWithGroupByField,
+  type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForScalarField,
+  type ObjectRecordOrderByWithGroupByDateField,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { type BarChartConfiguration } from '~/generated/graphql';
 import { buildGroupByFieldObject } from './buildGroupByFieldObject';
-
-const _mapOrderByToDirection = (orderByEnum: GraphOrderBy) => {
-  switch (orderByEnum) {
-    case GraphOrderBy.FIELD_ASC:
-      return 'AscNullsLast';
-    case GraphOrderBy.FIELD_DESC:
-      return 'DescNullsLast';
-    case GraphOrderBy.VALUE_ASC:
-      return 'AscNullsLast';
-    case GraphOrderBy.VALUE_DESC:
-      return 'DescNullsLast';
-    default:
-      assertUnreachable(orderByEnum);
-  }
-};
 
 export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
   objectMetadataItem,
   barChartConfiguration,
+  aggregateOperation,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   barChartConfiguration: BarChartConfiguration;
+  aggregateOperation?: string;
 }) => {
   const groupByFieldX = objectMetadataItem.fields.find(
     (field) => field.id === barChartConfiguration.groupByFieldMetadataIdX,
@@ -59,28 +53,36 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
     );
   }
 
-  const orderBy: Array<Record<string, string>> = [];
+  const orderBy: Array<
+    | AggregateOrderByWithGroupByField
+    | ObjectRecordOrderByForScalarField
+    | ObjectRecordOrderByWithGroupByDateField
+    | ObjectRecordOrderByForCompositeField
+  > = [];
 
-  // TODO: Add orderBy back in when the backend is ready
-  // if (isDefined(barChartConfiguration.orderByX)) {
-  //   orderBy.push({
-  //     [groupByFieldX.name]: mapOrderByToDirection(
-  //       barChartConfiguration.orderByX,
-  //     ),
-  //   });
-  // }
-
-  // if (isDefined(groupByFieldY) && isDefined(barChartConfiguration.orderByY)) {
-  //   orderBy.push({
-  //     [groupByFieldY.name]: mapOrderByToDirection(
-  //       barChartConfiguration.orderByY,
-  //     ),
-  //   });
-  // }
+  if (isDefined(barChartConfiguration.orderByX)) {
+    orderBy.push(
+      getGroupByOrderBy({
+        graphOrderBy: barChartConfiguration.orderByX,
+        groupByField: groupByFieldX,
+        groupBySubFieldName: barChartConfiguration.groupBySubFieldNameX,
+        aggregateOperation: aggregateOperation,
+      }),
+    );
+  }
+  if (isDefined(groupByFieldY) && isDefined(barChartConfiguration.orderByY)) {
+    orderBy.push(
+      getGroupByOrderBy({
+        graphOrderBy: barChartConfiguration.orderByY,
+        groupByField: groupByFieldY,
+        groupBySubFieldName: barChartConfiguration.groupBySubFieldNameY,
+        aggregateOperation: aggregateOperation,
+      }),
+    );
+  }
 
   return {
     groupBy,
-    // TODO: Add filters
     ...(orderBy.length > 0 && { orderBy }),
   };
 };
