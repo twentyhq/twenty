@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import {
   OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
   WorkspaceMigrationRunnerActionHandler,
@@ -112,7 +111,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       flatObjectMetadata,
     });
 
-    const quotedColumns = this.getQuotedColumns(
+    const quotedColumns = this.getColumns(
       flatIndexMetadata.flatIndexFieldMetadatas,
       flatFieldMetadataMaps,
     );
@@ -131,7 +130,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     });
   }
 
-  private getQuotedColumns(
+  private getColumns(
     flatIndexFieldMetadatas: FlatIndexFieldMetadata[],
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ) {
@@ -156,13 +155,20 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
           );
         }
 
-        return `"${flatFieldMetadata.settings.joinColumnName}"`;
+        return flatFieldMetadata.settings.joinColumnName;
       }
 
       if (isCompositeFieldMetadataType(flatFieldMetadata.type)) {
         const compositeType = compositeTypeDefinitions.get(
           flatFieldMetadata.type,
-        ) as CompositeType;
+        );
+
+        if (!compositeType) {
+          throw new FlatEntityMapsException(
+            'Composite type not found',
+            FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR,
+          );
+        }
 
         const uniqueCompositeProperties = compositeType.properties.filter(
           (property) => property.isIncludedInUniqueConstraint,
@@ -173,7 +179,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
         );
       }
 
-      return `"${flatFieldMetadata.name}"`;
+      return flatFieldMetadata.name;
     });
   }
 }
