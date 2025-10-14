@@ -6,7 +6,7 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutRenderer';
+import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutDispatcher';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
