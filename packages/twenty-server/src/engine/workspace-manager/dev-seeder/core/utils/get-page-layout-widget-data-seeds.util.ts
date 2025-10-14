@@ -64,6 +64,7 @@ export const getPageLayoutWidgetDataSeeds = (
   const companyArrFieldId = getFieldId(companyObject, 'annualRecurringRevenue');
   const companyNameFieldId = getFieldId(companyObject, 'name');
   const companyLinkedinLinkFieldId = getFieldId(companyObject, 'linkedinLink');
+  const companyAddressFieldId = getFieldId(companyObject, 'address');
 
   const personIdFieldId = getFieldId(personObject, 'id');
   const personCityFieldId = getFieldId(personObject, 'city');
@@ -158,19 +159,21 @@ export const getPageLayoutWidgetDataSeeds = (
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
       ),
-      title: 'Deals by Stage',
+      title: 'Pipeline Value by Close Date (Stacked by Stage)',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 4, column: 0, rowSpan: 4, columnSpan: 6 },
+      gridPosition: { row: 4, column: 0, rowSpan: 8, columnSpan: 6 },
       configuration:
         isDefined(opportunityAmountFieldId) &&
+        isDefined(opportunityCloseDateFieldId) &&
         isDefined(opportunityStageFieldId)
           ? {
               graphType: 'BAR',
               aggregateFieldMetadataId: opportunityAmountFieldId,
               aggregateOperation: AggregateOperations.SUM,
-              groupByFieldMetadataIdX: opportunityStageFieldId,
-              orderByX: 'FIELD_DESC',
-              axisNameDisplay: AxisNameDisplay.NONE,
+              groupByFieldMetadataIdX: opportunityCloseDateFieldId,
+              groupByFieldMetadataIdY: opportunityStageFieldId,
+              orderByX: 'FIELD_ASC',
+              axisNameDisplay: AxisNameDisplay.BOTH,
               displayDataLabel: false,
             }
           : null,
@@ -285,18 +288,22 @@ export const getPageLayoutWidgetDataSeeds = (
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
       ),
-      title: 'Companies by Size',
+      title: 'Companies by Size (Stacked by City)',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 0, column: 8, rowSpan: 6, columnSpan: 4 },
+      gridPosition: { row: 0, column: 8, rowSpan: 10, columnSpan: 8 },
       configuration:
-        isDefined(companyIdFieldId) && isDefined(companyEmployeesFieldId)
+        isDefined(companyIdFieldId) &&
+        isDefined(companyEmployeesFieldId) &&
+        isDefined(companyAddressFieldId)
           ? {
               graphType: 'BAR',
               aggregateFieldMetadataId: companyIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
               groupByFieldMetadataIdX: companyEmployeesFieldId,
+              groupByFieldMetadataIdY: companyAddressFieldId,
+              groupBySubFieldNameY: 'addressCity',
               orderByX: 'FIELD_ASC',
-              axisNameDisplay: AxisNameDisplay.NONE,
+              axisNameDisplay: AxisNameDisplay.BOTH,
               displayDataLabel: false,
             }
           : null,
@@ -460,7 +467,7 @@ export const getPageLayoutWidgetDataSeeds = (
               aggregateFieldMetadataId: personIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
               groupByFieldMetadataIdX: personCityFieldId,
-              orderByX: 'FIELD_DESC',
+              orderByX: 'VALUE_DESC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
             }
