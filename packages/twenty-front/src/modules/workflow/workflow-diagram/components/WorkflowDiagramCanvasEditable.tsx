@@ -138,6 +138,8 @@ const WorkflowDiagramCanvasEditableInner = () => {
         y: dropPosition.y - nodeHeight / 2,
       };
 
+      // Defer to the next tick so ReactFlow finalizes the drop state before we
+      // trigger the command menu workflow.
       setTimeout(() => {
         startNodeCreation({
           parentStepId: fromNode.id,

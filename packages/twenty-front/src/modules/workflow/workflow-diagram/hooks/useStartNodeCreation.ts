@@ -33,6 +33,14 @@ export const useStartNodeCreation = () => {
     const run = () => {
       reactFlowStoreApi.getState().cancelConnection?.();
 
+      /**
+       * ReactFlow relies on a document-level `pointerup` listener to release the
+       * provisional connection. Re-dispatching the event ensures the pointer
+       * capture clears even when the original gesture ended outside the canvas.
+       *
+       * Guards keep the code SSR/test friendly where `document` or
+       * `PointerEvent` might be undefined.
+       */
       if (
         typeof document !== 'undefined' &&
         typeof PointerEvent !== 'undefined'
