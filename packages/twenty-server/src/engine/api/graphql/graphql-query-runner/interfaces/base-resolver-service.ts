@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
+import { type ObjectRecord } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
   capitalize,
@@ -8,7 +9,6 @@ import {
 } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';

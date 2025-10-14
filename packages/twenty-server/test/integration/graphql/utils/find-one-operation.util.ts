@@ -2,8 +2,7 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecord } from 'twenty-shared/types';
 
 type FindOneOperationArgs = Parameters<typeof findOneOperationFactory>[0] & {
   expectToFail?: boolean;
