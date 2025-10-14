@@ -140,6 +140,7 @@ export class FieldMetadataServiceV2 {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: {
               fieldMetadata: true,
+              index: true,
             },
           },
           fromToAllFlatEntityMaps: {

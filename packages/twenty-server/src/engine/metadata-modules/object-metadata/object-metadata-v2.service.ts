@@ -308,6 +308,8 @@ export class ObjectMetadataServiceV2 {
           buildOptions: {
             inferDeletionFromMissingEntities: {
               objectMetadata: true,
+              fieldMetadata: true,
+              index: true,
             },
             isSystemBuild,
           },
