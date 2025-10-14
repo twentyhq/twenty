@@ -17,6 +17,12 @@ interface GoogleRefreshTokenResponse {
   expires_in?: number;
   scope?: string;
 }
+
+interface GoogleTokenInfoResponse {
+  exp: string;
+  expires_in: string;
+}
+
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
@@ -46,5 +52,30 @@ export class GoogleAPIRefreshAccessTokenService {
     return {
       accessToken: response.data.access_token,
     };
+  }
+
+  async isAccessTokenExpired(
+    accessToken: string,
+    bufferSeconds: number = 300,
+  ): Promise<boolean> {
+    try {
+      const response = await axios.get<GoogleTokenInfoResponse>(
+        'https://oauth2.googleapis.com/tokeninfo',
+        {
+          params: {
+            access_token: accessToken,
+          },
+        },
+      );
+
+      if (!response.data || !response.data.expires_in) {
+        return true;
+      }
+      const expiresIn = parseInt(response.data.expires_in, 10);
+
+      return expiresIn <= bufferSeconds;
+    } catch {
+      return true;
+    }
   }
 }
