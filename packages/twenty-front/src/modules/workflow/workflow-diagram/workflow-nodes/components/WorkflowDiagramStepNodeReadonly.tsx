@@ -19,6 +19,7 @@ import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/wo
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
+import { isNodeTitleHighlighted } from '@/workflow/workflow-diagram/workflow-nodes/utils/isNodeTitleHighlighted';
 import { Position } from '@xyflow/react';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -77,6 +78,11 @@ export const WorkflowDiagramStepNodeReadonly = ({
     });
   };
 
+  const nodeTitleHighlighted = isNodeTitleHighlighted({
+    nodeType: data.nodeType,
+    actionType: data.nodeType === 'action' ? data.actionType : undefined,
+  });
+
   return (
     <>
       <WorkflowNodeContainer
@@ -93,7 +99,9 @@ export const WorkflowDiagramStepNodeReadonly = ({
             <WorkflowNodeLabel>{capitalize(data.nodeType)}</WorkflowNodeLabel>
           </WorkflowNodeLabelWithCounterPart>
 
-          <WorkflowNodeTitle highlight>{data.name}</WorkflowNodeTitle>
+          <WorkflowNodeTitle highlight={nodeTitleHighlighted}>
+            {data.name}
+          </WorkflowNodeTitle>
         </WorkflowNodeRightPart>
       </WorkflowNodeContainer>
 

@@ -6,15 +6,14 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
-import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
+import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutDispatcher';
+import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
-import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 
 export const RecordShowPage = () => {
   const parameters = useParams<{
@@ -58,14 +57,11 @@ export const RecordShowPage = () => {
                   recordId: objectRecordId,
                 }}
               >
-                <RecordShowEffect
-                  objectNameSingular={objectNameSingular}
-                  recordId={objectRecordId}
-                />
-                <RecordShowContainer
-                  objectNameSingular={objectNameSingular}
-                  objectRecordId={objectRecordId}
-                  loading={false}
+                <PageLayoutDispatcher
+                  targetRecordIdentifier={{
+                    id: objectRecordId,
+                    targetObjectNameSingular: objectNameSingular,
+                  }}
                 />
               </TimelineActivityContext.Provider>
             </PageBody>

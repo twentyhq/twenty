@@ -378,6 +378,7 @@ export {
   IconSquareNumber9,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
+  IconStack2,
   IconStatusChange,
   IconStepInto,
   IconStrikethrough,
