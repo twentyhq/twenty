@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
@@ -15,7 +16,6 @@ import { isAxiosTemporaryError } from 'src/modules/messaging/message-import-mana
 
 export type ConnectedAccountTokens = {
   accessToken: string;
-  refreshToken: string;
 };
 
 @Injectable()
@@ -27,6 +27,7 @@ export class ConnectedAccountRefreshTokensService {
   constructor(
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
+    private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -34,7 +35,7 @@ export class ConnectedAccountRefreshTokensService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<ConnectedAccountTokens> {
-    const refreshToken = connectedAccount.refreshToken;
+    const { refreshToken, accessToken } = connectedAccount;
 
     if (!refreshToken) {
       throw new ConnectedAccountRefreshAccessTokenException(
@@ -42,6 +43,23 @@ export class ConnectedAccountRefreshTokensService {
         ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
       );
     }
+
+    const isAccessTokenExpired =
+      this.jwtWrapperService.isTokenExpired(accessToken);
+
+    if (!isAccessTokenExpired) {
+      this.logger.log(
+        `Reusing valid access token for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}`,
+      );
+
+      return {
+        accessToken,
+      };
+    }
+
+    this.logger.log(
+      `Access token expired for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}, refreshing...`,
+    );
 
     const connectedAccountTokens = await this.refreshTokens(
       connectedAccount,

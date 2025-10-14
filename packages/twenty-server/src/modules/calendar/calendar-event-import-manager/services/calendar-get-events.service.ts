@@ -30,7 +30,7 @@ export class CalendarGetCalendarEventsService {
   public async getCalendarEvents(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id' | 'connectionParameters' | 'handle'
+      'provider' | 'accessToken' | 'id' | 'connectionParameters' | 'handle'
     >,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {

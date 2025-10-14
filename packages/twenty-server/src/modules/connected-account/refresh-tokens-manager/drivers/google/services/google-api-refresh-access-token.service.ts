@@ -45,7 +45,6 @@ export class GoogleAPIRefreshAccessTokenService {
 
     return {
       accessToken: response.data.access_token,
-      refreshToken,
     };
   }
 }

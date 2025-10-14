@@ -48,7 +48,6 @@ export class MicrosoftAPIRefreshAccessTokenService {
 
     return {
       accessToken: response.data.access_token,
-      refreshToken: response.data.refresh_token,
     };
   }
 }

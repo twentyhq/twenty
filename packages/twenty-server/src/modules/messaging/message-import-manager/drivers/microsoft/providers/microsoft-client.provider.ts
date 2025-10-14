@@ -14,11 +14,11 @@ export class MicrosoftClientProvider {
   public async getMicrosoftClient(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'refreshToken' | 'id'
+      'accessToken' | 'id'
     >,
   ): Promise<Client> {
     return await this.microsoftOAuth2ClientManagerService.getOAuth2Client(
-      connectedAccount.refreshToken,
+      connectedAccount.accessToken,
     );
   }
 }

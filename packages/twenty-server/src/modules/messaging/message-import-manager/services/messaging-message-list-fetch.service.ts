@@ -59,7 +59,7 @@ export class MessagingMessageListFetchService {
         `messageChannelId: ${messageChannel.id} Processing message list fetch`,
       );
 
-      const { accessToken, refreshToken } =
+      const { accessToken } =
         await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
           {
             connectedAccount: messageChannel.connectedAccount,
@@ -73,7 +73,6 @@ export class MessagingMessageListFetchService {
         connectedAccount: {
           ...messageChannel.connectedAccount,
           accessToken,
-          refreshToken,
         },
       };
 

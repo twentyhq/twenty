@@ -28,7 +28,7 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
   async getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'refreshToken' | 'id' | 'handle'
+      'accessToken' | 'id' | 'handle'
     >,
   ): Promise<MessageFolder[]> {
     try {

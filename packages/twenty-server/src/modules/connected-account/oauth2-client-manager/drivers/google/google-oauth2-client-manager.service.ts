@@ -12,7 +12,7 @@ export class GoogleOAuth2ClientManagerService {
     private readonly logger: Logger,
   ) {}
 
-  public async getOAuth2Client(refreshToken: string): Promise<OAuth2Client> {
+  public async getOAuth2Client(accessToken: string): Promise<OAuth2Client> {
     const gmailClientId = this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID');
     const gmailClientSecret = this.twentyConfigService.get(
       'AUTH_GOOGLE_CLIENT_SECRET',
@@ -25,7 +25,7 @@ export class GoogleOAuth2ClientManagerService {
       );
 
       oAuth2Client.setCredentials({
-        refresh_token: refreshToken,
+        access_token: accessToken,
       });
 
       return oAuth2Client;

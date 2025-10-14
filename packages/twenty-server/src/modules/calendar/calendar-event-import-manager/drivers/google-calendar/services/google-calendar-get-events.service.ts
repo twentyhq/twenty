@@ -21,7 +21,7 @@ export class GoogleCalendarGetEventsService {
   public async getCalendarEvents(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'accessToken' | 'id'
     >,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {

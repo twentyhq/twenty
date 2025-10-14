@@ -45,11 +45,10 @@ export class MessagingAccountAuthenticationService {
 
       return {
         accessToken: '',
-        refreshToken: '',
       };
     }
 
-    return await this.refreshAccessTokenForNonImapProvider({
+    return await this.refreshAccessTokenForOAuthProvider({
       connectedAccount,
       workspaceId,
       messageChannelId,
@@ -79,7 +78,7 @@ export class MessagingAccountAuthenticationService {
     }
   }
 
-  private async refreshAccessTokenForNonImapProvider({
+  private async refreshAccessTokenForOAuthProvider({
     connectedAccount,
     workspaceId,
     messageChannelId,

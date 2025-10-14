@@ -15,15 +15,15 @@ export class OAuth2ClientManagerService {
   public async getOAuth2Client(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken'
+      'provider' | 'accessToken'
     >,
   ): Promise<OAuth2Client> {
-    const { refreshToken } = connectedAccount;
+    const { accessToken } = connectedAccount;
 
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
         return this.googleOAuth2ClientManagerService.getOAuth2Client(
-          refreshToken,
+          accessToken,
         );
       default:
         throw new Error(

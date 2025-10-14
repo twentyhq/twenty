@@ -69,7 +69,7 @@ export class MessagingMessagesImportService {
         messageChannel.id,
       ]);
 
-      const { accessToken, refreshToken } =
+      const { accessToken } =
         await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
           {
             connectedAccount,
@@ -81,7 +81,6 @@ export class MessagingMessagesImportService {
       const connectedAccountWithFreshTokens = {
         ...connectedAccount,
         accessToken,
-        refreshToken,
       };
 
       await this.emailAliasManagerService.refreshHandleAliases(

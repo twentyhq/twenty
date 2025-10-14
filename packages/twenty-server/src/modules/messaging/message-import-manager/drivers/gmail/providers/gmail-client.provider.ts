@@ -14,7 +14,7 @@ export class GmailClientProvider {
   public async getGmailClient(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken'
+      'provider' | 'accessToken'
     >,
   ): Promise<gmail_v1.Gmail> {
     const oAuth2Client =

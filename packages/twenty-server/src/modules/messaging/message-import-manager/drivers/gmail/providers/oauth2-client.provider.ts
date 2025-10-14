@@ -14,7 +14,7 @@ export class OAuth2ClientProvider {
   public async getOAuth2Client(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken'
+      'provider' | 'accessToken'
     >,
   ): Promise<oauth2_v2.Oauth2> {
     const oAuth2Client =

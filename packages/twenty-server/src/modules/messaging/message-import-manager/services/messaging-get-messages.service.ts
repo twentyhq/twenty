@@ -28,7 +28,6 @@ export class MessagingGetMessagesService {
       ConnectedAccountWorkspaceEntity,
       | 'provider'
       | 'accessToken'
-      | 'refreshToken'
       | 'id'
       | 'handle'
       | 'handleAliases'

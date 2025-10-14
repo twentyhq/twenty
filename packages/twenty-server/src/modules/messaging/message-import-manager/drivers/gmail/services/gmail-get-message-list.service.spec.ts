@@ -14,11 +14,11 @@ describe('GmailGetMessageListService', () => {
 
   const mockConnectedAccount: Pick<
     ConnectedAccountWorkspaceEntity,
-    'provider' | 'refreshToken' | 'id' | 'handle' | 'connectionParameters'
+    'provider' | 'accessToken' | 'id' | 'handle' | 'connectionParameters'
   > = {
     id: 'connected-account-id',
     provider: ConnectedAccountProvider.GOOGLE,
-    refreshToken: 'refresh-token',
+    accessToken: 'access-token',
     handle: 'test@gmail.com',
     connectionParameters: {},
   };

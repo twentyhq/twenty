@@ -16,15 +16,15 @@ import { MicrosoftGetMessageListService } from './microsoft-get-message-list.ser
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
 
 // in case you have "Please provide a valid token" it may be because you need to pass the env varible to the .env.test file
-const refreshToken = 'replace-with-your-refresh-token';
+const accessToken = 'replace-with-your-access-token';
 const syncCursor = `replace-with-your-sync-cursor`;
 const mockConnectedAccount: Pick<
   ConnectedAccountWorkspaceEntity,
-  'provider' | 'refreshToken' | 'id' | 'handle' | 'connectionParameters'
+  'provider' | 'accessToken' | 'id' | 'handle' | 'connectionParameters'
 > = {
   id: 'connected-account-id',
   provider: ConnectedAccountProvider.MICROSOFT,
-  refreshToken: refreshToken,
+  accessToken: accessToken,
   handle: 'test@gmail.com',
   connectionParameters: {},
 };
@@ -80,7 +80,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
     const mockConnectedAccountUnvalid = {
       id: 'connected-account-id',
       provider: ConnectedAccountProvider.MICROSOFT,
-      refreshToken: 'invalid-token',
+      accessToken: 'invalid-token',
       handle: 'test@microsoft.com',
       connectionParameters: {},
     };
