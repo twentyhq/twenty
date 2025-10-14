@@ -42,6 +42,9 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
         viewFields: {
           id: true,
         },
+        viewFilters: {
+          id: true,
+        },
       },
       withDeleted: true,
       relations: ['viewFields', 'viewFilters'],
