@@ -2,6 +2,7 @@ import { isNull, isUndefined } from '@sniptt/guards';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getFieldMetadataFromGqlField } from '@/object-record/cache/utils/getFieldMetadataFromGqlField';
+import { getMorphRelationFromFieldMetadataAndGqlField } from '@/object-record/cache/utils/getMorphRelationFromFieldMetadataAndGqlField';
 import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
@@ -90,10 +91,49 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           ];
         }
 
+        if (
+          field.type === FieldMetadataType.MORPH_RELATION &&
+          field.settings?.relationType === RelationType.ONE_TO_MANY
+        ) {
+          if (field.morphRelations?.length === 0) {
+            return undefined;
+          }
+
+          const morphRelation = getMorphRelationFromFieldMetadataAndGqlField({
+            objectMetadataItems,
+            fieldMetadata: { morphRelations: field.morphRelations ?? [] },
+            gqlField: fieldName,
+          });
+
+          if (isUndefined(morphRelation?.targetObjectMetadata?.nameSingular)) {
+            return undefined;
+          }
+
+          if (!morphRelation?.targetObjectMetadata?.nameSingular) {
+            return undefined;
+          }
+
+          return [
+            fieldName,
+            getRecordConnectionFromRecords({
+              objectMetadataItems,
+              objectMetadataItem: morphRelation?.targetObjectMetadata,
+              records: value as ObjectRecord[],
+              recordGqlFields:
+                recordGqlFields?.[fieldName] === true ||
+                isUndefined(recordGqlFields?.[fieldName])
+                  ? undefined
+                  : recordGqlFields?.[fieldName],
+              withPageInfo: false,
+              isRootLevel: false,
+              computeReferences,
+            }),
+          ];
+        }
+
         switch (field.type) {
           case FieldMetadataType.RELATION: {
             const isJoinColumn = field.settings?.joinColumnName === fieldName;
-
             if (isJoinColumn) {
               return [fieldName, value];
             }
@@ -123,6 +163,52 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
                   __ref: `${typeName}:${value.id}`,
                 },
               ];
+            }
+
+            return [
+              fieldName,
+              {
+                __typename: typeName,
+                ...value,
+              },
+            ];
+          }
+          case FieldMetadataType.MORPH_RELATION: {
+            const isJoinColumn = field.settings?.joinColumnName === fieldName;
+            if (isJoinColumn) {
+              return [fieldName, value];
+            }
+
+            if (field.morphRelations?.length === 0) {
+              return undefined;
+            }
+
+            const morphRelation = getMorphRelationFromFieldMetadataAndGqlField({
+              objectMetadataItems,
+              fieldMetadata: { morphRelations: field.morphRelations ?? [] },
+              gqlField: fieldName,
+            });
+
+            if (
+              isUndefined(morphRelation?.targetObjectMetadata?.nameSingular)
+            ) {
+              return undefined;
+            }
+
+            const typeName = getObjectTypename(
+              morphRelation?.targetObjectMetadata?.nameSingular,
+            );
+
+            if (isNull(value)) {
+              return [fieldName, null];
+            }
+
+            if (isUndefined(value?.id)) {
+              return undefined;
+            }
+
+            if (computeReferences) {
+              return [fieldName, { __ref: `${typeName}:${value.id}` }];
             }
 
             return [

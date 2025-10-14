@@ -52,7 +52,7 @@ export const getMorphRelationFromFieldMetadataAndGqlField = ({
     targetObjectMetadata: objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        gqlFieldMorphRelation.morphRelation?.targetObjectMetadata.id,
+        gqlFieldMorphRelation.morphRelation.targetObjectMetadata.id,
     ),
   };
 };
