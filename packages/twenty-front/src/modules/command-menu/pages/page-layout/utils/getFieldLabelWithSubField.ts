@@ -12,9 +12,13 @@ export const getFieldLabelWithSubField = ({
   field: FieldMetadataItem | undefined;
   subFieldName?: CompositeFieldSubFieldName;
 }): string => {
-  const subFieldNameLabel = isDefined(subFieldName)
-    ? getCompositeSubFieldLabel(field?.type as CompositeFieldType, subFieldName)
-    : undefined;
+  const subFieldNameLabel =
+    isDefined(subFieldName) && isDefined(field)
+      ? getCompositeSubFieldLabel(
+          field.type as CompositeFieldType,
+          subFieldName,
+        )
+      : undefined;
 
   const fieldLabel =
     isDefined(subFieldNameLabel) && isDefined(field?.label)

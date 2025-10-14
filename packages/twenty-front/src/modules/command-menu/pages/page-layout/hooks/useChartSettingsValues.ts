@@ -3,13 +3,13 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
-import { getChartFieldMappings } from '@/command-menu/pages/page-layout/utils/getChartFieldMappings';
 import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { useRecoilValue } from 'recoil';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { type GraphOrderBy, GraphType } from '~/generated-metadata/graphql';
 
 export const useChartSettingsValues = ({
   objectMetadataId,
@@ -38,16 +38,58 @@ export const useChartSettingsValues = ({
     };
   }
 
-  // Get normalized field mappings for BAR and LINE charts
-  const fieldMappings =
+  const isBarOrLineChart =
     configuration.__typename === 'BarChartConfiguration' ||
-    configuration.__typename === 'LineChartConfiguration'
-      ? getChartFieldMappings(configuration, objectMetadataItem)
-      : undefined;
+    configuration.__typename === 'LineChartConfiguration';
 
-  const groupByFieldX = fieldMappings?.xField;
-  const groupByFieldXId = fieldMappings?.xFieldId;
-  const groupBySubFieldNameX = fieldMappings?.xSubFieldName;
+  let groupByFieldXId: string | undefined;
+  let groupByFieldYId: string | undefined;
+  let groupBySubFieldNameX: CompositeFieldSubFieldName | undefined;
+  let groupBySubFieldNameY: CompositeFieldSubFieldName | undefined;
+  let xAxisOrderBy: GraphOrderBy | undefined | null;
+  let groupByOrderBy: GraphOrderBy | undefined | null;
+
+  if (isBarOrLineChart) {
+    const isVertical =
+      configuration.__typename === 'LineChartConfiguration' ||
+      configuration.graphType === GraphType.VERTICAL_BAR;
+
+    groupByFieldXId = isVertical
+      ? configuration.primaryAxisGroupByFieldMetadataId
+      : configuration.secondaryAxisGroupByFieldMetadataId;
+
+    groupByFieldYId = isVertical
+      ? configuration.secondaryAxisGroupByFieldMetadataId
+      : configuration.primaryAxisGroupByFieldMetadataId;
+
+    groupBySubFieldNameX = (
+      isVertical
+        ? configuration.primaryAxisGroupBySubFieldName
+        : configuration.secondaryAxisGroupBySubFieldName
+    ) as CompositeFieldSubFieldName | undefined;
+
+    groupBySubFieldNameY = (
+      isVertical
+        ? configuration.secondaryAxisGroupBySubFieldName
+        : configuration.primaryAxisGroupBySubFieldName
+    ) as CompositeFieldSubFieldName | undefined;
+
+    xAxisOrderBy = isVertical
+      ? configuration.primaryAxisOrderBy
+      : configuration.secondaryAxisOrderBy;
+
+    groupByOrderBy = isVertical
+      ? configuration.secondaryAxisOrderBy
+      : configuration.primaryAxisOrderBy;
+  }
+
+  const groupByFieldX = isDefined(groupByFieldXId)
+    ? objectMetadataItem?.fields.find((field) => field.id === groupByFieldXId)
+    : undefined;
+
+  const groupByFieldY = isDefined(groupByFieldYId)
+    ? objectMetadataItem?.fields.find((field) => field.id === groupByFieldYId)
+    : undefined;
 
   const groupBySubFieldNameXLabel =
     isDefined(groupBySubFieldNameX) && isDefined(groupByFieldX)
@@ -64,12 +106,6 @@ export const useChartSettingsValues = ({
 
   const yAxisAggregateOperation = configuration.aggregateOperation;
 
-  const groupByFieldY = fieldMappings?.yField;
-  const groupByFieldYId = fieldMappings?.yFieldId;
-  const groupBySubFieldNameY = fieldMappings?.ySubFieldName;
-
-  const xAxisOrderBy = fieldMappings?.xOrderBy;
-
   const xAxisOrderByLabel =
     isDefined(xAxisOrderBy) && isDefined(groupByFieldXId)
       ? getXSortOptionLabel({
@@ -81,26 +117,25 @@ export const useChartSettingsValues = ({
         })
       : undefined;
 
-  const groupByOrderBy =
-    configuration.__typename === 'PieChartConfiguration'
-      ? configuration.orderBy
-      : fieldMappings?.yOrderBy;
+  if (configuration.__typename === 'PieChartConfiguration') {
+    groupByOrderBy = configuration.orderBy;
+    groupByFieldYId = configuration.groupByFieldMetadataId;
+    groupBySubFieldNameY = configuration.groupBySubFieldName as
+      | CompositeFieldSubFieldName
+      | undefined;
+  }
+
+  const finalGroupByFieldYId = groupByFieldYId;
+  const finalGroupBySubFieldNameY = groupBySubFieldNameY;
 
   const groupByOrderByLabel =
-    isDefined(groupByOrderBy) &&
-    getGroupBySortOptionLabel({
-      graphOrderBy: groupByOrderBy,
-      groupByFieldMetadataId:
-        configuration.__typename === 'PieChartConfiguration'
-          ? configuration.groupByFieldMetadataId
-          : groupByFieldYId,
-      groupBySubFieldName:
-        configuration.__typename === 'PieChartConfiguration'
-          ? (configuration.groupBySubFieldName as
-              | CompositeFieldSubFieldName
-              | undefined)
-          : groupBySubFieldNameY,
-    });
+    isDefined(groupByOrderBy) && isDefined(finalGroupByFieldYId)
+      ? getGroupBySortOptionLabel({
+          graphOrderBy: groupByOrderBy,
+          groupByFieldMetadataId: finalGroupByFieldYId,
+          groupBySubFieldName: finalGroupBySubFieldNameY,
+        })
+      : undefined;
 
   const getChartSettingsValues = (
     itemId: CHART_CONFIGURATION_SETTING_IDS,
