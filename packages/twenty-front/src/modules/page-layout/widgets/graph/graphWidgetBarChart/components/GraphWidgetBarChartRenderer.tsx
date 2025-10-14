@@ -53,6 +53,7 @@ export const GraphWidgetBarChartRenderer = ({
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
         showValues={showDataLabels}
+        groupMode="stacked"
         id={widget.id}
         displayType="shortNumber"
       />
