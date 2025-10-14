@@ -36,8 +36,8 @@ const StyledRightContent = styled.div`
 `;
 
 const StyledFileName = styled.div`
-  overflow: hidden;
   flex: 1;
+  overflow: hidden;
 `;
 
 const StyledFileSize = styled.span`
