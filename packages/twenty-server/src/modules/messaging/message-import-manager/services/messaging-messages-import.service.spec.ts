@@ -222,14 +222,13 @@ describe('MessagingMessagesImportService', () => {
     expect(emailAliasManagerService.refreshHandleAliases).toHaveBeenCalledWith({
       ...mockConnectedAccount,
       accessToken: 'new-access-token',
-      refreshToken: 'new-refresh-token',
     });
     expect(messagingGetMessagesService.getMessages).toHaveBeenCalledWith(
       ['message-id-1', 'message-id-2'],
       {
         ...mockConnectedAccount,
         accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
+        refreshToken: 'refresh-token',
       },
     );
     expect(
