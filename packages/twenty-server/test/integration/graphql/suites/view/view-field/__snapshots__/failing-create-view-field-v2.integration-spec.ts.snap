@@ -32,6 +32,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 Should fail to crea
         },
       ],
       "viewFilter": [],
+      "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -45,6 +46,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 Should fail to crea
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
       "totalErrors": 0,
     },
     "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
@@ -86,6 +88,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
         },
       ],
       "viewFilter": [],
+      "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -99,6 +102,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
       "totalErrors": 0,
     },
     "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
@@ -140,6 +144,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
         },
       ],
       "viewFilter": [],
+      "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
@@ -153,6 +158,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
       "totalErrors": 0,
     },
     "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",

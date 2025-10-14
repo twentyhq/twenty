@@ -1,14 +1,17 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared/utils';
-
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
+import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/delete-view-group.input';
+import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
 import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
+import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
@@ -16,7 +19,11 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 @UseFilters(ViewGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewGroupResolver {
-  constructor(private readonly viewGroupService: ViewGroupService) {}
+  constructor(
+    private readonly viewGroupService: ViewGroupService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly viewGroupV2Service: ViewGroupV2Service,
+  ) {}
 
   @Query(() => [ViewGroupDTO])
   async getCoreViewGroups(
@@ -41,47 +48,104 @@ export class ViewGroupResolver {
 
   @Mutation(() => ViewGroupDTO)
   async createCoreViewGroup(
-    @Args('input') input: CreateViewGroupInput,
-    @AuthWorkspace() workspace: Workspace,
+    @Args('input') createViewGroupInput: CreateViewGroupInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<ViewGroupDTO> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return await this.viewGroupV2Service.createOne({
+        createViewGroupInput,
+        workspaceId,
+      });
+    }
+
     return this.viewGroupService.create({
-      ...input,
-      workspaceId: workspace.id,
+      ...createViewGroupInput,
+      workspaceId,
     });
   }
 
   @Mutation(() => ViewGroupDTO)
   async updateCoreViewGroup(
-    @Args('id', { type: () => String }) id: string,
-    @Args('input') input: UpdateViewGroupInput,
-    @AuthWorkspace() workspace: Workspace,
+    @Args('input') updateViewGroupInput: UpdateViewGroupInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<ViewGroupDTO> {
-    return this.viewGroupService.update(id, workspace.id, input);
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return await this.viewGroupV2Service.updateOne({
+        updateViewGroupInput,
+        workspaceId,
+      });
+    }
+
+    return this.viewGroupService.update(
+      updateViewGroupInput.id,
+      workspaceId,
+      updateViewGroupInput.update,
+    );
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ViewGroupDTO)
   async deleteCoreViewGroup(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<boolean> {
+    @Args('input') deleteViewGroupInput: DeleteViewGroupInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ): Promise<ViewGroupDTO> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return await this.viewGroupV2Service.deleteOne({
+        deleteViewGroupInput,
+        workspaceId,
+      });
+    }
+
     const deletedViewGroup = await this.viewGroupService.delete(
-      id,
-      workspace.id,
+      deleteViewGroupInput.id,
+      workspaceId,
     );
 
-    return isDefined(deletedViewGroup);
+    return deletedViewGroup;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ViewGroupDTO)
   async destroyCoreViewGroup(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<boolean> {
-    const deletedViewGroup = await this.viewGroupService.destroy(
-      id,
-      workspace.id,
+    @Args('input') destroyViewGroupInput: DestroyViewGroupInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ): Promise<ViewGroupDTO> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      const destroyedViewGroup = await this.viewGroupV2Service.destroyOne({
+        destroyViewGroupInput,
+        workspaceId,
+      });
+
+      return destroyedViewGroup;
+    }
+
+    const destroyedViewGroup = await this.viewGroupService.destroy(
+      destroyViewGroupInput.id,
+      workspaceId,
     );
 
-    return isDefined(deletedViewGroup);
+    return destroyedViewGroup;
   }
 }
