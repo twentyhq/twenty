@@ -287,14 +287,7 @@ export type BarChartConfiguration = {
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
-<<<<<<< HEAD
-=======
-  groupByFieldMetadataIdX: Scalars['UUID'];
-  groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
-  groupBySubFieldNameX?: Maybe<Scalars['String']>;
-  groupBySubFieldNameY?: Maybe<Scalars['String']>;
   groupMode?: Maybe<BarChartGroupMode>;
->>>>>>> upstream/main
   omitNullValues?: Maybe<Scalars['Boolean']>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
   primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
