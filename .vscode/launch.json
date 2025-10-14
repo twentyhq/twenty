@@ -34,7 +34,9 @@
       "runtimeArgs": [
         "nx",
         "run",
-        "twenty-server:database:reset",
+        "twenty-server:command",
+        "my-command",
+        "--my-parameter value"
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
