@@ -51,8 +51,9 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
 
   it('should order keys correctly despite unordered raw results', () => {
     // This test demonstrates the key ordering issue described in the user query
-    // Raw results where "CUSTOMER" appears before "NEW" in the data stream
-    // but we want them ordered alphabetically
+    // Raw results where "CUSTOMER" appears before "NEW" in the data stream despite orderBy,
+    // bc there is no "NEW" group before october 21st and the results are primarily ordered by date ASC
+    // but we want them ordered alphabetically-reversed
     const rawResults: GroupByRawResult[] = [
       {
         groupByDimensionValues: ['2025-10-16T00:00:00.000Z', 'SCREENING'],
