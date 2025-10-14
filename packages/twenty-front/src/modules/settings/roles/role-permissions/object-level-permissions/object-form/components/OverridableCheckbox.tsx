@@ -63,7 +63,7 @@ export const OverridableCheckbox = ({
               {!disabled && (
                 <AnimatedRotate>
                   <IconX
-                    size={theme.icon.size.xl}
+                    size={theme.icon.size.md}
                     color={theme.font.color.secondary}
                   />
                 </AnimatedRotate>
@@ -84,7 +84,7 @@ export const OverridableCheckbox = ({
             >
               <AnimatedRotate animateOnHover={!disabled}>
                 <IconReload
-                  size={theme.icon.size.xl}
+                  size={theme.icon.size.md}
                   color={theme.adaptiveColors.orange4}
                 />
               </AnimatedRotate>
