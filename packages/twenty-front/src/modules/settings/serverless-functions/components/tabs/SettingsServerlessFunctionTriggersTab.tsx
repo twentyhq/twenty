@@ -7,10 +7,9 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
-import { SETTINGS_ROUTE_TRIGGER_TABLE_METADATA } from '@/settings/serverless-functions/constants/settingsRouteTriggerTableMetadata';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { Tag } from 'twenty-ui/components';
-import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 
 export const StyledRouteTriggerTableRow = styled(TableRow)`
   grid-template-columns: 1fr 120px 120px;
@@ -52,7 +51,7 @@ export const SettingsServerlessFunctionTriggersTab = ({
       {databaseEvents.length > 0 && (
         <Section>
           <H2Title
-            title={t`Database event triggers`}
+            title={t`Database event`}
             description={t`Select the events that should trigger the function`}
           />
           <SettingsDatabaseEventsForm events={databaseEvents} disabled />
@@ -62,7 +61,7 @@ export const SettingsServerlessFunctionTriggersTab = ({
       {cronTriggers.length > 0 && (
         <Section>
           <H2Title
-            title={t`Cron triggers`}
+            title={t`Cron`}
             description={t`Triggers the function at regular intervals`}
           />
           {cronTriggers.map((cronTrigger, index) => (
@@ -82,25 +81,14 @@ export const SettingsServerlessFunctionTriggersTab = ({
       {routeTriggers.length > 0 && (
         <Section>
           <H2Title
-            title={t`Http triggers`}
+            title={t`Http`}
             description={t`Triggers the function with Http request`}
           />
           <Table>
             <StyledRouteTriggerTableHeaderRow>
-              {SETTINGS_ROUTE_TRIGGER_TABLE_METADATA.fields.map(
-                (settingsRouteTriggerTableMetadataField) => (
-                  <SortableTableHeader
-                    key={settingsRouteTriggerTableMetadataField.fieldName}
-                    fieldName={settingsRouteTriggerTableMetadataField.fieldName}
-                    label={t(settingsRouteTriggerTableMetadataField.fieldLabel)}
-                    tableId={SETTINGS_ROUTE_TRIGGER_TABLE_METADATA.tableId}
-                    align={settingsRouteTriggerTableMetadataField.align}
-                    initialSort={
-                      SETTINGS_ROUTE_TRIGGER_TABLE_METADATA.initialSort
-                    }
-                  />
-                ),
-              )}
+              <TableHeader>{t`Path`}</TableHeader>
+              <TableHeader>{t`Method`}</TableHeader>
+              <TableHeader>{t`Auth Required`}</TableHeader>
             </StyledRouteTriggerTableHeaderRow>
             {routeTriggers.map((routeTrigger, index) => (
               <StyledRouteTriggerTableRow key={index}>

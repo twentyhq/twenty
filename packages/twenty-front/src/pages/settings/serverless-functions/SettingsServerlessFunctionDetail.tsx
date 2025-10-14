@@ -169,7 +169,7 @@ export const SettingsServerlessFunctionDetail = () => {
               applicationId,
             }),
           },
-          { children: `${formValues.name}` },
+          { children: `${serverlessFunction?.name}` },
         ]}
       >
         <SettingsPageContainer>

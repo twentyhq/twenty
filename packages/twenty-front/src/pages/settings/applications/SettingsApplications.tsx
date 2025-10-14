@@ -2,14 +2,18 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { t } from '@lingui/core/macro';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
-import { H2Title } from 'twenty-ui/display';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Section } from 'twenty-ui/layout';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+
+const APPLICATIONS_ID = 'applications';
 
 export const SettingsApplications = () => {
   const { data } = useFindManyApplicationsQuery();
+
+  const tabs = [{ id: 'inUsed', title: 'In used' }];
 
   return (
     <SubMenuTopBarContainer
@@ -24,9 +28,10 @@ export const SettingsApplications = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title
-            title={t`Applications`}
-            description={t`Installed applications`}
+          <TabList
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={APPLICATIONS_ID}
           />
           <SettingsApplicationsTable
             applications={data?.findManyApplications ?? []}
