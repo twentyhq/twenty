@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -12,9 +12,11 @@ import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
+@UseFilters(ApplicationExceptionFilter)
 export class ApplicationResolver {
   constructor(
     private readonly applicationSyncService: ApplicationSyncService,
