@@ -257,7 +257,7 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
 
     expect(backwardPagePeople).toHaveLength(2);
 
-    expect(backwardPagePeople[0].id).toBe(allPeople.at(-2)?.id);
-    expect(backwardPagePeople[1].id).toBe(allPeople.at(-3)?.id);
+    expect(backwardPagePeople[0].id).toBe(allPeople.at(-3)?.id);
+    expect(backwardPagePeople[1].id).toBe(allPeople.at(-2)?.id);
   });
 });

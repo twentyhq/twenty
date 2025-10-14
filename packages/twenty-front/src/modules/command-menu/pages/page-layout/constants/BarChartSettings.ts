@@ -8,6 +8,7 @@ import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/setti
 import { GROUP_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/GroupBySetting';
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
 import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByXSetting';
+import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 
 export const BAR_CHART_SETTINGS: ChartSettingsGroup[] = [
@@ -29,6 +30,11 @@ export const BAR_CHART_SETTINGS: ChartSettingsGroup[] = [
   },
   {
     heading: 'Style',
-    items: [COLORS_SETTING, AXIS_NAME_SETTING, DATA_LABELS_SETTING],
+    items: [
+      COLORS_SETTING,
+      AXIS_NAME_SETTING,
+      STACKED_BARS_SETTING,
+      DATA_LABELS_SETTING,
+    ],
   },
 ];

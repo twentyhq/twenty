@@ -42,6 +42,10 @@ export const ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS = {
     view: 'viewId',
     fieldMetadata: 'fieldMetadataId',
   },
+  viewGroup: {
+    view: 'viewId',
+    fieldMetadata: 'fieldMetadataId',
+  },
   index: {
     objectMetadata: 'objectMetadataId',
   },

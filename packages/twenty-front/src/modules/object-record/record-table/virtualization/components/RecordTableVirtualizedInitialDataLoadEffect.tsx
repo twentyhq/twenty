@@ -3,12 +3,15 @@ import { useRecoilValue } from 'recoil';
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { isInitializingVirtualTableDataLoadingComponentState } from '@/object-record/record-table/virtualization/states/isInitializingVirtualTableDataLoadingComponentState';
 import { lastContextStoreVirtualizedViewIdComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedViewIdComponentState';
+import { lastContextStoreVirtualizedVisibleRecordFieldsComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedVisibleRecordFieldsComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useEffect } from 'react';
 
@@ -21,6 +24,9 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const [lastRecordTableQueryIdentifier, setLastRecordTableQueryIdentifier] =
     useRecoilComponentState(lastRecordTableQueryIdentifierComponentState);
 
+  const visibleRecordFields = useRecoilComponentValue(
+    visibleRecordFieldsComponentSelector,
+  );
   const [isInitializingVirtualTableDataLoading] = useRecoilComponentState(
     isInitializingVirtualTableDataLoadingComponentState,
   );
@@ -36,6 +42,13 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     lastContextStoreVirtualizedViewId,
     setLastContextStoreVirtualizedViewId,
   ] = useRecoilComponentState(lastContextStoreVirtualizedViewIdComponentState);
+
+  const [
+    lastContextStoreVisibleRecordFields,
+    setLastContextStoreVisibleRecordFields,
+  ] = useRecoilComponentState(
+    lastContextStoreVirtualizedVisibleRecordFieldsComponentState,
+  );
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -56,6 +69,13 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
         setLastRecordTableQueryIdentifier(queryIdentifier);
 
         await triggerInitialRecordTableDataLoad();
+      } else if (
+        JSON.stringify(lastContextStoreVisibleRecordFields) !==
+        JSON.stringify(visibleRecordFields)
+      ) {
+        setLastContextStoreVisibleRecordFields(visibleRecordFields);
+
+        await triggerInitialRecordTableDataLoad();
       }
     })();
   }, [
@@ -68,6 +88,9 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     currentView,
     lastContextStoreVirtualizedViewId,
     setLastContextStoreVirtualizedViewId,
+    lastContextStoreVisibleRecordFields,
+    setLastContextStoreVisibleRecordFields,
+    visibleRecordFields,
   ]);
 
   return <></>;

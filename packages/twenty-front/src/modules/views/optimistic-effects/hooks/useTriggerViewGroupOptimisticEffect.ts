@@ -6,7 +6,11 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewGroup } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-
+type UpdatedDeletedCoreViewGroup = {
+  createdViewGroups?: Omit<CoreViewGroup, 'workspaceId'>[];
+  updatedViewGroups?: Omit<CoreViewGroup, 'workspaceId'>[];
+  deletedViewGroups?: Pick<CoreViewGroup, 'id' | 'viewId'>[];
+};
 export const useTriggerViewGroupOptimisticEffect = () => {
   const apolloClient = useApolloClient();
 
@@ -18,11 +22,7 @@ export const useTriggerViewGroupOptimisticEffect = () => {
         createdViewGroups = [],
         updatedViewGroups = [],
         deletedViewGroups = [],
-      }: {
-        createdViewGroups?: CoreViewGroup[];
-        updatedViewGroups?: CoreViewGroup[];
-        deletedViewGroups?: Pick<CoreViewGroup, 'id' | 'viewId'>[];
-      }) => {
+      }: UpdatedDeletedCoreViewGroup) => {
         const coreViews = getSnapshotValue(snapshot, coreViewsState);
         let newCoreViews = [...coreViews];
 
