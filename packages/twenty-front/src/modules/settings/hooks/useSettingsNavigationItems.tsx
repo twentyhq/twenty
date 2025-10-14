@@ -17,7 +17,6 @@ import {
   type IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
-  IconFunction,
   IconHierarchy2,
   IconKey,
   IconLock,
@@ -163,15 +162,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !isApplicationEnabled ||
             !permissionMap[PermissionFlagType.WORKSPACE],
           isNew: true,
-        },
-        {
-          label: t`Functions`,
-          path: SettingsPath.ServerlessFunctions,
-          Icon: IconFunction,
-          isHidden:
-            !isApplicationEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
-          isAdvanced: true,
         },
         {
           label: t`AI`,

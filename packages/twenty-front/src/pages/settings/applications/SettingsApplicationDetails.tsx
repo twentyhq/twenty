@@ -28,7 +28,12 @@ export const SettingsApplicationDetails = () => {
     return;
   }
 
-  const { serverlessFunctions, agents, objects } = data.findOneApplication;
+  const {
+    name: applicationName,
+    serverlessFunctions,
+    agents,
+    objects,
+  } = data.findOneApplication;
 
   const shouldDisplayServerlessFunctions =
     !loading &&
@@ -65,7 +70,7 @@ export const SettingsApplicationDetails = () => {
           children: t`Applications`,
           href: getSettingsPath(SettingsPath.Applications),
         },
-        { children: t`Application` },
+        { children: `${applicationName}` },
       ]}
     >
       <SettingsPageContainer>

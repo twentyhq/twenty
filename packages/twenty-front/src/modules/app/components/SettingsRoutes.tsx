@@ -105,25 +105,11 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
   })),
 );
 
-const SettingsServerlessFunctions = lazy(() =>
-  import(
-    '~/pages/settings/serverless-functions/SettingsServerlessFunctions'
-  ).then((module) => ({ default: module.SettingsServerlessFunctions })),
-);
-
 const SettingsServerlessFunctionDetail = lazy(() =>
   import(
     '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail'
   ).then((module) => ({
     default: module.SettingsServerlessFunctionDetail,
-  })),
-);
-
-const SettingsServerlessFunctionsNew = lazy(() =>
-  import(
-    '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew'
-  ).then((module) => ({
-    default: module.SettingsServerlessFunctionsNew,
   })),
 );
 
@@ -619,18 +605,8 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.ApplicationDetail}
           element={<SettingsApplicationDetails />}
         />
-
         <Route
-          path={SettingsPath.ServerlessFunctions}
-          element={<SettingsServerlessFunctions />}
-        />
-        <Route
-          path={SettingsPath.NewServerlessFunction}
-          element={<SettingsServerlessFunctionsNew />}
-        />
-
-        <Route
-          path={SettingsPath.ServerlessFunctionDetail}
+          path={SettingsPath.ApplicationServerlessFunctionDetail}
           element={<SettingsServerlessFunctionDetail />}
         />
       </Route>

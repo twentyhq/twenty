@@ -21,11 +21,21 @@ import {
 } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
+import { t } from '@lingui/core/macro';
+import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 
 const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 
 export const SettingsServerlessFunctionDetail = () => {
-  const { serverlessFunctionId = '' } = useParams();
+  const { serverlessFunctionId = '', applicationId = '' } = useParams();
+
+  const { data } = useFindOneApplicationQuery({
+    variables: { id: applicationId },
+    skip: !applicationId,
+  });
+
+  const applicationName = data?.findOneApplication?.name;
+
   const [activeTabId, setActiveTabId] = useRecoilComponentState(
     activeTabIdComponentState,
     SERVERLESS_FUNCTION_DETAIL_ID,
@@ -150,8 +160,14 @@ export const SettingsServerlessFunctionDetail = () => {
             href: getSettingsPath(SettingsPath.Workspace),
           },
           {
-            children: 'Functions',
-            href: getSettingsPath(SettingsPath.ServerlessFunctions),
+            children: t`Applications`,
+            href: getSettingsPath(SettingsPath.Applications),
+          },
+          {
+            children: `${applicationName}`,
+            href: getSettingsPath(SettingsPath.ApplicationDetail, {
+              applicationId,
+            }),
           },
           { children: `${formValues.name}` },
         ]}
