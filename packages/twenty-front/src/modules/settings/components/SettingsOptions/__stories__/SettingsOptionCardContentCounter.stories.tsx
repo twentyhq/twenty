@@ -25,6 +25,7 @@ const SettingsOptionCardContentCounterWrapper = (
         disabled={args.disabled}
         minValue={args.minValue}
         maxValue={args.maxValue}
+        showButtons={args.showButtons}
       />
     </StyledContainer>
   );
@@ -50,6 +51,7 @@ export const Default: Story = {
     value: 5,
     minValue: 1,
     maxValue: 10,
+    showButtons: true,
   },
   argTypes: {
     Icon: { control: false },
@@ -64,6 +66,7 @@ export const WithoutIcon: Story = {
     value: 20,
     minValue: 10,
     maxValue: 50,
+    showButtons: true,
   },
 };
 
@@ -76,5 +79,17 @@ export const Disabled: Story = {
     disabled: true,
     minValue: 1,
     maxValue: 10,
+    showButtons: true,
+  },
+};
+
+export const WithoutButtons: Story = {
+  args: {
+    Icon: IconUsers,
+    title: 'Trash Retention',
+    description: 'Adjust the number of days before deletion',
+    value: 14,
+    minValue: 0,
+    showButtons: false,
   },
 };
