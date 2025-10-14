@@ -16,7 +16,6 @@ import { ConnectedAccountRefreshTokensService } from './connected-account-refres
 
 describe('ConnectedAccountRefreshTokensService', () => {
   let service: ConnectedAccountRefreshTokensService;
-  let jwtWrapperService: JwtWrapperService;
   let googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService;
   let microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService;
   let twentyORMManager: TwentyORMManager;
@@ -41,12 +40,14 @@ describe('ConnectedAccountRefreshTokensService', () => {
           provide: GoogleAPIRefreshAccessTokenService,
           useValue: {
             refreshAccessToken: jest.fn(),
+            isAccessTokenExpired: jest.fn(),
           },
         },
         {
           provide: MicrosoftAPIRefreshAccessTokenService,
           useValue: {
             refreshTokens: jest.fn(),
+            isAccessTokenExpired: jest.fn(),
           },
         },
         {
@@ -61,7 +62,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
     service = module.get<ConnectedAccountRefreshTokensService>(
       ConnectedAccountRefreshTokensService,
     );
-    jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
     googleAPIRefreshAccessTokenService =
       module.get<GoogleAPIRefreshAccessTokenService>(
         GoogleAPIRefreshAccessTokenService,
@@ -86,7 +86,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         refreshToken: mockRefreshToken,
       } as ConnectedAccountWorkspaceEntity;
 
-      jest.spyOn(jwtWrapperService, 'isTokenExpired').mockReturnValue(false);
+      jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(true);
 
       const result = await service.refreshAndSaveTokens(
         connectedAccount,
@@ -110,7 +110,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
 
       const mockRepository = { update: jest.fn() };
 
-      jest.spyOn(jwtWrapperService, 'isTokenExpired').mockReturnValue(true);
+      jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(false);
       jest
         .spyOn(googleAPIRefreshAccessTokenService, 'refreshAccessToken')
         .mockResolvedValue({ accessToken: mockNewAccessToken });
@@ -143,7 +143,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
 
       const mockRepository = { update: jest.fn() };
 
-      jest.spyOn(jwtWrapperService, 'isTokenExpired').mockReturnValue(true);
+      jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(false);
       jest
         .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
         .mockResolvedValue({ accessToken: mockNewAccessToken });
@@ -200,7 +200,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         },
       };
 
-      jest.spyOn(jwtWrapperService, 'isTokenExpired').mockReturnValue(true);
+      jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(false);
       jest
         .spyOn(googleAPIRefreshAccessTokenService, 'refreshAccessToken')
         .mockRejectedValue(axiosError);
@@ -226,7 +226,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         },
       };
 
-      jest.spyOn(jwtWrapperService, 'isTokenExpired').mockReturnValue(true);
+      jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(false);
       jest
         .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
         .mockRejectedValue(axiosError);
