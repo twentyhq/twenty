@@ -14,6 +14,9 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { ViewFilterGroupModule } from 'src/engine/metadata-modules/view-filter-group/view-filter-group.module';
+import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
+import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
 @Module({
@@ -26,6 +29,9 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     ApiKeyModule,
     WorkspacePermissionsCacheModule,
     FileModule,
+    ViewModule,
+    ViewFilterModule,
+    ViewFilterGroupModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,

@@ -7,19 +7,22 @@ import {
 import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { type IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
 
+import { type GroupByOutputItem } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
 import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 
-export const formatResultWithGroupByDimensionValues = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const formatResultWithGroupByDimensionValues = <
+  T extends
+    | IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>
+    | GroupByOutputItem,
+>( // eslint-disable-next-line @typescript-eslint/no-explicit-any
   result: any[],
   groupByColumnsWithQuotes: {
     columnNameWithQuotes: string;
     alias: string;
     dateGranularity?: ObjectRecordGroupByDateGranularity;
   }[],
-): IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] => {
-  let formattedResult: IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] =
-    [];
+): T[] => {
+  let formattedResult: T[] = [];
 
   result.forEach((group) => {
     let dimensionValues = [];

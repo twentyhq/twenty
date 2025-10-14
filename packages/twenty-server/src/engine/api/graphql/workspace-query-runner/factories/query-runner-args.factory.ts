@@ -11,6 +11,7 @@ import {
   type FindDuplicatesResolverArgs,
   type FindManyResolverArgs,
   type FindOneResolverArgs,
+  GroupByResolverArgs,
   type MergeManyResolverArgs,
   type ResolverArgs,
   ResolverArgsType,
@@ -108,7 +109,6 @@ export class QueryRunnerArgsFactory {
             options.objectMetadataItemWithFieldMaps,
           ),
         };
-
       case ResolverArgsType.FindDuplicates:
         return {
           ...args,
@@ -146,6 +146,14 @@ export class QueryRunnerArgsFactory {
             .conflictPriorityIndex,
           dryRun: (args as MergeManyResolverArgs).dryRun,
         } satisfies MergeManyResolverArgs;
+      case ResolverArgsType.GroupBy:
+        return {
+          ...args,
+          filter: this.overrideFilterByFieldMetadata(
+            (args as GroupByResolverArgs).filter,
+            options.objectMetadataItemWithFieldMaps,
+          ),
+        };
       default:
         return args;
     }

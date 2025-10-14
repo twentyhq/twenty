@@ -8,6 +8,7 @@ import {
   type FindDuplicatesResolverArgs,
   type FindManyResolverArgs,
   type FindOneResolverArgs,
+  type GroupByResolverArgs,
   type MergeManyResolverArgs,
   type RestoreManyResolverArgs,
   type UpdateManyResolverArgs,
@@ -45,4 +46,6 @@ export type WorkspacePreQueryHookPayload<T> = T extends 'createMany'
                         ? DestroyOneResolverArgs
                         : T extends 'mergeMany'
                           ? MergeManyResolverArgs
-                          : never;
+                          : T extends 'groupBy'
+                            ? GroupByResolverArgs
+                            : never;
