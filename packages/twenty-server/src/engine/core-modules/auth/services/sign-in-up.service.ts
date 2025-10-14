@@ -465,14 +465,17 @@ export class SignInUpService {
     newUserParams: SignInUpNewUserPayload,
     authParams: AuthProviderWithPasswordType['authParams'],
   ) {
-    await this.userService.findUserByEmailOrThrow(
+    const existingUser = await this.userService.findUserByEmail(
       newUserParams.email,
-      new AuthException(
+    );
+
+    if (existingUser) {
+      throw new AuthException(
         'User already exist',
         AuthExceptionCode.USER_ALREADY_EXIST,
         { userFriendlyMessage: msg`User already exists` },
-      ),
-    );
+      );
+    }
 
     return this.saveNewUser(
       await this.computePartialUserFromUserPayload(newUserParams, authParams),
