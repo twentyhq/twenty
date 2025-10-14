@@ -6,5 +6,5 @@ export const workflowFileSchema = z.object({
   name: z.string(),
   size: z.number(),
   type: z.string(),
-  createdAt: z.string(),
+  createdAt: z.date(),
 });

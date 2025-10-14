@@ -69,18 +69,19 @@ export const WorkflowSendEmailAttachments = ({
     fileInputRef.current?.click();
   };
 
-  const onUploadFile = async (file: File) => {
-    const uploadedFile = await uploadWorkflowFile(file);
-    if (uploadedFile !== null) {
-      onChange([...files, uploadedFile]);
-    }
-  };
-
   const onUploadFiles = async (filesToUpload: File[]) => {
     setIsUploading(true);
     try {
-      for (const file of filesToUpload) {
-        await onUploadFile(file);
+      const uploadedFiles = await Promise.all(
+        filesToUpload.map((file) => uploadWorkflowFile(file)),
+      );
+
+      const successfulUploads = uploadedFiles.filter(
+        (file): file is WorkflowFile => file !== null,
+      );
+
+      if (successfulUploads.length > 0) {
+        onChange([...files, ...successfulUploads]);
       }
     } finally {
       setIsUploading(false);

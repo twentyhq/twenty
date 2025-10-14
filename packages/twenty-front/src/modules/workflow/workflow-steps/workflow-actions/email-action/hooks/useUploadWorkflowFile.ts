@@ -2,6 +2,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
 import { useCreateFileMutation } from '~/generated-metadata/graphql';
+import { logError } from '~/utils/logError';
 
 type WorkflowFile = {
   id: string;
@@ -43,10 +44,13 @@ export const useUploadWorkflowFile = () => {
       });
 
       return workflowFile;
-    } catch {
+    } catch (error) {
+      logError(`Failed to upload workflow file "${file.name}": ${error}`);
+
       enqueueErrorSnackBar({
         message: `Failed to upload "${file.name}"`,
       });
+
       return null;
     }
   };
