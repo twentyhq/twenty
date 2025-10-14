@@ -48,7 +48,7 @@ export class ConnectedAccountRefreshTokensService {
       this.jwtWrapperService.isTokenExpired(accessToken);
 
     if (!isAccessTokenExpired) {
-      this.logger.log(
+      this.logger.debug(
         `Reusing valid access token for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}`,
       );
 
