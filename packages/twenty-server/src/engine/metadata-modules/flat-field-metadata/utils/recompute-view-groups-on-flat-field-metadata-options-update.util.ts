@@ -13,7 +13,7 @@ type RecomputeViewGroupsOnFlatFieldMetadataOptionsUpdateArgs = {
   update: PropertyUpdate<FlatFieldMetadata<EnumFieldMetadataType>, 'options'>;
 } & Pick<AllFlatEntityMaps, 'flatViewGroupMaps'>;
 
-export type FlatViewGroupsToDeleteAndUpdate = {
+export type FlatViewGroupsToDeleteUpdateAndCreate = {
   flatViewGroupsToDelete: FlatViewGroup[];
   flatViewGroupsToUpdate: FlatViewGroup[];
   flatViewGroupsToCreate: FlatViewGroup[];
@@ -22,7 +22,7 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
   flatViewGroupMaps,
   fromFlatFieldMetadata,
   update,
-}: RecomputeViewGroupsOnFlatFieldMetadataOptionsUpdateArgs): FlatViewGroupsToDeleteAndUpdate => {
+}: RecomputeViewGroupsOnFlatFieldMetadataOptionsUpdateArgs): FlatViewGroupsToDeleteUpdateAndCreate => {
   const {
     deleted: deletedFieldMetadataOptions,
     updated: updatedFieldMetadataOptions,
@@ -37,6 +37,16 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
     flatEntityIds: fromFlatFieldMetadata.viewGroupIds,
     flatEntityMaps: flatViewGroupMaps,
   });
+
+  if (flatViewGroups.length === 0) {
+    return {
+      flatViewGroupsToCreate: [],
+      flatViewGroupsToDelete: [],
+      flatViewGroupsToUpdate: [],
+    };
+  }
+
+  const workspaceId = flatViewGroups[0].workspaceId;
 
   const flatViewGroupsToDelete = deletedFieldMetadataOptions.flatMap((option) =>
     flatViewGroups.filter(
@@ -55,49 +65,59 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
 
   const viewGroupHighestPositionByViewId = flatViewGroups.reduce(
     (accumulator, flatViewGroup) => {
-      const viewGroupHighestPosition = accumulator[flatViewGroup.viewId];
       if (
-        isDefined(viewGroupHighestPosition) &&
-        viewGroupHighestPosition > flatViewGroup.position
+        flatViewGroupsToDelete.some(
+          (flatViewGroupToDelete) =>
+            flatViewGroupToDelete.id === flatViewGroup.id,
+        )
       ) {
         return accumulator;
       }
 
-      return {
-        ...accumulator,
-        [flatViewGroup.viewId]: flatViewGroup.position,
-      };
-    },
-    {} as Partial<Record<string, number>>,
-  );
-
-  const tmp = Object.entries(viewGroupHighestPositionByViewId).filter(
-    isDefined,
-  );
-  if (tmp.length > 0) {
-    const [firstViewGroup] = flatViewGroups;
-    const createdAt = new Date();
-    const workpsaceId = firstViewGroup.workspaceId;
-
-    const flatViewGroupsToCreate = tmp.map<FlatViewGroup>(
-      ([viewId, viewGroupHighestPosition]) => {
-        const viewGroupId = v4();
+      const viewGroupHighestPosition = accumulator[flatViewGroup.viewId] as
+        | number
+        | undefined;
+      if (
+        !isDefined(viewGroupHighestPosition) ||
+        flatViewGroup.position > viewGroupHighestPosition
+      ) {
+        // Update to the new higher position
         return {
-          id: viewGroupId,
-          fieldMetadataId: fromFlatFieldMetadata.id,
-          viewId: firstViewGroup.viewId,
-          workspaceId: firstViewGroup.workspaceId,
-          createdAt: createdAt,
-          updatedAt: createdAt,
-          deletedAt: null,
-          universalIdentifier: viewGroupId,
-          isVisible: true,
-          fieldValue: option.value,
-          position: viewGroupHighestPosition + 1,
+          ...accumulator,
+          [flatViewGroup.viewId]: flatViewGroup.position,
         };
-      },
-    );
-  }
+      }
+      return accumulator;
+    },
+    {} as Record<string, number>,
+  );
+
+  const viewIdAndHighestViewGroupPosition = Object.entries(
+    viewGroupHighestPositionByViewId,
+  );
+
+  const createdAt = new Date();
+  const flatViewGroupsToCreate = createdFieldMetadataOptions.flatMap(
+    (option, createdOptionIndex) =>
+      viewIdAndHighestViewGroupPosition.map<FlatViewGroup>(
+        ([viewId, viewGroupHighestPosition]) => {
+          const viewGroupId = v4();
+          return {
+            id: viewGroupId,
+            fieldMetadataId: fromFlatFieldMetadata.id,
+            viewId,
+            workspaceId,
+            createdAt: createdAt,
+            updatedAt: createdAt,
+            deletedAt: null,
+            universalIdentifier: viewGroupId,
+            isVisible: true,
+            fieldValue: option.value,
+            position: viewGroupHighestPosition + createdOptionIndex + 1,
+          };
+        },
+      ),
+  );
 
   return {
     flatViewGroupsToCreate,
