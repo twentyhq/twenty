@@ -17,6 +17,7 @@ import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-build
 import { ExtendedAggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/extended-aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
+import { BarChartGroupMode } from 'src/engine/core-modules/page-layout/enums/bar-chart-group-mode.enum';
 import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
@@ -109,4 +110,12 @@ export class BarChartConfigurationDTO {
   @IsObject()
   @IsOptional()
   filter?: ObjectRecordFilter;
+
+  @Field(() => BarChartGroupMode, {
+    nullable: true,
+    defaultValue: BarChartGroupMode.STACKED,
+  })
+  @IsEnum(BarChartGroupMode)
+  @IsOptional()
+  groupMode?: BarChartGroupMode;
 }
