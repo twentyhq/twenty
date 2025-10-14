@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { forwardRef } from 'react';
-import { IconBorderCornerSquare } from 'twenty-ui/display';
+import { IconRadiusBottomRight } from 'twenty-ui/display';
 
 type PageLayoutGridResizeHandleProps = {
   handleAxis?: string;
@@ -12,12 +12,16 @@ type PageLayoutGridResizeHandleProps = {
   style?: React.CSSProperties;
 };
 
-const StyledIcon = styled(IconBorderCornerSquare)`
+const StyledIcon = styled(IconRadiusBottomRight)`
   bottom: ${({ theme }) => theme.spacing(1)};
-  rotate: 180deg;
   cursor: nwse-resize;
   position: absolute;
   right: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.border.color.strong};
+
+  :hover {
+    color: ${({ theme }) => theme.font.color.tertiary};
+  }
 `;
 
 export const PageLayoutGridResizeHandle = forwardRef<
@@ -45,11 +49,7 @@ export const PageLayoutGridResizeHandle = forwardRef<
       className={className}
       style={style}
     >
-      <StyledIcon
-        size={theme.spacing(4)}
-        stroke={theme.spacing(1)}
-        color={theme.font.color.extraLight}
-      />
+      <StyledIcon size={theme.spacing(4)} stroke={theme.spacing(1)} />
     </div>
   );
 });
