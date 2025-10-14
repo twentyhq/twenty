@@ -1,7 +1,7 @@
-import { DashboardContentRenderer } from '@/dashboards/components/DashboardContentRenderer';
 import { type Dashboard } from '@/dashboards/components/types/Dashboard';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,5 +17,5 @@ export const DashboardCard = () => {
     return null;
   }
 
-  return <DashboardContentRenderer dashboard={dashboard} />;
+  return <PageLayoutRenderer pageLayoutId={dashboard.pageLayoutId} />;
 };
