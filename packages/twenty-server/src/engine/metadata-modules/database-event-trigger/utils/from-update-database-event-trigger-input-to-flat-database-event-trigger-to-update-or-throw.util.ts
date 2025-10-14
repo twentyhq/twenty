@@ -1,10 +1,10 @@
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type UpdateDatabaseEventTriggerInput } from 'src/engine/metadata-modules/database-event-trigger/dtos/update-database-event-trigger.input';
 import {
   DatabaseEventTriggerException,
   DatabaseEventTriggerExceptionCode,
 } from 'src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 
 export const fromUpdateDatabaseEventTriggerInputToFlatDatabaseEventTriggerToUpdateOrThrow =
   ({

@@ -12,10 +12,13 @@ import { isEmptyObject } from '~/utils/isEmptyObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export type GetRecordFromCacheArgs = {
-  cache: ApolloCache<object>;
+  cache: ApolloCache<unknown>;
   recordId: string;
   objectMetadataItems: ObjectMetadataItem[];
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'fields' | 'nameSingular' | 'id' | 'readableFields'
+  >;
   recordGqlFields?: RecordGqlFields;
   objectPermissionsByObjectMetadataId: Record<
     string,

@@ -35,12 +35,14 @@ const mocks: MockedResponse[] = [
           $orderBy: [PersonOrderByInput]
           $lastCursor: String
           $limit: Int
+          $offset: Int
         ) {
           people(
             filter: $filter
             orderBy: $orderBy
             first: $limit
             after: $lastCursor
+            offset: $offset
           ) {
             edges {
               node {

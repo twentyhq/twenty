@@ -11,7 +11,9 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
@@ -36,6 +38,8 @@ export const useUpdateOneRecord = <
   objectNameSingular,
   recordGqlFields,
 }: useUpdateOneRecordProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -136,6 +140,8 @@ export const useUpdateOneRecord = <
         currentRecord: cachedRecordWithConnection,
         updatedRecord: optimisticRecordWithConnection,
         objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+        upsertRecordsInStore,
       });
     }
 
@@ -165,6 +171,8 @@ export const useUpdateOneRecord = <
             currentRecord: computedOptimisticRecord,
             updatedRecord: record,
             objectMetadataItems,
+            objectPermissionsByObjectMetadataId,
+            upsertRecordsInStore,
           });
         },
       })
@@ -211,13 +219,23 @@ export const useUpdateOneRecord = <
           currentRecord: optimisticRecordWithConnection,
           updatedRecord: cachedRecordWithConnection,
           objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
+          upsertRecordsInStore,
         });
 
         throw error;
       });
 
     await refetchAggregateQueries();
-    return updatedRecord?.data?.[mutationResponseField] ?? null;
+
+    const udpatedRecord = updatedRecord?.data?.[mutationResponseField] ?? null;
+
+    registerObjectOperation(objectNameSingular, {
+      type: 'update-one',
+      result: { updatedRecord, updateInput: updateOneRecordInput },
+    });
+
+    return udpatedRecord;
   };
 
   return {

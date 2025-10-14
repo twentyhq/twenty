@@ -17,7 +17,7 @@ export const useLoadSelectedRecordsInContextStore = ({
   objectRecordIds,
   objectMetadataItemId,
 }: UseLoadSelectedRecordsInContextStoreProps) => {
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { findManyRecordsLazy } = useLazyFindManyRecords({
     objectNameSingular,
@@ -55,11 +55,17 @@ export const useLoadSelectedRecordsInContextStore = ({
           objectRecordIds.length,
         );
 
-        const records = await findManyRecordsLazy();
-        upsertRecords(records.records);
+        const { records } = await findManyRecordsLazy();
+
+        upsertRecordsInStore(records ?? []);
       };
     },
-    [objectRecordIds, objectMetadataItemId, findManyRecordsLazy, upsertRecords],
+    [
+      objectRecordIds,
+      objectMetadataItemId,
+      findManyRecordsLazy,
+      upsertRecordsInStore,
+    ],
   );
 
   return {

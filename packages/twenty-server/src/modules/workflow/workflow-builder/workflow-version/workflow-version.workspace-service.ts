@@ -115,7 +115,11 @@ export class WorkflowVersionWorkspaceService {
       trigger: newWorkflowVersionTrigger,
     });
 
-    return draftWorkflowVersion.id;
+    return {
+      ...draftWorkflowVersion,
+      steps: newWorkflowVersionSteps,
+      trigger: newWorkflowVersionTrigger,
+    };
   }
 
   async updateWorkflowVersionPositions({

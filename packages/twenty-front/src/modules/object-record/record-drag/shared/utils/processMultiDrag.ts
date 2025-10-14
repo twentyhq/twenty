@@ -1,62 +1,28 @@
 import { type MultiDragResult } from '@/object-record/record-drag/shared/types/MultiDragResult';
-import { type RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
-import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
-import { type DropResult } from '@hello-pangea/dnd';
-import { isNull } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
+import { computeNewPositionsOfDraggedRecords } from '@/object-record/utils/computeNewPositionsOfDraggedRecords';
 
 type MultiDragContext = {
-  result: DropResult;
+  draggedRecordId: string;
+  targetRecordId: string;
   selectedRecordIds: string[];
-  recordPositionData: RecordDragPositionData[];
-  recordIds: string[];
-  groupValue?: string | null;
-  selectFieldName?: string;
+  recordsWithPosition: RecordWithPosition[];
 };
 
 export const processMultiDrag = ({
-  result,
+  draggedRecordId,
+  targetRecordId,
   selectedRecordIds,
-  recordPositionData,
-  recordIds,
-  groupValue,
-  selectFieldName,
+  recordsWithPosition,
 }: MultiDragContext): MultiDragResult => {
-  if (!result.destination) {
-    throw new Error('Destination is required for drag operation');
-  }
-
-  const destinationIndex = result.destination.index;
-
-  const positions = calculateDragPositions({
-    recordIds,
-    recordsToMove: selectedRecordIds,
-    destinationIndex,
-    recordPositionData,
-  });
-
-  const recordUpdates = selectedRecordIds.map((recordId) => {
-    const baseUpdate = {
-      recordId,
-      position: positions[recordId],
-    };
-
-    const shouldIncludeGroupFields =
-      isDefined(selectFieldName) &&
-      (isDefined(groupValue) || isNull(groupValue));
-
-    if (shouldIncludeGroupFields) {
-      return {
-        ...baseUpdate,
-        groupValue,
-        selectFieldName,
-      };
-    }
-
-    return baseUpdate;
+  const newPositionOfDraggedRecords = computeNewPositionsOfDraggedRecords({
+    arrayOfRecordsWithPosition: recordsWithPosition,
+    draggedRecordId,
+    targetRecordId,
+    sourceRecordIds: selectedRecordIds,
   });
 
   return {
-    recordUpdates,
+    recordUpdates: newPositionOfDraggedRecords ?? [],
   };
 };

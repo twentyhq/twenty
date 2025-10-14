@@ -20,7 +20,7 @@ import { css, type Theme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
-const VerticalScrollBoxShadowCSS = ({ theme }: { theme: Theme }) => css`
+export const VerticalScrollBoxShadowCSS = ({ theme }: { theme: Theme }) => css`
   &::before {
     bottom: -1px;
     box-shadow:
@@ -38,7 +38,11 @@ const VerticalScrollBoxShadowCSS = ({ theme }: { theme: Theme }) => css`
   }
 `;
 
-const HorizontalScrollBoxShadowCSS = ({ theme }: { theme: Theme }) => css`
+export const HorizontalScrollBoxShadowCSS = ({
+  theme,
+}: {
+  theme: Theme;
+}) => css`
   &::after {
     content: '';
     position: absolute;
@@ -71,6 +75,8 @@ const StyledTable = styled.div<{
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+
+  position: relative;
 
   div.header-cell {
     position: sticky;

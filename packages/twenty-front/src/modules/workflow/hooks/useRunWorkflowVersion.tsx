@@ -11,6 +11,7 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
@@ -27,6 +28,7 @@ import {
 
 export const useRunWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowRun,
@@ -128,6 +130,7 @@ export const useRunWorkflowVersion = () => {
       objectMetadataItems,
       shouldMatchRootQueryFilter: true,
       objectPermissionsByObjectMetadataId,
+      upsertRecordsInStore,
     });
 
     setRecordInStore(recordCreatedInCache);

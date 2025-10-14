@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
+import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
@@ -41,13 +42,17 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     subFieldName: configuration.groupBySubFieldNameX,
   });
 
-  const data: BarChartDataItem[] = rawResults.map((result) => {
+  // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
+  const limitedResults = rawResults.slice(0, GRAPH_MAXIMUM_NUMBER_OF_GROUPS);
+
+  const data: BarChartDataItem[] = limitedResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
 
     const xValue = isDefined(dimensionValues?.[0])
       ? formatDimensionValue({
           value: dimensionValues[0],
           fieldMetadata: groupByFieldX,
+          subFieldName: configuration.groupBySubFieldNameX ?? undefined,
         })
       : '';
 

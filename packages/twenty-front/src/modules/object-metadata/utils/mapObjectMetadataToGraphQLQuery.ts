@@ -71,14 +71,14 @@ export const mapObjectMetadataToGraphQLQuery = ({
       }
 
       return fieldMetadata.morphRelations.map((morphRelation) => ({
-        gqlField: computeMorphRelationFieldName({
+        gqlField: `${computeMorphRelationFieldName({
           fieldName: fieldMetadata.name,
           relationType: morphRelation.type,
           targetObjectMetadataNameSingular:
             morphRelation.targetObjectMetadata.nameSingular,
           targetObjectMetadataNamePlural:
             morphRelation.targetObjectMetadata.namePlural,
-        }),
+        })}Id`,
         fieldMetadata: fieldMetadata,
       }));
     });

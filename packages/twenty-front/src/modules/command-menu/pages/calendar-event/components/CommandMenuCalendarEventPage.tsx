@@ -8,7 +8,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const CommandMenuCalendarEventPage = () => {
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const viewableRecordId = useRecoilComponentValue(
     viewableRecordIdComponentState,
   );
@@ -20,7 +20,7 @@ export const CommandMenuCalendarEventPage = () => {
     recordGqlFields: FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE.fields,
     // TODO: this is not executed on sub-sequent runs, make sure that it is intended
     onCompleted: (record) => {
-      upsertRecords([record]);
+      upsertRecordsInStore([record]);
     },
   });
 

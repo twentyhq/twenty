@@ -47,7 +47,8 @@ export const useBarChartData = ({
           seriesConfig?.color,
           keyIndex,
         );
-        const gradientId = `gradient-${id}-${instanceId}-${key}-${dataIndex}-${keyIndex}`;
+        const sanitizedKey = key.replace(/\s+/g, '-');
+        const gradientId = `gradient-${id}-${instanceId}-${sanitizedKey}-${dataIndex}-${keyIndex}`;
 
         return {
           key,

@@ -4,10 +4,10 @@ import { useRecoilCallback } from 'recoil';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
-import { calculateDragPositions } from '@/object-record/record-drag/shared/utils/calculateDragPositions';
 import { extractRecordPositions } from '@/object-record/record-drag/shared/utils/extractRecordPositions';
 import { isFieldDateTime } from '@/object-record/record-field/ui/types/guards/isFieldDateTime';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import {
@@ -58,19 +58,18 @@ export const useHandleDragOneCalendarCard = () => {
           .getLoadable(calendarDayRecordIdsSelector(destinationDate))
           .getValue() as string[];
 
-        const recordPositionData = extractRecordPositions(
+        const recordsWithPosition = extractRecordPositions(
           destinationRecordIds,
           snapshot,
         );
 
-        const positions = calculateDragPositions({
-          recordIds: destinationRecordIds,
-          recordsToMove: [recordId],
-          destinationIndex,
-          recordPositionData,
-        });
+        const targetRecordId = destinationRecordIds[destinationIndex];
 
-        const newPosition = positions[recordId];
+        const newPosition = computeNewPositionOfDraggedRecord({
+          arrayOfRecordsWithPosition: recordsWithPosition,
+          idOfItemToMove: recordId,
+          idOfTargetItem: targetRecordId,
+        });
 
         const targetDate = parse(destinationDate, 'yyyy-MM-dd', new Date());
         const currentFieldValue = record[calendarFieldMetadata.name];

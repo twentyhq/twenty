@@ -1,4 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { MessageChannelSyncStage } from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
@@ -26,14 +27,25 @@ export const SettingsAccounts = () => {
     shouldOnlyLoadRelationIdentifiers: false,
   });
 
-  const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
+  const { records: allAccounts, loading } =
+    useFindManyRecords<ConnectedAccount>({
+      objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
+      filter: {
+        accountOwnerId: {
+          eq: currentWorkspaceMember?.id,
+        },
       },
-    },
-    recordGqlFields,
+      recordGqlFields,
+    });
+
+  const accountsToShow = allAccounts.filter((account) => {
+    return (
+      account.messageChannels.length === 0 ||
+      account.messageChannels.some(
+        (channel) =>
+          channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION,
+      )
+    );
   });
 
   return (
@@ -57,7 +69,9 @@ export const SettingsAccounts = () => {
                 title={t`Connected accounts`}
                 description={t`Manage your internet accounts.`}
               />
-              <SettingsAccountsConnectedAccountsListCard accounts={accounts} />
+              <SettingsAccountsConnectedAccountsListCard
+                accounts={accountsToShow}
+              />
             </Section>
             <SettingsAccountsBlocklistSection />
             <SettingsAccountsSettingsSection />

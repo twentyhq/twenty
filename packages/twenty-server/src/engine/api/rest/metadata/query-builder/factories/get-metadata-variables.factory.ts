@@ -1,19 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
-import { EndingBeforeInputFactory } from 'src/engine/api/rest/input-factories/ending-before-input.factory';
-import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
-import { type MetadataQueryVariables } from 'src/engine/api/rest/metadata/types/metadata-query-variables.type';
-import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
+import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
+import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
+import { parseStartingAfterRestRequest } from 'src/engine/api/rest/input-request-parsers/starting-after-parser-utils/parse-starting-after-rest-request.util';
+import { MetadataQueryVariables } from 'src/engine/api/rest/metadata/types/metadata-query-variables.type';
+import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
 
 @Injectable()
 export class GetMetadataVariablesFactory {
-  constructor(
-    private readonly startingAfterInputFactory: StartingAfterInputFactory,
-    private readonly endingBeforeInputFactory: EndingBeforeInputFactory,
-    private readonly limitInputFactory: LimitInputFactory,
-  ) {}
-
   create(
     id: string | undefined,
     requestContext: RequestContext,
@@ -22,9 +16,9 @@ export class GetMetadataVariablesFactory {
       return { id };
     }
 
-    const limit = this.limitInputFactory.create(requestContext, 1000);
-    const before = this.endingBeforeInputFactory.create(requestContext);
-    const after = this.startingAfterInputFactory.create(requestContext);
+    const limit = parseLimitRestRequest(requestContext, 1000);
+    const before = parseEndingBeforeRestRequest(requestContext);
+    const after = parseStartingAfterRestRequest(requestContext);
 
     if (before && after) {
       throw new BadRequestException(
