@@ -18,8 +18,38 @@ export const buildDefaultIndexesForCustomObject = ({
   objectFlatFieldMetadatas: FlatFieldMetadata[];
   defaultFlatFieldForCustomObjectMaps: DefaultFlatFieldForCustomObjectMaps;
 }) => {
+  const primaryKeyFlatIndexId = v4();
   const tsFlatVectorIndexId = v4();
   const createdAt = new Date();
+
+  const primaryKeyFlatIndex = generateFlatIndexMetadataWithNameOrThrow({
+    objectFlatFieldMetadatas,
+    flatIndex: {
+      createdAt,
+      flatIndexFieldMetadatas: [
+        {
+          createdAt,
+          fieldMetadataId:
+            defaultFlatFieldForCustomObjectMaps.fields.idField.id,
+          id: v4(),
+          indexMetadataId: primaryKeyFlatIndexId,
+          order: 0,
+          updatedAt: createdAt,
+        },
+      ],
+      id: primaryKeyFlatIndexId,
+      indexType: IndexType.BTREE,
+      indexWhereClause: null,
+      isCustom: false,
+      isUnique: true,
+      objectMetadataId: flatObjectMetadata.id,
+      universalIdentifier: primaryKeyFlatIndexId,
+      updatedAt: createdAt,
+      workspaceId,
+    },
+    flatObjectMetadata,
+  });
+
   const tsVectorFlatIndex = generateFlatIndexMetadataWithNameOrThrow({
     objectFlatFieldMetadatas,
     flatIndex: {
@@ -50,6 +80,7 @@ export const buildDefaultIndexesForCustomObject = ({
 
   return {
     indexes: {
+      primaryKeyFlatIndex,
       tsVectorFlatIndex,
     },
   } as const satisfies { indexes: Record<string, FlatIndexMetadata> };

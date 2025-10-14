@@ -13,23 +13,18 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FieldMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-standard-overrides-properties.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
-import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
-import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
+import { handleIndexChangesDuringFieldUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 type UpdatedFlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadata: FlatFieldMetadata;
-  flatIndexMetadataToUpdate: FlatIndexMetadata[];
-  flatIndexMetadatasToDelete: FlatIndexMetadata[];
-  flatIndexMetadatasToCreate: FlatIndexMetadata[];
 };
 
 type SanitizedUpdateFieldInput = ReturnType<
@@ -53,117 +48,58 @@ const applyUpdatesToFlatFieldMetadata = ({
   flatObjectMetadataMaps,
   flatIndexMaps,
   flatFieldMetadataMaps,
-}: ApplyUpdatesToFlatFieldMetadataArgs) => {
-  return FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.reduce<UpdatedFlatFieldMetadataAndIndexToUpdate>(
-    (
-      {
-        flatFieldMetadata,
-        flatIndexMetadataToUpdate,
-        flatIndexMetadatasToDelete,
-        flatIndexMetadatasToCreate,
-      },
-      property,
-    ) => {
-      const updatedPropertyValue = updatedEditableFieldProperties[property];
-      const isPropertyUpdated =
-        updatedPropertyValue !== undefined &&
-        flatFieldMetadata[property] !== updatedPropertyValue;
+}: ApplyUpdatesToFlatFieldMetadataArgs): {
+  flatFieldMetadata: FlatFieldMetadata;
+  flatIndexMetadataToUpdate: FlatIndexMetadata[];
+  flatIndexMetadatasToDelete: FlatIndexMetadata[];
+  flatIndexMetadatasToCreate: FlatIndexMetadata[];
+} => {
+  const { flatFieldMetadata: updatedFlatFieldMetadata } =
+    FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.reduce<UpdatedFlatFieldMetadataAndIndexToUpdate>(
+      ({ flatFieldMetadata }, property) => {
+        const updatedPropertyValue = updatedEditableFieldProperties[property];
+        const isPropertyUpdated =
+          updatedPropertyValue !== undefined &&
+          flatFieldMetadata[property] !== updatedPropertyValue;
 
-      if (!isPropertyUpdated) {
-        return {
-          flatFieldMetadata,
-          flatIndexMetadataToUpdate,
-          flatIndexMetadatasToDelete,
-          flatIndexMetadatasToCreate,
-        };
-      }
-      const updatedFlatFieldMetadata = {
-        ...flatFieldMetadata,
-        [property]: updatedPropertyValue,
-      };
-
-      if (property === 'options') {
-        updatedFlatFieldMetadata.options =
-          updatedEditableFieldProperties[property]?.map((option) => ({
-            id: v4(),
-            ...option,
-          })) ?? [];
-      }
-
-      let newFlatIndexMetadataToUpdate: FlatIndexMetadata[] = [];
-      let newFlatIndexMetadatasToDelete: FlatIndexMetadata[] = [];
-      let newFlatIndexMetadatasToCreate: FlatIndexMetadata[] = [];
-
-      if (property === 'name' || property === 'isUnique') {
-        const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityMaps: flatObjectMetadataMaps,
-          flatEntityId: flatFieldMetadata.objectMetadataId,
-        });
-
-        const relatedFlatIndexMetadata = Object.values(
-          flatIndexMaps.byId,
-        ).filter(
-          (flatIndexMetadata): flatIndexMetadata is FlatIndexMetadata =>
-            isDefined(flatIndexMetadata) &&
-            flatIndexMetadata.objectMetadataId ===
-              fromFlatFieldMetadata.objectMetadataId &&
-            flatIndexMetadata.flatIndexFieldMetadatas.some(
-              (flatIndexField) =>
-                flatIndexField.fieldMetadataId === fromFlatFieldMetadata.id,
-            ),
-        );
-
-        if (relatedFlatIndexMetadata.length === 0) {
-          const newIndex = generateIndexForFlatFieldMetadata({
-            flatFieldMetadata: updatedFlatFieldMetadata,
-            flatObjectMetadata,
-            workspaceId: flatObjectMetadata.workspaceId,
-          });
-
-          newFlatIndexMetadatasToCreate = [newIndex];
-        } else if (
-          property === 'isUnique' &&
-          updatedFlatFieldMetadata.isUnique === false
-        ) {
-          newFlatIndexMetadatasToDelete = relatedFlatIndexMetadata;
-        } else {
-          newFlatIndexMetadataToUpdate =
-            recomputeIndexOnFlatFieldMetadataNameUpdate({
-              flatFieldMetadataMaps,
-              flatObjectMetadata,
-              fromFlatFieldMetadata,
-              toFlatFieldMetadata: {
-                name: updatedFlatFieldMetadata.name,
-                isUnique: updatedFlatFieldMetadata.isUnique,
-              },
-              relatedFlatIndexMetadata,
-            });
+        if (!isPropertyUpdated) {
+          return { flatFieldMetadata };
         }
-      }
 
-      return {
-        flatFieldMetadata: updatedFlatFieldMetadata,
-        flatIndexMetadataToUpdate: [
-          ...flatIndexMetadataToUpdate,
-          ...newFlatIndexMetadataToUpdate,
-        ],
-        flatIndexMetadatasToDelete: [
-          ...flatIndexMetadatasToDelete,
-          ...newFlatIndexMetadatasToDelete,
-        ],
-        flatIndexMetadatasToCreate: [
-          ...flatIndexMetadatasToCreate,
-          ...newFlatIndexMetadatasToCreate,
-        ],
-      };
-    },
-    {
-      flatFieldMetadata: structuredClone(fromFlatFieldMetadata),
-      flatIndexMetadataToUpdate: [],
-      flatIndexMetadatasToDelete: [],
-      flatIndexMetadatasToCreate: [],
-    },
+        const updatedFlatFieldMetadata = {
+          ...flatFieldMetadata,
+          [property]: updatedPropertyValue,
+        };
+
+        if (property === 'options') {
+          updatedFlatFieldMetadata.options =
+            updatedEditableFieldProperties[property]?.map((option) => ({
+              id: v4(),
+              ...option,
+            })) ?? [];
+        }
+
+        return {
+          flatFieldMetadata: updatedFlatFieldMetadata,
+        };
+      },
+      {
+        flatFieldMetadata: structuredClone(fromFlatFieldMetadata),
+      },
+    );
+
+  const indexChanges = handleIndexChangesDuringFieldUpdate(
+    fromFlatFieldMetadata,
+    updatedFlatFieldMetadata,
+    flatIndexMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
   );
+
+  return {
+    flatFieldMetadata: updatedFlatFieldMetadata,
+    ...indexChanges,
+  };
 };
 
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
