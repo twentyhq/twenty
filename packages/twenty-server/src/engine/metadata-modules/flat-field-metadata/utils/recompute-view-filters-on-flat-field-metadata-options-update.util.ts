@@ -4,7 +4,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadataEnumOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata-enum-options.util';
 import { FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
@@ -19,7 +19,7 @@ type RecomputeViewFiltersOnFlatFieldMetadataOptionsUpdateArgs = {
 
 export type FlatViewFiltersToDeleteAndUpdate = {
   flatViewFiltersToDelete: FlatViewFilter[];
-  flatViewFitlersToUpdate: FlatViewFilter[];
+  flatViewFiltersToUpdate: FlatViewFilter[];
 };
 export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
   flatViewFilterMaps,
@@ -28,7 +28,7 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
 }: RecomputeViewFiltersOnFlatFieldMetadataOptionsUpdateArgs): FlatViewFiltersToDeleteAndUpdate => {
   const flatViewFiltersToCreateAndUpdate: FlatViewFiltersToDeleteAndUpdate = {
     flatViewFiltersToDelete: [],
-    flatViewFitlersToUpdate: [],
+    flatViewFiltersToUpdate: [],
   };
 
   const {
@@ -47,14 +47,12 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
     return flatViewFiltersToCreateAndUpdate;
   }
 
-  const flatViewFilters = getSubFlatEntityMapsOrThrow({
-    flatEntityIds: fromFlatFieldMetadata.viewFilterIds, // view filter is empty here
+  const flatViewFilters = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+    flatEntityIds: fromFlatFieldMetadata.viewFilterIds,
     flatEntityMaps: flatViewFilterMaps,
   });
 
-  for (const viewFilter of Object.values(flatViewFilters.byId).filter(
-    isDefined,
-  )) {
+  for (const viewFilter of flatViewFilters) {
     const rawViewFitlerValue = viewFilter.value;
     if (!isDefined(rawViewFitlerValue)) {
       continue;
@@ -109,7 +107,7 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
       (option) => option.value,
     );
 
-    flatViewFiltersToCreateAndUpdate.flatViewFitlersToUpdate.push({
+    flatViewFiltersToCreateAndUpdate.flatViewFiltersToUpdate.push({
       ...viewFilter,
       value: optionsValues,
     });

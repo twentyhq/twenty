@@ -21,8 +21,8 @@ type SanitizedUpdateFieldInput = ReturnType<
 
 export type FlatFieldMetadataRelatedEntities = {
   flatIndexMetadatasToUpdate: FlatIndexMetadata[];
-  flatViewFilterToDelete: FlatViewFilter[];
-  flatViewFilterToUpdate: FlatViewFilter[];
+  flatViewFiltersToDelete: FlatViewFilter[];
+  flatViewFiltersToUpdate: FlatViewFilter[];
 };
 
 type HandleFlatFieldMetadataUpdateSideEffectArgs = {
@@ -66,8 +66,8 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       const sideEffectResult: UpdatedFlatFieldMetadataAndRelatedEntities = {
         flatIndexMetadatasToUpdate: [],
         flatFieldMetadata: accumulator.flatFieldMetadata,
-        flatViewFilterToDelete: [],
-        flatViewFilterToUpdate: [],
+        flatViewFiltersToDelete: [],
+        flatViewFiltersToUpdate: [],
       };
       // Note: Not really comparing options integrity here, will be improved once side effects are handled within the builder
       if (
@@ -80,7 +80,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
             ...option,
           })) ?? [];
 
-        const { flatViewFiltersToDelete, flatViewFitlersToUpdate } =
+        const { flatViewFiltersToDelete, flatViewFiltersToUpdate} =
           recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate({
             flatViewFilterMaps,
             fromFlatFieldMetadata: accumulator.flatFieldMetadata,
@@ -90,11 +90,11 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
               to: updatedFlatFieldMetadata.options,
             },
           });
-        sideEffectResult.flatViewFilterToDelete.push(
+        sideEffectResult.flatViewFiltersToDelete.push(
           ...flatViewFiltersToDelete,
         );
-        sideEffectResult.flatViewFilterToUpdate.push(
-          ...flatViewFitlersToUpdate,
+        sideEffectResult.flatViewFiltersToUpdate.push(
+          ...flatViewFiltersToUpdate,
         );
       }
 
@@ -123,21 +123,21 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
           ...accumulator.flatIndexMetadatasToUpdate,
           ...sideEffectResult.flatIndexMetadatasToUpdate,
         ],
-        flatViewFilterToDelete: [
-          ...accumulator.flatViewFilterToDelete,
-          ...sideEffectResult.flatViewFilterToDelete,
+        flatViewFiltersToDelete: [
+          ...accumulator.flatViewFiltersToDelete,
+          ...sideEffectResult.flatViewFiltersToDelete,
         ],
-        flatViewFilterToUpdate: [
-          ...accumulator.flatViewFilterToUpdate,
-          ...sideEffectResult.flatViewFilterToUpdate,
+        flatViewFiltersToUpdate: [
+          ...accumulator.flatViewFiltersToUpdate,
+          ...sideEffectResult.flatViewFiltersToUpdate,
         ],
       } satisfies UpdatedFlatFieldMetadataAndRelatedEntities;
     },
     {
       flatFieldMetadata: structuredClone(initialFromFlatFieldMetadata),
-      flatViewFilterToUpdate: [],
+      flatViewFiltersToUpdate: [],
       flatIndexMetadatasToUpdate: [],
-      flatViewFilterToDelete: [],
+      flatViewFiltersToDelete: [],
     } satisfies UpdatedFlatFieldMetadataAndRelatedEntities,
   );
 };

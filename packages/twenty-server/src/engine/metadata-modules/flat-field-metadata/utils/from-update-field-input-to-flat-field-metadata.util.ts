@@ -112,8 +112,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       result: {
         flatFieldMetadatasToUpdate: [updatedStandardFlatFieldMetadata],
         flatIndexMetadatasToUpdate: [],
-        flatViewFilterToDelete: [],
-        flatViewFilterToUpdate: [],
+        flatViewFiltersToDelete: [],
+        flatViewFiltersToUpdate: [],
       },
     };
   }
@@ -148,8 +148,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
         const {
           flatFieldMetadata,
           flatIndexMetadatasToUpdate,
-          flatViewFilterToDelete,
-          flatViewFilterToUpdate,
+          flatViewFiltersToDelete,
+          flatViewFiltersToUpdate,
         } = handleFlatFieldMetadataUpdateSideEffect({
           flatViewFilterMaps,
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -168,21 +168,21 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
             ...acc.flatIndexMetadatasToUpdate,
             ...flatIndexMetadatasToUpdate,
           ],
-          flatViewFilterToDelete: [
-            ...acc.flatViewFilterToDelete,
-            ...flatViewFilterToDelete,
+          flatViewFiltersToDelete: [
+            ...acc.flatViewFiltersToDelete,
+            ...flatViewFiltersToDelete,
           ],
-          flatViewFilterToUpdate: [
-            ...acc.flatViewFilterToUpdate,
-            ...flatViewFilterToUpdate,
+          flatViewFiltersToUpdate: [
+            ...acc.flatViewFiltersToUpdate,
+            ...flatViewFiltersToUpdate,
           ],
         };
       },
       {
         flatFieldMetadatasToUpdate: [],
         flatIndexMetadatasToUpdate: [],
-        flatViewFilterToDelete: [],
-        flatViewFilterToUpdate: [],
+        flatViewFiltersToDelete: [],
+        flatViewFiltersToUpdate: [],
       },
     );
 

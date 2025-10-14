@@ -205,8 +205,8 @@ export class FieldMetadataServiceV2 {
     const {
       flatFieldMetadatasToUpdate: optimisticallyUpdatedFlatFieldMetadatas,
       flatIndexMetadatasToUpdate,
-      flatViewFilterToDelete,
-      flatViewFilterToUpdate,
+      flatViewFiltersToDelete: flatViewFilterToDelete,
+      flatViewFiltersToUpdate: flatViewFilterToUpdate,
     } = inputTranspilationResult.result;
 
     const toFlatFieldMetadataMaps =
