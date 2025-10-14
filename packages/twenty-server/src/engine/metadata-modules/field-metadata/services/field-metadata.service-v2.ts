@@ -178,6 +178,7 @@ export class FieldMetadataServiceV2 {
       flatIndexMaps: existingFlatIndexMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatViewFilterMaps: existingFlatViewFilterMaps,
+      flatViewGroupMaps: existingFlatViewGroupMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -186,6 +187,7 @@ export class FieldMetadataServiceV2 {
           'flatIndexMaps',
           'flatFieldMetadataMaps',
           'flatViewFilterMaps',
+          'flatViewGroupMaps',
         ],
       },
     );
@@ -196,6 +198,7 @@ export class FieldMetadataServiceV2 {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       updateFieldInput,
       flatViewFilterMaps: existingFlatViewFilterMaps,
+      flatViewGroupMaps: existingFlatViewGroupMaps,
     });
 
     if (inputTranspilationResult.status === 'fail') {
@@ -207,6 +210,9 @@ export class FieldMetadataServiceV2 {
       flatIndexMetadatasToUpdate,
       flatViewFiltersToDelete: flatViewFilterToDelete,
       flatViewFiltersToUpdate: flatViewFilterToUpdate,
+      flatViewGroupsToCreate,
+      flatViewGroupsToDelete,
+      flatViewGroupsToUpdate,
     } = inputTranspilationResult.result;
 
     const toFlatFieldMetadataMaps =
@@ -261,6 +267,40 @@ export class FieldMetadataServiceV2 {
       flatViewFilterWithDeleted,
     );
 
+    const fromFlatViewGroupMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: [...flatViewGroupsToUpdate, ...flatViewGroupsToUpdate].map(
+        ({ id }) => id,
+      ),
+      flatEntityMaps: existingFlatViewGroupMaps,
+    });
+
+    const toFlatViewGroupMapsWithDeleted = flatViewGroupsToDelete.reduce(
+      (flatViewGroupMaps, flatViewGroup) =>
+        deleteFlatEntityFromFlatEntityMapsOrThrow({
+          entityToDeleteId: flatViewGroup.id,
+          flatEntityMaps: flatViewGroupMaps,
+        }),
+      fromFlatViewGroupMaps,
+    );
+
+    const toFlatViewGroupMapsWithUpdated = flatViewGroupsToUpdate.reduce(
+      (flatViewGroupMaps, flatViewGroup) =>
+        replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: flatViewGroup,
+          flatEntityMaps: flatViewGroupMaps,
+        }),
+      toFlatViewGroupMapsWithDeleted,
+    );
+
+    const toFlatViewGroupMaps = flatViewGroupsToCreate.reduce(
+      (flatViewGroupMaps, flatViewGroup) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatViewGroup,
+          flatEntityMaps: flatViewGroupMaps,
+        }),
+      toFlatViewGroupMapsWithUpdated,
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -280,10 +320,14 @@ export class FieldMetadataServiceV2 {
               from: fromFlatViewFiltersMaps,
               to: toFlatViewFitlerMaps,
             },
+            flatViewGroupMaps: {
+              from: fromFlatViewGroupMaps,
+              to: toFlatViewGroupMaps,
+            },
           },
           buildOptions: {
             isSystemBuild: false,
-            // TODO toggle to true for view filter once coco merged enhancement
+            // TODO toggle to true for view filter and view group once coco merged enhancement
             inferDeletionFromMissingEntities: false,
           },
           workspaceId,

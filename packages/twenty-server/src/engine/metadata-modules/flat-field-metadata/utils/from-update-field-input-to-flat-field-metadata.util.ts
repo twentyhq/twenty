@@ -31,6 +31,7 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   | 'flatIndexMaps'
   | 'flatFieldMetadataMaps'
   | 'flatViewFilterMaps'
+  | 'flatViewGroupMaps'
 >;
 
 type FlatFieldMetadataAndIndexToUpdate = {
@@ -42,6 +43,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatFieldMetadataMaps,
   updateFieldInput: rawUpdateFieldInput,
   flatViewFilterMaps,
+  flatViewGroupMaps,
 }: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadataAndIndexToUpdate> => {
   const updateFieldInputInformalProperties =
     extractAndSanitizeObjectStringFields(rawUpdateFieldInput, [
@@ -110,6 +112,9 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     return {
       status: 'success',
       result: {
+        flatViewGroupsToCreate: [],
+        flatViewGroupsToDelete: [],
+        flatViewGroupsToUpdate: [],
         flatFieldMetadatasToUpdate: [updatedStandardFlatFieldMetadata],
         flatIndexMetadatasToUpdate: [],
         flatViewFiltersToDelete: [],
@@ -142,16 +147,29 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     ...relatedFlatFieldMetadatasToUpdate,
   ];
 
+  const initialAccumulator: FlatFieldMetadataAndIndexToUpdate = {
+    flatFieldMetadatasToUpdate: [],
+    flatIndexMetadatasToUpdate: [],
+    flatViewFiltersToDelete: [],
+    flatViewFiltersToUpdate: [],
+    flatViewGroupsToCreate: [],
+    flatViewGroupsToDelete: [],
+    flatViewGroupsToUpdate: [],
+  };
   const optimisticiallyUpdatedFlatFieldMetadatas =
     flatFieldMetadatasToUpdate.reduce<FlatFieldMetadataAndIndexToUpdate>(
-      (acc, fromFlatFieldMetadata) => {
+      (accumulator, fromFlatFieldMetadata) => {
         const {
           flatFieldMetadata,
+          flatViewGroupsToCreate,
+          flatViewGroupsToDelete,
+          flatViewGroupsToUpdate,
           flatIndexMetadatasToUpdate,
           flatViewFiltersToDelete,
           flatViewFiltersToUpdate,
         } = handleFlatFieldMetadataUpdateSideEffect({
           flatViewFilterMaps,
+          flatViewGroupMaps,
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           fromFlatFieldMetadata,
           flatFieldMetadataMaps,
@@ -161,29 +179,36 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
         return {
           flatFieldMetadatasToUpdate: [
-            ...acc.flatFieldMetadatasToUpdate,
+            ...accumulator.flatFieldMetadatasToUpdate,
             flatFieldMetadata,
           ],
           flatIndexMetadatasToUpdate: [
-            ...acc.flatIndexMetadatasToUpdate,
+            ...accumulator.flatIndexMetadatasToUpdate,
             ...flatIndexMetadatasToUpdate,
           ],
           flatViewFiltersToDelete: [
-            ...acc.flatViewFiltersToDelete,
+            ...accumulator.flatViewFiltersToDelete,
             ...flatViewFiltersToDelete,
           ],
           flatViewFiltersToUpdate: [
-            ...acc.flatViewFiltersToUpdate,
+            ...accumulator.flatViewFiltersToUpdate,
             ...flatViewFiltersToUpdate,
+          ],
+          flatViewGroupsToCreate: [
+            ...accumulator.flatViewGroupsToCreate,
+            ...flatViewGroupsToCreate,
+          ],
+          flatViewGroupsToDelete: [
+            ...accumulator.flatViewGroupsToDelete,
+            ...flatViewGroupsToDelete,
+          ],
+          flatViewGroupsToUpdate: [
+            ...accumulator.flatViewGroupsToUpdate,
+            ...flatViewGroupsToUpdate,
           ],
         };
       },
-      {
-        flatFieldMetadatasToUpdate: [],
-        flatIndexMetadatasToUpdate: [],
-        flatViewFiltersToDelete: [],
-        flatViewFiltersToUpdate: [],
-      },
+      initialAccumulator,
     );
 
   return {
