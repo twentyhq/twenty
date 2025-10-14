@@ -6,8 +6,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
 import { ObjectIndexes } from '@/settings/data-model/object-details/components/tabs/ObjectIndexes';
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
-import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
-import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -35,6 +33,7 @@ import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -42,7 +41,7 @@ const StyledContentContainer = styled.div`
   padding-left: 0;
 `;
 
-const StyledObjectTypeTag = styled(SettingsDataModelObjectTypeTag)`
+const StyledObjectTypeTag = styled(SettingsItemTypeTag)`
   box-sizing: border-box;
   height: ${({ theme }) => theme.spacing(5)};
   margin-left: ${({ theme }) => theme.spacing(2)};
@@ -132,15 +131,13 @@ export const SettingsObjectDetailPage = () => {
     }
   };
 
-  const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
-
   return (
     <>
       <SubMenuTopBarContainer
         title={
           <StyledTitleContainer>
             <H3Title title={objectMetadataItem.labelPlural} />
-            <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
+            <StyledObjectTypeTag item={objectMetadataItem} />
           </StyledTitleContainer>
         }
         links={[

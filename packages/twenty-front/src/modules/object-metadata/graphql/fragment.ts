@@ -18,6 +18,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     updatedAt
     labelIdentifierFieldMetadataId
     imageIdentifierFieldMetadataId
+    applicationId
     shortcut
     isLabelSyncedWithName
     isSearchable

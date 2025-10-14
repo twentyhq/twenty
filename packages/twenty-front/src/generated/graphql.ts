@@ -51,6 +51,7 @@ export type AdminPanelWorkerQueueHealth = {
 
 export type Agent = {
   __typename?: 'Agent';
+  applicationId?: Maybe<Scalars['UUID']>;
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
@@ -2677,6 +2678,7 @@ export type NumberChartConfiguration = {
 
 export type Object = {
   __typename?: 'Object';
+  applicationId?: Maybe<Scalars['UUID']>;
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   duplicateCriteria?: Maybe<Array<Array<Scalars['String']>>>;

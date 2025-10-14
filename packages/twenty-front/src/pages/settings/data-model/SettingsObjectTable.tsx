@@ -16,7 +16,7 @@ import { useMemo, useState } from 'react';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { IconChevronRight, IconSearch } from 'twenty-ui/display';
 import styled from '@emotion/styled';
-import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
+import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -67,7 +67,7 @@ export const SettingsObjectTable = ({
           ({
             objectMetadataItem,
             labelPlural: objectMetadataItem.labelPlural,
-            objectTypeLabel: getObjectTypeLabel(objectMetadataItem).labelText,
+            objectTypeLabel: getItemTagInfo(objectMetadataItem).labelText,
             fieldsCount: objectMetadataItem.fields.filter(
               (field) => !field.isSystem,
             ).length,
@@ -87,7 +87,10 @@ export const SettingsObjectTable = ({
           ({
             objectMetadataItem,
             labelPlural: objectMetadataItem.labelPlural,
-            objectTypeLabel: getObjectTypeLabel(objectMetadataItem).labelText,
+            objectTypeLabel: getItemTagInfo({
+              isCustom: objectMetadataItem.isCustom,
+              isRemote: objectMetadataItem.isRemote,
+            }).labelText,
             fieldsCount: objectMetadataItem.fields.filter(
               (field) => !field.isSystem,
             ).length,
