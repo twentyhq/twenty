@@ -22,7 +22,7 @@ export const UUIDScalarType = new GraphQLScalarType({
   parseValue: checkUUID,
   parseLiteral(ast): string {
     if (ast.kind !== Kind.STRING) {
-      throw new ValidationError('UUID must be a string');
+      throw new ValidationError(`UUID (${ast.value}) must be a string`);
     }
 
     return ast.value;
