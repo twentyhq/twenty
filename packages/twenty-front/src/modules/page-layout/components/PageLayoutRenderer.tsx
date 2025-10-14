@@ -22,7 +22,7 @@ export const PageLayoutRenderer = ({
   return (
     <LayoutRenderingProvider
       value={{
-        targetRecord: undefined,
+        targetRecordIdentifier: undefined,
         layoutType: PageLayoutType.DASHBOARD,
         isInRightDrawer: false,
       }}

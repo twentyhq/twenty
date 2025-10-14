@@ -515,7 +515,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     const emptyNodeStep: WorkflowEmptyAction = {
       id: v4(),
-      name: 'Empty Node',
+      name: 'Add an Action',
       type: WorkflowActionType.EMPTY,
       valid: true,
       nextStepIds: [iteratorStepId],

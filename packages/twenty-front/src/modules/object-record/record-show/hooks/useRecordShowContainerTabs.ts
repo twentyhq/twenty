@@ -38,7 +38,6 @@ const OBJECT_SPECIFIC_LAYOUTS: Partial<
 };
 
 export const useRecordShowContainerTabs = (
-  loading: boolean,
   targetObjectNameSingular: CoreObjectNameSingular,
   isInRightDrawer: boolean,
   objectMetadataItem: ObjectMetadataItem,
@@ -101,7 +100,7 @@ export const useRecordShowContainerTabs = (
           title,
           Icon,
           cards,
-          hide: loading || shouldHide,
+          hide: shouldHide,
         };
       })
       // When isInRightDrawer === true, we merge first and second tab into first tab
