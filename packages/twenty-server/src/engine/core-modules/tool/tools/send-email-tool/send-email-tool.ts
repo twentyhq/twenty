@@ -106,59 +106,59 @@ export class SendEmailTool implements Tool {
     if (files.length === 0) {
       return [];
     }
-  
+
     const fileRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FileEntity>(
         workspaceId,
         'file',
       );
-  
+
     const fileIds = files.map((file) => file.id);
     const fileEntities = await fileRepository.find({
       where: { id: In(fileIds) },
     });
-  
+
     const fileEntityMap = new Map(
       fileEntities.map((entity) => [entity.id, entity]),
     );
-  
+
     const filesNotFound: string[] = [];
     for (const fileMetadata of files) {
       if (!fileEntityMap.has(fileMetadata.id)) {
         filesNotFound.push(`${fileMetadata.name} (${fileMetadata.id})`);
       }
     }
-  
+
     if (filesNotFound.length > 0) {
       throw new SendEmailToolException(
         `Files not found: ${filesNotFound.join(', ')}`,
         SendEmailToolExceptionCode.FILE_NOT_FOUND,
       );
     }
-  
+
     const attachments: MessageAttachment[] = [];
-  
+
     for (const fileMetadata of files) {
       const fileEntity = fileEntityMap.get(fileMetadata.id)!;
-  
+
       const { folderPath, filename } = extractFolderPathAndFilename(
         fileEntity.fullPath,
       );
-  
+
       const stream = await this.fileStorageService.read({
         folderPath: `workspace-${workspaceId}/${folderPath}`,
         filename,
       });
-  
+
       const buffer = await streamToBuffer(stream);
-  
+
       attachments.push({
         filename: fileMetadata.name,
         content: buffer,
         contentType: fileMetadata.type,
       });
     }
-  
+
     return attachments;
   }
 
