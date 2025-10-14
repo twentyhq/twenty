@@ -9,7 +9,7 @@ type Differences<T> = {
   updated: { from: T; to: T }[];
   deleted: T[];
 };
-type CompareToFlatFieldMetadataEnumOptionsArgs = FromTo<
+export type CompareToFlatFieldMetadataEnumOptionsArgs = FromTo<
   FieldMetadataEnumOptions,
   'options'
 > & {
