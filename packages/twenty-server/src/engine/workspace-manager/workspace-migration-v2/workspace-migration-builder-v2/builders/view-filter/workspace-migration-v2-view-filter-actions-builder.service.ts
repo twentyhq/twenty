@@ -67,7 +67,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
       replaceFlatEntityInFlatEntityMapsOrThrow({
         flatEntity: {
           ...flatFieldMetadata,
-          viewFiltersIds: [
+          viewFilterIds: [
             ...flatFieldMetadata.viewFieldIds,
             flatViewFilterToValidate.id,
           ],

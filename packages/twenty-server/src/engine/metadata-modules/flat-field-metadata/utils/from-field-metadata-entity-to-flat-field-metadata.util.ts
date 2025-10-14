@@ -20,8 +20,9 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
 
   return {
     ...fieldMetadataWithoutRelations,
+    viewGroupIds: fieldMetadataEntity.viewGroups.map(({ id }) => id),
     viewFieldIds: fieldMetadataEntity.viewFields.map(({ id }) => id),
-    viewFiltersIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),
+    viewFilterIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),
     universalIdentifier:
       fieldMetadataWithoutRelations.standardId ??
       fieldMetadataWithoutRelations.id,

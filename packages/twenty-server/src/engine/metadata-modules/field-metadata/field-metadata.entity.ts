@@ -27,6 +27,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 
 @Entity('fieldMetadata')
 @Check(
@@ -192,6 +193,9 @@ export class FieldMetadataEntity<
   @OneToMany(() => ViewFieldEntity, (viewField) => viewField.fieldMetadata)
   viewFields: Relation<ViewFieldEntity[]>;
 
-  @OneToMany(() => ViewFilterEntity, (viewField) => viewField.fieldMetadata)
+  @OneToMany(() => ViewFilterEntity, (viewFilter) => viewFilter.fieldMetadata)
   viewFilters: Relation<ViewFilterEntity[]>;
+
+  @OneToMany(() => ViewGroupEntity, (viewGroup) => viewGroup.fieldMetadata)
+  viewGroups: Relation<ViewGroupEntity[]>;
 }

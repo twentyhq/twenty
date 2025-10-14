@@ -139,6 +139,7 @@ export class StandardFieldFactory {
       {
         viewFields: [],
         viewFilters: [],
+        viewGroups: [],
         type: workspaceFieldMetadataArgs.type,
         standardId: workspaceFieldMetadataArgs.standardId,
         name: workspaceFieldMetadataArgs.name,
@@ -190,6 +191,7 @@ export class StandardFieldFactory {
     fieldMetadataCollection.push({
       viewFields: [],
       viewFilters: [],
+      viewGroups: [],
       type: FieldMetadataType.RELATION,
       standardId: workspaceRelationMetadataArgs.standardId,
       name: workspaceRelationMetadataArgs.name,

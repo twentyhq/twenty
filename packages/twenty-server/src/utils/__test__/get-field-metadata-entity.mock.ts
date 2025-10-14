@@ -21,6 +21,7 @@ export const getMockFieldMetadataEntity = <
   return {
     viewFilters: [],
     viewFields: [],
+    viewGroups: [],
     morphId: null,
     fieldPermissions: [],
     icon: null,

@@ -10,6 +10,7 @@ export const FIELD_METADATA_RELATION_PROPERTIES = [
   'object',
   'viewFields',
   'viewFilters',
+  'viewGroups',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 
 export type FieldMetadataEntityRelationProperties =
@@ -19,5 +20,6 @@ export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
   Omit<FieldMetadataEntity<T>, FieldMetadataEntityRelationProperties> & {
     universalIdentifier: string;
     viewFieldIds: string[];
-    viewFiltersIds: string[];
+    viewFilterIds: string[];
+    viewGroupIds: string[];
   };

@@ -46,6 +46,7 @@ export const computeStandardFields = (
           ...rest,
           viewFilters: [],
           viewFields: [],
+          viewGroups: [],
           standardId: relationStandardId,
           defaultValue: null,
           isNullable: true,

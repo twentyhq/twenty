@@ -48,7 +48,7 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
   }
 
   const flatViewFilters = getSubFlatEntityMapsOrThrow({
-    flatEntityIds: fromFlatFieldMetadata.viewFiltersIds, // view filter is empty here
+    flatEntityIds: fromFlatFieldMetadata.viewFilterIds, // view filter is empty here
     flatEntityMaps: flatViewFilterMaps,
   });
 
