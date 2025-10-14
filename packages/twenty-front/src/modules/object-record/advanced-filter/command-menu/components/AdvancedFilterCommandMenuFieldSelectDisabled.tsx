@@ -1,13 +1,13 @@
 import { useRecordFilterField } from '@/object-record/advanced-filter/hooks/useRecordFilterField';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 
-type WorkflowAdvancedFilterFieldSelectDisabledProps = {
+type AdvancedFilterCommandMenuFieldSelectDisabledProps = {
   recordFilterId: string;
 };
 
-export const WorkflowAdvancedFilterFieldSelectDisabled = ({
+export const AdvancedFilterCommandMenuFieldSelectDisabled = ({
   recordFilterId,
-}: WorkflowAdvancedFilterFieldSelectDisabledProps) => {
+}: AdvancedFilterCommandMenuFieldSelectDisabledProps) => {
   const { label, icon } = useRecordFilterField(recordFilterId);
 
   return (

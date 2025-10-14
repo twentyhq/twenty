@@ -1,4 +1,5 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
@@ -8,20 +9,35 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { useContext } from 'react';
+import { useRecoilValue } from 'recoil';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
-export const WorkflowFindRecordsAddFilterButton = ({
-  defaultFieldMetadataItem,
+
+export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
+  objectMetadataItem,
 }: {
-  defaultFieldMetadataItem: FieldMetadataItem;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { readonly } = useContext(AdvancedFilterContext);
   const rootRecordFilterGroup = useRecoilComponentValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
+
+  const availableFieldMetadataItemsForFilter = useRecoilValue(
+    availableFieldMetadataItemsForFilterFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
+  const defaultFieldMetadataItem =
+    availableFieldMetadataItemsForFilter.find(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.id ===
+        objectMetadataItem?.labelIdentifierFieldMetadataId,
+    ) ?? availableFieldMetadataItemsForFilter[0];
 
   const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
 

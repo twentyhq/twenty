@@ -1,3 +1,9 @@
+import { AdvancedFilterCommandMenuColumn } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuColumn';
+import { AdvancedFilterCommandMenuFieldSelectDisabled } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuFieldSelectDisabled';
+import { AdvancedFilterCommandMenuLogicalOperatorCell } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuLogicalOperatorCell';
+
+import { AdvancedFilterCommandMenuRecordFilterOperandSelect } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterOperandSelect';
+import { AdvancedFilterCommandMenuValueFormInput } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuValueFormInput';
 import { AdvancedFilterFieldSelectDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButton';
 import { AdvancedFilterRecordFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
@@ -5,11 +11,6 @@ import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/obje
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { WorkflowAdvancedFilterDropdownColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterDropdownColumn';
-import { WorkflowAdvancedFilterFieldSelectDisabled } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterFieldSelectDisabled';
-import { WorkflowAdvancedFilterValueFormInput } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterFormInput';
-import { WorkflowAdvancedFilterLogicalOperatorCell } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterLogicalOperatorCell';
-import { WorkflowAdvancedFilterRecordFilterOperandSelect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterOperandSelect';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 
@@ -20,15 +21,17 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const WorkflowAdvancedFilterRecordFilterColumn = ({
-  recordFilterGroup,
-  recordFilter,
-  recordFilterIndex,
-}: {
+type AdvancedFilterCommandMenuRecordFilterColumnProps = {
   recordFilterGroup: RecordFilterGroup;
   recordFilter: RecordFilter;
   recordFilterIndex: number;
-}) => {
+};
+
+export const AdvancedFilterCommandMenuRecordFilterColumn = ({
+  recordFilterGroup,
+  recordFilter,
+  recordFilterIndex,
+}: AdvancedFilterCommandMenuRecordFilterColumnProps) => {
   const { readonly } = useContext(AdvancedFilterContext);
 
   return (
@@ -39,9 +42,9 @@ export const WorkflowAdvancedFilterRecordFilterColumn = ({
         ),
       }}
     >
-      <WorkflowAdvancedFilterDropdownColumn>
+      <AdvancedFilterCommandMenuColumn>
         <StyledContainer>
-          <WorkflowAdvancedFilterLogicalOperatorCell
+          <AdvancedFilterCommandMenuLogicalOperatorCell
             index={recordFilterIndex}
             recordFilterGroup={recordFilterGroup}
           />
@@ -52,7 +55,7 @@ export const WorkflowAdvancedFilterRecordFilterColumn = ({
           )}
         </StyledContainer>
         {readonly ? (
-          <WorkflowAdvancedFilterFieldSelectDisabled
+          <AdvancedFilterCommandMenuFieldSelectDisabled
             recordFilterId={recordFilter.id}
           />
         ) : (
@@ -60,13 +63,13 @@ export const WorkflowAdvancedFilterRecordFilterColumn = ({
             recordFilterId={recordFilter.id}
           />
         )}
-        <WorkflowAdvancedFilterRecordFilterOperandSelect
+        <AdvancedFilterCommandMenuRecordFilterOperandSelect
           recordFilterId={recordFilter.id}
         />
-        <WorkflowAdvancedFilterValueFormInput
+        <AdvancedFilterCommandMenuValueFormInput
           recordFilterId={recordFilter.id}
         />
-      </WorkflowAdvancedFilterDropdownColumn>
+      </AdvancedFilterCommandMenuColumn>
     </ObjectFilterDropdownComponentInstanceContext.Provider>
   );
 };
