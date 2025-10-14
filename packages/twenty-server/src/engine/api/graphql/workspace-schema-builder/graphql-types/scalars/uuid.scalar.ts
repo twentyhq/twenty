@@ -6,10 +6,10 @@ import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-e
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const checkUUID = (value: any): string => {
   if (typeof value !== 'string') {
-    throw new ValidationError('UUID (' + value + ') must be a string');
+    throw new ValidationError(`UUID (${value}) must be a string`);
   }
   if (!uuidValidate(value)) {
-    throw new ValidationError('Invalid UUID: ' + value);
+    throw new ValidationError(`Invalid UUID: ${value}`);
   }
 
   return value;
