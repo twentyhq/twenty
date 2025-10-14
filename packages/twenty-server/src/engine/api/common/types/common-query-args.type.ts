@@ -1,7 +1,11 @@
-import { type ObjectRecord } from 'twenty-shared/types';
+import {
+  type ObjectRecord,
+  type OrderByWithGroupBy,
+} from 'twenty-shared/types';
 
 import {
   type ObjectRecordFilter,
+  type ObjectRecordGroupBy,
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -11,6 +15,7 @@ export enum CommonQueryNames {
   findOne = 'findOne',
   findMany = 'findMany',
   createMany = 'createMany',
+  groupBy = 'groupBy',
 }
 
 export interface FindOneQueryArgs {
@@ -39,3 +44,15 @@ export interface CreateOneQueryArgs {
   data: Partial<ObjectRecord>;
   upsert?: boolean;
 }
+export interface GroupByQueryArgs {
+  selectedFieldsResult: CommonSelectedFieldsResult;
+  filter?: ObjectRecordFilter;
+  orderBy?: OrderByWithGroupBy;
+  groupBy: ObjectRecordGroupBy;
+  viewId?: string;
+}
+
+export type CommonQueryArgs =
+  | FindOneQueryArgs
+  | FindManyQueryArgs
+  | GroupByQueryArgs;
