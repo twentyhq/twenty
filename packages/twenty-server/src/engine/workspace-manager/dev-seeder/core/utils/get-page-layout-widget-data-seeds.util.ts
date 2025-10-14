@@ -65,10 +65,12 @@ export const getPageLayoutWidgetDataSeeds = (
   const companyArrFieldId = getFieldId(companyObject, 'annualRecurringRevenue');
   const companyNameFieldId = getFieldId(companyObject, 'name');
   const companyLinkedinLinkFieldId = getFieldId(companyObject, 'linkedinLink');
+  const companyAddressFieldId = getFieldId(companyObject, 'address');
 
   const personIdFieldId = getFieldId(personObject, 'id');
   const personCityFieldId = getFieldId(personObject, 'city');
   const personJobTitleFieldId = getFieldId(personObject, 'jobTitle');
+  const personCompanyFieldId = getFieldId(personObject, 'company');
 
   const opportunityIdFieldId = getFieldId(opportunityObject, 'id');
 
@@ -159,19 +161,21 @@ export const getPageLayoutWidgetDataSeeds = (
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
       ),
-      title: 'Deals by Stage',
+      title: 'Pipeline Value by Close Date (Stacked by Stage)',
       type: WidgetType.GRAPH,
       gridPosition: { row: 4, column: 0, rowSpan: 4, columnSpan: 6 },
       configuration:
         isDefined(opportunityAmountFieldId) &&
+        isDefined(opportunityCloseDateFieldId) &&
         isDefined(opportunityStageFieldId)
           ? {
               graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: opportunityAmountFieldId,
               aggregateOperation: AggregateOperations.SUM,
-              primaryAxisGroupByFieldMetadataId: opportunityStageFieldId,
-              primaryAxisOrderBy: 'FIELD_DESC',
-              axisNameDisplay: AxisNameDisplay.NONE,
+              primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
+              secondaryAxisGroupByFieldMetadataId: opportunityStageFieldId,
+              primaryAxisOrderBy: 'FIELD_ASC',
+              axisNameDisplay: AxisNameDisplay.BOTH,
               displayDataLabel: false,
             }
           : null,
@@ -286,18 +290,22 @@ export const getPageLayoutWidgetDataSeeds = (
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
       ),
-      title: 'Companies by Size',
+      title: 'Companies by Size (Stacked by City)',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 8, rowSpan: 6, columnSpan: 4 },
       configuration:
-        isDefined(companyIdFieldId) && isDefined(companyEmployeesFieldId)
+        isDefined(companyIdFieldId) &&
+        isDefined(companyEmployeesFieldId) &&
+        isDefined(companyAddressFieldId)
           ? {
               graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: companyIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
               primaryAxisGroupByFieldMetadataId: companyEmployeesFieldId,
+              secondaryAxisGroupByFieldMetadataId: companyAddressFieldId,
+              secondaryAxisGroupBySubFieldName: 'addressCity',
               primaryAxisOrderBy: 'FIELD_ASC',
-              axisNameDisplay: AxisNameDisplay.NONE,
+              axisNameDisplay: AxisNameDisplay.BOTH,
               displayDataLabel: false,
             }
           : null,
@@ -451,18 +459,18 @@ export const getPageLayoutWidgetDataSeeds = (
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.TEAM_OVERVIEW,
       ),
-      title: 'Geographic Distribution',
+      title: 'Team Size by Company',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 6, rowSpan: 5, columnSpan: 6 },
       configuration:
-        isDefined(personIdFieldId) && isDefined(personCityFieldId)
+        isDefined(personIdFieldId) && isDefined(personCompanyFieldId)
           ? {
               graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: personIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              primaryAxisGroupByFieldMetadataId: personCityFieldId,
-              primaryAxisOrderBy: 'FIELD_DESC',
-              axisNameDisplay: AxisNameDisplay.NONE,
+              primaryAxisGroupByFieldMetadataId: personCompanyFieldId,
+              primaryAxisOrderBy: 'VALUE_DESC',
+              axisNameDisplay: AxisNameDisplay.BOTH,
               displayDataLabel: false,
             }
           : null,

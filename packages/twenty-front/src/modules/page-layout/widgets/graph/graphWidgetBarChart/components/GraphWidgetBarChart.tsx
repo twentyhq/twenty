@@ -63,7 +63,7 @@ export const GraphWidgetBarChart = ({
   yAxisLabel,
   id,
   layout = 'vertical',
-  groupMode = 'grouped',
+  groupMode = 'stacked',
   seriesLabels,
   displayType,
   decimals,
