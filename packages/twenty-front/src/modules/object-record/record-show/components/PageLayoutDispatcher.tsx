@@ -77,21 +77,21 @@ export const PageLayoutDispatcher = ({
         )}
 
         <StyledShowPageRightContainer>
-          <LayoutRenderingProvider
-            value={{
-              targetRecordIdentifier: {
-                id: targetRecordIdentifier.id,
-                targetObjectNameSingular:
-                  targetRecordIdentifier.targetObjectNameSingular,
-              },
-              layoutType: PageLayoutType.RECORD_PAGE,
-              isInRightDrawer,
-            }}
-          >
-            <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+          <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+            <LayoutRenderingProvider
+              value={{
+                targetRecordIdentifier: {
+                  id: targetRecordIdentifier.id,
+                  targetObjectNameSingular:
+                    targetRecordIdentifier.targetObjectNameSingular,
+                },
+                layoutType: PageLayoutType.DASHBOARD,
+                isInRightDrawer,
+              }}
+            >
               <DashboardCard />
-            </StyledContentContainer>
-          </LayoutRenderingProvider>
+            </LayoutRenderingProvider>
+          </StyledContentContainer>
 
           {isInRightDrawer && (
             <RightDrawerFooter
