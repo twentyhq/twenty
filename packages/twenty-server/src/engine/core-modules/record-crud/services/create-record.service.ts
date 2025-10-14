@@ -85,7 +85,7 @@ export class CreateRecordService {
       const insertResult = await repository.insert({
         ...transformedObjectRecord,
         position,
-        createdBy: {
+        createdBy: params.createdBy ?? {
           source: roleId ? FieldActorSource.AGENT : FieldActorSource.WORKFLOW,
           name: roleId ? 'Agent' : 'Workflow',
         },

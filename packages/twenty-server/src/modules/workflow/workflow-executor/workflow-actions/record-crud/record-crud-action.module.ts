@@ -6,9 +6,10 @@ import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
+import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
-  imports: [RecordCrudModule],
+  imports: [RecordCrudModule, WorkflowRunModule],
   providers: [
     ScopedWorkspaceContextFactory,
     CreateRecordWorkflowAction,
