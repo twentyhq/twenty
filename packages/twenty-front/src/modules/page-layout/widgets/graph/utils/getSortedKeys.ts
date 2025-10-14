@@ -5,7 +5,7 @@ export const getSortedKeys = ({
   yValues,
 }: {
   orderByY?: GraphOrderBy | null;
-  yValues: any[];
+  yValues: string[];
 }) => {
   switch (orderByY) {
     case GraphOrderBy.FIELD_ASC:

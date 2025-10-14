@@ -66,7 +66,7 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
         graphOrderBy: barChartConfiguration.orderByX,
         groupByField: groupByFieldX,
         groupBySubFieldName: barChartConfiguration.groupBySubFieldNameX,
-        aggregateOperation: aggregateOperation,
+        aggregateOperation,
       }),
     );
   }
@@ -76,7 +76,7 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
         graphOrderBy: barChartConfiguration.orderByY,
         groupByField: groupByFieldY,
         groupBySubFieldName: barChartConfiguration.groupBySubFieldNameY,
-        aggregateOperation: aggregateOperation,
+        aggregateOperation,
       }),
     );
   }

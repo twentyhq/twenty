@@ -51,7 +51,7 @@ export const getGroupByOrderBy = ({
       if (isCompositeFieldType(groupByField.type)) {
         if (!isDefined(groupBySubFieldName)) {
           throw new Error(
-            'Group by sub field name is required for composite fields',
+            `Group by subFieldName is required for composite fields (field: ${groupByField.name})`,
           );
         }
         return {
@@ -75,7 +75,9 @@ export const getGroupByOrderBy = ({
     case GraphOrderBy.VALUE_ASC:
     case GraphOrderBy.VALUE_DESC: {
       if (!isDefined(aggregateOperation)) {
-        throw new Error('Aggregate operation not found');
+        throw new Error(
+          `Aggregate operation not found (field: ${groupByField.name})`,
+        );
       }
 
       return {
