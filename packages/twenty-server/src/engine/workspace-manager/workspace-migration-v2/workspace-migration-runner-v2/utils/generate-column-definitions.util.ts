@@ -158,6 +158,7 @@ const generateColumnDefinition = ({
       flatFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
     isUnique: flatFieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
+    isPrimary: flatFieldMetadata.name === 'id',
   };
 };
 
