@@ -195,7 +195,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           } satisfies ViewGroup);
 
           await createViewGroupRecords(
-            viewGroupsToCreate.map((viewGroup) => ({
+            viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
               input: {
                 ...viewGroup,
                 viewId: newViewId,

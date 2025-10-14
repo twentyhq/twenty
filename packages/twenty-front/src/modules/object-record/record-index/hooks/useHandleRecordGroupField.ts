@@ -107,7 +107,7 @@ export const useHandleRecordGroupField = () => {
 
         if (viewGroupsToCreate.length > 0) {
           await createViewGroupRecords(
-            viewGroupsToCreate.map((viewGroup) => ({
+            viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
               input: {
                 ...viewGroup,
                 viewId: view.id,
