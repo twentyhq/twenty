@@ -2,7 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
-import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
@@ -70,7 +69,6 @@ export const getPageLayoutWidgetDataSeeds = (
   const personIdFieldId = getFieldId(personObject, 'id');
   const personCityFieldId = getFieldId(personObject, 'city');
   const personJobTitleFieldId = getFieldId(personObject, 'jobTitle');
-  const personCompanyFieldId = getFieldId(personObject, 'company');
 
   const opportunityIdFieldId = getFieldId(opportunityObject, 'id');
 
@@ -144,8 +142,8 @@ export const getPageLayoutWidgetDataSeeds = (
               graphType: 'LINE',
               aggregateFieldMetadataId: opportunityAmountFieldId,
               aggregateOperation: AggregateOperations.SUM,
-              primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
-              primaryAxisOrderBy: 'FIELD_ASC',
+              groupByFieldMetadataIdX: opportunityCloseDateFieldId,
+              orderByX: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
             }
@@ -163,18 +161,18 @@ export const getPageLayoutWidgetDataSeeds = (
       ),
       title: 'Pipeline Value by Close Date (Stacked by Stage)',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 4, column: 0, rowSpan: 4, columnSpan: 6 },
+      gridPosition: { row: 4, column: 0, rowSpan: 8, columnSpan: 6 },
       configuration:
         isDefined(opportunityAmountFieldId) &&
         isDefined(opportunityCloseDateFieldId) &&
         isDefined(opportunityStageFieldId)
           ? {
-              graphType: GraphType.VERTICAL_BAR,
+              graphType: 'BAR',
               aggregateFieldMetadataId: opportunityAmountFieldId,
               aggregateOperation: AggregateOperations.SUM,
-              primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
-              secondaryAxisGroupByFieldMetadataId: opportunityStageFieldId,
-              primaryAxisOrderBy: 'FIELD_ASC',
+              groupByFieldMetadataIdX: opportunityCloseDateFieldId,
+              groupByFieldMetadataIdY: opportunityStageFieldId,
+              orderByX: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.BOTH,
               displayDataLabel: false,
             }
@@ -198,11 +196,11 @@ export const getPageLayoutWidgetDataSeeds = (
       configuration:
         isDefined(rocketIdFieldId) && isDefined(rocketCreatedAtFieldId)
           ? {
-              graphType: GraphType.VERTICAL_BAR,
+              graphType: 'BAR',
               aggregateFieldMetadataId: rocketIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              primaryAxisGroupByFieldMetadataId: rocketCreatedAtFieldId,
-              primaryAxisOrderBy: 'FIELD_ASC',
+              groupByFieldMetadataIdX: rocketCreatedAtFieldId,
+              orderByX: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
             }
@@ -273,8 +271,8 @@ export const getPageLayoutWidgetDataSeeds = (
               graphType: 'LINE',
               aggregateFieldMetadataId: companyIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              primaryAxisGroupByFieldMetadataId: companyCreatedAtFieldId,
-              primaryAxisOrderBy: 'FIELD_ASC',
+              groupByFieldMetadataIdX: companyCreatedAtFieldId,
+              orderByX: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
             }
@@ -292,19 +290,19 @@ export const getPageLayoutWidgetDataSeeds = (
       ),
       title: 'Companies by Size (Stacked by City)',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 0, column: 8, rowSpan: 6, columnSpan: 4 },
+      gridPosition: { row: 0, column: 8, rowSpan: 10, columnSpan: 8 },
       configuration:
         isDefined(companyIdFieldId) &&
         isDefined(companyEmployeesFieldId) &&
         isDefined(companyAddressFieldId)
           ? {
-              graphType: GraphType.VERTICAL_BAR,
+              graphType: 'BAR',
               aggregateFieldMetadataId: companyIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              primaryAxisGroupByFieldMetadataId: companyEmployeesFieldId,
-              secondaryAxisGroupByFieldMetadataId: companyAddressFieldId,
-              secondaryAxisGroupBySubFieldName: 'addressCity',
-              primaryAxisOrderBy: 'FIELD_ASC',
+              groupByFieldMetadataIdX: companyEmployeesFieldId,
+              groupByFieldMetadataIdY: companyAddressFieldId,
+              groupBySubFieldNameY: 'addressCity',
+              orderByX: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.BOTH,
               displayDataLabel: false,
             }
@@ -459,18 +457,18 @@ export const getPageLayoutWidgetDataSeeds = (
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.TEAM_OVERVIEW,
       ),
-      title: 'Team Size by Company',
+      title: 'Geographic Distribution',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 6, rowSpan: 5, columnSpan: 6 },
       configuration:
-        isDefined(personIdFieldId) && isDefined(personCompanyFieldId)
+        isDefined(personIdFieldId) && isDefined(personCityFieldId)
           ? {
-              graphType: GraphType.VERTICAL_BAR,
+              graphType: 'BAR',
               aggregateFieldMetadataId: personIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              primaryAxisGroupByFieldMetadataId: personCompanyFieldId,
-              primaryAxisOrderBy: 'VALUE_DESC',
-              axisNameDisplay: AxisNameDisplay.BOTH,
+              groupByFieldMetadataIdX: personCityFieldId,
+              orderByX: 'VALUE_DESC',
+              axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
             }
           : null,

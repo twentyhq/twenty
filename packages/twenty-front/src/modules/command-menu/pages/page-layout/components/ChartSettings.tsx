@@ -22,7 +22,11 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type GraphType, type PageLayoutWidget } from '~/generated/graphql';
+import {
+  BarChartGroupMode,
+  type GraphType,
+  type PageLayoutWidget,
+} from '~/generated/graphql';
 
 export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
@@ -101,15 +105,34 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                   ? CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP[
                       CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS
                     ]
-                  : item.id;
+                  : item.id === CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS
+                    ? CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP[
+                        CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS
+                      ]
+                    : item.id;
 
               setSelectedItemId(item.id);
 
-              updateCurrentWidgetConfig({
-                configToUpdate: {
-                  [configKey]: !getChartSettingsValues(item.id),
-                },
-              });
+              if (item.id === CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS) {
+                const isCurrentlyStacked = getChartSettingsValues(item.id);
+                const newGroupMode = isCurrentlyStacked
+                  ? BarChartGroupMode.GROUPED
+                  : BarChartGroupMode.STACKED;
+
+                updateCurrentWidgetConfig({
+                  configToUpdate: {
+                    groupMode: newGroupMode,
+                  },
+                });
+              } else {
+                const newValue = !getChartSettingsValues(item.id);
+
+                updateCurrentWidgetConfig({
+                  configToUpdate: {
+                    [configKey]: newValue,
+                  },
+                });
+              }
             };
 
             const handleDropdownOpen = () => {

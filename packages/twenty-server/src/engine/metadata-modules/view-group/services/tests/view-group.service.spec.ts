@@ -315,7 +315,7 @@ describe('ViewGroupService', () => {
 
       expect(viewGroupService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(viewGroupRepository.delete).toHaveBeenCalledWith(id);
-      expect(result).toEqual(true);
+      expect(result).toEqual(mockViewGroup);
     });
   });
 });
