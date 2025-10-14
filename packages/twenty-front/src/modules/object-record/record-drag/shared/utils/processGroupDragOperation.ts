@@ -49,16 +49,43 @@ export const processGroupDragOperation = ({
     recordIdsByGroupFamilyState(destinationGroupId),
   ) as string[];
 
-  const recordsWithPosition = extractRecordPositions(
-    destinationRecordIds,
-    snapshot,
-  );
-
   const draggedRecordId = result.draggableId;
+
   const dragOperationType = getDragOperationType({
     draggedRecordId,
     selectedRecordIds,
   });
+
+  const targetGroupIsEmpty = destinationRecordIds.length === 0;
+
+  if (targetGroupIsEmpty) {
+    if (dragOperationType === 'single') {
+      onUpdateRecord(
+        {
+          recordId: draggedRecordId,
+          position: 1,
+        },
+        recordGroup.value,
+      );
+    } else {
+      for (const [index, selectedRecordId] of selectedRecordIds.entries()) {
+        onUpdateRecord(
+          {
+            recordId: selectedRecordId,
+            position: index + 1,
+          },
+          recordGroup.value,
+        );
+      }
+    }
+
+    return;
+  }
+
+  const recordsWithPosition = extractRecordPositions(
+    destinationRecordIds,
+    snapshot,
+  );
 
   const destinationIndex = result.destination.index;
 

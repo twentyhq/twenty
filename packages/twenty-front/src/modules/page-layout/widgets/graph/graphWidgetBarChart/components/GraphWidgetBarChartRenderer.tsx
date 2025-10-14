@@ -43,6 +43,10 @@ export const GraphWidgetBarChartRenderer = ({
     return <div>Error: {error.message}</div>;
   }
 
+  const configuration = widget.configuration as BarChartConfiguration;
+  const groupMode =
+    configuration.groupMode === 'GROUPED' ? 'grouped' : 'stacked';
+
   return (
     <Suspense fallback={<ChartSkeletonLoader />}>
       <GraphWidgetBarChart
@@ -53,7 +57,9 @@ export const GraphWidgetBarChartRenderer = ({
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
         showValues={showDataLabels}
+        groupMode={groupMode}
         id={widget.id}
+        displayType="shortNumber"
       />
     </Suspense>
   );

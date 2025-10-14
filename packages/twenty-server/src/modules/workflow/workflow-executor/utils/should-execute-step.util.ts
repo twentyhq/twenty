@@ -1,7 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { shouldExecuteChildStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-child-step.util';
 import { stepHasBeenStarted } from 'src/modules/workflow/workflow-executor/utils/step-has-been-started.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { shouldExecuteIteratorStep } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/should-execute-iterator-step.util';
@@ -39,20 +40,8 @@ export const shouldExecuteStep = ({
       isDefined(parentStep) && parentStep.nextStepIds?.includes(step.id),
   );
 
-  if (parentSteps.length === 0) {
-    return true;
-  }
-
-  const hasSuccessfulParentStep = parentSteps.some(
-    (parentStep) => stepInfos[parentStep.id]?.status === StepStatus.SUCCESS,
-  );
-
-  const areAllParentsCompleted = parentSteps.every(
-    (parentStep) =>
-      stepInfos[parentStep.id]?.status === StepStatus.SUCCESS ||
-      stepInfos[parentStep.id]?.status === StepStatus.STOPPED ||
-      stepInfos[parentStep.id]?.status === StepStatus.SKIPPED,
-  );
-
-  return hasSuccessfulParentStep && areAllParentsCompleted;
+  return shouldExecuteChildStep({
+    parentSteps,
+    stepInfos,
+  });
 };

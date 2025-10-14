@@ -1,34 +1,20 @@
 import { TEST_NOT_EXISTING_VIEW_GROUP_ID } from 'test/integration/constants/test-view-ids.constants';
-import { createViewGroupOperationFactory } from 'test/integration/graphql/utils/create-view-group-operation-factory.util';
-import { deleteViewGroupOperationFactory } from 'test/integration/graphql/utils/delete-view-group-operation-factory.util';
-import { destroyViewGroupOperationFactory } from 'test/integration/graphql/utils/destroy-view-group-operation-factory.util';
-import { findViewGroupsOperationFactory } from 'test/integration/graphql/utils/find-view-groups-operation-factory.util';
-import {
-  assertGraphQLErrorResponse,
-  assertGraphQLSuccessfulResponse,
-} from 'test/integration/graphql/utils/graphql-test-assertions.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateViewGroupOperationFactory } from 'test/integration/graphql/utils/update-view-group-operation-factory.util';
-import {
-  createViewGroupData,
-  updateViewGroupData,
-} from 'test/integration/graphql/utils/view-data-factory.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { createOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/create-one-core-view-group.util';
+import { deleteOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/delete-one-core-view-group.util';
+import { destroyOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-core-view-group.util';
+import { findCoreViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-core-view-groups.util';
+import { updateOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/update-one-core-view-group.util';
 import {
   assertViewGroupStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import {
-  generateViewGroupExceptionMessage,
-  ViewGroupExceptionMessageKey,
-} from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 
 describe('View Group Resolver', () => {
   let testViewId: string;
@@ -101,34 +87,33 @@ describe('View Group Resolver', () => {
 
   describe('getCoreViewGroups', () => {
     it('should return empty array when no view groups exist', async () => {
-      const operation = findViewGroupsOperationFactory({ viewId: testViewId });
-      const response = await makeGraphqlAPIRequest(operation);
+      const { data } = await findCoreViewGroups({
+        viewId: testViewId,
+        expectToFail: false,
+      });
 
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.getCoreViewGroups).toEqual([]);
+      expect(data.getCoreViewGroups).toEqual([]);
     });
 
     it('should return view groups for a specific view', async () => {
-      const groupData = createViewGroupData(testViewId, {
-        isVisible: true,
-        fieldValue: 'active',
-        position: 0,
-        fieldMetadataId: testFieldMetadataId,
-      });
-      const createOperation = createViewGroupOperationFactory({
-        data: groupData,
+      await createOneCoreViewGroup({
+        expectToFail: false,
+        input: {
+          viewId: testViewId,
+          fieldMetadataId: testFieldMetadataId,
+          isVisible: true,
+          fieldValue: 'active',
+          position: 0,
+        },
       });
 
-      await makeGraphqlAPIRequest(createOperation);
-
-      const getOperation = findViewGroupsOperationFactory({
+      const { data } = await findCoreViewGroups({
         viewId: testViewId,
+        expectToFail: false,
       });
-      const response = await makeGraphqlAPIRequest(getOperation);
 
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.getCoreViewGroups).toHaveLength(1);
-      assertViewGroupStructure(response.body.data.getCoreViewGroups[0], {
+      expect(data.getCoreViewGroups).toHaveLength(1);
+      assertViewGroupStructure(data.getCoreViewGroups[0], {
         fieldMetadataId: testFieldMetadataId,
         isVisible: true,
         fieldValue: 'active',
@@ -140,20 +125,18 @@ describe('View Group Resolver', () => {
 
   describe('createCoreViewGroup', () => {
     it('should create a new view group', async () => {
-      const groupData = createViewGroupData(testViewId, {
-        isVisible: false,
-        fieldValue: 'inactive',
-        position: 1,
-        fieldMetadataId: testFieldMetadataId,
+      const { data } = await createOneCoreViewGroup({
+        expectToFail: false,
+        input: {
+          viewId: testViewId,
+          fieldMetadataId: testFieldMetadataId,
+          isVisible: false,
+          fieldValue: 'inactive',
+          position: 1,
+        },
       });
 
-      const operation = createViewGroupOperationFactory({
-        data: groupData,
-      });
-      const response = await makeGraphqlAPIRequest(operation);
-
-      assertGraphQLSuccessfulResponse(response);
-      assertViewGroupStructure(response.body.data.createCoreViewGroup, {
+      assertViewGroupStructure(data.createCoreViewGroup, {
         fieldMetadataId: testFieldMetadataId,
         isVisible: false,
         fieldValue: 'inactive',
@@ -163,20 +146,18 @@ describe('View Group Resolver', () => {
     });
 
     it('should create a view group with null fieldValue', async () => {
-      const groupData = createViewGroupData(testViewId, {
-        isVisible: true,
-        fieldValue: '',
-        position: 2,
-        fieldMetadataId: testFieldMetadataId,
+      const { data } = await createOneCoreViewGroup({
+        expectToFail: false,
+        input: {
+          viewId: testViewId,
+          fieldMetadataId: testFieldMetadataId,
+          isVisible: true,
+          fieldValue: '',
+          position: 2,
+        },
       });
 
-      const operation = createViewGroupOperationFactory({
-        data: groupData,
-      });
-      const response = await makeGraphqlAPIRequest(operation);
-
-      assertGraphQLSuccessfulResponse(response);
-      assertViewGroupStructure(response.body.data.createCoreViewGroup, {
+      assertViewGroupStructure(data.createCoreViewGroup, {
         fieldMetadataId: testFieldMetadataId,
         isVisible: true,
         fieldValue: '',
@@ -187,32 +168,31 @@ describe('View Group Resolver', () => {
 
   describe('updateCoreViewGroup', () => {
     it('should update an existing view group', async () => {
-      const groupData = createViewGroupData(testViewId, {
-        isVisible: true,
-        fieldValue: 'original',
-        position: 0,
-        fieldMetadataId: testFieldMetadataId,
+      const { data: createData } = await createOneCoreViewGroup({
+        expectToFail: false,
+        input: {
+          viewId: testViewId,
+          fieldMetadataId: testFieldMetadataId,
+          isVisible: true,
+          fieldValue: 'original',
+          position: 0,
+        },
       });
-      const createOperation = createViewGroupOperationFactory({
-        data: groupData,
-      });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewGroup = createResponse.body.data.createCoreViewGroup;
+      const viewGroup = createData.createCoreViewGroup;
 
-      const updateInput = updateViewGroupData({
-        isVisible: false,
-        fieldValue: 'updated',
-        position: 5,
-        fieldMetadataId: testFieldMetadataId,
+      const { data } = await updateOneCoreViewGroup({
+        expectToFail: false,
+        input: {
+          id: viewGroup.id,
+          update: {
+            isVisible: false,
+            fieldValue: 'updated',
+            position: 5,
+          },
+        },
       });
-      const updateOperation = updateViewGroupOperationFactory({
-        viewGroupId: viewGroup.id,
-        data: updateInput,
-      });
-      const response = await makeGraphqlAPIRequest(updateOperation);
 
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.updateCoreViewGroup).toMatchObject({
+      expect(data.updateCoreViewGroup).toMatchObject({
         id: viewGroup.id,
         isVisible: false,
         fieldValue: 'updated',
@@ -221,99 +201,101 @@ describe('View Group Resolver', () => {
     });
 
     it('should throw an error when updating non-existent view group', async () => {
-      const operation = updateViewGroupOperationFactory({
-        viewGroupId: TEST_NOT_EXISTING_VIEW_GROUP_ID,
+      const { errors } = await updateOneCoreViewGroup({
+        expectToFail: true,
+        input: {
+          id: TEST_NOT_EXISTING_VIEW_GROUP_ID,
+          update: {
+            isVisible: false,
+          },
+        },
       });
-      const response = await makeGraphqlAPIRequest(operation);
 
-      assertGraphQLErrorResponse(
-        response,
-        ErrorCode.NOT_FOUND,
-        generateViewGroupExceptionMessage(
-          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_GROUP_ID,
-        ),
-      );
+      expectOneNotInternalServerErrorSnapshot({ errors });
     });
   });
 
   describe('deleteCoreViewGroup', () => {
     it('should delete an existing view group', async () => {
-      const groupData = createViewGroupData(testViewId, {
-        isVisible: true,
-        fieldValue: 'to delete',
-        position: 0,
-        fieldMetadataId: testFieldMetadataId,
+      const { data: createData } = await createOneCoreViewGroup({
+        expectToFail: false,
+        input: {
+          viewId: testViewId,
+          fieldMetadataId: testFieldMetadataId,
+          isVisible: true,
+          fieldValue: 'to delete',
+          position: 0,
+        },
       });
-      const createOperation = createViewGroupOperationFactory({
-        data: groupData,
-      });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewGroup = createResponse.body.data.createCoreViewGroup;
+      const viewGroup = createData.createCoreViewGroup;
 
-      const deleteOperation = deleteViewGroupOperationFactory({
-        viewGroupId: viewGroup.id,
+      const { data } = await deleteOneCoreViewGroup({
+        expectToFail: false,
+        input: {
+          id: viewGroup.id,
+        },
       });
-      const response = await makeGraphqlAPIRequest(deleteOperation);
 
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.deleteCoreViewGroup).toBe(true);
+      expect(data.deleteCoreViewGroup).toMatchObject({
+        id: viewGroup.id,
+      });
+      expect(data.deleteCoreViewGroup.deletedAt).toBeDefined();
     });
 
     it('should throw an error when deleting non-existent view group', async () => {
-      const operation = deleteViewGroupOperationFactory({
-        viewGroupId: TEST_NOT_EXISTING_VIEW_GROUP_ID,
+      const { errors } = await deleteOneCoreViewGroup({
+        expectToFail: true,
+        input: {
+          id: TEST_NOT_EXISTING_VIEW_GROUP_ID,
+        },
       });
-      const response = await makeGraphqlAPIRequest(operation);
 
-      assertGraphQLErrorResponse(
-        response,
-        ErrorCode.NOT_FOUND,
-        generateViewGroupExceptionMessage(
-          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_GROUP_ID,
-        ),
-      );
+      expectOneNotInternalServerErrorSnapshot({ errors });
     });
   });
 
   describe('destroyCoreViewGroup', () => {
     it('should destroy an existing view group', async () => {
-      const groupData = createViewGroupData(testViewId, {
-        isVisible: true,
-        fieldValue: 'to destroy',
-        position: 0,
-        fieldMetadataId: testFieldMetadataId,
+      const { data: createData } = await createOneCoreViewGroup({
+        expectToFail: false,
+        input: {
+          viewId: testViewId,
+          fieldMetadataId: testFieldMetadataId,
+          isVisible: true,
+          fieldValue: 'to destroy',
+          position: 0,
+        },
       });
-      const createOperation = createViewGroupOperationFactory({
-        data: groupData,
-      });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewGroup = createResponse.body.data.createCoreViewGroup;
+      const viewGroup = createData.createCoreViewGroup;
 
-      const destroyOperation = destroyViewGroupOperationFactory({
-        viewGroupId: viewGroup.id,
+      await deleteOneCoreViewGroup({
+        input: {
+          id: viewGroup.id,
+        },
+        expectToFail: false,
       });
-      const response = await makeGraphqlAPIRequest(destroyOperation);
 
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.destroyCoreViewGroup).toBe(true);
+      const { data } = await destroyOneCoreViewGroup({
+        expectToFail: false,
+        input: {
+          id: viewGroup.id,
+        },
+      });
+
+      expect(data.destroyCoreViewGroup).toMatchObject({
+        id: viewGroup.id,
+      });
     });
 
     it('should throw an error when destroying non-existent view group', async () => {
-      const operation = destroyViewGroupOperationFactory({
-        viewGroupId: TEST_NOT_EXISTING_VIEW_GROUP_ID,
+      const { errors } = await destroyOneCoreViewGroup({
+        expectToFail: true,
+        input: {
+          id: TEST_NOT_EXISTING_VIEW_GROUP_ID,
+        },
       });
-      const response = await makeGraphqlAPIRequest(operation);
 
-      assertGraphQLErrorResponse(
-        response,
-        ErrorCode.NOT_FOUND,
-        generateViewGroupExceptionMessage(
-          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_GROUP_ID,
-        ),
-      );
+      expectOneNotInternalServerErrorSnapshot({ errors });
     });
   });
 });

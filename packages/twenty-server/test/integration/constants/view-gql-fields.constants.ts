@@ -57,6 +57,7 @@ export const VIEW_GROUP_GQL_FIELDS = `
     viewId
     createdAt
     updatedAt
+    deletedAt
 `;
 
 export const VIEW_FILTER_GROUP_GQL_FIELDS = `

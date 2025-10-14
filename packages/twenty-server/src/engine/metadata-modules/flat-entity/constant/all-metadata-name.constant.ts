@@ -3,6 +3,7 @@ export const ALL_METADATA_NAME = {
   objectMetadata: 'objectMetadata',
   view: 'view',
   viewField: 'viewField',
+  viewGroup: 'viewGroup',
   index: 'index',
   serverlessFunction: 'serverlessFunction',
   cronTrigger: 'cronTrigger',
