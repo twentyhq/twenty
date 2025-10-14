@@ -1,20 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { capitalize, isDefined } from 'twenty-shared/utils';
-import {
-  FindOperator,
-  FindOptionsRelations,
-  In,
-  InsertResult,
-  ObjectLiteral,
-} from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { FindOptionsRelations, In, InsertResult, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
+import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
+import { categorizeRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/categorize-records.util';
+import { getConflictingFields } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-conflicting-fields.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -29,14 +26,11 @@ import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runne
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-
-type PartialObjectRecordWithId = Partial<ObjectRecord> & { id: string };
 
 @Injectable()
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService {
@@ -182,7 +176,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectMetadataMaps: ObjectMetadataMaps;
     args: CreateManyQueryArgs;
   }): Promise<InsertResult> {
-    const conflictingFields = this.getConflictingFields(
+    const conflictingFields = getConflictingFields(
       objectMetadataItemWithFieldMaps,
     );
     const existingRecords = await this.findExistingRecords({
@@ -192,7 +186,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       conflictingFields,
     });
 
-    const { recordsToUpdate, recordsToInsert } = this.categorizeRecords(
+    const { recordsToUpdate, recordsToInsert } = categorizeRecords(
       args.data,
       conflictingFields,
       existingRecords,
@@ -231,46 +225,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     return result;
   }
 
-  //TODO : Improve conflicting fields logic - unicity can be define on combination of fields - should be based on unique index not on field metadata
-  //TODO : https://github.com/twentyhq/core-team-issues/issues/1115
-  private getConflictingFields(
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-  ): {
-    baseField: string;
-    fullPath: string;
-    column: string;
-  }[] {
-    return Object.values(objectMetadataItemWithFieldMaps.fieldsById)
-      .filter((field) => field.isUnique || field.name === 'id')
-      .flatMap((field) => {
-        const compositeType = compositeTypeDefinitions.get(field.type);
-
-        if (!compositeType) {
-          return [
-            {
-              baseField: field.name,
-              fullPath: field.name,
-              column: field.name,
-            },
-          ];
-        }
-
-        const property = compositeType.properties.find(
-          (prop) => prop.isIncludedInUniqueConstraint,
-        );
-
-        return property
-          ? [
-              {
-                baseField: field.name,
-                fullPath: `${field.name}.${property.name}`,
-                column: `${field.name}${capitalize(property.name)}`,
-              },
-            ]
-          : [];
-      });
-  }
-
   private async findExistingRecords({
     repository,
     objectMetadataItemWithFieldMaps,
@@ -290,10 +244,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const whereConditions = this.buildWhereConditions(
-      args.data,
-      conflictingFields,
-    );
+    const whereConditions = buildWhereConditions(args.data, conflictingFields);
 
     whereConditions.forEach((condition) => {
       queryBuilder.orWhere(condition);
@@ -316,133 +267,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         select: selectOptions,
       })
       .getMany()) as PartialObjectRecordWithId[];
-  }
-
-  private getValueFromPath(
-    record: Partial<ObjectRecord>,
-    path: string,
-  ): unknown {
-    const pathParts = path.split('.');
-
-    if (pathParts.length === 1) {
-      return record[path];
-    }
-
-    const [parentField, childField] = pathParts;
-
-    return record[parentField]?.[childField];
-  }
-
-  private buildWhereConditions(
-    records: Partial<ObjectRecord>[],
-    conflictingFields: {
-      baseField: string;
-      fullPath: string;
-      column: string;
-    }[],
-  ): Record<string, FindOperator<string>>[] {
-    const whereConditions = [];
-
-    for (const field of conflictingFields) {
-      const fieldValues = records
-        .map((record) => this.getValueFromPath(record, field.fullPath))
-        .filter(Boolean);
-
-      //TODO : Adapt to composite constraint - https://github.com/twentyhq/core-team-issues/issues/1115
-      if (fieldValues.length > 0) {
-        whereConditions.push({ [field.column]: In(fieldValues) });
-      }
-    }
-
-    return whereConditions;
-  }
-
-  private categorizeRecords(
-    records: Partial<ObjectRecord>[],
-    conflictingFields: {
-      baseField: string;
-      fullPath: string;
-      column: string;
-    }[],
-    existingRecords: PartialObjectRecordWithId[],
-  ): {
-    recordsToUpdate: PartialObjectRecordWithId[];
-    recordsToInsert: Partial<ObjectRecord>[];
-  } {
-    const recordsToUpdate: PartialObjectRecordWithId[] = [];
-    const recordsToInsert: Partial<ObjectRecord>[] = [];
-
-    for (const record of records) {
-      const matchingRecordId = this.getMatchingRecordId(
-        record,
-        conflictingFields,
-        existingRecords,
-      );
-
-      if (isDefined(matchingRecordId)) {
-        recordsToUpdate.push({ ...record, id: matchingRecordId });
-      } else {
-        recordsToInsert.push(record);
-      }
-    }
-
-    return { recordsToUpdate, recordsToInsert };
-  }
-
-  private getMatchingRecordId(
-    record: Partial<ObjectRecord>,
-    conflictingFields: {
-      baseField: string;
-      fullPath: string;
-      column: string;
-    }[],
-    existingRecords: PartialObjectRecordWithId[],
-  ): string | undefined {
-    const matchingRecordIds = conflictingFields.reduce<string[]>(
-      (acc, field) => {
-        const requestFieldValue = this.getValueFromPath(record, field.fullPath);
-
-        const matchingRecord = existingRecords.find((existingRecord) => {
-          const existingFieldValue = this.getValueFromPath(
-            existingRecord,
-            field.fullPath,
-          );
-
-          return (
-            isDefined(existingFieldValue) &&
-            existingFieldValue === requestFieldValue
-          );
-        });
-
-        if (isDefined(matchingRecord)) {
-          acc.push(matchingRecord.id);
-        }
-
-        return acc;
-      },
-      [],
-    );
-
-    if ([...new Set(matchingRecordIds)].length > 1) {
-      const conflictingFieldsValues = conflictingFields
-        .map((field) => {
-          const value = this.getValueFromPath(record, field.fullPath);
-
-          return isDefined(value) ? `${field.fullPath}: ${value}` : undefined;
-        })
-        .filter(isDefined)
-        .join(', ');
-
-      throw new CommonQueryRunnerException(
-        `Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
-        CommonQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT,
-        {
-          userFriendlyMessage: msg`Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
-        },
-      );
-    }
-
-    return matchingRecordIds[0];
   }
 
   private async processRecordsToUpdate({
