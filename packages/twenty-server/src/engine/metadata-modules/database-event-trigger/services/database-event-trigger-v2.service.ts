@@ -75,7 +75,6 @@ export class DatabaseEventTriggerV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
         },
       );
@@ -156,7 +155,6 @@ export class DatabaseEventTriggerV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
         },
       );
@@ -242,7 +240,9 @@ export class DatabaseEventTriggerV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              databaseEventTrigger: true,
+            },
           },
           workspaceId,
         },

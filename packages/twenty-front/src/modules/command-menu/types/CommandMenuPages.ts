@@ -17,5 +17,6 @@ export enum CommandMenuPages {
   ViewPreviousAIChats = 'view-previous-ai-chats',
   PageLayoutWidgetTypeSelect = 'page-layout-widget-type-select',
   PageLayoutGraphTypeSelect = 'page-layout-graph-type-select',
+  PageLayoutGraphFilter = 'page-layout-graph-filter',
   PageLayoutIframeConfig = 'page-layout-iframe-config',
 }

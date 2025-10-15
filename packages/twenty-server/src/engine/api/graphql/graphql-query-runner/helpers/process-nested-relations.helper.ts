@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ObjectRecord } from 'twenty-shared/types';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
-
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { ProcessNestedRelationsV2Helper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations-v2.helper';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';

@@ -57,7 +57,7 @@ export class ViewGroupEntity extends SyncableEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date | null;
+  deletedAt: Date | null;
 
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',
