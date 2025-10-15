@@ -11,7 +11,8 @@ import { isDefined } from 'twenty-shared/utils';
 export const TidyUpWorkflowSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
   const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion();
-  const { createDraftFromWorkflowVersion } = useCreateDraftFromWorkflowVersion();
+  const { createDraftFromWorkflowVersion } =
+    useCreateDraftFromWorkflowVersion();
   const workflow = useWorkflowWithCurrentVersion(recordId);
 
   const onClick = useRecoilCallback(
