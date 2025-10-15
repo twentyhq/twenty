@@ -1,4 +1,4 @@
-import { Bundle, ZObject } from 'zapier-platform-core';
+import { type Bundle, type ZObject } from 'zapier-platform-core';
 
 import handleQueryParams from '../../utils/handleQueryParams';
 import requestDb, {
@@ -93,9 +93,7 @@ export const performList = async (
   return results.map((result) => ({
     record: result,
     ...(bundle.inputData.operation === DatabaseEventAction.UPDATED && {
-      updatedFields: [
-        Object.keys(result).filter((key) => key !== 'id')?.[0],
-      ] || ['updatedField'],
+      updatedFields: [Object.keys(result).filter((key) => key !== 'id')?.[0]],
     }),
   }));
 };

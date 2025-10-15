@@ -1,6 +1,9 @@
-import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
+import { CardType } from '@/object-record/record-show/types/CardType';
+import { getCardComponent } from '@/object-record/record-show/utils/getCardComponent';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { Section } from 'twenty-ui/layout';
+import { PageLayoutType } from '~/generated/graphql';
 
 type MergeRecordTabProps = {
   isInRightDrawer?: boolean;
@@ -13,21 +16,27 @@ export const MergeRecordTab = ({
   recordId,
 }: MergeRecordTabProps) => {
   return (
-    <Section>
-      <SummaryCard
-        objectNameSingular={objectNameSingular}
-        objectRecordId={recordId}
-        isInRightDrawer={true}
-      />
-
-      <CardComponents.FieldCard
-        targetableObject={{
-          targetObjectNameSingular: objectNameSingular,
+    <LayoutRenderingProvider
+      value={{
+        targetRecordIdentifier: {
           id: recordId,
-        }}
-        isInRightDrawer={true}
-        showDuplicatesSection={false}
-      />
-    </Section>
+          targetObjectNameSingular: objectNameSingular,
+        },
+        layoutType: PageLayoutType.RECORD_PAGE,
+        isInRightDrawer: true,
+      }}
+    >
+      <Section>
+        <SummaryCard
+          objectNameSingular={objectNameSingular}
+          objectRecordId={recordId}
+          isInRightDrawer={true}
+        />
+
+        {getCardComponent(CardType.FieldCard, {
+          showDuplicatesSection: false,
+        })}
+      </Section>
+    </LayoutRenderingProvider>
   );
 };

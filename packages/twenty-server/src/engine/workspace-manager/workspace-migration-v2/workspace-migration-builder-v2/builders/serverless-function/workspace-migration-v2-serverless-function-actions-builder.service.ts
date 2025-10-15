@@ -1,48 +1,36 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { compareTwoFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/compare-two-flat-serverless-function.util';
-import {
-  FlatEntityUpdateValidationArgs,
-  FlatEntityValidationArgs,
-  FlatEntityValidationReturnType,
-  WorkspaceEntityMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import {
-  UpdateServerlessFunctionAction,
-  WorkspaceMigrationServerlessFunctionActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-serverless-function-action-v2.type';
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
+import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  'serverlessFunction',
-  FlatServerlessFunction,
-  WorkspaceMigrationServerlessFunctionActionV2,
-  undefined
+  typeof ALL_METADATA_NAME.serverlessFunction
 > {
   constructor(
     private readonly flatServerlessFunctionValidatorService: FlatServerlessFunctionValidatorService,
   ) {
-    super('serverlessFunction');
+    super(ALL_METADATA_NAME.serverlessFunction);
   }
 
-  protected async validateFlatEntityCreation({
-    flatEntityToValidate: flatServerlessFunctionToValidate,
-    optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<FlatServerlessFunction>): Promise<
+  protected async validateFlatEntityCreation(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.serverlessFunction>,
+  ): Promise<
     FlatEntityValidationReturnType<
-      WorkspaceMigrationServerlessFunctionActionV2,
-      FlatServerlessFunction
+      typeof ALL_METADATA_NAME.serverlessFunction,
+      'created'
     >
   > {
     const validationResult =
       await this.flatServerlessFunctionValidatorService.validateFlatServerlessFunctionCreation(
-        {
-          flatServerlessFunctionToValidate,
-          optimisticFlatServerlessFunctionMaps,
-        },
+        args,
       );
 
     if (validationResult.errors.length > 0) {
@@ -51,6 +39,11 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         ...validationResult,
       };
     }
+
+    const {
+      flatEntityToValidate: flatServerlessFunctionToValidate,
+      dependencyOptimisticFlatEntityMaps,
+    } = args;
 
     return {
       status: 'success',
@@ -62,22 +55,17 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     };
   }
 
-  protected async validateFlatEntityDeletion({
-    flatEntityToValidate: flatServerlessFunctionToValidate,
-    optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<FlatServerlessFunction>): Promise<
+  protected async validateFlatEntityDeletion(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.serverlessFunction>,
+  ): Promise<
     FlatEntityValidationReturnType<
-      WorkspaceMigrationServerlessFunctionActionV2,
-      FlatServerlessFunction
+      typeof ALL_METADATA_NAME.serverlessFunction,
+      'deleted'
     >
   > {
     const validationResult =
       this.flatServerlessFunctionValidatorService.validateFlatServerlessFunctionDeletion(
-        {
-          flatServerlessFunctionToValidate,
-          optimisticFlatServerlessFunctionMaps,
-        },
+        args,
       );
 
     if (validationResult.errors.length > 0) {
@@ -86,6 +74,11 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         ...validationResult,
       };
     }
+
+    const {
+      flatEntityToValidate: flatServerlessFunctionToValidate,
+      dependencyOptimisticFlatEntityMaps,
+    } = args;
 
     return {
       status: 'success',
@@ -97,36 +90,19 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     };
   }
 
-  protected async validateFlatEntityUpdate({
-    flatEntityUpdate: {
-      from: fromFlatServerlessFunction,
-      to: toFlatServerlessFunction,
-    },
-    optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityUpdateValidationArgs<FlatServerlessFunction>): Promise<
-    | FlatEntityValidationReturnType<
-        WorkspaceMigrationServerlessFunctionActionV2,
-        FlatServerlessFunction
-      >
-    | undefined
+  protected async validateFlatEntityUpdate(
+    args: FlatEntityUpdateValidationArgs<
+      typeof ALL_METADATA_NAME.serverlessFunction
+    >,
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.serverlessFunction,
+      'updated'
+    >
   > {
-    const serverlessFunctionUpdatedProperties =
-      compareTwoFlatServerlessFunction({
-        fromFlatServerlessFunction,
-        toFlatServerlessFunction,
-      });
-
-    if (serverlessFunctionUpdatedProperties.length === 0) {
-      return undefined;
-    }
-
     const validationResult =
       this.flatServerlessFunctionValidatorService.validateFlatServerlessFunctionUpdate(
-        {
-          flatServerlessFunctionToValidate: toFlatServerlessFunction,
-          optimisticFlatServerlessFunctionMaps,
-        },
+        args,
       );
 
     if (validationResult.errors.length > 0) {
@@ -136,11 +112,29 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       };
     }
 
+    const {
+      dependencyOptimisticFlatEntityMaps,
+      flatEntityId,
+      flatEntityUpdates,
+      optimisticFlatEntityMaps,
+    } = args;
+
+    const existingEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatEntityMaps,
+    });
+    const updatedEntity = {
+      ...existingEntity,
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+        updates: flatEntityUpdates,
+      }),
+    };
+
     const updateServerlessFunctionAction: UpdateServerlessFunctionAction = {
       type: 'update_serverless_function',
-      serverlessFunctionId: toFlatServerlessFunction.id,
-      updates: serverlessFunctionUpdatedProperties,
-      code: toFlatServerlessFunction.code,
+      serverlessFunctionId: flatEntityId,
+      updates: flatEntityUpdates,
+      code: updatedEntity.code,
     };
 
     return {

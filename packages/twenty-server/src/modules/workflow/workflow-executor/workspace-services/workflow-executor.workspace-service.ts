@@ -15,6 +15,9 @@ import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/bil
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { type BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
@@ -30,7 +33,12 @@ import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executo
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
+import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+
+const MAX_EXECUTED_STEPS_COUNT = 20;
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
@@ -39,6 +47,9 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingService: BillingService,
+    @InjectMessageQueue(MessageQueue.workflowQueue)
+    private readonly messageQueueService: MessageQueueService,
+    private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
   ) {}
 
   async executeFromSteps({
@@ -46,6 +57,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     shouldComputeWorkflowRunStatus = true,
+    executedStepsCount = 0,
   }: WorkflowExecutorInput) {
     await Promise.all(
       stepIds.map(async (stepIdToExecute) => {
@@ -53,6 +65,7 @@ export class WorkflowExecutorWorkspaceService {
           stepId: stepIdToExecute,
           workflowRunId,
           workspaceId,
+          executedStepsCount,
         });
       }),
     );
@@ -69,6 +82,7 @@ export class WorkflowExecutorWorkspaceService {
     stepId,
     workflowRunId,
     workspaceId,
+    executedStepsCount,
   }: WorkflowBranchExecutorInput) {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
@@ -137,21 +151,60 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
-    if (shouldProcessNextSteps) {
-      const nextStepIdsToExecute = await this.getNextStepIdsToExecute({
-        executedStep: stepToExecute,
-        executedStepResult: actionOutput,
+    if (!shouldProcessNextSteps) {
+      return;
+    }
+
+    const shouldRunAnotherJob =
+      executedStepsCount && executedStepsCount > MAX_EXECUTED_STEPS_COUNT;
+
+    if (shouldRunAnotherJob) {
+      await this.continueExecutionFromStepInAnotherJob({
+        lastExecutedStepId: stepId,
+        workflowRunId,
+        workspaceId,
       });
 
-      if (isDefined(nextStepIdsToExecute) && nextStepIdsToExecute.length > 0) {
-        await this.executeFromSteps({
-          stepIds: nextStepIdsToExecute,
-          workflowRunId,
-          workspaceId,
-          shouldComputeWorkflowRunStatus: false,
-        });
+      return;
+    }
+
+    const nextStepIdsToExecute = await this.getNextStepIdsToExecute({
+      executedStep: stepToExecute,
+      executedStepResult: actionOutput,
+    });
+
+    if (isDefined(nextStepIdsToExecute) && nextStepIdsToExecute.length > 0) {
+      await this.executeFromSteps({
+        stepIds: nextStepIdsToExecute,
+        workflowRunId,
+        workspaceId,
+        shouldComputeWorkflowRunStatus: false,
+        executedStepsCount: (executedStepsCount ?? 0) + 1,
+      });
+    }
+  }
+
+  async getNextStepIdsToExecute({
+    executedStep,
+    executedStepResult,
+  }: {
+    executedStep: WorkflowAction;
+    executedStepResult: WorkflowActionOutput;
+  }): Promise<string[] | undefined> {
+    const isIteratorStep = isWorkflowIteratorAction(executedStep);
+
+    if (isIteratorStep) {
+      const iteratorStepResult =
+        executedStepResult.result as WorkflowIteratorResult;
+
+      if (!iteratorStepResult.hasProcessedAllItems) {
+        return isString(executedStep.settings.input.initialLoopStepIds)
+          ? JSON.parse(executedStep.settings.input.initialLoopStepIds)
+          : executedStep.settings.input.initialLoopStepIds;
       }
     }
+
+    return executedStep.nextStepIds;
   }
 
   private async computeWorkflowRunStatus({
@@ -214,29 +267,6 @@ export class WorkflowExecutorWorkspaceService {
         BillingProductKey.WORKFLOW_NODE_EXECUTION,
       ))
     );
-  }
-
-  private async getNextStepIdsToExecute({
-    executedStep,
-    executedStepResult,
-  }: {
-    executedStep: WorkflowAction;
-    executedStepResult: WorkflowActionOutput;
-  }) {
-    const isIteratorStep = isWorkflowIteratorAction(executedStep);
-
-    if (isIteratorStep) {
-      const iteratorStepResult =
-        executedStepResult.result as WorkflowIteratorResult;
-
-      if (!iteratorStepResult.hasProcessedAllItems) {
-        return isString(executedStep.settings.input.initialLoopStepIds)
-          ? JSON.parse(executedStep.settings.input.initialLoopStepIds)
-          : executedStep.settings.input.initialLoopStepIds;
-      }
-    }
-
-    return executedStep.nextStepIds;
   }
 
   private async processStepExecutionResult({
@@ -350,5 +380,27 @@ export class WorkflowExecutorWorkspaceService {
         error: error.message ?? 'Execution result error, no data or error',
       };
     }
+  }
+
+  private async continueExecutionFromStepInAnotherJob({
+    lastExecutedStepId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    lastExecutedStepId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RUN_WORKFLOW_JOB_NAME,
+      {
+        workspaceId,
+        workflowRunId,
+        lastExecutedStepId,
+      },
+    );
+    await this.workflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount(
+      workspaceId,
+    );
   }
 }

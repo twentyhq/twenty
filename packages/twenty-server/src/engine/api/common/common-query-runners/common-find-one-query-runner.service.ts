@@ -21,14 +21,13 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
-export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<ObjectRecord> {
+export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
     authContext: toValidateAuthContext,
@@ -137,23 +136,15 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       });
     }
 
-    const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
-
-    const results = typeORMObjectRecordsParser.processRecord({
-      objectRecord: objectRecords[0],
-      objectName: objectMetadataItemWithFieldMaps.nameSingular,
-      take: 1,
-      totalCount: 1,
-    }) as ObjectRecord;
-
-    return this.enrichResultsWithGettersAndHooks({
-      results,
+    const enrichedResults = await this.enrichResultsWithGettersAndHooks({
+      results: objectRecords,
       authContext,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       operationName: CommonQueryNames.findOne,
     });
+
+    return enrichedResults[0];
   }
 
   async processQueryArgs({

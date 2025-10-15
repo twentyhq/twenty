@@ -21,7 +21,7 @@ export const useEmailThreadInCommandMenu = () => {
   const viewableRecordId = useRecoilComponentValue(
     viewableRecordIdComponentState,
   );
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const [lastMessageId, setLastMessageId] = useState<string | null>(null);
   const [lastMessageChannelId, setLastMessageChannelId] = useState<
     string | null
@@ -35,7 +35,7 @@ export const useEmailThreadInCommandMenu = () => {
       id: true,
     },
     onCompleted: (record) => {
-      upsertRecords([record]);
+      upsertRecordsInStore([record]);
     },
   });
 

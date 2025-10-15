@@ -129,6 +129,10 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       objectMetadataMaps,
     });
 
+    if (isDefined(executionArgs.args.offset)) {
+      queryBuilder.skip(executionArgs.args.offset);
+    }
+
     const objectRecords = (await queryBuilder
       .setFindOptions({
         select: columnsToSelect,
@@ -171,7 +175,9 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.createConnection({
-      objectRecords,
+      objectRecords: isForwardPagination
+        ? objectRecords
+        : objectRecords.reverse(),
       objectRecordsAggregatedValues: parentObjectRecordsAggregatedValues,
       selectedAggregatedFields:
         executionArgs.graphqlQuerySelectedFieldsResult.aggregate,

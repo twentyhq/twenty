@@ -3,7 +3,7 @@ import { useRef } from 'react';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { RecordTableBodyEffectsWrapper } from '@/object-record/record-table/components/RecordTableBodyEffectsWrapper';
 import { RecordTableContent } from '@/object-record/record-table/components/RecordTableContent';
 import { RecordTableEmpty } from '@/object-record/record-table/components/RecordTableEmpty';
@@ -35,8 +35,8 @@ export const RecordTable = () => {
     recordTableId,
   );
 
-  const allRecordIds = useRecoilComponentValue(
-    recordIndexAllRecordIdsComponentSelector,
+  const recordTableHasRecords = useRecoilComponentValue(
+    recordIndexHasRecordsComponentSelector,
     recordTableId,
   );
 
@@ -48,7 +48,7 @@ export const RecordTable = () => {
   const { resetTableRowSelection } = useResetTableRowSelection(recordTableId);
 
   const recordTableIsEmpty =
-    !isRecordTableInitialLoading && allRecordIds.length === 0;
+    !isRecordTableInitialLoading && !recordTableHasRecords;
 
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;

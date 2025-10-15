@@ -7,8 +7,13 @@ import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePrev
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
+import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
+import { AIChatErrorMessageWithRecordsContext } from '@/ai/components/internal/AIChatErrorMessageWithRecordsContext';
 import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
@@ -139,12 +144,21 @@ const StyledFilesContainer = styled.div`
 export const AIChatMessage = ({
   message,
   isLastMessageStreaming,
+  error,
 }: {
   message: UIMessageWithMetadata;
   isLastMessageStreaming: boolean;
+  error?: Error | null;
 }) => {
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
+
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
+  const showError =
+    isDefined(error) && message.role === AgentChatMessageRole.ASSISTANT;
 
   return (
     <StyledMessageBubble
@@ -174,6 +188,7 @@ export const AIChatMessage = ({
             <AIChatAssistantMessageRenderer
               isLastMessageStreaming={isLastMessageStreaming}
               messageParts={message.parts}
+              hasError={showError}
             />
           </StyledMessageText>
           {message.parts.length > 0 && (
@@ -185,6 +200,12 @@ export const AIChatMessage = ({
                 ))}
             </StyledFilesContainer>
           )}
+          {showError &&
+            (contextStoreCurrentObjectMetadataItemId ? (
+              <AIChatErrorMessageWithRecordsContext error={error} />
+            ) : (
+              <AIChatErrorMessage error={error} />
+            ))}
           {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">
               <span>

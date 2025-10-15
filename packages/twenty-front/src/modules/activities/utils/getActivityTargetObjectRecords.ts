@@ -6,12 +6,13 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type GetActivityTargetObjectRecordsProps = {
   activityRecord: Note | Task;
   objectMetadataItems: ObjectMetadataItem[];
-  activityTargets?: NoteTarget[] | TaskTarget[];
+  activityTargets?: Nullable<NoteTarget[] | TaskTarget[]>;
 };
 
 export const getActivityTargetObjectRecords = ({

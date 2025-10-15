@@ -144,6 +144,10 @@ export const useChartSettingsValues = ({
         return groupByOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS:
         return configuration.displayDataLabel ?? undefined;
+      case CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS:
+        return 'groupMode' in configuration
+          ? configuration.groupMode !== 'GROUPED'
+          : true;
       default:
         return '';
     }

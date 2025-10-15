@@ -9,9 +9,10 @@ import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
-import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
+import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 // TODO: add extensive unit tests for this function
 // That will also serve as documentation
 export const triggerUpdateRecordOptimisticEffect = ({
@@ -20,12 +21,19 @@ export const triggerUpdateRecordOptimisticEffect = ({
   currentRecord,
   updatedRecord,
   objectMetadataItems,
+  objectPermissionsByObjectMetadataId,
+  upsertRecordsInStore,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
   currentRecord: RecordGqlNode;
   updatedRecord: RecordGqlNode;
   objectMetadataItems: ObjectMetadataItem[];
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
+  upsertRecordsInStore: (records: ObjectRecord[]) => void;
 }) => {
   triggerUpdateRelationsOptimisticEffect({
     cache,
@@ -33,6 +41,8 @@ export const triggerUpdateRecordOptimisticEffect = ({
     currentSourceRecord: currentRecord,
     updatedSourceRecord: updatedRecord,
     objectMetadataItems,
+    objectPermissionsByObjectMetadataId,
+    upsertRecordsInStore,
   });
 
   cache.modify<StoreObject>({

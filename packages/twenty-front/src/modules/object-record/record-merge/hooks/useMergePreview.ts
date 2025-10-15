@@ -31,7 +31,7 @@ export const useMergePreview = ({
   const { mergeManyRecords } = useMergeManyRecords({
     objectNameSingular,
   });
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { isLoading: isLoadingRelationships } = useMergeRecordRelationships({
     objectNameSingular,
@@ -56,7 +56,7 @@ export const useMergePreview = ({
         }
 
         setMergePreviewRecord(previewRecord);
-        upsertRecords([previewRecord]);
+        upsertRecordsInStore([previewRecord]);
       } catch {
         setMergePreviewRecord(null);
       } finally {
