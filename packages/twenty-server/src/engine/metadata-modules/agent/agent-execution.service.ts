@@ -16,19 +16,17 @@ import { getAppPath } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
-import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
+import { AgentActorContextService } from 'src/engine/metadata-modules/agent/services/agent-actor-context.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -45,7 +43,6 @@ export interface AgentExecutionResult {
 }
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class AgentExecutionService implements AgentExecutionContext {
   private readonly logger = new Logger(AgentExecutionService.name);
 
@@ -59,8 +56,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiBillingService: AIBillingService,
-    private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly userRoleService: UserRoleService,
+    private readonly agentActorContextService: AgentActorContextService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
   ) {}
@@ -274,16 +270,17 @@ export class AgentExecutionService implements AgentExecutionContext {
         contextString = `\n\nCONTEXT:\n${contextPart}`;
       }
 
-      const { actor, roleId } = await this.buildUserContext(
-        userWorkspaceId,
-        workspace.id,
-      );
+      const { actorContext, roleId } =
+        await this.agentActorContextService.buildUserActorContext(
+          userWorkspaceId,
+          workspace.id,
+        );
 
       const aiRequestConfig = await this.prepareAIRequestConfig({
         system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}${contextString}`,
         agent,
         messages,
-        actorContext: actor,
+        actorContext,
         roleIdOverride: roleId,
       });
 
@@ -318,52 +315,5 @@ export class AgentExecutionService implements AgentExecutionContext {
         AgentExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
-  }
-
-  private async buildUserContext(
-    userWorkspaceId: string,
-    workspaceId: string,
-  ): Promise<{ actor: ActorMetadata; roleId: string | undefined }> {
-    const userWorkspace =
-      await this.userWorkspaceService.findById(userWorkspaceId);
-
-    if (!userWorkspace) {
-      throw new AgentException(
-        'User workspace not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
-
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: {
-        userId: userWorkspace.userId,
-      },
-    });
-
-    if (!workspaceMember) {
-      throw new AgentException(
-        'Workspace member not found for user',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
-
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      userWorkspaceId,
-      workspaceId,
-    });
-
-    const actor = buildCreatedByFromFullNameMetadata({
-      fullNameMetadata: workspaceMember.name,
-      workspaceMemberId: workspaceMember.id,
-    });
-
-    return { actor, roleId };
   }
 }

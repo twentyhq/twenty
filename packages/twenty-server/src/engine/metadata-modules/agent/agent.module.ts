@@ -41,6 +41,8 @@ import { AgentEntity } from './agent.entity';
 import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
 
+import { AgentActorContextService } from './services/agent-actor-context.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -85,6 +87,7 @@ import { AgentService } from './agent.service';
     AgentTitleGenerationService,
     AgentHandoffExecutorService,
     AgentHandoffService,
+    AgentActorContextService,
   ],
   exports: [
     AgentService,
