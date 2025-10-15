@@ -51,6 +51,7 @@ import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
+import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 
@@ -158,15 +159,16 @@ export const WorkflowEditActionServerlessFunction = ({
     if (actionOptions.readonly === true) {
       return;
     }
-    setFormValues((prevState) => ({
-      ...prevState,
-      code: {
-        ...prevState.code,
-        [SOURCE_FOLDER_NAME]: {
-          [INDEX_FILE_NAME]: newCode,
-        },
-      },
-    }));
+    setFormValues((prevState) => {
+      return {
+        ...prevState,
+        code: computeNewSources({
+          previousCode: prevState['code'],
+          filePath: `${SOURCE_FOLDER_NAME}/${INDEX_FILE_NAME}`,
+          value: newCode,
+        }),
+      };
+    });
     await handleSave();
     await handleUpdateFunctionInputSchema(newCode);
   };
@@ -376,6 +378,12 @@ export const WorkflowEditActionServerlessFunction = ({
     setIsFullScreen(false);
   };
 
+  const indexFileContent =
+    typeof formValues.code?.[SOURCE_FOLDER_NAME] !== 'string' &&
+    typeof formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME] === 'string'
+      ? formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME]
+      : '';
+
   const fullScreenOverlay = renderFullScreenModal(
     <div data-globally-prevent-click-outside="true">
       <WorkflowEditActionServerlessFunctionFields
@@ -387,7 +395,7 @@ export const WorkflowEditActionServerlessFunction = ({
       <StyledFullScreenCodeEditorContainer>
         <CodeEditor
           height="100%"
-          value={formValues.code?.[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME]}
+          value={indexFileContent}
           language="typescript"
           onChange={handleCodeChange}
           onMount={handleEditorDidMount}
@@ -434,7 +442,7 @@ export const WorkflowEditActionServerlessFunction = ({
                 readonly={actionOptions.readonly}
               />
               <WorkflowServerlessFunctionCodeEditor
-                value={formValues.code?.[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME]}
+                value={indexFileContent}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
                 options={{

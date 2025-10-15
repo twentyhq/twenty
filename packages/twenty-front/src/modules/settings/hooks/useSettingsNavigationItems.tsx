@@ -17,7 +17,6 @@ import {
   type IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
-  IconFunction,
   IconHierarchy2,
   IconKey,
   IconLock,
@@ -26,6 +25,7 @@ import {
   IconServer,
   IconSettings,
   IconSparkles,
+  IconPuzzle2,
   IconUserCircle,
   IconUsers,
   IconWorld,
@@ -56,13 +56,15 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const billing = useRecoilValue(billingState);
   const { signOut } = useAuth();
 
-  const isFunctionSettingsEnabled = false;
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const currentUser = useRecoilValue(currentUserState);
   const isAdminEnabled =
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
     false;
   const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const isApplicationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APPLICATION_ENABLED,
+  );
 
   const permissionMap = usePermissionFlagMap();
   return [
@@ -153,19 +155,21 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         {
+          label: t`Applications`,
+          path: SettingsPath.Applications,
+          Icon: IconPuzzle2,
+          isHidden:
+            !isApplicationEnabled ||
+            !permissionMap[PermissionFlagType.WORKSPACE],
+          isNew: true,
+        },
+        {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
           isHidden:
             !isAIEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
           isNew: true,
-        },
-        {
-          label: t`Functions`,
-          path: SettingsPath.ServerlessFunctions,
-          Icon: IconFunction,
-          isHidden: !isFunctionSettingsEnabled,
-          isAdvanced: true,
         },
         {
           label: t`Security`,

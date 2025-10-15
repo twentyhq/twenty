@@ -21,6 +21,7 @@ export type TextAreaProps = {
   value?: string;
   className?: string;
   onBlur?: () => void;
+  readOnly?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -81,6 +82,7 @@ export const TextArea = ({
   className,
   onChange,
   onBlur,
+  readOnly = false,
 }: TextAreaProps) => {
   const computedMinRows = Math.min(minRows, maxRows);
 
@@ -125,6 +127,7 @@ export const TextArea = ({
         onBlur={handleBlur}
         disabled={disabled}
         className={className}
+        readOnly={readOnly}
       />
     </StyledContainer>
   );

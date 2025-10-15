@@ -14,6 +14,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { ZodError } from 'zod';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 
 type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -22,6 +23,7 @@ type SettingsUpdateDataModelObjectAboutFormProps = {
 export const SettingsUpdateDataModelObjectAboutForm = ({
   objectMetadataItem,
 }: SettingsUpdateDataModelObjectAboutFormProps) => {
+  const readonly = isObjectMetadataReadOnly({ objectMetadataItem });
   const navigate = useNavigateSettings();
   const { enqueueErrorSnackBar } = useSnackBar();
   const setUpdatedObjectNamePlural = useSetRecoilState(
@@ -54,6 +56,10 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
   const handleSave = async (
     formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
+    if (readonly) {
+      return;
+    }
+
     if (!(Object.keys(formConfig.formState.dirtyFields).length > 0)) {
       return;
     }
@@ -71,10 +77,10 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
           description,
           icon: icon ?? undefined,
           isLabelSyncedWithName: formValues.isLabelSyncedWithName,
-          labelPlural: updatedObject.data?.updateOneObject.labelPlural,
-          labelSingular: updatedObject.data?.updateOneObject.labelSingular,
-          namePlural: updatedObject.data?.updateOneObject.namePlural,
-          nameSingular: updatedObject.data?.updateOneObject.nameSingular,
+          labelPlural: updatedObject?.data?.updateOneObject.labelPlural,
+          labelSingular: updatedObject?.data?.updateOneObject.labelSingular,
+          namePlural: updatedObject?.data?.updateOneObject.namePlural,
+          nameSingular: updatedObject?.data?.updateOneObject.nameSingular,
         });
       } else {
         formConfig.reset(undefined, { keepValues: true });
@@ -91,6 +97,10 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
   const updateObjectMetadata = async (
     formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
+    if (readonly) {
+      return;
+    }
+
     const updatePayload = { ...formValues };
 
     if (!objectMetadataItem.isCustom) {
@@ -139,7 +149,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     <FormProvider {...formConfig}>
       <SettingsDataModelObjectAboutForm
         onNewDirtyField={() => formConfig.handleSubmit(handleSave)()}
-        disableEdition={!objectMetadataItem.isCustom}
+        disableEdition={!objectMetadataItem.isCustom || readonly}
         objectMetadataItem={objectMetadataItem}
       />
     </FormProvider>
