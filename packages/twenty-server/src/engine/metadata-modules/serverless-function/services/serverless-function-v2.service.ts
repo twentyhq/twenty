@@ -71,7 +71,6 @@ export class ServerlessFunctionV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
         },
       );
@@ -142,7 +141,6 @@ export class ServerlessFunctionV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
         },
       );
@@ -218,7 +216,6 @@ export class ServerlessFunctionV2Service {
             },
           },
           buildOptions: {
-            inferDeletionFromMissingEntities: false,
             isSystemBuild,
           },
           workspaceId,
@@ -298,7 +295,9 @@ export class ServerlessFunctionV2Service {
           },
           buildOptions: {
             isSystemBuild,
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              serverlessFunction: true,
+            },
           },
           workspaceId,
         },

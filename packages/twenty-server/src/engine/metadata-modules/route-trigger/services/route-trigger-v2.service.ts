@@ -69,7 +69,6 @@ export class RouteTriggerV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
         },
       );
@@ -140,7 +139,6 @@ export class RouteTriggerV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
         },
       );
@@ -217,7 +215,9 @@ export class RouteTriggerV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              routeTrigger: true,
+            },
           },
           workspaceId,
         },
