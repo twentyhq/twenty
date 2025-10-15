@@ -19,6 +19,7 @@ type UseGraphBarChartWidgetDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  layout?: 'vertical' | 'horizontal';
   loading: boolean;
   error?: Error;
 };

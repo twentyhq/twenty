@@ -4,7 +4,6 @@ import { FilesCard } from '@/activities/files/components/FilesCard';
 import { NotesCard } from '@/activities/notes/components/NotesCard';
 import { TasksCard } from '@/activities/tasks/components/TasksCard';
 import { TimelineCard } from '@/activities/timeline-activities/components/TimelineCard';
-import { DashboardCard } from '@/dashboards/components/DashboardCard';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import {
   type CardConfiguration,
@@ -26,9 +25,9 @@ const CardRenderer = <T extends CardConfiguration>({
   Component: React.ComponentType<{ configuration?: T }> | React.ComponentType;
   configuration?: T;
 }) => {
-  const { targetRecord } = useLayoutRenderingContext();
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
 
-  if (!targetRecord) {
+  if (!targetRecordIdentifier) {
     return null;
   }
 
@@ -87,7 +86,8 @@ export const getCardComponent = <T extends CardType>(
       return <CardRenderer Component={WorkflowRunCard} />;
 
     case CardType.DashboardCard:
-      return <CardRenderer Component={DashboardCard} />;
+      throw new Error('Dashboard are handled separately currently');
+
     default:
       assertUnreachable(cardType);
   }

@@ -12,19 +12,15 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
+import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-
-export type RunWorkflowJobData = {
-  workspaceId: string;
-  workflowRunId: string;
-  lastExecutedStepId?: string;
-};
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class RunWorkflowJob {
@@ -38,7 +34,7 @@ export class RunWorkflowJob {
     private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
   ) {}
 
-  @Process(RunWorkflowJob.name)
+  @Process(RUN_WORKFLOW_JOB_NAME)
   async handle({
     workflowRunId,
     lastExecutedStepId,
@@ -148,10 +144,16 @@ export class RunWorkflowJob {
       );
     }
 
-    if (
-      !isDefined(lastExecutedStep.nextStepIds) ||
-      lastExecutedStep.nextStepIds.length === 0
-    ) {
+    const lastExecutedStepResult =
+      workflowRun.state?.stepInfos[lastExecutedStepId]?.result;
+
+    const nextStepIdsToExecute =
+      await this.workflowExecutorWorkspaceService.getNextStepIdsToExecute({
+        executedStep: lastExecutedStep,
+        executedStepResult: lastExecutedStepResult,
+      });
+
+    if (!isDefined(nextStepIdsToExecute) || nextStepIdsToExecute.length === 0) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
@@ -162,7 +164,7 @@ export class RunWorkflowJob {
     }
 
     await this.workflowExecutorWorkspaceService.executeFromSteps({
-      stepIds: lastExecutedStep.nextStepIds,
+      stepIds: nextStepIdsToExecute,
       workflowRunId,
       workspaceId,
     });

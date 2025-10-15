@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
+import { shouldExecuteChildStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-child-step.util';
 import { stepHasBeenStarted } from 'src/modules/workflow/workflow-executor/utils/step-has-been-started.util';
 import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 import {
@@ -40,20 +41,8 @@ export const shouldExecuteIteratorStep = ({
     ? stepsTargetingIterator
     : parentSteps;
 
-  if (stepsToCheck.length === 0) {
-    return true;
-  }
-
-  const hasSuccessfulParentStep = stepsToCheck.some(
-    (parentStep) => stepInfos[parentStep.id]?.status === StepStatus.SUCCESS,
-  );
-
-  const hasFailedNorNotStartedOrRunningParentStep = stepsToCheck.some(
-    (parentStep) =>
-      stepInfos[parentStep.id]?.status === StepStatus.FAILED ||
-      stepInfos[parentStep.id]?.status === StepStatus.NOT_STARTED ||
-      stepInfos[parentStep.id]?.status === StepStatus.RUNNING,
-  );
-
-  return hasSuccessfulParentStep && !hasFailedNorNotStartedOrRunningParentStep;
+  return shouldExecuteChildStep({
+    parentSteps: stepsToCheck,
+    stepInfos,
+  });
 };

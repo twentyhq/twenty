@@ -43,7 +43,7 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheServi
           id: true,
         },
       },
-      relations: ['viewFields', 'viewFilters'],
+      relations: ['viewFields', 'viewFilters', 'viewGroups'],
       withDeleted: true,
     });
 

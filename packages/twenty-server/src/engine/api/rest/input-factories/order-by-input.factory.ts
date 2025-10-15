@@ -1,11 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { OrderByDirection } from 'twenty-shared/types';
 
-import {
-  type ObjectRecordOrderBy,
-  OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { checkFields } from 'src/engine/api/rest/core/query-builder/utils/check-fields.utils';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
