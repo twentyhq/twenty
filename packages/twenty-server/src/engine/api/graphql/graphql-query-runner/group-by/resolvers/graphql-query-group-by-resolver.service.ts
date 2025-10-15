@@ -13,6 +13,7 @@ import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
+  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -159,6 +160,36 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
 
           if (isNumericReturningAggregate) {
             queryBuilder.andHaving(`${aggregateExpression} != 0`);
+          }
+        }
+      });
+    }
+
+    if (
+      isDefined(executionArgs.args.rangeMin) ||
+      isDefined(executionArgs.args.rangeMax)
+    ) {
+      const aggregateFields =
+        executionArgs.graphqlQuerySelectedFieldsResult.aggregate ?? {};
+
+      Object.values(aggregateFields).forEach((aggregationField) => {
+        const aggregateExpression =
+          ProcessAggregateHelper.getAggregateExpression(
+            aggregationField,
+            objectMetadataNameSingular,
+          );
+
+        if (aggregateExpression) {
+          if (isDefined(executionArgs.args.rangeMin)) {
+            queryBuilder.andHaving(`${aggregateExpression} >= :rangeMin`, {
+              rangeMin: executionArgs.args.rangeMin,
+            });
+          }
+
+          if (isDefined(executionArgs.args.rangeMax)) {
+            queryBuilder.andHaving(`${aggregateExpression} <= :rangeMax`, {
+              rangeMax: executionArgs.args.rangeMax,
+            });
           }
         }
       });

@@ -1,6 +1,7 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
@@ -151,6 +152,21 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
               });
             };
 
+            const handleInputChange = (value: number | null) => {
+              const configKey =
+                item.id in CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP
+                  ? CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP[
+                      item.id as keyof typeof CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP
+                    ]
+                  : item.id;
+
+              updateCurrentWidgetConfig({
+                configToUpdate: {
+                  [configKey]: value,
+                },
+              });
+            };
+
             if (item.id === CHART_CONFIGURATION_SETTING_IDS.FILTER) {
               return (
                 <SelectableListItem
@@ -160,10 +176,29 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                 >
                   <CommandMenuItem
                     id={item.id}
-                    label="Filter"
+                    label={t`Filter`}
                     Icon={item.Icon}
                     hasSubMenu
                     onClick={handleFilterSettingsClick}
+                  />
+                </SelectableListItem>
+              );
+            }
+
+            if (item.isInput === true) {
+              return (
+                <SelectableListItem key={item.id} itemId={item.id}>
+                  <CommandMenuItem
+                    id={item.id}
+                    label={t(item.label)}
+                    Icon={item.Icon}
+                    RightComponent={
+                      <CommandMenuItemNumberInput
+                        value={getChartSettingsValues(item.id) as string}
+                        onChange={handleInputChange}
+                        placeholder={t`Auto`}
+                      />
+                    }
                   />
                 </SelectableListItem>
               );

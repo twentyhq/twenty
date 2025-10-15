@@ -102,5 +102,13 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
     groupBy,
     ...(orderBy.length > 0 && { orderBy }),
     ...(barChartConfiguration.omitNullValues ? { omitNullValues: true } : {}),
+    ...(isDefined(barChartConfiguration.rangeMin) &&
+    barChartConfiguration.rangeMin !== null
+      ? { rangeMin: barChartConfiguration.rangeMin }
+      : {}),
+    ...(isDefined(barChartConfiguration.rangeMax) &&
+    barChartConfiguration.rangeMax !== null
+      ? { rangeMax: barChartConfiguration.rangeMax }
+      : {}),
   };
 };

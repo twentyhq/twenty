@@ -21,6 +21,8 @@ export const generateGroupByQuery = ({
       $filter: ${capitalizedSingular}FilterInput
       $orderBy: [${capitalizedSingular}OrderByWithGroupByInput!]
       $omitNullValues: Boolean
+      $rangeMin: Float
+      $rangeMax: Float
       $viewId: UUID
     ) {
       ${queryFieldName}(
@@ -28,6 +30,8 @@ export const generateGroupByQuery = ({
         filter: $filter
         orderBy: $orderBy
         omitNullValues: $omitNullValues
+        rangeMin: $rangeMin
+        rangeMax: $rangeMax
         viewId: $viewId
       ) {
         groupByDimensionValues${aggregateOperations.length > 0 ? `\n        ${aggregateOperations.join('\n        ')}` : ''}

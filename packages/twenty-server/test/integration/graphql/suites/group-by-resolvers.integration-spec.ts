@@ -734,4 +734,424 @@ describe('group-by resolvers (integration)', () => {
       });
     });
   });
+
+  describe('rangeMin and rangeMax', () => {
+    describe('rangeMin', () => {
+      const lowEmployeesCompanyId = randomUUID();
+      const midEmployeesCompanyId = randomUUID();
+      const highEmployeesCompanyId = randomUUID();
+      const lowCity = 'LowCity';
+      const midCity = 'MidCity';
+      const highCity = 'HighCity';
+
+      beforeAll(async () => {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: lowEmployeesCompanyId,
+              name: 'Low Employees Company',
+              address: { addressCity: lowCity },
+              employees: 5,
+            },
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: midEmployeesCompanyId,
+              name: 'Mid Employees Company',
+              address: { addressCity: midCity },
+              employees: 10,
+            },
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: highEmployeesCompanyId,
+              name: 'High Employees Company',
+              address: { addressCity: highCity },
+              employees: 15,
+            },
+          }),
+        );
+      });
+
+      afterAll(async () => {
+        for (const id of [
+          lowEmployeesCompanyId,
+          midEmployeesCompanyId,
+          highEmployeesCompanyId,
+        ]) {
+          await makeGraphqlAPIRequest(
+            destroyOneOperationFactory({
+              objectMetadataSingularName: 'company',
+              gqlFields: 'id',
+              recordId: id,
+            }),
+          );
+        }
+      });
+
+      it('filters out groups with aggregates below rangeMin when enabled', async () => {
+        const baseOperation = {
+          objectMetadataSingularName: 'company',
+          objectMetadataPluralName: 'companies',
+          groupBy: [{ address: { addressCity: true } }],
+          gqlFields: `
+            sumEmployees
+          `,
+        };
+
+        const responseWithoutFilter = await makeGraphqlAPIRequest(
+          groupByOperationFactory(baseOperation),
+        );
+
+        expect(responseWithoutFilter.body.errors).toBeUndefined();
+
+        const groupsWithoutFilter =
+          responseWithoutFilter.body.data.companiesGroupBy;
+
+        expect(groupsWithoutFilter.length).toBeGreaterThanOrEqual(3);
+
+        const lowGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === lowCity,
+        );
+        const midGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === midCity,
+        );
+        const highGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === highCity,
+        );
+
+        expect(lowGroup).toBeDefined();
+        expect(lowGroup.sumEmployees).toBe(5);
+        expect(midGroup).toBeDefined();
+        expect(midGroup.sumEmployees).toBe(10);
+        expect(highGroup).toBeDefined();
+        expect(highGroup.sumEmployees).toBe(15);
+
+        const responseWithFilter = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            ...baseOperation,
+            rangeMin: 10,
+          }),
+        );
+
+        expect(responseWithFilter.body.errors).toBeUndefined();
+
+        const groupsWithFilter = responseWithFilter.body.data.companiesGroupBy;
+
+        expect(
+          groupsWithFilter.find(
+            (group: any) => group.groupByDimensionValues?.[0] === lowCity,
+          ),
+        ).toBeUndefined();
+
+        const midGroupFiltered = groupsWithFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === midCity,
+        );
+        const highGroupFiltered = groupsWithFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === highCity,
+        );
+
+        expect(midGroupFiltered).toBeDefined();
+        expect(midGroupFiltered.sumEmployees).toBe(10);
+        expect(highGroupFiltered).toBeDefined();
+        expect(highGroupFiltered.sumEmployees).toBe(15);
+      });
+    });
+
+    describe('rangeMax', () => {
+      const lowEmployeesCompanyId = randomUUID();
+      const midEmployeesCompanyId = randomUUID();
+      const highEmployeesCompanyId = randomUUID();
+      const lowCity = 'LowCityMax';
+      const midCity = 'MidCityMax';
+      const highCity = 'HighCityMax';
+
+      beforeAll(async () => {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: lowEmployeesCompanyId,
+              name: 'Low Employees Company Max',
+              address: { addressCity: lowCity },
+              employees: 5,
+            },
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: midEmployeesCompanyId,
+              name: 'Mid Employees Company Max',
+              address: { addressCity: midCity },
+              employees: 10,
+            },
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: highEmployeesCompanyId,
+              name: 'High Employees Company Max',
+              address: { addressCity: highCity },
+              employees: 15,
+            },
+          }),
+        );
+      });
+
+      afterAll(async () => {
+        for (const id of [
+          lowEmployeesCompanyId,
+          midEmployeesCompanyId,
+          highEmployeesCompanyId,
+        ]) {
+          await makeGraphqlAPIRequest(
+            destroyOneOperationFactory({
+              objectMetadataSingularName: 'company',
+              gqlFields: 'id',
+              recordId: id,
+            }),
+          );
+        }
+      });
+
+      it('filters out groups with aggregates above rangeMax when enabled', async () => {
+        const baseOperation = {
+          objectMetadataSingularName: 'company',
+          objectMetadataPluralName: 'companies',
+          groupBy: [{ address: { addressCity: true } }],
+          gqlFields: `
+            sumEmployees
+          `,
+        };
+
+        const responseWithoutFilter = await makeGraphqlAPIRequest(
+          groupByOperationFactory(baseOperation),
+        );
+
+        expect(responseWithoutFilter.body.errors).toBeUndefined();
+
+        const groupsWithoutFilter =
+          responseWithoutFilter.body.data.companiesGroupBy;
+
+        const lowGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === lowCity,
+        );
+        const midGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === midCity,
+        );
+        const highGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === highCity,
+        );
+
+        expect(lowGroup).toBeDefined();
+        expect(lowGroup.sumEmployees).toBe(5);
+        expect(midGroup).toBeDefined();
+        expect(midGroup.sumEmployees).toBe(10);
+        expect(highGroup).toBeDefined();
+        expect(highGroup.sumEmployees).toBe(15);
+
+        const responseWithFilter = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            ...baseOperation,
+            rangeMax: 10,
+          }),
+        );
+
+        expect(responseWithFilter.body.errors).toBeUndefined();
+
+        const groupsWithFilter = responseWithFilter.body.data.companiesGroupBy;
+
+        expect(
+          groupsWithFilter.find(
+            (group: any) => group.groupByDimensionValues?.[0] === highCity,
+          ),
+        ).toBeUndefined();
+
+        const lowGroupFiltered = groupsWithFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === lowCity,
+        );
+        const midGroupFiltered = groupsWithFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === midCity,
+        );
+
+        expect(lowGroupFiltered).toBeDefined();
+        expect(lowGroupFiltered.sumEmployees).toBe(5);
+        expect(midGroupFiltered).toBeDefined();
+        expect(midGroupFiltered.sumEmployees).toBe(10);
+      });
+    });
+
+    describe('combined range', () => {
+      const veryLowCompanyId = randomUUID();
+      const lowCompanyId = randomUUID();
+      const midCompanyId = randomUUID();
+      const highCompanyId = randomUUID();
+      const veryLowCity = 'VeryLowCity';
+      const lowCity = 'LowCityRange';
+      const midCity = 'MidCityRange';
+      const highCity = 'HighCityRange';
+
+      beforeAll(async () => {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: veryLowCompanyId,
+              name: 'Very Low Company',
+              address: { addressCity: veryLowCity },
+              employees: 3,
+            },
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: lowCompanyId,
+              name: 'Low Company Range',
+              address: { addressCity: lowCity },
+              employees: 7,
+            },
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: midCompanyId,
+              name: 'Mid Company Range',
+              address: { addressCity: midCity },
+              employees: 12,
+            },
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: highCompanyId,
+              name: 'High Company Range',
+              address: { addressCity: highCity },
+              employees: 20,
+            },
+          }),
+        );
+      });
+
+      afterAll(async () => {
+        for (const id of [
+          veryLowCompanyId,
+          lowCompanyId,
+          midCompanyId,
+          highCompanyId,
+        ]) {
+          await makeGraphqlAPIRequest(
+            destroyOneOperationFactory({
+              objectMetadataSingularName: 'company',
+              gqlFields: 'id',
+              recordId: id,
+            }),
+          );
+        }
+      });
+
+      it('filters groups to only those within the rangeMin and rangeMax bounds', async () => {
+        const baseOperation = {
+          objectMetadataSingularName: 'company',
+          objectMetadataPluralName: 'companies',
+          groupBy: [{ address: { addressCity: true } }],
+          gqlFields: `
+            sumEmployees
+          `,
+        };
+
+        const responseWithoutFilter = await makeGraphqlAPIRequest(
+          groupByOperationFactory(baseOperation),
+        );
+
+        expect(responseWithoutFilter.body.errors).toBeUndefined();
+
+        const groupsWithoutFilter =
+          responseWithoutFilter.body.data.companiesGroupBy;
+
+        const veryLowGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === veryLowCity,
+        );
+        const lowGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === lowCity,
+        );
+        const midGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === midCity,
+        );
+        const highGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === highCity,
+        );
+
+        expect(veryLowGroup).toBeDefined();
+        expect(veryLowGroup.sumEmployees).toBe(3);
+        expect(lowGroup).toBeDefined();
+        expect(lowGroup.sumEmployees).toBe(7);
+        expect(midGroup).toBeDefined();
+        expect(midGroup.sumEmployees).toBe(12);
+        expect(highGroup).toBeDefined();
+        expect(highGroup.sumEmployees).toBe(20);
+
+        const responseWithFilter = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            ...baseOperation,
+            rangeMin: 5,
+            rangeMax: 15,
+          }),
+        );
+
+        expect(responseWithFilter.body.errors).toBeUndefined();
+
+        const groupsWithFilter = responseWithFilter.body.data.companiesGroupBy;
+
+        expect(
+          groupsWithFilter.find(
+            (group: any) => group.groupByDimensionValues?.[0] === veryLowCity,
+          ),
+        ).toBeUndefined();
+        expect(
+          groupsWithFilter.find(
+            (group: any) => group.groupByDimensionValues?.[0] === highCity,
+          ),
+        ).toBeUndefined();
+
+        const lowGroupFiltered = groupsWithFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === lowCity,
+        );
+        const midGroupFiltered = groupsWithFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === midCity,
+        );
+
+        expect(lowGroupFiltered).toBeDefined();
+        expect(lowGroupFiltered.sumEmployees).toBe(7);
+        expect(midGroupFiltered).toBeDefined();
+        expect(midGroupFiltered.sumEmployees).toBe(12);
+      });
+    });
+  });
 });
