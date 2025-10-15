@@ -15,7 +15,6 @@ import { ServerlessFunctionExecutionResult } from '@/serverless-functions/compon
 import { INDEX_FILE_NAME } from '@/serverless-functions/constants/IndexFileName';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
-import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -47,6 +46,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { buildOutputSchemaFromValue } from 'twenty-shared/workflow';
 import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -135,7 +135,7 @@ export const WorkflowEditActionServerlessFunction = ({
     if (actionOptions.readonly === true) {
       return;
     }
-    const newOutputSchema = getFunctionOutputSchema(testResult);
+    const newOutputSchema = buildOutputSchemaFromValue(testResult);
     updateAction({
       ...action,
       settings: { ...action.settings, outputSchema: newOutputSchema },

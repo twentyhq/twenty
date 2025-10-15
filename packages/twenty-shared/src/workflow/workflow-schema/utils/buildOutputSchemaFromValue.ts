@@ -1,9 +1,9 @@
+import { isDefined } from '@/utils';
 import {
   type BaseOutputSchemaV2,
   type LeafType,
-} from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
+} from '@/workflow/workflow-schema/types/base-output-schema.type';
 import { isObject } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 
 const getValueType = (value: any): LeafType => {
   if (!isDefined(value) || value === null) {
@@ -24,7 +24,9 @@ const getValueType = (value: any): LeafType => {
   return 'unknown';
 };
 
-export const getFunctionOutputSchema = (testResult: object) => {
+export const buildOutputSchemaFromValue = (
+  testResult: object,
+): BaseOutputSchemaV2 => {
   return testResult
     ? Object.entries(testResult).reduce(
         (acc: BaseOutputSchemaV2, [key, value]) => {
@@ -33,7 +35,7 @@ export const getFunctionOutputSchema = (testResult: object) => {
               isLeaf: false,
               type: 'object',
               label: key,
-              value: getFunctionOutputSchema(value),
+              value: buildOutputSchemaFromValue(value),
             };
           } else {
             acc[key] = {
