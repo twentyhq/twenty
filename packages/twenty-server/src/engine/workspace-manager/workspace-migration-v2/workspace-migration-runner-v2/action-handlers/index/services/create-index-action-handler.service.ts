@@ -134,8 +134,8 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     flatIndexFieldMetadatas,
     flatFieldMetadataMaps,
   }: {
-    flatIndexFieldMetadatas: FlatIndexFieldMetadata[],
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): string[] {
     return flatIndexFieldMetadatas.flatMap(({ fieldMetadataId }) => {
       const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
