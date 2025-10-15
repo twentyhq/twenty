@@ -39,7 +39,7 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
             __typename: 'GridPosition',
             row: 0,
             column: 0,
-            rowSpan: 4,
+            rowSpan: 12,
             columnSpan: 12,
           },
           configuration: null,
