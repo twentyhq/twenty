@@ -45,9 +45,10 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
   formValues: ServerlessFunctionFormValues;
   onCodeChange: (filePath: string, value: string) => void;
 }) => {
-  const environmentVariables = formValues.code?.['.env']
-    ? dotenv.parse(formValues.code['.env'])
-    : {};
+  const environmentVariables =
+    formValues.code?.['.env'] && typeof formValues.code?.['.env'] === 'string'
+      ? dotenv.parse(formValues.code['.env'])
+      : {};
   const environmentVariablesList = Object.entries(environmentVariables).map(
     ([key, value]) => ({ id: v4(), key, value }),
   );

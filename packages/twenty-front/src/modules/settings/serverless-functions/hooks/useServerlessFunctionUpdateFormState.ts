@@ -8,6 +8,7 @@ import { useRecoilState } from 'recoil';
 import { type FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 import { type ServerlessFunction } from '~/generated/graphql';
+import { type Sources } from '@/serverless-functions/types/sources.type';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -15,12 +16,7 @@ export type ServerlessFunctionNewFormValues = {
 };
 
 export type ServerlessFunctionFormValues = ServerlessFunctionNewFormValues & {
-  code: {
-    src: {
-      'index.ts': string;
-    } & { [key: string]: string };
-    '.env'?: string;
-  };
+  code: Sources;
 };
 
 type SetServerlessFunctionFormValues = Dispatch<

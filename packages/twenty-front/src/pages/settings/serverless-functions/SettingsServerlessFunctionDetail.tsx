@@ -20,9 +20,10 @@ import {
   IconBolt,
 } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
-import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 import { t } from '@lingui/core/macro';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
+import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
+import { flattenSources } from '@/serverless-functions/utils/flattenSources';
 
 const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 
@@ -69,16 +70,16 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   const onCodeChange = async (filePath: string, value: string) => {
-    setFormValues((prevState) => ({
-      ...prevState,
-      code: {
-        ...prevState.code,
-        [SOURCE_FOLDER_NAME]: {
-          ...prevState.code[SOURCE_FOLDER_NAME],
-          [filePath]: value,
-        },
-      },
-    }));
+    setFormValues((prevState) => {
+      return {
+        ...prevState,
+        code: computeNewSources({
+          previousCode: prevState['code'],
+          filePath,
+          value,
+        }),
+      };
+    });
     await handleSave();
   };
 
@@ -94,22 +95,19 @@ export const SettingsServerlessFunctionDetail = () => {
     { id: 'settings', title: 'Settings', Icon: IconSettings },
   ];
 
-  const files = formValues.code
-    ? [
-        {
-          path: '.env',
-          language: 'ini',
-          content: formValues.code?.['.env'] || '',
-        },
-        ...Object.keys(formValues.code?.[SOURCE_FOLDER_NAME]).map((key) => {
-          return {
-            path: key,
-            language: 'typescript',
-            content: formValues.code?.[SOURCE_FOLDER_NAME]?.[key] || '',
-          };
-        }),
-      ].reverse()
-    : [];
+  const flattenedCode = flattenSources(formValues.code);
+
+  const files = flattenedCode
+    .map((file) => {
+      const language = file.path === '.env' ? 'ini' : 'typescript';
+
+      return {
+        path: file.path,
+        language,
+        content: file.content,
+      };
+    })
+    .reverse();
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
