@@ -157,7 +157,7 @@ export const useChartSettingsValues = ({
           : true;
       case CHART_CONFIGURATION_SETTING_IDS.OMIT_NULL_VALUES:
         return 'omitNullValues' in configuration
-          ? configuration.omitNullValues ?? false
+          ? (configuration.omitNullValues ?? false)
           : false;
       default:
         return '';
