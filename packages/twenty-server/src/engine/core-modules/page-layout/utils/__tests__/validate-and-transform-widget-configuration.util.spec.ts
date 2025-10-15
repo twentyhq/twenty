@@ -1,5 +1,6 @@
 import {
   INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
+  INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
   INVALID_IFRAME_CONFIG_BAD_URL,
   INVALID_IFRAME_CONFIG_EMPTY_URL,
   INVALID_IFRAME_CONFIG_MISSING_URL,
@@ -147,6 +148,15 @@ describe('validateAndTransformWidgetConfiguration', () => {
         );
 
         expect(result).toMatchObject(TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL);
+      });
+
+      it('should throw error for partial horizontal bar graph configuration with missing required fields', () => {
+        expect(() =>
+          validateAndTransformWidgetConfiguration(
+            WidgetType.GRAPH,
+            INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
+          ),
+        ).toThrow(/primaryAxisGroupByFieldMetadataId/);
       });
     });
 
