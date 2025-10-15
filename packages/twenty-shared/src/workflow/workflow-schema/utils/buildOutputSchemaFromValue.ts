@@ -1,12 +1,9 @@
-import { isDefined } from '../../../utils';
+import { isDefined } from '@/utils';
 import {
   type BaseOutputSchemaV2,
   type LeafType,
-} from '../types/base-output-schema.type';
-
-const isObject = (value: any): value is object => {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-};
+} from '@/workflow/workflow-schema/types/base-output-schema.type';
+import { isObject } from '@sniptt/guards';
 
 const getValueType = (value: any): LeafType => {
   if (!isDefined(value) || value === null) {

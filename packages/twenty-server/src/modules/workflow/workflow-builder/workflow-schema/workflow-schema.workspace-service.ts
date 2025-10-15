@@ -430,7 +430,6 @@ export class WorkflowSchemaWorkspaceService {
 
           return inferArrayItemSchema({ schemaNode });
         }
-        // TODO(t.trompette): handle other trigger types
         default: {
           return DEFAULT_ITERATOR_CURRENT_ITEM;
         }

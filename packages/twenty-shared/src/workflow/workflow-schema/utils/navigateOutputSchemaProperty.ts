@@ -1,9 +1,9 @@
-import { isDefined } from '../../../utils';
+import { isDefined } from '@/utils';
 import {
   type BaseOutputSchemaV2,
   type Leaf,
   type Node,
-} from '../types/base-output-schema.type';
+} from '@/workflow/workflow-schema/types/base-output-schema.type';
 
 export const navigateOutputSchemaProperty = ({
   schema,
