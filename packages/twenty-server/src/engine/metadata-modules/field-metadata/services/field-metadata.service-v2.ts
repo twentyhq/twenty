@@ -216,6 +216,8 @@ export class FieldMetadataServiceV2 {
       flatViewGroupsToCreate,
       flatViewGroupsToDelete,
       flatViewGroupsToUpdate,
+      flatViewFiltersToDelete,
+      flatViewFiltersToUpdate,
     } = inputTranspilationResult.result;
 
     const toFlatFieldMetadataMaps =
@@ -268,13 +270,14 @@ export class FieldMetadataServiceV2 {
     );
 
     const fromFlatViewFiltersMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: [...flatViewFilterToDelete, ...flatViewFilterToUpdate].map(
-        ({ id }) => id,
-      ),
+      flatEntityIds: [
+        ...flatViewFiltersToDelete,
+        ...flatViewFiltersToUpdate,
+      ].map(({ id }) => id),
       flatEntityMaps: existingFlatViewFilterMaps,
     });
 
-    const flatViewFilterWithDeleted = flatViewFilterToDelete.reduce(
+    const flatViewFilterWithDeleted = flatViewFiltersToDelete.reduce(
       (flatViewFilterMaps, { id: entityToDeleteId }) =>
         deleteFlatEntityFromFlatEntityMapsOrThrow({
           flatEntityMaps: flatViewFilterMaps,
@@ -283,7 +286,7 @@ export class FieldMetadataServiceV2 {
       fromFlatViewFiltersMaps,
     );
 
-    const toFlatViewFitlerMaps = flatViewFilterToUpdate.reduce(
+    const toFlatViewFilterMaps = flatViewFiltersToUpdate.reduce(
       (flatViewFilterMaps, flatViewFilter) =>
         replaceFlatEntityInFlatEntityMapsOrThrow({
           flatEntity: flatViewFilter,
@@ -343,7 +346,7 @@ export class FieldMetadataServiceV2 {
             },
             flatViewFilterMaps: {
               from: fromFlatViewFiltersMaps,
-              to: toFlatViewFitlerMaps,
+              to: toFlatViewFilterMaps,
             },
             flatViewGroupMaps: {
               from: fromFlatViewGroupMaps,
@@ -352,9 +355,10 @@ export class FieldMetadataServiceV2 {
           },
           buildOptions: {
             isSystemBuild: false,
-            // TODO PRASTOIN
             inferDeletionFromMissingEntities: {
               index: true,
+              viewGroup: true,
+              viewFilter: true,
             },
           },
           workspaceId,
