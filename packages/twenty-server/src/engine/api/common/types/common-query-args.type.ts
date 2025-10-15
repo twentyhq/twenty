@@ -34,13 +34,13 @@ export interface FindManyQueryArgs {
 }
 
 export interface CreateManyQueryArgs {
-  selectedFieldsResult: CommonSelectedFieldsResult;
+  selectedFields: CommonSelectedFields;
   data: Partial<ObjectRecord>[];
   upsert?: boolean;
 }
 
 export interface CreateOneQueryArgs {
-  selectedFieldsResult: CommonSelectedFieldsResult;
+  selectedFields: CommonSelectedFields;
   data: Partial<ObjectRecord>;
   upsert?: boolean;
 }
