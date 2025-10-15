@@ -9,7 +9,7 @@ import { getAggregateOperationLabel } from '@/object-record/record-board/record-
 import { useRecoilValue } from 'recoil';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { type GraphOrderBy, GraphType } from '~/generated-metadata/graphql';
+import { type GraphOrderBy } from '~/generated-metadata/graphql';
 
 export const useChartSettingsValues = ({
   objectMetadataId,
@@ -50,37 +50,16 @@ export const useChartSettingsValues = ({
   let groupByOrderBy: GraphOrderBy | undefined | null;
 
   if (isBarOrLineChart) {
-    const isVertical =
-      configuration.__typename === 'LineChartConfiguration' ||
-      configuration.graphType === GraphType.VERTICAL_BAR;
-
-    groupByFieldXId = isVertical
-      ? configuration.primaryAxisGroupByFieldMetadataId
-      : configuration.secondaryAxisGroupByFieldMetadataId;
-
-    groupByFieldYId = isVertical
-      ? configuration.secondaryAxisGroupByFieldMetadataId
-      : configuration.primaryAxisGroupByFieldMetadataId;
-
-    groupBySubFieldNameX = (
-      isVertical
-        ? configuration.primaryAxisGroupBySubFieldName
-        : configuration.secondaryAxisGroupBySubFieldName
-    ) as CompositeFieldSubFieldName | undefined;
-
-    groupBySubFieldNameY = (
-      isVertical
-        ? configuration.secondaryAxisGroupBySubFieldName
-        : configuration.primaryAxisGroupBySubFieldName
-    ) as CompositeFieldSubFieldName | undefined;
-
-    xAxisOrderBy = isVertical
-      ? configuration.primaryAxisOrderBy
-      : configuration.secondaryAxisOrderBy;
-
-    groupByOrderBy = isVertical
-      ? configuration.secondaryAxisOrderBy
-      : configuration.primaryAxisOrderBy;
+    groupByFieldXId = configuration.primaryAxisGroupByFieldMetadataId;
+    groupByFieldYId = configuration.secondaryAxisGroupByFieldMetadataId;
+    groupBySubFieldNameX = configuration.primaryAxisGroupBySubFieldName as
+      | CompositeFieldSubFieldName
+      | undefined;
+    groupBySubFieldNameY = configuration.secondaryAxisGroupBySubFieldName as
+      | CompositeFieldSubFieldName
+      | undefined;
+    xAxisOrderBy = configuration.primaryAxisOrderBy;
+    groupByOrderBy = configuration.secondaryAxisOrderBy;
   }
 
   const groupByFieldX = isDefined(groupByFieldXId)
