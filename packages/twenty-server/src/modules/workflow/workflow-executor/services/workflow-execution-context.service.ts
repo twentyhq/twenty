@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -26,7 +28,8 @@ export class WorkflowExecutionContextService {
       });
 
     const isActingOnBehalfOfUser =
-      workflowRun.createdBy.source === FieldActorSource.MANUAL;
+      workflowRun.createdBy.source === FieldActorSource.MANUAL &&
+      isDefined(workflowRun.createdBy.workspaceMemberId);
 
     let roleId: string | undefined;
 
