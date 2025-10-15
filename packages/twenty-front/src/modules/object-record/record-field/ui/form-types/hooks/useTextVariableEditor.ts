@@ -88,7 +88,7 @@ export const useTextVariableEditor = ({
             state: { schema, tr },
           } = view;
           const originalPos = tr.selection.from;
-          const pastedText = slice.content.firstChild?.textContent!;
+          const pastedText = slice.content.firstChild?.textContent ?? '';
 
           // Apply the clipboard text to the document without formatting
           tr.replaceSelection(slice);
