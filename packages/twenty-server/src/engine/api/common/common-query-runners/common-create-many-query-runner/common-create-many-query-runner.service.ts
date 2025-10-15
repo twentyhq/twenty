@@ -96,7 +96,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     });
 
     const upsertedRecords = await this.fetchUpsertedRecords({
-      args: processedArgs,
       objectRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
@@ -344,14 +343,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }
 
   private async fetchUpsertedRecords({
-    args,
     objectRecords,
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
     repository,
     selectedFieldsResult,
   }: {
-    args: CreateManyQueryArgs;
     objectRecords: InsertResult;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
