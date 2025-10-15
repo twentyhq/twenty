@@ -4,7 +4,6 @@ import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/
 export const expectGqlCreateInputValidationError = async (
   objectMetadataSingularName: string,
   input: any,
-  errorMessage: string,
 ) => {
   const createManyGraphqlOperation = createOneOperationFactory({
     objectMetadataSingularName: objectMetadataSingularName,
@@ -17,5 +16,5 @@ export const expectGqlCreateInputValidationError = async (
   );
 
   expect(createManyResponse.body.errors).toBeDefined();
-  expect(createManyResponse.body.errors[0].message).toContain(errorMessage);
+  expect(createManyResponse.body.errors[0].message).toMatchSnapshot();
 };

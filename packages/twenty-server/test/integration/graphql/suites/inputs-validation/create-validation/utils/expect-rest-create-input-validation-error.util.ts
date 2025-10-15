@@ -3,7 +3,6 @@ import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-re
 export const expectRestCreateInputValidationError = async (
   objectMetadataPluralName: string,
   input: any,
-  errorMessage: string,
 ) => {
   const response = await makeRestAPIRequest({
     method: 'post',
@@ -12,5 +11,5 @@ export const expectRestCreateInputValidationError = async (
   });
 
   expect(response.body.error).toBeDefined();
-  expect(JSON.stringify(response.body.messages)).toContain(errorMessage);
+  expect(JSON.stringify(response.body.messages)).toMatchSnapshot();
 };

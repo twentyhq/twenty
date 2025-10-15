@@ -45,11 +45,10 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
       })),
     )(
       `${FIELD_METADATA_TYPE} - should fail with : $stringifiedInput`,
-      async ({ input, gqlErrorMessage: errorMessage }) => {
+      async ({ input }) => {
         await expectGqlCreateInputValidationError(
           objectMetadataSingularName,
           input,
-          errorMessage,
         );
       },
     );
@@ -63,11 +62,10 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
       })),
     )(
       `${FIELD_METADATA_TYPE} - should fail with : $stringifiedInput`,
-      async ({ input, restErrorMessage: errorMessage }) => {
+      async ({ input }) => {
         await expectRestCreateInputValidationError(
           objectMetadataPluralName,
           input,
-          errorMessage,
         );
       },
     );
