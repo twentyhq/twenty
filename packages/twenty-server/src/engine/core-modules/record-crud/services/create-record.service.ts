@@ -86,8 +86,8 @@ export class CreateRecordService {
         ...transformedObjectRecord,
         position,
         createdBy: params.createdBy ?? {
-          source: roleId ? FieldActorSource.AGENT : FieldActorSource.WORKFLOW,
-          name: roleId ? 'Agent' : 'Workflow',
+          source: FieldActorSource.WORKFLOW,
+          name: 'Workflow',
         },
       });
 
