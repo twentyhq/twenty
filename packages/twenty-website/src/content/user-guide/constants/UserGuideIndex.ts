@@ -7,7 +7,6 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'getting-around-twenty' },
       { fileName: 'configure-workspace-in-three-steps' },
       { fileName: 'implementation-services' },
-      { fileName: 'quick-start-guide-sales-teams' },
       { fileName: 'migrating-from-other-crms' },
     ],
     'Data Model': [
