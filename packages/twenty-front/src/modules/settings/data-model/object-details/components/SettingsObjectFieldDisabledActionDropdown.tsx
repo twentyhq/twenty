@@ -22,10 +22,12 @@ type SettingsObjectFieldInactiveActionDropdownProps = {
   onEdit: () => void;
   onDelete: () => void;
   fieldMetadataItemId: string;
+  readonly?: boolean;
 };
 
 export const SettingsObjectFieldInactiveActionDropdown = ({
   onActivate,
+  readonly = false,
   fieldMetadataItemId,
   onDelete,
   onEdit,
@@ -66,16 +68,18 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             <MenuItem
-              text={isCustomField ? t`Edit` : t`View`}
+              text={isCustomField && !readonly ? t`Edit` : t`View`}
               LeftIcon={isCustomField ? IconPencil : IconEye}
               onClick={handleEdit}
             />
-            <MenuItem
-              text={t`Activate`}
-              LeftIcon={IconArchiveOff}
-              onClick={handleActivate}
-            />
-            {isDeletable && (
+            {!readonly && (
+              <MenuItem
+                text={t`Activate`}
+                LeftIcon={IconArchiveOff}
+                onClick={handleActivate}
+              />
+            )}
+            {isDeletable && !readonly && (
               <MenuItem
                 text={t`Delete`}
                 accent="danger"

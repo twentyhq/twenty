@@ -30,6 +30,7 @@ import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/
 
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;
@@ -64,6 +65,10 @@ export const SettingsObjectFieldItemTableRow = ({
 }: SettingsObjectFieldItemTableRowProps) => {
   const { fieldMetadataItem, identifierType, objectMetadataItem } =
     settingsObjectDetailTableItem;
+
+  const readonly = isObjectMetadataReadOnly({
+    objectMetadataItem,
+  });
 
   const isRemoteObjectField = objectMetadataItem.isRemote;
 
@@ -118,6 +123,10 @@ export const SettingsObjectFieldItemTableRow = ({
   const handleDisableField = async (
     activeFieldMetadatItem: FieldMetadataItem,
   ) => {
+    if (readonly) {
+      return;
+    }
+
     await deactivateMetadataField(
       activeFieldMetadatItem.id,
       objectMetadataItem.id,
@@ -146,13 +155,17 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const handleSetLabelIdentifierField = (
     activeFieldMetadatItem: FieldMetadataItem,
-  ) =>
+  ) => {
+    if (readonly) {
+      return;
+    }
     updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
       updatePayload: {
         labelIdentifierFieldMetadataId: activeFieldMetadatItem.id,
       },
     });
+  };
 
   const [, setActiveSettingsObjectFields] = useRecoilState(
     settingsObjectFieldsFamilyState({
@@ -254,6 +267,7 @@ export const SettingsObjectFieldItemTableRow = ({
           mode === 'view' ? (
             <SettingsObjectFieldActiveActionDropdown
               isCustomField={fieldMetadataItem.isCustom === true}
+              readonly={readonly}
               fieldMetadataItemId={fieldMetadataItem.id}
               onEdit={() =>
                 navigate(SettingsPath.ObjectFieldEdit, {
@@ -284,6 +298,7 @@ export const SettingsObjectFieldItemTableRow = ({
         ) : mode === 'view' ? (
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={fieldMetadataItem.isCustom === true}
+            readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
             onEdit={() =>
               navigate(SettingsPath.ObjectFieldEdit, {

@@ -55,6 +55,7 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
             fieldType={fieldType}
             existingFieldMetadataId={existingFieldMetadataId}
             objectNameSingular={objectNameSingular}
+            disabled={disabled}
           />
         </>
       }

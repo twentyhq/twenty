@@ -1,3 +1,4 @@
+import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -59,9 +60,11 @@ export const useCreatePageLayoutIframeWidget = (
 
         const widgetId = uuidv4();
         const defaultSize = { w: 6, h: 6 };
+        const minimumSize = DEFAULT_WIDGET_SIZE.minimum;
         const position = getDefaultWidgetPosition(
           pageLayoutDraggedArea,
           defaultSize,
+          minimumSize,
         );
 
         const newWidget = createDefaultIframeWidget(

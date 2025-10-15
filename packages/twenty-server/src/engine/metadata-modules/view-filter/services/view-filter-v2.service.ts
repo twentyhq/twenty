@@ -79,7 +79,6 @@ export class ViewFilterV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -154,7 +153,6 @@ export class ViewFilterV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -229,7 +227,6 @@ export class ViewFilterV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -308,7 +305,9 @@ export class ViewFilterV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              viewFilter: true,
+            },
           },
           workspaceId,
         },

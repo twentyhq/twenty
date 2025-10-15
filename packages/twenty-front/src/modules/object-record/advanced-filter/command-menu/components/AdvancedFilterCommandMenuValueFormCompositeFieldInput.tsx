@@ -7,17 +7,18 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useContext } from 'react';
 import { type JsonValue } from 'type-fest';
 
-export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
+export const AdvancedFilterCommandMenuValueFormCompositeFieldInput = ({
   recordFilter,
   onChange,
 }: {
   recordFilter: RecordFilter;
   onChange: (newValue: JsonValue) => void;
 }) => {
+  const { VariablePicker } = useContext(AdvancedFilterContext);
+
   const subFieldNameUsedInDropdown = useRecoilComponentValue(
     subFieldNameUsedInDropdownComponentState,
   );
@@ -33,14 +34,14 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
           <FormCountryMultiSelectInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={WorkflowVariablePicker}
+            VariablePicker={VariablePicker}
             readonly={readonly}
           />
         ) : (
           <FormTextFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={WorkflowVariablePicker}
+            VariablePicker={VariablePicker}
             readonly={readonly}
           />
         )
@@ -49,7 +50,7 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
           <FormMultiSelectFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={WorkflowVariablePicker}
+            VariablePicker={VariablePicker}
             options={CURRENCIES}
             readonly={readonly}
           />
@@ -57,7 +58,7 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
           <FormNumberFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={WorkflowVariablePicker}
+            VariablePicker={VariablePicker}
             readonly={readonly}
           />
         ) : null
@@ -66,14 +67,14 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
           <FormNumberFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={WorkflowVariablePicker}
+            VariablePicker={VariablePicker}
             readonly={readonly}
           />
         ) : (
           <FormTextFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={WorkflowVariablePicker}
+            VariablePicker={VariablePicker}
             readonly={readonly}
           />
         )
@@ -81,7 +82,7 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
         <FormTextFieldInput
           defaultValue={recordFilter.value}
           onChange={onChange}
-          VariablePicker={WorkflowVariablePicker}
+          VariablePicker={VariablePicker}
           readonly={readonly}
         />
       )}

@@ -76,7 +76,6 @@ export class ViewGroupV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -151,7 +150,6 @@ export class ViewGroupV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -226,7 +224,6 @@ export class ViewGroupV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -305,7 +302,9 @@ export class ViewGroupV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              viewGroup: true,
+            },
           },
           workspaceId,
         },

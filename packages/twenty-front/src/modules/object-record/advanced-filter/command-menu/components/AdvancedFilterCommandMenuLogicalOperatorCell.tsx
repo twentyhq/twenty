@@ -24,15 +24,15 @@ const StyledContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-type WorkflowAdvancedFilterLogicalOperatorCellProps = {
+type AdvancedFilterCommandMenuLogicalOperatorCellProps = {
   index: number;
   recordFilterGroup: RecordFilterGroup;
 };
 
-export const WorkflowAdvancedFilterLogicalOperatorCell = ({
+export const AdvancedFilterCommandMenuLogicalOperatorCell = ({
   index,
   recordFilterGroup,
-}: WorkflowAdvancedFilterLogicalOperatorCellProps) => {
+}: AdvancedFilterCommandMenuLogicalOperatorCellProps) => {
   const { readonly } = useContext(AdvancedFilterContext);
 
   return (

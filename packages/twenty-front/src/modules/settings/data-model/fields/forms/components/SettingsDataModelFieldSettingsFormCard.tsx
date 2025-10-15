@@ -16,7 +16,6 @@ import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-
 import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
 import { settingsDataModelFieldMorphRelationFormSchema } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm';
-import { SettingsDataModelFieldRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationFormCard';
 import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
 import { settingsDataModelFieldPhonesFormSchema } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
@@ -30,6 +29,7 @@ import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fie
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 
 import { Separator } from '@/settings/components/Separator';
+import { SettingsDataModelFieldRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationFormCard';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
@@ -154,6 +154,7 @@ type SettingsDataModelFieldSettingsFormCardProps = {
   existingFieldMetadataId: string;
   fieldType: FieldMetadataType;
   objectNameSingular: string;
+  disabled?: boolean;
 };
 
 const previewableTypes = [
@@ -182,6 +183,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   existingFieldMetadataId,
   fieldType,
   objectNameSingular,
+  disabled = false,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
   const { watch } = useFormContext<SettingsDataModelFieldEditFormValues>();
 
@@ -194,6 +196,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldBooleanSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -203,6 +206,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldCurrencySettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -216,6 +220,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
         existingFieldMetadataId={existingFieldMetadataId}
         fieldType={fieldType}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -228,6 +233,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldRelationFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -237,6 +243,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldNumberSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -246,6 +253,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldTextSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -255,6 +263,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldAddressSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -264,6 +273,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldPhonesSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -277,6 +287,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
         existingFieldMetadataId={existingFieldMetadataId}
         fieldType={fieldType}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -306,6 +317,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
               <SettingsDataModelFieldMaxValuesForm
                 existingFieldMetadataId={existingFieldMetadataId}
                 fieldType={fieldType}
+                disabled={disabled}
               />
               <Separator />
             </>
@@ -314,6 +326,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             fieldType={fieldType}
             existingFieldMetadataId={existingFieldMetadataId}
             objectNameSingular={objectNameSingular}
+            disabled={disabled}
           />
         </>
       }

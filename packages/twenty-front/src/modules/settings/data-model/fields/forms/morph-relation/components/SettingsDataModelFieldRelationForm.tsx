@@ -67,10 +67,12 @@ export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
 
 type SettingsDataModelFieldRelationFormProps = {
   existingFieldMetadataId: string;
+  disabled?: boolean;
 };
 
 export const SettingsDataModelFieldRelationForm = ({
   existingFieldMetadataId,
+  disabled = false,
 }: SettingsDataModelFieldRelationFormProps) => {
   const { t } = useLingui();
   const { control } =
@@ -124,7 +126,7 @@ export const SettingsDataModelFieldRelationForm = ({
               label={t`Relation type`}
               dropdownId="relation-type-select"
               fullWidth
-              disabled={disableRelationEdition}
+              disabled={disabled || disableRelationEdition}
               value={value}
               options={RELATION_TYPE_OPTIONS}
               onChange={onChange}

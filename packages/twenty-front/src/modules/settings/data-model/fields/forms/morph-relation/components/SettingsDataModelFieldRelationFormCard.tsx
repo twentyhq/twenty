@@ -18,11 +18,13 @@ import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data
 type SettingsDataModelFieldRelationFormCardProps = {
   existingFieldMetadataId: string;
   objectNameSingular: string;
+  disabled?: boolean;
 };
 
 export const SettingsDataModelFieldRelationFormCard = ({
   existingFieldMetadataId,
   objectNameSingular,
+  disabled = false,
 }: SettingsDataModelFieldRelationFormCardProps) => {
   const { watch } = useFormContext<
     SettingsDataModelFieldMorphRelationFormValues &
@@ -107,6 +109,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
       form={
         <SettingsDataModelFieldRelationForm
           existingFieldMetadataId={existingFieldMetadataId}
+          disabled={disabled}
         />
       }
     />
