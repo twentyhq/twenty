@@ -168,7 +168,7 @@ export class ViewGroupService {
     return viewGroup;
   }
 
-  async destroy(id: string, workspaceId: string): Promise<boolean> {
+  async destroy(id: string, workspaceId: string): Promise<ViewGroupEntity> {
     const viewGroup = await this.findById(id, workspaceId);
 
     if (!isDefined(viewGroup)) {
@@ -185,7 +185,7 @@ export class ViewGroupService {
 
     await this.flushGraphQLCache(workspaceId);
 
-    return true;
+    return viewGroup;
   }
 
   private async flushGraphQLCache(workspaceId: string): Promise<void> {

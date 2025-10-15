@@ -66,7 +66,6 @@ export class ViewV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -134,7 +133,6 @@ export class ViewV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -201,7 +199,6 @@ export class ViewV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: true,
           },
           workspaceId,
         },
@@ -268,7 +265,9 @@ export class ViewV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              view: true,
+            },
           },
           workspaceId,
         },

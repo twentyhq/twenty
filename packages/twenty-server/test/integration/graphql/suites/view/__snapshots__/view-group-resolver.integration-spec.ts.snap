@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Group Resolver deleteCoreViewGroup should throw an error when deleting non-existent view group 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View group to delete not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Group Resolver destroyCoreViewGroup should throw an error when destroying non-existent view group 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View group to destroy not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Group Resolver updateCoreViewGroup should throw an error when updating non-existent view group 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View group to update not found",
+  "name": "NotFoundError",
+}
+`;
