@@ -1,18 +1,17 @@
-import { BadRequestException } from '@nestjs/common';
-
 import { parseGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/group-by-parser-utils/parse-group-by-rest-request.util';
+import { RestInputRequestParserException } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 
 describe('parseGroupByRestRequest', () => {
   it('should parse mixed field types', () => {
     const request: any = {
       query: {
         group_by:
-          '[{"field_1": true}, {"fieldCurrency": {"amountMicros": true}}, {"createdAt": {"granularity": "WEEK"}}]',
+          '[{"firstField": true}, {"fieldCurrency": {"amountMicros": true}}, {"createdAt": {"granularity": "WEEK"}}]',
       },
     };
 
     expect(parseGroupByRestRequest(request)).toEqual([
-      { field_1: true },
+      { firstField: true },
       { fieldCurrency: { amountMicros: true } },
       { createdAt: { granularity: 'WEEK' } },
     ]);
@@ -28,12 +27,14 @@ describe('parseGroupByRestRequest', () => {
 
   it('should throw if group_by parameter is not a string', () => {
     const request: any = {
-      query: { group_by: [{ field_1: true }] },
+      query: { group_by: [{ firstField: true }] },
     };
 
-    expect(() => parseGroupByRestRequest(request)).toThrow(BadRequestException);
     expect(() => parseGroupByRestRequest(request)).toThrow(
-      `Invalid group_by query parameter - should be a valid array of objects - ex: [{"field_2": true}, {"field_3": {"subField": true}}, {"dateField": {"granularity": 'DAY'}}]`,
+      RestInputRequestParserException,
+    );
+    expect(() => parseGroupByRestRequest(request)).toThrow(
+      `Invalid group_by query parameter - should be a valid array of objects - ex: [{"firstField": true}, {"secondField": {"subField": true}}, {"dateField": {"granularity": 'DAY'}}]`,
     );
   });
 
@@ -42,9 +43,11 @@ describe('parseGroupByRestRequest', () => {
       query: { group_by: 'not-valid-json' },
     };
 
-    expect(() => parseGroupByRestRequest(request)).toThrow(BadRequestException);
     expect(() => parseGroupByRestRequest(request)).toThrow(
-      `Invalid group_by query parameter - should be a valid array of objects - ex: [{"field_2": true}, {"field_3": {"subField": true}}, {"dateField": {"granularity": 'DAY'}}]`,
+      RestInputRequestParserException,
+    );
+    expect(() => parseGroupByRestRequest(request)).toThrow(
+      `Invalid group_by query parameter - should be a valid array of objects - ex: [{"firstField": true}, {"secondField": {"subField": true}}, {"dateField": {"granularity": 'DAY'}}]`,
     );
   });
 
@@ -53,9 +56,11 @@ describe('parseGroupByRestRequest', () => {
       query: {},
     };
 
-    expect(() => parseGroupByRestRequest(request)).toThrow(BadRequestException);
     expect(() => parseGroupByRestRequest(request)).toThrow(
-      `Invalid group_by query parameter - should be a valid array of objects - ex: [{"field_2": true}, {"field_3": {"subField": true}}, {"dateField": {"granularity": 'DAY'}}]`,
+      RestInputRequestParserException,
+    );
+    expect(() => parseGroupByRestRequest(request)).toThrow(
+      `Invalid group_by query parameter - should be a valid array of objects - ex: [{"firstField": true}, {"secondField": {"subField": true}}, {"dateField": {"granularity": 'DAY'}}]`,
     );
   });
 });

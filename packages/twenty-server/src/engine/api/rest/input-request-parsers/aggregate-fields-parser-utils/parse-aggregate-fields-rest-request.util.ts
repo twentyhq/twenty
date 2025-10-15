@@ -1,6 +1,8 @@
-import { BadRequestException } from '@nestjs/common';
-
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import {
+  RestInputRequestParserException,
+  RestInputRequestParserExceptionCode,
+} from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 
 export const parseAggregateFieldsRestRequest = (
@@ -9,8 +11,9 @@ export const parseAggregateFieldsRestRequest = (
   const aggregateFieldsQuery = request.query.aggregate;
 
   if (typeof aggregateFieldsQuery !== 'string') {
-    throw new BadRequestException(
-      `Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField_1"]`,
+    throw new RestInputRequestParserException(
+      `Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField"]`,
+      RestInputRequestParserExceptionCode.INVALID_AGGREGATE_FIELDS_QUERY_PARAM,
     );
   }
 
@@ -26,8 +29,9 @@ export const parseAggregateFieldsRestRequest = (
       {},
     );
   } catch {
-    throw new BadRequestException(
-      `Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField_1"]`,
+    throw new RestInputRequestParserException(
+      `Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField"]`,
+      RestInputRequestParserExceptionCode.INVALID_AGGREGATE_FIELDS_QUERY_PARAM,
     );
   }
 };

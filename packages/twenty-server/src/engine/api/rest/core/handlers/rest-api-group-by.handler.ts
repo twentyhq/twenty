@@ -9,6 +9,7 @@ import { parseGroupByRestRequest } from 'src/engine/api/rest/input-request-parse
 import { parseOrderByWithGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/order-by-with-group-by-parser-utils/parse-order-by-with-group-by-rest-request.util';
 import { parseViewIdRestRequest } from 'src/engine/api/rest/input-request-parsers/view-id-parser-utils/parse-view-id-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 
 @Injectable()
 export class RestApiGroupByHandler extends RestApiBaseHandler {
@@ -19,24 +20,31 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
   }
 
   async handle(request: AuthenticatedRequest) {
-    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
-      await this.buildCommonOptions(request);
+    try {
+      const {
+        authContext,
+        objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+      } = await this.buildCommonOptions(request);
 
-    const { filter, orderBy, viewId, groupBy, selectedFields } =
-      this.parseRequestArgs(request);
+      const { filter, orderBy, viewId, groupBy, selectedFields } =
+        this.parseRequestArgs(request);
 
-    return await this.commonGroupByQueryRunnerService.run({
-      args: {
-        filter,
-        orderBy,
-        viewId,
-        groupBy,
-        selectedFields,
-      },
-      authContext,
-      objectMetadataMaps,
-      objectMetadataItemWithFieldMaps,
-    });
+      return await this.commonGroupByQueryRunnerService.run({
+        args: {
+          filter,
+          orderBy,
+          viewId,
+          groupBy,
+          selectedFields,
+        },
+        authContext,
+        objectMetadataMaps,
+        objectMetadataItemWithFieldMaps,
+      });
+    } catch (error) {
+      throw workspaceQueryRunnerRestApiExceptionHandler(error);
+    }
   }
 
   private parseRequestArgs(request: AuthenticatedRequest) {

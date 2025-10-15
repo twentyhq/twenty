@@ -1,6 +1,8 @@
-import { BadRequestException } from '@nestjs/common';
-
 import { parseAggregateFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/aggregate-fields-parser-utils/parse-aggregate-fields-rest-request.util';
+import {
+  RestInputRequestParserException,
+  RestInputRequestParserExceptionCode,
+} from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 
 describe('parseAggregateFieldsRestRequest', () => {
   it('should parse single aggregate field', () => {
@@ -40,10 +42,10 @@ describe('parseAggregateFieldsRestRequest', () => {
     };
 
     expect(() => parseAggregateFieldsRestRequest(request)).toThrow(
-      BadRequestException,
-    );
-    expect(() => parseAggregateFieldsRestRequest(request)).toThrow(
-      'Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField_1"]',
+      new RestInputRequestParserException(
+        'Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField"]',
+        RestInputRequestParserExceptionCode.INVALID_AGGREGATE_FIELDS_QUERY_PARAM,
+      ),
     );
   });
 
@@ -53,10 +55,10 @@ describe('parseAggregateFieldsRestRequest', () => {
     };
 
     expect(() => parseAggregateFieldsRestRequest(request)).toThrow(
-      BadRequestException,
-    );
-    expect(() => parseAggregateFieldsRestRequest(request)).toThrow(
-      'Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField_1"]',
+      new RestInputRequestParserException(
+        'Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField"]',
+        RestInputRequestParserExceptionCode.INVALID_AGGREGATE_FIELDS_QUERY_PARAM,
+      ),
     );
   });
 
@@ -66,10 +68,10 @@ describe('parseAggregateFieldsRestRequest', () => {
     };
 
     expect(() => parseAggregateFieldsRestRequest(request)).toThrow(
-      BadRequestException,
-    );
-    expect(() => parseAggregateFieldsRestRequest(request)).toThrow(
-      'Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField_1"]',
+      new RestInputRequestParserException(
+        'Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField"]',
+        RestInputRequestParserExceptionCode.INVALID_AGGREGATE_FIELDS_QUERY_PARAM,
+      ),
     );
   });
 });

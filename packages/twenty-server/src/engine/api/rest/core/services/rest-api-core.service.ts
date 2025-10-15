@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -93,7 +93,9 @@ export class RestApiCoreService {
     if (isCommonApiEnabled) {
       return await this.restApiGroupByHandler.handle(request);
     } else {
-      throw new Error('Activate feature flag to use GroupBy in the REST API');
+      throw new BadRequestException(
+        'Activate feature flag to use GroupBy in the REST API',
+      );
     }
   }
 }

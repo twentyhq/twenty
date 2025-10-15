@@ -37,7 +37,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -53,7 +53,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     selectedFieldsResult: CommonSelectedFieldsResult;
   }> {
     this.validate(args);
-    const authContext = toValidateAuthContext;
 
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
@@ -72,12 +71,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       objectMetadataItemWithFieldMaps,
     });
 
-    const graphqlQueryParser = new GraphqlQueryParser(
+    const commonQueryParser = new GraphqlQueryParser(
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
 
-    const selectedFieldsResult = graphqlQueryParser.parseSelectedFields(
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
       objectMetadataItemWithFieldMaps,
       args.selectedFields,
       objectMetadataMaps,
@@ -96,11 +95,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     const aggregateQueryBuilder = queryBuilder.clone();
 
     let appliedFilters = processedArgs.filter ?? ({} as ObjectRecordFilter);
-
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
 
     commonQueryParser.applyFilterToBuilder(
       aggregateQueryBuilder,
