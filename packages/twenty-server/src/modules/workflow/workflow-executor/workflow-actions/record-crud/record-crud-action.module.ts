@@ -27,6 +27,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     FindRecordsWorkflowAction,
   ],
   exports: [
+    WorkflowExecutionContextService,
     CreateRecordWorkflowAction,
     UpdateRecordWorkflowAction,
     DeleteRecordWorkflowAction,
