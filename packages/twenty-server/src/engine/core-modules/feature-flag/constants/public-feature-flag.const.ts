@@ -48,14 +48,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       imagePath: 'https://twenty.com/images/lab/is-calendar-view-enabled.png',
     },
   },
-  {
-    key: FeatureFlagKey.IS_APPLICATION_ENABLED,
-    metadata: {
-      label: 'Application Settings',
-      description: 'View and manage installed applications',
-      imagePath: 'https://twenty.com/images/lab/is-application-enabled.png',
-    },
-  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {
