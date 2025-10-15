@@ -16,7 +16,6 @@ import { parseUpsertRestRequest } from 'src/engine/api/rest/input-request-parser
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
-
 @Injectable()
 export class RestApiCreateManyHandler extends RestApiBaseHandler {
   constructor(
@@ -35,7 +34,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
-      const selectedFieldsResult = await this.computeSelectedFields({
+      const selectedFields = await this.computeSelectedFields({
         depth,
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
@@ -43,7 +42,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
       });
 
       const records = await this.commonCreateManyQueryRunnerService.run({
-        args: { data, selectedFieldsResult, upsert },
+        args: { data, selectedFields, upsert },
         authContext,
         objectMetadataMaps,
         objectMetadataItemWithFieldMaps,

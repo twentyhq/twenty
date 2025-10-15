@@ -1,8 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-
-import { type OrderByWithGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type OrderByWithGroupBy } from 'twenty-shared/types';
 
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 
