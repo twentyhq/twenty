@@ -50,6 +50,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
         },
       ],
       isTwoFactorAuthenticationEnforced: false,
+      trashRetentionDays: 14,
     });
   },
 });

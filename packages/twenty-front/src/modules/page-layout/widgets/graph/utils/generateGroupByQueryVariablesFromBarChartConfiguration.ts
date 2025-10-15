@@ -25,17 +25,29 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
   objectMetadataItem: ObjectMetadataItem;
   barChartConfiguration: BarChartConfiguration;
 }) => {
+  const groupByFieldXId =
+    barChartConfiguration.primaryAxisGroupByFieldMetadataId;
+
+  const groupByFieldYId =
+    barChartConfiguration.secondaryAxisGroupByFieldMetadataId;
+
+  const groupBySubFieldNameX =
+    barChartConfiguration.primaryAxisGroupBySubFieldName ?? undefined;
+
+  const groupBySubFieldNameY =
+    barChartConfiguration.secondaryAxisGroupBySubFieldName ?? undefined;
+
   const groupByFieldX = objectMetadataItem.fields.find(
-    (field) => field.id === barChartConfiguration.groupByFieldMetadataIdX,
+    (field) => field.id === groupByFieldXId,
   );
 
-  const groupByFieldY = objectMetadataItem.fields.find(
-    (field) => field.id === barChartConfiguration.groupByFieldMetadataIdY,
-  );
+  const groupByFieldY = isDefined(groupByFieldYId)
+    ? objectMetadataItem.fields.find((field) => field.id === groupByFieldYId)
+    : undefined;
 
-  if (!isDefined(groupByFieldX)) {
+  if (!isDefined(groupByFieldX) || !isDefined(groupByFieldXId)) {
     throw new Error(
-      `Field with id ${barChartConfiguration.groupByFieldMetadataIdX} not found in object metadata`,
+      `Field with id ${groupByFieldXId} not found in object metadata`,
     );
   }
 
@@ -46,7 +58,7 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
   groupBy.push(
     buildGroupByFieldObject({
       field: groupByFieldX,
-      subFieldName: barChartConfiguration.groupBySubFieldNameX,
+      subFieldName: groupBySubFieldNameX,
     }),
   );
 
@@ -54,7 +66,7 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
     groupBy.push(
       buildGroupByFieldObject({
         field: groupByFieldY,
-        subFieldName: barChartConfiguration.groupBySubFieldNameY,
+        subFieldName: groupBySubFieldNameY,
       }),
     );
   }
@@ -62,18 +74,21 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
   const orderBy: Array<Record<string, string>> = [];
 
   // TODO: Add orderBy back in when the backend is ready
-  // if (isDefined(barChartConfiguration.orderByX)) {
+  // if (isDefined(barChartConfiguration.primaryAxisOrderBy)) {
   //   orderBy.push({
   //     [groupByFieldX.name]: mapOrderByToDirection(
-  //       barChartConfiguration.orderByX,
+  //       barChartConfiguration.primaryAxisOrderBy!,
   //     ),
   //   });
   // }
 
-  // if (isDefined(groupByFieldY) && isDefined(barChartConfiguration.orderByY)) {
+  // if (
+  //   isDefined(groupByFieldY) &&
+  //   isDefined(barChartConfiguration.secondaryAxisOrderBy)
+  // ) {
   //   orderBy.push({
   //     [groupByFieldY.name]: mapOrderByToDirection(
-  //       barChartConfiguration.orderByY,
+  //       barChartConfiguration.secondaryAxisOrderBy!,
   //     ),
   //   });
   // }

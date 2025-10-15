@@ -34,7 +34,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     if (!isDefined(pageLayoutEditingWidgetId)) {
       const fieldSelection = buildBarChartFieldSelection();
       const newWidget = createPageLayoutGraphWidget({
-        graphType: GraphType.BAR,
+        graphType: GraphType.VERTICAL_BAR,
         fieldSelection,
       });
 

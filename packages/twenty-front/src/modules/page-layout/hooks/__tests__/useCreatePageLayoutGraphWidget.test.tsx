@@ -85,7 +85,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     act(() => {
       result.current.createWidget.createPageLayoutGraphWidget({
-        graphType: GraphType.BAR,
+        graphType: GraphType.VERTICAL_BAR,
       });
     });
 
@@ -163,7 +163,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
       GraphType.NUMBER,
       GraphType.GAUGE,
       GraphType.PIE,
-      GraphType.BAR,
+      GraphType.VERTICAL_BAR,
     ];
 
     const mockFieldSelections: Partial<
@@ -173,7 +173,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
         objectMetadataId: 'test-object-id',
         aggregateFieldMetadataId: 'test-aggregate-field-id',
       },
-      [GraphType.BAR]: {
+      [GraphType.VERTICAL_BAR]: {
         objectMetadataId: 'test-object-id',
         groupByFieldMetadataIdX: 'test-groupby-field-id',
         aggregateFieldMetadataId: 'test-aggregate-field-id',
@@ -234,7 +234,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     expect(() => {
       result.current.createWidget.createPageLayoutGraphWidget({
-        graphType: GraphType.BAR,
+        graphType: GraphType.VERTICAL_BAR,
       });
     }).toThrow('A tab must be selected to create a new graph widget');
   });
