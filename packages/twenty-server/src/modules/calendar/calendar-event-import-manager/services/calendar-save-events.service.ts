@@ -97,6 +97,7 @@ export class CalendarSaveEventsService {
                   | 'createdAt'
                   | 'updatedAt'
                   | 'deletedAt'
+                  | 'lastViewedAt'
                 >,
             ),
           {},
@@ -156,6 +157,7 @@ export class CalendarSaveEventsService {
                 | 'createdAt'
                 | 'updatedAt'
                 | 'deletedAt'
+                | 'lastViewedAt'
               >;
             }),
           {},

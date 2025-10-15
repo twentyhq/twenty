@@ -24,12 +24,18 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { RedisStorageDriver } from 'src/engine/twenty-orm/storage/drivers/redis-storage.driver';
+import { listStorageDrivers } from 'src/engine/twenty-orm/storage/list-storage-drivers.util';
 
 @Injectable()
 export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseResolverService<
   FindDuplicatesResolverArgs,
   IConnection<ObjectRecord>[]
 > {
+  constructor(private readonly redisStorageDriver: RedisStorageDriver) {
+    super();
+  }
+
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<FindDuplicatesResolverArgs>,
   ): Promise<IConnection<ObjectRecord>[]> {
@@ -40,6 +46,11 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
       executionArgs.repository.createQueryBuilder(
         objectMetadataItemWithFieldMaps.nameSingular,
       );
+
+    await existingRecordsQueryBuilder.appendExternalFields(
+      objectMetadataItemWithFieldMaps,
+      listStorageDrivers(this.redisStorageDriver),
+    );
 
     const objectMetadataItemWithFieldsMaps =
       getObjectMetadataMapItemByNameSingular(
@@ -106,6 +117,11 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
           executionArgs.repository.createQueryBuilder(
             objectMetadataItemWithFieldMaps.nameSingular,
           );
+
+        await duplicateRecordsQueryBuilder.appendExternalFields(
+          objectMetadataItemWithFieldMaps,
+          listStorageDrivers(this.redisStorageDriver),
+        );
 
         graphqlQueryParser.applyFilterToBuilder(
           duplicateRecordsQueryBuilder,

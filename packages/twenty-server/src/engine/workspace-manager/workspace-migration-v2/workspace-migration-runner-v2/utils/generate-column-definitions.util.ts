@@ -175,6 +175,10 @@ export const generateColumnDefinitions = ({
     flatObjectMetadata,
   });
 
+  if (flatFieldMetadata.storage && flatFieldMetadata.storage !== 'postgres') {
+    return [];
+  }
+
   if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
     const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 

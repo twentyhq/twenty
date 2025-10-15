@@ -90,6 +90,13 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         flatEntityId: flatFieldMetadata.objectMetadataId,
       });
 
+      if (
+        flatFieldMetadata.storage &&
+        flatFieldMetadata.storage !== 'postgres'
+      ) {
+        continue;
+      }
+
       const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
         workspaceId,
         flatObjectMetadata,

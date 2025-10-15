@@ -163,6 +163,7 @@ export class StandardFieldFactory {
         relationTargetObjectMetadata: null,
         relationTargetObjectMetadataId: null,
         morphId: null,
+        storage: workspaceFieldMetadataArgs.storage ?? 'postgres',
       },
     ];
   }
@@ -214,6 +215,7 @@ export class StandardFieldFactory {
       settings: null, // accurate ? looks weird for this to be undefined even for standard fields ?
       standardOverrides: null,
       morphId: null,
+      storage: 'postgres',
     });
 
     return fieldMetadataCollection;

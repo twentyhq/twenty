@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -29,18 +29,16 @@ import {
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
-import { RedisFieldRepository } from 'src/engine/twenty-orm/repository/redis-fields.repository';
-import { RedisFieldSqlFactory } from 'src/engine/twenty-orm/factories/redis-field-sql.factory';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { RedisStorageDriver } from 'src/engine/twenty-orm/storage/drivers/redis-storage.driver';
+import { listStorageDrivers } from 'src/engine/twenty-orm/storage/list-storage-drivers.util';
 
 @Injectable()
 export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolverService<
   FindManyResolverArgs,
   IConnection<ObjectRecord>
 > {
-  constructor(
-    private readonly redisFieldRepository: RedisFieldRepository,
-    private readonly redisFieldSqlFactory: RedisFieldSqlFactory,
-  ) {
+  constructor(private readonly redisStorageDriver: RedisStorageDriver) {
     super();
   }
 
@@ -57,6 +55,24 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataNameSingular,
+    );
+
+    const objectMetadataMapItem = getObjectMetadataMapItemByNameSingular(
+      objectMetadataMaps,
+      objectMetadataItemWithFieldMaps.nameSingular,
+    );
+
+    assertIsDefinedOrThrow(
+      objectMetadataMapItem,
+      new GraphqlQueryRunnerException(
+        `Could not find object metadata for ${objectMetadataItemWithFieldMaps.nameSingular}`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      ),
+    );
+
+    await queryBuilder.appendExternalFields(
+      objectMetadataItemWithFieldMaps,
+      listStorageDrivers(this.redisStorageDriver),
     );
 
     const aggregateQueryBuilder = queryBuilder.clone();
@@ -141,14 +157,6 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
     queryBuilder.setFindOptions({
       select: columnsToSelect,
     });
-
-    // Now compute and add redis-backed fields (e.g., lastViewedAt) to the SQL select
-    await executionArgs.graphqlQueryParser.computeRedisFields(
-      objectMetadataItemWithFieldMaps,
-      queryBuilder,
-      this.redisFieldRepository,
-      this.redisFieldSqlFactory,
-    );
 
     const objectRecords = (await queryBuilder
       .take(limit + 1)

@@ -303,8 +303,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       displayFormat: DateDisplayFormat.RELATIVE,
     },
+    storage: 'redis',
   })
   @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
-  lastViewedAt: string;
+  lastViewedAt: string | null;
 }

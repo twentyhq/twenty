@@ -2,42 +2,29 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class RedisFieldSqlFactory {
+  constructor() {}
+
   buildZSetDateTimeParts(
     entries: { id: string; score: number }[],
     tableAlias: string,
-    options?: {
-      cteName?: string;
-      idColumnName?: string;
-      valueColumnName?: string;
+    options: {
+      cteName: string;
+      idColumnName: string;
+      valueColumnName: string;
     },
   ) {
-    if (!entries.length) return null;
-
-    const cteName = options?.cteName ?? 'redisFieldRecords';
-    const idCol = options?.idColumnName ?? 'recordId';
-    const valueCol = options?.valueColumnName ?? 'tsMs';
-
-    if (!entries.length) return null;
-
+    const joinOn = `"${options.cteName}"."${options.idColumnName}"::uuid = ${tableAlias}.id::uuid`;
+    const selectExpr = `to_timestamp("${options.cteName}"."${options.valueColumnName}" / 1000)::timestamptz`;
     const values = entries
       .map(({ id, score }) => `('${id}', ${Number(score) || 0})`)
       .join(', ');
 
-    const cte = {
-      cteName,
-      columns: [idCol, valueCol],
-      cteSql: `VALUES ${values}`,
-    };
-
-    const joinOn = `rf."${idCol}"::uuid = ${tableAlias}.id::uuid`;
-    const selectExpr = `to_timestamp(rf."${valueCol}" / 1000)::timestamptz`;
-
     return {
-      cteName: cte.cteName,
-      cteSql: cte.cteSql,
-      cteColumns: cte.columns,
       joinOn,
       selectExpr,
+      cteColumns: [options.idColumnName, options.valueColumnName],
+      cteName: options.cteName,
+      cteSql: `VALUES ${values}`,
     };
   }
 }

@@ -59,6 +59,7 @@ export const computeStandardFields = (
           settings: null,
           standardOverrides: null,
           morphId: null,
+          storage: 'postgres',
         });
       }
     } else {

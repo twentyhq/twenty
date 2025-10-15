@@ -76,6 +76,8 @@ export class WorkspaceRepository<
       throw new Error('Object records permissions are required');
     }
 
+    queryBuilder.select(`${alias}.id`, `${alias}_id`);
+
     return new WorkspaceSelectQueryBuilder(
       queryBuilder,
       this.objectRecordsPermissions,

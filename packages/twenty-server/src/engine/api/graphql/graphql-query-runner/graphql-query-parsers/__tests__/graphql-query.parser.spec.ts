@@ -252,6 +252,4 @@ describe('GraphqlQueryParser', () => {
       expect(result).toBe(selectedFieldsResult);
     });
   });
-
-  describe('computeRedisFields', () => {});
 });

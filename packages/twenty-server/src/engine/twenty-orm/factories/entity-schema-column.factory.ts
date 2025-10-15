@@ -73,6 +73,11 @@ export class EntitySchemaColumnFactory {
         continue;
       }
 
+      // Skip fields that are not stored in Postgres (e.g., redis-backed virtual fields)
+      if (isDefined(fieldMetadata.storage) && fieldMetadata.storage !== 'postgres') {
+        continue;
+      }
+
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         const compositeColumns = this.createCompositeColumns(fieldMetadata);
 

@@ -123,6 +123,9 @@ export class FieldMetadataEntity<
   @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
   workspaceId: string;
 
+  @Column({ nullable: true, type: 'varchar' })
+  storage: 'postgres' | 'redis';
+
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
 

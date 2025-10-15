@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -25,9 +25,11 @@ export function formatData<T>(
   const newData: Record<string, any> = {};
 
   for (const [key, value] of Object.entries(data)) {
-    const fieldMetadataId =
-      objectMetadataItemWithFieldMaps.fieldIdByName[key] ||
+    const fieldIdFromName = objectMetadataItemWithFieldMaps.fieldIdByName[key];
+    const fieldIdFromJoin =
       objectMetadataItemWithFieldMaps.fieldIdByJoinColumnName[key];
+
+    const fieldMetadataId = fieldIdFromName || fieldIdFromJoin;
 
     const fieldMetadata =
       objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
@@ -36,6 +38,17 @@ export function formatData<T>(
       throw new Error(
         `Field metadata for field "${key}" is missing in object metadata ${objectMetadataItemWithFieldMaps.nameSingular}`,
       );
+    }
+
+    const isJoinColumnKey = isDefined(fieldIdFromJoin);
+
+    // Skip non-postgres stored fields when the key corresponds to a field name (not a join column)
+    if (
+      !isJoinColumnKey &&
+      (!isDefined(fieldMetadata.storage) ||
+        fieldMetadata.storage !== 'postgres')
+    ) {
+      continue;
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {

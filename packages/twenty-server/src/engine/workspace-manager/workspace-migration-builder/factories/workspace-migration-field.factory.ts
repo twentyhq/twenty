@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import diff from 'microdiff';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
@@ -115,6 +116,15 @@ export class WorkspaceMigrationFieldFactory {
         originalObjectMetadataMap[fieldMetadataCollection[0]?.objectMetadataId];
 
       for (const fieldMetadata of fieldMetadataCollection) {
+        // Skip relation fields as they are handled by relation factory and are not real columns
+        if (
+          fieldMetadata.type === FieldMetadataType.RELATION ||
+          !isDefined(fieldMetadata.storage) ||
+          fieldMetadata.storage !== 'postgres'
+        ) {
+          continue;
+        }
+
         columns.push(
           ...this.workspaceMigrationFactory.createColumnActions(
             WorkspaceMigrationColumnActionType.CREATE,
@@ -155,6 +165,22 @@ export class WorkspaceMigrationFieldFactory {
     }
 
     for (const fieldMetadataUpdate of fieldMetadataUpdateCollection) {
+      // Skip relation fields and fields not stored in postgres when neither current nor altered use postgres
+      const currentIsPostgres =
+        isDefined(fieldMetadataUpdate.current.storage) &&
+        fieldMetadataUpdate.current.storage === 'postgres';
+      const alteredIsPostgres =
+        isDefined(fieldMetadataUpdate.altered.storage) &&
+        fieldMetadataUpdate.altered.storage === 'postgres';
+
+      if (
+        fieldMetadataUpdate.current.type === FieldMetadataType.RELATION ||
+        fieldMetadataUpdate.altered.type === FieldMetadataType.RELATION ||
+        (!currentIsPostgres && !alteredIsPostgres)
+      ) {
+        continue;
+      }
+
       const columnActions = this.workspaceMigrationFactory.createColumnActions(
         WorkspaceMigrationColumnActionType.ALTER,
         fieldMetadataUpdate.current,
@@ -228,7 +254,11 @@ export class WorkspaceMigrationFieldFactory {
 
     for (const fieldMetadata of fieldMetadataCollection) {
       // We're skipping relation fields, because they're just representation and not real columns
-      if (fieldMetadata.type === FieldMetadataType.RELATION) {
+      if (
+        fieldMetadata.type === FieldMetadataType.RELATION ||
+        !isDefined(fieldMetadata.storage) ||
+        fieldMetadata.storage !== 'postgres'
+      ) {
         continue;
       }
 

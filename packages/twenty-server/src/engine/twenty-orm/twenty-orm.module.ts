@@ -12,7 +12,6 @@ import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
-import { RedisFieldSqlFactory } from 'src/engine/twenty-orm/factories/redis-field-sql.factory';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -20,6 +19,8 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { RedisFieldRepository } from 'src/engine/twenty-orm/repository/redis-fields.repository';
 import { RedisFieldsDataSource } from 'src/engine/twenty-orm/datasource/redis-fields-data-source.service';
+import { RedisStorageDriver } from 'src/engine/twenty-orm/storage/drivers/redis-storage.driver';
+import { RedisFieldSqlFactory } from 'src/engine/twenty-orm/factories/redis-field-sql.factory';
 
 import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
 
@@ -47,15 +48,17 @@ import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
     TwentyORMGlobalManager,
     RedisFieldRepository,
     RedisFieldsDataSource,
+    RedisStorageDriver,
+    RedisFieldSqlFactory,
   ],
   exports: [
     EntitySchemaFactory,
     TwentyORMManager,
     RedisFieldRepository,
+    RedisStorageDriver,
     TwentyORMGlobalManager,
     PgPoolSharedModule,
     ScopedWorkspaceContextFactory,
-    RedisFieldSqlFactory,
   ],
 })
 export class TwentyORMModule {}
