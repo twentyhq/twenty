@@ -7,7 +7,6 @@ import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getR
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
-import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
 import { useLazyFetchMoreRecordsWithPagination } from '@/object-record/hooks/useLazyFetchMoreRecordsWithPagination';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -16,6 +15,7 @@ import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamily
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseLazyFindManyRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
@@ -52,16 +52,27 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     limit,
   });
 
-  const { handleFindManyRecordsCompleted } = useHandleFindManyRecordsCompleted({
-    objectMetadataItem,
-    queryIdentifier,
-  });
-
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
+
+  const handleFindManyRecordsCompleted = useRecoilCallback(
+    ({ set }) =>
+      (data: RecordGqlOperationFindManyResult) => {
+        const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
+
+        if (isDefined(data?.[objectMetadataItem.namePlural])) {
+          set(cursorFamilyState(queryIdentifier), pageInfo.endCursor ?? '');
+          set(
+            hasNextPageFamilyState(queryIdentifier),
+            pageInfo.hasNextPage ?? false,
+          );
+        }
+      },
+    [objectMetadataItem.namePlural, queryIdentifier],
+  );
 
   const [findManyRecords, { data, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
