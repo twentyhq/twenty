@@ -274,7 +274,6 @@ export class AgentExecutionService implements AgentExecutionContext {
         contextString = `\n\nCONTEXT:\n${contextPart}`;
       }
 
-      // Build user context for "acting on behalf of user"
       const { actor, roleId } = await this.buildUserContext(
         userWorkspaceId,
         workspace.id,
