@@ -16,10 +16,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 
 import { RecordDetailMorphRelationRecordsList } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationRecordsList';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
-import { recordStoreMorphOneToManyValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilValue } from 'recoil';
-import { RelationType } from '~/generated-metadata/graphql';
+import { useGetMorphRelationRelatedRecordsWithObjectNameSingluar } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingluar';
 
 type RecordDetailMorphRelationSectionProps = {
   loading: boolean;
@@ -32,55 +29,16 @@ export const RecordDetailMorphRelationSection = ({
 
   const metadata = fieldDefinition.metadata as FieldMorphRelationMetadata;
   const { objectMetadataNameSingular } = metadata;
-  const relationType = metadata.morphRelations[0].type;
 
   const isMobile = useIsMobile();
 
-  const morphRelationObjectNameSingularWithValues = useRecoilValue(
-    recordStoreMorphOneToManyValueWithObjectNameFamilySelector({
+  const recordsWithObjectNameSingular =
+    useGetMorphRelationRelatedRecordsWithObjectNameSingluar({
       recordId,
       morphRelations: metadata.morphRelations,
-    }),
-  );
+    });
 
-  const morphRelationObjectNameSingularWithValuesArray =
-    morphRelationObjectNameSingularWithValues.map(
-      (recordWithObjectNameSingular) => {
-        const newRecordWithObjectNameSingular = {
-          ...recordWithObjectNameSingular,
-          value:
-            relationType === RelationType.MANY_TO_ONE
-              ? [recordWithObjectNameSingular.value as ObjectRecord]
-              : ((recordWithObjectNameSingular.value as ObjectRecord[]) ?? []),
-        };
-        return newRecordWithObjectNameSingular;
-      },
-    );
-
-  const recordsWithObjectNameSingular =
-    morphRelationObjectNameSingularWithValuesArray.flatMap(
-      (recordWithObjectNameSingular) => {
-        const fieldMetadataId = metadata.morphRelations.find(
-          (morphRelation) =>
-            morphRelation.targetObjectMetadata.nameSingular ===
-            recordWithObjectNameSingular.objectNameSingular,
-        )?.targetFieldMetadata.id;
-        if (!fieldMetadataId) {
-          return [];
-        }
-
-        return recordWithObjectNameSingular.value.map((value) => ({
-          objectNameSingular: recordWithObjectNameSingular.objectNameSingular,
-          value: value,
-          fieldMetadataId,
-        }));
-      },
-    );
-
-  const relationRecordsCount =
-    morphRelationObjectNameSingularWithValuesArray.flatMap(
-      (recordWithObjectNameSingular) => recordWithObjectNameSingular.value,
-    ).length;
+  const relationRecordsCount = recordsWithObjectNameSingular.length;
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
@@ -92,8 +50,6 @@ export const RecordDetailMorphRelationSection = ({
     dropdownId,
   );
 
-  // TODO: refactor this when we have refactored columnDefinitions and field definitions because
-  //    we should be able to get the objectMetadataItem from a context way more easily
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const objectMetadataItem = objectMetadataItems.find(

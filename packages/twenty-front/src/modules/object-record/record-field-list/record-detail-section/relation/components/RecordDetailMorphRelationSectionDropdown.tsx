@@ -2,6 +2,8 @@ import { useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
+import { RecordDetailMorphRelationSectionDropdownManyToOne } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdownManyToOne';
+import { RecordDetailMorphRelationSectionDropdownOneToMany } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdownOneToMany';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsRecordDeleted } from '@/object-record/record-field/ui/hooks/useIsRecordDeleted';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -56,11 +58,9 @@ export const RecordDetailMorphRelationSectionDropdown = ({
   }
 
   if (isToOneObject) {
-    return <></>; // todo @guilllim update this
-    // return <RecordDetailMorphRelationSectionDropdownManyToOne />;
+    return <RecordDetailMorphRelationSectionDropdownManyToOne />;
   } else if (isToManyObjects) {
-    return <></>; // todo @guilllim update this
-    // return <RecordDetailMorphRelationSectionDropdownOneToMany />;
+    return <RecordDetailMorphRelationSectionDropdownOneToMany />;
   } else {
     return null;
   }
