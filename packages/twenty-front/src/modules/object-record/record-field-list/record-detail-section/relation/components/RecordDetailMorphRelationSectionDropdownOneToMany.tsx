@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetMorphRelationRelatedRecordsWithObjectNameSingluar } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingluar';
+import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useUpdateMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateMorphRelationOneToManyFieldInput';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
@@ -20,7 +20,7 @@ import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dro
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -47,7 +47,7 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = () => {
     .filter(isDefined);
 
   const recordsWithObjectNameSingular =
-    useGetMorphRelationRelatedRecordsWithObjectNameSingluar({
+    useGetMorphRelationRelatedRecordsWithObjectNameSingular({
       recordId,
       morphRelations: morphRelations,
     });
@@ -102,7 +102,9 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = () => {
             record.objectNameSingular,
         )?.targetObjectMetadata.id;
         if (!objectMetadataId) {
-          throw new Error('ObjectMetadataId is required');
+          throw new CustomError(
+            'Sorry, we could not determine the correct object type for this related record. Please contact support if the issue persists.',
+          );
         }
         return {
           recordId: record.value.id,

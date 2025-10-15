@@ -3,8 +3,9 @@ import { recordStoreMorphOneToManyValueWithObjectNameFamilySelector } from '@/ob
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilValue } from 'recoil';
 import { RelationType } from 'twenty-shared/types';
+import { CustomError } from 'twenty-shared/utils';
 
-export const useGetMorphRelationRelatedRecordsWithObjectNameSingluar = ({
+export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
   recordId,
   morphRelations,
 }: {
@@ -17,6 +18,13 @@ export const useGetMorphRelationRelatedRecordsWithObjectNameSingluar = ({
       morphRelations,
     }),
   );
+
+  if (morphRelations.length < 1) {
+    throw new CustomError(
+      'Cannot load relation records: no morph relations were provided to this component.',
+      'MORPH_RELATIONS_REQUIRED',
+    );
+  }
 
   const morphRelationObjectNameSingularWithValuesArray =
     morphRelationObjectNameSingularWithValues.map(

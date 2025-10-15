@@ -16,7 +16,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 
 import { RecordDetailMorphRelationRecordsList } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationRecordsList';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
-import { useGetMorphRelationRelatedRecordsWithObjectNameSingluar } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingluar';
+import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
 
 type RecordDetailMorphRelationSectionProps = {
   loading: boolean;
@@ -33,7 +33,7 @@ export const RecordDetailMorphRelationSection = ({
   const isMobile = useIsMobile();
 
   const recordsWithObjectNameSingular =
-    useGetMorphRelationRelatedRecordsWithObjectNameSingluar({
+    useGetMorphRelationRelatedRecordsWithObjectNameSingular({
       recordId,
       morphRelations: metadata.morphRelations,
     });
@@ -63,7 +63,7 @@ export const RecordDetailMorphRelationSection = ({
 
   const handleSubmit: FieldInputEvent = ({ newValue }) => {
     persistField({
-      recordId: recordId,
+      recordId,
       fieldDefinition,
       valueToPersist: newValue,
     });

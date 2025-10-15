@@ -25,29 +25,29 @@ export const RecordDetailMorphRelationRecordsList = ({
     <RecordDetailRecordsListContainer>
       {recordsWithObjectNameSingular
         .slice(0, 5)
-        .map((recordsWithObjectNameSingular) => (
+        .map((recordWithObjectNameSingular) => (
           <Fragment
-            key={`${recordsWithObjectNameSingular.value.id}-${recordsWithObjectNameSingular.fieldMetadataId}`}
+            key={`${recordWithObjectNameSingular.value.id}-${recordWithObjectNameSingular.fieldMetadataId}`}
           >
             <RecordDetailRelationRecordsListItemEffect
-              key={`${recordsWithObjectNameSingular.value.id}-effect`}
-              relationRecordId={recordsWithObjectNameSingular.value.id}
+              key={`${recordWithObjectNameSingular.value.id}-effect`}
+              relationRecordId={recordWithObjectNameSingular.value.id}
               relationObjectMetadataNameSingular={
-                recordsWithObjectNameSingular.objectNameSingular
+                recordWithObjectNameSingular.objectNameSingular
               }
             />
             <RecordDetailRelationRecordsListItem
-              key={recordsWithObjectNameSingular.value.id}
+              key={recordWithObjectNameSingular.value.id}
               isExpanded={
-                expandedItem === recordsWithObjectNameSingular.value.id
+                expandedItem === recordWithObjectNameSingular.value.id
               }
               onClick={handleItemClick}
-              relationRecord={recordsWithObjectNameSingular.value}
+              relationRecord={recordWithObjectNameSingular.value}
               relationObjectMetadataNameSingular={
-                recordsWithObjectNameSingular.objectNameSingular
+                recordWithObjectNameSingular.objectNameSingular
               }
               relationFieldMetadataId={
-                recordsWithObjectNameSingular.fieldMetadataId
+                recordWithObjectNameSingular.fieldMetadataId
               }
             />
           </Fragment>

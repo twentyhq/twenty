@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetMorphRelationRelatedRecordsWithObjectNameSingluar } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingluar';
+import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
@@ -44,9 +44,9 @@ export const RecordDetailMorphRelationSectionDropdownManyToOne = () => {
     .filter(isDefined);
 
   const recordsWithObjectNameSingular =
-    useGetMorphRelationRelatedRecordsWithObjectNameSingluar({
+    useGetMorphRelationRelatedRecordsWithObjectNameSingular({
       recordId,
-      morphRelations: morphRelations,
+      morphRelations,
     });
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
