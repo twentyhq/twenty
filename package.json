@@ -224,7 +224,8 @@
     "typescript": "5.9.2",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",
     "prosemirror-view": "1.40.0",
-    "prosemirror-transform": "1.10.4"
+    "prosemirror-transform": "1.10.4",
+    "happy-dom": "20.0.0"
   },
   "version": "0.2.1",
   "nx": {},
