@@ -1,8 +1,8 @@
+import { AdvancedFilterCommandMenuRecordFilterColumn } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterColumn';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
-import { WorkflowAdvancedFilterRecordFilterColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterColumn';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,13 +20,13 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-type WorkflowAdvancedFilterRecordFilterGroupChildrenProps = {
+type AdvancedFilterCommandMenuRecordFilterGroupChildrenProps = {
   recordFilterGroupId: string;
 };
 
-export const WorkflowAdvancedFilterRecordFilterGroupChildren = ({
+export const AdvancedFilterCommandMenuRecordFilterGroupChildren = ({
   recordFilterGroupId,
-}: WorkflowAdvancedFilterRecordFilterGroupChildrenProps) => {
+}: AdvancedFilterCommandMenuRecordFilterGroupChildrenProps) => {
   const { readonly } = useContext(AdvancedFilterContext);
   const { currentRecordFilterGroup, childRecordFilters } =
     useChildRecordFiltersAndRecordFilterGroups({
@@ -44,7 +44,7 @@ export const WorkflowAdvancedFilterRecordFilterGroupChildren = ({
   return (
     <StyledContainer isGrayBackground={hasParentRecordFilterGroup}>
       {childRecordFilters.map((childRecordFilter, childRecordFilterIndex) => (
-        <WorkflowAdvancedFilterRecordFilterColumn
+        <AdvancedFilterCommandMenuRecordFilterColumn
           key={childRecordFilter.id}
           recordFilter={childRecordFilter}
           recordFilterIndex={childRecordFilterIndex}

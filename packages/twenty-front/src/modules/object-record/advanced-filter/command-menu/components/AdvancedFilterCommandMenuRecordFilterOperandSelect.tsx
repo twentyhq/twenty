@@ -9,13 +9,13 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type WorkflowAdvancedFilterRecordFilterOperandSelectProps = {
+type AdvancedFilterCommandMenuRecordFilterOperandSelectProps = {
   recordFilterId: string;
 };
 
-export const WorkflowAdvancedFilterRecordFilterOperandSelect = ({
+export const AdvancedFilterCommandMenuRecordFilterOperandSelect = ({
   recordFilterId,
-}: WorkflowAdvancedFilterRecordFilterOperandSelectProps) => {
+}: AdvancedFilterCommandMenuRecordFilterOperandSelectProps) => {
   const { readonly } = useContext(AdvancedFilterContext);
   const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,

@@ -1,8 +1,10 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
+import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
@@ -15,12 +17,14 @@ import {
   CHART_CONFIGURATION_SETTING_IDS,
   CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP,
 } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { IconFilter } from 'twenty-ui/display';
 
 import {
   BarChartGroupMode,
@@ -30,6 +34,8 @@ import {
 
 export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
+
+  const { navigateCommandMenu } = useNavigateCommandMenu();
 
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
@@ -140,6 +146,32 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                 dropdownComponentInstanceIdFromProps: item.id,
               });
             };
+
+            const handleFilterSettingsClick = () => {
+              navigateCommandMenu({
+                page: CommandMenuPages.PageLayoutGraphFilter,
+                pageTitle: t`Filters`,
+                pageIcon: IconFilter,
+              });
+            };
+
+            if (item.id === CHART_CONFIGURATION_SETTING_IDS.FILTER) {
+              return (
+                <SelectableListItem
+                  key={item.id}
+                  itemId={item.id}
+                  onEnter={handleFilterSettingsClick}
+                >
+                  <CommandMenuItem
+                    id={item.id}
+                    label="Filter"
+                    Icon={item.Icon}
+                    hasSubMenu
+                    onClick={handleFilterSettingsClick}
+                  />
+                </SelectableListItem>
+              );
+            }
 
             return item.isBoolean ? (
               <SelectableListItem
