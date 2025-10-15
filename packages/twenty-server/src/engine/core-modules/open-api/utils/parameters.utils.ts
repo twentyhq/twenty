@@ -3,8 +3,7 @@ import {
   QUERY_DEFAULT_LIMIT_RECORDS,
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
-
-import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { OrderByDirection } from 'twenty-shared/types';
 
 export const computeLimitParameters = (
   fromMetadata = false,

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecord } from 'twenty-shared/types';
+
 import {
   PageInfo,
   RestApiBaseHandler,
