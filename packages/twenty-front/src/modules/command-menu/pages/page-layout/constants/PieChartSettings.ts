@@ -4,7 +4,6 @@ import { DATA_DISPLAY_PIE_CHART_SETTING } from '@/command-menu/pages/page-layout
 import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataLabelsSetting';
 import { EACH_SLICE_REPRESENTS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/EachSliceRepresentsSetting';
 import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
-import { OMIT_NULL_VALUES_SETTING } from '@/command-menu/pages/page-layout/constants/settings/OmitNullValuesSetting';
 import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByXSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 
@@ -17,7 +16,6 @@ export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
       DATA_DISPLAY_PIE_CHART_SETTING,
       EACH_SLICE_REPRESENTS_SETTING,
       SORT_BY_X_SETTING,
-      OMIT_NULL_VALUES_SETTING,
     ],
   },
   {
