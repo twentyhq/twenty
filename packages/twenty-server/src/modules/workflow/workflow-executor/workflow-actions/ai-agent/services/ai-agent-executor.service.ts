@@ -18,7 +18,6 @@ import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constant
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 
 @Injectable()
@@ -29,8 +28,6 @@ export class AiAgentExecutorService {
     private readonly toolAdapterService: ToolAdapterService,
     @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
   ) {}
 
@@ -48,16 +45,9 @@ export class AiAgentExecutorService {
       select: ['roleId'],
     });
 
-    const role = await this.roleRepository.findOne({
-      where: {
-        id: roleTarget?.roleId,
-        workspaceId,
-      },
-    });
-
     const effectiveRoleId = roleIdOverride || roleTarget?.roleId;
 
-    if (!effectiveRoleId || !role) {
+    if (!effectiveRoleId) {
       const actionTools = await this.toolAdapterService.getTools();
 
       return { ...actionTools };
