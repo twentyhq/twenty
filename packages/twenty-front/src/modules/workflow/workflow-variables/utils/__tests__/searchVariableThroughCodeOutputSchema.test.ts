@@ -1,6 +1,6 @@
-import type { BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 import type { CodeOutputSchema } from '@/workflow/workflow-variables/types/CodeOutputSchema';
 import { searchVariableThroughCodeOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughCodeOutputSchema';
+import type { BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 
 describe('searchVariableThroughCodeOutputSchema', () => {
   describe('LinkOutputSchema tests', () => {
@@ -18,7 +18,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Step',
         codeOutputSchema: mockLinkSchema,
         rawVariableName: '{{step1.link}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -87,7 +86,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: '{{step1.message}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -102,7 +100,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: '{{step1.count}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -117,7 +114,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: '{{step1.isEnabled}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -132,7 +128,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: '{{step1.data.userId}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -147,7 +142,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: '{{step1.data.profile.name}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -163,7 +157,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: '{{step1.data.profile.email}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -179,7 +172,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: '{{step1.data}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -194,7 +186,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: '{{step1.invalidField}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -208,7 +199,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: '{{step1.data.invalidField}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -233,7 +223,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: undefined as any,
         rawVariableName: '{{step1.message}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -247,7 +236,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: '{{}}',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
@@ -261,7 +249,6 @@ describe('searchVariableThroughCodeOutputSchema', () => {
         stepName: 'Code Action',
         codeOutputSchema: mockBaseSchema,
         rawVariableName: 'step1.simpleField',
-        isFullRecord: false,
       });
 
       expect(result).toEqual({
