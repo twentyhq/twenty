@@ -85,7 +85,11 @@ export const PageLayoutDispatcher = ({
                   targetObjectNameSingular:
                     targetRecordIdentifier.targetObjectNameSingular,
                 },
-                layoutType: PageLayoutType.DASHBOARD,
+                layoutType:
+                  targetRecordIdentifier.targetObjectNameSingular ===
+                  CoreObjectNameSingular.Dashboard
+                    ? PageLayoutType.DASHBOARD
+                    : PageLayoutType.RECORD_PAGE,
                 isInRightDrawer,
               }}
             >
