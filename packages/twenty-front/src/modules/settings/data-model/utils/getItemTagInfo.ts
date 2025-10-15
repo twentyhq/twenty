@@ -34,23 +34,18 @@ export const getItemTagInfo = ({
   isCustom?: boolean;
   isRemote?: boolean;
   applicationId?: string | null;
-}): ItemTagInfo =>
-  isDefined(applicationId)
-    ? {
-        labelText: 'Managed',
-        labelColor: 'sky',
-      }
-    : isCustom
-      ? {
-          labelText: 'Custom',
-          labelColor: 'orange',
-        }
-      : isRemote
-        ? {
-            labelText: 'Remote',
-            labelColor: 'green',
-          }
-        : {
-            labelText: 'Standard',
-            labelColor: 'blue',
-          };
+}): ItemTagInfo => {
+  if (isDefined(applicationId)) {
+    return { labelText: 'Managed', labelColor: 'sky' };
+  }
+
+  if (isCustom!!) {
+    return { labelText: 'Custom', labelColor: 'orange' };
+  }
+
+  if (isRemote!!) {
+    return { labelText: 'Remote', labelColor: 'green' };
+  }
+
+  return { labelText: 'Standard', labelColor: 'blue' };
+};
