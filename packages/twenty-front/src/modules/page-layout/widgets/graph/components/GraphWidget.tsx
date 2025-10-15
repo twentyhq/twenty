@@ -100,7 +100,8 @@ export const GraphWidget = ({
         </Suspense>
       );
 
-    case GraphType.BAR:
+    case GraphType.VERTICAL_BAR:
+    case GraphType.HORIZONTAL_BAR:
       return <GraphWidgetBarChartRenderer widget={widget} />;
 
     case GraphType.LINE:

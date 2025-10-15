@@ -224,13 +224,7 @@ export const WorkflowStepDetail = ({
           );
         }
         case 'EMPTY': {
-          return (
-            <WorkflowEditActionEmpty
-              key={stepId}
-              action={stepDefinition.definition}
-              actionOptions={props}
-            />
-          );
+          return <WorkflowEditActionEmpty key={stepId} actionOptions={props} />;
         }
         default:
           return assertUnreachable(

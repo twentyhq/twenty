@@ -10,31 +10,52 @@ import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout
 import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByXSetting';
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
+import { IconAxisX, IconAxisY } from 'twenty-ui/display';
+import { GraphType } from '~/generated-metadata/graphql';
 
-export const BAR_CHART_SETTINGS: ChartSettingsGroup[] = [
-  {
-    heading: 'Data',
-    items: [CHART_DATA_SOURCE_SETTING, FILTER_SETTING],
-  },
-  {
-    heading: 'X axis',
-    items: [DATA_DISPLAY_X_SETTING, SORT_BY_X_SETTING],
-  },
-  {
-    heading: 'Y axis',
-    items: [
-      DATA_DISPLAY_Y_SETTING,
-      GROUP_BY_SETTING,
-      SORT_BY_GROUP_BY_FIELD_SETTING,
-    ],
-  },
-  {
-    heading: 'Style',
-    items: [
-      COLORS_SETTING,
-      AXIS_NAME_SETTING,
-      STACKED_BARS_SETTING,
-      DATA_LABELS_SETTING,
-    ],
-  },
-];
+export const getBarChartSettings = (
+  graphType: GraphType.VERTICAL_BAR | GraphType.HORIZONTAL_BAR,
+): ChartSettingsGroup[] => {
+  const isHorizontal = graphType === GraphType.HORIZONTAL_BAR;
+
+  const dataDisplayXIcon = isHorizontal ? IconAxisY : IconAxisX;
+  const dataDisplayYIcon = isHorizontal ? IconAxisX : IconAxisY;
+
+  const primaryAxisItems = [
+    { ...DATA_DISPLAY_X_SETTING, Icon: dataDisplayXIcon },
+    SORT_BY_X_SETTING,
+  ];
+
+  const secondaryAxisItems = [
+    { ...DATA_DISPLAY_Y_SETTING, Icon: dataDisplayYIcon },
+    GROUP_BY_SETTING,
+    SORT_BY_GROUP_BY_FIELD_SETTING,
+  ];
+
+  const xAxisItems = isHorizontal ? secondaryAxisItems : primaryAxisItems;
+  const yAxisItems = isHorizontal ? primaryAxisItems : secondaryAxisItems;
+
+  return [
+    {
+      heading: 'Data',
+      items: [CHART_DATA_SOURCE_SETTING, FILTER_SETTING],
+    },
+    {
+      heading: 'X axis',
+      items: xAxisItems,
+    },
+    {
+      heading: 'Y axis',
+      items: yAxisItems,
+    },
+    {
+      heading: 'Style',
+      items: [
+        COLORS_SETTING,
+        AXIS_NAME_SETTING,
+        STACKED_BARS_SETTING,
+        DATA_LABELS_SETTING,
+      ],
+    },
+  ];
+};
