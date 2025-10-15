@@ -88,13 +88,13 @@ const applyUpdatesToFlatFieldMetadata = ({
       },
     );
 
-  const indexChanges = handleIndexChangesDuringFieldUpdate(
-    fromFlatFieldMetadata,
+  const indexChanges = handleIndexChangesDuringFieldUpdate({
+    originalFlatFieldMetadata: fromFlatFieldMetadata,
     updatedFlatFieldMetadata,
     flatIndexMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-  );
+  });
 
   return {
     flatFieldMetadata: updatedFlatFieldMetadata,

@@ -1,8 +1,7 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
@@ -21,73 +20,99 @@ const NO_INDEX_CHANGES: IndexChanges = {
   flatIndexMetadatasToCreate: [],
 };
 
-export const handleIndexChangesDuringFieldUpdate = (
-  originalFieldMetadata: FlatFieldMetadata,
-  updatedFieldMetadata: FlatFieldMetadata,
-  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-): IndexChanges => {
-  if (!hasIndexRelevantChanges(originalFieldMetadata, updatedFieldMetadata)) {
+export const handleIndexChangesDuringFieldUpdate = ({
+  originalFlatFieldMetadata,
+  updatedFlatFieldMetadata,
+  flatIndexMaps,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+}: {
+  originalFlatFieldMetadata: FlatFieldMetadata;
+  updatedFlatFieldMetadata: FlatFieldMetadata;
+  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+}): IndexChanges => {
+  if (
+    !hasIndexRelevantChanges({
+      originalFlatFieldMetadata,
+      updatedFlatFieldMetadata,
+    })
+  ) {
     return NO_INDEX_CHANGES;
   }
 
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityMaps: flatObjectMetadataMaps,
-    flatEntityId: originalFieldMetadata.objectMetadataId,
+    flatEntityId: originalFlatFieldMetadata.objectMetadataId,
   });
 
-  const relatedIndexes = findRelatedIndexes(
-    originalFieldMetadata,
+  const relatedIndexes = findRelatedIndexes({
+    flatFieldMetadata: originalFlatFieldMetadata,
+    flatObjectMetadata,
     flatIndexMaps,
-  );
+  });
 
   if (relatedIndexes.length === 0) {
-    return handleNoExistingIndexes(updatedFieldMetadata, flatObjectMetadata);
+    return handleNoExistingIndexes({
+      updatedFlatFieldMetadata,
+      flatObjectMetadata,
+    });
   }
 
-  return handleExistingIndexes(
-    updatedFieldMetadata,
-    originalFieldMetadata,
+  return handleExistingIndexes({
+    updatedFlatFieldMetadata,
+    originalFlatFieldMetadata,
     relatedIndexes,
     flatObjectMetadata,
     flatFieldMetadataMaps,
+  });
+};
+
+const hasIndexRelevantChanges = ({
+  originalFlatFieldMetadata,
+  updatedFlatFieldMetadata,
+}: {
+  originalFlatFieldMetadata: FlatFieldMetadata;
+  updatedFlatFieldMetadata: FlatFieldMetadata;
+}): boolean =>
+  originalFlatFieldMetadata.name !== updatedFlatFieldMetadata.name ||
+  originalFlatFieldMetadata.isUnique !== updatedFlatFieldMetadata.isUnique;
+
+const findRelatedIndexes = ({
+  flatFieldMetadata,
+  flatObjectMetadata,
+  flatIndexMaps,
+}: {
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
+}): FlatIndexMetadata[] => {
+  const objectIndexes = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+    flatEntityMaps: flatIndexMaps,
+    flatEntityIds: flatObjectMetadata.indexMetadataIds,
+  });
+
+  return objectIndexes.filter((index) =>
+    index.flatIndexFieldMetadatas.some(
+      (indexField) => indexField.fieldMetadataId === flatFieldMetadata.id,
+    ),
   );
 };
 
-const hasIndexRelevantChanges = (
-  original: FlatFieldMetadata,
-  updated: FlatFieldMetadata,
-): boolean => {
-  return (
-    original.name !== updated.name || original.isUnique !== updated.isUnique
-  );
-};
-
-const findRelatedIndexes = (
-  fieldMetadata: FlatFieldMetadata,
-  flatIndexMaps: AllFlatEntityMaps['flatIndexMaps'],
-): FlatIndexMetadata[] => {
-  return Object.values(flatIndexMaps.byId).filter(
-    (index): index is FlatIndexMetadata =>
-      isDefined(index) &&
-      index.objectMetadataId === fieldMetadata.objectMetadataId &&
-      index.flatIndexFieldMetadatas.some(
-        (indexField) => indexField.fieldMetadataId === fieldMetadata.id,
-      ),
-  );
-};
-
-const handleNoExistingIndexes = (
-  updatedFieldMetadata: FlatFieldMetadata,
-  flatObjectMetadata: FlatObjectMetadata,
-): IndexChanges => {
-  if (!updatedFieldMetadata.isUnique) {
+const handleNoExistingIndexes = ({
+  updatedFlatFieldMetadata,
+  flatObjectMetadata,
+}: {
+  updatedFlatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadata: FlatObjectMetadata;
+}): IndexChanges => {
+  if (!updatedFlatFieldMetadata.isUnique) {
     return NO_INDEX_CHANGES;
   }
 
   const newIndex = generateIndexForFlatFieldMetadata({
-    flatFieldMetadata: updatedFieldMetadata,
+    flatFieldMetadata: updatedFlatFieldMetadata,
     flatObjectMetadata,
     workspaceId: flatObjectMetadata.workspaceId,
   });
@@ -98,27 +123,48 @@ const handleNoExistingIndexes = (
   };
 };
 
-const handleExistingIndexes = (
-  updatedFieldMetadata: FlatFieldMetadata,
-  originalFieldMetadata: FlatFieldMetadata,
-  relatedIndexes: FlatIndexMetadata[],
-  flatObjectMetadata: FlatObjectMetadata,
-  flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'],
-): IndexChanges => {
-  if (updatedFieldMetadata.isUnique === false) {
+const handleExistingIndexes = ({
+  updatedFlatFieldMetadata,
+  originalFlatFieldMetadata,
+  relatedIndexes,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
+}: {
+  updatedFlatFieldMetadata: FlatFieldMetadata;
+  originalFlatFieldMetadata: FlatFieldMetadata;
+  relatedIndexes: FlatIndexMetadata[];
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+}): IndexChanges => {
+  if (updatedFlatFieldMetadata.isUnique === false) {
+    const expectedUniqueIndex = generateIndexForFlatFieldMetadata({
+      flatFieldMetadata: {
+        ...originalFlatFieldMetadata,
+        isUnique: true,
+      },
+      flatObjectMetadata,
+      workspaceId: flatObjectMetadata.workspaceId,
+    });
+
+    const uniqueIndexToDelete = relatedIndexes.find(
+      (index) => index.name === expectedUniqueIndex.name,
+    );
+
     return {
       ...NO_INDEX_CHANGES,
-      flatIndexMetadatasToDelete: relatedIndexes,
+      flatIndexMetadatasToDelete: uniqueIndexToDelete
+        ? [uniqueIndexToDelete]
+        : [],
     };
   }
 
   const updatedIndexes = recomputeIndexOnFlatFieldMetadataNameUpdate({
     flatFieldMetadataMaps,
     flatObjectMetadata,
-    fromFlatFieldMetadata: originalFieldMetadata,
+    fromFlatFieldMetadata: originalFlatFieldMetadata,
     toFlatFieldMetadata: {
-      name: updatedFieldMetadata.name,
-      isUnique: updatedFieldMetadata.isUnique,
+      name: updatedFlatFieldMetadata.name,
+      isUnique: updatedFlatFieldMetadata.isUnique,
     },
     relatedFlatIndexMetadata: relatedIndexes,
   });

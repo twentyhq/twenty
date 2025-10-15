@@ -111,10 +111,10 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       flatObjectMetadata,
     });
 
-    const quotedColumns = this.getColumns(
-      flatIndexMetadata.flatIndexFieldMetadatas,
+    const quotedColumns = this.computeFlatIndexFieldColumnNames({
+      flatIndexFieldMetadatas: flatIndexMetadata.flatIndexFieldMetadatas,
       flatFieldMetadataMaps,
-    );
+    });
 
     await this.workspaceSchemaManagerService.indexManager.createIndex({
       index: {
@@ -130,10 +130,13 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     });
   }
 
-  private getColumns(
+  private computeFlatIndexFieldColumnNames({
+    flatIndexFieldMetadatas,
+    flatFieldMetadataMaps,
+  }: {
     flatIndexFieldMetadatas: FlatIndexFieldMetadata[],
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  ) {
+  }): string[] {
     return flatIndexFieldMetadatas.flatMap(({ fieldMetadataId }) => {
       const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: fieldMetadataId,
