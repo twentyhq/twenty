@@ -136,6 +136,7 @@ export const SettingsObjectNewFieldConfigure = () => {
             ...formValues,
             type: FieldMetadataType.MORPH_RELATION,
             objectMetadataId: activeObjectMetadataItem.id,
+            isLabelSyncedWithName: false,
             morphRelationsCreationPayload: morphRelationObjectMetadataIds.map(
               (morphRelationObjectMetadataId: string) => ({
                 type: relationType,
