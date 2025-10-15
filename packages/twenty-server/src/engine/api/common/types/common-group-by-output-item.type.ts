@@ -1,9 +1,9 @@
-type aggregateValues = {
+type AggregateValues = {
   [key: string]: number;
 };
 
-type groupByDimensionValues = {
+type GroupByDimensionValues = {
   groupByDimensionValues: string[];
 };
 
-export type CommonGroupByOutputItem = aggregateValues & groupByDimensionValues;
+export type CommonGroupByOutputItem = AggregateValues & GroupByDimensionValues;

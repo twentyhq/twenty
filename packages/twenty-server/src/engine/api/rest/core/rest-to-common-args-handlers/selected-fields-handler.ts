@@ -11,6 +11,10 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
+type SelectFields = {
+  [key: string]: boolean | SelectFields;
+};
+
 @Injectable()
 export class RestToCommonSelectedFieldsHandler {
   computeFromDepth = ({
@@ -60,11 +64,7 @@ export class RestToCommonSelectedFieldsHandler {
   }) {
     if (!isDefined(depth) || depth === 0) return {};
 
-    let relationsSelectFields: {
-      [key: string]:
-        | boolean
-        | { [key: string]: boolean | { [key: string]: boolean } };
-    } = {};
+    let relationsSelectFields: SelectFields = {};
 
     for (const field of Object.values(objectMetadataMapItem.fieldsById)) {
       if (!isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION))
@@ -98,11 +98,7 @@ export class RestToCommonSelectedFieldsHandler {
             objectMetadataMapItem: relationTargetObjectMetadata,
             objectsPermissions,
             depth: 1,
-          }) as {
-            relationsSelectFields: {
-              [key: string]: boolean;
-            };
-          };
+          });
 
         relationsSelectFields[field.name] = {
           ...relationFieldSelectFields,

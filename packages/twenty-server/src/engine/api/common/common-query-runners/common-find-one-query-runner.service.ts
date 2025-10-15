@@ -28,7 +28,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -37,8 +37,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<ObjectRecord> {
-    const authContext = toValidateAuthContext;
-
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',
@@ -52,12 +50,13 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         objectMetadataItemWithFieldMaps,
       });
 
-    const graphqlQueryParser = new GraphqlQueryParser(
+    //TODO : Refacto-common - QueryParser should be common branded service
+    const commonQueryParser = new GraphqlQueryParser(
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
 
-    const selectedFieldsResult = graphqlQueryParser.parseSelectedFields(
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
       objectMetadataItemWithFieldMaps,
       args.selectedFields,
       objectMetadataMaps,
@@ -81,12 +80,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const queryBuilder = repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
-    );
-
-    //TODO : Refacto-common - QueryParser should be common branded service
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
     );
 
     commonQueryParser.applyFilterToBuilder(

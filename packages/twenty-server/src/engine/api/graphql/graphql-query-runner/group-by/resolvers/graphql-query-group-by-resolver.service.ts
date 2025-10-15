@@ -172,7 +172,11 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
 
     const result = await queryBuilder.getRawMany();
 
-    return formatResultWithGroupByDimensionValues(result, groupByDefinitions);
+    return formatResultWithGroupByDimensionValues(
+      result,
+      groupByDefinitions,
+      Object.keys(executionArgs.graphqlQuerySelectedFieldsResult.aggregate),
+    );
   }
 
   private async addFiltersFromView({

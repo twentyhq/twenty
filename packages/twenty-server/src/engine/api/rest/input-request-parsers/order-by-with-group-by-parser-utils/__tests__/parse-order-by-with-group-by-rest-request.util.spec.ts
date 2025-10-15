@@ -44,7 +44,7 @@ describe('parseOrderByWithGroupByRestRequest', () => {
       BadRequestException,
     );
     expect(() => parseOrderByWithGroupByRestRequest(request)).toThrow(
-      `Invalid order_by query parameter - should be a valid array of objects - ex: [{"field_2": "AscNullsFirst"}, {"field_3": {"subField": "DescNullsLast"}}, {"aggregate": {"aggregateField": "DescNullsLast"}}, {dateField: {"orderBy": "AscNullsFirst", "granularity": "DAY"}}]`,
+      `Invalid order_by query parameter - should be a valid array of objects - ex: [{"firstField": "AscNullsFirst"}, {"secondField": {"subField": "DescNullsLast"}}, {"aggregate": {"aggregateField": "DescNullsLast"}}, {dateField: {"orderBy": "AscNullsFirst", "granularity": "DAY"}}]`,
     );
   });
 });

@@ -56,7 +56,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -65,8 +65,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<CommonGroupByOutputItem[]> {
-    const authContext = toValidateAuthContext;
-
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',
@@ -79,12 +77,13 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectMetadataItemWithFieldMaps,
     });
 
-    const graphqlQueryParser = new GraphqlQueryParser(
+    //TODO : Refacto-common - QueryParser should be common branded service
+    const commonQueryParser = new GraphqlQueryParser(
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
 
-    const selectedFieldsResult = graphqlQueryParser.parseSelectedFields(
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
       objectMetadataItemWithFieldMaps,
       args.selectedFields,
       objectMetadataMaps,
@@ -113,11 +112,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         appliedFilters,
       });
     }
-
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
 
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,

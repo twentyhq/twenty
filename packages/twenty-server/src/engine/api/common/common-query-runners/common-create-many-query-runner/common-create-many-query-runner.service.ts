@@ -39,7 +39,7 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -48,8 +48,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<ObjectRecord[]> {
-    const authContext = toValidateAuthContext;
-
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',
@@ -65,12 +63,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       }
     });
 
-    const graphqlQueryParser = new GraphqlQueryParser(
+    //TODO : Refacto-common - QueryParser should be common branded service
+    const commonQueryParser = new GraphqlQueryParser(
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
 
-    const selectedFieldsResult = graphqlQueryParser.parseSelectedFields(
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
       objectMetadataItemWithFieldMaps,
       args.selectedFields,
       objectMetadataMaps,
