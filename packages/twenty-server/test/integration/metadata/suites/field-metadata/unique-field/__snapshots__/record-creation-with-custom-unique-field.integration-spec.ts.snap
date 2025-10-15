@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create records with custom unique fields should not create a unique index on field if records with same value already exist 1`] = `
+{
+  "extensions": {
+    "code": "INTERNAL_SERVER_ERROR",
+    "exceptionEventId": Any<String>,
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "RUNNER_INTERNAL_SERVER_ERROR",
+}
+`;
+
+exports[`create records with custom unique fields should not create the second record with same value on unique field 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "isExpected": true,
+    "userFriendlyMessage": "This unique test field with value uniqueValue123 is already taken. Please choose a different value.",
+  },
+  "message": "Duplicate Unique Test Field with value uniqueValue123. Please set a unique one.",
+  "name": "UserInputError",
+}
+`;
