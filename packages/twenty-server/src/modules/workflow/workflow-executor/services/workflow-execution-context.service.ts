@@ -33,10 +33,10 @@ export class WorkflowExecutionContextService {
 
     let roleId: string | undefined;
 
-    if (isActingOnBehalfOfUser && workflowRun.createdBy.workspaceMemberId) {
+    if (isActingOnBehalfOfUser) {
       const workspaceMember =
         await this.userWorkspaceService.getWorkspaceMemberOrThrow({
-          workspaceMemberId: workflowRun.createdBy.workspaceMemberId,
+          workspaceMemberId: workflowRun.createdBy.workspaceMemberId!,
           workspaceId: runInfo.workspaceId,
         });
 
