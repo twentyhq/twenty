@@ -9,6 +9,7 @@ type SettingsDataModelPreviewFormCardProps = {
   className?: string;
   preview: ReactNode;
   form?: ReactNode;
+  disabled?: boolean;
 };
 
 const StyledPreviewContainer = styled(CardContent)`

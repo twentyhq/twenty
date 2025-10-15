@@ -34,6 +34,7 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -65,6 +66,8 @@ export const SettingsObjectDetailPage = () => {
   const objectMetadataItem =
     findActiveObjectMetadataItemByNamePlural(objectNamePlural) ??
     findActiveObjectMetadataItemByNamePlural(updatedObjectNamePlural);
+
+  const readonly = isObjectMetadataReadOnly({ objectMetadataItem });
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
@@ -151,6 +154,7 @@ export const SettingsObjectDetailPage = () => {
           },
         ]}
         actionButton={
+          !readonly &&
           activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
             <UndecoratedLink to="./new-field/select">
               <Button

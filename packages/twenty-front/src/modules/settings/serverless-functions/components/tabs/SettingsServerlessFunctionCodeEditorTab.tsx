@@ -65,6 +65,12 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
           files={files}
           currentFilePath={activeTabId}
           onChange={(newCodeValue) => onChange(activeTabId, newCodeValue)}
+          options={{
+            readOnly: true,
+            readOnlyMessage: {
+              value: 'Managed serverless functions are not editable',
+            },
+          }}
         />
       )}
     </Section>
