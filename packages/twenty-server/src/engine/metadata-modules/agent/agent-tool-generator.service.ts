@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -29,6 +30,8 @@ export class AgentToolGeneratorService {
   async generateToolsForAgent(
     agentId: string,
     workspaceId: string,
+    actorContext?: ActorMetadata,
+    roleIdOverride?: string,
   ): Promise<ToolSet> {
     let tools: ToolSet = {};
 
@@ -38,15 +41,15 @@ export class AgentToolGeneratorService {
 
       tools = { ...actionTools };
 
-      const roleId = agent.roleId;
+      const effectiveRoleId = roleIdOverride || agent.roleId;
 
-      if (!roleId) {
+      if (!effectiveRoleId) {
         return tools;
       }
 
       const role = await this.roleRepository.findOne({
         where: {
-          id: roleId,
+          id: effectiveRoleId,
           workspaceId,
         },
         relations: ['permissionFlags'],
@@ -65,21 +68,22 @@ export class AgentToolGeneratorService {
       if (hasWorkflowPermission) {
         const workflowTools = this.workflowToolService.generateWorkflowTools(
           workspaceId,
-          roleId,
+          effectiveRoleId,
         );
 
         tools = { ...tools, ...workflowTools };
       }
 
       const databaseTools = await this.toolService.listTools(
-        roleId,
+        effectiveRoleId,
         workspaceId,
+        actorContext,
       );
 
       tools = { ...tools, ...databaseTools };
 
       const roleActionTools = await this.toolAdapterService.getTools(
-        roleId,
+        effectiveRoleId,
         workspaceId,
       );
 

@@ -16,6 +16,7 @@ import {
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
+import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
@@ -36,6 +37,8 @@ export class AiAgentExecutorService {
   private async getTools(
     agentId: string,
     workspaceId: string,
+    actorContext?: ActorMetadata,
+    roleIdOverride?: string,
   ): Promise<ToolSet> {
     const roleTarget = await this.roleTargetsRepository.findOne({
       where: {
@@ -52,20 +55,23 @@ export class AiAgentExecutorService {
       },
     });
 
-    if (!roleTarget?.roleId || !role) {
+    const effectiveRoleId = roleIdOverride || roleTarget?.roleId;
+
+    if (!effectiveRoleId || !role) {
       const actionTools = await this.toolAdapterService.getTools();
 
       return { ...actionTools };
     }
 
     const actionTools = await this.toolAdapterService.getTools(
-      role.id,
+      effectiveRoleId,
       workspaceId,
     );
 
     const databaseTools = await this.toolService.listTools(
-      role.id,
+      effectiveRoleId,
       workspaceId,
+      actorContext,
     );
 
     return {
@@ -78,17 +84,21 @@ export class AiAgentExecutorService {
     agent,
     schema,
     userPrompt,
+    actorContext,
+    roleId,
   }: {
     agent: AgentEntity | null;
     schema: OutputSchema;
     userPrompt: string;
+    actorContext?: ActorMetadata;
+    roleId?: string;
   }): Promise<AgentExecutionResult> {
     try {
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       const tools = agent
-        ? await this.getTools(agent.id, agent.workspaceId)
+        ? await this.getTools(agent.id, agent.workspaceId, actorContext, roleId)
         : {};
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
