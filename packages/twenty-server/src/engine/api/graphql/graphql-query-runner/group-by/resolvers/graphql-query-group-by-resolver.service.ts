@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
@@ -44,6 +44,8 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
   GroupByResolverArgs,
   IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[]
 > {
+  private readonly logger = new Logger(GraphqlQueryGroupByResolverService.name);
+
   constructor(
     private readonly viewFilterService: ViewFilterService,
     private readonly viewFilterGroupService: ViewFilterGroupService,
@@ -134,6 +136,51 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
         queryBuilder.addGroupBy(groupByColumn.expression);
       }
     });
+
+    // Apply HAVING clause to filter out null and zero values if omitNullValues is enabled
+    console.log('============================================');
+    console.log(
+      '[omitNullValues] Checking flag:',
+      executionArgs.args.omitNullValues,
+    );
+    console.log(
+      '[omitNullValues] All args:',
+      JSON.stringify(executionArgs.args, null, 2),
+    );
+    console.log('============================================');
+
+    if (executionArgs.args.omitNullValues) {
+      const aggregateFields =
+        executionArgs.graphqlQuerySelectedFieldsResult.aggregate ?? {};
+
+      console.log('[omitNullValues] FILTERING ENABLED!');
+      console.log(
+        '[omitNullValues] Aggregate fields:',
+        Object.keys(aggregateFields),
+      );
+
+      Object.entries(aggregateFields).forEach(
+        ([fieldName, aggregationField]) => {
+          const aggregateExpression =
+            ProcessAggregateHelper.getAggregateExpression(
+              aggregationField,
+              objectMetadataNameSingular,
+            );
+
+          if (aggregateExpression) {
+            // Filter out null values
+            queryBuilder.andHaving(`${aggregateExpression} IS NOT NULL`);
+            // Filter out zero values
+            queryBuilder.andHaving(`${aggregateExpression} != 0`);
+            console.log(
+              `[omitNullValues] Added HAVING for ${fieldName}: ${aggregateExpression}`,
+            );
+          }
+        },
+      );
+    } else {
+      console.log('[omitNullValues] Flag is FALSE or undefined - no filtering');
+    }
 
     executionArgs.graphqlQueryParser.applyGroupByOrderToBuilder(
       queryBuilder,
