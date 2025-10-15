@@ -76,12 +76,14 @@ type SettingsDataModelFieldIconLabelFormProps = {
   fieldMetadataItem?: FieldMetadataItem;
   maxLength?: number;
   isCreationMode?: boolean;
+  readonly?: boolean;
 };
 
 export const SettingsDataModelFieldIconLabelForm = ({
   isCreationMode = false,
   fieldMetadataItem,
   maxLength,
+  readonly = false,
 }: SettingsDataModelFieldIconLabelFormProps) => {
   const {
     control,
@@ -150,6 +152,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
               selectedIconKey={value ?? 'IconUsers'}
               onChange={({ iconKey }) => onChange(iconKey)}
               variant="primary"
+              disabled={readonly}
             />
           )}
         />
@@ -162,7 +165,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
               instanceId={labelTextInputId}
               placeholder={t`Employees`}
               value={value}
-              disabled={!isLabelEditEnabled}
+              disabled={!isLabelEditEnabled || readonly}
               onChange={(value) => {
                 onChange(value);
                 trigger('label');
@@ -199,6 +202,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           placeholder={t`employees`}
                           value={value}
                           onChange={onChange}
+                          readOnly={readonly}
                           disabled={!isNameEditEnabled}
                           fullWidth
                           maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
@@ -245,6 +249,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           title={t`Synchronize Field Label and API Name`}
                           description={t`Should changing a field's label also change the API name?`}
                           checked={value ?? true}
+                          disabled={readonly}
                           advancedMode
                           onChange={(value) => {
                             onChange(value);

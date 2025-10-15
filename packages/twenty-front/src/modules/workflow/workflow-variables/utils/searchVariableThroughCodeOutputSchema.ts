@@ -24,12 +24,10 @@ export const searchVariableThroughCodeOutputSchema = ({
   stepName,
   codeOutputSchema,
   rawVariableName,
-  isFullRecord = false,
 }: {
   stepName: string;
   codeOutputSchema: CodeOutputSchema;
   rawVariableName: string;
-  isFullRecord?: boolean;
 }): VariableSearchResult => {
   if (!isDefined(codeOutputSchema) || isLinkOutputSchema(codeOutputSchema)) {
     return {
@@ -42,6 +40,5 @@ export const searchVariableThroughCodeOutputSchema = ({
     stepName,
     baseOutputSchema: codeOutputSchema,
     rawVariableName,
-    isFullRecord,
   });
 };

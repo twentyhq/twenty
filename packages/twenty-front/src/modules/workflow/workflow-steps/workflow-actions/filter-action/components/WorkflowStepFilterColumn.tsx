@@ -1,10 +1,10 @@
+import { AdvancedFilterCommandMenuColumn } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuColumn';
 import { WorkflowStepFilterFieldSelect } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect';
 import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterLogicalOperatorCell';
 import { WorkflowStepFilterOperandSelect } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterOperandSelect';
 import { WorkflowStepFilterOptionsDropdown } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterOptionsDropdown';
 import { WorkflowStepFilterValueInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
-import { WorkflowAdvancedFilterDropdownColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterDropdownColumn';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
@@ -30,7 +30,7 @@ export const WorkflowStepFilterColumn = ({
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   return (
-    <WorkflowAdvancedFilterDropdownColumn>
+    <AdvancedFilterCommandMenuColumn>
       <StyledContainer>
         <WorkflowStepFilterLogicalOperatorCell
           index={stepFilterIndex}
@@ -43,6 +43,6 @@ export const WorkflowStepFilterColumn = ({
       <WorkflowStepFilterFieldSelect stepFilter={stepFilter} />
       <WorkflowStepFilterOperandSelect stepFilter={stepFilter} />
       <WorkflowStepFilterValueInput stepFilter={stepFilter} />
-    </WorkflowAdvancedFilterDropdownColumn>
+    </AdvancedFilterCommandMenuColumn>
   );
 };

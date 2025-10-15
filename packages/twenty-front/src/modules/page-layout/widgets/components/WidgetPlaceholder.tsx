@@ -1,6 +1,6 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { useSetIsDashboardInEditMode } from '@/dashboards/hooks/useSetDashboardInEditMode';
+import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { WidgetContainer } from '@/page-layout/widgets/components/WidgetContainer';
@@ -27,14 +27,14 @@ export const WidgetPlaceholder = () => {
     isPageLayoutInEditModeComponentState,
   );
 
-  const { setIsDashboardInEditMode } =
-    useSetIsDashboardInEditMode(pageLayoutId);
+  const { setIsPageLayoutInEditMode } =
+    useSetIsPageLayoutInEditMode(pageLayoutId);
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const handleClick = () => {
     if (!isPageLayoutInEditMode) {
-      setIsDashboardInEditMode(true);
+      setIsPageLayoutInEditMode(true);
     }
     navigatePageLayoutCommandMenu({
       commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,

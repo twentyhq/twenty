@@ -5,7 +5,7 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
-import { PermissionFlagType } from '~/generated/graphql';
+import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import(
@@ -105,25 +105,11 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
   })),
 );
 
-const SettingsServerlessFunctions = lazy(() =>
-  import(
-    '~/pages/settings/serverless-functions/SettingsServerlessFunctions'
-  ).then((module) => ({ default: module.SettingsServerlessFunctions })),
-);
-
 const SettingsServerlessFunctionDetail = lazy(() =>
   import(
     '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail'
   ).then((module) => ({
     default: module.SettingsServerlessFunctionDetail,
-  })),
-);
-
-const SettingsServerlessFunctionsNew = lazy(() =>
-  import(
-    '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew'
-  ).then((module) => ({
-    default: module.SettingsServerlessFunctionsNew,
   })),
 );
 
@@ -155,6 +141,22 @@ const SettingsAI = lazy(() =>
   import('~/pages/settings/ai/SettingsAI').then((module) => ({
     default: module.SettingsAI,
   })),
+);
+
+const SettingsApplications = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplications').then(
+    (module) => ({
+      default: module.SettingsApplications,
+    }),
+  ),
+);
+
+const SettingsApplicationDetails = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationDetails').then(
+    (module) => ({
+      default: module.SettingsApplicationDetails,
+    }),
+  ),
 );
 
 const SettingsAgentForm = lazy(() =>
@@ -399,10 +401,7 @@ type SettingsRoutesProps = {
   isAdminPageEnabled?: boolean;
 };
 
-export const SettingsRoutes = ({
-  isFunctionSettingsEnabled,
-  isAdminPageEnabled,
-}: SettingsRoutesProps) => (
+export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
@@ -590,22 +589,27 @@ export const SettingsRoutes = ({
           element={<SettingsIntegrationMCP />}
         />
       </Route>
-      {isFunctionSettingsEnabled && (
-        <>
-          <Route
-            path={SettingsPath.ServerlessFunctions}
-            element={<SettingsServerlessFunctions />}
+
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            requiredFeatureFlag={FeatureFlagKey.IS_APPLICATION_ENABLED}
           />
-          <Route
-            path={SettingsPath.NewServerlessFunction}
-            element={<SettingsServerlessFunctionsNew />}
-          />
-          <Route
-            path={SettingsPath.ServerlessFunctionDetail}
-            element={<SettingsServerlessFunctionDetail />}
-          />
-        </>
-      )}
+        }
+      >
+        <Route
+          path={SettingsPath.Applications}
+          element={<SettingsApplications />}
+        />
+        <Route
+          path={SettingsPath.ApplicationDetail}
+          element={<SettingsApplicationDetails />}
+        />
+        <Route
+          path={SettingsPath.ApplicationServerlessFunctionDetail}
+          element={<SettingsServerlessFunctionDetail />}
+        />
+      </Route>
 
       <Route
         element={

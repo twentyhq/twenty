@@ -5,13 +5,11 @@ import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLa
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
-import {
-  getWidgetSize,
-  getWidgetTitle,
-} from '@/page-layout/utils/getDefaultWidgetData';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
+import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
+import { getWidgetTitle } from '@/page-layout/utils/getWidgetTitle';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -91,10 +89,12 @@ export const useCreatePageLayoutGraphWidget = (
         const title = getWidgetTitle(graphType, existingWidgetCount);
         const widgetId = uuidv4();
 
-        const defaultSize = getWidgetSize(graphType);
+        const defaultSize = getWidgetSize(graphType, 'default');
+        const minimumSize = getWidgetSize(graphType, 'minimum');
         const position = getDefaultWidgetPosition(
           pageLayoutDraggedArea,
           defaultSize,
+          minimumSize,
         );
 
         const newWidget = createDefaultGraphWidget({

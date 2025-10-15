@@ -1,6 +1,6 @@
-import { type BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { filterOutputSchema } from '../filterOutputSchema';
 
 describe('filterOutputSchema', () => {

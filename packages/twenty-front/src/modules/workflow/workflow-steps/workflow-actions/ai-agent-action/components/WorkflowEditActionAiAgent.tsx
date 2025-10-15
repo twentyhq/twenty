@@ -8,7 +8,7 @@ import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/Workf
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { type BaseOutputSchemaDeprecated } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
+import { type AiAgentOutputSchema } from '@/workflow/workflow-variables/types/AiAgentOutputSchema';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
@@ -48,7 +48,7 @@ export const WorkflowEditActionAiAgent = ({
     });
 
   const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
-    action.settings.outputSchema as BaseOutputSchemaDeprecated,
+    action.settings.outputSchema as AiAgentOutputSchema,
     actionOptions.readonly === true ? undefined : actionOptions.onActionUpdate,
     action,
     actionOptions.readonly,

@@ -160,6 +160,7 @@ type SettingsDataModelFieldSettingsFormCardProps = {
   existingFieldMetadataId: string;
   fieldType: FieldMetadataType;
   objectNameSingular: string;
+  disabled?: boolean;
 };
 
 const previewableTypes = [
@@ -188,6 +189,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   existingFieldMetadataId,
   fieldType,
   objectNameSingular,
+  disabled = false,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
   const { watch } = useFormContext<SettingsDataModelFieldEditFormValues>();
 
@@ -200,6 +202,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldBooleanSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -209,6 +212,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldCurrencySettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -222,6 +226,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
         existingFieldMetadataId={existingFieldMetadataId}
         fieldType={fieldType}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -231,6 +236,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldRelationSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -240,6 +246,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldMorphRelationFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -249,6 +256,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldNumberSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -258,6 +266,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldTextSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -267,6 +276,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldAddressSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -276,6 +286,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       <SettingsDataModelFieldPhonesSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -289,6 +300,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
         existingFieldMetadataId={existingFieldMetadataId}
         fieldType={fieldType}
         objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -318,6 +330,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
               <SettingsDataModelFieldMaxValuesForm
                 existingFieldMetadataId={existingFieldMetadataId}
                 fieldType={fieldType}
+                disabled={disabled}
               />
               <Separator />
             </>
@@ -326,6 +339,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             fieldType={fieldType}
             existingFieldMetadataId={existingFieldMetadataId}
             objectNameSingular={objectNameSingular}
+            disabled={disabled}
           />
         </>
       }
