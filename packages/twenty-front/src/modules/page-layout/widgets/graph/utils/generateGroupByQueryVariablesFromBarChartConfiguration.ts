@@ -101,8 +101,6 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
   return {
     groupBy,
     ...(orderBy.length > 0 && { orderBy }),
-    ...(barChartConfiguration.omitNullValues && {
-      omitNullValues: barChartConfiguration.omitNullValues,
-    }),
+    ...(barChartConfiguration.omitNullValues ? { omitNullValues: true } : {}),
   };
 };

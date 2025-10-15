@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
@@ -47,8 +47,6 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
   GroupByResolverArgs,
   IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[]
 > {
-  private readonly logger = new Logger(GraphqlQueryGroupByResolverService.name);
-
   constructor(
     private readonly viewFilterService: ViewFilterService,
     private readonly viewFilterGroupService: ViewFilterGroupService,
