@@ -4,11 +4,14 @@ import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hoo
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/serverlessFunctionTestDataFamilyState';
 import { type Dispatch, type SetStateAction, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { type FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 import { type ServerlessFunction } from '~/generated/graphql';
 import { type Sources } from '@/serverless-functions/types/sources.type';
+import { serverlessFunctionEnvVarFamilyState } from '@/settings/serverless-functions/states/serverlessFunctionEnvVarFamilyState';
+import dotenv from 'dotenv';
+import { v4 } from 'uuid';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -41,6 +44,10 @@ export const useServerlessFunctionUpdateFormState = ({
     code: { src: { 'index.ts': '' } },
   });
 
+  const setEnvVar = useSetRecoilState(
+    serverlessFunctionEnvVarFamilyState(serverlessFunctionId),
+  );
+
   const [serverlessFunctionTestData, setServerlessFunctionTestData] =
     useRecoilState(serverlessFunctionTestDataFamilyState(serverlessFunctionId));
 
@@ -54,8 +61,10 @@ export const useServerlessFunctionUpdateFormState = ({
       id: serverlessFunctionId,
       version: serverlessFunctionVersion,
       onCompleted: async (data: FindOneServerlessFunctionSourceCodeQuery) => {
+        const code = data?.getServerlessFunctionSourceCode;
+
         const newState = {
-          code: data?.getServerlessFunctionSourceCode || undefined,
+          code: code || undefined,
           name: serverlessFunction?.name || '',
           description: serverlessFunction?.description || '',
         };
@@ -64,6 +73,17 @@ export const useServerlessFunctionUpdateFormState = ({
           ...prevState,
           ...newState,
         }));
+
+        const environmentVariables =
+          code?.['.env'] && typeof code?.['.env'] === 'string'
+            ? dotenv.parse(code['.env'])
+            : {};
+
+        const environmentVariablesList = Object.entries(
+          environmentVariables,
+        ).map(([key, value]) => ({ id: v4(), key, value }));
+
+        setEnvVar(environmentVariablesList);
 
         if (serverlessFunctionTestData.shouldInitInput) {
           const sourceCode =

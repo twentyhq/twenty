@@ -6,6 +6,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
   onChange,
   onCodeChange,
+  serverlessFunctionId,
 }: {
   formValues: ServerlessFunctionFormValues;
   serverlessFunctionId: string;
@@ -20,8 +21,8 @@ export const SettingsServerlessFunctionSettingsTab = ({
         readonly
       />
       <SettingsServerlessFunctionTabEnvironmentVariablesSection
-        formValues={formValues}
         onCodeChange={onCodeChange}
+        serverlessFunctionId={serverlessFunctionId}
       />
     </>
   );
