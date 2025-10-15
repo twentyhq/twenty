@@ -41,12 +41,12 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
 
   const mockConfiguration: BarChartConfiguration = {
     __typename: 'BarChartConfiguration',
-    graphType: GraphType.BAR,
+    graphType: GraphType.VERTICAL_BAR,
     aggregateFieldMetadataId: 'field-aggregate',
     aggregateOperation: ExtendedAggregateOperations.SUM,
-    groupByFieldMetadataIdX: 'field-x',
-    groupByFieldMetadataIdY: 'field-y',
-    orderByY: GraphOrderBy.FIELD_DESC,
+    primaryAxisGroupByFieldMetadataId: 'field-x',
+    secondaryAxisGroupByFieldMetadataId: 'field-y',
+    secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
   };
 
   it('should order keys correctly despite unordered raw results', () => {

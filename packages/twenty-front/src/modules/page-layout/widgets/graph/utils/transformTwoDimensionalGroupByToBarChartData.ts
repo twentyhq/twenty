@@ -104,7 +104,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
 
   // Sorting needed because yValues may be unordered despite BE orderBy, if there are empty groups
   const keys = getSortedKeys({
-    orderByY: configuration.orderByY,
+    orderByY: configuration.secondaryAxisOrderBy,
     yValues: Array.from(yValues),
   });
 
