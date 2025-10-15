@@ -99,7 +99,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     });
 
     const upsertedRecords = await this.fetchUpsertedRecords({
-      args: processedArgs,
       objectRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
@@ -108,7 +107,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     });
 
     await this.processNestedRelationsIfNeeded({
-      args: processedArgs,
       records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
@@ -349,14 +347,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }
 
   private async fetchUpsertedRecords({
-    args,
     objectRecords,
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
     repository,
     selectedFieldsResult,
   }: {
-    args: CreateManyQueryArgs;
     objectRecords: InsertResult;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
@@ -389,7 +385,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }
 
   private async processNestedRelationsIfNeeded({
-    args,
     records,
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
@@ -399,7 +394,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     shouldBypassPermissionChecks,
     selectedFieldsResult,
   }: {
-    args: CreateManyQueryArgs;
     records: ObjectRecord[];
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
