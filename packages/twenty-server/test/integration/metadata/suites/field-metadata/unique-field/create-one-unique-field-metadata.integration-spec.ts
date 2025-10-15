@@ -2,21 +2,10 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 describe('create one unique field metadata', () => {
   let createdObjectMetadataId = '';
-
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: false,
-    });
-  });
 
   beforeEach(async () => {
     const {
@@ -48,14 +37,6 @@ describe('create one unique field metadata', () => {
     });
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataId },
-    });
-  });
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: true,
     });
   });
 
