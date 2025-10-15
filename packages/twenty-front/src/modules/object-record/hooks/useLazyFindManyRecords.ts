@@ -59,16 +59,27 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
   const handleFindManyRecordsCompleted = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       (data: RecordGqlOperationFindManyResult) => {
         const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
 
+        const existingCursor = snapshot
+          .getLoadable(cursorFamilyState(queryIdentifier))
+          .getValue();
+        const existingHasNextPage = snapshot
+          .getLoadable(hasNextPageFamilyState(queryIdentifier))
+          .getValue();
+
         if (isDefined(data?.[objectMetadataItem.namePlural])) {
-          set(cursorFamilyState(queryIdentifier), pageInfo.endCursor ?? '');
-          set(
-            hasNextPageFamilyState(queryIdentifier),
-            pageInfo.hasNextPage ?? false,
-          );
+          if (existingCursor !== pageInfo.endCursor) {
+            set(cursorFamilyState(queryIdentifier), pageInfo.endCursor ?? '');
+          }
+          if (existingHasNextPage !== pageInfo.hasNextPage) {
+            set(
+              hasNextPageFamilyState(queryIdentifier),
+              pageInfo.hasNextPage ?? false,
+            );
+          }
         }
       },
     [objectMetadataItem.namePlural, queryIdentifier],
