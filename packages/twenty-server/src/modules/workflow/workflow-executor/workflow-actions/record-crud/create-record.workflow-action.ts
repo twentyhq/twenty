@@ -14,18 +14,19 @@ import {
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
 export class CreateRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly createRecordService: CreateRecordService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
   async execute({
@@ -53,13 +54,17 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowCreateRecordActionInput;
 
-    const createdBy = await this.buildCreatedByActor(runInfo);
+    const executionContext =
+      await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
+    const createdBy = this.buildCreatedByActor(executionContext);
 
     const toolOutput = await this.createRecordService.execute({
       objectName: workflowActionInput.objectName,
       objectRecord: workflowActionInput.objectRecord,
       workspaceId,
       createdBy,
+      roleId: executionContext.roleId,
     });
 
     if (!toolOutput.success) {
@@ -74,18 +79,11 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     };
   }
 
-  private async buildCreatedByActor(runInfo: {
-    workflowRunId: string;
-    workspaceId: string;
-  }): Promise<ActorMetadata> {
-    const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-        workflowRunId: runInfo.workflowRunId,
-        workspaceId: runInfo.workspaceId,
-      });
-
-    if (workflowRun.createdBy.source === FieldActorSource.MANUAL) {
-      return workflowRun.createdBy;
+  private buildCreatedByActor(
+    executionContext: WorkflowExecutionContext,
+  ): ActorMetadata {
+    if (executionContext.isActingOnBehalfOfUser) {
+      return executionContext.initiator;
     }
 
     return {
