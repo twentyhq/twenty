@@ -96,7 +96,10 @@ export class ServerlessFunctionService {
           id,
           workspaceId,
         },
-        relations: ['serverlessFunctionLayer'],
+        relations: [
+          'serverlessFunctionLayer',
+          'application.applicationVariables',
+        ],
       });
 
     const resultServerlessFunction = await this.serverlessService.execute(
