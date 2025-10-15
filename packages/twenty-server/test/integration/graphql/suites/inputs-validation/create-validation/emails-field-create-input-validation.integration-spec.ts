@@ -1,6 +1,6 @@
 import { successfulCreateInputByFieldMetadataType } from 'test/integration/graphql/suites/inputs-validation/create-validation/constants/successful-create-input-by-field-metadata-type.constant';
-import { testGqlSuccessfulScenario } from 'test/integration/graphql/suites/inputs-validation/create-validation/utils/test-gql-successful-scenario.util';
-import { testRestSuccessfulScenario } from 'test/integration/graphql/suites/inputs-validation/create-validation/utils/test-rest-successful-scenario.util';
+import { expectGqlCreateInputValidationSuccess } from 'test/integration/graphql/suites/inputs-validation/create-validation/utils/expect-gql-create-input-validation-success.util';
+import { expectRestCreateInputValidationSuccess } from 'test/integration/graphql/suites/inputs-validation/create-validation/utils/expect-rest-create-input-validation-success.util';
 import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/inputs-validation/utils/destroy-many-objects-metadata';
 import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -41,7 +41,7 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
     )(
       `${FIELD_METADATA_TYPE} - should succeed with : $stringifiedInput`,
       async ({ input, validateInput }) => {
-        await testGqlSuccessfulScenario(
+        await expectGqlCreateInputValidationSuccess(
           objectMetadataSingularName,
           input,
           validateInput,
@@ -59,7 +59,7 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
     )(
       `${FIELD_METADATA_TYPE} - should succeed with : $stringifiedInput`,
       async ({ input, validateInput }) => {
-        await testRestSuccessfulScenario(
+        await expectRestCreateInputValidationSuccess(
           objectMetadataPluralName,
           objectMetadataSingularName,
           input,

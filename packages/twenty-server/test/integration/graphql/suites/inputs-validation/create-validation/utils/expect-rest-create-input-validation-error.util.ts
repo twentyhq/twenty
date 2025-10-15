@@ -1,6 +1,6 @@
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
-export const testRestFailingScenario = async (
+export const expectRestCreateInputValidationError = async (
   objectMetadataPluralName: string,
   input: any,
   errorMessage: string,

@@ -4,7 +4,7 @@ import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/
 
 import { pascalCase } from 'src/utils/pascal-case';
 
-export const testGqlSuccessfulScenario = async (
+export const expectGqlCreateInputValidationSuccess = async (
   objectMetadataSingularName: string,
   input: any,
   validateInput: (record: Record<string, any>) => boolean,

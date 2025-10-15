@@ -1,7 +1,7 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 
-export const testGqlFailingScenario = async (
+export const expectGqlCreateInputValidationError = async (
   objectMetadataSingularName: string,
   input: any,
   errorMessage: string,
