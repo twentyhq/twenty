@@ -123,7 +123,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
   describe.each(testFieldMetadataTypes)('%s field type', (fieldType) => {
     it('should delete all view groups when all enum field options are deleted', async () => {
       const initialOptions = generateOptions(3);
-      const { fieldMetadataId, fieldOptions, viewId } =
+      const { fieldMetadataId, viewId } =
         await createObjectWithSelectFieldAndView(fieldType, initialOptions);
 
       for (const [index, option] of initialOptions.entries()) {
@@ -147,6 +147,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         gqlFields: 'id fieldValue fieldMetadataId',
         expectToFail: false,
       });
+
       expect(
         initialViewGroups.filter((vg) => vg.fieldMetadataId === fieldMetadataId)
           .length,
@@ -169,6 +170,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         gqlFields: 'id fieldValue fieldMetadataId',
         expectToFail: false,
       });
+
       expect(
         updatedViewGroups.filter((vg) => vg.fieldMetadataId === fieldMetadataId)
           .length,
