@@ -125,7 +125,23 @@ export const loadManifest = async (
 
   const envVariables = dotenv.parse(envFile);
 
-  const packageJson = { ...rawPackageJson, envVariables };
+  const packageJsonEnv = rawPackageJson.env || {};
+
+  for (const key of Object.keys(envVariables)) {
+    if (packageJsonEnv[key]) {
+      packageJsonEnv[key] = {
+        isSecret: false,
+        ...packageJsonEnv[key],
+        value: envVariables[key],
+      };
+    } else {
+      throw new Error(
+        `Environment variable ${key} is defined in .env file but not in package.json`,
+      );
+    }
+  }
+
+  const packageJson = { ...rawPackageJson, env: packageJsonEnv };
 
   await validateSchema('appManifest', packageJson, packageJsonPath);
 

@@ -10,22 +10,33 @@ export class ApplicationVariableService {
     private readonly applicationVariableRepository: Repository<ApplicationVariable>,
   ) {}
 
-  async upsert({
-    key,
-    value,
+  async upsertManyApplicationVariables({
+    env,
     applicationId,
   }: {
-    key: string;
-    value: string;
+    env: Record<
+      string,
+      {
+        key: string;
+        value?: string;
+        description?: string;
+        isSecret: boolean;
+      }
+    >;
     applicationId: string;
   }) {
-    await this.applicationVariableRepository.upsert(
-      {
+    await this.applicationVariableRepository.delete({
+      applicationId,
+    });
+
+    for (const [key, { value, description, isSecret }] of Object.entries(env)) {
+      await this.applicationVariableRepository.save({
         key,
         value,
+        description,
+        isSecret,
         applicationId,
-      },
-      ['applicationId', 'key'],
-    );
+      });
+    }
   }
 }
