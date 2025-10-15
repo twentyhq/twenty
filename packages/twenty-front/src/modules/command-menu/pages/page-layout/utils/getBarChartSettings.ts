@@ -10,6 +10,7 @@ import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout
 import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByXSetting';
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
+import { IconAxisX, IconAxisY } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
 
 export const getBarChartSettings = (
@@ -17,9 +18,16 @@ export const getBarChartSettings = (
 ): ChartSettingsGroup[] => {
   const isHorizontal = graphType === GraphType.HORIZONTAL_BAR;
 
-  const primaryAxisItems = [DATA_DISPLAY_X_SETTING, SORT_BY_X_SETTING];
+  const dataDisplayXIcon = isHorizontal ? IconAxisY : IconAxisX;
+  const dataDisplayYIcon = isHorizontal ? IconAxisX : IconAxisY;
+
+  const primaryAxisItems = [
+    { ...DATA_DISPLAY_X_SETTING, Icon: dataDisplayXIcon },
+    SORT_BY_X_SETTING,
+  ];
+
   const secondaryAxisItems = [
-    DATA_DISPLAY_Y_SETTING,
+    { ...DATA_DISPLAY_Y_SETTING, Icon: dataDisplayYIcon },
     GROUP_BY_SETTING,
     SORT_BY_GROUP_BY_FIELD_SETTING,
   ];
