@@ -27,6 +27,7 @@ export const areChartConfigurationFieldsValidForQuery = (
 
   switch (configuration.__typename) {
     case 'BarChartConfiguration':
+    case 'LineChartConfiguration':
       return (
         fieldExists(
           configuration.aggregateFieldMetadataId,
@@ -42,27 +43,6 @@ export const areChartConfigurationFieldsValidForQuery = (
             objectMetadataItem,
           ))
       );
-
-    case 'LineChartConfiguration': {
-      const hasRequiredXFields =
-        fieldExists(
-          configuration.aggregateFieldMetadataId,
-          objectMetadataItem,
-        ) &&
-        fieldExists(
-          configuration.primaryAxisGroupByFieldMetadataId,
-          objectMetadataItem,
-        );
-
-      const hasValidYField =
-        !isDefined(configuration.secondaryAxisGroupByFieldMetadataId) ||
-        fieldExists(
-          configuration.secondaryAxisGroupByFieldMetadataId,
-          objectMetadataItem,
-        );
-
-      return hasRequiredXFields && hasValidYField;
-    }
 
     case 'PieChartConfiguration':
       return (
