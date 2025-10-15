@@ -1,12 +1,12 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   type ObjectRecord,
-  type ObjectRecordOrderBy,
   type ObjectRecordOrderByForCompositeField,
   type ObjectRecordOrderByForScalarField,
   OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
   GraphqlQueryRunnerException,
