@@ -5,6 +5,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { isValidUniqueFieldDefaultValueCombination } from 'src/engine/metadata-modules/field-metadata/utils/is-valid-unique-input.util';
 import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -137,8 +138,25 @@ export class FlatIndexValidatorService {
             });
           }
 
-          // Validate unique index constraints
           if (flatIndexToValidate.isUnique) {
+            if (
+              isDefined(relatedFlatField.defaultValue) &&
+              !isValidUniqueFieldDefaultValueCombination({
+                defaultValue: relatedFlatField.defaultValue,
+                isUnique: relatedFlatField.isUnique ?? false,
+                type: relatedFlatField.type,
+              })
+            ) {
+              const fieldName = relatedFlatField.name;
+              const fieldType = relatedFlatField.type;
+
+              validationResult.errors.push({
+                code: IndexExceptionCode.INDEX_FIELD_INVALID_DEFAULT_VALUE,
+                message: t`Unique index cannot be created for field ${fieldName} of type ${fieldType}`,
+                userFriendlyMessage: msg`${fieldType} fields cannot have a default value.`,
+              });
+            }
+
             const isCompositeFieldWithNonIncludedUniqueConstraint =
               isCompositeFlatFieldMetadata(relatedFlatField) &&
               !compositeTypeDefinitions

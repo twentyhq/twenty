@@ -5,6 +5,7 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const createRecordQuery = gql`
@@ -26,6 +27,7 @@ describe('create records with custom unique fields', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'testRecordObject',
         namePlural: 'testRecordObjects',
@@ -38,6 +40,7 @@ describe('create records with custom unique fields', () => {
     createdObjectMetadataId = objectMetadataId;
 
     const { data: createdField } = await createOneFieldMetadata({
+      expectToFail: false,
       input: {
         name: 'uniqueTestField',
         label: 'Unique Test Field',
@@ -68,6 +71,7 @@ describe('create records with custom unique fields', () => {
       },
     });
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: createdObjectMetadataId },
     });
   });
@@ -98,8 +102,11 @@ describe('create records with custom unique fields', () => {
     });
 
     expect(secondRecordResponse.body.errors).toBeDefined();
-    expect(secondRecordResponse.body.errors[0].message).toContain(
-      'Duplicate Unique Test Field with value uniqueValue123. Please set a unique one.',
+    expect(secondRecordResponse.body.errors.length).toBe(1);
+    const [firstError] = secondRecordResponse.body.errors;
+
+    expect(firstError).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstError),
     );
     expect(secondRecordResponse.body.data.createTestRecordObject).toBeNull();
   });
@@ -120,6 +127,7 @@ describe('create records with custom unique fields', () => {
     ).toBe('duplicateValue');
 
     const { data, errors } = await updateOneFieldMetadata({
+      expectToFail: false,
       input: {
         idToUpdate: uniqueFieldId,
         updatePayload: { isUnique: false },
@@ -152,6 +160,7 @@ describe('create records with custom unique fields', () => {
 
   it('should not create a unique index on field if records with same value already exist', async () => {
     await updateOneFieldMetadata({
+      expectToFail: false,
       input: {
         idToUpdate: uniqueFieldId,
         updatePayload: { isUnique: false },
@@ -200,8 +209,12 @@ describe('create records with custom unique fields', () => {
 
     expect(data).toBeNull();
     expect(errors).toBeDefined();
-    expect(errors[0].message).toContain(
-      'Unique index creation failed because of unique constraint violation',
+    expect(errors.length).toBe(1);
+    const [firstError] = errors;
+
+    expect(firstError).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstError),
     );
+    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
   });
 });
