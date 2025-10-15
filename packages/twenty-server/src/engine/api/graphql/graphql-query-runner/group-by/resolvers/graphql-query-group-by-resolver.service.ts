@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
+  ObjectRecord,
   PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
 } from 'twenty-shared/types';
@@ -18,10 +19,7 @@ import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import {
-  ObjectRecord,
-  ObjectRecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';

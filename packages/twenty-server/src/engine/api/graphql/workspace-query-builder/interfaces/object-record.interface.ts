@@ -1,14 +1,9 @@
-import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-
-//TODO : Refacto-common - Should be moved to common api layer
-export interface ObjectRecord {
-  id: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-}
+import {
+  type ObjectRecord,
+  type ObjectRecordGroupByDateGranularity,
+  type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForScalarField,
+} from 'twenty-shared/types';
 
 export type ObjectRecordFilter = Partial<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,44 +30,9 @@ export type ObjectRecordGroupByForDateField = Partial<{
   };
 }>;
 
-export enum OrderByDirection {
-  AscNullsFirst = 'AscNullsFirst',
-  AscNullsLast = 'AscNullsLast',
-  DescNullsFirst = 'DescNullsFirst',
-  DescNullsLast = 'DescNullsLast',
-}
-
 export type ObjectRecordOrderBy = Array<
   ObjectRecordOrderByForScalarField | ObjectRecordOrderByForCompositeField
 >;
-
-export type AggregateOrderByWithGroupByField = {
-  aggregate: {
-    [x: string]: OrderByDirection;
-  };
-};
-
-export type ObjectRecordOrderByWithGroupByDateField = {
-  [Property in keyof ObjectRecord]?: {
-    orderBy: OrderByDirection;
-    granularity: ObjectRecordGroupByDateGranularity;
-  };
-};
-
-export type OrderByWithGroupBy = Array<
-  | ObjectRecordOrderByForScalarField
-  | ObjectRecordOrderByForCompositeField
-  | ObjectRecordOrderByWithGroupByDateField
-  | AggregateOrderByWithGroupByField
->;
-
-export type ObjectRecordOrderByForScalarField = {
-  [Property in keyof ObjectRecord]?: OrderByDirection;
-};
-
-export type ObjectRecordOrderByForCompositeField = {
-  [Property in keyof ObjectRecord]?: Record<string, OrderByDirection>;
-};
 
 export type ObjectRecordCursorLeafScalarValue = string | number | boolean;
 export type ObjectRecordCursorLeafCompositeValue = Record<

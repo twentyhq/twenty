@@ -3,9 +3,9 @@ import { DiscoveryService, ModuleRef, createContextId } from '@nestjs/core';
 import { Injector } from '@nestjs/core/injector/injector';
 import { type Module } from '@nestjs/core/injector/module';
 
+import { type ObjectRecord } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import {
   type WorkspacePostQueryHookInstance,

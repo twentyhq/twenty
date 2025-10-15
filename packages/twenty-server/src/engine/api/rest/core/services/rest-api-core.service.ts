@@ -39,11 +39,23 @@ export class RestApiCoreService {
   }
 
   async createOne(request: AuthenticatedRequest) {
-    return await this.restApiCreateOneHandler.handle(request);
+    const isCommonApiEnabled = await this.isCommonApiEnabled(request);
+
+    if (isCommonApiEnabled) {
+      return await this.restApiCreateOneHandler.commonHandle(request);
+    } else {
+      return await this.restApiCreateOneHandler.handle(request);
+    }
   }
 
   async createMany(request: AuthenticatedRequest) {
-    return await this.restApiCreateManyHandler.handle(request);
+    const isCommonApiEnabled = await this.isCommonApiEnabled(request);
+
+    if (isCommonApiEnabled) {
+      return await this.restApiCreateManyHandler.commonHandle(request);
+    } else {
+      return await this.restApiCreateManyHandler.handle(request);
+    }
   }
 
   async findDuplicates(request: AuthenticatedRequest) {

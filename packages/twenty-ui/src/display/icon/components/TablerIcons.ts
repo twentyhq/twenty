@@ -272,6 +272,7 @@ export {
   IconProgressCheck,
   IconPuzzle,
   IconQuestionMark,
+  IconRadiusBottomRight,
   IconRefresh,
   IconRefreshAlert,
   IconRefreshDot,

@@ -1,8 +1,7 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type ObjectRecord,
   type ObjectRecordCursorLeafCompositeValue,
   type ObjectRecordFilter,
   type ObjectRecordOrderBy,

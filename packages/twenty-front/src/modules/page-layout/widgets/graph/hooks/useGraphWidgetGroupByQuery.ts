@@ -54,6 +54,7 @@ export const useGraphWidgetGroupByQuery = ({
   const variables = generateGroupByQueryVariablesFromBarChartConfiguration({
     objectMetadataItem,
     barChartConfiguration: configuration,
+    aggregateOperation,
   });
 
   const apolloCoreClient = useApolloCoreClient();
