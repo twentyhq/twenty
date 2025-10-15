@@ -22,6 +22,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import {
   CommonQueryNames,
   GroupByQueryArgs,
@@ -43,9 +44,6 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
-export type GroupByOutputItem = {
-  dimensionValues: string[] & { [key: string]: number };
-};
 @Injectable()
 export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService {
   constructor(
@@ -66,7 +64,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     authContext: AuthContext;
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-  }): Promise<GroupByOutputItem[]> {
+  }): Promise<CommonGroupByOutputItem[]> {
     const authContext = toValidateAuthContext;
 
     if (!isWorkspaceAuthContext(authContext)) {
@@ -184,7 +182,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const result = await queryBuilder.getRawMany();
 
-    return formatResultWithGroupByDimensionValues(result, groupByDefinitions);
+    return formatResultWithGroupByDimensionValues(
+      result,
+      groupByDefinitions,
+      Object.keys(selectedFieldsResult.aggregate),
+    );
   }
 
   private async addFiltersFromView({
