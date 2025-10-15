@@ -128,34 +128,3 @@ export const getDefaultWidgetData = (graphType: GraphType) => {
       return {};
   }
 };
-
-export const getWidgetTitle = (graphType: GraphType, index: number): string => {
-  const baseNames: Record<GraphType, string> = {
-    [GraphType.NUMBER]: 'Number',
-    [GraphType.GAUGE]: 'Gauge',
-    [GraphType.PIE]: 'Pie Chart',
-    [GraphType.VERTICAL_BAR]: 'Vertical Bar Chart',
-    [GraphType.HORIZONTAL_BAR]: 'Horizontal Bar Chart',
-    [GraphType.LINE]: 'Line Chart',
-  };
-
-  return `${baseNames[graphType] || 'Widget'} ${index + 1}`;
-};
-
-export const getWidgetSize = (graphType: GraphType) => {
-  switch (graphType) {
-    case GraphType.NUMBER:
-      return { w: 3, h: 2 };
-    case GraphType.GAUGE:
-      return { w: 3, h: 3 };
-    case GraphType.PIE:
-      return { w: 4, h: 4 };
-    case GraphType.VERTICAL_BAR:
-    case GraphType.HORIZONTAL_BAR:
-      return { w: 6, h: 6 };
-    case GraphType.LINE:
-      return { w: 6, h: 10 };
-    default:
-      return { w: 4, h: 4 };
-  }
-};

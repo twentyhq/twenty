@@ -1,6 +1,9 @@
+import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type TabLayouts } from '@/page-layout/types/tab-layouts';
-import { getWidgetMinimumSize } from '@/page-layout/utils/getWidgetMinimumSize';
+import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
+import { isDefined } from 'twenty-shared/utils';
+import { WidgetType } from '~/generated/graphql';
 
 export const convertPageLayoutToTabLayouts = (
   pageLayout: PageLayout,
@@ -13,7 +16,21 @@ export const convertPageLayoutToTabLayouts = (
 
   pageLayout.tabs.forEach((tab) => {
     const layouts = tab.widgets.map((widget) => {
-      const { minW, minH } = getWidgetMinimumSize(widget);
+      let minW = DEFAULT_WIDGET_SIZE.minimum.w;
+      let minH = DEFAULT_WIDGET_SIZE.minimum.h;
+
+      if (widget.type === WidgetType.GRAPH && isDefined(widget.configuration)) {
+        const graphType =
+          'graphType' in widget.configuration
+            ? widget.configuration.graphType
+            : undefined;
+
+        if (isDefined(graphType)) {
+          const minimumSize = getWidgetSize(graphType, 'minimum');
+          minW = minimumSize.w;
+          minH = minimumSize.h;
+        }
+      }
 
       return {
         i: widget.id,
