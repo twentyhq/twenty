@@ -42,6 +42,7 @@ export const SignInUpEmailField = ({
           <StyledInputContainer>
             <SettingsTextInput
               instanceId="sign-in-up-email"
+              autoComplete="email"
               autoFocus
               value={value}
               placeholder="Email"

@@ -14,6 +14,7 @@ import {
   computeLimitParameters,
   computeOrderByParameters,
   computeStartingAfterParameters,
+  computeUpsertParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { convertObjectMetadataToSchemaProperties } from 'src/engine/utils/convert-object-metadata-to-schema-properties.util';
@@ -208,6 +209,7 @@ export const computeParameterComponents = (
     endingBefore: computeEndingBeforeParameters(),
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
+    upsert: computeUpsertParameters(),
     orderBy: computeOrderByParameters(),
     limit: computeLimitParameters(fromMetadata),
   };

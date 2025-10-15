@@ -59,7 +59,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       } satisfies ViewGroup);
 
       await createViewGroupRecords(
-        viewGroupsToCreate.map((viewGroup) => ({
+        viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
           input: {
             ...viewGroup,
             viewId: currentViewId,
