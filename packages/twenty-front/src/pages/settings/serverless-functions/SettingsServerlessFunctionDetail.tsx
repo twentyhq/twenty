@@ -175,7 +175,6 @@ export const SettingsServerlessFunctionDetail = () => {
         <SettingsPageContainer>
           <TabList
             tabs={tabs}
-            behaveAsLinks={false}
             componentInstanceId={SERVERLESS_FUNCTION_DETAIL_ID}
           />
           {renderActiveTabContent()}
