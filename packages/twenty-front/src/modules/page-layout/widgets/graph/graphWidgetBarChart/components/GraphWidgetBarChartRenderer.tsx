@@ -28,6 +28,7 @@ export const GraphWidgetBarChartRenderer = ({
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
+    layout,
     loading,
     error,
   } = useGraphBarChartWidgetData({
@@ -57,6 +58,7 @@ export const GraphWidgetBarChartRenderer = ({
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
         showValues={showDataLabels}
+        layout={layout}
         groupMode={groupMode}
         id={widget.id}
         displayType="shortNumber"
