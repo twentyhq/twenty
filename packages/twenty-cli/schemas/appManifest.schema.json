@@ -36,6 +36,19 @@
       "title": "The application's license",
       "description": "Currently only MIT is accepted, although more licenses will probably be available in the future."
     },
+    "envVariables": {
+      "type": "object",
+      "title": "Environment Variables",
+      "description": "Key-value pairs defining environment variables available to all serverless functions.",
+      "patternProperties": {
+        "^[A-Z_][A-Z0-9_]*$": {
+          "type": "string",
+          "description": "Value for this environment variable.",
+          "default": ""
+        }
+      },
+      "additionalProperties": false
+    },
     "engines": {
       "type": "object",
       "title": "The application's engines",
