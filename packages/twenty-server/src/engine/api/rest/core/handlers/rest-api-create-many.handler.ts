@@ -54,7 +54,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
         objectMetadataItemWithFieldMaps.namePlural,
       );
     } catch (error) {
-      return workspaceQueryRunnerRestApiExceptionHandler(error);
+      workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 

@@ -18,7 +18,7 @@ import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/gr
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class CreateManyResolverFactory
@@ -28,8 +28,8 @@ export class CreateManyResolverFactory
 
   constructor(
     private readonly graphqlQueryRunnerService: GraphqlQueryCreateManyResolverService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly commonCreateManyQueryRunnerService: CommonCreateManyQueryRunnerService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   create(
@@ -38,12 +38,14 @@ export class CreateManyResolverFactory
     const internalContext = context;
 
     return async (_source, args, _context, info) => {
-      const isCommonApiEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_COMMON_API_ENABLED,
-        internalContext.authContext.workspace?.id as string,
-      );
+      const workspaceDataSource =
+        await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+          workspaceId: internalContext.authContext.workspace?.id as string,
+        });
 
-      if (isCommonApiEnabled) {
+      const featureFlagsMap = workspaceDataSource.featureFlagMap;
+
+      if (featureFlagsMap[FeatureFlagKey.IS_COMMON_API_ENABLED]) {
         const graphqlQueryParser = new GraphqlQueryParser(
           internalContext.objectMetadataItemWithFieldMaps,
           internalContext.objectMetadataMaps,
