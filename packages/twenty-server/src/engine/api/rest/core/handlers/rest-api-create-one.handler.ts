@@ -7,14 +7,69 @@ import {
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
+import { CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
+import { parseUpsertRestRequest } from 'src/engine/api/rest/input-request-parsers/upsert-parser-utils/parse-upsert-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
 export class RestApiCreateOneHandler extends RestApiBaseHandler {
+  constructor(
+    private readonly commonCreateOneQueryRunnerService: CommonCreateOneQueryRunnerService,
+  ) {
+    super();
+  }
+
+  async commonHandle(request: AuthenticatedRequest) {
+    try {
+      const { data, depth, upsert } = this.parseRequestArgs(request);
+
+      const {
+        authContext,
+        objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+      } = await this.buildCommonOptions(request);
+
+      const selectedFieldsResult = await this.computeSelectedFields({
+        depth,
+        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+        authContext,
+      });
+
+      const record = await this.commonCreateOneQueryRunnerService.run({
+        args: { data, selectedFieldsResult, upsert },
+        authContext,
+        objectMetadataMaps,
+        objectMetadataItemWithFieldMaps,
+      });
+
+      return this.formatRestResponse(
+        record,
+        objectMetadataItemWithFieldMaps.nameSingular,
+      );
+    } catch (error) {
+      workspaceQueryRunnerRestApiExceptionHandler(error);
+    }
+  }
+
+  private formatRestResponse(record: ObjectRecord, objectNameSingular: string) {
+    return { data: { [objectNameSingular]: record } };
+  }
+
+  private parseRequestArgs(request: AuthenticatedRequest) {
+    return {
+      data: request.body,
+      depth: parseDepthRestRequest(request),
+      upsert: parseUpsertRestRequest(request),
+    };
+  }
+
   async handle(request: AuthenticatedRequest) {
     const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);

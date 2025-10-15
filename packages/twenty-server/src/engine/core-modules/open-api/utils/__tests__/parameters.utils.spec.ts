@@ -62,8 +62,7 @@ describe('computeParameters', () => {
         in: 'query',
         description: `Determines the level of nested related objects to include in the response.  
     - 0: Primary object only  
-    - 1: Primary object + direct relations  
-    - 2: Primary object + direct relations + nested relations`,
+    - 1: Primary object + direct relations`,
         required: false,
         schema: {
           type: 'integer',
