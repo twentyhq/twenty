@@ -9,9 +9,14 @@ type BuildCreatedByFromApiKeyArgs = {
 };
 export const buildCreatedByFromApiKey = ({
   apiKey,
-}: BuildCreatedByFromApiKeyArgs): ActorMetadata => ({
-  source: FieldActorSource.API,
-  name: apiKey.name,
-  workspaceMemberId: null,
-  context: {},
-});
+}: BuildCreatedByFromApiKeyArgs): ActorMetadata => {
+  // Extract the name to avoid any reference issues with TypeORM entity caching
+  const apiKeyName = String(apiKey.name);
+
+  return {
+    source: FieldActorSource.API,
+    name: apiKeyName,
+    workspaceMemberId: null,
+    context: {},
+  };
+};
