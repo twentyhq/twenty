@@ -20,6 +20,7 @@ type TransformTwoDimensionalGroupByToBarChartDataParams = {
   configuration: BarChartConfiguration;
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
+  primaryAxisSubFieldName?: string | null;
 };
 
 type TransformTwoDimensionalGroupByToBarChartDataResult = {
@@ -37,10 +38,11 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   configuration,
   aggregateOperation,
   objectMetadataItem,
+  primaryAxisSubFieldName,
 }: TransformTwoDimensionalGroupByToBarChartDataParams): TransformTwoDimensionalGroupByToBarChartDataResult => {
   const indexByKey = getFieldKey({
     field: groupByFieldX,
-    subFieldName: configuration.groupBySubFieldNameX,
+    subFieldName: primaryAxisSubFieldName ?? undefined,
   });
 
   const dataMap = new Map<string, BarChartDataItem>();
@@ -54,12 +56,12 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     const xValue = formatDimensionValue({
       value: dimensionValues[0],
       fieldMetadata: groupByFieldX,
-      subFieldName: configuration.groupBySubFieldNameX ?? undefined,
+      subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
     });
     const yValue = formatDimensionValue({
       value: dimensionValues[1],
       fieldMetadata: groupByFieldY,
-      subFieldName: configuration.groupBySubFieldNameY ?? undefined,
+      subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
     });
 
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
