@@ -81,6 +81,17 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectMetadataItemWithFieldMaps,
     });
 
+    const graphqlQueryParser = new GraphqlQueryParser(
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+    );
+
+    const selectedFieldsResult = graphqlQueryParser.parseSelectedFields(
+      objectMetadataItemWithFieldMaps,
+      args.selectedFields,
+      objectMetadataMaps,
+    );
+
     const processedArgs = await this.processQueryArgs({
       authContext,
       objectMetadataItemWithFieldMaps,
@@ -119,7 +130,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: processedArgs.selectedFieldsResult.aggregate,
+      selectedAggregatedFields: selectedFieldsResult.aggregate,
       queryBuilder,
       objectMetadataNameSingular,
     });

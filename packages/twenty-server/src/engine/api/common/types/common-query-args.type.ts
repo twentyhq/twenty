@@ -9,7 +9,7 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 
 export enum CommonQueryNames {
   findOne = 'findOne',
@@ -19,12 +19,12 @@ export enum CommonQueryNames {
 }
 
 export interface FindOneQueryArgs {
-  selectedFieldsResult: CommonSelectedFieldsResult;
+  selectedFields: CommonSelectedFields;
   filter?: ObjectRecordFilter;
 }
 
 export interface FindManyQueryArgs {
-  selectedFieldsResult: CommonSelectedFieldsResult;
+  selectedFields: CommonSelectedFields;
   filter?: ObjectRecordFilter;
   orderBy?: ObjectRecordOrderBy;
   first?: number;
@@ -45,7 +45,7 @@ export interface CreateOneQueryArgs {
   upsert?: boolean;
 }
 export interface GroupByQueryArgs {
-  selectedFieldsResult: CommonSelectedFieldsResult;
+  selectedFields: CommonSelectedFields;
   filter?: ObjectRecordFilter;
   orderBy?: OrderByWithGroupBy;
   groupBy: ObjectRecordGroupBy;

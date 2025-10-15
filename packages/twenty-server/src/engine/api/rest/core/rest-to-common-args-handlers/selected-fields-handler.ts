@@ -3,7 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { FieldMetadataType, ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
@@ -23,17 +23,16 @@ export class RestToCommonSelectedFieldsHandler {
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     depth: Depth | undefined;
-  }): CommonSelectedFieldsResult => {
+  }): CommonSelectedFields => {
     const restrictedFields =
       objectsPermissions[objectMetadataMapItem.id].restrictedFields;
 
-    const { relations, relationsSelectFields } =
-      this.getRelationsAndRelationsSelectFields({
-        objectMetadataMaps,
-        objectMetadataMapItem,
-        objectsPermissions,
-        depth,
-      });
+    const relationsSelectFields = this.getRelationsAndRelationsSelectFields({
+      objectMetadataMaps,
+      objectMetadataMapItem,
+      objectsPermissions,
+      depth,
+    });
 
     const selectableFields = getAllSelectableFields({
       restrictedFields,
@@ -43,12 +42,8 @@ export class RestToCommonSelectedFieldsHandler {
     });
 
     return {
-      select: {
-        ...selectableFields,
-        ...relationsSelectFields,
-      },
-      relations,
-      aggregate: {},
+      ...selectableFields,
+      ...relationsSelectFields,
     };
   };
 
@@ -63,14 +58,7 @@ export class RestToCommonSelectedFieldsHandler {
     objectsPermissions: ObjectsPermissions;
     depth: Depth | undefined;
   }) {
-    if (!isDefined(depth) || depth === 0) {
-      return {
-        relations: {},
-        relationsSelectFields: {},
-      };
-    }
-
-    let relations: { [key: string]: boolean | { [key: string]: boolean } } = {};
+    if (!isDefined(depth) || depth === 0) return {};
 
     let relationsSelectFields: {
       [key: string]:
@@ -104,35 +92,27 @@ export class RestToCommonSelectedFieldsHandler {
         depth === MAX_DEPTH &&
         isDefined(field.relationTargetObjectMetadataId)
       ) {
-        const {
-          relations: depth2Relations,
-          relationsSelectFields: depth2RelationsSelectFields,
-        } = this.getRelationsAndRelationsSelectFields({
-          objectMetadataMaps,
-          objectMetadataMapItem: relationTargetObjectMetadata,
-          objectsPermissions,
-          depth: 1,
-        }) as {
-          relations: { [key: string]: boolean };
-          relationsSelectFields: {
-            [key: string]: boolean;
+        const depth2RelationsSelectFields =
+          this.getRelationsAndRelationsSelectFields({
+            objectMetadataMaps,
+            objectMetadataMapItem: relationTargetObjectMetadata,
+            objectsPermissions,
+            depth: 1,
+          }) as {
+            relationsSelectFields: {
+              [key: string]: boolean;
+            };
           };
-        };
-
-        relations[field.name] = depth2Relations as {
-          [key: string]: boolean;
-        };
 
         relationsSelectFields[field.name] = {
           ...relationFieldSelectFields,
           ...depth2RelationsSelectFields,
         };
       } else {
-        relations[field.name] = true;
         relationsSelectFields[field.name] = relationFieldSelectFields;
       }
     }
 
-    return { relations, relationsSelectFields };
+    return relationsSelectFields;
   }
 }
