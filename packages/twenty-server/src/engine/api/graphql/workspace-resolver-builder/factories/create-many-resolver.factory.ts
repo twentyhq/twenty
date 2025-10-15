@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
+import { ObjectRecord } from 'twenty-shared/types';
 
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {

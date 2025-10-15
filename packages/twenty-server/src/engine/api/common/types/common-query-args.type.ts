@@ -1,5 +1,6 @@
+import { type ObjectRecord } from 'twenty-shared/types';
+
 import {
-  type ObjectRecord,
   type ObjectRecordFilter,
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
