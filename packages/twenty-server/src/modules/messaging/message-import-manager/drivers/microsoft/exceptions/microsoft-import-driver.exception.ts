@@ -13,7 +13,7 @@ export class MicrosoftImportDriverException extends CustomException<string> {
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? msg`An error occurred during message import`,
+        userFriendlyMessage ?? msg`An error occurred during messages import`,
     });
     this.statusCode = statusCode;
   }
