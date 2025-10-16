@@ -10,6 +10,20 @@ export class ApplicationVariableService {
     private readonly applicationVariableRepository: Repository<ApplicationVariable>,
   ) {}
 
+  async update({
+    key,
+    value,
+    applicationId,
+  }: Pick<ApplicationVariable, 'key' | 'value'> & { applicationId: string }) {
+    const { id } = await this.applicationVariableRepository.findOneOrFail({
+      where: { key, applicationId },
+    });
+
+    await this.applicationVariableRepository.update(id, {
+      value,
+    });
+  }
+
   async upsertManyApplicationVariables({
     env,
     applicationId,
