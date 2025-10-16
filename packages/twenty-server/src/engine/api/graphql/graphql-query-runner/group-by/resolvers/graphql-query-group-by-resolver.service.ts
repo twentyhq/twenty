@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
-  FieldMetadataType,
   ObjectRecord,
   PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
@@ -13,7 +12,6 @@ import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
-  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -27,11 +25,6 @@ import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runne
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
@@ -143,79 +136,6 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       }
     });
 
-    const shouldApplyAggregateFilters =
-      executionArgs.args.omitNullValues ||
-      isDefined(executionArgs.args.rangeMin) ||
-      isDefined(executionArgs.args.rangeMax);
-
-    if (shouldApplyAggregateFilters) {
-      const aggregateFields =
-        executionArgs.graphqlQuerySelectedFieldsResult.aggregate ?? {};
-
-      Object.values(aggregateFields).forEach((aggregationField) => {
-        const aggregateExpression =
-          ProcessAggregateHelper.getAggregateExpression(
-            aggregationField,
-            objectMetadataNameSingular,
-          );
-
-        if (!aggregateExpression) {
-          return;
-        }
-
-        if (executionArgs.args.omitNullValues) {
-          queryBuilder.andHaving(`${aggregateExpression} IS NOT NULL`);
-        }
-
-        const isNumericReturningAggregate = this.isNumericReturningAggregate(
-          aggregationField.aggregateOperation,
-          aggregationField.fromFieldType,
-        );
-
-        if (!isNumericReturningAggregate) {
-          return;
-        }
-
-        if (executionArgs.args.omitNullValues) {
-          queryBuilder.andHaving(`${aggregateExpression} != 0`);
-        }
-
-        const shouldApplyRangeFilters = this.shouldApplyRangeFilters(
-          aggregationField.aggregateOperation,
-          aggregationField.fromFieldType,
-        );
-
-        if (!shouldApplyRangeFilters) {
-          return;
-        }
-
-        const isCurrencyField =
-          aggregationField.fromFieldType === FieldMetadataType.CURRENCY;
-
-        const rangeMinToApply =
-          isDefined(executionArgs.args.rangeMin) && isCurrencyField
-            ? executionArgs.args.rangeMin * 1000000
-            : executionArgs.args.rangeMin;
-
-        const rangeMaxToApply =
-          isDefined(executionArgs.args.rangeMax) && isCurrencyField
-            ? executionArgs.args.rangeMax * 1000000
-            : executionArgs.args.rangeMax;
-
-        if (isDefined(rangeMinToApply)) {
-          queryBuilder.andHaving(`${aggregateExpression} >= :rangeMin`, {
-            rangeMin: rangeMinToApply,
-          });
-        }
-
-        if (isDefined(rangeMaxToApply)) {
-          queryBuilder.andHaving(`${aggregateExpression} <= :rangeMax`, {
-            rangeMax: rangeMaxToApply,
-          });
-        }
-      });
-    }
-
     executionArgs.graphqlQueryParser.applyGroupByOrderToBuilder(
       queryBuilder,
       executionArgs.args.orderBy ?? [],
@@ -318,70 +238,8 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     return appliedFilters;
   }
 
-  private isNumericReturningAggregate(
-    operation: AggregateOperations,
-    fromFieldType: FieldMetadataType,
-  ): boolean {
-    if (
-      operation === AggregateOperations.COUNT ||
-      operation === AggregateOperations.COUNT_UNIQUE_VALUES ||
-      operation === AggregateOperations.COUNT_EMPTY ||
-      operation === AggregateOperations.COUNT_NOT_EMPTY ||
-      operation === AggregateOperations.COUNT_TRUE ||
-      operation === AggregateOperations.COUNT_FALSE ||
-      operation === AggregateOperations.PERCENTAGE_EMPTY ||
-      operation === AggregateOperations.PERCENTAGE_NOT_EMPTY
-    ) {
-      return true;
-    }
-
-    if (
-      operation === AggregateOperations.MIN ||
-      operation === AggregateOperations.MAX ||
-      operation === AggregateOperations.AVG ||
-      operation === AggregateOperations.SUM
-    ) {
-      return [
-        FieldMetadataType.NUMBER,
-        FieldMetadataType.NUMERIC,
-        FieldMetadataType.CURRENCY,
-      ].includes(fromFieldType);
-    }
-
-    return false;
-  }
-
-  private shouldApplyRangeFilters(
-    operation: AggregateOperations,
-    fromFieldType: FieldMetadataType,
-  ): boolean {
-    if (
-      operation === AggregateOperations.MIN ||
-      operation === AggregateOperations.MAX ||
-      operation === AggregateOperations.AVG ||
-      operation === AggregateOperations.SUM
-    ) {
-      return [
-        FieldMetadataType.NUMBER,
-        FieldMetadataType.NUMERIC,
-        FieldMetadataType.CURRENCY,
-      ].includes(fromFieldType);
-    }
-
-    return false;
-  }
-
   async validate(
-    args: GroupByResolverArgs<ObjectRecordFilter>,
+    _args: GroupByResolverArgs<ObjectRecordFilter>,
     _options: WorkspaceQueryRunnerOptions,
-  ): Promise<void> {
-    if (isDefined(args.rangeMin) && isDefined(args.rangeMax)) {
-      if (args.rangeMin > args.rangeMax) {
-        throw new GraphqlQueryRunnerException(
-          'rangeMin cannot be greater than rangeMax',
-          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        );
-      }
-    }
-  }
+  ): Promise<void> {}
 }

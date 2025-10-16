@@ -6,18 +6,12 @@ exports[`generateGroupByQuery should generate valid GraphQL query for empty aggr
       $groupBy: [PersonGroupByInput!]
       $filter: PersonFilterInput
       $orderBy: [PersonOrderByWithGroupByInput!]
-      $omitNullValues: Boolean
-      $rangeMin: Float
-      $rangeMax: Float
       $viewId: UUID
     ) {
       peopleGroupBy(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
-        omitNullValues: $omitNullValues
-        rangeMin: $rangeMin
-        rangeMax: $rangeMax
         viewId: $viewId
       ) {
         groupByDimensionValues
@@ -32,18 +26,12 @@ exports[`generateGroupByQuery should generate valid GraphQL query for multiple a
       $groupBy: [OpportunityGroupByInput!]
       $filter: OpportunityFilterInput
       $orderBy: [OpportunityOrderByWithGroupByInput!]
-      $omitNullValues: Boolean
-      $rangeMin: Float
-      $rangeMax: Float
       $viewId: UUID
     ) {
       opportunitiesGroupBy(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
-        omitNullValues: $omitNullValues
-        rangeMin: $rangeMin
-        rangeMax: $rangeMax
         viewId: $viewId
       ) {
         groupByDimensionValues
@@ -61,18 +49,12 @@ exports[`generateGroupByQuery should generate valid GraphQL query for single agg
       $groupBy: [OpportunityGroupByInput!]
       $filter: OpportunityFilterInput
       $orderBy: [OpportunityOrderByWithGroupByInput!]
-      $omitNullValues: Boolean
-      $rangeMin: Float
-      $rangeMax: Float
       $viewId: UUID
     ) {
       opportunitiesGroupBy(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
-        omitNullValues: $omitNullValues
-        rangeMin: $rangeMin
-        rangeMax: $rangeMax
         viewId: $viewId
       ) {
         groupByDimensionValues

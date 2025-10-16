@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
 
 type GroupByOperationFactoryParams = {
   objectMetadataSingularName: string;
@@ -9,9 +9,6 @@ type GroupByOperationFactoryParams = {
   orderBy?: object[];
   viewId?: string;
   gqlFields?: string;
-  omitNullValues?: boolean;
-  rangeMin?: number;
-  rangeMax?: number;
 };
 
 export const groupByOperationFactory = ({
@@ -22,13 +19,10 @@ export const groupByOperationFactory = ({
   orderBy = [],
   viewId,
   gqlFields,
-  omitNullValues,
-  rangeMin,
-  rangeMax,
 }: GroupByOperationFactoryParams) => ({
   query: gql`
-    query ${capitalize(objectMetadataPluralName)}GroupBy($groupBy: [${capitalize(objectMetadataSingularName)}GroupByInput!]!, $filter: ${capitalize(objectMetadataSingularName)}FilterInput, $orderBy: [${capitalize(objectMetadataSingularName)}OrderByWithGroupByInput!], $viewId: UUID, $omitNullValues: Boolean, $rangeMin: Float, $rangeMax: Float) {
-      ${objectMetadataPluralName}GroupBy(groupBy: $groupBy, filter: $filter, orderBy: $orderBy, viewId: $viewId, omitNullValues: $omitNullValues, rangeMin: $rangeMin, rangeMax: $rangeMax) {
+    query ${capitalize(objectMetadataPluralName)}GroupBy($groupBy: [${capitalize(objectMetadataSingularName)}GroupByInput!]!, $filter: ${capitalize(objectMetadataSingularName)}FilterInput, $orderBy: [${capitalize(objectMetadataSingularName)}OrderByWithGroupByInput!], $viewId: UUID) {
+      ${objectMetadataPluralName}GroupBy(groupBy: $groupBy, filter: $filter, orderBy: $orderBy, viewId: $viewId,) {
         ${gqlFields ? gqlFields : ''}
         groupByDimensionValues
         totalCount
@@ -40,8 +34,5 @@ export const groupByOperationFactory = ({
     filter,
     orderBy,
     ...(viewId && { viewId }),
-    ...(isDefined(omitNullValues) && { omitNullValues }),
-    ...(isDefined(rangeMin) && { rangeMin }),
-    ...(isDefined(rangeMax) && { rangeMax }),
   },
 });
