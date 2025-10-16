@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 type GroupByOperationFactoryParams = {
   objectMetadataSingularName: string;
@@ -40,8 +40,8 @@ export const groupByOperationFactory = ({
     filter,
     orderBy,
     ...(viewId && { viewId }),
-    omitNullValues: omitNullValues ?? null,
-    rangeMin: rangeMin ?? null,
-    rangeMax: rangeMax ?? null,
+    ...(isDefined(omitNullValues) && { omitNullValues }),
+    ...(isDefined(rangeMin) && { rangeMin }),
+    ...(isDefined(rangeMax) && { rangeMax }),
   },
 });
