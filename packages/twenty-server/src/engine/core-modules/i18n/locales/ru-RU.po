@@ -61,7 +61,7 @@ msgstr "Поля {fieldType} не могут быть уникальными."
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
-msgstr "{hostnameCount}  ( ,\t \t)  \"{domainName}\".  1"
+msgstr "{hostnameCount} имен хостов найдено для домена '{domainName}'. Ожидается 1"
 
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
@@ -259,7 +259,7 @@ msgstr "Вложение"
 #. js-lingui-id: Q7akko
 #: src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception.ts
 msgid "An error occurred during message import"
-msgstr "     13    \n"
+msgstr "Произошла ошибка при импорте сообщений"
 " "
 
 #. js-lingui-id: XyOToQ
