@@ -10,7 +10,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -30,6 +30,8 @@ const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '', applicationId = '' } = useParams();
 
+  const navigate = useNavigate();
+
   const { data } = useFindOneApplicationQuery({
     variables: { id: applicationId },
     skip: !applicationId,
@@ -37,9 +39,11 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const applicationName = data?.findOneApplication?.name;
 
+  const instanceId = `${SERVERLESS_FUNCTION_DETAIL_ID}-${serverlessFunctionId}`;
+
   const [activeTabId, setActiveTabId] = useRecoilComponentState(
     activeTabIdComponentState,
-    SERVERLESS_FUNCTION_DETAIL_ID,
+    instanceId,
   );
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
@@ -84,8 +88,8 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   const handleTestFunction = async () => {
+    navigate('#test');
     await testServerlessFunction();
-    setActiveTabId('test');
   };
 
   const tabs = [
@@ -163,10 +167,7 @@ export const SettingsServerlessFunctionDetail = () => {
         ]}
       >
         <SettingsPageContainer>
-          <TabList
-            tabs={tabs}
-            componentInstanceId={SERVERLESS_FUNCTION_DETAIL_ID}
-          />
+          <TabList tabs={tabs} componentInstanceId={instanceId} />
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
