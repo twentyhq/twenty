@@ -47,7 +47,16 @@ export class AppCommand {
       .command('delete')
       .description('Delete application from Twenty')
       .action(async () => {
-        await this.deleteCommand.execute();
+        try {
+          const result = await this.deleteCommand.execute({
+            askForConfirmation: true,
+          });
+          if (!result.success) {
+            process.exit(1);
+          }
+        } catch {
+          process.exit(1);
+        }
       });
 
     appCommand

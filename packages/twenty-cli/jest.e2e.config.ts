@@ -40,6 +40,9 @@ const jestConfig: JestConfigWithTsJest = {
       },
     ],
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(chalk|inquirer|@inquirer|ansi-styles|strip-ansi|has-flag|supports-color|color-convert|color-name|wrap-ansi|string-width|strip-ansi|is-fullwidth-code-point|emoji-regex|onetime|mimic-fn|signal-exit|yallist|lru-cache|p-limit|p-queue|p-timeout|p-finally|p-try|p-cancelable|p-locate|p-map|p-race|p-reduce|p-some|p-waterfall|p-defer|p-delay|p-retry|p-any|p-settle|p-all|p-map-series|p-map-concurrent|p-filter|p-reject|p-tap|p-log|p-debounce|p-throttle|p-forever|p-whilst|p-do-whilst|p-until|p-wait-for|p-min-delay|p-timeout|p-retry|p-any|p-settle|p-all|p-map-series|p-map-concurrent|p-filter|p-reject|p-tap|p-log|p-debounce|p-throttle|p-forever|p-whilst|p-do-whilst|p-until|p-wait-for|p-min-delay)/)',
+  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
