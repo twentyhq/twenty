@@ -66,7 +66,9 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
   },
   serverlessFunction: {
     propertiesToCompare: [
-      ...FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES,
+      ...FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES.filter(
+        (property) => property !== 'code',
+      ),
       'deletedAt',
     ],
     propertiesToStringify: [],

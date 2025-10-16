@@ -12,11 +12,13 @@ import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data
 type SettingsDataModelFieldBooleanSettingsFormCardProps = {
   existingFieldMetadataId: string;
   objectNameSingular: string;
+  disabled?: boolean;
 };
 
 export const SettingsDataModelFieldBooleanSettingsFormCard = ({
   existingFieldMetadataId,
   objectNameSingular,
+  disabled = false,
 }: SettingsDataModelFieldBooleanSettingsFormCardProps) => {
   const { watch } = useFormContext<
     SettingsDataModelFieldBooleanFormValues &
@@ -38,6 +40,7 @@ export const SettingsDataModelFieldBooleanSettingsFormCard = ({
       }
       form={
         <SettingsDataModelFieldBooleanForm
+          disabled={disabled}
           existingFieldMetadataId={existingFieldMetadataId}
         />
       }

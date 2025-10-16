@@ -33,7 +33,13 @@ const StyledTableHeaderRow = styled(StyledAIAgentTableRow)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
+export const SettingsAIAgentsTable = ({
+  agents,
+  withSearchBar = false,
+}: {
+  agents: Agent[];
+  withSearchBar?: boolean;
+}) => {
   const { t } = useLingui();
   const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,13 +56,15 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
 
   return (
     <>
-      <StyledSearchInput
-        instanceId="settings-ai-agents-search"
-        LeftIcon={IconSearch}
-        placeholder={t`Search an agent...`}
-        value={searchTerm}
-        onChange={setSearchTerm}
-      />
+      {withSearchBar && (
+        <StyledSearchInput
+          instanceId="settings-ai-agents-search"
+          LeftIcon={IconSearch}
+          placeholder={t`Search an agent...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+      )}
 
       <StyledTable>
         <StyledTableHeaderRow>

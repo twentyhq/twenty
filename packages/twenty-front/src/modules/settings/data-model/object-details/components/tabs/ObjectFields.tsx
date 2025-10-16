@@ -9,6 +9,7 @@ import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -21,7 +22,9 @@ type ObjectFieldsProps = {
 };
 
 export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
-  const shouldDisplayAddFieldButton = !objectMetadataItem.isRemote;
+  const readonly = isObjectMetadataReadOnly({
+    objectMetadataItem,
+  });
 
   const { t } = useLingui();
   const objectLabelSingular = objectMetadataItem.labelSingular;
@@ -36,7 +39,7 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
         objectMetadataItem={objectMetadataItem}
         mode="view"
       />
-      {shouldDisplayAddFieldButton && (
+      {!readonly && (
         <StyledDiv>
           <UndecoratedLink
             to={getSettingsPath(SettingsPath.ObjectNewFieldSelect, {

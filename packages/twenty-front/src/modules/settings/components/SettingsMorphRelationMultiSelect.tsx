@@ -165,8 +165,8 @@ export const SettingsMorphRelationMultiSelect = ({
       {isDisabled ? (
         <MultiSelectControl
           selectedOptions={selectedOptions}
-          fixedIcon={IconBox}
-          fixedText="Object"
+          fixedIcon={selectedOptions.length < 2 ? undefined : IconBox}
+          fixedText={selectedOptions.length < 2 ? undefined : 'Object'}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
           hasRightElement={hasRightElement}
@@ -180,8 +180,8 @@ export const SettingsMorphRelationMultiSelect = ({
           clickableComponent={
             <MultiSelectControl
               selectedOptions={selectedOptions}
-              fixedIcon={IconBox}
-              fixedText="Object"
+              fixedIcon={selectedOptions.length < 2 ? undefined : IconBox}
+              fixedText={selectedOptions.length < 2 ? undefined : 'Object'}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}

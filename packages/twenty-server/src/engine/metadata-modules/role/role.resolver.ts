@@ -261,7 +261,10 @@ export class RoleResolver {
       workspace.id,
     );
 
-    return agents;
+    return agents.map((agent) => ({
+      ...agent,
+      applicationId: agent.applicationId ?? undefined,
+    }));
   }
 
   @ResolveField('apiKeys', () => [ApiKeyForRoleDTO])
