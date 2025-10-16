@@ -107,15 +107,11 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
             const handleToggleChange = () => {
               const configKey =
-                item.id === CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS
+                item.id in CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP
                   ? CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP[
-                      CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS
+                      item.id as keyof typeof CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP
                     ]
-                  : item.id === CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS
-                    ? CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP[
-                        CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS
-                      ]
-                    : item.id;
+                  : item.id;
 
               setSelectedItemId(item.id);
 
