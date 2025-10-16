@@ -42,6 +42,11 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
+        key: FeatureFlagKey.IS_APPLICATION_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
         workspaceId: workspaceId,
         value: true,
@@ -65,6 +70,11 @@ export const seedFeatureFlags = async (
         key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
       },
       {
         key: FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,

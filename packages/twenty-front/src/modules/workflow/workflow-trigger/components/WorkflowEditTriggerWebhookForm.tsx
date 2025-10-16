@@ -1,7 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
-import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -22,6 +21,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { buildOutputSchemaFromValue } from 'twenty-shared/workflow';
 import { IconCopy, useIcons } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -175,7 +175,9 @@ export const WorkflowEditTriggerWebhookForm = ({
                 expectedBody: undefined,
               }));
 
-              const outputSchema = getFunctionOutputSchema(parsingResult.data);
+              const outputSchema = buildOutputSchemaFromValue(
+                parsingResult.data,
+              );
 
               triggerOptions.onTriggerUpdate(
                 {

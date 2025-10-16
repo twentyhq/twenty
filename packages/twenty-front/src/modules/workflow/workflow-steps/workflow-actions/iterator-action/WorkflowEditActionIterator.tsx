@@ -58,7 +58,7 @@ export const WorkflowEditActionIterator = ({
     ? defaultItems
     : isArray(defaultItems)
       ? stringifyArrayItems(defaultItems)
-      : stringifyArrayItems(JSON.parse(defaultItems));
+      : [];
 
   const [formData, setFormData] = useState({
     items: parsedItems,

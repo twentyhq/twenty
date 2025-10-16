@@ -20,12 +20,14 @@ type SettingsDataModelFieldSelectSettingsFormCardProps = {
   objectNameSingular: string;
   fieldType: FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT;
   existingFieldMetadataId: string;
+  disabled?: boolean;
 };
 
 export const SettingsDataModelFieldSelectSettingsFormCard = ({
   objectNameSingular,
   fieldType,
   existingFieldMetadataId,
+  disabled = false,
 }: SettingsDataModelFieldSelectSettingsFormCardProps) => {
   const { watch: watchFormValue } = useFormContext<
     SettingsDataModelFieldSelectOrMultiSelectFormValues &
@@ -50,6 +52,7 @@ export const SettingsDataModelFieldSelectSettingsFormCard = ({
         <SettingsDataModelFieldSelectForm
           fieldType={fieldType}
           existingFieldMetadataId={existingFieldMetadataId}
+          disabled={disabled}
         />
       }
     />
