@@ -15,7 +15,7 @@ import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-mana
 import { SEARCH_FIELDS_FOR_PERSON } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Command({
-  name: 'upgrade:1-10:regenerate-person-search-vector-with-phones',
+  name: 'upgrade:1-8:regenerate-person-search-vector-with-phones',
   description:
     'Regenerate person search vector to include phone number indexing for existing workspaces',
 })

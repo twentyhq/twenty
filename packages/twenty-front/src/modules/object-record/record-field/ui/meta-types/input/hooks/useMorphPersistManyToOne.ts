@@ -25,7 +25,7 @@ export const useMorphPersistManyToOne = ({
   const { updateOneRecord } = useUpdateOneRecordV2();
 
   const persistMorphManyToOne = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ snapshot }) =>
       async ({
         recordId,
         fieldDefinition,
@@ -83,20 +83,32 @@ export const useMorphPersistManyToOne = ({
           return;
         }
 
+        const allNullRecordInput: Record<string, null> =
+          fieldDefinition.metadata.morphRelations.reduce(
+            (acc, morphRelation) => {
+              const computedFieldName = computeMorphRelationFieldName({
+                fieldName,
+                relationType: fieldDefinition.metadata.relationType,
+                targetObjectMetadataNameSingular:
+                  morphRelation.targetObjectMetadata.nameSingular,
+                targetObjectMetadataNamePlural:
+                  morphRelation.targetObjectMetadata.namePlural,
+              });
+              acc[`${computedFieldName}Id`] = null;
+              return acc;
+            },
+            {} as Record<string, null>,
+          );
+
         updateOneRecord?.({
           objectNameSingular: objectMetadataNameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: {
+            ...allNullRecordInput,
             [`${computedFieldName}Id`]: valueToPersist,
           },
         });
-        set(
-          recordStoreFamilySelector({
-            recordId,
-            fieldName: computedFieldName,
-          }),
-          valueToPersist,
-        );
+
         return;
       },
     [objectMetadataItems, updateOneRecord, objectMetadataNameSingular],
