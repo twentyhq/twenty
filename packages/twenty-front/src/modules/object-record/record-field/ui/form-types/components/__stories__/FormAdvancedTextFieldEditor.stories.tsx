@@ -6,6 +6,8 @@ import { useAdvancedTextEditor } from '~/hooks/useAdvancedTextEditor';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
@@ -63,6 +65,8 @@ const meta: Meta<typeof EditorWrapper> = {
     msw: graphqlMocks,
   },
   decorators: [
+    WorkflowStepActionDrawerDecorator,
+    WorkflowStepDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
