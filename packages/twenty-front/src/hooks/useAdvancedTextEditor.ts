@@ -1,6 +1,6 @@
-import { ResizableImage } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/ResizableImage';
-import { UploadImageExtension } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/UploadImageExtension';
-import { getInitialEmailEditorContent } from '@/workflow/workflow-variables/utils/getInitialEmailEditorContent';
+import { ResizableImage } from '@/object-record/record-field/ui/extensions/resizable-image/ResizableImage';
+import { UploadImageExtension } from '@/object-record/record-field/ui/extensions/resizable-image/UploadImageExtension';
+import { getInitialAdvancedTextEditorContent } from '@/workflow/workflow-variables/utils/getInitialAdvancedTextEditorContent';
 import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
 import { Bold } from '@tiptap/extension-bold';
 import { Document } from '@tiptap/extension-document';
@@ -78,7 +78,7 @@ export const useAdvancedTextEditor = (
     {
       extensions,
       content: isDefined(defaultValue)
-        ? getInitialEmailEditorContent(defaultValue)
+        ? getInitialAdvancedTextEditorContent(defaultValue)
         : undefined,
       editable: !readonly,
       onUpdate: ({ editor }) => {

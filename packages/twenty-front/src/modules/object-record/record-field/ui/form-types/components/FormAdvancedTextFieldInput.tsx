@@ -61,7 +61,7 @@ const StyledFullScreenEditorContainer = styled.div`
 `;
 
 const StyledFullScreenButtonContainer = styled(StyledDropdownButtonContainer)`
-  background-color: 'transparent';
+  background-color: transparent;
 
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: ${({ theme }) => theme.spacing(2)};
