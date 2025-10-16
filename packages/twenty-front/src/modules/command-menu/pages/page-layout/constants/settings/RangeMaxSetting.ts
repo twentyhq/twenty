@@ -6,7 +6,7 @@ import { IconMathMax } from 'twenty-ui/display';
 export const RANGE_MAX_SETTING: ChartSettingsItem = {
   isBoolean: false,
   Icon: IconMathMax,
-  label: CHART_CONFIGURATION_SETTING_LABELS.RANGE_MAX,
-  id: CHART_CONFIGURATION_SETTING_IDS.RANGE_MAX,
+  label: CHART_CONFIGURATION_SETTING_LABELS.MAX_RANGE,
+  id: CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
   isInput: true,
 };

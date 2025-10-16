@@ -6,7 +6,7 @@ import { IconMathMin } from 'twenty-ui/display';
 export const RANGE_MIN_SETTING: ChartSettingsItem = {
   isBoolean: false,
   Icon: IconMathMin,
-  label: CHART_CONFIGURATION_SETTING_LABELS.RANGE_MIN,
-  id: CHART_CONFIGURATION_SETTING_IDS.RANGE_MIN,
+  label: CHART_CONFIGURATION_SETTING_LABELS.MIN_RANGE,
+  id: CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE,
   isInput: true,
 };
