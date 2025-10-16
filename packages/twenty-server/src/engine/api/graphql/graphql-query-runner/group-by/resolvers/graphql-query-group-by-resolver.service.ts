@@ -155,33 +155,46 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
             objectMetadataNameSingular,
           );
 
-        if (aggregateExpression) {
-          if (executionArgs.args.omitNullValues) {
-            queryBuilder.andHaving(`${aggregateExpression} IS NOT NULL`);
-          }
+        if (!aggregateExpression) {
+          return;
+        }
 
-          const isNumericReturningAggregate = this.isNumericReturningAggregate(
-            aggregationField.aggregateOperation,
-            aggregationField.fromFieldType,
-          );
+        if (executionArgs.args.omitNullValues) {
+          queryBuilder.andHaving(`${aggregateExpression} IS NOT NULL`);
+        }
 
-          if (isNumericReturningAggregate) {
-            if (executionArgs.args.omitNullValues) {
-              queryBuilder.andHaving(`${aggregateExpression} != 0`);
-            }
+        const isNumericReturningAggregate = this.isNumericReturningAggregate(
+          aggregationField.aggregateOperation,
+          aggregationField.fromFieldType,
+        );
 
-            if (isDefined(executionArgs.args.rangeMin)) {
-              queryBuilder.andHaving(`${aggregateExpression} >= :rangeMin`, {
-                rangeMin: executionArgs.args.rangeMin,
-              });
-            }
+        if (!isNumericReturningAggregate) {
+          return;
+        }
 
-            if (isDefined(executionArgs.args.rangeMax)) {
-              queryBuilder.andHaving(`${aggregateExpression} <= :rangeMax`, {
-                rangeMax: executionArgs.args.rangeMax,
-              });
-            }
-          }
+        if (executionArgs.args.omitNullValues) {
+          queryBuilder.andHaving(`${aggregateExpression} != 0`);
+        }
+
+        const shouldApplyRangeFilters = this.shouldApplyRangeFilters(
+          aggregationField.aggregateOperation,
+          aggregationField.fromFieldType,
+        );
+
+        if (!shouldApplyRangeFilters) {
+          return;
+        }
+
+        if (isDefined(executionArgs.args.rangeMin)) {
+          queryBuilder.andHaving(`${aggregateExpression} >= :rangeMin`, {
+            rangeMin: executionArgs.args.rangeMin,
+          });
+        }
+
+        if (isDefined(executionArgs.args.rangeMax)) {
+          queryBuilder.andHaving(`${aggregateExpression} <= :rangeMax`, {
+            rangeMax: executionArgs.args.rangeMax,
+          });
         }
       });
     }
@@ -305,6 +318,26 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       return true;
     }
 
+    if (
+      operation === AggregateOperations.MIN ||
+      operation === AggregateOperations.MAX ||
+      operation === AggregateOperations.AVG ||
+      operation === AggregateOperations.SUM
+    ) {
+      return [
+        FieldMetadataType.NUMBER,
+        FieldMetadataType.NUMERIC,
+        FieldMetadataType.CURRENCY,
+      ].includes(fromFieldType);
+    }
+
+    return false;
+  }
+
+  private shouldApplyRangeFilters(
+    operation: AggregateOperations,
+    fromFieldType: FieldMetadataType,
+  ): boolean {
     if (
       operation === AggregateOperations.MIN ||
       operation === AggregateOperations.MAX ||
