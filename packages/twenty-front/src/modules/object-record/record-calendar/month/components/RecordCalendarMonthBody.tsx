@@ -8,6 +8,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   border: 0.5px solid ${({ theme }) => theme.border.color.light};
   border-radius: 4px;
+  height: inherit;
   overflow: hidden;
 `;
 
