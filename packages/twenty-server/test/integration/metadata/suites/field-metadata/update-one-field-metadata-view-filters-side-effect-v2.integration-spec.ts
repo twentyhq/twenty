@@ -256,6 +256,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
         const updatedOptions = updateOptions(optionsWithIds);
 
         await updateOneFieldMetadata({
+          expectToFail: false,
           input: {
             idToUpdate: createOneField.id,
             updatePayload: {
@@ -319,7 +320,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
       },
     ];
 
-    test.skip.each(eachTestingContextFilter(failingTestCases))(
+    test.each(eachTestingContextFilter(failingTestCases))(
       '$title',
       async ({ context: { createViewFilterValue } }) => {
         const { createOneField, createdView } =
@@ -339,7 +340,9 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
             value: createViewFilterValue as unknown as ViewFilterValue,
           },
           expectToFail: false,
-          gqlFields: ``,
+          gqlFields: `
+            id
+          `,
         });
 
         const optionsWithIds = createOneField.options;
@@ -351,6 +354,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
           options: optionsWithIds.map((option) => fakeOptionUpdate(option)),
         };
         const { errors, data } = await updateOneFieldMetadata({
+          expectToFail: true,
           input: {
             idToUpdate: createOneField.id,
             updatePayload,
