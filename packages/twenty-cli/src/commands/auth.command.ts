@@ -38,7 +38,7 @@ export class AuthCommand {
     return authCommand;
   }
 
-  private async login(options: {
+  public async login(options: {
     apiKey?: string;
     apiUrl?: string;
   }): Promise<void> {

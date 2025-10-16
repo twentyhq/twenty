@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SERVER_URL } from '../constants/server-url.constant';
 
 // Global test setup
 beforeAll(async () => {
@@ -11,7 +12,7 @@ beforeAll(async () => {
   
   while (Date.now() - startTime < maxWaitTime) {
     try {
-      await axios.get('http://localhost:3000/healthz');
+      await axios.get(`${SERVER_URL}/healthz`);
       console.log('✅ Server is ready for e2e tests');
       return;
     } catch (error) {
