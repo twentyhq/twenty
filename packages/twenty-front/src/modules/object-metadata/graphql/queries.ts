@@ -1,109 +1,13 @@
 import { gql } from '@apollo/client';
+import { OBJECT_METADATA_FRAGMENT } from '@/object-metadata/graphql/fragment';
 
 export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
+  ${OBJECT_METADATA_FRAGMENT}
   query ObjectMetadataItems {
     objects(paging: { first: 1000 }) {
       edges {
         node {
-          id
-          nameSingular
-          namePlural
-          labelSingular
-          labelPlural
-          description
-          icon
-          isCustom
-          isRemote
-          isActive
-          isSystem
-          isUIReadOnly
-          createdAt
-          updatedAt
-          labelIdentifierFieldMetadataId
-          imageIdentifierFieldMetadataId
-          shortcut
-          isLabelSyncedWithName
-          isSearchable
-          duplicateCriteria
-          indexMetadataList {
-            id
-            createdAt
-            updatedAt
-            name
-            indexWhereClause
-            indexType
-            isUnique
-            isCustom
-            indexFieldMetadataList {
-              id
-              fieldMetadataId
-              createdAt
-              updatedAt
-              order
-            }
-          }
-          fieldsList {
-            id
-            type
-            name
-            label
-            description
-            icon
-            isCustom
-            isActive
-            isSystem
-            isUIReadOnly
-            isNullable
-            isUnique
-            createdAt
-            updatedAt
-            defaultValue
-            options
-            settings
-            isLabelSyncedWithName
-            relation {
-              type
-              sourceObjectMetadata {
-                id
-                nameSingular
-                namePlural
-              }
-              targetObjectMetadata {
-                id
-                nameSingular
-                namePlural
-              }
-              sourceFieldMetadata {
-                id
-                name
-              }
-              targetFieldMetadata {
-                id
-                name
-              }
-            }
-            morphRelations {
-              type
-              sourceObjectMetadata {
-                id
-                nameSingular
-                namePlural
-              }
-              targetObjectMetadata {
-                id
-                nameSingular
-                namePlural
-              }
-              sourceFieldMetadata {
-                id
-                name
-              }
-              targetFieldMetadata {
-                id
-                name
-              }
-            }
-          }
+          ...ObjectMetadataFields
         }
       }
       pageInfo {

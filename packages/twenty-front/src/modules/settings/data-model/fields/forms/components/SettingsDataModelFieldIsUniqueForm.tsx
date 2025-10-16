@@ -18,12 +18,14 @@ type SettingsDataModelFieldIsUniqueFormProps = {
   objectNameSingular: string;
   fieldType: FieldMetadataType;
   existingFieldMetadataId: string;
+  disabled?: boolean;
 };
 
 export const SettingsDataModelFieldIsUniqueForm = ({
   fieldType,
   existingFieldMetadataId,
   objectNameSingular,
+  disabled = false,
 }: SettingsDataModelFieldIsUniqueFormProps) => {
   const { control } =
     useFormContext<SettingsDataModelFieldIsUniqueFormValues>();
@@ -74,7 +76,7 @@ export const SettingsDataModelFieldIsUniqueForm = ({
                 toggleSize="small"
                 value={isUnique}
                 onChange={(value) => onChange(value)}
-                disabled={hasStandardUniqueIndex}
+                disabled={disabled || hasStandardUniqueIndex}
               />
             </SettingsOptionCardContentSelect>
           </>

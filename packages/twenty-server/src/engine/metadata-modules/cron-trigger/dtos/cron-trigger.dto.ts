@@ -1,4 +1,4 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { IsDateString, IsNotEmpty, IsObject, IsUUID } from 'class-validator';
@@ -17,13 +17,6 @@ export class CronTriggerDTO {
   @IsObject()
   @Field(() => GraphQLJSON)
   settings: CronTriggerSettings;
-
-  @HideField()
-  workspaceId: string;
-
-  @IsUUID()
-  @Field()
-  serverlessFunctionId: string;
 
   @IsDateString()
   @Field()

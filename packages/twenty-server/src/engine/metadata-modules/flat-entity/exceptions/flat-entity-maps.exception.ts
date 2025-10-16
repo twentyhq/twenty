@@ -1,15 +1,14 @@
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  appendCommonExceptionCode,
+  CustomException,
+} from 'src/utils/custom-exception';
 
-export class FlatEntityMapsException extends CustomException {
-  code: FlatEntityMapsExceptionCode;
+export class FlatEntityMapsException extends CustomException<
+  keyof typeof FlatEntityMapsExceptionCode
+> {}
 
-  constructor(message: string, code: FlatEntityMapsExceptionCode) {
-    super(message, code);
-  }
-}
-
-export enum FlatEntityMapsExceptionCode {
-  ENTITY_ALREADY_EXISTS = 'ENTITY_ALREADY_EXISTS',
-  ENTITY_NOT_FOUND = 'ENTITY_NOT_FOUND',
-  ENTITY_MALFORMED = 'ENTITY_MALFORMED',
-}
+export const FlatEntityMapsExceptionCode = appendCommonExceptionCode({
+  ENTITY_ALREADY_EXISTS: 'ENTITY_ALREADY_EXISTS',
+  ENTITY_NOT_FOUND: 'ENTITY_NOT_FOUND',
+  ENTITY_MALFORMED: 'ENTITY_MALFORMED',
+} as const);

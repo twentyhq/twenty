@@ -1,18 +1,18 @@
 import { SettingsServerlessFunctionTabEnvironmentVariableTableRow } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow';
-import { type ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
-import dotenv from 'dotenv';
 import { useMemo, useState } from 'react';
 import { H2Title, IconPlus, IconSearch } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
+import { serverlessFunctionEnvVarFamilyState } from '@/settings/serverless-functions/states/serverlessFunctionEnvVarFamilyState';
+import { useRecoilState } from 'recoil';
 
 const StyledSearchInput = styled(SettingsTextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
@@ -39,24 +39,18 @@ const StyledTableRow = styled(TableRow)`
 export type EnvironmentVariable = { id: string; key: string; value: string };
 
 export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
-  formValues,
   onCodeChange,
+  serverlessFunctionId,
 }: {
-  formValues: ServerlessFunctionFormValues;
+  serverlessFunctionId: string;
   onCodeChange: (filePath: string, value: string) => void;
 }) => {
-  const environmentVariables = formValues.code?.['.env']
-    ? dotenv.parse(formValues.code['.env'])
-    : {};
-  const environmentVariablesList = Object.entries(environmentVariables).map(
-    ([key, value]) => ({ id: v4(), key, value }),
-  );
-
   const [searchTerm, setSearchTerm] = useState('');
   const [newEnvVarAdded, setNewEnvVarAdded] = useState(false);
-  const [envVariables, setEnvVariables] = useState<EnvironmentVariable[]>(
-    environmentVariablesList,
+  const [envVariables, setEnvVariables] = useRecoilState(
+    serverlessFunctionEnvVarFamilyState(serverlessFunctionId),
   );
+
   const filteredEnvVariable = useMemo(() => {
     return envVariables.filter(
       ({ key, value }) =>
@@ -68,11 +62,28 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
   const getFormattedEnvironmentVariables = (
     newEnvVariables: EnvironmentVariable[],
   ) => {
-    return newEnvVariables.reduce(
-      (acc, { key, value }) =>
-        key.length > 0 && value.length > 0 ? `${acc}\n${key}=${value}` : acc,
-      '',
-    );
+    return [...newEnvVariables]
+      .reverse()
+      .reduce(
+        (acc, { key, value }) =>
+          key.length > 0 && value.length > 0 ? `${key}=${value}\n${acc}` : acc,
+        '',
+      );
+  };
+
+  const onEnvVarChange = (newEnvVariable: EnvironmentVariable) => {
+    const newEnvVariables: EnvironmentVariable[] = [];
+
+    for (const envVariable of envVariables) {
+      if (envVariable.id === newEnvVariable.id) {
+        newEnvVariables.push(newEnvVariable);
+      } else if (envVariable.key !== newEnvVariable.key) {
+        newEnvVariables.push(envVariable);
+      }
+    }
+
+    setEnvVariables(newEnvVariables);
+    onCodeChange('.env', getFormattedEnvironmentVariables(newEnvVariables));
   };
 
   return (
@@ -101,24 +112,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
                 key={envVariable.id}
                 envVariable={envVariable}
                 initialEditMode={newEnvVarAdded && envVariable.value === ''}
-                onChange={(newEnvVariable) => {
-                  const newEnvVariables = envVariables.reduce(
-                    (acc, { id, key }) => {
-                      if (id === newEnvVariable.id) {
-                        acc.push(newEnvVariable);
-                      } else if (key !== newEnvVariable.key) {
-                        acc.push(envVariable);
-                      }
-                      return acc;
-                    },
-                    [] as EnvironmentVariable[],
-                  );
-                  setEnvVariables(newEnvVariables);
-                  onCodeChange(
-                    '.env',
-                    getFormattedEnvironmentVariables(newEnvVariables),
-                  );
-                }}
+                onChange={onEnvVarChange}
                 onDelete={() => {
                   const newEnvVariables = envVariables.filter(
                     ({ id }) => id !== envVariable.id,
