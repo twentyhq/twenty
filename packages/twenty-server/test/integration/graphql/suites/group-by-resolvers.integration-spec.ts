@@ -708,7 +708,7 @@ describe('group-by resolvers (integration)', () => {
         }
       });
 
-      it('does not error for date aggregates when enabled', async () => {
+      it('does not throw error for date aggregates when enabled', async () => {
         const response = await makeGraphqlAPIRequest(
           groupByOperationFactory({
             objectMetadataSingularName: 'person',
