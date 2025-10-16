@@ -22,7 +22,7 @@ import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 
 export const StyledApplicationEnvironmentVariableTableRow = styled(TableRow)`
-  grid-template-columns: 100px auto 56px 56px;
+  grid-template-columns: auto 200px 36px 36px;
 `;
 
 export type EnvironmentVariable = {
