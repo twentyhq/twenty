@@ -19,6 +19,8 @@ import {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: inherit;
+  min-height: 700px;
   min-width: 1000px;
 `;
 
