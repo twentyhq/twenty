@@ -46,25 +46,17 @@ export class CronTriggerV2Service {
       },
     );
 
-    const {
-      fromFlatEntityMaps: fromFlatCronTriggerMaps,
-      toFlatEntityMaps: toFlatCronTriggerMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatCronTriggerMaps,
-      flatEntityToCreate: [flatCronTriggerToCreate],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatCronTriggerMaps: {
-              from: fromFlatCronTriggerMaps,
-              to: toFlatCronTriggerMaps,
-            },
+            flatCronTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatCronTriggerMaps,
+              flatEntityToCreate: [flatCronTriggerToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps:
@@ -117,25 +109,17 @@ export class CronTriggerV2Service {
         updateCronTriggerInput: cronTriggerInput,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatCronTriggerMaps,
-      toFlatEntityMaps: toFlatCronTriggerMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatCronTriggerMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [optimisticallyUpdatedFlatCronTrigger],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatCronTriggerMaps: {
-              from: fromFlatCronTriggerMaps,
-              to: toFlatCronTriggerMaps,
-            },
+            flatCronTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatCronTriggerMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatCronTrigger],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps:
@@ -196,24 +180,16 @@ export class CronTriggerV2Service {
       );
     }
 
-    const {
-      fromFlatEntityMaps: fromFlatCronTriggerMaps,
-      toFlatEntityMaps: toFlatCronTriggerMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatCronTriggerMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [existingFlatCronTrigger],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatCronTriggerMaps: {
-              from: fromFlatCronTriggerMaps,
-              to: toFlatCronTriggerMaps,
-            },
+            flatCronTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatCronTriggerMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [existingFlatCronTrigger],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,

@@ -54,24 +54,16 @@ export class ViewFieldV2Service {
         workspaceId,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewFieldMaps,
-      toFlatEntityMaps: toFlatViewFieldMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewFieldMaps,
-      flatEntityToCreate: [flatViewFieldToCreate],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewFieldMaps: {
-              from: fromFlatViewFieldMaps,
-              to: toFlatViewFieldMaps,
-            },
+            flatViewFieldMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFieldMaps,
+              flatEntityToCreate: [flatViewFieldToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatFieldMetadataMaps,
@@ -134,24 +126,16 @@ export class ViewFieldV2Service {
         updateViewFieldInput,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewFieldMaps,
-      toFlatEntityMaps: toFlatViewFieldMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewFieldMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [optimisticallyUpdatedFlatView],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewFieldMaps: {
-              from: fromFlatViewFieldMaps,
-              to: toFlatViewFieldMaps,
-            },
+            flatViewFieldMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFieldMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatView],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatObjectMetadataMaps,
@@ -213,24 +197,16 @@ export class ViewFieldV2Service {
         deleteViewFieldInput,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewFieldMaps,
-      toFlatEntityMaps: toFlatViewFieldMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewFieldMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [optimisticallyUpdatedFlatViewWithDeletedAt],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewFieldMaps: {
-              from: fromFlatViewFieldMaps,
-              to: toFlatViewFieldMaps,
-            },
+            flatViewFieldMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFieldMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatViewWithDeletedAt],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatObjectMetadataMaps,
@@ -288,24 +264,16 @@ export class ViewFieldV2Service {
         flatViewFieldMaps: existingFlatViewFieldMaps,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewFieldMaps,
-      toFlatEntityMaps: toFlatViewFieldMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewFieldMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [existingViewFieldToDelete],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewFieldMaps: {
-              from: fromFlatViewFieldMaps,
-              to: toFlatViewFieldMaps,
-            },
+            flatViewFieldMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFieldMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [existingViewFieldToDelete],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatViewMaps: existingFlatViewMaps,

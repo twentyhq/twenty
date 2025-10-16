@@ -52,24 +52,16 @@ export class ViewGroupV2Service {
         workspaceId,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewGroupMaps,
-      toFlatEntityMaps: toFlatViewGroupMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewGroupMaps,
-      flatEntityToCreate: [flatViewGroupToCreate],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewGroupMaps: {
-              from: fromFlatViewGroupMaps,
-              to: toFlatViewGroupMaps,
-            },
+            flatViewGroupMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewGroupMaps,
+              flatEntityToCreate: [flatViewGroupToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatFieldMetadataMaps,
@@ -131,24 +123,16 @@ export class ViewGroupV2Service {
         updateViewGroupInput,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewGroupMaps,
-      toFlatEntityMaps: toFlatViewGroupMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewGroupMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [optimisticallyUpdatedFlatViewGroup],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewGroupMaps: {
-              from: fromFlatViewGroupMaps,
-              to: toFlatViewGroupMaps,
-            },
+            flatViewGroupMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewGroupMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatViewGroup],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatViewMaps,
@@ -210,24 +194,16 @@ export class ViewGroupV2Service {
         deleteViewGroupInput,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewGroupMaps,
-      toFlatEntityMaps: toFlatViewGroupMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewGroupMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [optimisticallyUpdatedFlatViewGroupWithDeletedAt],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewGroupMaps: {
-              from: fromFlatViewGroupMaps,
-              to: toFlatViewGroupMaps,
-            },
+            flatViewGroupMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewGroupMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatViewGroupWithDeletedAt],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatFieldMetadataMaps,
@@ -289,24 +265,16 @@ export class ViewGroupV2Service {
         flatViewGroupMaps: existingFlatViewGroupMaps,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewGroupMaps,
-      toFlatEntityMaps: toFlatViewGroupMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewGroupMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [existingViewGroupToDelete],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewGroupMaps: {
-              from: fromFlatViewGroupMaps,
-              to: toFlatViewGroupMaps,
-            },
+            flatViewGroupMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewGroupMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [existingViewGroupToDelete],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatViewMaps: existingFlatViewMaps,

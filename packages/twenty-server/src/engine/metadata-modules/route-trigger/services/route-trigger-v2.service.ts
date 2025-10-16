@@ -45,25 +45,17 @@ export class RouteTriggerV2Service {
         workspaceId,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatRouteMaps,
-      toFlatEntityMaps: toFlatRouteMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatRouteMaps,
-      flatEntityToCreate: [flatRouteTriggerToCreate],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatRouteTriggerMaps: {
-              from: fromFlatRouteMaps,
-              to: toFlatRouteMaps,
-            },
+            flatRouteTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatRouteMaps,
+              flatEntityToCreate: [flatRouteTriggerToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps:
@@ -116,25 +108,17 @@ export class RouteTriggerV2Service {
         updateRouteTriggerInput: routeTriggerInput,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatRouteMaps,
-      toFlatEntityMaps: toFlatRouteMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatRouteMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [optimisticallyUpdatedFlatRouteTrigger],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatRouteTriggerMaps: {
-              from: fromFlatRouteMaps,
-              to: toFlatRouteMaps,
-            },
+            flatRouteTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatRouteMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatRouteTrigger],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps:
@@ -195,24 +179,16 @@ export class RouteTriggerV2Service {
       );
     }
 
-    const {
-      fromFlatEntityMaps: fromFlatRouteMaps,
-      toFlatEntityMaps: toFlatRouteMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatRouteMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [existingFlatRoute],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatRouteTriggerMaps: {
-              from: fromFlatRouteMaps,
-              to: toFlatRouteMaps,
-            },
+            flatRouteTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatRouteMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [existingFlatRoute],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,

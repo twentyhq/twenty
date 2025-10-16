@@ -44,24 +44,16 @@ export class ViewV2Service {
       workspaceId,
     });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewMaps,
-      toFlatEntityMaps: toFlatViewMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewMaps,
-      flatEntityToCreate: [flatViewFromCreateInput],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewMaps: {
-              from: fromFlatViewMaps,
-              to: toFlatViewMaps,
-            },
+            flatViewMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewMaps,
+              flatEntityToCreate: [flatViewFromCreateInput],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatObjectMetadataMaps: flatObjectMetadataMaps,
@@ -115,24 +107,16 @@ export class ViewV2Service {
         flatViewMaps: existingFlatViewMaps,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewMaps,
-      toFlatEntityMaps: toFlatViewMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [flatViewFromUpdateInput],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewMaps: {
-              from: fromFlatViewMaps,
-              to: toFlatViewMaps,
-            },
+            flatViewMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatViewFromUpdateInput],
+            }),
           },
           buildOptions: {
             isSystemBuild: false,
@@ -182,24 +166,16 @@ export class ViewV2Service {
       flatViewMaps: existingFlatViewMaps,
     });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewMaps,
-      toFlatEntityMaps: toFlatViewMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [flatViewFromDeleteInput],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewMaps: {
-              from: fromFlatViewMaps,
-              to: toFlatViewMaps,
-            },
+            flatViewMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatViewFromDeleteInput],
+            }),
           },
           buildOptions: {
             isSystemBuild: false,
@@ -249,24 +225,16 @@ export class ViewV2Service {
       flatViewMaps: existingFlatViewMaps,
     });
 
-    const {
-      fromFlatEntityMaps: fromFlatViewMaps,
-      toFlatEntityMaps: toFlatViewMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatViewMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [flatViewFromDestroyInput],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewMaps: {
-              from: fromFlatViewMaps,
-              to: toFlatViewMaps,
-            },
+            flatViewMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [flatViewFromDestroyInput],
+              flatEntityToUpdate: [],
+            }),
           },
           buildOptions: {
             isSystemBuild: false,

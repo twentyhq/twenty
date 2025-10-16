@@ -1,5 +1,3 @@
-import { type FromTo } from 'twenty-shared/types';
-
 import { type AllFlatEntities } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entities.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -18,10 +16,10 @@ export const computeFlatEntityMapsFromTo = <T extends AllFlatEntities>({
   flatEntityToCreate,
   flatEntityToDelete,
   flatEntityToUpdate,
-}: ComputeFlatEntityMapsFromToArgs<T>): FromTo<
-  FlatEntityMaps<T>,
-  'flatEntityMaps'
-> => {
+}: ComputeFlatEntityMapsFromToArgs<T>): {
+  from: FlatEntityMaps<T>;
+  to: FlatEntityMaps<T>;
+} => {
   const fromFlatEntityMaps =
     flatEntityToDelete.length > 0
       ? getSubFlatEntityMapsOrThrow({
@@ -60,7 +58,7 @@ export const computeFlatEntityMapsFromTo = <T extends AllFlatEntities>({
   );
 
   return {
-    fromFlatEntityMaps,
-    toFlatEntityMaps,
+    from: fromFlatEntityMaps,
+    to: toFlatEntityMaps,
   };
 };

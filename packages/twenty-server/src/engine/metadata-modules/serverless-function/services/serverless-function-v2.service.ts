@@ -51,25 +51,17 @@ export class ServerlessFunctionV2Service {
         workspaceId,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatServerlessFunctionMaps,
-      toFlatEntityMaps: toFlatServerlessFunctionMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatServerlessFunctionMaps,
-      flatEntityToCreate: [flatServerlessFunctionToCreate],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: {
-              from: fromFlatServerlessFunctionMaps,
-              to: toFlatServerlessFunctionMaps,
-            },
+            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatServerlessFunctionMaps,
+              flatEntityToCreate: [flatServerlessFunctionToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           buildOptions: {
             isSystemBuild: false,
@@ -121,25 +113,17 @@ export class ServerlessFunctionV2Service {
         updateServerlessFunctionInput: serverlessFunctionInput,
       });
 
-    const {
-      fromFlatEntityMaps: fromFlatServerlessFunctionMaps,
-      toFlatEntityMaps: toFlatServerlessFunctionMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatServerlessFunctionMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [optimisticallyUpdatedFlatServerlessFunction],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: {
-              from: fromFlatServerlessFunctionMaps,
-              to: toFlatServerlessFunctionMaps,
-            },
+            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatServerlessFunctionMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatServerlessFunction],
+            }),
           },
           buildOptions: {
             isSystemBuild: false,
@@ -202,24 +186,16 @@ export class ServerlessFunctionV2Service {
       deletedAt: new Date(),
     };
 
-    const {
-      fromFlatEntityMaps: fromFlatServerlessFunctionMaps,
-      toFlatEntityMaps: toFlatServerlessFunctionMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatServerlessFunctionMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [optimisticallyUpdatedFlatServerlessFunctionWithDeletedAt],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: {
-              from: fromFlatServerlessFunctionMaps,
-              to: toFlatServerlessFunctionMaps,
-            },
+            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatServerlessFunctionMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatServerlessFunctionWithDeletedAt],
+            }),
           },
           buildOptions: {
             isSystemBuild,
@@ -280,24 +256,16 @@ export class ServerlessFunctionV2Service {
       );
     }
 
-    const {
-      fromFlatEntityMaps: fromFlatServerlessFunctionMaps,
-      toFlatEntityMaps: toFlatServerlessFunctionMaps,
-    } = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatServerlessFunctionMaps,
-      flatEntityToCreate: [],
-      flatEntityToDelete: [existingFlatServerlessFunction],
-      flatEntityToUpdate: [],
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: {
-              from: fromFlatServerlessFunctionMaps,
-              to: toFlatServerlessFunctionMaps,
-            },
+            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatServerlessFunctionMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [existingFlatServerlessFunction],
+              flatEntityToUpdate: [],
+            }),
           },
           buildOptions: {
             isSystemBuild,
