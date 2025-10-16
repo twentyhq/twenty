@@ -3,7 +3,7 @@ export default async function globalTeardown() {
   const { exec } = require('child_process');
   
   return new Promise((resolve) => {
-    exec('pkill -f "nest start" || true', (error) => {
+    exec('pkill -f "nest start" || true', (error: unknown) => {
       if (error) {
         console.log('No server processes to kill');
       } else {

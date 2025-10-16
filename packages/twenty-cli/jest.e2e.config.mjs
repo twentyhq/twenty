@@ -28,6 +28,11 @@ const jestConfig = {
   maxWorkers: 1,
   forceExit: true,
   detectOpenHandles: true,
+  globals: {
+    'ts-jest': {
+      tsconfig: '<rootDir>/tsconfig.e2e.json',
+    },
+  },
 };
 
 export default jestConfig;

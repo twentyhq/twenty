@@ -6,6 +6,11 @@
   "bin": {
     "twenty": "dist/cli.js"
   },
+  "files": [
+    "dist/**/*",
+    "!dist/**/*.e2e-spec.*",
+    "!dist/**/__tests__/**"
+  ],
   "scripts": {
     "build": "echo 'use npx nx build'",
     "dev": "tsx src/cli.ts",

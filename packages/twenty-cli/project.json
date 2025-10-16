@@ -9,7 +9,7 @@
       "cache": true,
       "options": {
         "cwd": "packages/twenty-cli",
-        "commands": ["rimraf dist", "tsc"]
+        "commands": ["rimraf dist", "tsc --project tsconfig.lib.json"]
       },
       "dependsOn": ["^after-build"]
     },
@@ -42,7 +42,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-cli",
-        "command": "tsc --noEmit"
+        "command": "tsc --noEmit --project tsconfig.lib.json"
       }
     },
     "lint": {
