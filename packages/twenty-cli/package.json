@@ -6,6 +6,11 @@
   "bin": {
     "twenty": "dist/cli.js"
   },
+  "files": [
+    "dist/**/*",
+    "!dist/**/*.e2e-spec.*",
+    "!dist/**/__tests__/**"
+  ],
   "scripts": {
     "build": "echo 'use npx nx build'",
     "dev": "tsx src/cli.ts",
@@ -40,7 +45,8 @@
     "@types/node": "^20.0.0",
     "jest": "^29.5.0",
     "tsx": "^4.7.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "wait-on": "^7.2.0"
   },
   "engines": {
     "node": "^24.5.0",

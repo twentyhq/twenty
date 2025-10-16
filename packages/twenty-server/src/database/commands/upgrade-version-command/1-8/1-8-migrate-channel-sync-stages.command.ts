@@ -143,11 +143,26 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         `Would migrate deprecated messageChannel sync stages for workspace ${workspaceId}`,
       );
     } else {
-      const messageChannelUpdateResult = await this.coreDataSource.query(
-        `UPDATE "${schemaName}"."${tableName}"
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let messageChannelUpdateResult: any;
+
+      try {
+        messageChannelUpdateResult = await this.coreDataSource.query(
+          `UPDATE "${schemaName}"."${tableName}"
          SET "syncStage" = 'MESSAGE_LIST_FETCH_PENDING'
          WHERE "syncStage" IN ('FULL_MESSAGE_LIST_FETCH_PENDING', 'PARTIAL_MESSAGE_LIST_FETCH_PENDING')`,
-      );
+        );
+      } catch {
+        await this.coreDataSource.query(
+          `ALTER TYPE ${schemaName}."messageChannel_syncStage_enum" ADD VALUE IF NOT EXISTS 'MESSAGE_LIST_FETCH_PENDING'`,
+        );
+
+        messageChannelUpdateResult = await this.coreDataSource.query(
+          `UPDATE "${schemaName}"."${tableName}"
+         SET "syncStage" = 'MESSAGE_LIST_FETCH_PENDING'
+         WHERE "syncStage" IN ('FULL_MESSAGE_LIST_FETCH_PENDING', 'PARTIAL_MESSAGE_LIST_FETCH_PENDING')`,
+        );
+      }
 
       const messageChannelRowsUpdated = messageChannelUpdateResult[1] || 0;
 
@@ -224,11 +239,26 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         `Would migrate deprecated calendarChannel sync stages for workspace ${workspaceId}`,
       );
     } else {
-      const calendarChannelUpdateResult = await this.coreDataSource.query(
-        `UPDATE "${schemaName}"."${tableName}"
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let calendarChannelUpdateResult: any;
+
+      try {
+        calendarChannelUpdateResult = await this.coreDataSource.query(
+          `UPDATE "${schemaName}"."${tableName}"
          SET "syncStage" = 'CALENDAR_EVENT_LIST_FETCH_PENDING'
          WHERE "syncStage" IN ('FULL_CALENDAR_EVENT_LIST_FETCH_PENDING', 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING')`,
-      );
+        );
+      } catch {
+        await this.coreDataSource.query(
+          `ALTER TYPE ${schemaName}."calendarChannel_syncStage_enum" ADD VALUE IF NOT EXISTS 'CALENDAR_EVENT_LIST_FETCH_PENDING'`,
+        );
+
+        calendarChannelUpdateResult = await this.coreDataSource.query(
+          `UPDATE "${schemaName}"."${tableName}"
+         SET "syncStage" = 'CALENDAR_EVENT_LIST_FETCH_PENDING'
+         WHERE "syncStage" IN ('FULL_CALENDAR_EVENT_LIST_FETCH_PENDING', 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING')`,
+        );
+      }
 
       const calendarChannelRowsUpdated = calendarChannelUpdateResult[1] || 0;
 

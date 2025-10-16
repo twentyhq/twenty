@@ -61,7 +61,7 @@ msgstr "שדות {fieldType} אינם יכולים להיות ייחודיים."
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
-msgstr ""
+msgstr "נמצאו {hostnameCount} שמות מתחם עבור הדומיין '{domainName}'. צפה ל-1"
 
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
@@ -259,7 +259,7 @@ msgstr "קובץ מצורף"
 #. js-lingui-id: Q7akko
 #: src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception.ts
 msgid "An error occurred during message import"
-msgstr ""
+msgstr "אירעה שגיאה במהלך ייבוא הודעות"
 
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
@@ -270,7 +270,7 @@ msgstr "אירעה שגיאה."
 #. js-lingui-id: +MvnxO
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "An index must contain at least one field"
-msgstr ""
+msgstr "אינדקס חייב להכיל לפחות שדה אחד"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -291,7 +291,7 @@ msgstr "ערך סינון שדה כלשהו"
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain already registered."
-msgstr ""
+msgstr "הדומיין המאושר גישה כבר רשום."
 
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -307,7 +307,7 @@ msgstr "הדומיין שאושר כבר אומת."
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
-msgstr ""
+msgstr "אפריל"
 
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -357,7 +357,7 @@ msgstr "חברת הקובץ המצורף"
 #. js-lingui-id: wtcL/T
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment dashboard"
-msgstr ""
+msgstr "לוח מחוונים של קבצים מצורפים"
 
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -397,7 +397,7 @@ msgstr "סוג הקובץ המצורף"
 #. js-lingui-id: tH6L3e
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment workflow"
-msgstr ""
+msgstr "זרימת עבודה של קבצים מצורפים"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -430,7 +430,7 @@ msgstr "קבצים מצורפים המקושרים לאיש קשר."
 #. js-lingui-id: 2AEUIb
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Attachments linked to the dashboard"
-msgstr ""
+msgstr "קבצים מצורפים המקושרים ללוח הבקרה"
 
 #. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -440,7 +440,7 @@ msgstr "קבצים מצורפים המקושרים להזדמנות"
 #. js-lingui-id: 83l3Yd
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Attachments linked to the workflow"
-msgstr ""
+msgstr "קבצים מצורפים המקושרים לזרימת העבודה"
 
 #. js-lingui-id: fCbqr7
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -450,7 +450,7 @@ msgstr "קבצים מצורפים אשר קשורים ל{label}"
 #. js-lingui-id: DBHTm/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "August"
-msgstr ""
+msgstr "אוגוסט"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -466,7 +466,7 @@ msgstr "אימות אינו מופעל עם ספק זה."
 #. js-lingui-id: Tsx+z2
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr ""
+msgstr "נדרש אימות כדי לגשת לתכונה זו. אנא היכנס ונסה שוב."
 
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -573,23 +573,23 @@ msgstr "האגודות של אירועי ערוץ הלוח שנה"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Calendar Channels"
-msgstr "\\"
+msgstr "ערוצי יומן"
 
 #. js-lingui-id: bRk+FR
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar event"
-msgstr "\\"
+msgstr "אירוע יומן"
 
 #. js-lingui-id: N2kMfO
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Calendar event participant"
-msgstr "\\"
+msgstr "משתתף אירוע יומן"
 
 #. js-lingui-id: AWDqkQ
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Calendar event participants"
-msgstr "\\"
+msgstr "משתתפי אירוע יומן"
 
 #. js-lingui-id: ZI2UyM
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -597,13 +597,13 @@ msgstr "\\"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Calendar Event Participants"
-msgstr "\\"
+msgstr "משתתפי אירוע יומן"
 
 #. js-lingui-id: X9A2xC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar events"
-msgstr "\\"
+msgstr "אירועי יומן"
 
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
@@ -613,7 +613,7 @@ msgstr "אין אפשרות להתחבר ל-{connectFieldName}. לא נמצא ר
 #. js-lingui-id: 2oVE+z
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "Can't impersonate user via api key"
-msgstr ""
+msgstr "לא ניתן להתחזות למשתמש באמצעות מפתח API"
 
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -623,17 +623,17 @@ msgstr "לא ניתן להפעיל גרסה שאינה טיוטה או אינה 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
-msgstr "לא ניתן ליצור מספר גרסאות טיוטה לאותו תהליך עבודה."
+msgstr "לא ניתן ליצור מספר גרסאות טיוטה לאותו תהליך עבודה"
 
 #. js-lingui-id: RggZr4
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
-msgstr "לא ניתן ליצור גרסת תהליך עבודה במצב שאינו טיוטה."
+msgstr "לא ניתן ליצור גרסת תהליך עבודה במצב שאינו טיוטה"
 
 #. js-lingui-id: VPXcr5
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first."
-msgstr ""
+msgstr "לא ניתן למחוק חשבון: אתה המנהל היחידי. הקצה מנהל נוסף או מחק תחילה את המרחב(ים)."
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -644,7 +644,7 @@ msgstr "לא ניתן למחוק, אנא עדכן קודם את שדה מזהה 
 #. js-lingui-id: FrNWt0
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot disable non-active workflow version"
-msgstr "לא ניתן להשבית גרסת תהליך עבודה שאינה פעילה."
+msgstr "לא ניתן להשבית גרסת תהליך עבודה שאינה פעילה"
 
 #. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
@@ -654,7 +654,7 @@ msgstr "לא ניתן לאפשר ייחודיות עקב ערכים כפולים
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
-msgstr "לא ניתן להחזיק ביותר מגרסת תהליך עבודה פעילה אחת."
+msgstr "לא ניתן להחזיק ביותר מגרסת תהליך עבודה פעילה אחת"
 
 #. js-lingui-id: UcdPY5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
@@ -670,37 +670,37 @@ msgstr "לא ניתן לעדכן את מצב גרסת תהליך העבודה ב
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Channel ID"
-msgstr "\\"
+msgstr "ID ערוץ"
 
 #. js-lingui-id: Ubg/B+
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Channel Type"
-msgstr "\\"
+msgstr "סוג ערוץ"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "City"
-msgstr "\\"
+msgstr "עיר"
 
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
-msgstr "\\"
+msgstr "תאריך סגירה"
 
 #. js-lingui-id: 96YB1a
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Color Scheme"
-msgstr "\\"
+msgstr "ערכת צבעים"
 
 #. js-lingui-id: 07OSD1
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Compact View"
-msgstr "\\"
+msgstr "תצוגה קומפקטית"
 
 #. js-lingui-id: s2QZS6
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Companies"
-msgstr "\\"
+msgstr "חברות"
 
 #. js-lingui-id: 7i8j3G
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -712,18 +712,18 @@ msgstr "\\"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Company"
-msgstr "\\"
+msgstr "חברה"
 
 #. js-lingui-id: yA1de7
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company record position"
-msgstr "\\"
+msgstr "מיקום רשומת חברה"
 
 #. js-lingui-id: AgktVC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Conference Solution"
-msgstr "\\"
+msgstr "פתרון שיחות ועידה"
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -737,94 +737,94 @@ msgstr "לא ניתן להתחבר עבור {connectFieldName} על {objectMetad
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Connected Account"
-msgstr "\\"
+msgstr "חשבון מחובר"
 
 #. js-lingui-id: 9TzudL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Connected accounts"
-msgstr "\\"
+msgstr "חשבונות מחוברים"
 
 #. js-lingui-id: AMDUqA
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Connected Accounts"
-msgstr "\\"
+msgstr "חשבונות מחוברים"
 
 #. js-lingui-id: bA6O5B
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Contact auto creation policy"
-msgstr "\\"
+msgstr "מדיניות יצירת אנשי קשר אוטומטית"
 
 #. js-lingui-id: RnsmQs
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s avatar"
-msgstr "\\"
+msgstr "תמונת איש קשר"
 
 #. js-lingui-id: pL+pqi
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s city"
-msgstr "\\"
+msgstr "עיר איש קשר"
 
 #. js-lingui-id: VnWMlz
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s company"
-msgstr "\\"
+msgstr "חברת איש קשר"
 
 #. js-lingui-id: ITlFIB
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s Emails"
-msgstr "\\"
+msgstr "דוא\"ל איש קשר"
 
 #. js-lingui-id: GuRtLY
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s job title"
-msgstr "\\"
+msgstr "תפקיד איש קשר"
 
 #. js-lingui-id: QrCvRQ
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s Linkedin account"
-msgstr "\\"
+msgstr "LinkedIn איש קשר"
 
 #. js-lingui-id: 6xPSVt
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s name"
-msgstr "\\"
+msgstr "שם איש קשר"
 
 #. js-lingui-id: Y37CZ4
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s phone number"
-msgstr "\\"
+msgstr "טלפון איש קשר"
 
 #. js-lingui-id: zsW3gg
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s phone numbers"
-msgstr "\\"
+msgstr "טלפוני איש קשר"
 
 #. js-lingui-id: uuZ00G
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s X/Twitter account"
-msgstr "\\"
+msgstr "X/Twitter איש קשר"
 
 #. js-lingui-id: gdbojg
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
-msgstr ""
+msgstr "זוהו הרשאות שדה סותרות בשדה קשר ({fieldName})."
 
 #. js-lingui-id: LZf/L8
 #: src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
 msgid "Could not find flat entity in maps"
-msgstr ""
+msgstr "לא ניתן היה למצוא ישות שטוחה במפות"
 
 #. js-lingui-id: jBrX/g
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Could not find index field related field metadata"
-msgstr ""
+msgstr "לא ניתן למצוא מידע מטאדטה שדה קשור לאינדקס"
 
 #. js-lingui-id: HVajHk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Could not find index related object metadata"
-msgstr ""
+msgstr "לא ניתן למצוא מטאדטה אובייקט קשור לאינדקס"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -836,7 +836,7 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
-msgstr "\\"
+msgstr "נוצר ע\"י"
 
 #. js-lingui-id: 2ZhYYy
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
@@ -849,13 +849,13 @@ msgstr "נוצרו נתוני שדה metadata, נתוני העצם ההורה ל
 #: src/engine/twenty-orm/base.workspace-entity.ts
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Creation date"
-msgstr "\\"
+msgstr "תאריך יצירה"
 
 #. js-lingui-id: CJXWmO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Creation DateTime"
-msgstr "\\"
+msgstr "תאריך ושעת יצירה"
 
 #. js-lingui-id: umhXiy
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -865,7 +865,7 @@ msgstr "תבנית קרון '{pattern}' אינה חוקית."
 #. js-lingui-id: GuyjcQ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Cron trigger already exists"
-msgstr ""
+msgstr "טריגר קרון כבר קיים"
 
 #. js-lingui-id: Ej90Yp
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
@@ -873,12 +873,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Cron trigger not found"
-msgstr ""
+msgstr "טריגר הקרון לא נמצא"
 
 #. js-lingui-id: vz7B0E
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Cron trigger with same id already exists"
-msgstr ""
+msgstr "טריגר קרון עם מזהה זהה כבר קיים"
 
 #. js-lingui-id: Mikszu
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -901,7 +901,7 @@ msgstr "פריסת עמוד של לוח מחוונים"
 #. js-lingui-id: FrOkwR
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard record Position"
-msgstr ""
+msgstr "מיקום תיעוד לוח הבקרה"
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -916,7 +916,7 @@ msgstr "לוחות בקרה"
 #. js-lingui-id: K2CQHf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger already exists"
-msgstr ""
+msgstr "טריגר אירוע בסיסי נתונים כבר קיים"
 
 #. js-lingui-id: iS6kjG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
@@ -924,27 +924,27 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger not found"
-msgstr ""
+msgstr "גורם אירוע מסד נתונים לא נמצא"
 
 #. js-lingui-id: 0vtv+s
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger with same id already exists"
-msgstr ""
+msgstr "גורם אירוע מסד נתונים עם אותו מזהה כבר קיים"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
-msgstr "\\"
+msgstr "תבנית תאריך"
 
 #. js-lingui-id: 1lL5Iu
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Date when the record was deleted"
-msgstr "\\"
+msgstr "תאריך מחיקת הרשומה"
 
 #. js-lingui-id: r6zgGo
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "December"
-msgstr ""
+msgstr "דצמבר"
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -955,7 +955,7 @@ msgstr "ערך ברירת המחדל \"{defaultValue}\" חייב להיות אח
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value must be a string"
-msgstr "לערך ברירת מחדל חייב להיות מחרוזת"
+msgstr "ערך ברירת מחדל חייב להיות מחרוזת"
 
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -972,7 +972,7 @@ msgstr "ערכי ברירת המחדל חייבים להיות ייחודיים"
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Deleted at"
-msgstr "\\"
+msgstr "תאריך מחיקה"
 
 #. js-lingui-id: U1bSSI
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1012,17 +1012,17 @@ msgstr "ערך תצוגה"
 #. js-lingui-id: IymH4t
 #: src/engine/core-modules/public-domain/public-domain.service.ts
 msgid "Domain already used for workspace custom domain"
-msgstr ""
+msgstr "הדומיין כבר בשימוש כדומיין מותאם אישית של סביבת העבודה."
 
 #. js-lingui-id: 2sIVDj
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Domain is already registered"
-msgstr ""
+msgstr "הדומיין כבר רשום."
 
 #. js-lingui-id: PfJswy
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Domain is already registered as public domain"
-msgstr ""
+msgstr "הדומיין כבר רשום כדומיין ציבורי."
 
 #. js-lingui-id: wMncXq
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -1081,7 +1081,7 @@ msgstr "תאריך סיום"
 #. js-lingui-id: EzGlkq
 #: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
 msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr ""
+msgstr "משתנה סביבה CLOUDFLARE_API_KEY חייב להיות מוגדר על מנת להשתמש בתכונה זו."
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1091,7 +1091,7 @@ msgstr "חברה באירוע"
 #. js-lingui-id: CPhvC+
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event dashboard"
-msgstr ""
+msgstr "לוח בקרה לאירועים"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1195,12 +1195,12 @@ msgstr "התעלם מכתובות דוא\"ל לא מקצועיות"
 #. js-lingui-id: Lo5U0b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Executed by"
-msgstr "נתבע על ידי"
+msgstr "בוצע על ידי"
 
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
-msgstr "הציפייה היא שהשדות המגבילים ישמשו באופן עקבי בכל הפעולות עבור {connectFieldName}."
+msgstr "נדרש שאותם שדות אילוץ ישמשו באופן עקבי בכל הפעולות עבור {connectFieldName}."
 
 #. js-lingui-id: 5KfWxA
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1221,7 +1221,7 @@ msgstr "חברה מועדפת"
 #. js-lingui-id: Aj026i
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite dashboard"
-msgstr ""
+msgstr "לוח בקרה מועדף"
 
 #. js-lingui-id: TDlZ/o
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1319,7 +1319,7 @@ msgstr "מועדפים הקשורים לאיש קשר"
 #. js-lingui-id: 5zuBdE
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Favorites linked to the dashboard"
-msgstr ""
+msgstr "מועדפים המקושרים ללוח הבקרה"
 
 #. js-lingui-id: GOfcBt
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -1364,7 +1364,7 @@ msgstr "מועדפים המקושרים ל-{label}"
 #. js-lingui-id: 4lgLew
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
-msgstr ""
+msgstr "פברואר"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -1374,7 +1374,7 @@ msgstr "השדה כבר קיים"
 #. js-lingui-id: ugu505
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Field cannot be indexed as it belongs to a different object"
-msgstr ""
+msgstr "שדה לא יכול להיות מאונדקס כיוון שהוא שייך לאובייקט שונה"
 
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
@@ -1394,17 +1394,17 @@ msgstr "לא נמצא שדה שהוכרז כמזהה תווית"
 #. js-lingui-id: qelyBB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Field does not belong to the indexed object"
-msgstr ""
+msgstr "השדה אינו שייך לאובייקט המואנדקס"
 
 #. js-lingui-id: DXxcTd
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Field ID is already used in another index"
-msgstr ""
+msgstr "מזהה השדה כבר בשימוש באינדקס אחר"
 
 #. js-lingui-id: AgbRjM
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Field label identifier is required"
-msgstr ""
+msgstr "נחוצה זיהוי תווית השדה"
 
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -1422,12 +1422,12 @@ msgstr "מזהה המטא-דאטה של השדה"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "Field metadata not found"
-msgstr ""
+msgstr "לא נמצאו מטא-נתונים של שדה"
 
 #. js-lingui-id: uTPwH1
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field metadata to delete not found"
-msgstr ""
+msgstr "לא נמצאו נתוני metadata למחיקת שדה"
 
 #. js-lingui-id: Ljqo/T
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
@@ -1448,12 +1448,12 @@ msgstr "שם השדה אינו מסונכרן עם תווית השדה"
 #. js-lingui-id: QXuG8C
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Field permissions can only be used to restrict access, not to grant additional permissions."
-msgstr ""
+msgstr "אפשרויות שדה יכולות לשמש רק להכנת גישה, לא להעניק הרשאות נוספות."
 
 #. js-lingui-id: S+y2Wg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Field referenced in index does not exist"
-msgstr ""
+msgstr "השדה שמצוין באינדקס לא קיים"
 
 #. js-lingui-id: cK8ILP
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -1538,7 +1538,7 @@ msgstr "פעולת הטופס חייבת לכלול לפחות שדה אחד."
 #. js-lingui-id: 39y5bn
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Friday"
-msgstr ""
+msgstr "יום שישי"
 
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1616,48 +1616,48 @@ msgstr "אם הוגדר ערך ברירת מחדל יש לכלול לפחות ע
 #. js-lingui-id: Kfy/ML
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index already exists"
-msgstr ""
+msgstr "האינדקס כבר קיים"
 
 #. js-lingui-id: EwXumf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index field has an invalid reference"
-msgstr ""
+msgstr "לשדה האינדקס יש הפניה שגויה"
 
 #. js-lingui-id: +hk7cY
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index field ID already exists in another index"
-msgstr ""
+msgstr "מזהה שדה האינדקס כבר קיים באינדקס אחר"
 
 #. js-lingui-id: ITue4V
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index field references incorrect index metadata"
-msgstr ""
+msgstr "שדה האינדקס מציין מטאדטה שגויה של האינדקס"
 
 #. js-lingui-id: K1hWwv
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index must have at least one field"
-msgstr ""
+msgstr "האינדקס חייב לכלול לפחות שדה אחד"
 
 #. js-lingui-id: Hl6cv2
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index related object not found"
-msgstr ""
+msgstr "אובייקט הקשור לאינדקס לא נמצא"
 
 #. js-lingui-id: fY2zUQ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index to delete not found"
-msgstr ""
+msgstr "האינדקס למחיקה לא נמצא"
 
 #. js-lingui-id: qgBN4Y
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same id already exists"
-msgstr ""
+msgstr "אינדקס עם אותו מזהה כבר קיים"
 
 #. js-lingui-id: a+k+8J
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same name already exists"
-msgstr ""
+msgstr "אינדקס עם אותו שם כבר קיים"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -1682,7 +1682,7 @@ msgstr "קוד מדינה אינו חוקי {countryCode}."
 #. js-lingui-id: AMeEDO
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Invalid credentials. Please check your username and password."
-msgstr ""
+msgstr "פרטי התחברות לא חוקיים. אנא בדוק את שם המשתמש והסיסמה שלך."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1725,7 +1725,7 @@ msgstr "קלט קשר מורף לא תקין"
 #. js-lingui-id: VvhAS2
 #: src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util.ts
 msgid "Invalid object metadata input"
-msgstr ""
+msgstr "קלט מטא-נתונים לא תקין"
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -1792,7 +1792,7 @@ msgstr "מארגן האירוע"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Sent Folder"
-msgstr "האם תיקיית נשלחים"
+msgstr "תיקיית נשלחים"
 
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1811,7 +1811,7 @@ msgstr "מסונכרן"
 #. js-lingui-id: rjyWPb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "January"
-msgstr ""
+msgstr "ינואר"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1846,12 +1846,12 @@ msgstr "ערך Json לפרטי אירוע"
 #. js-lingui-id: u4ex5r
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "July"
-msgstr ""
+msgstr "יולי"
 
 #. js-lingui-id: zeEQd/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "June"
-msgstr ""
+msgstr "יוני"
 
 #. js-lingui-id: qmarO2
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1867,19 +1867,19 @@ msgstr "מפתח"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 msgid "Label identifier view field cannot be deleted"
-msgstr ""
+msgstr "שדה זיהוי תווית לא ניתן למחיקה."
 
 #. js-lingui-id: rI+dAx
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 msgid "Label identifier view field has to be in the lowest position"
-msgstr ""
+msgstr "שדה זיהוי תווית חייב להיות במיקום הנמוך ביותר."
 
 #. js-lingui-id: PqTWJf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 msgid "Label identifier view field has to be visible"
-msgstr ""
+msgstr "שדה זיהוי תווית חייב להיות גלוי."
 
 #. js-lingui-id: w8Rv8T
 #: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
@@ -1931,7 +1931,7 @@ msgstr "מזהה היסטוריית סנכרון אחרון"
 #. js-lingui-id: tGwswq
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Last time the record was changed"
-msgstr "הפעם האחרונה בה הרשומה הוחלפה"
+msgstr "הפעם האחרונה שהרשומה שונתה"
 
 #. js-lingui-id: o1zvNS
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -1985,17 +1985,17 @@ msgstr "אופרטור לוגי לקבוצת הפילטר"
 #. js-lingui-id: hg6l4j
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
-msgstr ""
+msgstr "מרץ"
 
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr ""
+msgstr "מספר המרבי של תקליטים לעדכון או הוספה הוא {QUERY_MAX_RECORDS}."
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
-msgstr ""
+msgstr "מאי"
 
 #. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2008,36 +2008,36 @@ msgstr "לינק לפגישה"
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message"
-msgstr "\\"
+msgstr "הודעה"
 
 #. js-lingui-id: g+QGD6
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel"
-msgstr "\\"
+msgstr "ערוץ הודעות"
 
 #. js-lingui-id: DzU4a3
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel Association"
-msgstr "\\"
+msgstr "שיוך ערוץ הודעות"
 
 #. js-lingui-id: wd/R++
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Id"
-msgstr "\\"
+msgstr "ID ערוץ הודעות"
 
 #. js-lingui-id: disipM
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Message Association"
-msgstr "\\"
+msgstr "שיוך הודעה לערוץ הודעות"
 
 #. js-lingui-id: ijQY3P
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Message Associations"
-msgstr "\\"
+msgstr "שיוכי הודעות לערוצי הודעות"
 
 #. js-lingui-id: k7LXPQ
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2045,56 +2045,56 @@ msgstr "\\"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Message Channels"
-msgstr "\\"
+msgstr "ערוצי הודעות"
 
 #. js-lingui-id: /4uGJc
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Direction"
-msgstr "\\"
+msgstr "כיוון הודעה"
 
 #. js-lingui-id: fBw8fQ
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message External Id"
-msgstr "\\"
+msgstr "ID חיצוני של הודעה"
 
 #. js-lingui-id: CStLnc
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Message Folder"
-msgstr "\\"
+msgstr "תיקיית הודעות"
 
 #. js-lingui-id: XCJIdB
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message folder import policy"
-msgstr ""
+msgstr "הגבלות ייבוא תיקיית ההודעות"
 
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Folders"
-msgstr "\\"
+msgstr "תיקיות הודעות"
 
 #. js-lingui-id: 6icznk
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Id"
-msgstr "\\"
+msgstr "ID הודעה"
 
 #. js-lingui-id: 9FJSpK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Message id from the message header"
-msgstr "\\"
+msgstr "ID הודעה מכותרת ההודעה"
 
 #. js-lingui-id: yaC1Aq
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message id from the messaging provider"
-msgstr "\\"
+msgstr "ID הודעה מספק ההודעות"
 
 #. js-lingui-id: IUmVwu
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message Participant"
-msgstr "\\"
+msgstr "משתתף הודעה"
 
 #. js-lingui-id: FhIFx7
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2106,28 +2106,28 @@ msgstr "\\"
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message Participants"
-msgstr "\\"
+msgstr "משתתפי הודעה"
 
 #. js-lingui-id: IC5A8V
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Synced with a Message Channel"
-msgstr "\\"
+msgstr "הודעה מסונכרנת עם ערוץ הודעות"
 
 #. js-lingui-id: de2nM/
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Message Thread"
-msgstr "\\"
+msgstr "שרשור הודעות"
 
 #. js-lingui-id: km1jgD
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Message Thread Id"
-msgstr "\\"
+msgstr "ID שרשור הודעות"
 
 #. js-lingui-id: RD0ecC
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Message Threads"
-msgstr "\\"
+msgstr "שרשורי הודעות"
 
 #. js-lingui-id: t7TeQU
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2149,22 +2149,22 @@ msgstr "הודעות מהשרשור."
 #. js-lingui-id: XcKQrV
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider access token"
-msgstr "\\"
+msgstr "טוקן גישה של ספק הודעות"
 
 #. js-lingui-id: 80EvIk
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider refresh token"
-msgstr "\\"
+msgstr "טוקן רענון של ספק הודעות"
 
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
-msgstr "חסרים שדות דרושים: יש למלא לפחות אילוץ ייחודי אחד באופן מלא עבור '{connectFieldName}'."
+msgstr "שדות חובה חסרים: לפחות אילוץ ייחודי אחד חייב להיות מאוכלס במלואו עבור '{connectFieldName}'."
 
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
-msgstr ""
+msgstr "יום שני"
 
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -2174,7 +2174,7 @@ msgstr "מטען יצירת קשרים מורפיים חייב להיות בעל
 #. js-lingui-id: nU54nm
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr "מטען יצירת קשרים מורפיים חייב להכיל קשר רק עם מטא-נתונים של עצמים אחרים"
+msgstr "מטעני יצירת קשר מסוג Morph חייבים להכיל רק קשרים למטא-נתוני אובייקטים אחרים"
 
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -2194,7 +2194,7 @@ msgstr "ערך ברירת המחדל של שדה רב-בחירה חייב להי
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
-msgstr ""
+msgstr "נמצאו מספר תקליטים עם אותם ערכים ייחודיים לשדות עבור {conflictingFieldsValues}. לא ניתן לקבוע איזה תקליט לעדכן."
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2211,7 +2211,7 @@ msgstr ""
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Name"
-msgstr "\\"
+msgstr "שם"
 
 #. js-lingui-id: aD053i
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
@@ -2231,7 +2231,7 @@ msgstr "שם זה \"{flatFieldMetadataName}\" אינו זמין שכן כבר ב
 #. js-lingui-id: Q2loDF
 #: src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service.ts
 msgid "Name \"{name}\" is not available."
-msgstr ""
+msgstr "השם \"{name}\" אינו זמין."
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2256,17 +2256,17 @@ msgstr "השם ארוך מדי: הוא חורג מהגבלת 63 התווים."
 #. js-lingui-id: go/Vg1
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too short"
-msgstr ""
+msgstr "השם קצר מדי"
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Name of the favorite folder"
-msgstr "\\"
+msgstr "שם תיקיית מועדפים"
 
 #. js-lingui-id: csMjko
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
-msgstr "\\"
+msgstr "שם ריצת הזרימה"
 
 #. js-lingui-id: P+jdmX
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
@@ -2297,7 +2297,7 @@ msgstr "לא סופקה תבנית בהפעלת קרון מותאם אישית."
 #. js-lingui-id: 2iURlq
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "No permissions are set for this role on the selected object. Please set object permissions first."
-msgstr ""
+msgstr "לא הוגדרו הרשאות עבור תפקיד זה על האובייקט הנבחר. יש להגדיר תחילה הגדרות הרשאות."
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2322,7 +2322,7 @@ msgstr "לא סופק סוג הפעלה."
 #. js-lingui-id: /BipSk
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
-msgstr ""
+msgstr "לא נמצא הקשר אימות תקף."
 
 #. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2331,17 +2331,17 @@ msgstr ""
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Note"
-msgstr "\\"
+msgstr "הערה"
 
 #. js-lingui-id: GGlkb7
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note attachments"
-msgstr "\\"
+msgstr "קבצים מצורפים להערה"
 
 #. js-lingui-id: Q1Rz+6
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note body"
-msgstr "\\"
+msgstr "גוף ההערה"
 
 #. js-lingui-id: Yp057F
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -2420,12 +2420,12 @@ msgstr "NoteTarget אדם"
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "November"
-msgstr ""
+msgstr "נובמבר"
 
 #. js-lingui-id: bR2sEm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Number format"
-msgstr ""
+msgstr "פורמט מספר"
 
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -2457,7 +2457,7 @@ msgstr "מזהה מטא-נתונים של אובייקט"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Object metadata not found"
-msgstr ""
+msgstr "לא נמצאו מטא-נתונים של אובייקט"
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2505,12 +2505,12 @@ msgstr "ObjectMetadataId נדרש ליצירת תצוגה."
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
-msgstr ""
+msgstr "אוקטובר"
 
 #. js-lingui-id: eWQQpx
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
-msgstr ""
+msgstr "אובייקט אחד או יותר שאתה מנסה להגדיר הרשאות עבורו לא נמצא. ייתכן שהוא נמחק."
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2618,7 +2618,7 @@ msgstr "נדרשת תווית אפשרות."
 #. js-lingui-id: dFudyC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label must be a string of at least one character"
-msgstr "כתובת אפשרות חייבת להיות מחרוזת של לפחות תו אחד"
+msgstr "תווית האפשרות חייבת להיות מחרוזת של תו אחד לפחות"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2723,23 +2723,23 @@ msgstr "טלפונים"
 #. js-lingui-id: rxi3R2
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
-msgstr ""
+msgstr "אנא בדוק את הגדרות החיבור שלך. וודא ששרת המארח, הפורט והסיסמא נכונים."
 
 #. js-lingui-id: v0iiWr
 #: src/engine/core-modules/webhook/webhook.service.ts
 #: src/engine/core-modules/webhook/webhook.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL."
-msgstr ""
+msgstr "אנא ספק כתובת URL חוקית של HTTP או HTTPS."
 
 #. js-lingui-id: RDvKTq
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "Please provide connection details to configure your email account."
-msgstr ""
+msgstr "אנא ספק פרטי חיבור כדי להגדיר את חשבון הדואר האלקטרוני שלך."
 
 #. js-lingui-id: 0ldKS0
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
-msgstr ""
+msgstr "אנא בחר סוג חיבור חוקי (IMAP, SMTP, או CalDAV) ונסה שוב."
 
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2786,7 +2786,7 @@ msgstr "מיקום בקבוצת מסנני ההצגה"
 #. js-lingui-id: TTHIbk
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred color scheme"
-msgstr "''"
+msgstr "ערכת צבעים מועדפת"
 
 #. js-lingui-id: 5v4qYi
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2826,12 +2826,12 @@ msgstr "ספק"
 #. js-lingui-id: OL88cI
 #: src/engine/core-modules/public-domain/public-domain.service.ts
 msgid "Public domain already registered"
-msgstr ""
+msgstr "הדומיין הציבורי כבר רשום"
 
 #. js-lingui-id: Capzni
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
-msgstr ""
+msgstr "URL הדומיין הציבורי לא מוגדר. אנא קבע את המשתנה הסביבתי PUBLIC_DOMAIN_URL."
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2842,12 +2842,12 @@ msgstr "תאריך קבלה"
 #: src/engine/metadata-modules/view-field/services/view-field.service.ts
 #: src/engine/metadata-modules/view-field/services/view-field.service.ts
 msgid "Record text must be in first position of the view."
-msgstr ""
+msgstr "טקסט הרישום חייב להיות במצב הראשון של התצוגה."
 
 #. js-lingui-id: KGmwY/
 #: src/engine/metadata-modules/view-field/services/view-field.service.ts
 msgid "Record text must stay visible."
-msgstr ""
+msgstr "טקסט הרישום חייב להישאר גלוי."
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -2915,7 +2915,7 @@ msgstr "תפקיד"
 #. js-lingui-id: MFW30/
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route already exists"
-msgstr ""
+msgstr "המקטע כבר קיים"
 
 #. js-lingui-id: ldQZkA
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -2923,22 +2923,22 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route not found"
-msgstr ""
+msgstr "מקטע לא נמצא"
 
 #. js-lingui-id: NCQS+K
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route path already exists"
-msgstr ""
+msgstr "נתיב המקטע כבר קיים"
 
 #. js-lingui-id: v5H7VS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route with same id already exists"
-msgstr ""
+msgstr "נתיב עם אותו מזהה כבר קיים"
 
 #. js-lingui-id: c10Yre
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route with same path already exists"
-msgstr ""
+msgstr "נתיב עם אותו נתיב כבר קיים"
 
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2949,7 +2949,7 @@ msgstr "ריצות"
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
-msgstr ""
+msgstr "יום שבת"
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2965,12 +2965,12 @@ msgstr "וקטור חיפוש"
 #. js-lingui-id: hgvbYY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "September"
-msgstr ""
+msgstr "ספטמבר"
 
 #. js-lingui-id: F3+i2a
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 msgid "Serverless function already exists"
-msgstr ""
+msgstr "הפונקציה חסרת השרת כבר קיימת"
 
 #. js-lingui-id: MSgd2w
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
@@ -2990,17 +2990,17 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Serverless function not found"
-msgstr ""
+msgstr "לא נמצאה פונקציה חסרת שרת"
 
 #. js-lingui-id: jNhvmj
 #: src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util.ts
 msgid "Serverless function to update not found"
-msgstr ""
+msgstr "לא נמצאה פונקציה חסרת שרת לעדכון"
 
 #. js-lingui-id: zoBkIJ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 msgid "Serverless function with same id already exists"
-msgstr ""
+msgstr "פונקציה חסרת שרת עם מזהה זהה כבר קיימת"
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -3015,12 +3015,12 @@ msgstr "גודל"
 #. js-lingui-id: RyE+Of
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
-msgstr ""
+msgstr "חלק מהמידע שסופק אינו חוקי. אנא בדוק את הקלט שלך ונסה שוב."
 
 #. js-lingui-id: 01Sxb6
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
-msgstr ""
+msgstr "חלק מהרשאות שבחרת אינן תקפות. אנא נסה שוב עם הגדרות הרשאות חוקיות."
 
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -3099,7 +3099,7 @@ msgstr "נושא"
 #. js-lingui-id: DBC3t5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
-msgstr ""
+msgstr "יום ראשון"
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -3274,7 +3274,7 @@ msgstr "ספק החשבון"
 #. js-lingui-id: eC8p5b
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr ""
+msgstr "למפתח ה-API אין תפקיד תקף שייך. אנא בדוק את הגדרת ה-API שלך."
 
 #. js-lingui-id: qnNFrW
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -3321,12 +3321,12 @@ msgstr "תאריך קבלת ההודעה"
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The default role cannot be deleted as it is required for the workspace to function properly."
-msgstr ""
+msgstr "לא ניתן למחוק את התפקיד המוגדר כברירת מחדל שכן הוא נחוץ לפעולת המרחב."
 
 #. js-lingui-id: 6BBrjb
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
-msgstr ""
+msgstr "לא נמצא התפקיד המוגדר כברירת מחדל עבור מרחב זה. אנא פנה לתמיכה לקבלת עזרה."
 
 #. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3336,7 +3336,7 @@ msgstr "ביצוע הזרימה"
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
-msgstr ""
+msgstr "לא ניתן למצוא את השדה שאתה מנסה להגדיר הרשאות עבורו. ייתכן שהוא נמחק."
 
 #. js-lingui-id: W3raza
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -3357,7 +3357,7 @@ msgstr "שם זה אינו זמין"
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The object you are trying to set permissions for could not be found. It may have been deleted."
-msgstr ""
+msgstr "לא ניתן למצוא את האובייקט שאתה מנסה להגדיר הרשאות עבורו. ייתכן שהוא נמחק."
 
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -3367,12 +3367,12 @@ msgstr "שם ההזדמנות"
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
-msgstr ""
+msgstr "לא ניתן למצוא את התפקיד שאתה מחפש. ייתכן שהוא נמחק או שאין לך גישה אליו."
 
 #. js-lingui-id: 5h4Nxe
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "The role you are trying to assign could not be found. It may have been deleted."
-msgstr ""
+msgstr "לא ניתן למצוא את התפקיד שאתה מנסה להעניק. ייתכן שהוא נמחק."
 
 #. js-lingui-id: HRcugS
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
@@ -3380,7 +3380,7 @@ msgstr ""
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
-msgstr ""
+msgstr "לא ניתן למצוא את התפקיד שאתה מנסה לשנות. ייתכן שהוא נמחק או שאין לך גישה אליו."
 
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -3425,32 +3425,32 @@ msgstr "סטטוס גרסת תהליך העבודה"
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "There was an issue with your connection settings. Please try again."
-msgstr ""
+msgstr "הייתה בעיה להגדרות החיבור שלך. אנא נסה שוב."
 
 #. js-lingui-id: Bm40Ow
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr ""
+msgstr "{fieldName} זה כבר תפוס. אנא בחר ערך אחר."
 
 #. js-lingui-id: CYyoPc
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr ""
+msgstr "{fieldName} זה עם ערך {duplicatedValues} כבר תפוס. אנא בחר ערך אחר."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
-msgstr ""
+msgstr "מפתח ה-API הזה בוטל ולא ניתן להשתמש בו עוד."
 
 #. js-lingui-id: Jmzgho
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
-msgstr ""
+msgstr "מפתח ה-API הזה פג תוקף. אנא צור אחד חדש."
 
 #. js-lingui-id: r/Z8XK
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr ""
+msgstr "צירוף זה של {fieldNames} כבר קיים. אנא השתמש בערכים שונים."
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
@@ -3466,17 +3466,17 @@ msgstr "שם זה אינו זמין."
 #. js-lingui-id: eitC3W
 #: src/engine/workspace-datasource/workspace-datasource.service.ts
 msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr ""
+msgstr "הפעולה הזו אינה מותרת. אנא נסה גישה אחרת או פנה לתמיכה אם אתה צריך עזרה."
 
 #. js-lingui-id: TjUnO1
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This record already exists. Please check your data and try again."
-msgstr ""
+msgstr "רישום זה כבר קיים. אנא בדוק את הנתונים שלך ונסה שוב."
 
 #. js-lingui-id: +L9yxk
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "This role cannot be assigned to users. Please select a different role."
-msgstr ""
+msgstr "לא ניתן להקצות תפקיד זה למשתמשים. אנא בחר תפקיד אחר."
 
 #. js-lingui-id: KoDdqN
 #: src/engine/metadata-modules/role/role.service.ts
@@ -3484,7 +3484,7 @@ msgstr ""
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
-msgstr ""
+msgstr "לא ניתן לשנות תפקיד זה כי הוא תפקיד מערכת. רק תפקידים מותאמים אישית יכולים להשתנות."
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -3507,7 +3507,7 @@ msgstr "מספר ניסיונות כשל בדיקת מהירות"
 #. js-lingui-id: kkDQ8m
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
-msgstr ""
+msgstr "יום חמישי"
 
 #. js-lingui-id: n9nSNJ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3541,7 +3541,7 @@ msgstr "פעילויות ציר זמנים הקשורות לחברה"
 #. js-lingui-id: CNev+0
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Timeline activities linked to the dashboard"
-msgstr ""
+msgstr "פעילויות ציר זמן המקושרות ללוח הבקרה"
 
 #. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -3595,7 +3595,7 @@ msgstr "כותרת"
 #. js-lingui-id: G3myU+
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Tuesday"
-msgstr ""
+msgstr "יום שלישי"
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3634,7 +3634,7 @@ msgstr "השם המעודכן של השדה אינו מסונכרן עם התו�
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User already exists"
-msgstr ""
+msgstr "המשתמש כבר קיים"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
@@ -3645,7 +3645,7 @@ msgstr "למשתמש אין גישה למרחב עבודה זה"
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
-msgstr ""
+msgstr "למשתמש אין הרשאה."
 
 #. js-lingui-id: YFciqL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3665,7 +3665,7 @@ msgstr "המשתמש אינו חלק מהמקום העבודה."
 #. js-lingui-id: g5Z6no
 #: src/engine/core-modules/admin-panel/admin-panel.service.ts
 msgid "User not found. Please check the email or ID."
-msgstr ""
+msgstr "לא נמצא משתמש. אנא בדוק את הדוא\"ל או את מזהה."
 
 #. js-lingui-id: 4juE7s
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3685,7 +3685,7 @@ msgstr "פורמט התאריך המועדף על המשתמש"
 #. js-lingui-id: PLfanm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred number format"
-msgstr ""
+msgstr "פורמט המספר המועדף על המשתמש"
 
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3700,7 +3700,7 @@ msgstr "פורמט הזמן המועדף על המשתמש"
 #. js-lingui-id: xInMK/
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Validation failed for 0 object(s) and 0 field(s)"
-msgstr ""
+msgstr "האימות נכשל עבור 0 אובייקטים ו-0 שדות"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3747,7 +3747,7 @@ msgstr "תצוגה"
 #. js-lingui-id: HhN1Bv
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View already exists"
-msgstr ""
+msgstr "התצוגה כבר קיימת"
 
 #. js-lingui-id: cZPDyy
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -3757,7 +3757,7 @@ msgstr "שדה תצוגה"
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field already exists"
-msgstr ""
+msgstr "שדה התצוגה כבר קיים"
 
 #. js-lingui-id: Xm6R6B
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -3767,12 +3767,12 @@ msgstr "שדה התצוגה כבר קיים."
 #. js-lingui-id: 7jUWQ+
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field metadata already exists"
-msgstr ""
+msgstr "נתוני שדה התצוגה כבר קיימים"
 
 #. js-lingui-id: Yvf7WL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field metadata with id {flatViewFieldId} already exists"
-msgstr ""
+msgstr "נתוני שדה התצוגה עם מזהה {flatViewFieldId} כבר קיימים"
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -3784,23 +3784,23 @@ msgstr "מיקום שדה התצוגה"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field position cannot be lower than label identifier view field position"
-msgstr ""
+msgstr "מיקום שדה תצוגה לא יכול להיות נמוך ממיקום שדה זיהוי תווית."
 
 #. js-lingui-id: Ju6gri
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field related view"
-msgstr "\t"
+msgstr "התצוגה הקשורה לשדה התצוגה"
 
 #. js-lingui-id: WZzm3R
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field related view object metadata not found"
-msgstr ""
+msgstr "לא נמצאו נתוני Metadata של עצם התצוגה הקשור לשדה תצוגה."
 
 #. js-lingui-id: tvTr2y
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field size"
-msgstr "\t"
+msgstr "גודל שדה תצוגה"
 
 #. js-lingui-id: BkII8t
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -3811,48 +3811,48 @@ msgstr "\t"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field to delete has not been soft deleted"
-msgstr ""
+msgstr "שדה התצוגה למחיקה לא נמחק רכות"
 
 #. js-lingui-id: XJlyZS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to delete not found"
-msgstr ""
+msgstr "לא נמצא שדה תצוגה למחיקה"
 
 #. js-lingui-id: DXyYuh
 #: src/engine/metadata-modules/flat-view-field/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to destroy not found"
-msgstr ""
+msgstr "לא נמצא שדה תצוגה למחיקה"
 
 #. js-lingui-id: Fpy/K1
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
 msgid "View field to update not found"
-msgstr ""
+msgstr "שדה תצוגה לעדכון לא נמצא"
 
 #. js-lingui-id: AprfQL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field to update parent view not found"
-msgstr ""
+msgstr "שדה תצוגה לעדכון תצוגת הורה לא נמצא."
 
 #. js-lingui-id: sqzMKR
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field to update parent view object not found"
-msgstr ""
+msgstr "שדה תצוגה לעדכון עצם תצוגת הורה לא נמצא."
 
 #. js-lingui-id: Gd/LzL
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field visibility"
-msgstr "\t"
+msgstr "נראות שדה תצוגה"
 
 #. js-lingui-id: 89Wiy+
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field with same fieldmetadataId and viewId already exists"
-msgstr ""
+msgstr "שדה תצוגה עם אותה fieldmetadataId ו-viewId כבר קיים"
 
 #. js-lingui-id: GUFYyq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3893,7 +3893,7 @@ msgstr "קבוצות סינון תצוגה"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 msgid "View filter has to be soft deleted first"
-msgstr ""
+msgstr "המסנן תצוגה חייב להימחק תחילה באופן רך"
 
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -3901,7 +3901,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 msgid "View filter not found"
-msgstr ""
+msgstr "לא נמצא מסנן תצוגה"
 
 #. js-lingui-id: 4MG8+B
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3921,17 +3921,17 @@ msgstr "שדה יעד של סינון תצוגה"
 #. js-lingui-id: 3l1ppY
 #: src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util.ts
 msgid "View filter to delete not found"
-msgstr ""
+msgstr "לא נמצא מסנן תצוגה למחיקה"
 
 #. js-lingui-id: 9gedIx
 #: src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util.ts
 msgid "View filter to destroy not found"
-msgstr ""
+msgstr "לא נמצא מסנן תצוגה להשמדה"
 
 #. js-lingui-id: GzthLy
 #: src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util.ts
 msgid "View filter to update not found"
-msgstr ""
+msgstr "לא נמצא מסנן תצוגה לעדכון"
 
 #. js-lingui-id: 3KzkxN
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3942,7 +3942,7 @@ msgstr "ערך סינון תצוגה"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 msgid "View filter with this id already exists"
-msgstr ""
+msgstr "מסנן תצוגה עם מזהה זה כבר קיים"
 
 #. js-lingui-id: vj5JsR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3969,7 +3969,7 @@ msgstr "שדה יעד של קבוצת תצוגה"
 #. js-lingui-id: b1Vc+l
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group visibility"
-msgstr "\t"
+msgstr "נראות קבוצת תצוגה"
 
 #. js-lingui-id: V4nZs/
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3981,22 +3981,22 @@ msgstr "קבוצות תצוגה"
 #. js-lingui-id: qXlovu
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View icon"
-msgstr "\t"
+msgstr "סמל תצוגה\t"
 
 #. js-lingui-id: cd/+ZD
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View Kanban column field"
-msgstr "\t"
+msgstr "שדה עמודת קנבן בתצוגה\t"
 
 #. js-lingui-id: vdfZ+A
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View key"
-msgstr "\t"
+msgstr "מפתח תצוגה\t"
 
 #. js-lingui-id: oOljSE
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View name"
-msgstr "\t"
+msgstr "שם תצוגה\t"
 
 #. js-lingui-id: F4A9mL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
@@ -4008,12 +4008,12 @@ msgstr "\t"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View not found"
-msgstr ""
+msgstr "תצוגה לא נמצאה"
 
 #. js-lingui-id: rhO8zp
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View position"
-msgstr "\t"
+msgstr "מיקום תצוגה\t"
 
 #. js-lingui-id: EUjpwJ
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -4038,7 +4038,7 @@ msgstr "סידור תצוגה לא נמצא"
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort related view"
-msgstr "קשור למיון תצוגה"
+msgstr "תצוגה קשורה למיון תצוגה"
 
 #. js-lingui-id: +du2wy
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -4061,22 +4061,22 @@ msgstr "אוביקט יעד של תצוגה"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View to delete has not been soft deleted"
-msgstr ""
+msgstr "התצוגה למחיקה לא עברה מחיקה רכה"
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
-msgstr ""
+msgstr "לא נמצאה תצוגה למחיקה"
 
 #. js-lingui-id: NnD3Ti
 #: src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
 msgid "View to destroy not found"
-msgstr ""
+msgstr "לא נמצאה תצוגה להשמדה"
 
 #. js-lingui-id: 3+GbNY
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "View to update not found"
-msgstr ""
+msgstr "לא נמצאה תצוגה לעדכון"
 
 #. js-lingui-id: bJAIqT
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -4086,7 +4086,7 @@ msgstr "סוג תצוגה"
 #. js-lingui-id: ZgRtC4
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View with same id is already exists"
-msgstr ""
+msgstr "תצוגה עם מזהה זהה כבר קיימת"
 
 #. js-lingui-id: aeqysn
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -4135,7 +4135,7 @@ msgstr "תצוגות"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Visibility"
-msgstr "\t"
+msgstr "נראות"
 
 #. js-lingui-id: oh8+os
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -4151,32 +4151,32 @@ msgstr "אנו חווים בעיה זמנית עם מסד הנתונים שלנ�
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't connect to your CalDAV server. Please check your server settings and try again."
-msgstr ""
+msgstr "לא הצלחנו להתחבר לשרת ה-CalDAV שלך. אנא בדוק את הגדרות השרת ונסה שוב."
 
 #. js-lingui-id: ax8unE
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't connect to your email server. Please check your server settings and try again."
-msgstr ""
+msgstr "לא הצלחנו להתחבר לשרת הדואר האלקטרוני שלך. אנא בדוק את הגדרות השרת שלך ונסה שוב."
 
 #. js-lingui-id: g4rOV3
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again."
-msgstr ""
+msgstr "לא הצלחנו להתחבר לשרת הדואר היוצא שלך. אנא בדוק את הגדרות ה-SMTP ונסה שוב."
 
 #. js-lingui-id: v8UNEA
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't log in to your email account. Please check your email address and password, then try again."
-msgstr ""
+msgstr "לא הצלחנו להתחבר לחשבון הדואר האלקטרוני שלך. אנא בדוק את כתובת הדוא\"ל והסיסמה שלך, ולאחר מכן נסה שוב."
 
 #. js-lingui-id: YxBvFz
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
-msgstr ""
+msgstr "נתקלנו בבעיה בחיבור לחשבון הדואר האלקטרוני שלך. אנא בדוק את ההגדרות שלך ונסה שוב."
 
 #. js-lingui-id: VAcXNz
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Wednesday"
-msgstr ""
+msgstr "יום רביעי"
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
@@ -4194,7 +4194,7 @@ msgstr "ברוך הבא ל-Twenty: נא לאשר את האימייל שלך"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Workflow"
-msgstr "Workflows"
+msgstr "זרימת עבודה"
 
 #. js-lingui-id: hdtWQn
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -4340,7 +4340,7 @@ msgstr "גרסת זרימת עבודה"
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
-msgstr ""
+msgstr "יצירת סביבת עבודה מוגבלת למנהלים בלבד"
 
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -4438,48 +4438,48 @@ msgstr "X"
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/role/role.resolver.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
-msgstr ""
+msgstr "אינך יכול לשנות תפקיד משלך. אנא בקש מנהל נוסף לעדכן את תפקידך."
 
 #. js-lingui-id: y5haJ4
 #: src/engine/metadata-modules/role/role.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
-msgstr ""
+msgstr "אינך יכול לתת הרשאות עריכה ללא מתן הרשאות קריאה. אנא אפשר גישת קריאה תחילה."
 
 #. js-lingui-id: 8wovNr
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
-msgstr ""
+msgstr "לא ניתן להסיר את תפקיד המנהל מהאדמיניסטרטור האחרון. אנא הקצה מנהל נוסף תחילה."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
-msgstr ""
+msgstr "לא ניתן להגדיר הרשאות שדה על אובייקטי מערכת מאחר שהם מנוהלים על ידי הפלטפורמה."
 
 #. js-lingui-id: SI6USg
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr ""
+msgstr "לא ניתן להגדיר הרשאות על אובייקטי מערכת מאחר שהם מנוהלים על ידי הפלטפורמה."
 
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permissions.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "אין לך הרשאה לגשת לתכונה זו. אנא פנה למנהל המרחב שלך לקבלת גישה."
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "אין לך הרשאה להיכנס למשתמשים אחרים. אנא פנה למנהל המרחב שלך לקבלת גישה."
 
 #. js-lingui-id: k7P8yU
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "You do not have permission to manage security settings. Please contact your workspace administrator."
-msgstr ""
+msgstr "אין לך הרשאה לנהל הגדרות אבטחה. אנא פנה למנהל המרחב שלך."
 
 #. js-lingui-id: svchJc
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "You do not have permission to manage workspace settings. Please contact your workspace administrator."
-msgstr ""
+msgstr "אין לך הרשאה לנהל הגדרות המרחב. אנא פנה למנהל המרחב שלך."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -4494,7 +4494,7 @@ msgstr "גרסת האפליקציה שלך ישנה. נא לרענן את הדף
 #. js-lingui-id: J5Vm4Q
 #: src/engine/core-modules/billing/billing.validate.ts
 msgid "Your billing subscription is corrupted. Please contact support."
-msgstr ""
+msgstr "המנוי שלך לכרטיסייה תקול. אנא פנה לתמיכה."
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -4506,7 +4506,7 @@ msgstr "הסיסמה שלך שונתה בהצלחה"
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
-msgstr ""
+msgstr "לא נמצא תפקידך במרחב זה. אנא פנה למנהל המרחב שלך."
 
 #. js-lingui-id: vPccnr
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -4521,4 +4521,4 @@ msgstr "המקום העבודה שלך עודכן עם מודל נתונים ח�
 #. js-lingui-id: ZukXiD
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
-msgstr ""
+msgstr "לא נמצא החיברתך במרחב זה. ייתכן שאין לך עוד גישה למרחב זה."
