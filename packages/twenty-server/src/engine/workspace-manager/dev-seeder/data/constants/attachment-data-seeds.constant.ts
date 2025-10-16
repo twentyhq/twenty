@@ -11,9 +11,9 @@ type AttachmentDataSeed = {
   fullPath: string;
   type: string;
   authorId: string | null;
-  createdBySource: string;
-  createdByWorkspaceMemberId: string;
-  createdByName: string;
+  // createdBySource: string;
+  // createdByWorkspaceMemberId: string;
+  // createdByName: string;
   personId: string | null;
   companyId: string | null;
   noteId: string | null;
@@ -27,9 +27,9 @@ export const ATTACHMENT_DATA_SEED_COLUMNS: (keyof AttachmentDataSeed)[] = [
   'fullPath',
   'type',
   'authorId',
-  'createdBySource',
-  'createdByWorkspaceMemberId',
-  'createdByName',
+  // 'createdBySource',
+  // 'createdByWorkspaceMemberId',
+  // 'createdByName',
   'personId',
   'companyId',
   'noteId',
@@ -174,9 +174,9 @@ const GENERATE_ATTACHMENT_SEEDS = (): AttachmentDataSeed[] => {
       fullPath: FILE_TEMPLATE.fullPath,
       type: NAME_VARIATION.type,
       authorId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      createdBySource: 'MANUAL',
-      createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      createdByName: 'Tim A',
+      // createdBySource: 'MANUAL',
+      //createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      //createdByName: 'Tim A',
       personId,
       companyId,
       noteId,
