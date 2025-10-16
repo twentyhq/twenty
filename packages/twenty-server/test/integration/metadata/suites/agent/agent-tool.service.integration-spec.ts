@@ -25,8 +25,8 @@ describe('AgentToolGeneratorService Integration', () => {
         .spyOn(context.agentService, 'findOneAgent')
         .mockResolvedValue(context.testAgent as any);
       jest
-        .spyOn(context.roleRepository, 'findOne')
-        .mockResolvedValue(roleWithFullPermissions);
+        .spyOn(context.roleRepository, 'find')
+        .mockResolvedValue([roleWithFullPermissions]);
       jest
         .spyOn(
           context.workspacePermissionsCacheService,
@@ -75,8 +75,8 @@ describe('AgentToolGeneratorService Integration', () => {
         .spyOn(context.agentService, 'findOneAgent')
         .mockResolvedValue(context.testAgent as any);
       jest
-        .spyOn(context.roleRepository, 'findOne')
-        .mockResolvedValue(context.testRole);
+        .spyOn(context.roleRepository, 'find')
+        .mockResolvedValue([context.testRole]);
       jest
         .spyOn(
           context.workspacePermissionsCacheService,
@@ -144,8 +144,8 @@ describe('AgentToolGeneratorService Integration', () => {
         .spyOn(context.agentService, 'findOneAgent')
         .mockResolvedValue(context.testAgent as any);
       jest
-        .spyOn(context.roleRepository, 'findOne')
-        .mockResolvedValue(context.testRole);
+        .spyOn(context.roleRepository, 'find')
+        .mockResolvedValue([context.testRole]);
       jest
         .spyOn(
           context.workspacePermissionsCacheService,
