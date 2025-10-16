@@ -1,7 +1,6 @@
+import { exec } from 'child_process';
+
 export default async function globalTeardown() {
-  // Kill any remaining server processes
-  const { exec } = require('child_process');
-  
   return new Promise((resolve) => {
     exec('pkill -f "nest start" || true', (error: unknown) => {
       if (error) {

@@ -15,7 +15,7 @@ beforeAll(async () => {
       await axios.get(`${SERVER_URL}/healthz`);
       console.log('✅ Server is ready for e2e tests');
       return;
-    } catch (error) {
+    } catch {
       // Server not ready yet, continue waiting
       await new Promise((resolve) => setTimeout(resolve, checkInterval));
     }
