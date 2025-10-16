@@ -35406,14 +35406,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:20.0.0":
-  version: 20.0.0
-  resolution: "happy-dom@npm:20.0.0"
+"happy-dom@npm:20.0.2":
+  version: 20.0.2
+  resolution: "happy-dom@npm:20.0.2"
   dependencies:
     "@types/node": "npm:^20.0.0"
     "@types/whatwg-mimetype": "npm:^3.0.2"
     whatwg-mimetype: "npm:^3.0.0"
-  checksum: 10c0/a205da48f3c98ae2b2bcb73c8f673fea66296cd2fc081065fcd5fa42b4411546c1b8f7c26ef2ca5adf0bdd1ced9aff4f429a3a4f5e6bce7724eec2747bef1a49
+  checksum: 10c0/d4449e087cb7566fb493f9e6ee99221c64177732bf944ec3e2f464033107832c637e201e3e78e81a8b35871d41aa510806f3f1a2f18b924fc6120226f337a845
   languageName: node
   linkType: hard
 
