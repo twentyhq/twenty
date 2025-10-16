@@ -4,9 +4,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
@@ -24,13 +22,10 @@ import { MicrosoftGetMessageListService } from './services/microsoft-get-message
     ObjectMetadataRepositoryModule,
   ],
   providers: [
-    OAuth2ClientManagerService,
     MicrosoftGetMessageListService,
     MicrosoftGetMessagesService,
-
     MicrosoftFetchByBatchService,
     MicrosoftHandleErrorService,
-    MicrosoftOAuth2ClientManagerService,
   ],
   exports: [
     MicrosoftGetMessageListService,
