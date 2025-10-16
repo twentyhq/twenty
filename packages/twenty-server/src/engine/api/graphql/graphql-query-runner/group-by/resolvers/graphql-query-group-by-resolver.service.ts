@@ -139,11 +139,12 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       }
     });
 
-    if (
+    const shouldApplyAggregateFilters =
       executionArgs.args.omitNullValues ||
       isDefined(executionArgs.args.rangeMin) ||
-      isDefined(executionArgs.args.rangeMax)
-    ) {
+      isDefined(executionArgs.args.rangeMax);
+
+    if (shouldApplyAggregateFilters) {
       const aggregateFields =
         executionArgs.graphqlQuerySelectedFieldsResult.aggregate ?? {};
 

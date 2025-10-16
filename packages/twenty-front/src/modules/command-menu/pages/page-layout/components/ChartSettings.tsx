@@ -25,6 +25,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 
 import {
@@ -160,6 +161,26 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                     ]
                   : item.id;
 
+              if (
+                configKey === 'rangeMin' &&
+                isDefined(value) &&
+                'rangeMax' in configuration &&
+                isDefined(configuration.rangeMax) &&
+                value > configuration.rangeMax
+              ) {
+                return;
+              }
+
+              if (
+                configKey === 'rangeMax' &&
+                isDefined(value) &&
+                'rangeMin' in configuration &&
+                isDefined(configuration.rangeMin) &&
+                value < configuration.rangeMin
+              ) {
+                return;
+              }
+
               updateCurrentWidgetConfig({
                 configToUpdate: {
                   [configKey]: value,
@@ -176,7 +197,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                 >
                   <CommandMenuItem
                     id={item.id}
-                    label={t`Filter`}
+                    label={t(item.label)}
                     Icon={item.Icon}
                     hasSubMenu
                     onClick={handleFilterSettingsClick}
@@ -186,6 +207,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
             }
 
             if (item.isInput === true) {
+              const settingValue = getChartSettingsValues(item.id);
+              const stringValue =
+                typeof settingValue === 'string' ? settingValue : '';
+
               return (
                 <SelectableListItem key={item.id} itemId={item.id}>
                   <CommandMenuItem
@@ -194,7 +219,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                     Icon={item.Icon}
                     RightComponent={
                       <CommandMenuItemNumberInput
-                        value={getChartSettingsValues(item.id) as string}
+                        value={stringValue}
                         onChange={handleInputChange}
                         placeholder={t`Auto`}
                       />
