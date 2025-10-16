@@ -71,6 +71,27 @@
           "watchAll": false
         }
       }
+    },
+    "test:e2e": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "{projectRoot}/jest.e2e.config.mjs"
+      },
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": "dependencies"
+        },
+        {
+          "target": "database:reset:no-seed",
+          "projects": "twenty-server"
+        },
+        {
+          "target": "start:ci",
+          "projects": "twenty-server"
+        }
+      ]
     }
   }
 }
