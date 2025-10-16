@@ -285,7 +285,7 @@ describe('McpService', () => {
       });
 
       expect(toolService.listTools).toHaveBeenCalledWith(
-        mockAdminRoleId,
+        { roleId: mockAdminRoleId },
         mockWorkspace.id,
       );
       expect(mockTool.execute).toHaveBeenCalledWith(
