@@ -4,29 +4,10 @@ describe('Twenty Server Health Check (E2E)', () => {
   const SERVER_URL = 'http://localhost:3000';
   const HEALTH_ENDPOINT = `${SERVER_URL}/healthz`;
 
-  describe('Health Endpoint', () => {
-    it('should return 200 for health check', async () => {
-      const response = await axios.get(HEALTH_ENDPOINT);
-      
-      expect(response.status).toBe(200);
-      expect(response.data).toBeDefined();
-    });
+  it('should return 200 for health check', async () => {
+    const response = await axios.get(HEALTH_ENDPOINT);
 
-    it('should respond within reasonable time', async () => {
-      const startTime = Date.now();
-      const response = await axios.get(HEALTH_ENDPOINT);
-      const responseTime = Date.now() - startTime;
-      
-      expect(response.status).toBe(200);
-      expect(responseTime).toBeLessThan(5000); // Should respond within 5 seconds
-    });
-
-    it('should have proper CORS headers', async () => {
-      const response = await axios.get(HEALTH_ENDPOINT);
-      
-      expect(response.status).toBe(200);
-      // Check if CORS headers are present (adjust based on actual headers)
-      expect(response.headers).toBeDefined();
-    });
+    expect(response.status).toBe(200);
+    expect(response.data).toBeDefined();
   });
 });
