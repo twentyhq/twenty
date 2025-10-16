@@ -1,16 +1,14 @@
-import inquirer from 'inquirer';
 import chalk from 'chalk';
-import { ApiService } from '../services/api.service';
+import inquirer from 'inquirer';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
+import { ApiService } from '../services/api.service';
 import { loadManifest } from '../utils/app-manifest-loader';
 
 export class AppDeleteCommand {
   private apiService = new ApiService();
 
-  async execute(): Promise<void> {
+  async execute(appPath: string = CURRENT_EXECUTION_DIRECTORY): Promise<void> {
     try {
-      const appPath = CURRENT_EXECUTION_DIRECTORY;
-
       console.log(chalk.blue('🚀 Deleting Twenty Application'));
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
