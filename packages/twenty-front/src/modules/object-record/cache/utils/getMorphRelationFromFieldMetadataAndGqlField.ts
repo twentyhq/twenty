@@ -1,10 +1,9 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 
-export const getFieldMetadataMorphRelationFromGqlField = ({
+export const getMorphRelationFromFieldMetadataAndGqlField = ({
   objectMetadataItems,
   fieldMetadata,
   gqlField,
@@ -50,25 +49,10 @@ export const getFieldMetadataMorphRelationFromGqlField = ({
 
   return {
     morphRelation: gqlFieldMorphRelation.morphRelation,
-    sourceFieldMetadata: getFieldMetadataItemById({
-      fieldMetadataId:
-        gqlFieldMorphRelation.morphRelation.sourceFieldMetadata.id,
-      objectMetadataItems,
-    }),
-    targetFieldMetadata: getFieldMetadataItemById({
-      fieldMetadataId:
-        gqlFieldMorphRelation.morphRelation?.targetFieldMetadata.id,
-      objectMetadataItems,
-    }),
     targetObjectMetadata: objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        gqlFieldMorphRelation.morphRelation?.targetObjectMetadata.id,
-    ),
-    sourceObjectMetadata: objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.id ===
-        gqlFieldMorphRelation.morphRelation?.sourceObjectMetadata.id,
+        gqlFieldMorphRelation.morphRelation.targetObjectMetadata.id,
     ),
   };
 };
