@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import { ApplicationVariable } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 
@@ -15,13 +15,12 @@ export class ApplicationVariableService {
     value,
     applicationId,
   }: Pick<ApplicationVariable, 'key' | 'value'> & { applicationId: string }) {
-    const { id } = await this.applicationVariableRepository.findOneOrFail({
-      where: { key, applicationId },
-    });
-
-    await this.applicationVariableRepository.update(id, {
-      value,
-    });
+    await this.applicationVariableRepository.update(
+      { key, applicationId },
+      {
+        value,
+      },
+    );
   }
 
   async upsertManyApplicationVariables({
@@ -38,39 +37,8 @@ export class ApplicationVariableService {
     >;
     applicationId: string;
   }) {
-    const existingVariables = await this.applicationVariableRepository.find({
-      where: { applicationId },
-    });
-
-    const variablesToCreate = Object.entries(env).filter(
-      ([key, _]) => !existingVariables.map((v) => v.key).includes(key),
-    );
-
-    const variablesToUpdate = Object.entries(env).filter(([key, _]) =>
-      existingVariables.map((v) => v.key).includes(key),
-    );
-
-    const variablesToDelete = existingVariables.filter(
-      (existingVariable) => !Object.keys(env).includes(existingVariable.key),
-    );
-
-    await this.applicationVariableRepository.delete({
-      id: In(variablesToDelete.map((v) => v.id)),
-    });
-
-    for (const [key, { value, description, isSecret }] of variablesToCreate) {
-      await this.applicationVariableRepository.save({
-        key,
-        value,
-        description,
-        isSecret,
-        applicationId,
-      });
-    }
-
-    for (const [key, { value, description, isSecret }] of variablesToUpdate) {
-      await this.applicationVariableRepository.update(
-        { key, applicationId },
+    for (const [key, { value, description, isSecret }] of Object.entries(env)) {
+      await this.applicationVariableRepository.upsert(
         {
           key,
           value,
@@ -78,7 +46,13 @@ export class ApplicationVariableService {
           isSecret,
           applicationId,
         },
+        { conflictPaths: ['key', 'applicationId'] },
       );
     }
+
+    await this.applicationVariableRepository.delete({
+      applicationId,
+      key: Not(In(Object.keys(env))),
+    });
   }
 }

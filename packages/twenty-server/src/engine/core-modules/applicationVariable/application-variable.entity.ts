@@ -37,8 +37,8 @@ export class ApplicationVariable {
   @Column({ nullable: false, type: 'text', default: '' })
   value: string;
 
-  @Column({ nullable: true, type: 'text' })
-  description?: string;
+  @Column({ nullable: false, type: 'text', default: '' })
+  description: string;
 
   @Column({ nullable: false, type: 'boolean', default: false })
   isSecret: boolean;
