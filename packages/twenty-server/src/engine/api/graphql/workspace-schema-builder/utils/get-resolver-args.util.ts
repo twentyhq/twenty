@@ -1,9 +1,4 @@
-import {
-  GraphQLBoolean,
-  GraphQLFloat,
-  GraphQLInt,
-  GraphQLString,
-} from 'graphql';
+import { GraphQLBoolean, GraphQLInt, GraphQLString } from 'graphql';
 
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { type ArgMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
@@ -182,18 +177,7 @@ export const getResolverArgs = (
           isNullable: true,
           isArray: true,
         },
-        omitNullValues: {
-          type: GraphQLBoolean,
-          isNullable: true,
-        },
-        rangeMin: {
-          type: GraphQLFloat,
-          isNullable: true,
-        },
-        rangeMax: {
-          type: GraphQLFloat,
-          isNullable: true,
-        },
+
         viewId: {
           type: UUIDScalarType,
           isNullable: true,
