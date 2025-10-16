@@ -130,7 +130,9 @@ export class DatabaseEventTriggerV2Service {
               flatEntityMaps: existingFlatDatabaseEventTriggerMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatDatabaseEventTrigger],
+              flatEntityToUpdate: [
+                optimisticallyUpdatedFlatDatabaseEventTrigger,
+              ],
             }),
           },
           dependencyAllFlatEntityMaps: {

@@ -194,7 +194,9 @@ export class ServerlessFunctionV2Service {
               flatEntityMaps: existingFlatServerlessFunctionMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatServerlessFunctionWithDeletedAt],
+              flatEntityToUpdate: [
+                optimisticallyUpdatedFlatServerlessFunctionWithDeletedAt,
+              ],
             }),
           },
           buildOptions: {

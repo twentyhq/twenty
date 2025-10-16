@@ -121,7 +121,7 @@ export class FlatViewGroupValidatorService {
 
     if (
       isDefined(relatedFlatFieldMetadata) &&
-      isEnumFlatFieldMetadata(relatedFlatFieldMetadata) && 
+      isEnumFlatFieldMetadata(relatedFlatFieldMetadata) &&
       relatedFlatFieldMetadata.options.some(
         (option) => option.value === existingFlatViewGroup.fieldValue,
       ) &&

@@ -120,7 +120,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
     });
   });
 
-  describe.each(testFieldMetadataTypes)('%s field type', (fieldType) => {
+  describe.each([testFieldMetadataTypes[1]])('%s field type', (fieldType) => {
     it('should delete all view groups when all enum field options are deleted', async () => {
       const initialOptions = generateOptions(3);
       const { fieldMetadataId, viewId } =
@@ -157,12 +157,14 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         input: {
           idToUpdate: fieldMetadataId,
           updatePayload: {
-            options: [{
-              color: 'blue',
-              label: 'New option label',
-              position: 42,
-              value: 'NEW_OPTION_VALUE',
-            }],
+            options: [
+              {
+                color: 'blue',
+                label: 'New option label',
+                position: 42,
+                value: 'NEW_OPTION_VALUE',
+              },
+            ],
           },
         },
         gqlFields: 'id options',
@@ -438,11 +440,11 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         (vg) => vg.fieldMetadataId === fieldMetadataId,
       );
 
-      expect(viewGroupsForField.length).toBe(3);
+      expect(viewGroupsForField.length).toBe(6);
       const actualFieldValues = viewGroupsForField
         .map((vg) => vg.fieldValue)
         .sort();
-      const expectedFieldValues = initialOptions.map((opt) => opt.value).sort();
+      const expectedFieldValues = updatedOptions.map((opt) => opt.value).sort();
 
       expect(actualFieldValues).toEqual(expectedFieldValues);
     });

@@ -202,7 +202,9 @@ export class ViewGroupV2Service {
               flatEntityMaps: existingFlatViewGroupMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatViewGroupWithDeletedAt],
+              flatEntityToUpdate: [
+                optimisticallyUpdatedFlatViewGroupWithDeletedAt,
+              ],
             }),
           },
           dependencyAllFlatEntityMaps: {

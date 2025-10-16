@@ -205,7 +205,9 @@ export class ViewFilterV2Service {
               flatEntityMaps: existingFlatViewFilterMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatViewFilterWithDeletedAt],
+              flatEntityToUpdate: [
+                optimisticallyUpdatedFlatViewFilterWithDeletedAt,
+              ],
             }),
           },
           dependencyAllFlatEntityMaps: {
