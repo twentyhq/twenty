@@ -15,7 +15,7 @@ export const PageLayoutDispatcher = ({
   isInRightDrawer?: boolean;
 }) => {
   const isRecordPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_ENABLED,
+    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
   );
 
   if (
