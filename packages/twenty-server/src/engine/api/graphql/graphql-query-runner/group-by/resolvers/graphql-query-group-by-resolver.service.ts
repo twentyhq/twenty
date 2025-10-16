@@ -139,33 +139,8 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       }
     });
 
-    if (executionArgs.args.omitNullValues) {
-      const aggregateFields =
-        executionArgs.graphqlQuerySelectedFieldsResult.aggregate ?? {};
-
-      Object.values(aggregateFields).forEach((aggregationField) => {
-        const aggregateExpression =
-          ProcessAggregateHelper.getAggregateExpression(
-            aggregationField,
-            objectMetadataNameSingular,
-          );
-
-        if (aggregateExpression) {
-          queryBuilder.andHaving(`${aggregateExpression} IS NOT NULL`);
-
-          const isNumericReturningAggregate = this.isNumericReturningAggregate(
-            aggregationField.aggregateOperation,
-            aggregationField.fromFieldType,
-          );
-
-          if (isNumericReturningAggregate) {
-            queryBuilder.andHaving(`${aggregateExpression} != 0`);
-          }
-        }
-      });
-    }
-
     if (
+      executionArgs.args.omitNullValues ||
       isDefined(executionArgs.args.rangeMin) ||
       isDefined(executionArgs.args.rangeMax)
     ) {
@@ -180,16 +155,31 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
           );
 
         if (aggregateExpression) {
-          if (isDefined(executionArgs.args.rangeMin)) {
-            queryBuilder.andHaving(`${aggregateExpression} >= :rangeMin`, {
-              rangeMin: executionArgs.args.rangeMin,
-            });
+          if (executionArgs.args.omitNullValues) {
+            queryBuilder.andHaving(`${aggregateExpression} IS NOT NULL`);
           }
 
-          if (isDefined(executionArgs.args.rangeMax)) {
-            queryBuilder.andHaving(`${aggregateExpression} <= :rangeMax`, {
-              rangeMax: executionArgs.args.rangeMax,
-            });
+          const isNumericReturningAggregate = this.isNumericReturningAggregate(
+            aggregationField.aggregateOperation,
+            aggregationField.fromFieldType,
+          );
+
+          if (isNumericReturningAggregate) {
+            if (executionArgs.args.omitNullValues) {
+              queryBuilder.andHaving(`${aggregateExpression} != 0`);
+            }
+
+            if (isDefined(executionArgs.args.rangeMin)) {
+              queryBuilder.andHaving(`${aggregateExpression} >= :rangeMin`, {
+                rangeMin: executionArgs.args.rangeMin,
+              });
+            }
+
+            if (isDefined(executionArgs.args.rangeMax)) {
+              queryBuilder.andHaving(`${aggregateExpression} <= :rangeMax`, {
+                rangeMax: executionArgs.args.rangeMax,
+              });
+            }
           }
         }
       });
