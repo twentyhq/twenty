@@ -11,7 +11,7 @@ type RecordDetailRelationRecordsListProps = {
   fieldMetadataId: string;
 };
 
-export const RecordDetailMorphRelationRecordsList = ({
+export const RecordDetailRelationRecordsList = ({
   recordsWithObjectNameSingular,
 }: {
   recordsWithObjectNameSingular: RecordDetailRelationRecordsListProps[];
