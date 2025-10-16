@@ -9,7 +9,6 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -57,15 +56,15 @@ export const KeyValuePairInput = ({
   const [pairs, setPairs] = useState<KeyValuePair[]>(() => {
     const initialPairs = defaultValue
       ? Object.entries(defaultValue).map(([key, value]) => ({
-          id: v4(),
+          id: crypto.randomUUID(),
           key,
           value,
           isAutoSet: isAutoSetHeaderKey(key),
         }))
       : [];
     return initialPairs.length > 0
-      ? [...initialPairs, { id: v4(), key: '', value: '', isAutoSet: false }]
-      : [{ id: v4(), key: '', value: '', isAutoSet: false }];
+      ? [...initialPairs, { id: crypto.randomUUID(), key: '', value: '', isAutoSet: false }]
+      : [{ id: crypto.randomUUID(), key: '', value: '', isAutoSet: false }];
   });
 
   const getKeyValidationError = (pair: KeyValuePair): string | undefined => {
@@ -93,7 +92,7 @@ export const KeyValuePairInput = ({
       (field === 'key' || field === 'value') &&
       Boolean(newValue.trim())
     ) {
-      newPairs.push({ id: v4(), key: '', value: '', isAutoSet: false });
+      newPairs.push({ id: crypto.randomUUID(), key: '', value: '', isAutoSet: false });
     }
 
     setPairs(newPairs);
@@ -123,7 +122,7 @@ export const KeyValuePairInput = ({
           AUTO_SET_HEADER_KEYS.includes(pair.key.trim()),
         ))
     ) {
-      newPairs.push({ id: v4(), key: '', value: '', isAutoSet: false });
+      newPairs.push({ id: crypto.randomUUID(), key: '', value: '', isAutoSet: false });
     }
     setPairs(newPairs);
 

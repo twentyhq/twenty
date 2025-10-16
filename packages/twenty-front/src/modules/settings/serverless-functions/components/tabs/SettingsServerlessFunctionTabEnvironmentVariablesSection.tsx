@@ -10,7 +10,6 @@ import { H2Title, IconPlus, IconSearch } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { v4 } from 'uuid';
 import { serverlessFunctionEnvVarFamilyState } from '@/settings/serverless-functions/states/serverlessFunctionEnvVarFamilyState';
 import { useRecoilState } from 'recoil';
 
@@ -136,7 +135,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
           variant="secondary"
           onClick={() => {
             setEnvVariables((prevState) => {
-              return [...prevState, { id: v4(), key: '', value: '' }];
+              return [...prevState, { id: crypto.randomUUID(), key: '', value: '' }];
             });
             setNewEnvVarAdded(true);
           }}

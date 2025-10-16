@@ -3,7 +3,6 @@ import {
   objectOperationsByObjectNameSingularFamilyState,
 } from '@/object-record/states/objectOperationsByObjectNameSingularFamilyState';
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
 
 export const useRegisterObjectOperation = () => {
   const registerObjectOperation = useRecoilCallback(
@@ -17,7 +16,7 @@ export const useRegisterObjectOperation = () => {
             const newValue = currentValue.concat();
 
             newValue.push({
-              id: v4(),
+              id: crypto.randomUUID(),
               timestamp: +new Date(),
               data,
             });

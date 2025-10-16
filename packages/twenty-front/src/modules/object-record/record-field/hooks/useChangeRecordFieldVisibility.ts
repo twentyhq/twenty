@@ -6,7 +6,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const useChangeRecordFieldVisibility = (
@@ -47,7 +46,7 @@ export const useChangeRecordFieldVisibility = (
 
     if (noExistingRecordField) {
       const recordFieldToUpsert: RecordField = {
-        id: v4(),
+        id: crypto.randomUUID(),
         fieldMetadataItemId: fieldMetadataId,
         size: 100,
         isVisible: shouldShowFieldMetadataItem,

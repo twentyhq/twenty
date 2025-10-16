@@ -1,9 +1,9 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { v4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { getDefaultFormFieldSettings } from '../getDefaultFormFieldSettings';
 
-jest.mock('uuid', () => ({
-  v4: jest.fn(() => 'test-uuid-123'),
+jest.mock('crypto', () => ({
+  randomUUID: jest.fn(() => 'test-uuid-123'),
 }));
 
 describe('getDefaultFormFieldSettings', () => {

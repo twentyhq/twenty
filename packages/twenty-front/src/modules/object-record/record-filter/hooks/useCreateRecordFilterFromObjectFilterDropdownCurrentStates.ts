@@ -5,7 +5,6 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 export const useCreateRecordFilterFromObjectFilterDropdownCurrentStates =
   () => {
@@ -54,7 +53,7 @@ export const useCreateRecordFilterFromObjectFilterDropdownCurrentStates =
 
             const newRecordFilterFromObjectFilterDropdownStates: RecordFilter =
               {
-                id: v4(),
+                id: crypto.randomUUID(),
                 fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
                 operand: selectedOperandInDropdown,
                 displayValue: '',

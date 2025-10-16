@@ -1,5 +1,4 @@
 import { useSetRecoilState } from 'recoil';
-import { v4 } from 'uuid';
 
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
@@ -60,7 +59,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
   return {
     createNewRecordAndOpenRightDrawer: async (searchInput?: string) => {
-      const newRecordId = v4();
+      const newRecordId = crypto.randomUUID();
       const labelIdentifierType = getLabelIdentifierFieldMetadataItem(
         relationObjectMetadataItem,
       )?.type;

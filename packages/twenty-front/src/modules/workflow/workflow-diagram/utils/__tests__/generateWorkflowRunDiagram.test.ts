@@ -7,8 +7,8 @@ import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { generateWorkflowRunDiagram } from '../generateWorkflowRunDiagram';
 
-jest.mock('uuid', () => ({
-  v4: getUuidV4Mock(),
+jest.mock('crypto', () => ({
+  randomUUID: getUuidV4Mock(),
 }));
 
 describe('generateWorkflowRunDiagram', () => {

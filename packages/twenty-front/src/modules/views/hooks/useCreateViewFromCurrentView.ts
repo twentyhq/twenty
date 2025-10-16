@@ -26,7 +26,6 @@ import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToView
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 import {
   type CreateCoreViewFieldMutationVariables,
@@ -123,7 +122,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         const result = await createCoreViewMutation({
           variables: {
             input: {
-              id: id ?? v4(),
+              id: id ?? crypto.randomUUID(),
               name: name ?? sourceView.name,
               icon: icon ?? sourceView.icon,
               key: null,
@@ -160,7 +159,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         await createViewFieldRecords(
           sourceView.viewFields.map<CreateCoreViewFieldMutationVariables>(
             ({ __typename, id: _id, ...viewField }) => ({
-              input: { ...viewField, id: v4(), viewId: newViewId },
+              input: { ...viewField, id: crypto.randomUUID(), viewId: newViewId },
             }),
           ),
         );
@@ -176,7 +175,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               ?.options?.map(
                 (option, index) =>
                   ({
-                    id: v4(),
+                    id: crypto.randomUUID(),
                     __typename: 'ViewGroup',
                     fieldMetadataId: kanbanFieldMetadataId,
                     fieldValue: option.value,
@@ -187,7 +186,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
           viewGroupsToCreate.push({
             __typename: 'ViewGroup',
-            id: v4(),
+            id: crypto.randomUUID(),
             fieldValue: '',
             position: viewGroupsToCreate.length,
             isVisible: true,
@@ -229,7 +228,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             .map((recordSort) => mapRecordSortToViewSort(recordSort, newViewId))
             .map((viewSort) => ({
               ...viewSort,
-              id: v4(),
+              id: crypto.randomUUID(),
             }));
 
           await createViewFilterGroupRecords(viewFilterGroupsToCreate, {

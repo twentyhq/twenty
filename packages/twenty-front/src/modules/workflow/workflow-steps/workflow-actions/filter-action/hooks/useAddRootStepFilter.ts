@@ -13,7 +13,6 @@ import {
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { v4 } from 'uuid';
 
 export const useAddRootStepFilter = () => {
   const { stepId, onFilterSettingsUpdate } = useContext(
@@ -42,12 +41,12 @@ export const useAddRootStepFilter = () => {
     ({ set }) =>
       () => {
         const newStepFilterGroup: StepFilterGroup = {
-          id: v4(),
+          id: crypto.randomUUID(),
           logicalOperator: StepLogicalOperator.AND,
         };
 
         const newStepFilter: StepFilter = {
-          id: v4(),
+          id: crypto.randomUUID(),
           type: 'unknown',
           value: '',
           operand: ViewFilterOperand.IS,

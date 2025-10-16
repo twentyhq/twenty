@@ -12,7 +12,6 @@ import {
   type IconComponent,
   IconSettingsAutomation,
 } from 'twenty-ui/display';
-import { v4 } from 'uuid';
 
 export const useWorkflowCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
@@ -22,7 +21,7 @@ export const useWorkflowCommandMenu = () => {
   const openWorkflowTriggerTypeInCommandMenu = useRecoilCallback(
     ({ set }) => {
       return (workflowId: string) => {
-        const pageId = v4();
+        const pageId = crypto.randomUUID();
 
         set(
           commandMenuWorkflowIdComponentState.atomFamily({
@@ -45,7 +44,7 @@ export const useWorkflowCommandMenu = () => {
   const openWorkflowCreateStepInCommandMenu = useRecoilCallback(
     ({ set }) => {
       return (workflowId: string) => {
-        const pageId = v4();
+        const pageId = crypto.randomUUID();
 
         set(
           commandMenuWorkflowIdComponentState.atomFamily({
@@ -68,7 +67,7 @@ export const useWorkflowCommandMenu = () => {
   const openWorkflowEditStepInCommandMenu = useRecoilCallback(
     ({ set }) => {
       return (workflowId: string, title: string, icon: IconComponent) => {
-        const pageId = v4();
+        const pageId = crypto.randomUUID();
 
         set(
           commandMenuWorkflowIdComponentState.atomFamily({
@@ -91,7 +90,7 @@ export const useWorkflowCommandMenu = () => {
   const openWorkflowEditStepTypeInCommandMenu = useRecoilCallback(
     ({ set }) => {
       return (workflowId: string) => {
-        const pageId = v4();
+        const pageId = crypto.randomUUID();
 
         set(
           commandMenuWorkflowIdComponentState.atomFamily({
@@ -124,7 +123,7 @@ export const useWorkflowCommandMenu = () => {
         title: string;
         icon: IconComponent;
       }) => {
-        const pageId = v4();
+        const pageId = crypto.randomUUID();
 
         set(
           commandMenuWorkflowIdComponentState.atomFamily({
@@ -167,7 +166,7 @@ export const useWorkflowCommandMenu = () => {
         workflowSelectedNode: string;
         stepExecutionStatus: WorkflowRunStepStatus;
       }) => {
-        const pageId = v4();
+        const pageId = crypto.randomUUID();
 
         set(
           commandMenuWorkflowIdComponentState.atomFamily({

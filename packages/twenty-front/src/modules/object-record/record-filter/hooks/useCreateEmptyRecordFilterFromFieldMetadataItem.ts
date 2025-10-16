@@ -4,7 +4,6 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 export const useCreateEmptyRecordFilterFromFieldMetadataItem = () => {
   const createEmptyRecordFilterFromFieldMetadataItem = (
@@ -27,7 +26,7 @@ export const useCreateEmptyRecordFilterFromFieldMetadataItem = () => {
     );
 
     const newRecordFilter: RecordFilter = {
-      id: v4(),
+      id: crypto.randomUUID(),
       fieldMetadataId: fieldMetadataItem.id,
       operand: defaultOperand,
       displayValue,

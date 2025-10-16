@@ -16,7 +16,6 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { v4 } from 'uuid';
 
 import { type AllowedAddressSubField } from 'twenty-shared/types';
 import { useAddressAutocomplete } from '../hooks/useAddressAutocomplete';
@@ -147,7 +146,7 @@ export const AddressInput = ({
       onChange?.(updatedAddress);
 
       if (field === 'addressStreet1' || field === 'addressCity') {
-        const token = tokenForPlaceApi ?? v4();
+        const token = tokenForPlaceApi ?? crypto.randomUUID();
         if (token !== tokenForPlaceApi) {
           setTokenForPlaceApi(token);
         }

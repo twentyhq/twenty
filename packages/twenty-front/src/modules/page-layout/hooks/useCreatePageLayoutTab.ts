@@ -5,7 +5,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useRecoilCallback } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
 import { type PageLayoutTab } from '../types/PageLayoutTab';
@@ -40,7 +39,7 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
           .getLoadable(pageLayoutDraftState)
           .getValue();
 
-        const newTabId = uuidv4();
+        const newTabId = crypto.randomUUID();
         const tabsLength = pageLayoutDraft.tabs.length;
         const newTab: PageLayoutTab = {
           id: newTabId,

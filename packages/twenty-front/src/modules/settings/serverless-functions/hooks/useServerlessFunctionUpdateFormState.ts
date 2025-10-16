@@ -11,7 +11,6 @@ import { type ServerlessFunction } from '~/generated/graphql';
 import { type Sources } from '@/serverless-functions/types/sources.type';
 import { serverlessFunctionEnvVarFamilyState } from '@/settings/serverless-functions/states/serverlessFunctionEnvVarFamilyState';
 import dotenv from 'dotenv';
-import { v4 } from 'uuid';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -81,7 +80,7 @@ export const useServerlessFunctionUpdateFormState = ({
 
         const environmentVariablesList = Object.entries(
           environmentVariables,
-        ).map(([key, value]) => ({ id: v4(), key, value }));
+        ).map(([key, value]) => ({ id: crypto.randomUUID(), key, value }));
 
         setEnvVar(environmentVariablesList);
 

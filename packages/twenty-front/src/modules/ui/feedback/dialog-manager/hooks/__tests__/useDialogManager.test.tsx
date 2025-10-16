@@ -1,6 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
@@ -9,9 +8,8 @@ import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOpt
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const mockedUuid = 'mocked-uuid';
-jest.mock('uuid');
 
-(uuidv4 as jest.Mock).mockReturnValue(mockedUuid);
+(crypto.randomUUID as jest.Mock).mockReturnValue(mockedUuid);
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>

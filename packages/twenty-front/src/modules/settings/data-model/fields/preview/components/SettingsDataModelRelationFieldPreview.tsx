@@ -11,7 +11,6 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui/display';
-import { v4 } from 'uuid';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelRelationFieldPreviewProps = {
@@ -70,7 +69,7 @@ export const SettingsDataModelRelationFieldPreview = ({
     relationObjectNameSingular: relationTargetObjectNameSingular,
   });
 
-  const fieldName = v4();
+  const fieldName = crypto.randomUUID();
 
   const recordId = `${relationTargetObjectNameSingular}-${fieldName}-preview`;
 
@@ -88,28 +87,28 @@ export const SettingsDataModelRelationFieldPreview = ({
             {
               type: fieldMetadataItem.settings?.relationType,
               sourceFieldMetadata: {
-                id: v4(),
+                id: crypto.randomUUID(),
                 name: fieldName,
               },
               targetFieldMetadata: {
-                id: v4(),
+                id: crypto.randomUUID(),
                 name: 'does-not-matter',
               },
               sourceObjectMetadata: {
-                id: v4(),
+                id: crypto.randomUUID(),
                 namePlural: 'does-not-matter',
                 nameSingular: 'does-not-matter',
               },
               targetObjectMetadata: {
-                id: v4(),
+                id: crypto.randomUUID(),
                 namePlural: relationTargetObjectMetadataItem.namePlural,
                 nameSingular: relationTargetObjectMetadataItem.nameSingular,
               },
             } satisfies FieldMetadataItemRelation,
           ]
         : [],
-    relationFieldMetadataId: isRelation ? '' : v4(),
-    relationObjectMetadataId: isRelation ? '' : v4(),
+    relationFieldMetadataId: isRelation ? '' : crypto.randomUUID(),
+    relationObjectMetadataId: isRelation ? '' : crypto.randomUUID(),
     relationObjectMetadataNamePlural: isRelation
       ? ''
       : relationTargetObjectMetadataItem.namePlural,

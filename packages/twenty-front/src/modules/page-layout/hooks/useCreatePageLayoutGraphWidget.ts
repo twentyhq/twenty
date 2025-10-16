@@ -15,7 +15,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 as uuidv4 } from 'uuid';
 import { type GraphType } from '~/generated-metadata/graphql';
 import { WidgetType, type PageLayoutWidget } from '~/generated/graphql';
 
@@ -87,7 +86,7 @@ export const useCreatePageLayoutGraphWidget = (
             w.configuration.graphType === graphType,
         ).length;
         const title = getWidgetTitle(graphType, existingWidgetCount);
-        const widgetId = uuidv4();
+        const widgetId = crypto.randomUUID();
 
         const defaultSize = getWidgetSize(graphType, 'default');
         const minimumSize = getWidgetSize(graphType, 'minimum');

@@ -7,7 +7,6 @@ import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistVie
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {
@@ -66,7 +65,7 @@ export const useHandleRecordGroupField = () => {
             (option, index) =>
               ({
                 __typename: 'ViewGroup',
-                id: v4(),
+                id: crypto.randomUUID(),
                 fieldValue: option.value,
                 isVisible: true,
                 position: index,
@@ -80,7 +79,7 @@ export const useHandleRecordGroupField = () => {
         ) {
           viewGroupsToCreate.push({
             __typename: 'ViewGroup',
-            id: v4(),
+            id: crypto.randomUUID(),
             fieldValue: '',
             isVisible: true,
             position: fieldMetadataItem.options.length,

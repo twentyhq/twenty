@@ -4,7 +4,6 @@ import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/uti
 import { useVectorSearchFieldInRecordIndexContextOrThrow } from '@/views/hooks/useVectorSearchFieldInRecordIndexContextOrThrow';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import { useVectorSearchFilterState } from './useVectorSearchFilterState';
 
 export const useVectorSearchFilterActions = () => {
@@ -22,7 +21,7 @@ export const useVectorSearchFilterActions = () => {
     const existingVectorSearchFilter = getExistingVectorSearchFilter();
 
     const vectorSearchRecordFilter = {
-      id: existingVectorSearchFilter?.id ?? v4(),
+      id: existingVectorSearchFilter?.id ?? crypto.randomUUID(),
       fieldMetadataId: vectorSearchField.id,
       value: value,
       displayValue: value,

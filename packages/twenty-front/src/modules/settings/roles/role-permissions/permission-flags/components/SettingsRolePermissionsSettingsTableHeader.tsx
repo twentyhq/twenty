@@ -7,7 +7,6 @@ import { Checkbox } from 'twenty-ui/input';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useRecoilState } from 'recoil';
-import { v4 } from 'uuid';
 
 type SettingsRolePermissionsSettingsTableHeaderProps = {
   roleId: string;
@@ -63,7 +62,7 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
               ...settingsDraftRole,
               permissionFlags: newValue
                 ? settingsPermissionsConfig.map((permission) => ({
-                    id: v4(),
+                    id: crypto.randomUUID(),
                     flag: permission.key,
                     roleId,
                   }))

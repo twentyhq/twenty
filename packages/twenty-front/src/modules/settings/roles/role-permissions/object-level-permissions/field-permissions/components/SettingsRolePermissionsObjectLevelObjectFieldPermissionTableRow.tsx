@@ -14,7 +14,6 @@ import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { v4 } from 'uuid';
 import { type FieldPermission, RelationType } from '~/generated/graphql';
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -93,7 +92,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
         }
       } else {
         upsertFieldPermissionInDraftRole({
-          id: v4(),
+          id: crypto.randomUUID(),
           fieldMetadataId: fieldMetadataItem.id,
           objectMetadataId: objectMetadataItem.id,
           canReadFieldValue: false,
@@ -121,7 +120,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
         }
       } else {
         upsertFieldPermissionInDraftRole({
-          id: v4(),
+          id: crypto.randomUUID(),
           fieldMetadataId: fieldMetadataItem.id,
           objectMetadataId: objectMetadataItem.id,
           canUpdateFieldValue: false,

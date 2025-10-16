@@ -3,7 +3,6 @@ import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
 import { IconCalendarEvent } from 'twenty-ui/display';
 
 export const useOpenCalendarEventInCommandMenu = () => {
@@ -12,7 +11,7 @@ export const useOpenCalendarEventInCommandMenu = () => {
   const openCalendarEventInCommandMenu = useRecoilCallback(
     ({ set }) => {
       return (calendarEventId: string) => {
-        const pageComponentInstanceId = v4();
+        const pageComponentInstanceId = crypto.randomUUID();
 
         set(
           viewableRecordIdComponentState.atomFamily({

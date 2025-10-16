@@ -13,7 +13,6 @@ import {
 import { useState } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 export const useCreateStep = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +48,7 @@ export const useCreateStep = () => {
 
     try {
       const workflowVersionId = await getUpdatableWorkflowVersion();
-      const id = v4();
+      const id = crypto.randomUUID();
 
       const workflowVersionStepChanges = (
         await createWorkflowVersionStep({

@@ -15,8 +15,8 @@ import {
   mocks,
 } from '../__mocks__/useFavorites';
 
-jest.mock('uuid', () => ({
-  v4: () => mockId,
+jest.mock('crypto', () => ({
+  randomUUID: () => mockId,
 }));
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({

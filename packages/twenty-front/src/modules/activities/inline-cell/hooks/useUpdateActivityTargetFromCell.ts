@@ -11,7 +11,6 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 type UpdateActivityTargetFromCellProps = {
   recordPickerInstanceId: string;
@@ -120,7 +119,7 @@ export const useUpdateActivityTargetFromCell = ({
           const activityTarget =
             activityObjectNameSingular === CoreObjectNameSingular.Task
               ? {
-                  id: v4(),
+                  id: crypto.randomUUID(),
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
                   __typename: 'TaskTarget',
@@ -134,7 +133,7 @@ export const useUpdateActivityTargetFromCell = ({
                   [pickedObjectMetadataItem.nameSingular]: targetRecord,
                 }
               : {
-                  id: v4(),
+                  id: crypto.randomUUID(),
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
                   __typename: 'NoteTarget',

@@ -1,5 +1,3 @@
-import { v4 } from 'uuid';
-
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -104,7 +102,7 @@ export const useCreateManyRecords = <
     const recordOptimisticRecordsInput: PartialObjectRecordWithId[] = [];
     recordsToCreate.forEach((recordToCreate) => {
       const idForCreation = shouldPerformOptimisticEffect
-        ? (recordToCreate?.id ?? v4())
+        ? (recordToCreate?.id ?? crypto.randomUUID())
         : undefined;
       const sanitizedRecord = {
         ...sanitizeRecordInput({

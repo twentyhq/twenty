@@ -20,7 +20,6 @@ import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workf
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { v4 } from 'uuid';
 
 export const generateWorkflowDiagram = ({
   trigger,
@@ -48,7 +47,7 @@ export const generateWorkflowDiagram = ({
     edges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       type: edgeTypeBetweenTwoNodes,
-      id: v4(),
+      id: crypto.randomUUID(),
       source: TRIGGER_STEP_ID,
       sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
       target: stepLinkToTriggerId,

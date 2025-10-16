@@ -14,7 +14,6 @@ import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { v4 } from 'uuid';
 
 export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
   objectMetadataItem,
@@ -59,7 +58,7 @@ export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
       setHasInitializedCurrentRecordFilters(false);
 
       const newRecordFilterGroup = {
-        id: v4(),
+        id: crypto.randomUUID(),
         logicalOperator: RecordFilterGroupLogicalOperator.AND,
       };
 

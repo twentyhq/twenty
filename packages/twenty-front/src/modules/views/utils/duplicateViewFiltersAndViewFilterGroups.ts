@@ -1,6 +1,5 @@
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 
 export const duplicateViewFiltersAndViewFilterGroups = ({
@@ -18,7 +17,7 @@ export const duplicateViewFiltersAndViewFilterGroups = ({
   for (const viewFilterGroupToCopy of viewFilterGroupsToDuplicate) {
     oldViewFilterGroupIdToNewViewFilterGroupIdMap.set(
       viewFilterGroupToCopy.id,
-      v4(),
+      crypto.randomUUID(),
     );
   }
 
@@ -70,7 +69,7 @@ export const duplicateViewFiltersAndViewFilterGroups = ({
 
     return {
       ...viewFilter,
-      id: v4(),
+      id: crypto.randomUUID(),
       viewFilterGroupId: newParentViewFilterGroupId,
     } satisfies ViewFilter;
   });

@@ -1,6 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
-import { v4 } from 'uuid';
 
 import {
   type CurrentWorkspace,
@@ -47,7 +46,7 @@ describe('useSubscriptionStatus', () => {
         setCurrentWorkspace({
           ...currentWorkspace,
           currentBillingSubscription: {
-            id: v4(),
+            id: crypto.randomUUID(),
             status: subscriptionStatus,
             metadata: {},
             phases: [],

@@ -1,8 +1,8 @@
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { getWorkflowVersionDiagram } from '../getWorkflowVersionDiagram';
 
-jest.mock('uuid', () => ({
-  v4: getUuidV4Mock(),
+jest.mock('crypto', () => ({
+  randomUUID: getUuidV4Mock(),
 }));
 
 describe('getWorkflowVersionDiagram', () => {

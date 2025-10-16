@@ -18,7 +18,6 @@ import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { v4 } from 'uuid';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
   recordFilterGroup: RecordFilterGroup;
@@ -66,7 +65,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       getDefaultSubFieldNameForCompositeFilterableFieldType(filterType);
 
     const newRecordFilter: RecordFilter = {
-      id: v4(),
+      id: crypto.randomUUID(),
       fieldMetadataId: defaultFieldMetadataItemForFilter.id,
       type: filterType,
       operand: getRecordFilterOperands({
@@ -96,7 +95,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       throw new Error('Missing view');
     }
 
-    const newRecordFilterGroupId = v4();
+    const newRecordFilterGroupId = crypto.randomUUID();
 
     const newRecordFilterGroup: RecordFilterGroup = {
       id: newRecordFilterGroupId,
@@ -112,7 +111,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
     );
 
     const newRecordFilter: RecordFilter = {
-      id: v4(),
+      id: crypto.randomUUID(),
       fieldMetadataId: defaultFieldMetadataItemForFilter.id,
       type: filterType,
       operand: getRecordFilterOperands({

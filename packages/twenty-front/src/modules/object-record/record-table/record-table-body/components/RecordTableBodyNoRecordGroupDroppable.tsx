@@ -3,7 +3,6 @@ import { RecordTableBodyVirtualizedDraggableClone } from '@/object-record/record
 import { RecordTableBodyDroppableContextProvider } from '@/object-record/record-table/record-table-body/contexts/RecordTableBodyDroppableContext';
 import { Droppable } from '@hello-pangea/dnd';
 import { type ReactNode, useState } from 'react';
-import { v4 } from 'uuid';
 
 type RecordTableBodyNoRecordGroupDroppableProps = {
   children: ReactNode;
@@ -14,7 +13,7 @@ export const RecordTableBodyNoRecordGroupDroppable = ({
   children,
   isDropDisabled,
 }: RecordTableBodyNoRecordGroupDroppableProps) => {
-  const [v4Persistable] = useState(v4());
+  const [v4Persistable] = useState(crypto.randomUUID());
 
   return (
     <Droppable

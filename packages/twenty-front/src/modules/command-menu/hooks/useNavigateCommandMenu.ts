@@ -17,7 +17,6 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
 import { type IconComponent } from 'twenty-ui/display';
-import { v4 } from 'uuid';
 
 export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;
@@ -93,7 +92,7 @@ export const useNavigateCommandMenu = () => {
       }: CommandMenuNavigationStackItem & {
         resetNavigationStack?: boolean;
       }) => {
-        const computedPageId = pageId || v4();
+        const computedPageId = pageId || crypto.randomUUID();
 
         openCommandMenu();
         set(commandMenuPageState, page);

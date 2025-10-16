@@ -11,8 +11,8 @@ import { IconCalendarEvent } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-jest.mock('uuid', () => ({
-  v4: jest.fn().mockReturnValue('mocked-uuid'),
+jest.mock('crypto', () => ({
+  randomUUID: jest.fn().mockReturnValue('mocked-uuid'),
 }));
 
 const mockNavigateCommandMenu = jest.fn();

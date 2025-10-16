@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
@@ -80,7 +79,7 @@ export const useCreateOneRecord = <
   const createOneRecord = async (recordInput: Partial<CreatedObjectRecord>) => {
     setLoading(true);
 
-    const idForCreation = recordInput.id ?? v4();
+    const idForCreation = recordInput.id ?? crypto.randomUUID();
 
     const sanitizedInput = {
       ...sanitizeRecordInput({

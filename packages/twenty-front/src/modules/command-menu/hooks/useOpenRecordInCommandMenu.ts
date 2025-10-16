@@ -23,7 +23,6 @@ import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { v4 } from 'uuid';
 
 export const useOpenRecordInCommandMenu = () => {
   const theme = useTheme();
@@ -66,7 +65,7 @@ export const useOpenRecordInCommandMenu = () => {
           }
         }
 
-        const pageComponentInstanceId = v4();
+        const pageComponentInstanceId = crypto.randomUUID();
 
         set(
           viewableRecordNameSingularComponentState.atomFamily({

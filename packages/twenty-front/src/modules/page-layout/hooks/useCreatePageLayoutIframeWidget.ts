@@ -13,7 +13,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 
 export const useCreatePageLayoutIframeWidget = (
   pageLayoutIdFromProps?: string,
@@ -58,7 +57,7 @@ export const useCreatePageLayoutIframeWidget = (
           return;
         }
 
-        const widgetId = uuidv4();
+        const widgetId = crypto.randomUUID();
         const defaultIframeSize = { w: 6, h: 6 };
         const minimumSize = DEFAULT_WIDGET_SIZE.minimum;
         const position = getDefaultWidgetPosition(

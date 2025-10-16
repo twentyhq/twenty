@@ -24,7 +24,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
 import { IconFilter } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { v4 } from 'uuid';
 
 const StyledPill = styled(Pill)`
   background: ${({ theme }) => theme.color.blueAccent10};
@@ -86,7 +85,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
 
     if (!alreadyHasAdvancedFilterGroup) {
       const newRecordFilterGroup = {
-        id: v4(),
+        id: crypto.randomUUID(),
         viewId: currentView.id,
         logicalOperator: RecordFilterGroupLogicalOperator.AND,
       };

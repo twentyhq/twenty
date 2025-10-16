@@ -1,7 +1,6 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { t } from '@lingui/core/macro';
-import { v4 } from 'uuid';
 import { IconSearch } from 'twenty-ui/display';
 
 export const useOpenRecordsSearchPageInCommandMenu = () => {
@@ -12,7 +11,7 @@ export const useOpenRecordsSearchPageInCommandMenu = () => {
       page: CommandMenuPages.SearchRecords,
       pageTitle: t`Search`,
       pageIcon: IconSearch,
-      pageId: v4(),
+      pageId: crypto.randomUUID(),
     });
   };
 

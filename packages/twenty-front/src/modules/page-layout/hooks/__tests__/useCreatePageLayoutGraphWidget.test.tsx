@@ -15,8 +15,8 @@ import {
 } from './PageLayoutTestWrapper';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
-jest.mock('uuid', () => ({
-  v4: jest.fn(() => 'mock-uuid'),
+jest.mock('crypto', () => ({
+  randomUUID: jest.fn(() => 'mock-uuid'),
 }));
 
 describe('useCreatePageLayoutGraphWidget', () => {

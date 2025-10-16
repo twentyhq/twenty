@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { v4 } from 'uuid';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
@@ -9,7 +8,7 @@ import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/c
 
 const DEFAULT_OPTION: FieldMetadataItemOption = {
   color: 'green',
-  id: v4(),
+  id: crypto.randomUUID(),
   label: 'Option 1',
   position: 0,
   value: computeOptionValueFromLabel('Option 1'),

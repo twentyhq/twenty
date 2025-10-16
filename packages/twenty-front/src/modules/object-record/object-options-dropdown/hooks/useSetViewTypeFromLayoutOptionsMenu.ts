@@ -17,7 +17,6 @@ import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGet
 import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated/graphql';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
@@ -40,7 +39,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           ?.options?.map(
             (option, index) =>
               ({
-                id: v4(),
+                id: crypto.randomUUID(),
                 __typename: 'ViewGroup',
                 fieldMetadataId: randomFieldForKanban,
                 fieldValue: option.value,
@@ -51,7 +50,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
       viewGroupsToCreate.push({
         __typename: 'ViewGroup',
-        id: v4(),
+        id: crypto.randomUUID(),
         fieldValue: '',
         position: viewGroupsToCreate.length,
         isVisible: true,

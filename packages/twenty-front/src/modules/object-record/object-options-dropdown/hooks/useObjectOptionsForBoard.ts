@@ -17,7 +17,6 @@ import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { produce } from 'immer';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
@@ -163,7 +162,7 @@ export const useObjectOptionsForBoard = ({
 
       if (noExistingRecordField) {
         const recordFieldToUpsert: RecordField = {
-          id: v4(),
+          id: crypto.randomUUID(),
           fieldMetadataItemId: updatedFieldDefinition.fieldMetadataId,
           size: 100,
           isVisible: shouldShowFieldMetadataItem,

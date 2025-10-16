@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { v4 } from 'uuid';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -55,7 +54,7 @@ export const useHandleToggleTrashColumnFilter = ({
     );
 
     const newFilter: RecordFilter = {
-      id: v4(),
+      id: crypto.randomUUID(),
       fieldMetadataId: trashFieldMetadata.id,
       operand: ViewFilterOperand.IS_NOT_EMPTY,
       displayValue: '',

@@ -13,7 +13,6 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseCreateNewIndexRecordProps = {
@@ -41,7 +40,7 @@ export const useCreateNewIndexRecord = ({
   const createNewIndexRecord = useRecoilCallback(
     ({ snapshot }) =>
       async (recordInput?: Partial<ObjectRecord>) => {
-        const recordId = v4();
+        const recordId = crypto.randomUUID();
         const recordInputFromFilters = buildRecordInputFromFilters();
 
         const recordIndexOpenRecordIn = snapshot

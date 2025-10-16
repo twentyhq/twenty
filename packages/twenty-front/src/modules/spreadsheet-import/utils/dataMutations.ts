@@ -1,5 +1,4 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { v4 } from 'uuid';
 
 import {
   type Errors,
@@ -154,7 +153,7 @@ export const addErrorsAndRunHooks = (
   return data.map((value, index) => {
     // This is required only for table. Mutates to prevent needless rerenders
     if (!('__index' in value)) {
-      value.__index = v4();
+      value.__index = crypto.randomUUID();
     }
     const newValue = value as ImportedStructuredRow &
       ImportedStructuredRowMetadata;

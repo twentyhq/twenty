@@ -15,7 +15,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { v4 } from 'uuid';
 
 type WorkflowStepFilterAddFilterRuleSelectProps = {
   stepFilterGroup: StepFilterGroup;
@@ -52,7 +51,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     closeDropdown(dropdownId);
 
     const newStepFilter = {
-      id: v4(),
+      id: crypto.randomUUID(),
       ...BASE_NEW_STEP_FILTER,
       stepFilterGroupId: stepFilterGroup.id,
       positionInStepFilterGroup: newPositionInStepFilterGroup,
@@ -66,7 +65,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
   const handleAddFilterGroup = () => {
     closeDropdown(dropdownId);
 
-    const newStepFilterGroupId = v4();
+    const newStepFilterGroupId = crypto.randomUUID();
 
     const newStepFilterGroup: StepFilterGroup = {
       id: newStepFilterGroupId,
@@ -76,7 +75,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     };
 
     const newStepFilter: StepFilter = {
-      id: v4(),
+      id: crypto.randomUUID(),
       ...BASE_NEW_STEP_FILTER,
       stepFilterGroupId: newStepFilterGroupId,
       positionInStepFilterGroup: 1,

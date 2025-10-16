@@ -18,7 +18,6 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { Position } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 export const generateNodesAndEdgesForIteratorNode = ({
   step,
@@ -87,7 +86,7 @@ export const generateNodesAndEdgesForIteratorNode = ({
     updatedEdges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       type: edgeTypeBetweenTwoNodes,
-      id: v4(),
+      id: crypto.randomUUID(),
       source: step.id,
       sourceHandle: WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID,
       target: initialLoopStepId,
@@ -115,7 +114,7 @@ export const generateNodesAndEdgesForIteratorNode = ({
       updatedEdges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
         type: edgeTypeBetweenTwoNodes,
-        id: v4(),
+        id: crypto.randomUUID(),
         source: step.id,
         sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
         target: nextStepId,

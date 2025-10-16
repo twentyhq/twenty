@@ -6,7 +6,7 @@ import {
   type OnDragStartResponder,
 } from '@hello-pangea/dnd';
 import { useState } from 'react';
-import { v4 } from 'uuid';
+
 type DraggableListProps = {
   draggableItems: React.ReactNode;
   onDragEnd: OnDragEndResponder;
@@ -22,7 +22,7 @@ export const DraggableList = ({
   onDragEnd,
   onDragStart,
 }: DraggableListProps) => {
-  const [v4Persistable] = useState(v4());
+  const [v4Persistable] = useState(crypto.randomUUID());
 
   return (
     <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>

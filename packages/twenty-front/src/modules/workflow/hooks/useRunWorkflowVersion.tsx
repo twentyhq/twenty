@@ -20,7 +20,6 @@ import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import {
   type RunWorkflowVersionMutation,
   type RunWorkflowVersionMutationVariables,
@@ -78,7 +77,7 @@ export const useRunWorkflowVersion = () => {
     workflowVersionId: string;
     payload?: Record<string, any>;
   }) => {
-    const workflowRunId = v4();
+    const workflowRunId = crypto.randomUUID();
 
     const recordInput: Partial<WorkflowRun> = {
       name: '#0',

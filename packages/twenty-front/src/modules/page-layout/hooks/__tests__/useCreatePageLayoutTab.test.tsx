@@ -12,8 +12,8 @@ import {
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
-jest.mock('uuid', () => ({
-  v4: jest.fn(),
+jest.mock('crypto', () => ({
+  randomUUID: jest.fn(),
 }));
 
 describe('useCreatePageLayoutTab', () => {

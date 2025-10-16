@@ -15,7 +15,6 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { useRecoilCallback } from 'recoil';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
   () => {
@@ -115,7 +114,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
                 );
 
                 const initialDateRecordFilter: RecordFilter = {
-                  id: v4(),
+                  id: crypto.randomUUID(),
                   fieldMetadataId: fieldMetadataItem.id,
                   operand: defaultOperand,
                   displayValue,

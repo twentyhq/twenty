@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilState, useSetRecoilState } from 'recoil';
-import { v4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -38,7 +38,7 @@ const renderHooks = (
       ...mockCurrentWorkspace,
       currentBillingSubscription: withCurrentBillingSubscription
         ? {
-            id: v4(),
+            id: randomUUID(),
             status: SubscriptionStatus.Active,
             metadata: {},
             phases: [],

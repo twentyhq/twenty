@@ -22,8 +22,8 @@ import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jes
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useWorkflowCommandMenu } from '../useWorkflowCommandMenu';
 
-jest.mock('uuid', () => ({
-  v4: jest.fn().mockReturnValue('mocked-uuid'),
+jest.mock('crypto', () => ({
+  randomUUID: jest.fn().mockReturnValue('mocked-uuid'),
 }));
 
 const mockNavigateCommandMenu = jest.fn();

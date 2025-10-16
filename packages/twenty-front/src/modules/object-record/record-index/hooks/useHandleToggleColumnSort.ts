@@ -5,7 +5,6 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated/graphql';
 
 type UseHandleToggleColumnSortProps = {
@@ -34,7 +33,7 @@ export const useHandleToggleColumnSort = ({
       if (!isDefined(correspondingColumnDefinition)) return;
 
       const newSort: RecordSort = {
-        id: v4(),
+        id: crypto.randomUUID(),
         fieldMetadataId,
         direction: ViewSortDirection.ASC,
       };
