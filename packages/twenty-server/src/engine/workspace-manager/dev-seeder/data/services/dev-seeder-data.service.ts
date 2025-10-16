@@ -8,88 +8,92 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import {
-  CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
-  CALENDAR_CHANNEL_DATA_SEEDS,
+    ATTACHMENT_DATA_SEED_COLUMNS,
+    ATTACHMENT_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/attachment-data-seeds.constant';
+import {
+    CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
+    CALENDAR_CHANNEL_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-channel-data-seeds.constant';
 import {
-  CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_COLUMNS,
-  CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEEDS,
+    CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_COLUMNS,
+    CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-channel-event-association-data-seeds.constant';
 import {
-  CALENDAR_EVENT_DATA_SEED_COLUMNS,
-  CALENDAR_EVENT_DATA_SEEDS,
+    CALENDAR_EVENT_DATA_SEED_COLUMNS,
+    CALENDAR_EVENT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 import {
-  CALENDAR_EVENT_PARTICIPANT_DATA_SEED_COLUMNS,
-  getCalendarEventParticipantDataSeeds,
+    CALENDAR_EVENT_PARTICIPANT_DATA_SEED_COLUMNS,
+    getCalendarEventParticipantDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-participant-data-seeds.constant';
 import {
-  COMPANY_DATA_SEED_COLUMNS,
-  COMPANY_DATA_SEEDS,
+    COMPANY_DATA_SEED_COLUMNS,
+    COMPANY_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import {
-  CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
-  CONNECTED_ACCOUNT_DATA_SEEDS,
+    CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
+    CONNECTED_ACCOUNT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 import {
-  DASHBOARD_DATA_SEED_COLUMNS,
-  getDashboardDataSeeds,
+    DASHBOARD_DATA_SEED_COLUMNS,
+    getDashboardDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/dashboard-data-seeds.constant';
 import {
-  MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
-  MESSAGE_CHANNEL_DATA_SEEDS,
+    MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
+    MESSAGE_CHANNEL_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
 import {
-  MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS,
-  MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
+    MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS,
+    MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-message-association-data-seeds.constant';
 import {
-  MESSAGE_DATA_SEED_COLUMNS,
-  MESSAGE_DATA_SEEDS,
+    MESSAGE_DATA_SEED_COLUMNS,
+    MESSAGE_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import {
-  getMessageParticipantDataSeeds,
-  MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
+    getMessageParticipantDataSeeds,
+    MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-participant-data-seeds.constant';
 import {
-  MESSAGE_THREAD_DATA_SEED_COLUMNS,
-  MESSAGE_THREAD_DATA_SEEDS,
+    MESSAGE_THREAD_DATA_SEED_COLUMNS,
+    MESSAGE_THREAD_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
 import {
-  NOTE_DATA_SEED_COLUMNS,
-  NOTE_DATA_SEEDS,
+    NOTE_DATA_SEED_COLUMNS,
+    NOTE_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
 import {
-  NOTE_TARGET_DATA_SEED_COLUMNS,
-  NOTE_TARGET_DATA_SEEDS,
+    NOTE_TARGET_DATA_SEED_COLUMNS,
+    NOTE_TARGET_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-target-data-seeds.constant';
 import {
-  OPPORTUNITY_DATA_SEED_COLUMNS,
-  OPPORTUNITY_DATA_SEEDS,
+    OPPORTUNITY_DATA_SEED_COLUMNS,
+    OPPORTUNITY_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import {
-  PERSON_DATA_SEED_COLUMNS,
-  PERSON_DATA_SEEDS,
+    PERSON_DATA_SEED_COLUMNS,
+    PERSON_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import {
-  PET_DATA_SEED_COLUMNS,
-  PET_DATA_SEEDS,
+    PET_DATA_SEED_COLUMNS,
+    PET_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/pet-data-seeds.constant';
 import {
-  SURVEY_RESULT_DATA_SEED_COLUMNS,
-  SURVEY_RESULT_DATA_SEEDS,
+    SURVEY_RESULT_DATA_SEED_COLUMNS,
+    SURVEY_RESULT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/survey-result-data-seeds.constant';
 import {
-  TASK_DATA_SEED_COLUMNS,
-  TASK_DATA_SEEDS,
+    TASK_DATA_SEED_COLUMNS,
+    TASK_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-data-seeds.constant';
 import {
-  TASK_TARGET_DATA_SEED_COLUMNS,
-  TASK_TARGET_DATA_SEEDS,
+    TASK_TARGET_DATA_SEED_COLUMNS,
+    TASK_TARGET_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-target-data-seeds.constant';
 import {
-  getWorkspaceMemberDataSeeds,
-  WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
+    getWorkspaceMemberDataSeeds,
+    WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
@@ -206,6 +210,11 @@ const getRecordSeedsConfigs = (
     tableName: 'taskTarget',
     pgColumns: TASK_TARGET_DATA_SEED_COLUMNS,
     recordSeeds: TASK_TARGET_DATA_SEEDS,
+  },
+  {
+    tableName: 'attachment',
+    pgColumns: ATTACHMENT_DATA_SEED_COLUMNS,
+    recordSeeds: ATTACHMENT_DATA_SEEDS,
   },
 ];
 
