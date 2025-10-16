@@ -22,7 +22,7 @@ export const groupByOperationFactory = ({
 }: GroupByOperationFactoryParams) => ({
   query: gql`
     query ${capitalize(objectMetadataPluralName)}GroupBy($groupBy: [${capitalize(objectMetadataSingularName)}GroupByInput!]!, $filter: ${capitalize(objectMetadataSingularName)}FilterInput, $orderBy: [${capitalize(objectMetadataSingularName)}OrderByWithGroupByInput!], $viewId: UUID) {
-      ${objectMetadataPluralName}GroupBy(groupBy: $groupBy, filter: $filter, orderBy: $orderBy, viewId: $viewId,) {
+      ${objectMetadataPluralName}GroupBy(groupBy: $groupBy, filter: $filter, orderBy: $orderBy, viewId: $viewId) {
         ${gqlFields ? gqlFields : ''}
         groupByDimensionValues
         totalCount
