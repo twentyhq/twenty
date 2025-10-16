@@ -271,6 +271,7 @@ export {
   IconPrinter,
   IconProgressCheck,
   IconPuzzle,
+  IconPuzzle2,
   IconQuestionMark,
   IconRadiusBottomRight,
   IconRefresh,

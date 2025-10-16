@@ -7,6 +7,10 @@ import { Repository } from 'typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 
 @Injectable()
 export class ApplicationService {
@@ -15,6 +19,34 @@ export class ApplicationService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
+
+  async findManyApplications(
+    workspaceId: string,
+  ): Promise<ApplicationEntity[]> {
+    return this.applicationRepository.find({
+      where: { workspaceId },
+      relations: ['serverlessFunctions', 'agents', 'objects'],
+    });
+  }
+
+  async findOneApplication(
+    applicationId: string,
+    workspaceId: string,
+  ): Promise<ApplicationEntity> {
+    const application = await this.applicationRepository.findOne({
+      where: { workspaceId, id: applicationId },
+      relations: ['serverlessFunctions', 'agents', 'objects'],
+    });
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application with id ${applicationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return application;
+  }
 
   async findById(id: string): Promise<ApplicationEntity | null> {
     return this.applicationRepository.findOne({
