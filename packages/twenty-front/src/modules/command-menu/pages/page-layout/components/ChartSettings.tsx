@@ -24,7 +24,7 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 
@@ -223,8 +223,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
             if (item.isInput === true) {
               const settingValue = getChartSettingsValues(item.id);
-              const stringValue =
-                typeof settingValue === 'string' ? settingValue : '';
+              const stringValue = isString(settingValue) ? settingValue : '';
 
               return (
                 <SelectableListItem key={item.id} itemId={item.id}>
