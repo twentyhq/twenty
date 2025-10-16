@@ -56,7 +56,7 @@ describe('getDefaultFormFieldSettings', () => {
   it('should generate unique UUID for each call', () => {
     getDefaultFormFieldSettings(FieldMetadataType.TEXT);
     getDefaultFormFieldSettings(FieldMetadataType.NUMBER);
-    expect(v4).toHaveBeenCalledTimes(2);
+    expect(crypto.randomUUID).toHaveBeenCalledTimes(2);
   });
 
   it('should return object with required properties for TEXT type', () => {

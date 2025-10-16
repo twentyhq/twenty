@@ -1,6 +1,5 @@
 import { mocked } from '@storybook/test';
 import { act, renderHook } from '@testing-library/react';
-import { randomUUID } from 'crypto';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
@@ -12,8 +11,9 @@ import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
+const mockedRandomUUID = jest.fn();
 jest.mock('crypto', () => ({
-  randomUUID: jest.fn(),
+  randomUUID: mockedRandomUUID,
 }));
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
@@ -22,7 +22,7 @@ const mockRefetchAggregateQueries = jest.fn();
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
 
-mocked(randomUUID)
+mockedRandomUUID
   .mockReturnValueOnce(variables.data[0].id)
   .mockReturnValueOnce(variables.data[1].id);
 

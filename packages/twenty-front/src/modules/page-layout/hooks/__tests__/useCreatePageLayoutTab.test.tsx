@@ -12,8 +12,9 @@ import {
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
+const mockedRandomUUID = jest.fn();
 jest.mock('crypto', () => ({
-  randomUUID: jest.fn(),
+  randomUUID: mockedRandomUUID,
 }));
 
 describe('useCreatePageLayoutTab', () => {
@@ -22,7 +23,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should create a new tab with default title', () => {
-    crypto.randomUUID.mockReturnValue('mock-uuid');
+    mockedRandomUUID.mockReturnValue('mock-uuid');
 
     const { result } = renderHook(
       () => ({
@@ -63,7 +64,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should create a new tab with custom title', () => {
-    crypto.randomUUID.mockReturnValue('mock-uuid');
+    mockedRandomUUID.mockReturnValue('mock-uuid');
 
     const { result } = renderHook(
       () => ({
@@ -88,7 +89,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should increment position for subsequent tabs', () => {
-    crypto.randomUUID
+    mockedRandomUUID
       .mockReturnValueOnce('mock-uuid-1')
       .mockReturnValueOnce('mock-uuid-2');
 
@@ -123,7 +124,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should create isolated layouts for multiple tabs', () => {
-    crypto.randomUUID
+    mockedRandomUUID
       .mockReturnValueOnce('mock-uuid-1')
       .mockReturnValueOnce('mock-uuid-2');
 
@@ -165,7 +166,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should set newly created tab as active', () => {
-    crypto.randomUUID.mockReturnValue('mock-uuid');
+    mockedRandomUUID.mockReturnValue('mock-uuid');
 
     const { result } = renderHook(
       () => {
@@ -193,7 +194,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should handle creating tab when draft already has tabs', () => {
-    crypto.randomUUID.mockReturnValue('mock-uuid-new');
+    mockedRandomUUID.mockReturnValue('mock-uuid-new');
 
     const { result } = renderHook(
       () => {
