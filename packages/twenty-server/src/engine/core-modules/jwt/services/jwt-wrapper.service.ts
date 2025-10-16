@@ -7,7 +7,6 @@ import {
 
 import { createHash } from 'crypto';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { type Request as ExpressRequest } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { ExtractJwt, type JwtFromRequestFunction } from 'passport-jwt';
@@ -167,25 +166,5 @@ export class JwtWrapperService {
       // (e.g. the REST API playground)
       return ExtractJwt.fromUrlQueryParameter('token')(request);
     };
-  }
-
-  isTokenExpired(token: string, expirationBufferInSeconds = 5 * 60): boolean {
-    if (!isNonEmptyString(token)) {
-      return true;
-    }
-
-    try {
-      const payload = this.decode<{ exp?: number }>(token, { json: true });
-
-      if (!isDefined(payload) || !isDefined(payload.exp)) {
-        return true;
-      }
-
-      const currentTime = Math.floor(Date.now() / 1000);
-
-      return payload.exp < currentTime + expirationBufferInSeconds;
-    } catch {
-      return true;
-    }
   }
 }

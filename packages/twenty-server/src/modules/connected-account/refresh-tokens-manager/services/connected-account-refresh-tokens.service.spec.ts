@@ -4,7 +4,6 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
@@ -16,7 +15,6 @@ import { ConnectedAccountRefreshTokensService } from './connected-account-refres
 
 describe('ConnectedAccountRefreshTokensService', () => {
   let service: ConnectedAccountRefreshTokensService;
-  let googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService;
   let microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService;
   let twentyORMManager: TwentyORMManager;
 
@@ -34,13 +32,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
           provide: JwtWrapperService,
           useValue: {
             isTokenExpired: jest.fn(),
-          },
-        },
-        {
-          provide: GoogleAPIRefreshAccessTokenService,
-          useValue: {
-            refreshAccessToken: jest.fn(),
-            isAccessTokenExpired: jest.fn(),
           },
         },
         {
@@ -62,10 +53,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
     service = module.get<ConnectedAccountRefreshTokensService>(
       ConnectedAccountRefreshTokensService,
     );
-    googleAPIRefreshAccessTokenService =
-      module.get<GoogleAPIRefreshAccessTokenService>(
-        GoogleAPIRefreshAccessTokenService,
-      );
     microsoftAPIRefreshAccessTokenService =
       module.get<MicrosoftAPIRefreshAccessTokenService>(
         MicrosoftAPIRefreshAccessTokenService,
@@ -78,61 +65,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
   });
 
   describe('refreshAndSaveTokens', () => {
-    it('should return existing token when not expired', async () => {
-      const connectedAccount = {
-        id: mockConnectedAccountId,
-        provider: ConnectedAccountProvider.GOOGLE,
-        accessToken: mockAccessToken,
-        refreshToken: mockRefreshToken,
-      } as ConnectedAccountWorkspaceEntity;
-
-      jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(true);
-
-      const result = await service.refreshAndSaveTokens(
-        connectedAccount,
-        mockWorkspaceId,
-      );
-
-      expect(result).toEqual({ accessToken: mockAccessToken });
-      expect(
-        googleAPIRefreshAccessTokenService.refreshAccessToken,
-      ).not.toHaveBeenCalled();
-      expect(twentyORMManager.getRepository).not.toHaveBeenCalled();
-    });
-
-    it('should refresh and save new Google token when expired', async () => {
-      const connectedAccount = {
-        id: mockConnectedAccountId,
-        provider: ConnectedAccountProvider.GOOGLE,
-        accessToken: mockAccessToken,
-        refreshToken: mockRefreshToken,
-      } as ConnectedAccountWorkspaceEntity;
-
-      const mockRepository = { update: jest.fn() };
-
-      jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(false);
-      jest
-        .spyOn(googleAPIRefreshAccessTokenService, 'refreshAccessToken')
-        .mockResolvedValue({ accessToken: mockNewAccessToken });
-      jest
-        .spyOn(twentyORMManager, 'getRepository')
-        .mockResolvedValue(mockRepository as any);
-
-      const result = await service.refreshAndSaveTokens(
-        connectedAccount,
-        mockWorkspaceId,
-      );
-
-      expect(result).toEqual({ accessToken: mockNewAccessToken });
-      expect(
-        googleAPIRefreshAccessTokenService.refreshAccessToken,
-      ).toHaveBeenCalledWith(mockRefreshToken);
-      expect(mockRepository.update).toHaveBeenCalledWith(
-        { id: mockConnectedAccountId },
-        { accessToken: mockNewAccessToken },
-      );
-    });
-
     it('should refresh and save new Microsoft token when expired', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
@@ -146,7 +78,10 @@ describe('ConnectedAccountRefreshTokensService', () => {
       jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(false);
       jest
         .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
-        .mockResolvedValue({ accessToken: mockNewAccessToken });
+        .mockResolvedValue({
+          accessToken: mockNewAccessToken,
+          refreshToken: '',
+        });
       jest
         .spyOn(twentyORMManager, 'getRepository')
         .mockResolvedValue(mockRepository as any);
@@ -182,32 +117,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
           ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
         ),
       );
-    });
-
-    it('should throw when Google refresh fails with axios error', async () => {
-      const connectedAccount = {
-        id: mockConnectedAccountId,
-        provider: ConnectedAccountProvider.GOOGLE,
-        accessToken: mockAccessToken,
-        refreshToken: mockRefreshToken,
-      } as ConnectedAccountWorkspaceEntity;
-
-      const axiosError = {
-        message: 'Request failed',
-        response: {
-          status: 400,
-          data: { error: 'invalid_grant', error_description: 'Token expired' },
-        },
-      };
-
-      jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(false);
-      jest
-        .spyOn(googleAPIRefreshAccessTokenService, 'refreshAccessToken')
-        .mockRejectedValue(axiosError);
-
-      await expect(
-        service.refreshAndSaveTokens(connectedAccount, mockWorkspaceId),
-      ).rejects.toThrow(ConnectedAccountRefreshAccessTokenException);
     });
 
     it('should throw when Microsoft refresh fails with axios error', async () => {

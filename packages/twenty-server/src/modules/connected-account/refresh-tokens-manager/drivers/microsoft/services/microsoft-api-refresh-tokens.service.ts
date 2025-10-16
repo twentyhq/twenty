@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { z } from 'zod';
 
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
@@ -22,10 +21,7 @@ interface MicrosoftRefreshTokenResponse {
 }
 @Injectable()
 export class MicrosoftAPIRefreshAccessTokenService {
-  constructor(
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly jwtWrapperService: JwtWrapperService,
-  ) {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   async refreshTokens(refreshToken: string): Promise<ConnectedAccountTokens> {
     const response = await axios.post<MicrosoftRefreshTokenResponse>(
@@ -52,10 +48,7 @@ export class MicrosoftAPIRefreshAccessTokenService {
 
     return {
       accessToken: response.data.access_token,
+      refreshToken: response.data.refresh_token,
     };
-  }
-
-  isAccessTokenExpired(accessToken: string): boolean {
-    return this.jwtWrapperService.isTokenExpired(accessToken);
   }
 }

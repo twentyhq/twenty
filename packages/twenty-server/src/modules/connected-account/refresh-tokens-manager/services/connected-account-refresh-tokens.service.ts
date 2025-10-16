@@ -4,8 +4,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
+import { isAccessTokenExpiredOrInvalid } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/utils/is-access-token-expired-or-invalid.util';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
@@ -15,6 +15,7 @@ import { isAxiosTemporaryError } from 'src/modules/messaging/message-import-mana
 
 export type ConnectedAccountTokens = {
   accessToken: string;
+  refreshToken: string;
 };
 
 @Injectable()
@@ -24,7 +25,6 @@ export class ConnectedAccountRefreshTokensService {
   );
 
   constructor(
-    private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
@@ -54,6 +54,7 @@ export class ConnectedAccountRefreshTokensService {
 
       return {
         accessToken,
+        refreshToken,
       };
     }
 
@@ -86,18 +87,11 @@ export class ConnectedAccountRefreshTokensService {
   ): Promise<boolean> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE: {
-        const isExpired =
-          await this.googleAPIRefreshAccessTokenService.isAccessTokenExpired(
-            accessToken,
-          );
-
-        return !isExpired;
+        // Google's OAuth2Client handles token auto-refresh internally, no need to check token validity
+        return true;
       }
       case ConnectedAccountProvider.MICROSOFT: {
-        const isExpired =
-          this.microsoftAPIRefreshAccessTokenService.isAccessTokenExpired(
-            accessToken,
-          );
+        const isExpired = isAccessTokenExpiredOrInvalid(accessToken);
 
         return !isExpired;
       }
@@ -119,9 +113,10 @@ export class ConnectedAccountRefreshTokensService {
     try {
       switch (connectedAccount.provider) {
         case ConnectedAccountProvider.GOOGLE:
-          return await this.googleAPIRefreshAccessTokenService.refreshAccessToken(
+          return {
+            accessToken: '',
             refreshToken,
-          );
+          };
         case ConnectedAccountProvider.MICROSOFT:
           return await this.microsoftAPIRefreshAccessTokenService.refreshTokens(
             refreshToken,
