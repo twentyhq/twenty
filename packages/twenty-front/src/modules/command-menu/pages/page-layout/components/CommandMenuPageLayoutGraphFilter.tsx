@@ -12,6 +12,8 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuPageLayoutGraphFilter = () => {
+  const theme = useTheme();
+
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
   const draftPageLayout = useRecoilComponentValue(
@@ -28,27 +30,22 @@ export const CommandMenuPageLayoutGraphFilter = () => {
     .flatMap((tab) => tab.widgets)
     .find((widget) => widget.id === pageLayoutEditingWidgetId);
 
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: widgetInEditMode?.objectMetadataId,
-  });
-
-  if (!isDefined(pageLayoutEditingWidgetId)) {
-    throw new Error('Widget ID must be present while editing the widget');
-  }
-
   if (!isDefined(widgetInEditMode)) {
     throw new Error(
       `Widget with ID ${pageLayoutEditingWidgetId} not found in page layout`,
     );
   }
 
-  const theme = useTheme();
+  if (!isDefined(widgetInEditMode?.objectMetadataId)) {
+    throw new Error('No data source in chart');
+  }
 
-  if (
-    !isDefined(widgetInEditMode.configuration) ||
-    !('graphType' in widgetInEditMode.configuration)
-  ) {
-    return null;
+  const { objectMetadataItem } = useObjectMetadataItemById({
+    objectId: widgetInEditMode.objectMetadataId,
+  });
+
+  if (!isDefined(pageLayoutEditingWidgetId)) {
+    throw new Error('Widget ID must be present while editing the widget');
   }
 
   if (!isChartWidget(widgetInEditMode)) {
