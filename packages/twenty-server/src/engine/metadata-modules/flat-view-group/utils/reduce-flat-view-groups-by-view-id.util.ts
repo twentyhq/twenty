@@ -23,7 +23,7 @@ export const reduceFlatViewGroupsByViewId = ({
     return {
       flatViewGroupRecordByViewId: {
         ...accumulator.flatViewGroupRecordByViewId,
-        [flatViewGroup.id]: {
+        [flatViewGroup.viewId]: {
           ...accumulator.flatViewGroupRecordByViewId[flatViewGroup.viewId],
           [flatViewGroup.id]: flatViewGroup,
         },
@@ -31,9 +31,7 @@ export const reduceFlatViewGroupsByViewId = ({
       highestViewGroupPositionByViewId: {
         ...accumulator.highestViewGroupPositionByViewId,
         [flatViewGroup.viewId]: isDefined(accumulatorHighestPosition)
-          ? accumulatorHighestPosition > flatViewGroup.position
-            ? accumulatorHighestPosition
-            : flatViewGroup.position
+          ? Math.max(accumulatorHighestPosition, flatViewGroup.position)
           : flatViewGroup.position,
       },
     };

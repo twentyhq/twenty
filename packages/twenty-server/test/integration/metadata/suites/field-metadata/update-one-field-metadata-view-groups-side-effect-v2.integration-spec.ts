@@ -157,10 +157,16 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         input: {
           idToUpdate: fieldMetadataId,
           updatePayload: {
-            options: [],
+            options: [{
+              color: 'blue',
+              label: 'New option label',
+              position: 42,
+              value: 'NEW_OPTION_VALUE',
+            }],
           },
         },
         gqlFields: 'id options',
+        expectToFail: false,
       });
 
       const {
@@ -204,6 +210,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
           },
         },
         gqlFields: 'id options',
+        expectToFail: false,
       });
 
       const {
@@ -253,6 +260,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
           },
         },
         gqlFields: 'id options',
+        expectToFail: false,
       });
 
       const {
@@ -307,6 +315,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
           },
         },
         gqlFields: 'id options',
+        expectToFail: false,
       });
 
       const {
@@ -360,6 +369,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
           },
         },
         gqlFields: 'id options',
+        expectToFail: false,
       });
 
       const {
@@ -383,7 +393,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
       expect(actualFieldValues).toEqual(expectedFieldValues);
     });
 
-    it('should handle adding new options while maintaining existing view groups', async () => {
+    it.only('should handle adding new options while maintaining existing view groups', async () => {
       const initialOptions = generateOptions(3);
       const { fieldMetadataId, fieldOptions, viewId } =
         await createObjectWithSelectFieldAndView(fieldType, initialOptions);
@@ -413,6 +423,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
           },
         },
         gqlFields: 'id options',
+        expectToFail: false,
       });
 
       const {

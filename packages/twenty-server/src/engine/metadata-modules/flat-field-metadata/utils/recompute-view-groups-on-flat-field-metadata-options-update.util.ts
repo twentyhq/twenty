@@ -79,14 +79,12 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
     ),
   });
 
-  const viewIdAndHighestViewGroupPosition = Object.entries(
-    viewGroupsByViewId.flatViewGroupRecordByViewId,
-  );
+  const viewIds = Object.keys(viewGroupsByViewId.flatViewGroupRecordByViewId);
 
   const createdAt = new Date();
   const flatViewGroupsToCreate = createdFieldMetadataOptions.flatMap(
     (option, createdOptionIndex) =>
-      viewIdAndHighestViewGroupPosition.map<FlatViewGroup>(([viewId]) => {
+      viewIds.map<FlatViewGroup>((viewId) => {
         const viewGroupHighestPosition =
           viewGroupsByViewId.highestViewGroupPositionByViewId[viewId];
 
