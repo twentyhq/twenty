@@ -26,11 +26,8 @@ import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
@@ -62,18 +59,15 @@ export const usePersistField = ({
 }: {
   objectMetadataItemId: string;
 }) => {
-  const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
-  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
   });
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const persistField = useRecoilCallback(
     ({ set, snapshot }) =>
