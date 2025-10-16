@@ -143,6 +143,7 @@ export class FieldMetadataServiceV2 {
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatViewGroupMaps: existingFlatViewGroupMaps,
+      flatViewMaps: existingFlatViewMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -152,6 +153,7 @@ export class FieldMetadataServiceV2 {
           'flatFieldMetadataMaps',
           'flatViewFilterMaps',
           'flatViewGroupMaps',
+          'flatViewMaps',
         ],
       },
     );
@@ -186,6 +188,7 @@ export class FieldMetadataServiceV2 {
         {
           dependencyAllFlatEntityMaps: {
             flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+            flatViewMaps: existingFlatViewMaps,
           },
           fromToAllFlatEntityMaps: {
             flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
