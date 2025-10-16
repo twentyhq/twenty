@@ -12,7 +12,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TRASH_CLEANUP_CRON_PATTERN } from 'src/engine/trash-cleanup/constants/trash-cleanup.constants';
+import { TRASH_CLEANUP_CRON_PATTERN } from 'src/engine/trash-cleanup/constants/trash-cleanup-cron-pattern.constant';
 import {
   TrashCleanupJob,
   type TrashCleanupJobData,
