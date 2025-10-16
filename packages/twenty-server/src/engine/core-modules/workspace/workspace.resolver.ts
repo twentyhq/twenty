@@ -244,6 +244,7 @@ export class WorkspaceResolver {
       return {
         ...agent,
         roleId: agent.roleId ?? undefined,
+        applicationId: agent.applicationId ?? undefined,
       };
     } catch {
       // If agent is not found, return null instead of throwing

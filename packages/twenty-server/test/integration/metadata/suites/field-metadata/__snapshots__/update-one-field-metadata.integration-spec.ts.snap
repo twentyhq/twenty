@@ -33,6 +33,7 @@ exports[`updateOne failing update should not update a field name if it is not sy
         "view": [],
         "viewField": [],
         "viewFilter": [],
+        "viewGroup": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
@@ -46,6 +47,7 @@ exports[`updateOne failing update should not update a field name if it is not sy
         "invalidView": 0,
         "invalidViewField": 0,
         "invalidViewFilter": 0,
+        "invalidViewGroup": 0,
         "totalErrors": 0,
       },
       "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
@@ -95,6 +97,7 @@ exports[`updateOne failing update should throw if the field name is not availabl
         "view": [],
         "viewField": [],
         "viewFilter": [],
+        "viewGroup": [],
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
@@ -108,6 +111,7 @@ exports[`updateOne failing update should throw if the field name is not availabl
         "invalidView": 0,
         "invalidViewField": 0,
         "invalidViewFilter": 0,
+        "invalidViewGroup": 0,
         "totalErrors": 0,
       },
       "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",

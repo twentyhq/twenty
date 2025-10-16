@@ -13,4 +13,5 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   DATA_ON_DISPLAY_PIE_CHART: msg`Data on display`,
   EACH_SLICE_REPRESENTS: msg`Each slice represents`,
   AXIS_NAME: msg`Axis name`,
+  STACKED_BARS: msg`Stacked bars`,
 };

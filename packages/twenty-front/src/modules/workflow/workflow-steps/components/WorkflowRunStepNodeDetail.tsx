@@ -250,7 +250,6 @@ export const WorkflowRunStepNodeDetail = ({
           return (
             <WorkflowEditActionEmpty
               key={stepId}
-              action={stepDefinition.definition}
               actionOptions={{
                 readonly: true,
               }}

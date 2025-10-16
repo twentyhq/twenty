@@ -24,6 +24,7 @@ export type CurrentWorkspace = Pick<
   | 'workspaceUrls'
   | 'metadataVersion'
   | 'isTwoFactorAuthenticationEnforced'
+  | 'trashRetentionDays'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   defaultAgent?: { id: string } | null;

@@ -10,14 +10,16 @@ type SettingsCounterProps = {
   minValue?: number;
   maxValue?: number;
   disabled?: boolean;
+  showButtons?: boolean;
 };
 
-const StyledCounterContainer = styled.div`
+const StyledCounterContainer = styled.div<{ showButtons: boolean }>`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   margin-left: auto;
-  width: ${({ theme }) => theme.spacing(30)};
+  width: ${({ theme, showButtons }) =>
+    showButtons ? theme.spacing(30) : theme.spacing(16)};
 `;
 
 const StyledTextInput = styled(SettingsTextInput)`
@@ -34,11 +36,12 @@ export const SettingsCounter = ({
   value,
   onChange,
   minValue = 0,
-  maxValue = 100,
+  maxValue,
   disabled = false,
+  showButtons = true,
 }: SettingsCounterProps) => {
   const handleIncrementCounter = () => {
-    if (value < maxValue) {
+    if (maxValue === undefined || value < maxValue) {
       onChange(value + 1);
     }
   };
@@ -60,7 +63,7 @@ export const SettingsCounter = ({
       return;
     }
 
-    if (castedNumber > maxValue) {
+    if (maxValue !== undefined && castedNumber > maxValue) {
       onChange(maxValue);
       return;
     }
@@ -68,14 +71,16 @@ export const SettingsCounter = ({
   };
 
   return (
-    <StyledCounterContainer>
-      <IconButton
-        size="small"
-        Icon={IconMinus}
-        variant="secondary"
-        onClick={handleDecrementCounter}
-        disabled={disabled}
-      />
+    <StyledCounterContainer showButtons={showButtons}>
+      {showButtons && (
+        <IconButton
+          size="small"
+          Icon={IconMinus}
+          variant="secondary"
+          onClick={handleDecrementCounter}
+          disabled={disabled}
+        />
+      )}
       <StyledTextInput
         instanceId="settings-counter-input"
         name="counter"
@@ -84,13 +89,15 @@ export const SettingsCounter = ({
         onChange={handleTextInputChange}
         disabled={disabled}
       />
-      <IconButton
-        size="small"
-        Icon={IconPlus}
-        variant="secondary"
-        onClick={handleIncrementCounter}
-        disabled={disabled}
-      />
+      {showButtons && (
+        <IconButton
+          size="small"
+          Icon={IconPlus}
+          variant="secondary"
+          onClick={handleIncrementCounter}
+          disabled={disabled}
+        />
+      )}
     </StyledCounterContainer>
   );
 };

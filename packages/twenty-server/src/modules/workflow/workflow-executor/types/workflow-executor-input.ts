@@ -3,6 +3,7 @@ export type WorkflowExecutorInput = {
   workflowRunId: string;
   workspaceId: string;
   shouldComputeWorkflowRunStatus?: boolean;
+  executedStepsCount?: number;
 };
 
 export type WorkflowBranchExecutorInput = {
@@ -10,4 +11,5 @@ export type WorkflowBranchExecutorInput = {
   attemptCount?: number;
   workflowRunId: string;
   workspaceId: string;
+  executedStepsCount?: number;
 };
