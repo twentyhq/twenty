@@ -52806,6 +52806,7 @@ __metadata:
     lodash.kebabcase: "npm:^4.1.1"
     tsx: "npm:^4.7.0"
     typescript: "npm:^5.3.0"
+    wait-on: "npm:^7.2.0"
   bin:
     twenty: dist/cli.js
   languageName: unknown
@@ -55410,7 +55411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wait-on@npm:^7.0.0":
+"wait-on@npm:^7.0.0, wait-on@npm:^7.2.0":
   version: 7.2.0
   resolution: "wait-on@npm:7.2.0"
   dependencies:

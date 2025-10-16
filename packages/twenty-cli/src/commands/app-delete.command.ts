@@ -1,21 +1,26 @@
-import inquirer from 'inquirer';
 import chalk from 'chalk';
-import { ApiService } from '../services/api.service';
+import inquirer from 'inquirer';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
+import { ApiService } from '../services/api.service';
+import { ApiResponse } from '../types/config.types';
 import { loadManifest } from '../utils/app-manifest-loader';
 
 export class AppDeleteCommand {
   private apiService = new ApiService();
 
-  async execute(): Promise<void> {
+  async execute({
+    appPath = CURRENT_EXECUTION_DIRECTORY,
+    askForConfirmation,
+  }: {
+    appPath?: string;
+    askForConfirmation: boolean;
+  }): Promise<ApiResponse<any>> {
     try {
-      const appPath = CURRENT_EXECUTION_DIRECTORY;
-
       console.log(chalk.blue('🚀 Deleting Twenty Application'));
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
 
-      if (!(await this.confirmationPrompt())) {
+      if (askForConfirmation && !(await this.confirmationPrompt())) {
         console.error(chalk.red('⛔️ Aborting deletion'));
         process.exit(1);
       }
@@ -26,16 +31,17 @@ export class AppDeleteCommand {
 
       if (!result.success) {
         console.error(chalk.red('❌ Deletion failed:'), result.error);
-        process.exit(1);
+      } else {
+        console.log(chalk.green('✅ Application deleted successfully'));
       }
 
-      console.log(chalk.green('✅ Application deleted successfully'));
+      return result;
     } catch (error) {
       console.error(
         chalk.red('Deletion failed:'),
         error instanceof Error ? error.message : error,
       );
-      process.exit(1);
+      throw error;
     }
   }
 
