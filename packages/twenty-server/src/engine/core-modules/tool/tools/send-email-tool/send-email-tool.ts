@@ -4,6 +4,7 @@ import { render, toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
 import { reactMarkupFromJSON } from 'twenty-emails';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 import { z } from 'zod';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -26,7 +27,6 @@ import {
 } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { parseEmailBody } from 'src/utils/parse-email-body';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { In } from 'typeorm';
 
 @Injectable()
 export class SendEmailTool implements Tool {
@@ -123,6 +123,7 @@ export class SendEmailTool implements Tool {
     );
 
     const filesNotFound: string[] = [];
+
     for (const fileMetadata of files) {
       if (!fileEntityMap.has(fileMetadata.id)) {
         filesNotFound.push(`${fileMetadata.name} (${fileMetadata.id})`);

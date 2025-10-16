@@ -1,48 +1,60 @@
-import { ActivityRow } from '@/activities/components/ActivityRow';
 import { getFileType } from '@/activities/files/utils/getFileType';
-import { FileIcon } from '@/file/components/FileIcon';
-import { formatFileSize } from '@/file/utils/formatFileSize';
+import { IconMapping, useFileTypeColors } from '@/file/utils/fileIconMappings';
+import { type WorkflowAttachmentType } from '@/workflow/workflow-steps/workflow-actions/email-action/types/WorkflowAttachmentType';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconX, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
-
-type WorkflowFile = {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  createdAt: string;
-};
+import { AvatarChip } from 'twenty-ui/components';
+import { IconX } from 'twenty-ui/display';
 
 type WorkflowAttachmentRowProps = {
-  file: WorkflowFile;
+  file: WorkflowAttachmentType;
   onRemove: () => void;
   readonly?: boolean;
 };
 
-const StyledLeftContent = styled.div`
+const StyledChip = styled.div<{ deletable: boolean }>`
   align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
-  width: 100%;
-  overflow: auto;
-  flex: 1;
+  background-color: ${({ theme }) => theme.background.transparent.light};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  column-gap: ${({ theme }) => theme.spacing(1)};
+  display: inline-flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  max-width: 140px;
+  padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledRightContent = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledFileName = styled.div`
-  flex: 1;
-  overflow: hidden;
-`;
-
-const StyledFileSize = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
+const StyledLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledDelete = styled.button`
+  height: 20px;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  user-select: none;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
+  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.transparent.medium};
+    color: ${({ theme }) => theme.font.color.primary};
+  }
 `;
 
 export const WorkflowAttachmentRow = ({
@@ -50,27 +62,22 @@ export const WorkflowAttachmentRow = ({
   onRemove,
   readonly = false,
 }: WorkflowAttachmentRowProps) => {
-  const attachmentType = getFileType(file.name);
+  const iconColors = useFileTypeColors();
+  const theme = useTheme();
 
   return (
-    <ActivityRow disabled>
-      <StyledLeftContent>
-        <FileIcon fileType={attachmentType} />
-        <StyledFileName>
-          <OverflowingTextWithTooltip text={file.name} />
-        </StyledFileName>
-      </StyledLeftContent>
-      <StyledRightContent>
-        <StyledFileSize>{formatFileSize(file.size)}</StyledFileSize>
-        {!readonly && (
-          <IconButton
-            Icon={IconX}
-            size="small"
-            variant="tertiary"
-            onClick={onRemove}
-          />
-        )}
-      </StyledRightContent>
-    </ActivityRow>
+    <StyledChip data-chip deletable={!readonly}>
+      <AvatarChip
+        Icon={IconMapping[getFileType(file.name)]}
+        IconBackgroundColor={iconColors[getFileType(file.name)]}
+      />
+      <StyledLabel title={file.name}>{file.name}</StyledLabel>
+
+      {!readonly && (
+        <StyledDelete onClick={onRemove}>
+          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+        </StyledDelete>
+      )}
+    </StyledChip>
   );
 };

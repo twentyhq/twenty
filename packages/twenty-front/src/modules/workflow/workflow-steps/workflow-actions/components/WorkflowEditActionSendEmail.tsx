@@ -297,6 +297,13 @@ export const WorkflowEditActionSendEmail = ({
             }}
             VariablePicker={WorkflowVariablePicker}
           />
+          <WorkflowSendEmailAttachments
+            label="Attachments"
+            files={formData.files}
+            onChange={(files) => {
+              handleFieldChange('files', files);
+            }}
+          />
           <WorkflowSendEmailBody
             action={action}
             label="Body"
@@ -307,13 +314,6 @@ export const WorkflowEditActionSendEmail = ({
               handleFieldChange('body', body);
             }}
             VariablePicker={WorkflowVariablePicker}
-          />
-          <WorkflowSendEmailAttachments
-            files={formData.files}
-            onChange={(files) => {
-              handleFieldChange('files', files);
-            }}
-            readonly={actionOptions.readonly}
           />
         </WorkflowStepBody>
         {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
