@@ -1,5 +1,8 @@
 import isEmpty from 'lodash.isempty';
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import {
+  type ObjectsPermissionsDeprecated,
+  type RestrictedFieldPermissions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type DeleteResult,
@@ -55,8 +58,8 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -88,6 +91,7 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
       roleId?: string;
+      roleIds?: { intersection: string[] };
     },
     authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
@@ -95,7 +99,25 @@ export class WorkspaceEntityManager extends EntityManager {
 
     let objectPermissions = {};
 
-    if (permissionOptions?.roleId) {
+    if (permissionOptions?.roleIds?.intersection) {
+      const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
+
+      const allRolePermissions = permissionOptions.roleIds.intersection.map(
+        (roleId) => {
+          if (!isDefined(objectPermissionsByRoleId?.[roleId])) {
+            throw new PermissionsException(
+              `No permissions found for role in datasource (roleId: ${roleId})`,
+              PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
+            );
+          }
+
+          return objectPermissionsByRoleId[roleId];
+        },
+      );
+
+      objectPermissions =
+        this.computePermissionIntersection(allRolePermissions);
+    } else if (permissionOptions?.roleId) {
       const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
 
       if (!isDefined(objectPermissionsByRoleId?.[permissionOptions.roleId])) {
@@ -1631,6 +1653,89 @@ export class WorkspaceEntityManager extends EntityManager {
   }
 
   // Forbidden methods
+
+  private computePermissionIntersection(
+    permissionsArray: ObjectsPermissionsDeprecated[],
+  ): ObjectsPermissionsDeprecated {
+    if (permissionsArray.length === 0) {
+      return {};
+    }
+
+    if (permissionsArray.length === 1) {
+      return permissionsArray[0];
+    }
+
+    const result: ObjectsPermissionsDeprecated = {};
+
+    const allObjectMetadataIds = new Set<string>();
+
+    for (const permissions of permissionsArray) {
+      for (const id of Object.keys(permissions)) {
+        allObjectMetadataIds.add(id);
+      }
+    }
+
+    for (const objectMetadataId of allObjectMetadataIds) {
+      let canRead = true;
+      let canUpdate = true;
+      let canSoftDelete = true;
+      let canDestroy = true;
+      const restrictedFields: Record<string, RestrictedFieldPermissions> = {};
+
+      for (const permissions of permissionsArray) {
+        const objPerm = permissions[objectMetadataId];
+
+        if (!objPerm) {
+          canRead = false;
+          canUpdate = false;
+          canSoftDelete = false;
+          canDestroy = false;
+          continue;
+        }
+
+        canRead = canRead && objPerm.canRead === true;
+        canUpdate = canUpdate && objPerm.canUpdate === true;
+        canSoftDelete = canSoftDelete && objPerm.canSoftDelete === true;
+        canDestroy = canDestroy && objPerm.canDestroy === true;
+
+        if (objPerm.restrictedFields) {
+          for (const [fieldName, fieldPerm] of Object.entries(
+            objPerm.restrictedFields,
+          )) {
+            if (!restrictedFields[fieldName]) {
+              restrictedFields[fieldName] = {
+                canRead: null,
+                canUpdate: null,
+              };
+            }
+
+            const current = restrictedFields[fieldName];
+
+            restrictedFields[fieldName] = {
+              canRead:
+                current.canRead === false || fieldPerm.canRead === false
+                  ? false
+                  : null,
+              canUpdate:
+                current.canUpdate === false || fieldPerm.canUpdate === false
+                  ? false
+                  : null,
+            };
+          }
+        }
+      }
+
+      result[objectMetadataId] = {
+        canRead,
+        canUpdate,
+        canSoftDelete,
+        canDestroy,
+        restrictedFields,
+      };
+    }
+
+    return result;
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
