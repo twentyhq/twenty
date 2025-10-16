@@ -6,9 +6,9 @@ import { format } from 'date-fns';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
   border: 0.5px solid ${({ theme }) => theme.border.color.light};
   border-radius: 4px;
-  height: inherit;
   overflow: hidden;
 `;
 
