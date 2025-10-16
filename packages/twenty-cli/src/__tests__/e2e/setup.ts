@@ -1,11 +1,9 @@
 import axios from 'axios';
 import { SERVER_URL } from './constants/server-url.constant';
 
-// Global test setup
 beforeAll(async () => {
-  // Wait for server to be ready with 3-minute timeout
-  const maxWaitTime = 3 * 60 * 1000; // 3 minutes in milliseconds
-  const checkInterval = 1000; // Check every second
+  const maxWaitTime = 3 * 60 * 1000;
+  const checkInterval = 1000;
   const startTime = Date.now();
 
   console.log('⏳ Waiting for server to be ready...');
@@ -16,7 +14,6 @@ beforeAll(async () => {
       console.log('✅ Server is ready for e2e tests');
       return;
     } catch {
-      // Server not ready yet, continue waiting
       await new Promise((resolve) => setTimeout(resolve, checkInterval));
     }
   }
@@ -25,6 +22,5 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  // Cleanup if needed
   console.log('🧹 E2E tests completed');
 });
