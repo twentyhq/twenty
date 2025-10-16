@@ -1,5 +1,6 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { DEFAULT_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,6 +29,6 @@ export const useRecordPageLayoutId = ({
 
   // TODO: implement a default layout
   return {
-    pageLayoutId: 'DEFAULT_LAYOUT_ID',
+    pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
   };
 };

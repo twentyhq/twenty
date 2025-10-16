@@ -52,14 +52,17 @@ export class WorkflowCleanWorkflowRunsJob {
           WITH ranked_runs AS (
             SELECT id,
                    ROW_NUMBER() OVER (
-           PARTITION BY "workflowId"
-           ORDER BY "createdAt" DESC
-         ) AS rn
+                      PARTITION BY "workflowId"
+                      ORDER BY "createdAt" DESC
+                   ) AS rn,
+                   "createdAt"
             FROM ${schemaName}."workflowRun"
             WHERE status IN ('${WorkflowRunStatus.COMPLETED}', '${WorkflowRunStatus.FAILED}')
           )
-          SELECT id, rn FROM ranked_runs WHERE rn > ${NUMBER_OF_WORKFLOW_RUNS_TO_KEEP};
-          `,
+          SELECT id, rn FROM ranked_runs
+          WHERE rn > ${NUMBER_OF_WORKFLOW_RUNS_TO_KEEP}
+             OR "createdAt" < NOW() - INTERVAL '14 days';
+        `,
       );
 
       const workflowRunRepository =

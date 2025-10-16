@@ -5,12 +5,12 @@ import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMen
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { GRAPH_TYPE_TO_CONFIG_TYPENAME } from '@/command-menu/pages/page-layout/constants/GraphTypeToConfigTypename';
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
@@ -26,7 +26,6 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilter } from 'twenty-ui/display';
 
 import {
   BarChartGroupMode,
@@ -37,7 +36,7 @@ import {
 export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
 
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
@@ -146,10 +145,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
             };
 
             const handleFilterSettingsClick = () => {
-              navigateCommandMenu({
-                page: CommandMenuPages.PageLayoutGraphFilter,
-                pageTitle: t`Filters`,
-                pageIcon: IconFilter,
+              navigatePageLayoutCommandMenu({
+                commandMenuPage: CommandMenuPages.PageLayoutGraphFilter,
               });
             };
 

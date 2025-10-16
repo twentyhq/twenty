@@ -1,0 +1,1 @@
+export const DEFAULT_PAGE_LAYOUT_ID = 'DEFAULT_LAYOUT_ID';
