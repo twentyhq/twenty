@@ -111,13 +111,8 @@ export const WorkflowRunDiagramStepNode = ({
   const stepInfo = workflowRun?.state?.stepInfos[data.stepId];
 
   const iterationCount =
-    data.nodeType === 'action' &&
-    isDefined(data.actionType) &&
-    isDefined(stepInfo)
-      ? getNodeIterationCount({
-          stepInfo,
-          actionType: data.actionType,
-        })
+    data.nodeType === 'action' && isDefined(stepInfo)
+      ? getNodeIterationCount({ stepInfo })
       : 0;
 
   const handleClick = () => {
