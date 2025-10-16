@@ -11,7 +11,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = () => {
     <Section>
       <H2Title
         title="Environment Variables"
-        description="Name and set your function"
+        description="Accessible in your function via process.env.KEY"
       />
       Environment variables are defined at application level for all functions.
       Please check{' '}

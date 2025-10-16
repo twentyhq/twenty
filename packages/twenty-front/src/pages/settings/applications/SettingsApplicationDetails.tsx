@@ -56,7 +56,7 @@ export const SettingsApplicationDetails = () => {
           <SettingsApplicationDetailContentTab application={application} />
         );
       default:
-        <></>;
+        return <></>;
     }
   };
 

@@ -9,7 +9,6 @@ import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -24,6 +23,7 @@ import { t } from '@lingui/core/macro';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
 import { flattenSources } from '@/serverless-functions/utils/flattenSources';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 
@@ -41,7 +41,7 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const instanceId = `${SERVERLESS_FUNCTION_DETAIL_ID}-${serverlessFunctionId}`;
 
-  const [activeTabId, setActiveTabId] = useRecoilComponentState(
+  const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
     instanceId,
   );

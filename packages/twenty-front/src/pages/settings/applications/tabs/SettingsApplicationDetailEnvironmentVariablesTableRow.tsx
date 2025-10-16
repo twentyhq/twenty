@@ -20,16 +20,13 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { type ApplicationVariable } from '~/generated/graphql';
 
 export const StyledApplicationEnvironmentVariableTableRow = styled(TableRow)`
   grid-template-columns: auto 200px 36px 36px;
 `;
 
-export type EnvironmentVariable = {
-  key: string;
-  value: string;
-  description: string;
-};
+export type EnvironmentVariable = ApplicationVariable;
 
 export const SettingsApplicationDetailEnvironmentVariablesTableRow = ({
   envVariable,
@@ -94,7 +91,7 @@ export const SettingsApplicationDetailEnvironmentVariablesTableRow = ({
         <LightIconButton
           accent="tertiary"
           Icon={IconCheck}
-          disabled={editedEnvVariable.key === ''}
+          disabled={editedEnvVariable.value === ''}
           onClick={() => {
             onChange(editedEnvVariable);
             setEditMode(false);
@@ -107,7 +104,7 @@ export const SettingsApplicationDetailEnvironmentVariablesTableRow = ({
       onClick={() => setEditMode(true)}
     >
       <TableCell>
-        <OverflowingTextWithTooltip text={editedEnvVariable.key} />
+        <OverflowingTextWithTooltip text={envVariable.key} />
       </TableCell>
       <TableCell>
         <OverflowingTextWithTooltip text={editedEnvVariable.value} />

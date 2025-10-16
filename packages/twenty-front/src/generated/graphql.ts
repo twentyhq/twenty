@@ -216,6 +216,7 @@ export type Application = {
 export type ApplicationVariable = {
   __typename?: 'ApplicationVariable';
   description: Scalars['String'];
+  id: Scalars['UUID'];
   isSecret: Scalars['Boolean'];
   key: Scalars['String'];
   value: Scalars['String'];

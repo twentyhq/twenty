@@ -291,7 +291,7 @@ export class LocalDriver implements ServerlessDriver {
       stderr: string;
     }>((resolve, _) => {
       const child = spawn(process.execPath, [runnerPath], {
-        env,
+        env: { ...process.env, ...env },
         stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       });
 

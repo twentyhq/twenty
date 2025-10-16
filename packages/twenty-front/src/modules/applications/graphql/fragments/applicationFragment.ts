@@ -13,6 +13,7 @@ export const APPLICATION_FRAGMENT = gql`
     description
     version
     applicationVariables {
+      id
       key
       value
       description

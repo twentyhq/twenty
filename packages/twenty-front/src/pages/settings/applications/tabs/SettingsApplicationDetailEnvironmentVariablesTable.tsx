@@ -61,9 +61,9 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
         </StyledApplicationEnvironmentVariableTableRow>
         {filteredEnvVariable.length > 0 && (
           <StyledTableBody>
-            {filteredEnvVariable.map((envVariable, index) => (
+            {filteredEnvVariable.map((envVariable) => (
               <SettingsApplicationDetailEnvironmentVariablesTableRow
-                key={index}
+                key={envVariable.id}
                 envVariable={envVariable}
                 onChange={onUpdate}
                 readonly={readonly}

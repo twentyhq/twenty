@@ -17,7 +17,7 @@ export const SettingsApplicationDetailContentTab = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (!isDefined(application)) {
-    return;
+    return null;
   }
 
   const { serverlessFunctions, agents, objects } = application;
@@ -29,11 +29,9 @@ export const SettingsApplicationDetailContentTab = ({
 
   const shouldDisplayObjects = isDefined(objects) && objects.length > 0;
 
-  const objectIds = objects.map((object) => object.id);
-
   const applicationObjectMetadataItems = shouldDisplayObjects
     ? objectMetadataItems.filter((objectMetadataItem) =>
-        objectIds.includes(objectMetadataItem.id),
+        objects.map((object) => object.id).includes(objectMetadataItem.id),
       )
     : [];
 

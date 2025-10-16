@@ -119,9 +119,15 @@ export const loadManifest = async (
 
   const rawYarnLock = await fs.readFile(yarnLockPath, 'utf8');
 
-  const envFilePath = await findPathFile(appPath, '.env');
+  let envFile = '';
 
-  const envFile = await fs.readFile(envFilePath, 'utf8');
+  try {
+    const envFilePath = await findPathFile(appPath, '.env');
+
+    envFile = await fs.readFile(envFilePath, 'utf8');
+  } catch {
+    // Allow missing .env
+  }
 
   const envVariables = dotenv.parse(envFile);
 
@@ -136,7 +142,7 @@ export const loadManifest = async (
       };
     } else {
       throw new Error(
-        `Environment variable ${key} is defined in .env file but not in package.json`,
+        `Environment variable "${key}" is defined in .env but missing from package.json. Please add it to the "env" section in package.json.`,
       );
     }
   }

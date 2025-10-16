@@ -12,7 +12,7 @@ export const SettingsApplicationDetailAboutTab = ({
   application?: Omit<Application, 'objects'> & { objects: { id: string }[] };
 }) => {
   if (!isDefined(application)) {
-    return;
+    return null;
   }
 
   const { id, name, description } = application;

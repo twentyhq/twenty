@@ -10,6 +10,6 @@ export class UpdateApplicationVariableInput {
   @Field(() => String, { nullable: false })
   value: string;
 
-  @Field(() => UUIDScalarType)
+  @Field(() => UUIDScalarType, { nullable: false })
   applicationId: string;
 }

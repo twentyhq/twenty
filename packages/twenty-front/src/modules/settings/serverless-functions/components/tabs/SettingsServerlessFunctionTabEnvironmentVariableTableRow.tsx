@@ -1,4 +1,4 @@
-import { type EnvironmentVariable } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariablesSection';
+import { type EnvironmentVariable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

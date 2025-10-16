@@ -43,8 +43,8 @@ export class ApplicationVariable {
   @Column({ nullable: false, type: 'boolean', default: false })
   isSecret: boolean;
 
-  @Column({ nullable: false, type: 'uuid' })
-  applicationId: string;
+  @Column({ nullable: true, type: 'uuid' })
+  applicationId?: string;
 
   @ManyToOne(
     () => ApplicationEntity,

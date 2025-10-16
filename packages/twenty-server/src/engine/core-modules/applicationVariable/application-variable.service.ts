@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ApplicationVariable } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 
@@ -31,7 +31,6 @@ export class ApplicationVariableService {
     env: Record<
       string,
       {
-        key: string;
         value?: string;
         description?: string;
         isSecret: boolean;
@@ -39,11 +38,27 @@ export class ApplicationVariableService {
     >;
     applicationId: string;
   }) {
-    await this.applicationVariableRepository.delete({
-      applicationId,
+    const existingVariables = await this.applicationVariableRepository.find({
+      where: { applicationId },
     });
 
-    for (const [key, { value, description, isSecret }] of Object.entries(env)) {
+    const variablesToCreate = Object.entries(env).filter(
+      ([key, _]) => !existingVariables.map((v) => v.key).includes(key),
+    );
+
+    const variablesToUpdate = Object.entries(env).filter(([key, _]) =>
+      existingVariables.map((v) => v.key).includes(key),
+    );
+
+    const variablesToDelete = existingVariables.filter(
+      (existingVariable) => !Object.keys(env).includes(existingVariable.key),
+    );
+
+    await this.applicationVariableRepository.delete({
+      id: In(variablesToDelete.map((v) => v.id)),
+    });
+
+    for (const [key, { value, description, isSecret }] of variablesToCreate) {
       await this.applicationVariableRepository.save({
         key,
         value,
@@ -51,6 +66,19 @@ export class ApplicationVariableService {
         isSecret,
         applicationId,
       });
+    }
+
+    for (const [key, { value, description, isSecret }] of variablesToUpdate) {
+      await this.applicationVariableRepository.update(
+        { key, applicationId },
+        {
+          key,
+          value,
+          description,
+          isSecret,
+          applicationId,
+        },
+      );
     }
   }
 }

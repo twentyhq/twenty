@@ -11,11 +11,11 @@ export const SettingsApplicationDetailSettingsTab = ({
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
 
   if (!isDefined(application)) {
-    return;
+    return null;
   }
 
-  const envVariables = [...application.applicationVariables].sort((a, b) =>
-    a.key.localeCompare(b.key),
+  const envVariables = [...(application.applicationVariables ?? [])].sort(
+    (a, b) => a.key.localeCompare(b.key),
   );
 
   return (
