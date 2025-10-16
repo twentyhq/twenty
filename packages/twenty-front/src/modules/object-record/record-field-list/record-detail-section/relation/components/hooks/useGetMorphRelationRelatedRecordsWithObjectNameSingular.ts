@@ -2,8 +2,7 @@ import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMet
 import { recordStoreMorphOneToManyValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilValue } from 'recoil';
-import { RelationType } from 'twenty-shared/types';
-import { CustomError } from 'twenty-shared/utils';
+import { CustomError, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
   recordId,
@@ -27,18 +26,14 @@ export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
   }
 
   const morphRelationObjectNameSingularWithValuesArray =
-    morphRelationObjectNameSingularWithValues.map(
-      (recordWithObjectNameSingular) => {
-        const newRecordWithObjectNameSingular = {
-          ...recordWithObjectNameSingular,
-          value:
-            morphRelations[0].type === RelationType.MANY_TO_ONE
-              ? [recordWithObjectNameSingular.value as ObjectRecord]
-              : ((recordWithObjectNameSingular.value as ObjectRecord[]) ?? []),
-        };
-        return newRecordWithObjectNameSingular;
-      },
-    );
+    morphRelationObjectNameSingularWithValues
+      .map((recordWithObjectNameSingular) => ({
+        ...recordWithObjectNameSingular,
+        value: (recordWithObjectNameSingular.value as ObjectRecord[]) ?? [],
+      }))
+      .filter((recordWithObjectNameSingular) =>
+        isNonEmptyArray(recordWithObjectNameSingular.value),
+      );
 
   const recordsWithObjectNameSingular =
     morphRelationObjectNameSingularWithValuesArray.flatMap(
@@ -59,5 +54,9 @@ export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
         }));
       },
     );
+  // console.log(recordsWithObjectNameSingular);
+  // if (recordId === 'f0dcb041-a731-4e28-abb6-aa4e4fafc8c9') {
+  //   debugger;
+  // }
   return recordsWithObjectNameSingular;
 };
