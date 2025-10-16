@@ -2,13 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
 import { fromDeleteViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util';
 import { fromDestroyViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util';
@@ -56,9 +52,14 @@ export class ViewGroupV2Service {
         workspaceId,
       });
 
-    const toFlatViewGroupMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: flatViewGroupToCreate,
+    const {
+      fromFlatEntityMaps: fromFlatViewGroupMaps,
+      toFlatEntityMaps: toFlatViewGroupMaps,
+    } = computeFlatEntityMapsFromTo({
       flatEntityMaps: existingFlatViewGroupMaps,
+      flatEntityToCreate: [flatViewGroupToCreate],
+      flatEntityToDelete: [],
+      flatEntityToUpdate: [],
     });
 
     const validateAndBuildResult =
@@ -66,7 +67,7 @@ export class ViewGroupV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewGroupMaps: {
-              from: existingFlatViewGroupMaps,
+              from: fromFlatViewGroupMaps,
               to: toFlatViewGroupMaps,
             },
           },
@@ -130,9 +131,14 @@ export class ViewGroupV2Service {
         updateViewGroupInput,
       });
 
-    const toFlatViewGroupMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: optimisticallyUpdatedFlatViewGroup,
-      flatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
+    const {
+      fromFlatEntityMaps: fromFlatViewGroupMaps,
+      toFlatEntityMaps: toFlatViewGroupMaps,
+    } = computeFlatEntityMapsFromTo({
+      flatEntityMaps: existingFlatViewGroupMaps,
+      flatEntityToCreate: [],
+      flatEntityToDelete: [],
+      flatEntityToUpdate: [optimisticallyUpdatedFlatViewGroup],
     });
 
     const validateAndBuildResult =
@@ -140,7 +146,7 @@ export class ViewGroupV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewGroupMaps: {
-              from: existingFlatViewGroupMaps,
+              from: fromFlatViewGroupMaps,
               to: toFlatViewGroupMaps,
             },
           },
@@ -204,9 +210,14 @@ export class ViewGroupV2Service {
         deleteViewGroupInput,
       });
 
-    const toFlatViewGroupMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-      flatEntity: optimisticallyUpdatedFlatViewGroupWithDeletedAt,
+    const {
+      fromFlatEntityMaps: fromFlatViewGroupMaps,
+      toFlatEntityMaps: toFlatViewGroupMaps,
+    } = computeFlatEntityMapsFromTo({
       flatEntityMaps: existingFlatViewGroupMaps,
+      flatEntityToCreate: [],
+      flatEntityToDelete: [],
+      flatEntityToUpdate: [optimisticallyUpdatedFlatViewGroupWithDeletedAt],
     });
 
     const validateAndBuildResult =
@@ -214,7 +225,7 @@ export class ViewGroupV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewGroupMaps: {
-              from: existingFlatViewGroupMaps,
+              from: fromFlatViewGroupMaps,
               to: toFlatViewGroupMaps,
             },
           },
@@ -278,13 +289,14 @@ export class ViewGroupV2Service {
         flatViewGroupMaps: existingFlatViewGroupMaps,
       });
 
-    const fromFlatViewGroupMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: [existingViewGroupToDelete.id],
+    const {
+      fromFlatEntityMaps: fromFlatViewGroupMaps,
+      toFlatEntityMaps: toFlatViewGroupMaps,
+    } = computeFlatEntityMapsFromTo({
       flatEntityMaps: existingFlatViewGroupMaps,
-    });
-    const toFlatViewGroupMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      flatEntityMaps: fromFlatViewGroupMaps,
-      entityToDeleteId: existingViewGroupToDelete.id,
+      flatEntityToCreate: [],
+      flatEntityToDelete: [existingViewGroupToDelete],
+      flatEntityToUpdate: [],
     });
 
     const validateAndBuildResult =
