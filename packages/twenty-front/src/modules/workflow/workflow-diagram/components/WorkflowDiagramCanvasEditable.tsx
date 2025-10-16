@@ -8,6 +8,7 @@ import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStart
 import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import {
   type WorkflowConnection,
   type WorkflowDiagramEdge,
@@ -66,6 +67,9 @@ const WorkflowDiagramCanvasEditableInner = () => {
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
 
   const { startNodeCreation } = useStartNodeCreation();
+  const setWorkflowInsertStepIds = useSetRecoilComponentState(
+    workflowInsertStepIdsComponentState,
+  );
 
   const onConnect = (edgeConnect: WorkflowConnection) => {
     setWorkflowDiagram((diagram) => {
@@ -138,6 +142,18 @@ const WorkflowDiagramCanvasEditableInner = () => {
         y: dropPosition.y - nodeHeight / 2,
       };
 
+      const connectionOptions = getConnectionOptionsForSourceHandle({
+        sourceHandleId,
+      });
+
+      setWorkflowInsertStepIds({
+        parentStepId: fromNode.id,
+        nextStepId: undefined,
+        position: centeredPosition,
+        connectionOptions,
+        sourceHandleId,
+      });
+
       // Defer to the next tick so ReactFlow finalizes the drop state before we
       // trigger the command menu workflow.
       setTimeout(() => {
@@ -146,13 +162,15 @@ const WorkflowDiagramCanvasEditableInner = () => {
           nextStepId: undefined,
           position: centeredPosition,
           sourceHandleId,
-          connectionOptions: getConnectionOptionsForSourceHandle({
-            sourceHandleId,
-          }),
+          connectionOptions,
         });
       }, 0);
     },
-    [startNodeCreation, workflowDiagramScreenToFlowPosition],
+    [
+      startNodeCreation,
+      workflowDiagramScreenToFlowPosition,
+      setWorkflowInsertStepIds,
+    ],
   );
 
   const handleReconnect = useCallback(

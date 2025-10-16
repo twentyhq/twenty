@@ -230,71 +230,82 @@ export const WorkflowDiagramCanvasBase = ({
   const [pendingPlaceholder, setPendingPlaceholder] = useState<
     PendingPlaceholder | undefined
   >(undefined);
-  const [previousRightDrawerState, setPreviousRightDrawerState] =
-    useState<CommandMenuAnimationVariant>(rightDrawerState);
+
+  const hasActiveInsert =
+    isDefined(workflowInsertStepIds.parentStepId) &&
+    isDefined(workflowInsertStepIds.position);
 
   useEffect(() => {
-    if (
-      isDefined(workflowInsertStepIds.parentStepId) &&
-      isDefined(workflowInsertStepIds.position)
-    ) {
-      const sourceHandleId =
-        workflowInsertStepIds.sourceHandleId ??
-        WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID;
-
-      const existingTargets = baseEdges
-        .filter(
-          (edge) =>
-            edge.source === workflowInsertStepIds.parentStepId &&
-            edge.sourceHandle === sourceHandleId,
-        )
-        .map((edge) => edge.target);
-
-      setPendingPlaceholder({
-        parentStepId: workflowInsertStepIds.parentStepId,
-        position: workflowInsertStepIds.position,
-        sourceHandleId,
-        existingTargets,
-      });
+    if (!hasActiveInsert) {
+      return;
     }
+
+    const sourceHandleId =
+      workflowInsertStepIds.sourceHandleId ??
+      WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID;
+
+    const existingTargets = baseEdges
+      .filter(
+        (edge) =>
+          edge.source === workflowInsertStepIds.parentStepId &&
+          edge.sourceHandle === sourceHandleId,
+      )
+      .map((edge) => edge.target);
+
+    const nextSnapshot: PendingPlaceholder = {
+      parentStepId: workflowInsertStepIds.parentStepId as string,
+      position: workflowInsertStepIds.position as { x: number; y: number },
+      sourceHandleId,
+      existingTargets,
+    };
+
+    setPendingPlaceholder((previousSnapshot) => {
+      if (
+        isDefined(previousSnapshot) &&
+        previousSnapshot.parentStepId === nextSnapshot.parentStepId &&
+        previousSnapshot.sourceHandleId === nextSnapshot.sourceHandleId &&
+        previousSnapshot.position.x === nextSnapshot.position.x &&
+        previousSnapshot.position.y === nextSnapshot.position.y
+      ) {
+        return previousSnapshot;
+      }
+
+      return nextSnapshot;
+    });
   }, [
+    hasActiveInsert,
     workflowInsertStepIds.parentStepId,
     workflowInsertStepIds.position,
     workflowInsertStepIds.sourceHandleId,
-    setPendingPlaceholder,
     baseEdges,
   ]);
 
   useEffect(() => {
-    if (
-      !isDefined(workflowInsertStepIds.parentStepId) &&
-      isDefined(pendingPlaceholder)
-    ) {
-      const timeoutId = setTimeout(() => {
-        setPendingPlaceholder(undefined);
-      }, PENDING_PLACEHOLDER_TIMEOUT_MS);
-
-      return () => {
-        clearTimeout(timeoutId);
-      };
+    if (hasActiveInsert || !isDefined(pendingPlaceholder)) {
+      return;
     }
-  }, [
-    workflowInsertStepIds.parentStepId,
-    pendingPlaceholder,
-    setPendingPlaceholder,
-  ]);
+
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setPendingPlaceholder(undefined);
+    }, PENDING_PLACEHOLDER_TIMEOUT_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [hasActiveInsert, pendingPlaceholder, setPendingPlaceholder]);
 
   const activePlaceholderEvaluation = useMemo<{
     placeholder: PendingPlaceholder | undefined;
     shouldClearPending: boolean;
   }>(() => {
-    if (
-      isDefined(workflowInsertStepIds.parentStepId) &&
-      isDefined(workflowInsertStepIds.position)
-    ) {
+    if (hasActiveInsert) {
       const placeholderFromState: PendingPlaceholder = {
-        parentStepId: workflowInsertStepIds.parentStepId,
-        position: workflowInsertStepIds.position,
+        parentStepId: workflowInsertStepIds.parentStepId as string,
+        position: workflowInsertStepIds.position as { x: number; y: number },
         sourceHandleId:
           workflowInsertStepIds.sourceHandleId ??
           WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
@@ -323,6 +334,7 @@ export const WorkflowDiagramCanvasBase = ({
       shouldClearPending: hasNewEdge,
     };
   }, [
+    hasActiveInsert,
     workflowInsertStepIds.parentStepId,
     workflowInsertStepIds.position,
     workflowInsertStepIds.sourceHandleId,
@@ -439,14 +451,6 @@ export const WorkflowDiagramCanvasBase = ({
     }
 
     const handlePointerDown = (event: PointerEvent) => {
-      if (!isDefined(containerRef.current)) {
-        return;
-      }
-
-      if (containerRef.current.contains(event.target as Node)) {
-        return;
-      }
-
       const commandMenuElement = document.querySelector(
         '[data-testid="command-menu"]',
       );
@@ -472,22 +476,15 @@ export const WorkflowDiagramCanvasBase = ({
   }, [activePlaceholder, setWorkflowInsertStepIds, setPendingPlaceholder]);
 
   useEffect(() => {
-    if (
-      previousRightDrawerState !== 'closed' &&
-      rightDrawerState === 'closed'
-    ) {
-      setWorkflowInsertStepIds({
-        ...DEFAULT_WORKFLOW_INSERT_STEP_IDS_STATE,
-      });
-      setPendingPlaceholder(undefined);
+    if (rightDrawerState !== 'closed') {
+      return;
     }
-    setPreviousRightDrawerState(rightDrawerState);
-  }, [
-    previousRightDrawerState,
-    rightDrawerState,
-    setWorkflowInsertStepIds,
-    setPendingPlaceholder,
-  ]);
+
+    setWorkflowInsertStepIds({
+      ...DEFAULT_WORKFLOW_INSERT_STEP_IDS_STATE,
+    });
+    setPendingPlaceholder(undefined);
+  }, [rightDrawerState, setWorkflowInsertStepIds, setPendingPlaceholder]);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
