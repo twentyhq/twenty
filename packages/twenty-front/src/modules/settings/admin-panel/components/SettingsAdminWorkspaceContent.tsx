@@ -7,6 +7,7 @@ import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonat
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
+import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/get-workspace-schema-name.util';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -164,6 +165,11 @@ export const SettingsAdminWorkspaceContent = ({
       Icon: IconId,
       label: t`ID`,
       value: activeWorkspace?.id,
+    },
+    {
+      Icon: IconId,
+      label: t`Schema name`,
+      value: getWorkspaceSchemaName(activeWorkspace?.id!),
     },
     {
       Icon: IconLink,
