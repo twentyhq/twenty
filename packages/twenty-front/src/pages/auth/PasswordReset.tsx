@@ -4,11 +4,15 @@ import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { countAvailableWorkspaces, getFirstAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { ApolloError } from '@apollo/client';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -30,6 +34,7 @@ import {
   useValidatePasswordResetTokenQuery,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { logError } from '~/utils/logError';
 
 const validationSchema = z
@@ -83,6 +88,9 @@ export const PasswordReset = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
   const navigate = useNavigateApp();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { loadCurrentUser } = useLoadCurrentUser();
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   const [email, setEmail] = useState('');
   const [isTokenValid, setIsTokenValid] = useState(false);
@@ -158,6 +166,22 @@ export const PasswordReset = () => {
         formData.newPassword,
         token,
       );
+      // After signing in, redirect appropriately.
+      // If multi-workspace is enabled and the user has exactly one workspace,
+      // redirect to that workspace domain home. Otherwise, navigate locally.
+      try {
+        const { user } = await loadCurrentUser();
+        if (isMultiWorkspaceEnabled && countAvailableWorkspaces(user.availableWorkspaces) === 1) {
+          const targetWorkspace = getFirstAvailableWorkspaces(user.availableWorkspaces);
+          await redirectToWorkspaceDomain(
+            getWorkspaceUrl(targetWorkspace.workspaceUrls),
+            AppPath.Index,
+          );
+          return;
+        }
+      } catch (e) {
+        // Fallback to local navigation if loading current user fails
+      }
       navigate(AppPath.Index);
     } catch (err) {
       logError(err);
