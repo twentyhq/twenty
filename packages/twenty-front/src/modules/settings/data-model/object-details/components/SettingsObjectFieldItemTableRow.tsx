@@ -201,7 +201,7 @@ export const SettingsObjectFieldItemTableRow = ({
             : 'Record image'
           : ''
         : '';
-  debugger;
+
   if (!isFieldTypeSupported) return null;
 
   const isRelatedObjectLinkable =
