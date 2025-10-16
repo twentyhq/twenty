@@ -32,6 +32,7 @@ import { MigrateViewsToCoreCommand } from 'src/database/commands/upgrade-version
 import { RemoveFavoriteViewRelationCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-remove-favorite-view-relation.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
+import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-attachment-author-to-created-by.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -86,6 +87,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.7 Commands
     protected readonly backfillWorkflowManualTriggerAvailabilityCommand: BackfillWorkflowManualTriggerAvailabilityCommand,
+
+    // 1.8 Commands
+    protected readonly migrateAttachmentAuthorToCreatedByCommand: MigrateAttachmentAuthorToCreatedByCommand,
 
     // 1.10 Commands
     protected readonly migrateWorkflowStepFilterOperandValueCommand: MigrateWorkflowStepFilterOperandValueCommand,
@@ -184,6 +188,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
+    const commands_180: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [this.migrateAttachmentAuthorToCreatedByCommand],
+    };
+
     const commands_1100: VersionCommands = {
       beforeSyncMetadata: [
         this.migrateWorkflowStepFilterOperandValueCommand,
@@ -206,6 +215,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.5.0': commands_150,
       '1.6.0': commands_160,
       '1.7.0': commands_170,
+      '1.8.0': commands_180,
       '1.10.0': commands_1100,
     };
   }
