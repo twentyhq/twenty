@@ -62,6 +62,8 @@ export const GraphWidgetBarChartRenderer = ({
         groupMode={groupMode}
         id={widget.id}
         displayType="shortNumber"
+        rangeMin={configuration.rangeMin ?? undefined}
+        rangeMax={configuration.rangeMax ?? undefined}
       />
     </Suspense>
   );
