@@ -89,7 +89,9 @@ describe('ToolAdapterService', () => {
 
     expect(Object.keys(toolsNoContext)).toContain('http_request');
 
-    const toolsWithPartialContext = await service.getTools('role-1');
+    const toolsWithPartialContext = await service.getTools({
+      roleId: 'role-1',
+    });
 
     expect(Object.keys(toolsWithPartialContext)).toContain('http_request');
   });
@@ -99,7 +101,7 @@ describe('ToolAdapterService', () => {
 
     expect(Object.keys(toolsNoContext)).not.toContain('send_email');
 
-    const toolsRoleOnly = await service.getTools('role-1');
+    const toolsRoleOnly = await service.getTools({ roleId: 'role-1' });
 
     expect(Object.keys(toolsRoleOnly)).not.toContain('send_email');
 
@@ -111,7 +113,7 @@ describe('ToolAdapterService', () => {
   it('should include flagged tools when permission is granted', async () => {
     mockPermissions.hasToolPermission.mockResolvedValueOnce(true);
 
-    const tools = await service.getTools('role-1', 'ws-1');
+    const tools = await service.getTools({ roleId: 'role-1' }, 'ws-1');
 
     expect(mockPermissions.hasToolPermission).toHaveBeenCalledWith(
       'role-1',
@@ -125,7 +127,7 @@ describe('ToolAdapterService', () => {
   it('should exclude flagged tools when permission is denied', async () => {
     mockPermissions.hasToolPermission.mockResolvedValueOnce(false);
 
-    const tools = await service.getTools('role-1', 'ws-1');
+    const tools = await service.getTools({ roleId: 'role-1' }, 'ws-1');
 
     expect(Object.keys(tools)).not.toContain('send_email');
   });

@@ -335,8 +335,10 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       try {
         const repository = executionArgs.workspaceDataSource.getRepository(
           relationField.objectMetadata.nameSingular,
-          executionArgs.isExecutedByApiKey,
-          executionArgs.roleId,
+          {
+            shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+            roleId: executionArgs.roleId,
+          },
         );
 
         const whereCondition = { [relationField.joinColumnName]: In(fromIds) };

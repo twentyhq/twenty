@@ -81,8 +81,9 @@ export abstract class CommonBaseQueryRunnerService {
 
     const repository = workspaceDataSource.getRepository(
       objectMetadataItemWithFieldMaps.nameSingular,
-      false,
-      roleId,
+      {
+        roleId,
+      },
       authContext,
     );
 

@@ -128,7 +128,7 @@ describe('ToolService', () => {
 
   describe('listTools', () => {
     it('should return tools based on role permissions', async () => {
-      const tools = await service.listTools(roleId, workspaceId);
+      const tools = await service.listTools({ roleId }, workspaceId);
 
       expect(
         permissionsCacheService.getRolesPermissionsFromCache,

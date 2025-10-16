@@ -155,8 +155,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
       const repository = workspaceDataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
-        shouldBypassPermissionChecks,
-        roleId,
+        { shouldBypassPermissionChecks, roleId },
         authContext,
       );
 
