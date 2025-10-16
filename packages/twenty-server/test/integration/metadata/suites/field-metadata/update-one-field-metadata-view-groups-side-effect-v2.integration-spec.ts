@@ -120,7 +120,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
     });
   });
 
-  describe.each([testFieldMetadataTypes[1]])('%s field type', (fieldType) => {
+  describe.each(testFieldMetadataTypes)('%s field type', (fieldType) => {
     it('should delete all view groups when all enum field options are deleted', async () => {
       const initialOptions = generateOptions(3);
       const { fieldMetadataId, viewId } =
@@ -395,7 +395,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
       expect(actualFieldValues).toEqual(expectedFieldValues);
     });
 
-    it.only('should handle adding new options while maintaining existing view groups', async () => {
+    it('should handle adding new options while maintaining existing view groups', async () => {
       const initialOptions = generateOptions(3);
       const { fieldMetadataId, fieldOptions, viewId } =
         await createObjectWithSelectFieldAndView(fieldType, initialOptions);

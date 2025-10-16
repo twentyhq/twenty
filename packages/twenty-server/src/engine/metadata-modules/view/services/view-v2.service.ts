@@ -173,8 +173,8 @@ export class ViewV2Service {
             flatViewMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatViewMaps,
               flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [flatViewFromDeleteInput],
+              flatEntityToDelete: [flatViewFromDeleteInput],
+              flatEntityToUpdate: [],
             }),
           },
           buildOptions: {

@@ -5,6 +5,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
+import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { findViewFilterWithRestApi } from 'test/integration/rest/utils/view-rest-api.util';
 import {
   eachTestingContextFilter,
@@ -16,8 +18,6 @@ import {
   type EnumFieldMetadataType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 
 import {
   type FieldMetadataComplexOption,
@@ -68,7 +68,7 @@ const testFieldMetadataType: EnumFieldMetadataType[] = [
   FieldMetadataType.MULTI_SELECT,
 ];
 
-describe('update-one-field-metadata-view-filers-side-effect-v2', () => {
+describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
   let idToDelete: string;
 
   const createObjectSelectFieldAndView = async ({
@@ -150,7 +150,6 @@ describe('update-one-field-metadata-view-filers-side-effect-v2', () => {
   describe.each(testFieldMetadataType)('%s', (fieldType) => {
     const testCases: TestCase[] = [
       {
-        only: true,
         title:
           'should delete related view filter if all select field options got deleted',
         context: {
@@ -264,8 +263,8 @@ describe('update-one-field-metadata-view-filers-side-effect-v2', () => {
             },
           },
           gqlFields: `
-          id
-          options
+            id
+            options
         `,
         });
 
@@ -342,7 +341,6 @@ describe('update-one-field-metadata-view-filers-side-effect-v2', () => {
           expectToFail: false,
           gqlFields: ``,
         });
-        ``;
 
         const optionsWithIds = createOneField.options;
 

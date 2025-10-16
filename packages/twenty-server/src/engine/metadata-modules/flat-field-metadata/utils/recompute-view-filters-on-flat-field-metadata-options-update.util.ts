@@ -54,16 +54,16 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
   });
 
   for (const viewFilter of flatViewFilters) {
-    const rawViewFitlerValue = viewFilter.value;
+    const rawViewFilterValue = viewFilter.value;
 
-    if (!isDefined(rawViewFitlerValue)) {
+    if (!isDefined(rawViewFilterValue)) {
       continue;
     }
 
     // TODO: all view filter value should be stored as JSON, this is ongoing work (we are missing a command to migrate the data)
-    const viewFilterValue = isNonEmptyString(rawViewFitlerValue)
-      ? parseJson(rawViewFitlerValue)
-      : rawViewFitlerValue;
+    const viewFilterValue = isNonEmptyString(rawViewFilterValue)
+      ? parseJson(rawViewFilterValue)
+      : rawViewFilterValue;
 
     if (!isDefined(viewFilterValue) || !Array.isArray(viewFilterValue)) {
       throw new FieldMetadataException(

@@ -163,18 +163,18 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     flatViewGroupsToUpdate: [],
   };
 
+  updatedEditableFieldProperties.options = !isDefined(
+    updatedEditableFieldProperties.options,
+  )
+    ? updatedEditableFieldProperties.options
+    : updatedEditableFieldProperties.options.map((option) => ({
+        id: v4(),
+        ...option,
+      }));
+
   const optimisticiallyUpdatedFlatFieldMetadatas =
     flatFieldMetadatasToUpdate.reduce<FlatFieldMetadataAndIndexToUpdate>(
       (accumulator, fromFlatFieldMetadata) => {
-        updatedEditableFieldProperties.options = !isDefined(
-          updatedEditableFieldProperties.options,
-        )
-          ? updatedEditableFieldProperties.options
-          : updatedEditableFieldProperties.options.map((option) => ({
-              id: v4(),
-              ...option,
-            }));
-
         const toFlatFieldMetadata = mergeUpdateInExistingRecord({
           existing: fromFlatFieldMetadata,
           properties: FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,

@@ -51,7 +51,7 @@ export const handleEnumFlatFieldMetadataUpdateSideEffects = ({
 
   if (
     JSON.stringify(fromFlatFieldMetadata.options) !==
-    JSON.stringify(toFlatFieldMetadata)
+    JSON.stringify(toFlatFieldMetadata.options)
   ) {
     const optionsPropertyUpdate: PropertyUpdate<
       FlatFieldMetadata<EnumFieldMetadataType>,
