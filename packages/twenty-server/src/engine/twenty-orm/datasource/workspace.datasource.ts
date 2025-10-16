@@ -60,31 +60,14 @@ export class WorkspaceDataSource extends DataSource {
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    shouldBypassPermissionChecks = false,
-    roleId?: string,
+    permissionOptions?: {
+      shouldBypassPermissionChecks?: boolean;
+      roleId?: string;
+      roleIds?: { intersection: string[] };
+    },
     authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
-    if (shouldBypassPermissionChecks === true) {
-      return this.manager.getRepository(
-        target,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-        authContext,
-      );
-    }
-
-    if (roleId) {
-      return this.manager.getRepository(
-        target,
-        {
-          roleId,
-        },
-        authContext,
-      );
-    }
-
-    return this.manager.getRepository(target, undefined, authContext);
+    return this.manager.getRepository(target, permissionOptions, authContext);
   }
 
   override createEntityManager(
