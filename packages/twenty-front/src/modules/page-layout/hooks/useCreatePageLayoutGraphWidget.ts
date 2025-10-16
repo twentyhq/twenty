@@ -117,6 +117,8 @@ export const useCreatePageLayoutGraphWidget = (
           y: position.y,
           w: position.w,
           h: position.h,
+          minW: minimumSize.w,
+          minH: minimumSize.h,
         };
 
         const updatedLayouts = getUpdatedTabLayouts(

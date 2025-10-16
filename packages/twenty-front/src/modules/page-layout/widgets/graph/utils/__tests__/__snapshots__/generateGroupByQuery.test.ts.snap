@@ -6,12 +6,14 @@ exports[`generateGroupByQuery should generate valid GraphQL query for empty aggr
       $groupBy: [PersonGroupByInput!]
       $filter: PersonFilterInput
       $orderBy: [PersonOrderByWithGroupByInput!]
+      $omitNullValues: Boolean
       $viewId: UUID
     ) {
       peopleGroupBy(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
+        omitNullValues: $omitNullValues
         viewId: $viewId
       ) {
         groupByDimensionValues
@@ -26,12 +28,14 @@ exports[`generateGroupByQuery should generate valid GraphQL query for multiple a
       $groupBy: [OpportunityGroupByInput!]
       $filter: OpportunityFilterInput
       $orderBy: [OpportunityOrderByWithGroupByInput!]
+      $omitNullValues: Boolean
       $viewId: UUID
     ) {
       opportunitiesGroupBy(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
+        omitNullValues: $omitNullValues
         viewId: $viewId
       ) {
         groupByDimensionValues
@@ -49,12 +53,14 @@ exports[`generateGroupByQuery should generate valid GraphQL query for single agg
       $groupBy: [OpportunityGroupByInput!]
       $filter: OpportunityFilterInput
       $orderBy: [OpportunityOrderByWithGroupByInput!]
+      $omitNullValues: Boolean
       $viewId: UUID
     ) {
       opportunitiesGroupBy(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
+        omitNullValues: $omitNullValues
         viewId: $viewId
       ) {
         groupByDimensionValues
