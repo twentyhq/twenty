@@ -4,10 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, LessThan } from 'typeorm';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import {
-  TRASH_CLEANUP_BATCH_SIZE,
-  TRASH_CLEANUP_MAX_RECORDS_PER_WORKSPACE,
-} from 'src/engine/trash-cleanup/constants/trash-cleanup.constants';
+import { TRASH_CLEANUP_BATCH_SIZE } from 'src/engine/trash-cleanup/constants/trash-cleanup-batch-size.constant';
+import { TRASH_CLEANUP_MAX_RECORDS_PER_WORKSPACE } from 'src/engine/trash-cleanup/constants/trash-cleanup-max-records-per-workspace.constant';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export type TrashCleanupInput = {

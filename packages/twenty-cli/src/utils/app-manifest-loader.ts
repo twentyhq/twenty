@@ -6,8 +6,8 @@ import {
   CoreEntityManifest,
   PackageJson,
 } from '../types/config.types';
-import { parseJsoncFile } from './jsonc-parser';
 import { validateSchema } from '../utils/schema-validator';
+import { parseJsoncFile } from './jsonc-parser';
 
 type Sources = { [key: string]: string | Sources };
 

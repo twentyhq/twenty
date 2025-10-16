@@ -30,6 +30,7 @@ import { RemoveFavoriteViewRelationCommand } from 'src/database/commands/upgrade
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
+import { MigrateChannelSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-channel-sync-stages.command';
 import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-workflow-step-filter-operand-value';
 import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-regenerate-person-search-vector-with-phones.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -91,6 +92,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly migrateWorkflowStepFilterOperandValueCommand: MigrateWorkflowStepFilterOperandValueCommand,
     protected readonly deduplicateUniqueFieldsCommand: DeduplicateUniqueFieldsCommand,
     protected readonly regeneratePersonSearchVectorWithPhonesCommand: RegeneratePersonSearchVectorWithPhonesCommand,
+    protected readonly migrateChannelSyncStagesCommand: MigrateChannelSyncStagesCommand,
   ) {
     super(
       workspaceRepository,
@@ -189,6 +191,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.migrateWorkflowStepFilterOperandValueCommand,
         this.deduplicateUniqueFieldsCommand,
         this.regeneratePersonSearchVectorWithPhonesCommand,
+        this.migrateChannelSyncStagesCommand,
       ],
       afterSyncMetadata: [],
     };
