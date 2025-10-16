@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { OrderByDirection } from 'twenty-shared/types';
 
 import {
   objectMetadataMapItemMock,

@@ -1,7 +1,6 @@
-import {
-  type ObjectRecord,
-  type ObjectRecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecord } from 'twenty-shared/types';
+
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type CommonPageInfo } from 'src/engine/api/common/types/common-page-info.type';
 import {

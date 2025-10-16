@@ -1,5 +1,6 @@
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
+import { PageLayoutGridResizeHandle } from '@/page-layout/components/PageLayoutGridResizeHandle';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
@@ -115,6 +116,10 @@ export const PageLayoutGridLayout = () => {
           draggableHandle=".drag-handle"
           compactType="vertical"
           preventCollision={false}
+          resizeHandle={
+            isPageLayoutInEditMode ? <PageLayoutGridResizeHandle /> : undefined
+          }
+          resizeHandles={['se']}
           onLayoutChange={handleLayoutChange}
           onBreakpointChange={(newBreakpoint) =>
             setPageLayoutCurrentBreakpoint(

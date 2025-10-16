@@ -2,14 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import {
-  ObjectRecord,
   ObjectRecordFilter,
   ObjectRecordOrderBy,
-  OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';

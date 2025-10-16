@@ -24,7 +24,7 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
       return msg`Iterator`;
     }
     case 'EMPTY': {
-      return msg`Empty Node`;
+      return msg`Add an Action`;
     }
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);

@@ -8,5 +8,8 @@ export const VIEW_GROUP_FRAGMENT = gql`
     fieldValue
     position
     viewId
+    createdAt
+    updatedAt
+    deletedAt
   }
 `;

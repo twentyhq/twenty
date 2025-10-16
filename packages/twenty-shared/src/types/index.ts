@@ -34,6 +34,15 @@ export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
 export type { ObjectPermissions } from './ObjectPermissions';
 export type { ObjectPermissionsDeprecated } from './ObjectPermissionsDeprecated';
+export type { ObjectRecord } from './ObjectRecord';
+export type {
+  AggregateOrderByWithGroupByField,
+  ObjectRecordOrderByWithGroupByDateField,
+  OrderByWithGroupBy,
+  ObjectRecordOrderByForScalarField,
+  ObjectRecordOrderByForCompositeField,
+} from './ObjectRecordGroupBy';
+export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';

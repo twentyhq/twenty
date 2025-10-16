@@ -45,5 +45,6 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     universalIdentifier: v4(),
     viewFieldIds: [],
     viewFilterIds: [],
+    viewGroupIds: [],
   };
 };

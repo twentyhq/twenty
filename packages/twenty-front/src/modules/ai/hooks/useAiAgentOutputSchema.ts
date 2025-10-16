@@ -1,13 +1,13 @@
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
-import { type BaseOutputSchemaDeprecated } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
+import { type AiAgentOutputSchema } from '@/workflow/workflow-variables/types/AiAgentOutputSchema';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
 export const useAiAgentOutputSchema = (
-  outputSchema?: BaseOutputSchemaDeprecated,
+  outputSchema?: AiAgentOutputSchema,
   onActionUpdate?: (action: WorkflowAiAgentAction) => void,
   action?: WorkflowAiAgentAction,
   readonly?: boolean,
@@ -26,7 +26,7 @@ export const useAiAgentOutputSchema = (
         return;
       }
 
-      const newOutputSchema = fields.reduce<BaseOutputSchemaDeprecated>(
+      const newOutputSchema = fields.reduce<AiAgentOutputSchema>(
         (schema, field) => {
           if (isDefined(field.name)) {
             schema[field.name] = {
