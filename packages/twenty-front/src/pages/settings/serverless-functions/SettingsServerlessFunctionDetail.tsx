@@ -97,17 +97,11 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const flattenedCode = flattenSources(formValues.code);
 
-  const files = flattenedCode
-    .map((file) => {
-      const language = file.path === '.env' ? 'ini' : 'typescript';
-
-      return {
-        path: file.path,
-        language,
-        content: file.content,
-      };
-    })
-    .reverse();
+  const files = flattenedCode.map((file) => ({
+    path: file.path,
+    language: 'typescript',
+    content: file.content,
+  }));
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
@@ -138,9 +132,7 @@ export const SettingsServerlessFunctionDetail = () => {
         return (
           <SettingsServerlessFunctionSettingsTab
             formValues={formValues}
-            serverlessFunctionId={serverlessFunctionId}
             onChange={onChange}
-            onCodeChange={onCodeChange}
           />
         );
       default:
