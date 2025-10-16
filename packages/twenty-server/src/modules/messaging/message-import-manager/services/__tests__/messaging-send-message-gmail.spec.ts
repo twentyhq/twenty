@@ -139,10 +139,10 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
 
     await service.sendMessage(sendMessageInput, connectedAccount);
 
-    const mockOAuth2Client =
-      await oAuth2ClientManagerService.getGoogleOAuth2Client(connectedAccount);
-    const gmailClient = mockOAuth2Client.gmail({ version: 'v1' });
-    const sendCall = gmailClient.users.messages.send as jest.Mock;
+    const sendCall = mockGmailClient.users.messages.send as jest.Mock;
+
+    expect(sendCall).toHaveBeenCalledTimes(1);
+
     const rawMessage = Buffer.from(
       sendCall.mock.calls[0][0].requestBody.raw,
       'base64',

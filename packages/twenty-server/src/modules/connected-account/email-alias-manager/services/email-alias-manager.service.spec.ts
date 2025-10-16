@@ -44,7 +44,7 @@ describe('Email Alias Manager Service', () => {
         {
           provide: OAuth2ClientManagerService,
           useValue: {
-            getMicrosoftClient: jest.fn().mockResolvedValue({
+            getMicrosoftOAuth2Client: jest.fn().mockResolvedValue({
               api: jest.fn().mockReturnValue({
                 get: jest
                   .fn()

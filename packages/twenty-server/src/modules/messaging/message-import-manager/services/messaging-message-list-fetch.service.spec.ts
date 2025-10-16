@@ -279,6 +279,7 @@ describe('MessagingMessageListFetchService', () => {
         connectedAccount: {
           ...mockMicrosoftMessageChannel.connectedAccount,
           accessToken: 'new-microsoft-access-token',
+          refreshToken: 'new-microsoft-refresh-token',
         },
       },
       [
@@ -302,7 +303,7 @@ describe('MessagingMessageListFetchService', () => {
         connectedAccount: {
           ...mockMicrosoftMessageChannel.connectedAccount,
           accessToken: 'new-microsoft-access-token',
-          refreshToken: 'microsoft-refresh-token',
+          refreshToken: 'new-microsoft-refresh-token',
         },
       },
       'new-sync-cursor',
@@ -337,6 +338,7 @@ describe('MessagingMessageListFetchService', () => {
         connectedAccount: {
           ...mockGoogleMessageChannel.connectedAccount,
           accessToken: 'new-google-access-token',
+          refreshToken: 'new-google-refresh-token',
         },
       },
       [
@@ -360,7 +362,7 @@ describe('MessagingMessageListFetchService', () => {
         connectedAccount: {
           ...mockGoogleMessageChannel.connectedAccount,
           accessToken: 'new-google-access-token',
-          refreshToken: 'google-refresh-token',
+          refreshToken: 'new-google-refresh-token',
         },
       },
       'new-google-history-id',
