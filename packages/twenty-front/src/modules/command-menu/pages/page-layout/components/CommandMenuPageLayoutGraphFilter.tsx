@@ -1,7 +1,8 @@
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
-import { ChartFilters } from '@/command-menu/pages/page-layout/components/ChartFilters';
+import { ChartFiltersSettings } from '@/command-menu/pages/page-layout/components/ChartFiltersSettings';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { isChartWidget } from '@/command-menu/pages/page-layout/utils/isChartWidget';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -50,6 +51,10 @@ export const CommandMenuPageLayoutGraphFilter = () => {
     return null;
   }
 
+  if (!isChartWidget(widgetInEditMode)) {
+    return null;
+  }
+
   const currentGraphType = widgetInEditMode.configuration.graphType;
   const graphTypeLabel = t(GRAPH_TYPE_INFORMATION[currentGraphType].label);
 
@@ -62,7 +67,7 @@ export const CommandMenuPageLayoutGraphFilter = () => {
         headerType={t`${graphTypeLabel} Chart`}
         disabled
       />
-      <ChartFilters
+      <ChartFiltersSettings
         widget={widgetInEditMode}
         objectMetadataItem={objectMetadataItem}
       />
