@@ -1,7 +1,8 @@
-export const buildPermissionOptions = (roleContext: {
-  roleId?: string;
-  roleIds?: string[];
-}):
+import { type RoleContext } from 'src/engine/metadata-modules/role/types/role-context.type';
+
+export const buildPermissionOptions = (
+  roleContext: RoleContext,
+):
   | { roleId: string }
   | { roleIds: { intersection: string[] } }
   | { shouldBypassPermissionChecks: true } => {

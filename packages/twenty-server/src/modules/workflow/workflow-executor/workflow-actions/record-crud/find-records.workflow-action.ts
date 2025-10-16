@@ -70,7 +70,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       orderBy: workflowActionInput.orderBy,
       limit: workflowActionInput.limit,
       workspaceId,
-      roleId: executionContext.roleId,
+      roleContext: { roleId: executionContext.roleId },
     });
 
     if (!toolOutput.success) {

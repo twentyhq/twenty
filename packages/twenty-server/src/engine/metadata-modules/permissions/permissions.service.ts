@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -188,30 +188,56 @@ export class PermissionsService {
     );
   }
 
+  public checkRolesPermissions(
+    roles: RoleEntity[],
+    setting: PermissionFlagType,
+  ): boolean {
+    if (roles.length === 0) {
+      return false;
+    }
+
+    return roles.every((role) => this.checkRolePermissions(role, setting));
+  }
+
   public async hasToolPermission(
-    roleId: string,
+    roleContext: {
+      roleId?: string;
+      roleIds?: string[];
+    },
     workspaceId: string,
     flag: PermissionFlagType,
   ): Promise<boolean> {
     try {
-      const role = await this.roleRepository.findOne({
-        where: { id: roleId, workspaceId },
-        relations: ['permissionFlags'],
-      });
+      const roleIds = roleContext.roleIds
+        ? roleContext.roleIds
+        : roleContext.roleId
+          ? [roleContext.roleId]
+          : [];
 
-      if (!role) {
+      if (roleIds.length === 0) {
         return false;
       }
 
-      if (role.canAccessAllTools === true) {
-        return true;
+      const roles = await this.roleRepository.find({
+        where: { id: In(roleIds), workspaceId },
+        relations: ['permissionFlags'],
+      });
+
+      if (roles.length !== roleIds.length) {
+        return false;
       }
 
-      const permissionFlags = role.permissionFlags ?? [];
+      return roles.every((role) => {
+        if (role.canAccessAllTools === true) {
+          return true;
+        }
 
-      return permissionFlags.some(
-        (permissionFlag) => permissionFlag.flag === flag,
-      );
+        const permissionFlags = role.permissionFlags ?? [];
+
+        return permissionFlags.some(
+          (permissionFlag) => permissionFlag.flag === flag,
+        );
+      });
     } catch {
       return false;
     }

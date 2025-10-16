@@ -3,6 +3,8 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { type RoleContext } from 'src/engine/metadata-modules/role/types/role-context.type';
+
 export type FindRecordsParams = {
   objectName: string;
   filter?:
@@ -14,5 +16,5 @@ export type FindRecordsParams = {
   limit?: number;
   offset?: number;
   workspaceId: string;
-  roleId?: string;
+  roleContext?: RoleContext;
 };

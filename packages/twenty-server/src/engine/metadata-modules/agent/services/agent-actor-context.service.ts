@@ -12,7 +12,9 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 
 export type AgentActorContext = {
   actorContext: ActorMetadata;
-  roleId: string | undefined;
+  roleContext: {
+    roleIds: string[];
+  };
 };
 
 @Injectable()
@@ -24,8 +26,9 @@ export class AgentActorContextService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async buildUserActorContext(
+  async buildUserAndAgentActorContext(
     userWorkspaceId: string,
+    agentId: string,
     workspaceId: string,
   ): Promise<AgentActorContext> {
     const userWorkspace =
@@ -58,7 +61,7 @@ export class AgentActorContextService {
       );
     }
 
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+    const userRoleId = await this.userRoleService.getRoleIdForUserWorkspace({
       userWorkspaceId,
       workspaceId,
     });
@@ -68,6 +71,41 @@ export class AgentActorContextService {
       workspaceMemberId: workspaceMember.id,
     });
 
-    return { actorContext, roleId };
+    const roleTargetsRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'roleTarget',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const roleTarget = await roleTargetsRepository.findOne({
+      where: {
+        agentId,
+        workspaceId,
+      },
+    });
+
+    const agentRoleId = roleTarget?.roleId;
+
+    if (!agentRoleId) {
+      throw new AgentException(
+        'Agent role not found',
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+
+    if (!userRoleId) {
+      throw new AgentException(
+        'User role not found',
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+
+    return {
+      actorContext,
+      roleContext: {
+        roleIds: [userRoleId, agentRoleId],
+      },
+    };
   }
 }

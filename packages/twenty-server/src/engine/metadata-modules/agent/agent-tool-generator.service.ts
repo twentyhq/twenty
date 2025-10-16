@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ToolSet } from 'ai';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
@@ -11,6 +11,7 @@ import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/c
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RoleContext } from 'src/engine/metadata-modules/role/types/role-context.type';
 import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 @Injectable()
@@ -31,7 +32,7 @@ export class AgentToolGeneratorService {
     agentId: string,
     workspaceId: string,
     actorContext?: ActorMetadata,
-    roleIdOverride?: string,
+    roleContext?: RoleContext,
   ): Promise<ToolSet> {
     let tools: ToolSet = {};
 
@@ -41,41 +42,53 @@ export class AgentToolGeneratorService {
 
       tools = { ...actionTools };
 
-      const effectiveRoleId = roleIdOverride || agent.roleId;
+      const effectiveRoleIdOrIds = roleContext?.roleIds
+        ? roleContext.roleIds
+        : roleContext?.roleId || agent.roleId;
 
-      if (!effectiveRoleId) {
+      if (!effectiveRoleIdOrIds) {
         return tools;
       }
 
-      const role = await this.roleRepository.findOne({
-        where: {
-          id: effectiveRoleId,
-          workspaceId,
-        },
+      const roleIds =
+        typeof effectiveRoleIdOrIds === 'string'
+          ? [effectiveRoleIdOrIds]
+          : effectiveRoleIdOrIds;
+
+      const roles = await this.roleRepository.find({
+        where: { id: In(roleIds), workspaceId },
         relations: ['permissionFlags'],
       });
 
-      if (!role) {
+      if (roles.length !== roleIds.length) {
         return tools;
       }
 
       const hasWorkflowPermission =
-        this.permissionsService.checkRolePermissions(
-          role,
-          PermissionFlagType.WORKFLOWS,
-        );
+        roles.length === 1
+          ? this.permissionsService.checkRolePermissions(
+              roles[0],
+              PermissionFlagType.WORKFLOWS,
+            )
+          : this.permissionsService.checkRolesPermissions(
+              roles,
+              PermissionFlagType.WORKFLOWS,
+            );
+
+      const toolRoleContext =
+        roles.length === 1 ? { roleId: roleIds[0] } : { roleIds };
 
       if (hasWorkflowPermission) {
         const workflowTools = this.workflowToolService.generateWorkflowTools(
           workspaceId,
-          effectiveRoleId,
+          toolRoleContext,
         );
 
         tools = { ...tools, ...workflowTools };
       }
 
       const databaseTools = await this.toolService.listTools(
-        effectiveRoleId,
+        toolRoleContext,
         workspaceId,
         actorContext,
       );
@@ -83,7 +96,7 @@ export class AgentToolGeneratorService {
       tools = { ...tools, ...databaseTools };
 
       const roleActionTools = await this.toolAdapterService.getTools(
-        effectiveRoleId,
+        toolRoleContext,
         workspaceId,
       );
 

@@ -27,6 +27,7 @@ import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constant
 import { AgentActorContextService } from 'src/engine/metadata-modules/agent/services/agent-actor-context.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { RoleContext } from 'src/engine/metadata-modules/role/types/role-context.type';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -66,14 +67,14 @@ export class AgentExecutionService implements AgentExecutionContext {
     system,
     agent,
     actorContext,
-    roleIdOverride,
+    roleContext,
     excludeHandoffTools = false,
   }: {
     system: string;
     agent: AgentEntity | null;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     actorContext?: ActorMetadata;
-    roleIdOverride?: string;
+    roleContext?: RoleContext;
     excludeHandoffTools?: boolean;
   }) {
     try {
@@ -95,7 +96,7 @@ export class AgentExecutionService implements AgentExecutionContext {
             agent.id,
             agent.workspaceId,
             actorContext,
-            roleIdOverride,
+            roleContext,
           );
 
         let handoffTools = {};
@@ -193,8 +194,7 @@ export class AgentExecutionService implements AgentExecutionContext {
 
             const repository = workspaceDataSource.getRepository(
               recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-              false,
-              roleId,
+              { roleId },
             );
 
             const restrictedFields =
@@ -270,9 +270,10 @@ export class AgentExecutionService implements AgentExecutionContext {
         contextString = `\n\nCONTEXT:\n${contextPart}`;
       }
 
-      const { actorContext, roleId } =
-        await this.agentActorContextService.buildUserActorContext(
+      const { actorContext, roleContext } =
+        await this.agentActorContextService.buildUserAndAgentActorContext(
           userWorkspaceId,
+          agent.id,
           workspace.id,
         );
 
@@ -281,7 +282,7 @@ export class AgentExecutionService implements AgentExecutionContext {
         agent,
         messages,
         actorContext,
-        roleIdOverride: roleId,
+        roleContext,
       });
 
       this.logger.log(

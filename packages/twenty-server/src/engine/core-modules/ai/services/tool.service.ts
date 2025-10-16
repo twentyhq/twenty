@@ -16,8 +16,11 @@ import {
 import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { type RoleContext } from 'src/engine/metadata-modules/role/types/role-context.type';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { buildPermissionOptions } from 'src/engine/twenty-orm/utils/build-permission-options.util';
+import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 
 @Injectable()
 export class ToolService {
@@ -32,7 +35,7 @@ export class ToolService {
   ) {}
 
   async listTools(
-    roleId: string,
+    roleContext: RoleContext,
     workspaceId: string,
     actorContext?: ActorMetadata,
   ): Promise<ToolSet> {
@@ -43,7 +46,19 @@ export class ToolService {
         workspaceId,
       });
 
-    const objectPermissions = rolesPermissions[roleId];
+    let objectPermissions;
+
+    if (roleContext.roleId) {
+      objectPermissions = rolesPermissions[roleContext.roleId];
+    } else if (roleContext.roleIds) {
+      const allRolePermissions = roleContext.roleIds.map(
+        (roleId) => rolesPermissions[roleId],
+      );
+
+      objectPermissions = computePermissionIntersection(allRolePermissions);
+    } else {
+      return tools;
+    }
 
     const allObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
@@ -74,7 +89,7 @@ export class ToolService {
               objectName: objectMetadata.nameSingular,
               objectRecord: parameters.input,
               workspaceId,
-              roleId,
+              roleContext,
               createdBy: actorContext,
             });
           },
@@ -91,7 +106,7 @@ export class ToolService {
               objectRecordId: id,
               objectRecord,
               workspaceId,
-              roleId,
+              roleContext,
             });
           },
         };
@@ -110,7 +125,7 @@ export class ToolService {
               limit,
               offset,
               workspaceId,
-              roleId,
+              roleContext,
             });
           },
         };
@@ -124,7 +139,7 @@ export class ToolService {
               filter: { id: { eq: parameters.input.id } },
               limit: 1,
               workspaceId,
-              roleId,
+              roleContext,
             });
           },
         };
@@ -139,7 +154,7 @@ export class ToolService {
               objectName: objectMetadata.nameSingular,
               objectRecordId: parameters.input.id,
               workspaceId,
-              roleId,
+              roleContext,
               soft: true,
             });
           },
@@ -153,7 +168,7 @@ export class ToolService {
               objectMetadata.nameSingular,
               parameters.input,
               workspaceId,
-              roleId,
+              roleContext,
             );
           },
         };
@@ -167,14 +182,17 @@ export class ToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
-    roleId: string,
+    roleContext: {
+      roleId?: string;
+      roleIds?: string[];
+    },
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          { roleId },
+          buildPermissionOptions(roleContext),
         );
 
       const { filter } = parameters;

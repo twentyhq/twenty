@@ -15,6 +15,7 @@ import { FindRecordsResult } from 'src/engine/core-modules/record-crud/types/fin
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { buildPermissionOptions } from 'src/engine/twenty-orm/utils/build-permission-options.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
@@ -37,7 +38,7 @@ export class FindRecordsService {
       limit,
       offset = 0,
       workspaceId,
-      roleId,
+      roleContext,
     } = params;
 
     if (!workspaceId) {
@@ -53,7 +54,7 @@ export class FindRecordsService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          roleId ? { roleId } : { shouldBypassPermissionChecks: true },
+          buildPermissionOptions(roleContext || {}),
         );
 
       const { objectMetadataItemWithFieldsMaps, objectMetadataMaps } =
