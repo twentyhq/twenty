@@ -1,8 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type Client } from '@microsoft/microsoft-graph-client';
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   MessageFolder,
   MessageFolderDriver,
@@ -42,113 +39,60 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
       const microsoftClient =
         await this.microsoftClientProvider.getMicrosoftClient(connectedAccount);
 
-      const microsoftGraphFolders = await this.fetchFoldersRecursively(
-        microsoftClient,
-        connectedAccount,
-      );
+      const response = await microsoftClient
+        .api('/me/mailFolders')
+        .version('beta')
+        .top(MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT)
+        .get()
+        .catch((error) => {
+          this.logger.error(
+            `Connected account ${connectedAccount.id}: Error fetching folders: ${error.message}`,
+          );
+          this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
+            error,
+          );
 
-      const messageFolders: MessageFolder[] = [];
+          return { value: [] };
+        });
 
-      for (const microsoftGraphFolder of microsoftGraphFolders) {
-        if (!microsoftGraphFolder.displayName) continue;
+      const folders = (response.value as MicrosoftGraphFolder[]) || [];
+      const folderInfos: MessageFolder[] = [];
 
-        const standardFolder = getStandardFolderByRegex(
-          microsoftGraphFolder.displayName,
-        );
+      for (const folder of folders) {
+        if (!folder.displayName) {
+          continue;
+        }
 
-        if (this.shouldExcludeFolder(standardFolder)) continue;
+        const standardFolder = getStandardFolderByRegex(folder.displayName);
 
-        const isInboxFolder = this.isInboxFolder(standardFolder);
+        if (this.shouldExcludeFolder(standardFolder)) {
+          continue;
+        }
+
+        const isInbox = this.isInboxFolder(standardFolder);
         const isSentFolder = this.isSentFolder(standardFolder);
 
-        messageFolders.push({
-          externalId: microsoftGraphFolder.id,
-          name: microsoftGraphFolder.displayName,
-          isSynced: isInboxFolder || isSentFolder,
+        folderInfos.push({
+          externalId: folder.id,
+          name: folder.displayName,
+          isSynced: isInbox || isSentFolder,
           isSentFolder,
         });
       }
 
       this.logger.log(
-        `Found ${messageFolders.length} folders for Microsoft account ${connectedAccount.handle}`,
+        `Found ${folderInfos.length} folders for Microsoft account ${connectedAccount.handle}`,
       );
 
-      return messageFolders;
+      return folderInfos;
     } catch (error) {
       this.logger.error(
         `Failed to get Microsoft folders for account ${connectedAccount.handle}:`,
         error,
       );
+
       throw error;
     }
-  }
-
-  private async fetchFoldersRecursively(
-    microsoftClient: Client,
-    connectedAccount: Pick<ConnectedAccountWorkspaceEntity, 'id'>,
-    parentFolderId: string | null = null,
-  ): Promise<MicrosoftGraphFolder[]> {
-    const endpoint = parentFolderId
-      ? `/me/mailFolders/${parentFolderId}/childFolders`
-      : '/me/mailFolders';
-
-    const folders = await this.fetchFolderPage(
-      microsoftClient,
-      connectedAccount,
-      endpoint,
-    );
-
-    const allFolders = [...folders];
-
-    for (const folder of folders) {
-      if ((folder.childFolderCount ?? 0) > 0) {
-        const childFolders = await this.fetchFoldersRecursively(
-          microsoftClient,
-          connectedAccount,
-          folder.id,
-        );
-
-        allFolders.push(...childFolders);
-      }
-    }
-
-    return allFolders;
-  }
-
-  private async fetchFolderPage(
-    microsoftClient: Client,
-    connectedAccount: Pick<ConnectedAccountWorkspaceEntity, 'id'>,
-    endpoint: string,
-  ): Promise<MicrosoftGraphFolder[]> {
-    const allFoldersFromEndpoint: MicrosoftGraphFolder[] = [];
-    let nextPageUrl: string | undefined = endpoint;
-
-    while (isDefined(nextPageUrl)) {
-      try {
-        const response = await microsoftClient
-          .api(nextPageUrl)
-          .top(MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT)
-          .select('id,displayName,childFolderCount,parentFolderId')
-          .get();
-
-        const currentPageFolders =
-          (response.value as MicrosoftGraphFolder[]) || [];
-
-        allFoldersFromEndpoint.push(...currentPageFolders);
-
-        nextPageUrl = response['@odata.nextLink'];
-      } catch (error) {
-        this.logger.error(
-          `Connected account ${connectedAccount.id}: Error fetching folder page: ${error.message}`,
-        );
-        this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
-          error,
-        );
-        break;
-      }
-    }
-
-    return allFoldersFromEndpoint;
   }
 
   private isInboxFolder(standardFolder: StandardFolder | null): boolean {
