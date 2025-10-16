@@ -7,10 +7,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type ResumeDelayedJobData } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/delay.workflow-action';
-import {
-  RunWorkflowJob,
-  type RunWorkflowJobData,
-} from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
