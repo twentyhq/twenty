@@ -1,6 +1,7 @@
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useRef } from 'react';
+import { useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
 import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
@@ -9,27 +10,55 @@ import {
 type CommandMenuItemNumberInputProps = {
   value: string;
   onChange: (value: number | null) => void;
+  onValidate?: (value: number | null) => boolean;
   placeholder?: string;
 };
 
 export const CommandMenuItemNumberInput = ({
   value,
   onChange,
+  onValidate,
   placeholder,
 }: CommandMenuItemNumberInputProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [draftValue, setDraftValue] = useState(value);
+  const [hasError, setHasError] = useState(false);
 
   const handleChange = (text: string) => {
-    if (canBeCastAsNumberOrNull(text)) {
-      const numericValue = castAsNumberOrNull(text);
-      onChange(numericValue);
+    setDraftValue(text);
+    if (hasError) {
+      setHasError(false);
     }
+  };
+
+  const handleCommit = () => {
+    if (!canBeCastAsNumberOrNull(draftValue)) {
+      setHasError(true);
+      setDraftValue(value);
+      return;
+    }
+
+    const numericValue = castAsNumberOrNull(draftValue);
+
+    if (isDefined(onValidate)) {
+      const isInvalid = onValidate(numericValue);
+      if (isInvalid) {
+        setHasError(true);
+        return;
+      }
+    }
+
+    onChange(numericValue);
+    setHasError(false);
+  };
+
+  const handleBlur = () => {
+    handleCommit();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === Key.Enter || event.key === Key.Escape) {
       event.stopPropagation();
-      inputRef.current?.blur();
+      handleCommit();
     } else {
       event.stopPropagation();
     }
@@ -37,13 +66,15 @@ export const CommandMenuItemNumberInput = ({
 
   return (
     <TextInput
-      ref={inputRef}
       type="number"
-      value={value}
+      value={draftValue}
       sizeVariant="sm"
       onChange={handleChange}
+      onBlur={handleBlur}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
+      error={hasError ? ' ' : undefined}
+      noErrorHelper
     />
   );
 };

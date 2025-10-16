@@ -27,6 +27,10 @@ import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runne
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
@@ -355,7 +359,16 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
   }
 
   async validate(
-    _args: GroupByResolverArgs<ObjectRecordFilter>,
+    args: GroupByResolverArgs<ObjectRecordFilter>,
     _options: WorkspaceQueryRunnerOptions,
-  ): Promise<void> {}
+  ): Promise<void> {
+    if (isDefined(args.rangeMin) && isDefined(args.rangeMax)) {
+      if (args.rangeMin > args.rangeMax) {
+        throw new GraphqlQueryRunnerException(
+          'rangeMin cannot be greater than rangeMax',
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        );
+      }
+    }
+  }
 }

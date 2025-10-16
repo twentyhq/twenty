@@ -153,6 +153,41 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
               });
             };
 
+            const createRangeValidator = (itemId: string) => {
+              return (value: number | null): boolean => {
+                const configKey =
+                  itemId in CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP
+                    ? CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP[
+                        itemId as keyof typeof CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP
+                      ]
+                    : itemId;
+
+                if (configKey === 'rangeMin') {
+                  if (
+                    'rangeMax' in configuration &&
+                    isDefined(configuration.rangeMax) &&
+                    isDefined(value) &&
+                    value > configuration.rangeMax
+                  ) {
+                    return true;
+                  }
+                }
+
+                if (configKey === 'rangeMax') {
+                  if (
+                    'rangeMin' in configuration &&
+                    isDefined(configuration.rangeMin) &&
+                    isDefined(value) &&
+                    value < configuration.rangeMin
+                  ) {
+                    return true;
+                  }
+                }
+
+                return false;
+              };
+            };
+
             const handleInputChange = (value: number | null) => {
               const configKey =
                 item.id in CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP
@@ -160,26 +195,6 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                       item.id as keyof typeof CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP
                     ]
                   : item.id;
-
-              if (
-                configKey === 'rangeMin' &&
-                isDefined(value) &&
-                'rangeMax' in configuration &&
-                isDefined(configuration.rangeMax) &&
-                value > configuration.rangeMax
-              ) {
-                return;
-              }
-
-              if (
-                configKey === 'rangeMax' &&
-                isDefined(value) &&
-                'rangeMin' in configuration &&
-                isDefined(configuration.rangeMin) &&
-                value < configuration.rangeMin
-              ) {
-                return;
-              }
 
               updateCurrentWidgetConfig({
                 configToUpdate: {
@@ -221,6 +236,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                       <CommandMenuItemNumberInput
                         value={stringValue}
                         onChange={handleInputChange}
+                        onValidate={createRangeValidator(item.id)}
                         placeholder={t`Auto`}
                       />
                     }
