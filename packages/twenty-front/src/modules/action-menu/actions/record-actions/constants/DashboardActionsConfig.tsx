@@ -1,20 +1,20 @@
 import { CancelDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/CancelDashboardSingleRecordAction';
 import { EditDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/EditDashboardSingleRecordAction';
 import { SaveDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/SaveDashboardSingleRecordAction';
-import { DashboardSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/types/DashboardSingleRecordActionKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { PageLayoutSingleRecordActionKeys } from '@/page-layout/actions/PageLayoutSingleRecordActionKeys';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDeviceFloppy, IconPencil, IconX } from 'twenty-ui/display';
 
 export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {
-    [DashboardSingleRecordActionKeys.EDIT_DASHBOARD]: {
-      key: DashboardSingleRecordActionKeys.EDIT_DASHBOARD,
+    [PageLayoutSingleRecordActionKeys.EDIT_LAYOUT]: {
+      key: PageLayoutSingleRecordActionKeys.EDIT_LAYOUT,
       label: msg`Edit Dashboard`,
       shortLabel: msg`Edit`,
       isPinned: true,
@@ -30,8 +30,8 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <EditDashboardSingleRecordAction />,
     },
-    [DashboardSingleRecordActionKeys.SAVE_DASHBOARD]: {
-      key: DashboardSingleRecordActionKeys.SAVE_DASHBOARD,
+    [PageLayoutSingleRecordActionKeys.SAVE_LAYOUT]: {
+      key: PageLayoutSingleRecordActionKeys.SAVE_LAYOUT,
       label: msg`Save Dashboard`,
       shortLabel: msg`Save`,
       isPinned: true,
@@ -47,8 +47,8 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <SaveDashboardSingleRecordAction />,
     },
-    [DashboardSingleRecordActionKeys.CANCEL_DASHBOARD_EDITION]: {
-      key: DashboardSingleRecordActionKeys.CANCEL_DASHBOARD_EDITION,
+    [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: {
+      key: PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION,
       label: msg`Cancel Edition`,
       shortLabel: msg`Cancel`,
       isPinned: true,

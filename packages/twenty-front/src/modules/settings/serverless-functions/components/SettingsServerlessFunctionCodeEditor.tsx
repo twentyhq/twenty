@@ -1,7 +1,7 @@
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { type EditorProps, type Monaco } from '@monaco-editor/react';
 import dotenv from 'dotenv';
-import { type editor, MarkerSeverity } from 'monaco-editor';
+import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,14 +20,12 @@ type SettingsServerlessFunctionCodeEditorProps = Omit<
   currentFilePath: string;
   files: File[];
   onChange: (value: string) => void;
-  setIsCodeValid: (isCodeValid: boolean) => void;
 };
 
 export const SettingsServerlessFunctionCodeEditor = ({
   currentFilePath,
   files,
   onChange,
-  setIsCodeValid,
   height = 450,
   options = undefined,
 }: SettingsServerlessFunctionCodeEditorProps) => {
@@ -106,16 +104,6 @@ export const SettingsServerlessFunctionCodeEditor = ({
     }
   };
 
-  const handleEditorValidation = (markers: editor.IMarker[]) => {
-    for (const marker of markers) {
-      if (marker.severity === MarkerSeverity.Error) {
-        setIsCodeValid?.(false);
-        return;
-      }
-    }
-    setIsCodeValid?.(true);
-  };
-
   return (
     isDefined(currentFile) &&
     isDefined(availablePackages) && (
@@ -125,7 +113,6 @@ export const SettingsServerlessFunctionCodeEditor = ({
         language={currentFile.language}
         onMount={handleEditorDidMount}
         onChange={onChange}
-        onValidate={handleEditorValidation}
         options={options}
         variant="with-header"
       />

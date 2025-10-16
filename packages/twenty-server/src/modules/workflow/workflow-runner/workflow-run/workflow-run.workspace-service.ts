@@ -198,41 +198,22 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
-    const updatedStepInfos = Object.entries(
-      workflowRunToUpdate.state?.stepInfos ?? {},
-    )
-      .map(([stepId, step]) => {
-        if (
-          step.status === StepStatus.RUNNING ||
-          step.status === StepStatus.PENDING
-        ) {
-          return {
-            [stepId]: {
-              ...step,
-              status: StepStatus.FAILED,
-              error: 'Workflow has been ended before this step was completed',
-            },
-          };
-        }
+    let updatedStepInfos = {};
+    const shouldUpdateStepInfos = status === WorkflowRunStatus.FAILED;
 
-        return {
-          [stepId]: step,
-        };
-      })
-      .reduce((acc, current) => {
-        return {
-          ...acc,
-          ...current,
-        };
-      }, {});
+    if (shouldUpdateStepInfos) {
+      updatedStepInfos = this.markRunningStepsAsFailed({
+        stepInfosToUpdate: workflowRunToUpdate.state?.stepInfos ?? {},
+      });
+    }
 
     const partialUpdate = {
       status,
       endedAt: new Date().toISOString(),
       state: {
         ...workflowRunToUpdate.state,
-        stepInfos: updatedStepInfos,
         workflowRunError: error,
+        ...(shouldUpdateStepInfos && { stepInfos: updatedStepInfos }),
       },
     };
 
@@ -458,5 +439,37 @@ export class WorkflowRunWorkspaceService {
       undefined,
       ['id'],
     );
+  }
+
+  private markRunningStepsAsFailed({
+    stepInfosToUpdate,
+  }: {
+    stepInfosToUpdate: Record<string, WorkflowRunStepInfo>;
+  }) {
+    return Object.entries(stepInfosToUpdate ?? {})
+      .map(([stepId, step]) => {
+        if (
+          step.status === StepStatus.RUNNING ||
+          step.status === StepStatus.PENDING
+        ) {
+          return {
+            [stepId]: {
+              ...step,
+              status: StepStatus.FAILED,
+              error: 'Workflow has been ended before this step was completed',
+            },
+          };
+        }
+
+        return {
+          [stepId]: step,
+        };
+      })
+      .reduce((acc, current) => {
+        return {
+          ...acc,
+          ...current,
+        };
+      }, {});
   }
 }

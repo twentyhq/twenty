@@ -6,7 +6,6 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { type BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 import { type LinkOutputSchema } from '@/workflow/workflow-variables/types/LinkOutputSchema';
 import { type FieldOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
@@ -14,6 +13,7 @@ import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { isBaseOutputSchemaV2 } from '../types/guards/isBaseOutputSchemaV2';
 import { isLinkOutputSchema } from '../types/guards/isLinkOutputSchema';

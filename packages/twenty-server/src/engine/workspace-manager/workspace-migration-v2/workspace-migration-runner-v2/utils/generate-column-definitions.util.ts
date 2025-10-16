@@ -81,6 +81,7 @@ export const generateCompositeColumnDefinition = ({
     isUnique: parentFieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
     isArray: isArrayFlag,
+    isPrimary: false,
   };
 
   return definition;
@@ -100,6 +101,7 @@ const generateTsVectorColumnDefinition = (
     default: null,
     asExpression: flatFieldMetadata.settings?.asExpression ?? undefined,
     generatedType: flatFieldMetadata.settings?.generatedType ?? undefined,
+    isPrimary: false,
   };
 };
 
@@ -124,6 +126,7 @@ const generateRelationColumnDefinition = (
     isArray: false,
     isUnique: false,
     default: null,
+    isPrimary: false,
   };
 };
 
@@ -160,6 +163,7 @@ const generateColumnDefinition = ({
       flatFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
     isUnique: flatFieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
+    isPrimary: flatFieldMetadata.name === 'id',
   };
 };
 

@@ -138,7 +138,10 @@ export class FieldMetadataServiceV2 {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              fieldMetadata: true,
+              index: true,
+            },
           },
           fromToAllFlatEntityMaps: {
             flatFieldMetadataMaps: {
@@ -202,6 +205,8 @@ export class FieldMetadataServiceV2 {
     const {
       flatFieldMetadatasToUpdate: optimisticallyUpdatedFlatFieldMetadatas,
       flatIndexMetadatasToUpdate,
+      flatIndexMetadatasToDelete,
+      flatIndexMetadatasToCreate,
     } = inputTranspilationResult.result;
 
     const toFlatFieldMetadataMaps =
@@ -219,16 +224,38 @@ export class FieldMetadataServiceV2 {
         }),
       );
 
-    const toFlatIndexMaps = flatIndexMetadatasToUpdate.reduce(
-      (flatIndexMaps, flatIndexMetadata) =>
-        replaceFlatEntityInFlatEntityMapsOrThrow({
-          flatEntity: flatIndexMetadata,
+    const fromFlatIndexMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: [
+        ...flatIndexMetadatasToUpdate,
+        ...flatIndexMetadatasToDelete,
+      ].map(({ id }) => id),
+      flatEntityMaps: existingFlatIndexMaps,
+    });
+    const toFlatIndexMapsWithCreatedFlatIndex =
+      flatIndexMetadatasToCreate.reduce(
+        (flatIndexMaps, flatIndex) =>
+          addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: flatIndex,
+            flatEntityMaps: flatIndexMaps,
+          }),
+        fromFlatIndexMaps,
+      );
+    const toFlatIndexMapsWithUpdatedFlatIndex =
+      flatIndexMetadatasToUpdate.reduce(
+        (flatIndexMaps, flatIndex) =>
+          replaceFlatEntityInFlatEntityMapsOrThrow({
+            flatEntity: flatIndex,
+            flatEntityMaps: flatIndexMaps,
+          }),
+        toFlatIndexMapsWithCreatedFlatIndex,
+      );
+    const toFlatIndexMaps = flatIndexMetadatasToDelete.reduce(
+      (flatIndexMaps, flatIndex) =>
+        deleteFlatEntityFromFlatEntityMapsOrThrow({
+          entityToDeleteId: flatIndex.id,
           flatEntityMaps: flatIndexMaps,
         }),
-      getSubFlatEntityMapsOrThrow({
-        flatEntityIds: flatIndexMetadatasToUpdate.map(({ id }) => id),
-        flatEntityMaps: existingFlatIndexMaps,
-      }),
+      toFlatIndexMapsWithUpdatedFlatIndex,
     );
 
     const validateAndBuildResult =
@@ -243,13 +270,15 @@ export class FieldMetadataServiceV2 {
               to: toFlatFieldMetadataMaps,
             },
             flatIndexMaps: {
-              from: existingFlatIndexMaps,
+              from: fromFlatIndexMaps,
               to: toFlatIndexMaps,
             },
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
+            inferDeletionFromMissingEntities: {
+              index: true,
+            },
           },
           workspaceId,
         },
@@ -365,7 +394,6 @@ export class FieldMetadataServiceV2 {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },

@@ -20,15 +20,12 @@ const StyledShowPageBannerContainer = styled.div`
 type RecordShowContainerProps = {
   objectNameSingular: string;
   objectRecordId: string;
-  loading: boolean;
   isInRightDrawer?: boolean;
-  isNewRightDrawerItemLoading?: boolean;
 };
 
 export const RecordShowContainer = ({
   objectNameSingular,
   objectRecordId,
-  loading,
   isInRightDrawer = false,
 }: RecordShowContainerProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -47,7 +44,6 @@ export const RecordShowContainer = ({
   );
 
   const { layout, tabs } = useRecordShowContainerTabs(
-    loading,
     objectNameSingular as CoreObjectNameSingular,
     isInRightDrawer,
     objectMetadataItem,
@@ -70,12 +66,12 @@ export const RecordShowContainer = ({
         <ShowPageSubContainer
           tabs={tabs}
           layout={layout}
-          targetableObject={{
+          targetRecordIdentifier={{
             id: objectRecordId,
             targetObjectNameSingular: objectMetadataItem?.nameSingular,
           }}
           isInRightDrawer={isInRightDrawer}
-          loading={isPrefetchLoading || loading || recordLoading}
+          loading={isPrefetchLoading || recordLoading}
         />
       </ShowPageContainer>
     </RightDrawerProvider>

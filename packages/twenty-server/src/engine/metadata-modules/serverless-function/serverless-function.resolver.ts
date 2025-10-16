@@ -45,6 +45,7 @@ export class ServerlessFunctionResolver {
           id,
           workspaceId,
         },
+        relations: ['cronTriggers', 'databaseEventTriggers', 'routeTriggers'],
       });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
@@ -56,8 +57,9 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return await this.serverlessFunctionService.findManyServerlessFunctions({
-        workspaceId,
+      return this.serverlessFunctionRepository.find({
+        where: { workspaceId },
+        relations: ['cronTriggers', 'databaseEventTriggers', 'routeTriggers'],
       });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);

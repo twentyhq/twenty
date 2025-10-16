@@ -1,6 +1,19 @@
 import { useParams } from 'react-router-dom';
 
-import { RecordShowContent } from '~/pages/object-record/RecordShowContent';
+import { RecordShowActionMenu } from '@/action-menu/components/RecordShowActionMenu';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutDispatcher';
+import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
+import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
+import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
+import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
+import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
 
 export const RecordShowPage = () => {
   const parameters = useParams<{
@@ -8,14 +21,53 @@ export const RecordShowPage = () => {
     objectRecordId: string;
   }>();
 
+  const { objectNameSingular, objectRecordId } = useRecordShowPage(
+    parameters.objectNameSingular ?? '',
+    parameters.objectRecordId ?? '',
+  );
+
+  const recordShowComponentInstanceId =
+    computeRecordShowComponentInstanceId(objectRecordId);
+
   return (
-    <>
-      {parameters.objectRecordId && parameters.objectNameSingular && (
-        <RecordShowContent
-          objectRecordId={parameters.objectRecordId}
-          objectNameSingular={parameters.objectNameSingular}
-        />
-      )}
-    </>
+    <RecordComponentInstanceContextsWrapper
+      componentInstanceId={recordShowComponentInstanceId}
+    >
+      <ContextStoreComponentInstanceContext.Provider
+        value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+      >
+        <ActionMenuComponentInstanceContext.Provider
+          value={{ instanceId: recordShowComponentInstanceId }}
+        >
+          <PageContainer>
+            <RecordShowPageTitle
+              objectNameSingular={objectNameSingular}
+              objectRecordId={objectRecordId}
+            />
+            <RecordShowPageHeader
+              objectNameSingular={objectNameSingular}
+              objectRecordId={objectRecordId}
+            >
+              <RecordShowActionMenu />
+              <PageHeaderToggleCommandMenuButton />
+            </RecordShowPageHeader>
+            <PageBody>
+              <TimelineActivityContext.Provider
+                value={{
+                  recordId: objectRecordId,
+                }}
+              >
+                <PageLayoutDispatcher
+                  targetRecordIdentifier={{
+                    id: objectRecordId,
+                    targetObjectNameSingular: objectNameSingular,
+                  }}
+                />
+              </TimelineActivityContext.Provider>
+            </PageBody>
+          </PageContainer>
+        </ActionMenuComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
+    </RecordComponentInstanceContextsWrapper>
   );
 };

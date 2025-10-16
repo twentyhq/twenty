@@ -92,6 +92,10 @@ export class Workspace {
   @Column({ default: true })
   isPublicInviteLinkEnabled: boolean;
 
+  @Field()
+  @Column({ type: 'integer', default: 14 })
+  trashRetentionDays: number;
+
   // Relations
   @OneToMany(() => AppToken, (appToken) => appToken.workspace, {
     cascade: true,

@@ -1,5 +1,5 @@
-import type { Leaf } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 import { type RecordNode } from '@/workflow/workflow-variables/types/RecordNode';
+import type { Leaf } from 'twenty-shared/workflow';
 
 export type FindRecordsOutputSchema = {
   first: RecordNode;

@@ -4,7 +4,7 @@ import {
   MUTATION_MAX_MERGE_RECORDS,
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +13,6 @@ import {
   GraphqlQueryBaseResolverService,
   type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type MergeManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { type FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';

@@ -1,19 +1,17 @@
 import { isObject } from 'class-validator';
 import {
+  type AggregateOrderByWithGroupByField,
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
-import {
-  OrderByDirection,
-  type AggregateOrderByWithGroupByField,
-  type ObjectRecordOrderBy,
   type ObjectRecordOrderByForCompositeField,
   type ObjectRecordOrderByForScalarField,
   type ObjectRecordOrderByWithGroupByDateField,
+  OrderByDirection,
   type OrderByWithGroupBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -28,8 +26,8 @@ import {
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
-  getAvailableAggregationsFromObjectFields,
   type AggregationField,
+  getAvailableAggregationsFromObjectFields,
 } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';

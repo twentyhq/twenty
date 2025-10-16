@@ -2,10 +2,9 @@
 
 import { BadRequestException } from '@nestjs/common';
 
-import {
-  type ObjectRecordOrderBy,
-  OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { OrderByDirection } from 'twenty-shared/types';
+
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 import { addDefaultOrderById } from 'src/engine/api/rest/input-request-parsers/order-by-parser-utils/add-default-order-by-id.util';

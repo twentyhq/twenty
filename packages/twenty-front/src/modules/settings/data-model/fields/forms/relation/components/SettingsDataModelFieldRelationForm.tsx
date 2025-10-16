@@ -47,6 +47,7 @@ export type SettingsDataModelFieldRelationFormValues = z.infer<
 type SettingsDataModelFieldRelationFormProps = {
   existingFieldMetadataId: string;
   objectMetadataItem?: ObjectMetadataItem;
+  disabled?: boolean;
 };
 
 export const StyledContainer = styled.div`
@@ -84,6 +85,7 @@ export const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES).map(
 export const SettingsDataModelFieldRelationForm = ({
   existingFieldMetadataId,
   objectMetadataItem,
+  disabled,
 }: SettingsDataModelFieldRelationFormProps) => {
   const { t } = useLingui();
   const { control, watch: watchFormValue } =
@@ -129,7 +131,7 @@ export const SettingsDataModelFieldRelationForm = ({
               label={t`Relation type`}
               dropdownId="relation-type-select"
               fullWidth
-              disabled={disableRelationEdition}
+              disabled={disabled || disableRelationEdition}
               value={value}
               options={RELATION_TYPE_OPTIONS}
               onChange={onChange}
@@ -145,7 +147,7 @@ export const SettingsDataModelFieldRelationForm = ({
               label={t`Object destination`}
               dropdownId="object-destination-select"
               fullWidth
-              disabled={disableRelationEdition}
+              disabled={disabled || disableRelationEdition}
               value={value}
               options={activeObjectMetadataItems
                 .filter(isObjectMetadataAvailableForRelation)
@@ -175,7 +177,7 @@ export const SettingsDataModelFieldRelationForm = ({
           defaultValue={initialRelationFieldMetadataItem.icon}
           render={({ field: { onChange, value } }) => (
             <IconPicker
-              disabled={disableFieldEdition}
+              disabled={disabled || disableFieldEdition}
               dropdownId="field-destination-icon-picker"
               selectedIconKey={value ?? undefined}
               onChange={({ iconKey }) => onChange(iconKey)}
@@ -190,7 +192,7 @@ export const SettingsDataModelFieldRelationForm = ({
           render={({ field: { onChange, value } }) => (
             <SettingsTextInput
               instanceId="relation-field-label"
-              disabled={disableFieldEdition}
+              disabled={disabled || disableFieldEdition}
               placeholder={t`Field name`}
               value={value}
               onChange={onChange}

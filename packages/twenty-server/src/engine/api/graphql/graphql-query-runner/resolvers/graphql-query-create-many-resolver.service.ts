@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   In,
@@ -14,7 +15,6 @@ import {
   GraphqlQueryBaseResolverService,
   type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
