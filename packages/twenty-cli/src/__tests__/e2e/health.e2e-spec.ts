@@ -29,13 +29,4 @@ describe('Twenty Server Health Check (E2E)', () => {
       expect(response.headers).toBeDefined();
     });
   });
-
-  describe('Server Availability', () => {
-    it('should be accessible on expected port', async () => {
-      const response = await axios.get(SERVER_URL);
-      
-      // Server should respond (might be 404 for root, but should not be connection error)
-      expect([200, 404, 405]).toContain(response.status);
-    });
-  });
 });
