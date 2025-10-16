@@ -64,6 +64,7 @@ export const createAgentToolTestModule =
           provide: getRepositoryToken(RoleEntity),
           useValue: {
             findOne: jest.fn(),
+            find: jest.fn(),
           },
         },
         {
