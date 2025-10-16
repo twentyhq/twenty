@@ -122,7 +122,6 @@ export const ChartFiltersSettings = ({
             />
             <ChartFiltersSettingsEffect
               initialFilterValue={chartWidgetConfiguration.filter}
-              objectMetadataItemId={objectMetadataItem.id}
             />
           </RecordFiltersComponentInstanceContext.Provider>
         </RecordFilterGroupsComponentInstanceContext.Provider>
