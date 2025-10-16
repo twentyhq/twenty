@@ -4,10 +4,13 @@ import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/is
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useMorphRelationSettingsFormInitialTargetMetadatas = ({
+export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
   fieldMetadataItem,
 }: {
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'morphRelations'>;
+  fieldMetadataItem?: Pick<
+    FieldMetadataItem,
+    'type' | 'morphRelations' | 'relation'
+  >;
 }) => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -27,6 +30,10 @@ export const useMorphRelationSettingsFormInitialTargetMetadatas = ({
     );
   }
 
+  if (isDefined(fieldMetadataItem) && isDefined(fieldMetadataItem.relation)) {
+    return [fieldMetadataItem.relation.targetObjectMetadata];
+  }
+
   const availableItems = activeObjectMetadataItems
     .filter(isObjectMetadataAvailableForRelation)
     .sort((a, b) => a.labelSingular.localeCompare(b.labelSingular));
@@ -36,12 +43,6 @@ export const useMorphRelationSettingsFormInitialTargetMetadatas = ({
       'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
     );
   }
-  const secondInitialObjectCandidate = availableItems[1];
-  if (!isDefined(secondInitialObjectCandidate)) {
-    throw new Error(
-      'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
-    );
-  }
 
-  return [firstInitialObjectCandidate, secondInitialObjectCandidate];
+  return [firstInitialObjectCandidate];
 };

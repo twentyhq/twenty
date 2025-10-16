@@ -1,16 +1,20 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
-import { RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
-export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
+export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
   fieldMetadataItem,
   objectMetadataItem,
   relationType,
 }: {
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'morphRelations'>;
+  fieldMetadataItem?: Pick<
+    FieldMetadataItem,
+    'type' | 'morphRelations' | 'relation'
+  >;
   objectMetadataItem?: Pick<
     ObjectMetadataItem,
     'id' | 'namePlural' | 'nameSingular' | 'icon'
@@ -22,8 +26,15 @@ export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
 } => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
+  if (!isDefined(fieldMetadataItem)) {
+    return {
+      icon: 'IconUsers',
+      label: '',
+    };
+  }
+
   if (
-    isDefined(fieldMetadataItem) &&
+    fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION &&
     fieldMetadataItemHasMorphRelations(fieldMetadataItem)
   ) {
     const firstMorphRelation = fieldMetadataItem.morphRelations?.[0];
@@ -38,9 +49,27 @@ export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
 
       return {
         icon: targetFieldMetadata?.icon ?? 'IconUsers',
-        label: targetFieldMetadata?.label ?? '',
+        label: capitalize(targetFieldMetadata?.label ?? ''),
       };
     }
+  }
+
+  if (
+    fieldMetadataItem.type === FieldMetadataType.RELATION &&
+    isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id)
+  ) {
+    const { fieldMetadataItem: targetFieldMetadata } = getFieldMetadataItemById(
+      {
+        fieldMetadataId: fieldMetadataItem.relation?.targetFieldMetadata.id,
+        objectMetadataItems: activeObjectMetadataItems,
+      },
+    );
+    return {
+      icon: targetFieldMetadata?.icon ?? 'IconUsers',
+      label: capitalize(
+        fieldMetadataItem.relation?.targetFieldMetadata?.name ?? '',
+      ),
+    };
   }
 
   if (isDefined(objectMetadataItem)) {
@@ -50,7 +79,7 @@ export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
 
     return {
       icon: objectMetadataItem.icon ?? 'IconUsers',
-      label,
+      label: capitalize(label),
     };
   }
 

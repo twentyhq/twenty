@@ -4,28 +4,28 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
-  SettingsDataModelFieldMorphRelationForm,
+  SettingsDataModelFieldRelationForm,
   type SettingsDataModelFieldMorphRelationFormValues,
-} from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
-import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewContent';
-import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewImageCard';
+} from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm';
+import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewContent';
+import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewImageCard';
 import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewSubWidget';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
-type SettingsDataModelFieldMorphRelationFormCardProps = {
+type SettingsDataModelFieldRelationFormCardProps = {
   existingFieldMetadataId: string;
   objectNameSingular: string;
   disabled?: boolean;
 };
 
-export const SettingsDataModelFieldMorphRelationFormCard = ({
+export const SettingsDataModelFieldRelationFormCard = ({
   existingFieldMetadataId,
   objectNameSingular,
   disabled = false,
-}: SettingsDataModelFieldMorphRelationFormCardProps) => {
+}: SettingsDataModelFieldRelationFormCardProps) => {
   const { watch } = useFormContext<
     SettingsDataModelFieldMorphRelationFormValues &
       SettingsDataModelFieldEditFormValues
@@ -67,7 +67,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
             fieldMetadataItem={{
               icon: watch('icon'),
               label: watch('label'),
-              type: FieldMetadataType.MORPH_RELATION,
+              type: FieldMetadataType.RELATION,
               settings: {
                 relationType,
               },
@@ -107,7 +107,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
         </SettingsDataModelFieldRelationPreviewContent>
       }
       form={
-        <SettingsDataModelFieldMorphRelationForm
+        <SettingsDataModelFieldRelationForm
           existingFieldMetadataId={existingFieldMetadataId}
           disabled={disabled}
         />
