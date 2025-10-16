@@ -1,4 +1,5 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useResetChartDraftFiltersSettings } from '@/command-menu/pages/page-layout/hooks/useResetChartDraftFiltersSettings';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -35,7 +36,9 @@ export const ChartDataSourceDropdownContent = () => {
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const currentSource = widgetInEditMode?.objectMetadataId;
+  const currentObjectMetadataItemId = widgetInEditMode?.objectMetadataId as
+    | string
+    | undefined;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -80,10 +83,13 @@ export const ChartDataSourceDropdownContent = () => {
 
   const { getIcon } = useIcons();
 
-  const handleSelectSource = (objectMetadataId: string) => {
-    if (currentSource !== objectMetadataId) {
+  const { resetChartDraftFiltersSettings } =
+    useResetChartDraftFiltersSettings();
+
+  const handleSelectSource = (newObjectMetadataItemId: string) => {
+    if (currentObjectMetadataItemId !== newObjectMetadataItemId) {
       updateCurrentWidgetConfig({
-        objectMetadataId,
+        objectMetadataId: newObjectMetadataItemId,
         configToUpdate: {
           aggregateFieldMetadataId: null,
           primaryAxisGroupByFieldMetadataId: null,
@@ -94,8 +100,13 @@ export const ChartDataSourceDropdownContent = () => {
           secondaryAxisOrderBy: null,
           groupByFieldMetadataId: null,
           groupBySubFieldName: null,
+          filter: {},
         },
       });
+
+      if (isDefined(currentObjectMetadataItemId)) {
+        resetChartDraftFiltersSettings(currentObjectMetadataItemId);
+      }
     }
     closeDropdown();
   };
@@ -155,7 +166,7 @@ export const ChartDataSourceDropdownContent = () => {
             >
               <MenuItemSelect
                 text={objectMetadataItem.labelPlural}
-                selected={currentSource === objectMetadataItem.id}
+                selected={currentObjectMetadataItemId === objectMetadataItem.id}
                 focused={selectedItemId === objectMetadataItem.id}
                 LeftIcon={getIcon(objectMetadataItem.icon)}
                 onClick={() => {

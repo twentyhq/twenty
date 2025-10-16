@@ -12,6 +12,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type GraphOrderBy } from '~/generated/graphql';
 
@@ -25,6 +26,10 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
     configuration?.__typename !== 'LineChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
+  }
+
+  if (!isDefined(widgetInEditMode?.objectMetadataId)) {
+    throw new Error('No data source in chart');
   }
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
@@ -41,7 +46,7 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
   const { closeDropdown } = useCloseDropdown();
 
   const { getXSortOptionLabel } = useGraphXSortOptionLabels({
-    objectMetadataId: widgetInEditMode?.objectMetadataId,
+    objectMetadataId: widgetInEditMode.objectMetadataId,
   });
 
   const handleSelect = (orderBy: GraphOrderBy) => {

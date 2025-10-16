@@ -5,7 +5,10 @@ import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generate
 import { generateGroupByQueryVariablesFromBarChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromBarChartConfiguration';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRecordGqlOperationFilter,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated-metadata/graphql';
 
 export const useGraphWidgetGroupByQuery = ({
@@ -46,15 +49,32 @@ export const useGraphWidgetGroupByQuery = ({
     throw new Error('Aggregate operation not found');
   }
 
+  const gqlOperationFilter = computeRecordGqlOperationFilter({
+    fields: objectMetadataItem.fields,
+    filterValueDependencies: {},
+    recordFilters: configuration.filter?.recordFilters ?? [],
+    recordFilterGroups: configuration.filter?.recordFilterGroups ?? [],
+  });
+
+  const filterQueryVariables = {
+    filter: gqlOperationFilter,
+  };
+
+  const groupByQueryVariables =
+    generateGroupByQueryVariablesFromBarChartConfiguration({
+      objectMetadataItem,
+      barChartConfiguration: configuration,
+      aggregateOperation,
+    });
+
+  const variables = {
+    ...groupByQueryVariables,
+    ...filterQueryVariables,
+  };
+
   const query = generateGroupByQuery({
     objectMetadataItem,
     aggregateOperations: [aggregateOperation],
-  });
-
-  const variables = generateGroupByQueryVariablesFromBarChartConfiguration({
-    objectMetadataItem,
-    barChartConfiguration: configuration,
-    aggregateOperation,
   });
 
   const apolloCoreClient = useApolloCoreClient();
@@ -69,7 +89,6 @@ export const useGraphWidgetGroupByQuery = ({
     loading,
     error,
     refetch,
-    variables,
     aggregateOperation,
   };
 };
