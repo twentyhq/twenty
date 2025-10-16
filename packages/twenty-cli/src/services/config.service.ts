@@ -83,7 +83,6 @@ export class ConfigService {
   private getEnvironmentConfig(): Partial<TwentyConfig> {
     const envConfig: Partial<TwentyConfig> = {};
 
-    console.log(process.env);
     if (process.env.TWENTY_API_URL) {
       envConfig.apiUrl = process.env.TWENTY_API_URL;
     }
