@@ -318,7 +318,7 @@ export class WorkspaceSchemaEnumManagerService {
     newColumnName,
     oldToNewEnumOptionMap,
     columnDefinition,
-    oldEnumTypeName
+    oldEnumTypeName,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
