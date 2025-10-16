@@ -2,12 +2,12 @@
 title: Customize your data model
 info: "Learn how to design and create a data model that reflects how you operate."
 icon: IconNote
-image: /images/user-guide/import-export-data/cloud.png
-sectionInfo: Discover how to use standard and custom objects in your workspace.
+image: /images/user-guide/fields/custom_data_model.png
+sectionInfo: Flexible data model designed to support your unique business processes
 ---
 
 ## What is a data model?
-A data model is the structure that defines how information is organized in your CRM. It determines what objects exist (like companies, people, or deals), what properties they have (those are the fields), and how they relate to each other. You can think of it as the map of your customer data. 
+A data model is the structure that defines how information is organized in your CRM. It determines what objects exist (like companies, people, or opportunities), what properties they have (those are the fields), and how they relate to each other. You can think of it as the map of your customer data. 
 
 ## Why should you customize your data model? 
 Every business works differently. Being able to fully customize your data model means you can shape Twenty around your processes instead of forcing yours into a rigid system.  
@@ -17,7 +17,8 @@ Twenty offers the flexibility you need to shape the data model that will best su
 There is rarely only one way to build a data model. Below are a few tips to help you build yours.
 
 **1. Start with your core objects.**  
-Identify the main things you work with (e.g. Companies, People, Opportunities). Those are already available as they are used very often. But think of any other you might need.  
+Identify the main concepts you work with (e.g. Companies, People, Opportunities). Those three objects are already available as they are used very often. But think of any other you might need.  
+Example: Stripe would need an object ```Subscriptions```, Airbnb would need an object ```Trips```, a start-up accelerator an object ```Batches```.
 
 **2. Use fields for variations, not new objects.**  
 If something is just a characteristic of an existing object (e.g. “Industry” for a Company, or “Status” for an Opportunity), make it a field. Fields are best for categories, labels, and attributes.  
@@ -37,10 +38,11 @@ If something can be linked multiple times and you don’t know how many, it’s 
 Start with fields. Move to new objects only when you feel the limits — too many fields, repeated records, or relationships that don’t fit neatly.  
 
 
-### Special note on People and Companies  
+### Special note on People, Companies and Opportunities
 
-- **People and Companies are the only two objects from where you can access emails and meetings.** We recommend using these as much as possible. If you need to create categories of People or Companies, use fields rather than new objects.  
-- Example: it is best to use the **People object** for both prospects and partners, adding a field called `Person Type`. Avoid creating a Partner object, since you wouldn’t be able to access email threads from it. Instead, create different views under People — one showing Partners, another showing Prospects.  
+- **People, Companies and Opportunities are the only objects from where you can access the emails and meetings synchronized from your mailbox / calendar.** We recommend using those as much as possible. If you need to create categories of People or Companies, use fields rather than new objects. 
+   
+    Example: it is best to use the **People object** for both prospects and partners, adding a field called `Person Type`. Avoid creating a Partner object, since you wouldn’t be able to access email threads from it. Instead, create different views under People — one showing Partners, another showing Prospects.  
 - Given the point above, it’s fine to have fields that don’t apply to every record. For example, under People you might add a **Referral Link** field that is only relevant when `Person Type = Partner`. That’s okay — you can hide this field from views where it doesn’t matter.  
 
 
@@ -57,30 +59,6 @@ If the answer is “yes” to one or more of these, it’s probably time for a n
 
 ## Want some help?
 Our team can assist you designing and creating the data model you need. Discover our Onboarding Pack [here](https://twenty.com/onboarding-packages).
-
-
-## FAQ
-
-<details>
-<summary>Where can I see and edit my data model?</summary>
-
-You can access your Data Model under the `Settings`.
-
-</details>
-
-<details>
-<summary>Why can't I see the Data Model under the Settings?</summary>
-
-Reach out to your workspace administrator, data model is usually only accessible by administrators.
-
-</details>
-
-<details>
-<summary>How many custom objects or fields can I create?</summary>
-
-You can create as many custom objects and fields as you need - the price won't change.
-
-</details>
 
 
 <ArticleEditContent></ArticleEditContent>
