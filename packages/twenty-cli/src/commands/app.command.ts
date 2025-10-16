@@ -1,14 +1,14 @@
+import chalk from 'chalk';
 import { Command } from 'commander';
-import { AppSyncCommand } from './app-sync.command';
-import { AppDevCommand } from './app-dev.command';
-import { AppInitCommand } from './app-init.command';
-import { AppDeleteCommand } from './app-delete.command';
 import {
   AppAddCommand,
   isSyncableEntity,
   SyncableEntity,
 } from './app-add.command';
-import chalk from 'chalk';
+import { AppDeleteCommand } from './app-delete.command';
+import { AppDevCommand } from './app-dev.command';
+import { AppInitCommand } from './app-init.command';
+import { AppSyncCommand } from './app-sync.command';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
@@ -33,7 +33,14 @@ export class AppCommand {
       .command('sync')
       .description('Sync application to Twenty')
       .action(async () => {
-        await this.syncCommand.execute();
+        try {
+          const result = await this.syncCommand.execute();
+          if (!result.success) {
+            process.exit(1);
+          }
+        } catch {
+          process.exit(1);
+        }
       });
 
     appCommand

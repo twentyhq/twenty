@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ConfigService } from '../../services/config.service';
-import { SERVER_URL } from '../constants/server-url.constant';
+import { SERVER_URL } from './constants/server-url.constant';
 
 describe('Twenty Server Health Check (E2E)', () => {
   const configService = new ConfigService();

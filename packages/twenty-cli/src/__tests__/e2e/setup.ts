@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SERVER_URL } from '../constants/server-url.constant';
+import { SERVER_URL } from './constants/server-url.constant';
 
 // Global test setup
 beforeAll(async () => {
