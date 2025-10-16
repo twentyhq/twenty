@@ -27,11 +27,11 @@ import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runne
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
@@ -189,15 +189,28 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
           return;
         }
 
-        if (isDefined(executionArgs.args.rangeMin)) {
+        const isCurrencyField =
+          aggregationField.fromFieldType === FieldMetadataType.CURRENCY;
+
+        const rangeMinToApply =
+          isDefined(executionArgs.args.rangeMin) && isCurrencyField
+            ? executionArgs.args.rangeMin * 1000000
+            : executionArgs.args.rangeMin;
+
+        const rangeMaxToApply =
+          isDefined(executionArgs.args.rangeMax) && isCurrencyField
+            ? executionArgs.args.rangeMax * 1000000
+            : executionArgs.args.rangeMax;
+
+        if (isDefined(rangeMinToApply)) {
           queryBuilder.andHaving(`${aggregateExpression} >= :rangeMin`, {
-            rangeMin: executionArgs.args.rangeMin,
+            rangeMin: rangeMinToApply,
           });
         }
 
-        if (isDefined(executionArgs.args.rangeMax)) {
+        if (isDefined(rangeMaxToApply)) {
           queryBuilder.andHaving(`${aggregateExpression} <= :rangeMax`, {
-            rangeMax: executionArgs.args.rangeMax,
+            rangeMax: rangeMaxToApply,
           });
         }
       });
