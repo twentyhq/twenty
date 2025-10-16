@@ -4,11 +4,12 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useGetUpdatableWorkflowVersionOrThrow = () => {
+export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
+    instanceId,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
