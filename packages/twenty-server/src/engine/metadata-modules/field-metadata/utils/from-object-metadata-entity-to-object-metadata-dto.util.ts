@@ -12,6 +12,7 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
     standardOverrides,
     shortcut,
     duplicateCriteria,
+    applicationId,
     ...rest
   } = objectMetadataEntity;
 
@@ -24,5 +25,6 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
     standardOverrides: standardOverrides ?? undefined,
     shortcut: shortcut ?? undefined,
     duplicateCriteria: duplicateCriteria ?? undefined,
+    applicationId: applicationId ?? undefined,
   };
 };

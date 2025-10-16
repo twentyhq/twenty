@@ -3,9 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { isString } from '@sniptt/guards';
 import { isDefined, isValidVariable } from 'twenty-shared/utils';
 import {
+  BaseOutputSchemaV2,
   BulkRecordsAvailability,
   extractRawVariableNamePart,
   GlobalAvailability,
+  navigateOutputSchemaProperty,
   SingleRecordAvailability,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
@@ -22,10 +24,12 @@ import {
   Node,
   type OutputSchema,
 } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { extractPropertyPathFromVariable } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/extract-property-path-from-variable';
 import { generateFakeArrayItem } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-array-item';
 import { generateFakeFormResponse } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-response';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
+import { inferArrayItemSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/infer-array-item-schema';
 import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import {
   type WorkflowAction,
@@ -413,7 +417,19 @@ export class WorkflowSchemaWorkspaceService {
 
           return DEFAULT_ITERATOR_CURRENT_ITEM;
         }
-        // TODO(t.trompette): handle other trigger types
+        case WorkflowTriggerType.WEBHOOK: {
+          const propertyPath = extractPropertyPathFromVariable(items);
+          const schemaNode = navigateOutputSchemaProperty({
+            schema: trigger.settings.outputSchema as BaseOutputSchemaV2,
+            propertyPath,
+          });
+
+          if (!isDefined(schemaNode)) {
+            return DEFAULT_ITERATOR_CURRENT_ITEM;
+          }
+
+          return inferArrayItemSchema({ schemaNode });
+        }
         default: {
           return DEFAULT_ITERATOR_CURRENT_ITEM;
         }
@@ -446,6 +462,20 @@ export class WorkflowSchemaWorkspaceService {
             workspaceId,
           }),
         };
+      }
+      case WorkflowActionType.CODE:
+      case WorkflowActionType.HTTP_REQUEST: {
+        const propertyPath = extractPropertyPathFromVariable(items);
+        const schemaNode = navigateOutputSchemaProperty({
+          schema: step.settings.outputSchema as BaseOutputSchemaV2,
+          propertyPath,
+        });
+
+        if (!isDefined(schemaNode)) {
+          return DEFAULT_ITERATOR_CURRENT_ITEM;
+        }
+
+        return inferArrayItemSchema({ schemaNode });
       }
       default: {
         return DEFAULT_ITERATOR_CURRENT_ITEM;

@@ -48,6 +48,7 @@ export type SettingsDataModelFieldSelectFormValues = z.infer<
 type SettingsDataModelFieldSelectFormProps = {
   fieldType: FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT;
   existingFieldMetadataId: string;
+  disabled?: boolean;
 };
 
 const StyledContainer = styled(CardContent)`
@@ -112,6 +113,7 @@ const StyledButton = styled(LightButton)`
 export const SettingsDataModelFieldSelectForm = ({
   existingFieldMetadataId,
   fieldType,
+  disabled = false,
 }: SettingsDataModelFieldSelectFormProps) => {
   const { initialDefaultValue, initialOptions } =
     useSelectSettingsFormInitialValues({
@@ -281,7 +283,11 @@ export const SettingsDataModelFieldSelectForm = ({
                 </StyledOptionsLabel>
               </StyledLabelContainer>
               <DraggableList
-                onDragEnd={(result) => handleDragEnd(options, result, onChange)}
+                onDragEnd={(result) =>
+                  !disabled
+                    ? handleDragEnd(options, result, onChange)
+                    : undefined
+                }
                 draggableItems={
                   <>
                     {options.map((option, index) => (
@@ -297,6 +303,9 @@ export const SettingsDataModelFieldSelectForm = ({
                             option={option}
                             isNewRow={index === options.length - 1}
                             onChange={(nextOption) => {
+                              if (disabled) {
+                                return;
+                              }
                               const nextOptions = toSpliced(
                                 options,
                                 index,
@@ -315,6 +324,9 @@ export const SettingsDataModelFieldSelectForm = ({
                               }
                             }}
                             onRemove={() => {
+                              if (disabled) {
+                                return;
+                              }
                               const nextOptions = toSpliced(
                                 options,
                                 index,
@@ -326,13 +338,24 @@ export const SettingsDataModelFieldSelectForm = ({
                               onChange(nextOptions);
                             }}
                             isDefault={isOptionDefaultValue(option.value)}
-                            onSetAsDefault={() =>
-                              handleSetOptionAsDefault(option.value)
-                            }
-                            onRemoveAsDefault={() =>
-                              handleRemoveOptionAsDefault(option.value)
-                            }
-                            onInputEnter={handleInputEnter}
+                            onSetAsDefault={() => {
+                              if (disabled) {
+                                return;
+                              }
+                              handleSetOptionAsDefault(option.value);
+                            }}
+                            onRemoveAsDefault={() => {
+                              if (disabled) {
+                                return;
+                              }
+                              handleRemoveOptionAsDefault(option.value);
+                            }}
+                            onInputEnter={() => {
+                              if (disabled) {
+                                return;
+                              }
+                              handleInputEnter();
+                            }}
                           />
                         }
                       />
@@ -341,13 +364,15 @@ export const SettingsDataModelFieldSelectForm = ({
                 }
               />
             </StyledContainer>
-            <StyledFooter>
-              <StyledButton
-                title={t`Add option`}
-                Icon={IconPlus}
-                onClick={handleAddOption}
-              />
-            </StyledFooter>
+            {!disabled && (
+              <StyledFooter>
+                <StyledButton
+                  title={t`Add option`}
+                  Icon={IconPlus}
+                  onClick={handleAddOption}
+                />
+              </StyledFooter>
+            )}
           </>
         )}
       />

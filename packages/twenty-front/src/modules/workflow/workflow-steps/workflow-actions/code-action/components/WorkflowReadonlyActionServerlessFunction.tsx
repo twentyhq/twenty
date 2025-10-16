@@ -69,6 +69,12 @@ export const WorkflowReadonlyActionServerlessFunction = ({
     return null;
   }
 
+  const indexFileContent =
+    typeof formValues.code?.[SOURCE_FOLDER_NAME] !== 'string' &&
+    typeof formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME] === 'string'
+      ? formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME]
+      : '';
+
   return (
     <>
       <SidePanelHeader
@@ -86,7 +92,7 @@ export const WorkflowReadonlyActionServerlessFunction = ({
         <StyledCodeEditorContainer>
           <CodeEditor
             height={343}
-            value={formValues.code?.[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME]}
+            value={indexFileContent}
             language="typescript"
             onMount={handleEditorDidMount}
             setMarkers={getWrongExportedFunctionMarkers}
