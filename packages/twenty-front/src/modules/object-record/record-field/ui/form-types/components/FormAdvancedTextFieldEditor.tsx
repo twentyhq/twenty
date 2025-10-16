@@ -1,15 +1,14 @@
+import { ImageBubbleMenu } from '@/object-record/record-field/ui/components/ImageBubbleMenu';
+import { LinkBubbleMenu } from '@/object-record/record-field/ui/components/LinkBubbleMenu';
+import { TextBubbleMenu } from '@/object-record/record-field/ui/components/TextBubbleMenu';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
-import { ImageBubbleMenu } from '@/workflow/workflow-steps/workflow-actions/email-action/components/image-bubble-menu/ImageBubbleMenu';
-import { LinkBubbleMenu } from '@/workflow/workflow-steps/workflow-actions/email-action/components/link-bubble-menu/LinkBubbleMenu';
-import { TextBubbleMenu } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/TextBubbleMenu';
 import styled from '@emotion/styled';
 import { EditorContent, type Editor } from '@tiptap/react';
 
-const EMAIL_EDITOR_MIN_HEIGHT = 340;
-const EMAIL_EDITOR_MAX_WIDTH = 600;
-
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;
+  maxHeight: number;
+  maxWidth: number;
 }>`
   height: 100%;
   display: flex;
@@ -21,8 +20,8 @@ const StyledEditorContainer = styled.div<{
     flex-grow: 1;
     width: 100%;
     height: 100%;
-    min-height: ${EMAIL_EDITOR_MIN_HEIGHT}px;
-    max-width: ${EMAIL_EDITOR_MAX_WIDTH}px;
+    min-height: ${({ maxHeight }) => maxHeight}px;
+    max-width: ${({ maxWidth }) => maxWidth}px;
     margin: 0 auto;
   }
 
@@ -78,17 +77,25 @@ const StyledEditorContainer = styled.div<{
   }
 `;
 
-type WorkflowEmailEditorProps = {
+type FormAdvancedTextFieldEditorProps = {
   readonly: boolean | undefined;
   editor: Editor;
+  maxHeight: number;
+  maxWidth: number;
 };
 
-export const WorkflowEmailEditor = ({
+export const FormAdvancedTextFieldEditor = ({
   readonly,
   editor,
-}: WorkflowEmailEditorProps) => {
+  maxHeight,
+  maxWidth,
+}: FormAdvancedTextFieldEditorProps) => {
   return (
-    <StyledEditorContainer readonly={readonly}>
+    <StyledEditorContainer
+      readonly={readonly}
+      maxHeight={maxHeight}
+      maxWidth={maxWidth}
+    >
       <EditorContent className="editor-content" editor={editor} />
       <ImageBubbleMenu editor={editor} />
       <TextBubbleMenu editor={editor} />

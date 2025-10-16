@@ -1,28 +1,30 @@
-import { WorkflowEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowEmailEditor';
-import { useEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useEmailEditor';
+import { FormAdvancedTextFieldEditor } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldEditor';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { useAdvancedTextEditor } from '~/hooks/useAdvancedTextEditor';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
-import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const EditorWrapper = ({
   readonly = false,
-  placeholder = 'Enter email content...',
+  placeholder = 'Enter text content...',
   defaultValue = null,
   onUpdate = fn(),
+  maxHeight = 200,
+  maxWidth = 800,
 }: {
   readonly?: boolean;
   placeholder?: string;
   defaultValue?: string | null;
   onUpdate?: (content: string) => void;
+  maxHeight?: number;
+  maxWidth?: number;
 }) => {
-  const editor = useEmailEditor({
+  const editor = useAdvancedTextEditor({
     placeholder,
     readonly,
     defaultValue,
@@ -43,18 +45,24 @@ const EditorWrapper = ({
     return <div>Loading editor...</div>;
   }
 
-  return <WorkflowEmailEditor editor={editor} readonly={readonly} />;
+  return (
+    <FormAdvancedTextFieldEditor
+      editor={editor}
+      readonly={readonly}
+      maxHeight={maxHeight}
+      maxWidth={maxWidth}
+    />
+  );
 };
 
 const meta: Meta<typeof EditorWrapper> = {
-  title: 'Modules/Workflow/Actions/SendEmail/EmailEditor',
+  title:
+    'Modules/ObjectRecord/RecordField/FormTypes/FormAdvancedTextFieldEditor',
   component: EditorWrapper,
   parameters: {
     msw: graphqlMocks,
   },
   decorators: [
-    WorkflowStepActionDrawerDecorator,
-    WorkflowStepDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
@@ -87,7 +95,7 @@ export const WithContent: Story = {
             {
               type: 'text',
               marks: [{ type: 'bold' }],
-              text: 'John',
+              text: 'World',
             },
             {
               type: 'text',
@@ -100,7 +108,7 @@ export const WithContent: Story = {
           content: [
             {
               type: 'text',
-              text: 'This is a sample email with ',
+              text: 'This is a sample text with ',
             },
             {
               type: 'text',
@@ -135,30 +143,30 @@ export const WithHeadings: Story = {
         {
           type: 'heading',
           attrs: { level: 1 },
-          content: [{ type: 'text', text: 'Welcome Email' }],
+          content: [{ type: 'text', text: 'Main Title' }],
         },
         {
           type: 'heading',
           attrs: { level: 2 },
-          content: [{ type: 'text', text: 'Getting Started' }],
+          content: [{ type: 'text', text: 'Subtitle' }],
         },
         {
           type: 'paragraph',
           content: [
             {
               type: 'text',
-              text: 'Thank you for joining us! Here are some next steps:',
+              text: 'This is a paragraph with some content.',
             },
           ],
         },
         {
           type: 'heading',
           attrs: { level: 3 },
-          content: [{ type: 'text', text: 'Next Steps' }],
+          content: [{ type: 'text', text: 'Smaller Heading' }],
         },
         {
           type: 'paragraph',
-          content: [{ type: 'text', text: '1. Complete your profile' }],
+          content: [{ type: 'text', text: 'Another paragraph here.' }],
         },
       ],
     }),
@@ -224,7 +232,7 @@ export const WithVariableTags: Story = {
               type: 'variableTag',
               attrs: { variable: '{{orderNumber}}' },
             },
-            { type: 'text', text: ' has been shipped!' },
+            { type: 'text', text: ' has been processed!' },
           ],
         },
       ],
@@ -264,7 +272,7 @@ export const ReadOnly: Story = {
 
 export const Empty: Story = {
   args: {
-    placeholder: 'Start typing your email content...',
+    placeholder: 'Start typing your content...',
   },
 };
 
@@ -272,5 +280,13 @@ export const Interactive: Story = {
   args: {
     onUpdate: fn(),
     placeholder: 'Try typing, formatting text, or uploading images...',
+  },
+};
+
+export const CustomSize: Story = {
+  args: {
+    maxHeight: 300,
+    maxWidth: 600,
+    placeholder: 'This editor has custom dimensions...',
   },
 };

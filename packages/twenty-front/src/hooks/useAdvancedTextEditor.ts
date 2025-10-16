@@ -17,7 +17,7 @@ import { type Editor, useEditor } from '@tiptap/react';
 import { type DependencyList, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type UseEmailEditorProps = {
+type UseAdvancedTextEditorProps = {
   placeholder: string | undefined;
   readonly: boolean | undefined;
   defaultValue: string | undefined | null;
@@ -28,7 +28,7 @@ type UseEmailEditorProps = {
   onImageUploadError?: (error: Error, file: File) => void;
 };
 
-export const useEmailEditor = (
+export const useAdvancedTextEditor = (
   {
     placeholder,
     readonly,
@@ -38,7 +38,7 @@ export const useEmailEditor = (
     onBlur,
     onImageUpload,
     onImageUploadError,
-  }: UseEmailEditorProps,
+  }: UseAdvancedTextEditorProps,
   dependencies?: DependencyList,
 ) => {
   const extensions = useMemo(
