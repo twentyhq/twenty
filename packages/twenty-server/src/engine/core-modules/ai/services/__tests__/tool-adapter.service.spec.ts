@@ -116,7 +116,7 @@ describe('ToolAdapterService', () => {
     const tools = await service.getTools({ roleId: 'role-1' }, 'ws-1');
 
     expect(mockPermissions.hasToolPermission).toHaveBeenCalledWith(
-      'role-1',
+      { roleId: 'role-1' },
       'ws-1',
       PermissionFlagType.SEND_EMAIL_TOOL,
     );
