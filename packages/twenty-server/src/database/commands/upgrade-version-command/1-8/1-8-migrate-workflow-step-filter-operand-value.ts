@@ -23,7 +23,7 @@ import { isWorkflowFilterAction } from 'src/modules/workflow/workflow-executor/w
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 @Command({
-  name: 'upgrade:1-10:migrate-workflow-step-filter-operand-value',
+  name: 'upgrade:1-8:migrate-workflow-step-filter-operand-value',
   description:
     'Migrate workflowVersion.steps[].settings.input.stepFilters[].operand to use new operand enum',
 })

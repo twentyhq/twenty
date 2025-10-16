@@ -28,7 +28,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 @Command({
-  name: 'upgrade:1-10:deduplicate-unique-fields',
+  name: 'upgrade:1-8:deduplicate-unique-fields',
   description:
     'Deduplicate unique fields for workspaceMembers, companies and people because we changed the unique constraint',
 })

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-deduplicate-unique-fields.command';
-import { MigrateChannelSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-sync-stages.command';
-import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-workflow-step-filter-operand-value';
-import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-person-search-vector-with-phones.command';
+import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
+import { MigrateChannelSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-channel-sync-stages.command';
+import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-workflow-step-filter-operand-value';
+import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-regenerate-person-search-vector-with-phones.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -40,4 +40,4 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     RegeneratePersonSearchVectorWithPhonesCommand,
   ],
 })
-export class V1_10_UpgradeVersionCommandModule {}
+export class V1_8_UpgradeVersionCommandModule {}
