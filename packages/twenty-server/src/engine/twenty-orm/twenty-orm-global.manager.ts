@@ -18,6 +18,7 @@ export class TwentyORMGlobalManager {
     options?: {
       shouldBypassPermissionChecks?: boolean;
       roleId?: string;
+      roleIds?: { intersection: string[] };
     },
   ): Promise<WorkspaceRepository<T>>;
 
@@ -27,17 +28,17 @@ export class TwentyORMGlobalManager {
     options?: {
       shouldBypassPermissionChecks?: boolean;
       roleId?: string;
+      roleIds?: { intersection: string[] };
     },
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntityOrObjectMetadataName: Type<T> | string,
-    options: {
+    options?: {
       shouldBypassPermissionChecks?: boolean;
       roleId?: string;
-    } = {
-      shouldBypassPermissionChecks: false,
+      roleIds?: { intersection: string[] };
     },
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
@@ -55,8 +56,7 @@ export class TwentyORMGlobalManager {
 
     const repository = workspaceDataSource.getRepository<T>(
       objectMetadataName,
-      options.shouldBypassPermissionChecks,
-      options.roleId,
+      options,
     );
 
     return repository;
