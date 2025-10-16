@@ -1,6 +1,10 @@
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { useRef } from 'react';
+import { Key } from 'ts-key-enum';
+import {
+  canBeCastAsNumberOrNull,
+  castAsNumberOrNull,
+} from '~/utils/cast-as-number-or-null';
 
 type CommandMenuItemNumberInputProps = {
   value: string;
@@ -13,35 +17,32 @@ export const CommandMenuItemNumberInput = ({
   onChange,
   placeholder,
 }: CommandMenuItemNumberInputProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleChange = (text: string) => {
-    const numericValue = isNonEmptyString(text) ? parseFloat(text) : null;
-    onChange(numericValue);
+    if (canBeCastAsNumberOrNull(text)) {
+      const numericValue = castAsNumberOrNull(text);
+      onChange(numericValue);
+    }
   };
 
-  const handleBlur = () => {
-    const trimmedValue = value.trim();
-
-    if (!isNonEmptyString(trimmedValue)) {
-      onChange(null);
-      return;
-    }
-
-    const numericValue = parseFloat(trimmedValue);
-
-    if (!isDefined(numericValue) || !isNaN(numericValue)) {
-      onChange(numericValue);
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === Key.Enter || event.key === Key.Escape) {
+      event.stopPropagation();
+      inputRef.current?.blur();
     } else {
-      onChange(null);
+      event.stopPropagation();
     }
   };
 
   return (
     <TextInput
+      ref={inputRef}
       type="number"
       value={value}
       sizeVariant="sm"
       onChange={handleChange}
-      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
       placeholder={placeholder}
     />
   );
