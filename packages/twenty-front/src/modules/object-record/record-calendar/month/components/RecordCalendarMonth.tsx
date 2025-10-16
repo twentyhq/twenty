@@ -20,7 +20,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: inherit;
-  min-height: 700px;
+  min-height: 1000px;
   min-width: 1000px;
 `;
 
