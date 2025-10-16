@@ -22,8 +22,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should create a new tab with default title', () => {
-    const uuidModule = require('uuid');
-    uuidModule.v4.mockReturnValue('mock-uuid');
+    crypto.randomUUID.mockReturnValue('mock-uuid');
 
     const { result } = renderHook(
       () => ({
@@ -64,8 +63,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should create a new tab with custom title', () => {
-    const uuidModule = require('uuid');
-    uuidModule.v4.mockReturnValue('mock-uuid');
+    crypto.randomUUID.mockReturnValue('mock-uuid');
 
     const { result } = renderHook(
       () => ({
@@ -90,8 +88,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should increment position for subsequent tabs', () => {
-    const uuidModule = require('uuid');
-    uuidModule.v4
+    crypto.randomUUID
       .mockReturnValueOnce('mock-uuid-1')
       .mockReturnValueOnce('mock-uuid-2');
 
@@ -126,8 +123,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should create isolated layouts for multiple tabs', () => {
-    const uuidModule = require('uuid');
-    uuidModule.v4
+    crypto.randomUUID
       .mockReturnValueOnce('mock-uuid-1')
       .mockReturnValueOnce('mock-uuid-2');
 
@@ -169,8 +165,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should set newly created tab as active', () => {
-    const uuidModule = require('uuid');
-    uuidModule.v4.mockReturnValue('mock-uuid');
+    crypto.randomUUID.mockReturnValue('mock-uuid');
 
     const { result } = renderHook(
       () => {
@@ -198,8 +193,7 @@ describe('useCreatePageLayoutTab', () => {
   });
 
   it('should handle creating tab when draft already has tabs', () => {
-    const uuidModule = require('uuid');
-    uuidModule.v4.mockReturnValue('mock-uuid-new');
+    crypto.randomUUID.mockReturnValue('mock-uuid-new');
 
     const { result } = renderHook(
       () => {
