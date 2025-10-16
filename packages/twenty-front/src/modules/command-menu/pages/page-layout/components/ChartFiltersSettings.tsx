@@ -1,5 +1,5 @@
 import { CommandMenuSubPageNavigationHeader } from '@/command-menu/pages/common/components/CommandMenuSubPageNavigationHeader';
-import { ChartFiltersSettingsEffect } from '@/command-menu/pages/page-layout/components/ChartFiltersSettingsEffect';
+import { ChartFiltersSettingsInitializeStateEffect } from '@/command-menu/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -30,15 +30,15 @@ const StyledChartFiltersPageContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledFiltersContainer = styled.div``;
+export type ChartFiltersSettingsProps = {
+  objectMetadataItem: ObjectMetadataItem;
+  widget: ChartWidget;
+};
 
 export const ChartFiltersSettings = ({
   objectMetadataItem,
   widget,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-  widget: ChartWidget;
-}) => {
+}: ChartFiltersSettingsProps) => {
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const handleBackClick = () => {
@@ -107,7 +107,7 @@ export const ChartFiltersSettings = ({
         title={t`Filter`}
         onBackClick={handleBackClick}
       />
-      <StyledFiltersContainer>
+      <div>
         <InputLabel>{t`Conditions`}</InputLabel>
         <RecordFilterGroupsComponentInstanceContext.Provider
           value={{ instanceId }}
@@ -120,12 +120,12 @@ export const ChartFiltersSettings = ({
               objectMetadataItem={objectMetadataItem}
               isWorkflowFindRecords={false}
             />
-            <ChartFiltersSettingsEffect
-              initialFilterValue={chartWidgetConfiguration.filter}
+            <ChartFiltersSettingsInitializeStateEffect
+              initialChartFilters={chartWidgetConfiguration.filter}
             />
           </RecordFiltersComponentInstanceContext.Provider>
         </RecordFilterGroupsComponentInstanceContext.Provider>
-      </StyledFiltersContainer>
+      </div>
     </StyledChartFiltersPageContainer>
   );
 };

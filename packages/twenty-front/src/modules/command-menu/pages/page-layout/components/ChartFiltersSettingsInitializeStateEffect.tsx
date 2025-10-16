@@ -10,11 +10,13 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const ChartFiltersSettingsEffect = ({
-  initialFilterValue,
-}: {
-  initialFilterValue?: ChartFilters;
-}) => {
+export type ChartFiltersSettingsInitializeStateEffectProps = {
+  initialChartFilters?: ChartFilters;
+};
+
+export const ChartFiltersSettingsInitializeStateEffect = ({
+  initialChartFilters,
+}: ChartFiltersSettingsInitializeStateEffectProps) => {
   const [
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
@@ -50,9 +52,9 @@ export const ChartFiltersSettingsEffect = ({
   useEffect(() => {
     if (
       !hasInitializedCurrentRecordFilters &&
-      isDefined(initialFilterValue?.recordFilters)
+      isDefined(initialChartFilters?.recordFilters)
     ) {
-      setCurrentRecordFilters(initialFilterValue.recordFilters);
+      setCurrentRecordFilters(initialChartFilters.recordFilters);
       setShouldSetAdvancedFilterDropdownStates(true);
       setHasInitializedCurrentRecordFilters(true);
     }
@@ -60,23 +62,25 @@ export const ChartFiltersSettingsEffect = ({
     setCurrentRecordFilters,
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
-    initialFilterValue?.recordFilters,
+    initialChartFilters?.recordFilters,
   ]);
 
   useEffect(() => {
     if (
       !hasInitializedCurrentRecordFilterGroups &&
-      isNonEmptyArray(initialFilterValue?.recordFilterGroups) &&
-      initialFilterValue.recordFilterGroups.length > 0
+      isNonEmptyArray(initialChartFilters?.recordFilterGroups) &&
+      initialChartFilters.recordFilterGroups.length > 0
     ) {
-      setCurrentRecordFilterGroups(initialFilterValue.recordFilterGroups ?? []);
+      setCurrentRecordFilterGroups(
+        initialChartFilters.recordFilterGroups ?? [],
+      );
       setHasInitializedCurrentRecordFilterGroups(true);
     }
   }, [
     setCurrentRecordFilterGroups,
     hasInitializedCurrentRecordFilterGroups,
     setHasInitializedCurrentRecordFilterGroups,
-    initialFilterValue?.recordFilterGroups,
+    initialChartFilters?.recordFilterGroups,
   ]);
 
   useEffect(() => {
