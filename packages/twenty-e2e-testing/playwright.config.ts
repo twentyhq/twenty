@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { config } from 'dotenv';
-import path from 'path';
+import * as path from 'path';
 
 const envResult = config({
   path: path.resolve(__dirname, '.env'),
