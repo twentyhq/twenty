@@ -1,12 +1,10 @@
+import { hasInitializedChartFiltersComponentState } from '@/command-menu/pages/page-layout/states/hasInitializedChartFiltersComponentState';
 import { type ChartFilters } from '@/command-menu/pages/page-layout/types/ChartFilters';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
-import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,21 +15,8 @@ export type ChartFiltersSettingsInitializeStateEffectProps = {
 export const ChartFiltersSettingsInitializeStateEffect = ({
   initialChartFilters,
 }: ChartFiltersSettingsInitializeStateEffectProps) => {
-  const [
-    hasInitializedCurrentRecordFilters,
-    setHasInitializedCurrentRecordFilters,
-  ] = useRecoilComponentFamilyState(
-    hasInitializedCurrentRecordFiltersComponentFamilyState,
-    {},
-  );
-
-  const [
-    hasInitializedCurrentRecordFilterGroups,
-    setHasInitializedCurrentRecordFilterGroups,
-  ] = useRecoilComponentFamilyState(
-    hasInitializedCurrentRecordFilterGroupsComponentFamilyState,
-    {},
-  );
+  const [hasInitializedChartFilters, setHasInitializedChartFilters] =
+    useRecoilComponentState(hasInitializedChartFiltersComponentState);
 
   const setCurrentRecordFilters = useSetRecoilComponentState(
     currentRecordFiltersComponentState,
@@ -50,37 +35,21 @@ export const ChartFiltersSettingsInitializeStateEffect = ({
   ] = useState(false);
 
   useEffect(() => {
-    if (
-      !hasInitializedCurrentRecordFilters &&
-      isDefined(initialChartFilters?.recordFilters)
-    ) {
-      setCurrentRecordFilters(initialChartFilters.recordFilters);
-      setShouldSetAdvancedFilterDropdownStates(true);
-      setHasInitializedCurrentRecordFilters(true);
-    }
-  }, [
-    setCurrentRecordFilters,
-    hasInitializedCurrentRecordFilters,
-    setHasInitializedCurrentRecordFilters,
-    initialChartFilters?.recordFilters,
-  ]);
-
-  useEffect(() => {
-    if (
-      !hasInitializedCurrentRecordFilterGroups &&
-      isNonEmptyArray(initialChartFilters?.recordFilterGroups) &&
-      initialChartFilters.recordFilterGroups.length > 0
-    ) {
+    if (!hasInitializedChartFilters && isDefined(initialChartFilters)) {
+      setCurrentRecordFilters(initialChartFilters.recordFilters ?? []);
       setCurrentRecordFilterGroups(
         initialChartFilters.recordFilterGroups ?? [],
       );
-      setHasInitializedCurrentRecordFilterGroups(true);
+
+      setShouldSetAdvancedFilterDropdownStates(true);
+      setHasInitializedChartFilters(true);
     }
   }, [
+    setCurrentRecordFilters,
     setCurrentRecordFilterGroups,
-    hasInitializedCurrentRecordFilterGroups,
-    setHasInitializedCurrentRecordFilterGroups,
-    initialChartFilters?.recordFilterGroups,
+    setHasInitializedChartFilters,
+    hasInitializedChartFilters,
+    initialChartFilters,
   ]);
 
   useEffect(() => {
