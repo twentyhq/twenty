@@ -217,43 +217,7 @@ export const RecordFieldList = ({
       {boxedRelationFieldMetadataItems
         .filter(
           (fieldMetadataItem) =>
-            fieldMetadataItem.type === FieldMetadataType.RELATION,
-        )
-        .map((fieldMetadataItem, index) => (
-          <FieldContext.Provider
-            key={objectRecordId + fieldMetadataItem.id}
-            value={{
-              recordId: objectRecordId,
-              isLabelIdentifier: false,
-              fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                field: fieldMetadataItem,
-                position: index,
-                objectMetadataItem,
-              }),
-              useUpdateRecord: useUpdateOneObjectRecordMutation,
-              isDisplayModeFixHeight: true,
-              isRecordFieldReadOnly: isRecordFieldReadOnly({
-                isRecordReadOnly,
-                objectPermissions:
-                  getObjectPermissionsFromMapByObjectMetadataId({
-                    objectPermissionsByObjectMetadataId,
-                    objectMetadataId: objectMetadataItem.id,
-                  }),
-                fieldMetadataItem: {
-                  id: fieldMetadataItem.id,
-                  isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
-                },
-              }),
-            }}
-          >
-            <RecordDetailRelationSection
-              loading={isPrefetchLoading || recordLoading}
-            />
-          </FieldContext.Provider>
-        ))}
-      {boxedRelationFieldMetadataItems
-        .filter(
-          (fieldMetadataItem) =>
+            fieldMetadataItem.type === FieldMetadataType.RELATION ||
             fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION,
         )
         .map((fieldMetadataItem, index) => (
@@ -283,9 +247,15 @@ export const RecordFieldList = ({
               }),
             }}
           >
-            <RecordDetailMorphRelationSection
-              loading={isPrefetchLoading || recordLoading}
-            />
+            {fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION ? (
+              <RecordDetailMorphRelationSection
+                loading={isPrefetchLoading || recordLoading}
+              />
+            ) : (
+              <RecordDetailRelationSection
+                loading={isPrefetchLoading || recordLoading}
+              />
+            )}
           </FieldContext.Provider>
         ))}
 
