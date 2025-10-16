@@ -1,7 +1,5 @@
 import { type JestConfigWithTsJest } from 'ts-jest';
 
-const tsConfig = require('./tsconfig.e2e.json');
-
 const jestConfig: JestConfigWithTsJest = {
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
   // Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
@@ -40,18 +38,10 @@ const jestConfig: JestConfigWithTsJest = {
     ],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(chalk|inquirer|@inquirer|ansi-styles|strip-ansi|has-flag|supports-color|color-convert|color-name|wrap-ansi|string-width|strip-ansi|is-fullwidth-code-point|emoji-regex|onetime|mimic-fn|signal-exit|yallist|lru-cache|p-limit|p-queue|p-timeout|p-finally|p-try|p-cancelable|p-locate|p-map|p-race|p-reduce|p-some|p-waterfall|p-defer|p-delay|p-retry|p-any|p-settle|p-all|p-map-series|p-map-concurrent|p-filter|p-reject|p-tap|p-log|p-debounce|p-throttle|p-forever|p-whilst|p-do-whilst|p-until|p-wait-for|p-min-delay|p-timeout|p-retry|p-any|p-settle|p-all|p-map-series|p-map-concurrent|p-filter|p-reject|p-tap|p-log|p-debounce|p-throttle|p-forever|p-whilst|p-do-whilst|p-until|p-wait-for|p-min-delay)/)',
+    'node_modules/(?!(chalk|inquirer|@inquirer|ansi-styles|strip-ansi|has-flag|supports-color|color-convert|color-name|wrap-ansi|string-width|is-fullwidth-code-point|emoji-regex|onetime|mimic-fn|signal-exit|yallist|lru-cache|p-limit|p-queue|p-timeout|p-finally|p-try|p-cancelable|p-locate|p-map|p-race|p-reduce|p-some|p-waterfall|p-defer|p-delay|p-retry|p-any|p-settle|p-all|p-map-series|p-map-concurrent|p-filter|p-reject|p-tap|p-log|p-debounce|p-throttle|p-forever|p-whilst|p-do-whilst|p-until|p-wait-for|p-min-delay)/)',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-  },
-  fakeTimers: {
-    enableGlobally: true,
-  },
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.e2e.json',
-    },
   },
 };
 

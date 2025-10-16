@@ -26,7 +26,6 @@ describe.each(COVERED_APPLICATION_FOLDERS)(
     // });
 
     it(`should successfully install ${applicationName} application`, async () => {
-      console.log(appPath);
       const result = await syncCommand.execute(appPath);
 
       expect(result.success).toBe(true);
@@ -44,7 +43,6 @@ describe.each(COVERED_APPLICATION_FOLDERS)(
     it.failing(
       `should successfully re-install ${applicationName} application`,
       async () => {
-        console.log(appPath);
         const result = await syncCommand.execute(appPath);
 
         expect(result.success).toBe(true);
