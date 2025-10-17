@@ -164,7 +164,6 @@ export const DropdownInternalContainer = ({
       )}
 
       <FloatingPortal>
-        {/* per-instance CSS injection so the native scrollbar can be hidden for this dropdown only */}
         <style>{hideScrollbarCss}</style>
         <StyledDropdownContentContainer
           ref={floatingUiRefs.setFloating}
