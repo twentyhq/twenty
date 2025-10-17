@@ -19,7 +19,11 @@ export class ActivateUnaccentExtension1758117800000
             LANGUAGE sql
             IMMUTABLE
         AS $$
-        SELECT public.unaccent('public.unaccent'::regdictionary, input)
+        SELECT TRANSLATE(
+          public.unaccent('public.unaccent'::regdictionary, input),
+          'äöüÄÖÜß',
+          'aouAOUss'
+        )
         $$;`,
       );
     } catch {

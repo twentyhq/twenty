@@ -4,6 +4,8 @@ import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.
 import {
   TEST_COMPANY_1_ID,
   TEST_COMPANY_2_ID,
+  TEST_COMPANY_3_ID,
+  TEST_COMPANY_4_ID,
 } from 'test/integration/constants/test-company-ids.constants';
 import {
   TEST_PERSON_1_ID,
@@ -13,6 +15,8 @@ import {
   TEST_PERSON_5_ID,
   TEST_PERSON_6_ID,
   TEST_PERSON_7_ID,
+  TEST_PERSON_8_ID,
+  TEST_PERSON_9_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import {
   TEST_PET_ID_1,
@@ -84,11 +88,25 @@ describe('SearchResolver', () => {
       jobTitle: 'Manager',
       emails: { primaryEmail: 'francois@naive.com' },
     },
+    {
+      id: TEST_PERSON_8_ID,
+      name: { firstName: 'Jürgen', lastName: 'Müller' },
+      jobTitle: 'Software Engineer',
+      emails: { primaryEmail: 'juergen@example.com' },
+    },
+    {
+      id: TEST_PERSON_9_ID,
+      name: { firstName: 'Jurgen', lastName: 'Muller' },
+      jobTitle: 'Software Engineer',
+      emails: { primaryEmail: 'jurgen@example.com' },
+    },
   ];
 
   const companies = [
     { id: TEST_COMPANY_1_ID, name: 'Café Corp' },
     { id: TEST_COMPANY_2_ID, name: 'Naïve Solutions' },
+    { id: TEST_COMPANY_3_ID, name: 'Müller GmbH' },
+    { id: TEST_COMPANY_4_ID, name: 'Muller GmbH' },
   ];
 
   const pets = [
@@ -106,8 +124,10 @@ describe('SearchResolver', () => {
     francoisPerson,
     josePersonNoAccent,
     francoisPersonNoAccent,
+    jurgenPerson,
+    jurgenPersonNoAccent,
   ] = persons;
-  const [cafeCorp, naiveCorp] = companies;
+  const [cafeCorp, naiveCorp, mullerGmbH, mullerGmbHNoAccent] = companies;
   const [searchInput1Pet, searchInput2Pet, cafePet, naivePet] = pets;
 
   beforeAll(async () => {
@@ -699,6 +719,91 @@ describe('SearchResolver', () => {
               lastRanks: { tsRank: 0.12158542, tsRankCD: 0.2 },
               lastRecordIdsPerObject: {
                 person: francoisPersonNoAccent.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find both "Jürgen" and "Jurgen" when searching for "jurgen" (German umlaut ü)',
+      context: {
+        input: {
+          searchInput: 'jurgen',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [jurgenPerson.id, jurgenPersonNoAccent.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.12158542, tsRankCD: 0.2 },
+              lastRecordIdsPerObject: {
+                person: jurgenPersonNoAccent.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find both "Müller" companies when searching for "muller" (German umlaut ü in company name)',
+      context: {
+        input: {
+          searchInput: 'muller',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [
+            francoisPerson.id,
+            francoisPersonNoAccent.id,
+            jurgenPerson.id,
+            jurgenPersonNoAccent.id,
+            mullerGmbH.id,
+            mullerGmbHNoAccent.id,
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: jurgenPersonNoAccent.id,
+                company: mullerGmbHNoAccent.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find "Müller GmbH" when searching with German umlaut "müller"',
+      context: {
+        input: {
+          searchInput: 'müller',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [
+            francoisPerson.id,
+            francoisPersonNoAccent.id,
+            jurgenPerson.id,
+            jurgenPersonNoAccent.id,
+            mullerGmbH.id,
+            mullerGmbHNoAccent.id,
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: jurgenPersonNoAccent.id,
+                company: mullerGmbHNoAccent.id,
               },
             },
           },
