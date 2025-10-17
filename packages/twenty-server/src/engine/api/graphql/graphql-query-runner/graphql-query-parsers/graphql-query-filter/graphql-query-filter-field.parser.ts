@@ -49,7 +49,16 @@ export class GraphqlQueryFilterFieldParser {
         isFirst,
       );
     }
-    const [[operator, value]] = Object.entries(filterValue);
+    const entries = Object.entries(filterValue);
+    
+    if (entries.length !== 1) {
+      throw new GraphqlQueryRunnerException(
+        `Invalid filter format for field ${key}. Expected exactly one operator`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
+    
+    const [[operator, value]] = entries;
 
     if (
       ARRAY_OPERATORS.includes(operator) &&
@@ -106,10 +115,19 @@ export class GraphqlQueryFilterFieldParser {
 
       const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-      const [[operator, value]] = Object.entries(
+      const subFieldEntries = Object.entries(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         subFieldFilter as Record<string, any>,
       );
+      
+      if (subFieldEntries.length !== 1) {
+        throw new GraphqlQueryRunnerException(
+          `Invalid filter format for composite field ${subFieldKey}. Expected exactly one operator`,
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        );
+      }
+      
+      const [[operator, value]] = subFieldEntries;
 
       if (
         ARRAY_OPERATORS.includes(operator) &&
