@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -47,6 +48,9 @@ export const getMockFieldMetadataEntity = <
     createdAt: new Date(),
     updatedAt: new Date(),
     isActive: true,
+    application: {} as ApplicationEntity,
+    applicationId: faker.string.uuid(),
+    universalIdentifier: faker.string.uuid(),
     ...overrides,
   };
 };

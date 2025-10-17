@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -67,6 +68,19 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
         idByUniversalIdentifier: {
           ...flatEntityMaps.idByUniversalIdentifier,
           [flatObjectMetadata.universalIdentifier]: flatObjectMetadata.id,
+        },
+        universalIdentifiersByApplicationId: {
+          ...flatEntityMaps.universalIdentifiersByApplicationId,
+          ...(isDefined(flatObjectMetadata.applicationId)
+            ? {
+                [flatObjectMetadata.applicationId]: [
+                  ...(flatEntityMaps.universalIdentifiersByApplicationId?.[
+                    flatObjectMetadata.applicationId
+                  ] ?? []),
+                  flatObjectMetadata.universalIdentifier,
+                ],
+              }
+            : {}),
         },
       };
     }, EMPTY_FLAT_ENTITY_MAPS);

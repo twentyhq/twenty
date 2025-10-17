@@ -28,6 +28,9 @@ export type PartialFieldMetadata<
   | 'indexFieldMetadatas'
   | 'fieldPermissions'
   | 'object'
+  | 'application'
+  | 'applicationId'
+  | 'universalIdentifier'
 > & {
   standardId: string;
   label: string | ((objectMetadata: ObjectMetadataEntity) => string);

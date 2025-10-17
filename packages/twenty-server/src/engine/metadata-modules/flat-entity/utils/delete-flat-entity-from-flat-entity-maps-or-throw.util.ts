@@ -31,10 +31,27 @@ export const deleteFlatEntityFromFlatEntityMapsOrThrow = <
     flatEntityMaps.idByUniversalIdentifier,
   ).filter(([_universalIdentifier, id]) => id !== entityToDeleteId);
 
+  const updatedUniversalIdentifiersByApplicationIdEntries = Object.entries(
+    flatEntityMaps.universalIdentifiersByApplicationId,
+  ).map(([applicationId, universalIdentifiers]) => {
+    const stillPresentUniversalIdentifiers = universalIdentifiers?.filter(
+      (universalIdentifier) =>
+        updatedIdByUniversalIdentifierEntries.some(
+          ([existingUniversalIdentifier]) =>
+            existingUniversalIdentifier === universalIdentifier,
+        ),
+    );
+
+    return [applicationId, stillPresentUniversalIdentifiers];
+  });
+
   return {
     byId: removePropertiesFromRecord(flatEntityMaps.byId, [entityToDeleteId]),
     idByUniversalIdentifier: Object.fromEntries(
       updatedIdByUniversalIdentifierEntries,
+    ),
+    universalIdentifiersByApplicationId: Object.fromEntries(
+      updatedUniversalIdentifiersByApplicationIdEntries,
     ),
   };
 };

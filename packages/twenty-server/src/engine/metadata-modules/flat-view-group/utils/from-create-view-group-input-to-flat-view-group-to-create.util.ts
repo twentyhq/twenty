@@ -28,9 +28,11 @@ export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
     createdAt: createdAt,
     updatedAt: createdAt,
     deletedAt: null,
-    universalIdentifier: viewGroupId,
+    universalIdentifier:
+      createViewGroupInput.universalIdentifier ?? viewGroupId,
     isVisible: createViewGroupInput.isVisible ?? true,
     fieldValue: createViewGroupInput.fieldValue,
     position: createViewGroupInput.position ?? 0,
+    applicationId: createViewGroupInput.applicationId ?? null,
   };
 };

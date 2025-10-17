@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -60,6 +60,19 @@ export class WorkspaceFlatCronTriggerMapCacheService extends WorkspaceFlatMapCac
         idByUniversalIdentifier: {
           ...flatEntityMaps.idByUniversalIdentifier,
           [flatCronTrigger.universalIdentifier]: flatCronTrigger.id,
+        },
+        universalIdentifiersByApplicationId: {
+          ...flatEntityMaps.universalIdentifiersByApplicationId,
+          ...(isDefined(flatCronTrigger.applicationId)
+            ? {
+                [flatCronTrigger.applicationId]: [
+                  ...(flatEntityMaps.universalIdentifiersByApplicationId?.[
+                    flatCronTrigger.applicationId
+                  ] ?? []),
+                  flatCronTrigger.universalIdentifier,
+                ],
+              }
+            : {}),
         },
       };
     }, EMPTY_FLAT_ENTITY_MAPS);

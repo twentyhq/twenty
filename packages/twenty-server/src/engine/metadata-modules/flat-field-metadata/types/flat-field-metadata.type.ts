@@ -9,6 +9,7 @@ export const fieldMetadataRelationProperties = [
   'indexFieldMetadatas',
   'object',
   'viewFields',
+  'application',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 
 export type FieldMetadataEntityRelationProperties =

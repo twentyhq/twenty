@@ -16,6 +16,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless
     DatabaseEventTriggerModule,
     CronTriggerModule,
     RouteTriggerModule,
+    WorkspaceMigrationV2Module,
   ],
   providers: [ApplicationResolver, ApplicationService, ApplicationSyncService],
 })

@@ -21,7 +21,7 @@ export class AgentDTO {
   id: string;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  standardId?: string;
+  standardId: string | null;
 
   @IsString()
   @Field()

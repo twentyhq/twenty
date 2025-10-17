@@ -12,7 +12,7 @@ import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-mana
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   workspaceId: string;
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'id'>;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'applicationId'>;
 };
 
 export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
@@ -21,7 +21,7 @@ export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
 // This could be replaced totally by an import schema + its transpilation when it's ready
 export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   workspaceId,
-  flatObjectMetadata: { id: objectMetadataId },
+  flatObjectMetadata: { id: objectMetadataId, applicationId },
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
   const createdAt = new Date();
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
@@ -56,6 +56,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const nameField: FlatFieldMetadata<FieldMetadataType.TEXT> = {
@@ -90,6 +91,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const createdAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -124,6 +126,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const updatedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -158,6 +161,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const deletedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -192,6 +196,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const createdByField: FlatFieldMetadata<FieldMetadataType.ACTOR> = {
@@ -226,6 +231,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const positionField: FlatFieldMetadata<FieldMetadataType.POSITION> = {
@@ -260,6 +266,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
@@ -297,6 +304,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
       generatedType: 'STORED',
     },
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   return {

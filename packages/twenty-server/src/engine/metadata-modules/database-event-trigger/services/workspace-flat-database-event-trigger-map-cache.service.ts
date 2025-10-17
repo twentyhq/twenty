@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -50,7 +50,8 @@ export class WorkspaceFlatDatabaseEventTriggerMapCacheService extends WorkspaceF
         ...removePropertiesFromRecord(databaseEventTrigger, [
           ...DATABASE_EVENT_TRIGGER_ENTITY_RELATION_PROPERTIES,
         ]),
-        universalIdentifier: databaseEventTrigger.universalIdentifier ?? '',
+        universalIdentifier:
+          databaseEventTrigger.universalIdentifier ?? databaseEventTrigger.id,
       } satisfies FlatDatabaseEventTrigger;
 
       return {
@@ -62,6 +63,19 @@ export class WorkspaceFlatDatabaseEventTriggerMapCacheService extends WorkspaceF
           ...flatEntityMaps.idByUniversalIdentifier,
           [flatDatabaseEventTrigger.universalIdentifier]:
             flatDatabaseEventTrigger.id,
+        },
+        universalIdentifiersByApplicationId: {
+          ...flatEntityMaps.universalIdentifiersByApplicationId,
+          ...(isDefined(flatDatabaseEventTrigger.applicationId)
+            ? {
+                [flatDatabaseEventTrigger.applicationId]: [
+                  ...(flatEntityMaps.universalIdentifiersByApplicationId?.[
+                    flatDatabaseEventTrigger.applicationId
+                  ] ?? []),
+                  flatDatabaseEventTrigger.universalIdentifier,
+                ],
+              }
+            : {}),
         },
       };
     }, EMPTY_FLAT_ENTITY_MAPS);
