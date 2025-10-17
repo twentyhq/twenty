@@ -197,10 +197,11 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
           );
 
           const columns = sortedIndexFields
-            .map((indexFieldMetadata) =>
-              objectMetadata.fields.find(
-                (field) => field.id === indexFieldMetadata.fieldMetadataId,
-              )?.name,
+            .map(
+              (indexFieldMetadata) =>
+                objectMetadata.fields.find(
+                  (field) => field.id === indexFieldMetadata.fieldMetadataId,
+                )?.name,
             )
             .filter((columnName): columnName is string => Boolean(columnName));
 
@@ -255,7 +256,8 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
     searchVectorFieldMetadata: FieldMetadataEntity;
   }): string | undefined {
     if (objectMetadata.standardId) {
-      const searchFields = this.standardObjectSearchFields[objectMetadata.standardId];
+      const searchFields =
+        this.standardObjectSearchFields[objectMetadata.standardId];
 
       if (searchFields) {
         return getTsVectorColumnExpressionFromFields(searchFields);
@@ -263,7 +265,9 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
     }
 
     if (objectMetadata.isCustom) {
-      return getTsVectorColumnExpressionFromFields(SEARCH_FIELDS_FOR_CUSTOM_OBJECT);
+      return getTsVectorColumnExpressionFromFields(
+        SEARCH_FIELDS_FOR_CUSTOM_OBJECT,
+      );
     }
 
     const storedExpressionFromSettings = hasAsExpressionSetting(
