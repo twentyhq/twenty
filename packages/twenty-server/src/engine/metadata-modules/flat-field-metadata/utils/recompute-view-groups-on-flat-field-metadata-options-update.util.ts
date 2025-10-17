@@ -109,6 +109,7 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
           isVisible: true,
           fieldValue: option.value,
           position: viewGroupHighestPosition + createdOptionIndex + 1,
+          applicationId: fromFlatFieldMetadata.applicationId,
         };
       }),
   );

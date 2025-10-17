@@ -71,6 +71,7 @@ export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
         updatedAt: createdAt,
         deletedAt: null,
         viewId,
+        applicationId: toFlatFieldMetadata.applicationId,
       });
     } else if (isDefined(emptyValueFlatViewGroup)) {
       sideEffectResult.flatViewGroupsToDelete.push(emptyValueFlatViewGroup);
