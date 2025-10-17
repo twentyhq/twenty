@@ -25,7 +25,7 @@ export const SettingsServerlessFunctionNewForm = ({
 
   return (
     <Section>
-      <H2Title title="About" description="Name and set your function" />
+      <H2Title title="About" description="Name and describe your function" />
       <StyledInputsContainer>
         <SettingsTextInput
           instanceId={nameTextInputId}

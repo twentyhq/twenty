@@ -20,6 +20,7 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   @Matches(/^(?!api-).*^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/)
   @IsNotIn([
+    'trust',
     'demo',
     'api',
     't',

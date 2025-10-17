@@ -5,7 +5,8 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+
+import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -21,12 +22,10 @@ export const useMorphPersistManyToOne = ({
 }: MorphPersistManyToOneProps) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: objectMetadataNameSingular,
-  });
+  const { updateOneRecord } = useUpdateOneRecordV2();
 
   const persistMorphManyToOne = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ snapshot }) =>
       async ({
         recordId,
         fieldDefinition,
@@ -84,22 +83,35 @@ export const useMorphPersistManyToOne = ({
           return;
         }
 
+        const allNullRecordInput: Record<string, null> =
+          fieldDefinition.metadata.morphRelations.reduce(
+            (acc, morphRelation) => {
+              const computedFieldName = computeMorphRelationFieldName({
+                fieldName,
+                relationType: fieldDefinition.metadata.relationType,
+                targetObjectMetadataNameSingular:
+                  morphRelation.targetObjectMetadata.nameSingular,
+                targetObjectMetadataNamePlural:
+                  morphRelation.targetObjectMetadata.namePlural,
+              });
+              acc[`${computedFieldName}Id`] = null;
+              return acc;
+            },
+            {} as Record<string, null>,
+          );
+
         updateOneRecord?.({
+          objectNameSingular: objectMetadataNameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: {
+            ...allNullRecordInput,
             [`${computedFieldName}Id`]: valueToPersist,
           },
         });
-        set(
-          recordStoreFamilySelector({
-            recordId,
-            fieldName: computedFieldName,
-          }),
-          valueToPersist,
-        );
+
         return;
       },
-    [updateOneRecord, objectMetadataItems],
+    [updateOneRecord, objectMetadataItems, objectMetadataNameSingular],
   );
 
   return { persistMorphManyToOne };

@@ -25,7 +25,12 @@ export class ApplicationService {
   ): Promise<ApplicationEntity[]> {
     return this.applicationRepository.find({
       where: { workspaceId },
-      relations: ['serverlessFunctions', 'agents', 'objects'],
+      relations: [
+        'serverlessFunctions',
+        'agents',
+        'objects',
+        'applicationVariables',
+      ],
     });
   }
 
@@ -35,7 +40,12 @@ export class ApplicationService {
   ): Promise<ApplicationEntity> {
     const application = await this.applicationRepository.findOne({
       where: { workspaceId, id: applicationId },
-      relations: ['serverlessFunctions', 'agents', 'objects'],
+      relations: [
+        'serverlessFunctions',
+        'agents',
+        'objects',
+        'applicationVariables',
+      ],
     });
 
     if (!isDefined(application)) {
