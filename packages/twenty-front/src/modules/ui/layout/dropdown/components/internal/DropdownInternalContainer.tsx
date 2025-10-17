@@ -181,6 +181,6 @@ export const DropdownInternalContainer = ({
           </OverlayContainer>
         </StyledDropdownContentContainer>
       </FloatingPortal>
-    </>
-  );
-};
+      </>
+      );
+    };

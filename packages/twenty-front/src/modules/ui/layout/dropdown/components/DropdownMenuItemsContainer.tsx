@@ -20,7 +20,10 @@ const StyledExternalContainer = styled.div<{
   box-sizing: border-box;
 `;
 
-const StyledScrollableContainer = styled.div<{ maxHeight?: number; hideScrollbar?: boolean }>`
+const StyledScrollableContainer = styled.div<{
+  maxHeight?: number;
+  hideScrollbar?: boolean;
+}>`
   box-sizing: border-box;
 
   display: flex;
