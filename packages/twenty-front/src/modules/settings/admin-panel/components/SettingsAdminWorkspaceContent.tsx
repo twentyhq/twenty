@@ -169,7 +169,9 @@ export const SettingsAdminWorkspaceContent = ({
     {
       Icon: IconId,
       label: t`Schema name`,
-      value: getWorkspaceSchemaName(activeWorkspace?.id!),
+      value: isDefined(activeWorkspace?.id)
+        ? getWorkspaceSchemaName(activeWorkspace.id)
+        : '',
     },
     {
       Icon: IconLink,
