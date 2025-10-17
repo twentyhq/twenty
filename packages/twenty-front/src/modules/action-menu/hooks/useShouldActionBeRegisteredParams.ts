@@ -16,6 +16,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
