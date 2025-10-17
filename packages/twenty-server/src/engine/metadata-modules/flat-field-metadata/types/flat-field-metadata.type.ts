@@ -11,6 +11,7 @@ export const FIELD_METADATA_RELATION_PROPERTIES = [
   'viewFields',
   'viewFilters',
   'viewGroups',
+  'views'
 ] as const satisfies (keyof FieldMetadataEntity)[];
 
 export type FieldMetadataEntityRelationProperties =
@@ -22,4 +23,5 @@ export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
     viewFieldIds: string[];
     viewFilterIds: string[];
     viewGroupIds: string[];
+    viewIds: string[];
   };

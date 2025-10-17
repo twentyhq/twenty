@@ -56,5 +56,6 @@ export const getDefaultFlatFieldMetadata = ({
     morphId: null,
     viewFilterIds: [],
     viewGroupIds: [],
+    viewIds: [],
   } as const satisfies FlatFieldMetadata;
 };

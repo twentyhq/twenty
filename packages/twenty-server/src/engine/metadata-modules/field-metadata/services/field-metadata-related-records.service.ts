@@ -119,31 +119,6 @@ export class FieldMetadataRelatedRecordsService {
     await this.viewService.flushGraphQLCache(newFieldMetadata.workspaceId);
   }
 
-  public async resetViewKanbanAggregateOperation(
-    fieldMetadata: Pick<
-      FieldMetadataEntity,
-      'id' | 'workspaceId' | 'objectMetadataId'
-    >,
-  ): Promise<void> {
-    const views = await this.viewService.findByObjectMetadataId(
-      fieldMetadata.workspaceId,
-      fieldMetadata.objectMetadataId,
-    );
-
-    const viewsHavingFieldAsAggregateOperation = views.filter(
-      (view) =>
-        view.kanbanAggregateOperationFieldMetadataId === fieldMetadata.id,
-    );
-
-    for (const view of viewsHavingFieldAsAggregateOperation) {
-      await this.viewService.update(view.id, fieldMetadata.workspaceId, {
-        kanbanAggregateOperationFieldMetadataId: null,
-        kanbanAggregateOperation: null,
-      });
-    }
-    await this.viewService.flushGraphQLCache(fieldMetadata.workspaceId);
-  }
-
   public async updateRelatedViewFilters(
     oldFieldMetadata: SelectOrMultiSelectFieldMetadataEntity,
     newFieldMetadata: SelectOrMultiSelectFieldMetadataEntity,

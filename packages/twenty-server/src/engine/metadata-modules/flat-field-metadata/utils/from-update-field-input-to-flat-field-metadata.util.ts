@@ -34,6 +34,7 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   | 'flatFieldMetadataMaps'
   | 'flatViewFilterMaps'
   | 'flatViewGroupMaps'
+  | 'flatViewMaps'
 >;
 
 type FlatFieldMetadataAndIndexToUpdate = {
@@ -46,6 +47,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   updateFieldInput: rawUpdateFieldInput,
   flatViewFilterMaps,
   flatViewGroupMaps,
+  flatViewMaps,
 }: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadataAndIndexToUpdate> => {
   const updateFieldInputInformalProperties =
     extractAndSanitizeObjectStringFields(rawUpdateFieldInput, [
@@ -114,6 +116,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     return {
       status: 'success',
       result: {
+        flatViewsToDelete: [],
         flatViewGroupsToCreate: [],
         flatViewGroupsToDelete: [],
         flatViewGroupsToUpdate: [],
@@ -161,6 +164,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     flatIndexMetadatasToCreate: [],
     flatIndexMetadatasToDelete: [],
     flatViewGroupsToUpdate: [],
+    flatViewsToDelete: [],
   };
 
   updatedEditableFieldProperties.options = !isDefined(
@@ -190,6 +194,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           flatViewFiltersToUpdate,
           flatIndexMetadatasToCreate,
           flatIndexMetadatasToDelete,
+          flatViewsToDelete: flatViewToDelete,
         } = handleFlatFieldMetadataUpdateSideEffect({
           flatViewFilterMaps,
           flatViewGroupMaps,
@@ -198,6 +203,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           flatFieldMetadataMaps,
           flatIndexMaps,
           toFlatFieldMetadata,
+          flatViewMaps,
         });
 
         return {
@@ -236,6 +242,10 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           flatIndexMetadatasToCreate: [
             ...accumulator.flatIndexMetadatasToCreate,
             ...flatIndexMetadatasToCreate,
+          ],
+          flatViewsToDelete: [
+            ...accumulator.flatViewsToDelete,
+            ...flatViewToDelete,
           ],
         };
       },
