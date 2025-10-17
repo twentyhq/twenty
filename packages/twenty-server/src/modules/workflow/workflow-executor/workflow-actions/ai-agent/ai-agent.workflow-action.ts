@@ -9,12 +9,12 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import {
-  AgentException,
-  AgentExceptionCode,
+    AgentException,
+    AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import {
-  WorkflowStepExecutorException,
-  WorkflowStepExecutorExceptionCode,
+    WorkflowStepExecutorException,
+    WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
@@ -85,9 +85,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
           actorContext: executionContext.isActingOnBehalfOfUser
             ? executionContext.initiator
             : undefined,
-          rolePermissionConfig: executionContext.roleId
-            ? { unionOf: [executionContext.roleId] }
-            : { shouldBypassPermissionChecks: true },
+          rolePermissionConfig: executionContext.rolePermissionConfig,
         },
       );
 

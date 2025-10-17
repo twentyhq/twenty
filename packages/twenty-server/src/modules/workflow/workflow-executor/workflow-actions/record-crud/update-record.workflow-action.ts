@@ -81,9 +81,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       objectRecord: workflowActionInput.objectRecord,
       fieldsToUpdate: workflowActionInput.fieldsToUpdate,
       workspaceId,
-      rolePermissionConfig: executionContext.roleId
-        ? { unionOf: [executionContext.roleId] }
-        : { shouldBypassPermissionChecks: true },
+      rolePermissionConfig: executionContext.rolePermissionConfig,
     });
 
     if (!toolOutput.success) {

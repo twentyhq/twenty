@@ -64,9 +64,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       objectRecord: workflowActionInput.objectRecord,
       workspaceId,
       createdBy,
-      rolePermissionConfig: executionContext.roleId
-        ? { unionOf: [executionContext.roleId] }
-        : { shouldBypassPermissionChecks: true },
+      rolePermissionConfig: executionContext.rolePermissionConfig,
     });
 
     if (!toolOutput.success) {
