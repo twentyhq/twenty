@@ -1,5 +1,5 @@
-import { ResizableImage } from '@/object-record/record-field/ui/extensions/resizable-image/ResizableImage';
-import { UploadImageExtension } from '@/object-record/record-field/ui/extensions/resizable-image/UploadImageExtension';
+import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-image/ResizableImage';
+import { UploadImageExtension } from '@/advanced-text-editor/extensions/resizable-image/UploadImageExtension';
 import { getInitialAdvancedTextEditorContent } from '@/workflow/workflow-variables/utils/getInitialAdvancedTextEditorContent';
 import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
 import { Bold } from '@tiptap/extension-bold';

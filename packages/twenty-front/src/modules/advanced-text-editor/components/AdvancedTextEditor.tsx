@@ -1,6 +1,6 @@
-import { ImageBubbleMenu } from '@/object-record/record-field/ui/components/ImageBubbleMenu';
-import { LinkBubbleMenu } from '@/object-record/record-field/ui/components/LinkBubbleMenu';
-import { TextBubbleMenu } from '@/object-record/record-field/ui/components/TextBubbleMenu';
+import { ImageBubbleMenu } from '@/advanced-text-editor/components/ImageBubbleMenu';
+import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu';
+import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
 import styled from '@emotion/styled';
 import { EditorContent, type Editor } from '@tiptap/react';
@@ -77,19 +77,19 @@ const StyledEditorContainer = styled.div<{
   }
 `;
 
-type FormAdvancedTextFieldEditorProps = {
+type AdvancedTextEditorProps = {
   readonly: boolean | undefined;
   editor: Editor;
   maxHeight: number;
   maxWidth: number;
 };
 
-export const FormAdvancedTextFieldEditor = ({
+export const AdvancedTextEditor = ({
   readonly,
   editor,
   maxHeight,
   maxWidth,
-}: FormAdvancedTextFieldEditorProps) => {
+}: AdvancedTextEditorProps) => {
   return (
     <StyledEditorContainer
       readonly={readonly}
