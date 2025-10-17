@@ -23,7 +23,7 @@ interface SendMessageInput {
   subject: string;
   to: string;
   html: string;
-  attachments: {
+  attachments?: {
     filename: string;
     content: Buffer;
     contentType: string;
