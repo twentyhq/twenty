@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -9,6 +8,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -54,37 +54,19 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
       relations: ['fields', 'indexMetadatas', 'views'],
     });
 
-    const flatObjectMetadataMaps = objectMetadatas.reduce<
-      FlatEntityMaps<FlatObjectMetadata>
-    >((flatEntityMaps, object) => {
-      const flatObjectMetadata =
-        fromObjectMetadataEntityToFlatObjectMetadata(object);
+    const objectCache = objectMetadatas.reduce(
+      (flatObjectMetadataMaps, objectMetadataEntity) => {
+        const flatObjectMetadata =
+          fromObjectMetadataEntityToFlatObjectMetadata(objectMetadataEntity);
 
-      return {
-        byId: {
-          ...flatEntityMaps.byId,
-          [flatObjectMetadata.id]: flatObjectMetadata,
-        },
-        idByUniversalIdentifier: {
-          ...flatEntityMaps.idByUniversalIdentifier,
-          [flatObjectMetadata.universalIdentifier]: flatObjectMetadata.id,
-        },
-        universalIdentifiersByApplicationId: {
-          ...flatEntityMaps.universalIdentifiersByApplicationId,
-          ...(isDefined(flatObjectMetadata.applicationId)
-            ? {
-                [flatObjectMetadata.applicationId]: [
-                  ...(flatEntityMaps.universalIdentifiersByApplicationId?.[
-                    flatObjectMetadata.applicationId
-                  ] ?? []),
-                  flatObjectMetadata.universalIdentifier,
-                ],
-              }
-            : {}),
-        },
-      };
-    }, EMPTY_FLAT_ENTITY_MAPS);
+        return addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatObjectMetadata,
+          flatEntityMaps: flatObjectMetadataMaps,
+        });
+      },
+      EMPTY_FLAT_ENTITY_MAPS,
+    );
 
-    return flatObjectMetadataMaps;
+    return objectCache;
   }
 }

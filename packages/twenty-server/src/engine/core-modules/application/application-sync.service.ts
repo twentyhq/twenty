@@ -25,8 +25,7 @@ import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/const
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
+import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
@@ -825,7 +824,7 @@ export class ApplicationSyncService {
     }
 
     const flatObjectMetadataMapsByApplicationId =
-      this.getEntitiesByApplicationId(
+      getFlatEntitiesByApplicationId(
         existingFlatObjectMetadataMaps,
         application.id,
       );
@@ -835,11 +834,10 @@ export class ApplicationSyncService {
       flatEntityMaps: existingFlatObjectMetadataMaps,
     });
 
-    const flatIndexMetadataMapsByApplicationId =
-      this.getEntitiesByApplicationId(
-        existingFlatIndexMetadataMaps,
-        application.id,
-      );
+    const flatIndexMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
+      existingFlatIndexMetadataMaps,
+      application.id,
+    );
 
     const fromFlatIndexMetadataMaps = getSubFlatEntityMapsOrThrow({
       flatEntityIds: flatIndexMetadataMapsByApplicationId.map(
@@ -848,11 +846,10 @@ export class ApplicationSyncService {
       flatEntityMaps: existingFlatIndexMetadataMaps,
     });
 
-    const flatFieldMetadataMapsByApplicationId =
-      this.getEntitiesByApplicationId(
-        existingFlatFieldMetadataMaps,
-        application.id,
-      );
+    const flatFieldMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
+      existingFlatFieldMetadataMaps,
+      application.id,
+    );
 
     const fromFlatFieldMetadataMaps = getSubFlatEntityMapsOrThrow({
       flatEntityIds: flatFieldMetadataMapsByApplicationId.map((idx) => idx.id),
@@ -895,39 +892,5 @@ export class ApplicationSyncService {
       applicationUniversalIdentifier,
       workspaceId,
     );
-  }
-
-  private getEntitiesByApplicationId<T extends FlatEntity>(
-    maps: FlatEntityMaps<T>,
-    applicationId: string,
-  ): T[] {
-    const universalIdentifiers =
-      maps.universalIdentifiersByApplicationId[applicationId];
-
-    if (!universalIdentifiers || universalIdentifiers.length === 0) {
-      return [];
-    }
-
-    return universalIdentifiers
-      .map((universalId) => {
-        const id = maps.idByUniversalIdentifier[universalId];
-
-        if (!isDefined(id)) {
-          return undefined;
-        }
-
-        const entity = maps.byId[id];
-
-        if (!isDefined(entity)) {
-          return undefined;
-        }
-
-        if (entity.applicationId !== applicationId) {
-          return undefined;
-        }
-
-        return entity;
-      })
-      .filter(isDefined);
   }
 }

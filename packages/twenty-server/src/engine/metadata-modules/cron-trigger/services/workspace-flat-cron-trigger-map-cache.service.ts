@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
+import { removePropertiesFromRecord } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -14,6 +14,7 @@ import {
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
@@ -42,41 +43,19 @@ export class WorkspaceFlatCronTriggerMapCacheService extends WorkspaceFlatMapCac
       },
     });
 
-    const flatCronTriggerMaps = cronTriggers.reduce<
-      FlatEntityMaps<FlatCronTrigger>
-    >((flatEntityMaps, cronTrigger) => {
+    return cronTriggers.reduce((flatCronTriggerMaps, cronTriggerEntity) => {
       const flatCronTrigger = {
-        ...removePropertiesFromRecord(cronTrigger, [
+        ...removePropertiesFromRecord(cronTriggerEntity, [
           ...CRON_TRIGGER_ENTITY_RELATION_PROPERTIES,
         ]),
-        universalIdentifier: cronTrigger.universalIdentifier ?? cronTrigger.id,
+        universalIdentifier:
+          cronTriggerEntity.universalIdentifier ?? cronTriggerEntity.id,
       } satisfies FlatCronTrigger;
 
-      return {
-        byId: {
-          ...flatEntityMaps.byId,
-          [flatCronTrigger.id]: flatCronTrigger,
-        },
-        idByUniversalIdentifier: {
-          ...flatEntityMaps.idByUniversalIdentifier,
-          [flatCronTrigger.universalIdentifier]: flatCronTrigger.id,
-        },
-        universalIdentifiersByApplicationId: {
-          ...flatEntityMaps.universalIdentifiersByApplicationId,
-          ...(isDefined(flatCronTrigger.applicationId)
-            ? {
-                [flatCronTrigger.applicationId]: [
-                  ...(flatEntityMaps.universalIdentifiersByApplicationId?.[
-                    flatCronTrigger.applicationId
-                  ] ?? []),
-                  flatCronTrigger.universalIdentifier,
-                ],
-              }
-            : {}),
-        },
-      };
+      return addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: flatCronTrigger,
+        flatEntityMaps: flatCronTriggerMaps,
+      });
     }, EMPTY_FLAT_ENTITY_MAPS);
-
-    return flatCronTriggerMaps;
   }
 }

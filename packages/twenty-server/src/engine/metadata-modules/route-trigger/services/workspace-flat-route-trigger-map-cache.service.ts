@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
+import { removePropertiesFromRecord } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -9,6 +9,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import {
   ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES,
   RouteTrigger,
@@ -42,41 +43,19 @@ export class WorkspaceFlatRouteTriggerMapCacheService extends WorkspaceFlatMapCa
       },
     });
 
-    const flatRouteTriggerMaps = routeTriggers.reduce<
-      FlatEntityMaps<FlatRouteTrigger>
-    >((flatEntityMaps, routeTrigger) => {
+    return routeTriggers.reduce((flatRouteTriggerMaps, routeTriggerEntity) => {
       const flatRouteTrigger = {
-        ...removePropertiesFromRecord(routeTrigger, [
+        ...removePropertiesFromRecord(routeTriggerEntity, [
           ...ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES,
         ]),
-        universalIdentifier: routeTrigger.universalIdentifier ?? '',
+        universalIdentifier:
+          routeTriggerEntity.universalIdentifier ?? routeTriggerEntity.id,
       } satisfies FlatRouteTrigger;
 
-      return {
-        byId: {
-          ...flatEntityMaps.byId,
-          [flatRouteTrigger.id]: flatRouteTrigger,
-        },
-        idByUniversalIdentifier: {
-          ...flatEntityMaps.idByUniversalIdentifier,
-          [flatRouteTrigger.universalIdentifier]: flatRouteTrigger.id,
-        },
-        universalIdentifiersByApplicationId: {
-          ...flatEntityMaps.universalIdentifiersByApplicationId,
-          ...(isDefined(flatRouteTrigger.applicationId)
-            ? {
-                [flatRouteTrigger.applicationId]: [
-                  ...(flatEntityMaps.universalIdentifiersByApplicationId?.[
-                    flatRouteTrigger.applicationId
-                  ] ?? []),
-                  flatRouteTrigger.universalIdentifier,
-                ],
-              }
-            : {}),
-        },
-      };
+      return addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: flatRouteTrigger,
+        flatEntityMaps: flatRouteTriggerMaps,
+      });
     }, EMPTY_FLAT_ENTITY_MAPS);
-
-    return flatRouteTriggerMaps;
   }
 }

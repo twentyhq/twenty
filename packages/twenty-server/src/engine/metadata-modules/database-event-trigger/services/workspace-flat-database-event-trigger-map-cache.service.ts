@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
+import { removePropertiesFromRecord } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -14,6 +14,7 @@ import {
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
@@ -43,43 +44,23 @@ export class WorkspaceFlatDatabaseEventTriggerMapCacheService extends WorkspaceF
         },
       });
 
-    const flatDatabaseEventTriggerMaps = databaseEventTriggers.reduce<
-      FlatEntityMaps<FlatDatabaseEventTrigger>
-    >((flatEntityMaps, databaseEventTrigger) => {
-      const flatDatabaseEventTrigger = {
-        ...removePropertiesFromRecord(databaseEventTrigger, [
-          ...DATABASE_EVENT_TRIGGER_ENTITY_RELATION_PROPERTIES,
-        ]),
-        universalIdentifier:
-          databaseEventTrigger.universalIdentifier ?? databaseEventTrigger.id,
-      } satisfies FlatDatabaseEventTrigger;
+    return databaseEventTriggers.reduce(
+      (flatDatabaseEventTriggerMaps, databaseEventTriggerEntity) => {
+        const flatDatabaseEventTrigger = {
+          ...removePropertiesFromRecord(databaseEventTriggerEntity, [
+            ...DATABASE_EVENT_TRIGGER_ENTITY_RELATION_PROPERTIES,
+          ]),
+          universalIdentifier:
+            databaseEventTriggerEntity.universalIdentifier ??
+            databaseEventTriggerEntity.id,
+        } satisfies FlatDatabaseEventTrigger;
 
-      return {
-        byId: {
-          ...flatEntityMaps.byId,
-          [flatDatabaseEventTrigger.id]: flatDatabaseEventTrigger,
-        },
-        idByUniversalIdentifier: {
-          ...flatEntityMaps.idByUniversalIdentifier,
-          [flatDatabaseEventTrigger.universalIdentifier]:
-            flatDatabaseEventTrigger.id,
-        },
-        universalIdentifiersByApplicationId: {
-          ...flatEntityMaps.universalIdentifiersByApplicationId,
-          ...(isDefined(flatDatabaseEventTrigger.applicationId)
-            ? {
-                [flatDatabaseEventTrigger.applicationId]: [
-                  ...(flatEntityMaps.universalIdentifiersByApplicationId?.[
-                    flatDatabaseEventTrigger.applicationId
-                  ] ?? []),
-                  flatDatabaseEventTrigger.universalIdentifier,
-                ],
-              }
-            : {}),
-        },
-      };
-    }, EMPTY_FLAT_ENTITY_MAPS);
-
-    return flatDatabaseEventTriggerMaps;
+        return addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatDatabaseEventTrigger,
+          flatEntityMaps: flatDatabaseEventTriggerMaps,
+        });
+      },
+      EMPTY_FLAT_ENTITY_MAPS,
+    );
   }
 }

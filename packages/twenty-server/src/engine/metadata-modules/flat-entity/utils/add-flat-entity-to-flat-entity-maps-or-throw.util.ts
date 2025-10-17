@@ -36,12 +36,14 @@ export const addFlatEntityToFlatEntityMapsOrThrow = <T extends FlatEntity>({
       ...flatEntityMaps.universalIdentifiersByApplicationId,
       ...(isDefined(flatEntity.applicationId)
         ? {
-            [flatEntity.applicationId]: [
-              ...(flatEntityMaps.universalIdentifiersByApplicationId?.[
-                flatEntity.applicationId
-              ] ?? []),
-              flatEntity.universalIdentifier,
-            ],
+            [flatEntity.applicationId]: Array.from(
+              new Set([
+                ...(flatEntityMaps.universalIdentifiersByApplicationId?.[
+                  flatEntity.applicationId
+                ] ?? []),
+                flatEntity.universalIdentifier,
+              ]),
+            ),
           }
         : {}),
     },
