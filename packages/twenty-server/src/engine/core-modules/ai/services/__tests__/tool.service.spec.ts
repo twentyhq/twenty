@@ -69,10 +69,10 @@ describe('ToolService', () => {
               data: {
                 [roleId]: {
                   [testObject.id]: {
-                    canRead: true,
-                    canUpdate: true,
-                    canSoftDelete: true,
-                    canDestroy: false,
+                    canReadObjectRecords: true,
+                    canUpdateObjectRecords: true,
+                    canSoftDeleteObjectRecords: true,
+                    canDestroyObjectRecords: false,
                     restrictedFields: {},
                   },
                 },
