@@ -13,7 +13,6 @@ import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -63,7 +62,11 @@ const StyledVerticalListContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const PageLayoutGridLayout = () => {
+export const PageLayoutGridLayout = ({
+  activeTabId,
+}: {
+  activeTabId: string | null;
+}) => {
   const isRecordPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
   );
@@ -83,8 +86,6 @@ export const PageLayoutGridLayout = () => {
   const pageLayoutCurrentLayouts = useRecoilComponentValue(
     pageLayoutCurrentLayoutsComponentState,
   );
-
-  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
 
   const { currentPageLayout } = useCurrentPageLayout();
 
