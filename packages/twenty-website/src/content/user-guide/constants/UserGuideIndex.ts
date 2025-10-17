@@ -50,18 +50,14 @@ export const USER_GUIDE_INDEX = {
     ],
     'Collaboration': [
       { fileName: 'collaboration' },
-      { fileName: 'emails' },
-      { fileName: 'mailbox-calendar-sync' },
-      { fileName: 'gmail-outlook-setup' },
-      { fileName: 'smtp-caldav-configuration' },
+      { fileName: 'emails-and-calendars' },
       { fileName: 'notes' },
       { fileName: 'tasks' },
-      { fileName: 'team-collaboration-productivity' },
-      { fileName: 'team-collaboration-best-practices' },
     ],
-    'Integrations & APIs': [
+    'Integrations API': [
       { fileName: 'apis-overview' },
       { fileName: 'api-webhooks' },
+      { fileName: 'integrations-api' },
       { fileName: 'integrations' },
     ],
     'Reporting': [
