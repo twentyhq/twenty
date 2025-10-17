@@ -19,4 +19,7 @@ export class CreateCronTriggerInput {
 
   @HideField()
   universalIdentifier?: string;
+
+  @HideField()
+  applicationId?: string;
 }

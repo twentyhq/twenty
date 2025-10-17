@@ -19,4 +19,7 @@ export class CreateDatabaseEventTriggerInput {
 
   @HideField()
   universalIdentifier?: string;
+
+  @HideField()
+  applicationId?: string;
 }

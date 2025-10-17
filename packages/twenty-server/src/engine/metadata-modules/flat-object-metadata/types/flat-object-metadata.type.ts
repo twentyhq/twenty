@@ -1,3 +1,4 @@
+import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
 import { type MetadataEntitiesRelationTarget } from 'src/engine/workspace-manager/workspace-migration-v2/types/metadata-entities-relation-targets.type';
@@ -18,11 +19,10 @@ type ObjectMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
   MetadataEntitiesRelationTarget
 >;
 
-export type FlatObjectMetadata = Omit<
+export type FlatObjectMetadata = FlatEntityFrom<
   ObjectMetadataEntity,
   ObjectMetadataRelationProperties | 'dataSourceId'
 > & {
-  universalIdentifier: string;
   fieldMetadataIds: string[];
   indexMetadataIds: string[];
   viewIds: string[];

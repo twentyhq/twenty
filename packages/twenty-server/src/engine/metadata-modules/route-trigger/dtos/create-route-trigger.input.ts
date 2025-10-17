@@ -34,4 +34,7 @@ export class CreateRouteTriggerInput {
 
   @HideField()
   universalIdentifier?: string;
+
+  @HideField()
+  applicationId?: string;
 }
