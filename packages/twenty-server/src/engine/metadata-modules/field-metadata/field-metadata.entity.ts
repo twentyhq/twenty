@@ -18,6 +18,7 @@ import {
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
@@ -49,10 +50,11 @@ import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities
   'objectMetadataId',
   'workspaceId',
 ])
-// TODO add some documentation about this entity
 export class FieldMetadataEntity<
-  TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
-> implements Required<FieldMetadataEntity>
+    TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
+  >
+  extends SyncableEntity
+  implements Required<FieldMetadataEntity>
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;

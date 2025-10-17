@@ -1,18 +1,18 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-sync.service';
-import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import { DeleteApplicationInput } from 'src/engine/core-modules/application/dtos/deleteApplication.input';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-sync.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
+import { DeleteApplicationInput } from 'src/engine/core-modules/application/dtos/deleteApplication.input';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
@@ -58,10 +58,10 @@ export class ApplicationResolver {
     @Args() { packageJson }: DeleteApplicationInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    await this.applicationService.delete(
-      packageJson.universalIdentifier,
+    await this.applicationSyncService.deleteApplication({
+      applicationUniversalIdentifier: packageJson.universalIdentifier,
       workspaceId,
-    );
+    });
 
     return true;
   }

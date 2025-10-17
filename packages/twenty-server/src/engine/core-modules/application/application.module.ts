@@ -5,6 +5,7 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationVariableModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
@@ -16,7 +17,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
-import { ApplicationVariableModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ApplicationVariableModule } from 'src/engine/core-modules/applicationVa
     DatabaseEventTriggerModule,
     CronTriggerModule,
     RouteTriggerModule,
+    WorkspaceMigrationV2Module,
   ],
   providers: [ApplicationResolver, ApplicationService, ApplicationSyncService],
 })

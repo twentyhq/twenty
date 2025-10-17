@@ -97,6 +97,7 @@ const generateSourceFlatFieldMetadata = ({
     ]),
     workspaceId,
     morphId: null,
+    applicationId: sourceFlatObjectMetadata.applicationId ?? null,
   };
 };
 
@@ -165,6 +166,7 @@ const generateTargetFlatFieldMetadata = ({
       targetFlatObjectMetadata.id,
       standardId,
     ]),
+    applicationId: sourceFlatObjectMetadata.applicationId ?? null,
   };
 };
 

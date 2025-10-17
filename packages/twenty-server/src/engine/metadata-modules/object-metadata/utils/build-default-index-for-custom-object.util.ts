@@ -44,6 +44,7 @@ export const buildDefaultIndexesForCustomObject = ({
       universalIdentifier: tsFlatVectorIndexId,
       updatedAt: createdAt,
       workspaceId,
+      applicationId: flatObjectMetadata.applicationId ?? null,
     },
     flatObjectMetadata,
   });
