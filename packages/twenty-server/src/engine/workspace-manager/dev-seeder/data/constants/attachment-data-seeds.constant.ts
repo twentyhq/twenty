@@ -119,7 +119,6 @@ const FILE_NAME_VARIATIONS = [
 
 const GENERATE_ATTACHMENT_SEEDS = (): AttachmentDataSeed[] => {
   const ATTACHMENT_SEEDS: AttachmentDataSeed[] = [];
-  const NOW = new Date();
 
   // Get available entity IDs
   const PERSON_IDS = Object.values(PERSON_DATA_SEED_IDS).slice(0, 120); // Use first 120 persons
@@ -189,4 +188,3 @@ const GENERATE_ATTACHMENT_SEEDS = (): AttachmentDataSeed[] => {
 };
 
 export const ATTACHMENT_DATA_SEEDS = GENERATE_ATTACHMENT_SEEDS();
-
