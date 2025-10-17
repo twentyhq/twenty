@@ -4,13 +4,15 @@ import { baseWorkflowActionSettingsSchema } from './base-workflow-action-setting
 export const workflowDelayActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      delayType: z.enum(['schedule_date', 'duration']),
+      delayType: z.enum(['SCHEDULED_DATE', 'DURATION']),
       scheduledDateTime: z.string().nullable().optional(),
-      duration: z.object({
-        days: z.number().min(0),
-        hours: z.number().min(0),
-        minutes: z.number().min(0),
-        seconds: z.number().min(0),
-      }).optional(),
+      duration: z
+        .object({
+          days: z.union([z.number().min(0), z.string()]).optional(),
+          hours: z.union([z.number().min(0), z.string()]).optional(),
+          minutes: z.union([z.number().min(0), z.string()]).optional(),
+          seconds: z.union([z.number().min(0), z.string()]).optional(),
+        })
+        .optional(),
     }),
   });

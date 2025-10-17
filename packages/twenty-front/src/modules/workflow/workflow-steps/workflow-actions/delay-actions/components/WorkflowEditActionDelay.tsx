@@ -9,14 +9,12 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
-import { useEffect, useState } from 'react';
 import {
   HorizontalSeparator,
   IconCalendar,
-  IconClockHour8,
+  IconHourglassHigh,
 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import { useDebouncedCallback } from 'use-debounce';
 type WorkflowEditActionDelayProps = {
   action: WorkflowDelayAction;
   actionOptions:
@@ -29,17 +27,6 @@ type WorkflowEditActionDelayProps = {
       };
 };
 
-type DelayFormData = {
-  delayType: 'schedule_date' | 'duration';
-  scheduledDateTime: string | null;
-  duration: {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-  };
-};
-
 export const WorkflowEditActionDelay = ({
   action,
   actionOptions,
@@ -50,96 +37,105 @@ export const WorkflowEditActionDelay = ({
       defaultTitle: 'Delay',
     });
 
-  const [formData, setFormData] = useState<DelayFormData>(() => {
-    const input = action.settings.input;
-    return {
-      delayType: input.delayType ?? 'duration',
-      scheduledDateTime: input.scheduledDateTime ?? null,
-      duration: input.duration ?? {
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-      },
-    };
-  });
-
-  const delayOptions: Array<SelectOption<string>> = [
+  const delayOptions: Array<SelectOption<'SCHEDULED_DATE' | 'DURATION'>> = [
     {
       label: t`At a specific date or time`,
-      value: 'schedule_date',
+      value: 'SCHEDULED_DATE',
       Icon: IconCalendar,
     },
     {
       label: t`After a set amount of time`,
-      value: 'duration',
-      Icon: IconClockHour8,
+      value: 'DURATION',
+      Icon: IconHourglassHigh,
     },
   ];
 
-  const saveAction = useDebouncedCallback((formData: DelayFormData) => {
+  const handleDelayTypeChange = (
+    newDelayType: 'SCHEDULED_DATE' | 'DURATION',
+  ) => {
+    if (
+      actionOptions.readonly === true ||
+      newDelayType === action.settings.input.delayType
+    ) {
+      return;
+    }
+
+    if (newDelayType === 'SCHEDULED_DATE') {
+      actionOptions.onActionUpdate({
+        ...action,
+        settings: {
+          ...action.settings,
+          input: {
+            delayType: 'SCHEDULED_DATE',
+          },
+        },
+      });
+    } else {
+      actionOptions.onActionUpdate({
+        ...action,
+        settings: {
+          ...action.settings,
+          input: {
+            delayType: 'DURATION',
+            duration: undefined,
+          },
+        },
+      });
+    }
+  };
+
+  const handleDateTimeChange = (value: string | null) => {
     if (actionOptions.readonly === true) {
       return;
     }
+
     actionOptions.onActionUpdate({
       ...action,
       settings: {
         ...action.settings,
         input: {
-          delayType: formData.delayType,
-          scheduledDateTime:
-            formData.delayType === 'schedule_date'
-              ? formData.scheduledDateTime
-              : null,
-          duration:
-            formData.delayType === 'duration' ? formData.duration : undefined,
+          delayType: 'SCHEDULED_DATE',
+          scheduledDateTime: value ?? '',
         },
       },
     });
-  }, 1_000);
-
-  useEffect(() => {
-    return () => {
-      saveAction.flush();
-    };
-  }, [saveAction]);
-
-  const handleDelayTypeChange = (value: string) => {
-    const delayType = value === 'schedule_date' ? 'schedule_date' : 'duration';
-    const newFormData: DelayFormData = {
-      ...formData,
-      delayType,
-    };
-
-    setFormData(newFormData);
-    saveAction(newFormData);
-  };
-
-  const handleDateTimeChange = (value: string | null) => {
-    const newFormData: DelayFormData = {
-      ...formData,
-      scheduledDateTime: value,
-    };
-
-    setFormData(newFormData);
-    saveAction(newFormData);
   };
 
   const handleDurationChange = (
-    field: keyof DelayFormData['duration'],
-    value: number | null | string,
+    field: 'days' | 'hours' | 'minutes' | 'seconds',
+    value: number | string | null,
   ) => {
-    const numberValue = value === null || value === '' ? 0 : Number(value);
-    const newFormData: DelayFormData = {
-      ...formData,
-      duration: {
-        ...formData.duration,
-        [field]: numberValue,
-      },
-    };
+    if (actionOptions.readonly === true) {
+      return;
+    }
 
-    setFormData(newFormData);
-    saveAction(newFormData);
+    actionOptions.onActionUpdate({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: {
+          delayType: 'DURATION',
+          duration: {
+            days:
+              field === 'days'
+                ? (value ?? undefined)
+                : action.settings.input.duration?.days,
+            hours:
+              field === 'hours'
+                ? (value ?? undefined)
+                : action.settings.input.duration?.hours,
+            minutes:
+              field === 'minutes'
+                ? (value ?? undefined)
+                : action.settings.input.duration?.minutes,
+            seconds:
+              field === 'seconds'
+                ? (value ?? undefined)
+                : action.settings.input.duration?.seconds,
+          },
+        },
+      },
+    });
   };
 
   const HeaderIcon = getIcon(headerIcon ?? 'IconPlayerPause');
@@ -169,26 +165,27 @@ export const WorkflowEditActionDelay = ({
           label={t`Resume`}
           options={delayOptions}
           dropdownWidth={GenericDropdownContentWidth.Large}
-          value={formData.delayType}
+          value={action.settings.input.delayType}
           onChange={handleDelayTypeChange}
           disabled={actionOptions.readonly}
         />
         <HorizontalSeparator noMargin />
 
-        {formData.delayType === 'schedule_date' ? (
+        {action.settings.input.delayType === 'SCHEDULED_DATE' && (
           <FormDateTimeFieldInput
-            label={t`Delay Until Date`}
-            defaultValue={formData.scheduledDateTime ?? ''}
+            label={t`Delay until date`}
+            defaultValue={action.settings.input.scheduledDateTime ?? undefined}
             onChange={handleDateTimeChange}
             readonly={actionOptions.readonly}
             VariablePicker={WorkflowVariablePicker}
             placeholder="Select a date"
           />
-        ) : (
+        )}
+        {action.settings.input.delayType === 'DURATION' && (
           <>
             <FormNumberFieldInput
               label={t`Days`}
-              defaultValue={formData.duration.days}
+              defaultValue={action.settings.input.duration?.days}
               onChange={(value) => handleDurationChange('days', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
@@ -196,7 +193,7 @@ export const WorkflowEditActionDelay = ({
             />
             <FormNumberFieldInput
               label={t`Hours`}
-              defaultValue={formData.duration.hours}
+              defaultValue={action.settings.input.duration?.hours}
               onChange={(value) => handleDurationChange('hours', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
@@ -204,7 +201,7 @@ export const WorkflowEditActionDelay = ({
             />
             <FormNumberFieldInput
               label={t`Minutes`}
-              defaultValue={formData.duration.minutes}
+              defaultValue={action.settings.input.duration?.minutes}
               onChange={(value) => handleDurationChange('minutes', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
@@ -212,7 +209,7 @@ export const WorkflowEditActionDelay = ({
             />
             <FormNumberFieldInput
               label={t`Seconds`}
-              defaultValue={formData.duration.seconds}
+              defaultValue={action.settings.input.duration?.seconds}
               onChange={(value) => handleDurationChange('seconds', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}

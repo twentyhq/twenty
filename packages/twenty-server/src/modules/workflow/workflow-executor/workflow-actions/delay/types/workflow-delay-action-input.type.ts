@@ -1,10 +1,18 @@
-export type WorkflowDelayActionInput = {
-  delayType: 'schedule_date' | 'duration';
-  scheduledDateTime?: string | null;
-  duration?: {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
+export type WorkflowDelayActionInput =
+  | WorkflowScheduledDateActionInput
+  | WorkflowDurationDelayActionInput;
+
+export type WorkflowScheduledDateActionInput = {
+  delayType: 'SCHEDULED_DATE';
+  scheduledDateTime: string;
+};
+
+export type WorkflowDurationDelayActionInput = {
+  delayType: 'DURATION';
+  duration: {
+    days?: number;
+    hours?: number;
+    minutes?: number;
+    seconds?: number;
   };
 };

@@ -12,6 +12,7 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
     case 'FIND_RECORDS':
     case 'FORM':
     case 'SEND_EMAIL':
+    case 'DELAY':
       return msg`Action`;
     case 'HTTP_REQUEST':
       return msg`HTTP Request`;
@@ -25,9 +26,6 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
     }
     case 'EMPTY': {
       return msg`Add an Action`;
-    }
-    case 'DELAY': {
-      return msg`Delay`;
     }
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { resolveInput } from 'twenty-shared/utils';
+
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -12,18 +14,15 @@ import {
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
+import { RESUME_DELAYED_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/contants/resume-delayed-workflow-job-name';
 import { isWorkflowDelayAction } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/guards/is-workflow-delay-action.guard';
-
-export type ResumeDelayedJobData = {
-  workspaceId: string;
-  workflowRunId: string;
-  stepId: string;
-};
+import { ResumeDelayedWorkflowJobData } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/resume-delayed-workflow-job-data.type';
+import { WorkflowDelayActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-input.type';
 
 @Injectable()
 export class DelayWorkflowAction implements WorkflowAction {
   constructor(
-    @InjectMessageQueue(MessageQueue.workflowDelayedJobsQueue)
+    @InjectMessageQueue(MessageQueue.delayedJobsQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
@@ -31,6 +30,7 @@ export class DelayWorkflowAction implements WorkflowAction {
     currentStepId,
     steps,
     runInfo,
+    context,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = findStepOrThrow({
       stepId: currentStepId,
@@ -44,18 +44,22 @@ export class DelayWorkflowAction implements WorkflowAction {
       );
     }
 
-    const settings = step.settings.input;
+    const workflowActionInput = resolveInput(
+      step.settings.input,
+      context,
+    ) as WorkflowDelayActionInput;
+
     let delayInMs: number;
 
-    if (settings.delayType === 'schedule_date') {
-      if (!settings.scheduledDateTime) {
+    if (workflowActionInput.delayType === 'SCHEDULED_DATE') {
+      if (!workflowActionInput.scheduledDateTime) {
         throw new WorkflowStepExecutorException(
           'Scheduled date time is required for scheduled date delay',
           WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
         );
       }
 
-      const scheduledDate = new Date(settings.scheduledDateTime);
+      const scheduledDate = new Date(workflowActionInput.scheduledDateTime);
       const now = new Date();
 
       delayInMs = scheduledDate.getTime() - now.getTime();
@@ -66,15 +70,20 @@ export class DelayWorkflowAction implements WorkflowAction {
           WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
         );
       }
-    } else if (settings.delayType === 'duration') {
-      if (!settings.duration) {
+    } else if (workflowActionInput.delayType === 'DURATION') {
+      if (!workflowActionInput.duration) {
         throw new WorkflowStepExecutorException(
           'Duration is required for duration delay',
           WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
         );
       }
 
-      const { days, hours, minutes, seconds } = settings.duration;
+      const {
+        days = 0,
+        hours = 0,
+        minutes = 0,
+        seconds = 0,
+      } = workflowActionInput.duration;
 
       delayInMs =
         days * 24 * 60 * 60 * 1000 +
@@ -88,8 +97,8 @@ export class DelayWorkflowAction implements WorkflowAction {
       );
     }
 
-    await this.messageQueueService.add<ResumeDelayedJobData>(
-      'ResumeDelayedJob',
+    await this.messageQueueService.add<ResumeDelayedWorkflowJobData>(
+      RESUME_DELAYED_WORKFLOW_JOB_NAME,
       {
         workspaceId: runInfo.workspaceId,
         workflowRunId: runInfo.workflowRunId,

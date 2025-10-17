@@ -1,7 +1,7 @@
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export const MESSAGE_QUEUE_PRIORITY = {
-  [MessageQueue.workflowDelayedJobsQueue]: 1,
+  [MessageQueue.delayedJobsQueue]: 1,
   [MessageQueue.billingQueue]: 2,
   [MessageQueue.workflowQueue]: 2,
   [MessageQueue.emailQueue]: 5,
