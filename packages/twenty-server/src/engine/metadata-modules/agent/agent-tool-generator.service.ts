@@ -6,7 +6,6 @@ import { In, Repository } from 'typeorm';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -24,7 +23,6 @@ export class AgentToolGeneratorService {
     private readonly toolService: ToolService,
     private readonly workflowToolService: WorkflowToolService,
     private readonly permissionsService: PermissionsService,
-    private readonly agentService: AgentService,
   ) {}
 
   async generateToolsForAgent(
@@ -36,7 +34,6 @@ export class AgentToolGeneratorService {
     let tools: ToolSet = {};
 
     try {
-      const agent = await this.agentService.findOneAgent(agentId, workspaceId);
       const actionTools = await this.toolAdapterService.getTools();
 
       tools = { ...actionTools };
