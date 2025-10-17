@@ -1,6 +1,6 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
@@ -36,6 +36,20 @@ export const GraphWidgetBarChartRenderer = ({
     configuration: widget.configuration as BarChartConfiguration,
   });
 
+  const configuration = widget.configuration as BarChartConfiguration;
+  const groupMode =
+    configuration.groupMode === 'GROUPED' ? 'grouped' : 'stacked';
+
+  const filterStateKey = useMemo(
+    () =>
+      `${configuration.rangeMin ?? ''}-${configuration.rangeMax ?? ''}-${configuration.omitNullValues ?? ''}`,
+    [
+      configuration.rangeMin,
+      configuration.rangeMax,
+      configuration.omitNullValues,
+    ],
+  );
+
   if (loading) {
     return <ChartSkeletonLoader />;
   }
@@ -44,13 +58,10 @@ export const GraphWidgetBarChartRenderer = ({
     return <div>Error: {error.message}</div>;
   }
 
-  const configuration = widget.configuration as BarChartConfiguration;
-  const groupMode =
-    configuration.groupMode === 'GROUPED' ? 'grouped' : 'stacked';
-
   return (
     <Suspense fallback={<ChartSkeletonLoader />}>
       <GraphWidgetBarChart
+        key={filterStateKey}
         data={data}
         series={series}
         indexBy={indexBy}
