@@ -80,6 +80,7 @@ describe('useCreateStep', () => {
       stepType: 'CODE',
       parentStepId: 'parent-step-id',
       nextStepId: undefined,
+      parentStepConnectionOptions: undefined,
       position: undefined,
     });
   });

@@ -161,6 +161,17 @@ export const WorkflowStepDetail = ({
           );
         }
 
+        case 'UPSERT_RECORD': {
+          return (
+            <WorkflowEditActionCreateRecord
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+              mode="upsert"
+            />
+          );
+        }
+
         case 'FORM': {
           return (
             <WorkflowEditActionFormBuilder

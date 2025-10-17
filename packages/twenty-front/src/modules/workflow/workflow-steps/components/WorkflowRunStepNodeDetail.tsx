@@ -171,6 +171,19 @@ export const WorkflowRunStepNodeDetail = ({
           );
         }
 
+        case 'UPSERT_RECORD': {
+          return (
+            <WorkflowEditActionCreateRecord
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+              mode="upsert"
+            />
+          );
+        }
+
         case 'FORM': {
           return (
             <WorkflowEditActionFormFiller
