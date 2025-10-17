@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Create input validation - NUMBER Gql create input - failure NUMBER - should fail with : {"textField":null} 1`] = `"null value in column "textField" of relation "_apiInputValidationTestObject" violates not-null constraint"`;
-
-exports[`Create input validation - NUMBER Rest create input - failure NUMBER - should fail with : {"textField":null} 1`] = `"["null value in column \\"textField\\" of relation \\"_apiInputValidationTestObject\\" violates not-null constraint"]"`;

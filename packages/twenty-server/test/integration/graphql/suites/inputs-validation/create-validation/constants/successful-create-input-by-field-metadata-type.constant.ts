@@ -40,6 +40,14 @@ export const successfulCreateInputByFieldMetadataType: {
     },
     {
       input: {
+        numberField: null,
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.numberField === null;
+      },
+    },
+    {
+      input: {
         numberField: 0,
       },
       validateInput: (record: Record<string, any>) => {
@@ -258,6 +266,14 @@ export const successfulCreateInputByFieldMetadataType: {
     },
   ],
   [FieldMetadataType.BOOLEAN]: [
+    {
+      input: {
+        booleanField: null,
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.booleanField === null;
+      },
+    },
     {
       input: {
         booleanField: false,
