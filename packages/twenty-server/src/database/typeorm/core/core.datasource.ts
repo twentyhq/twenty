@@ -7,8 +7,29 @@ config({
   override: true,
 });
 
+const isRunningCommand = (): boolean => {
+  const scriptPath = process.argv[1] || '';
+
+  return scriptPath.includes('/command/command.');
+};
+
 const getLoggingConfig = (): LogLevel[] => {
-  if (process.env.NODE_ENV === 'development') {
+  // ORM_QUERY_LOGGING can be: 'disabled', 'server-only', 'always'
+  const ormQueryLogging = process.env.ORM_QUERY_LOGGING || 'disabled';
+
+  if (ormQueryLogging === 'disabled') {
+    return ['error'];
+  }
+
+  if (ormQueryLogging === 'server-only') {
+    if (isRunningCommand()) {
+      return ['error'];
+    }
+
+    return ['query', 'error'];
+  }
+
+  if (ormQueryLogging === 'always') {
     return ['query', 'error'];
   }
 

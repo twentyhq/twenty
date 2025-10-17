@@ -277,50 +277,27 @@ export class DevSeederDataService {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    // Disable logging by replacing the logger with a no-op
-    const originalLogger = this.coreDataSource.logger;
+    await this.coreDataSource.transaction(
+      async (entityManager: WorkspaceEntityManager) => {
+        await this.seedRecordsInBatches({
+          entityManager,
+          schemaName,
+          workspaceId,
+          featureFlags,
+          objectMetadataItems,
+        });
 
-    // Create a no-op logger that ignores all log calls
-    const noOpLogger = {
-      logQuery: () => {},
-      logQueryError: () => {},
-      logQuerySlow: () => {},
-      logSchemaBuild: () => {},
-      logMigration: () => {},
-      log: () => {},
-    };
+        await this.timelineActivitySeederService.seedTimelineActivities({
+          entityManager,
+          schemaName,
+          workspaceId,
+        });
 
-    this.coreDataSource.logger = noOpLogger;
+        await this.seedAttachmentFiles(workspaceId);
 
-    try {
-      await this.coreDataSource.transaction(
-        async (entityManager: WorkspaceEntityManager) => {
-          await this.seedRecordsInBatches({
-            entityManager,
-            schemaName,
-            workspaceId,
-            featureFlags,
-            objectMetadataItems,
-          });
-
-          await this.timelineActivitySeederService.seedTimelineActivities({
-            entityManager,
-            schemaName,
-            workspaceId,
-          });
-
-          await this.seedAttachmentFiles(workspaceId);
-
-          await prefillWorkflows(
-            entityManager,
-            schemaName,
-            objectMetadataItems,
-          );
-        },
-      );
-    } finally {
-      this.coreDataSource.logger = originalLogger;
-    }
+        await prefillWorkflows(entityManager, schemaName, objectMetadataItems);
+      },
+    );
   }
 
   private async seedRecordsInBatches({
@@ -410,22 +387,15 @@ export class DevSeederDataService {
     ];
 
     for (const filename of filesToCreate) {
-      try {
-        const filePath = join(sampleFilesDir, filename);
-        const fileBuffer = await readFile(filePath);
+      const filePath = join(sampleFilesDir, filename);
+      const fileBuffer = await readFile(filePath);
 
-        await this.fileStorageService.write({
-          file: fileBuffer,
-          name: filename,
-          folder: `workspace-${workspaceId}/attachment`,
-          mimeType: this.getMimeType(filename),
-        });
-      } catch (error) {
-        console.warn(
-          `Warning: Failed to seed file ${filename}`,
-          error instanceof Error ? error.message : error,
-        );
-      }
+      await this.fileStorageService.write({
+        file: fileBuffer,
+        name: filename,
+        folder: `workspace-${workspaceId}/attachment`,
+        mimeType: this.getMimeType(filename),
+      });
     }
   }
 

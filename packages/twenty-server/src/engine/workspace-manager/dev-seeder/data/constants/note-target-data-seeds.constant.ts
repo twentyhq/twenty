@@ -79,6 +79,6 @@ export const NOTE_TARGET_DATA_SEEDS = GENERATE_NOTE_TARGET_SEEDS();
 // Map for O(1) lookups by note ID
 export const NOTE_TARGET_DATA_SEEDS_MAP = new Map<string, NoteTargetDataSeed>(
   NOTE_TARGET_DATA_SEEDS.filter((target) => target.noteId !== null).map(
-    (target) => [target.noteId as string, target],
+    (target) => [target.noteId!, target],
   ),
 );
