@@ -56,27 +56,27 @@ export const ATTACHMENT_DATA_SEED_IDS = GENERATE_ATTACHMENT_IDS();
 const FILE_TEMPLATES = [
   {
     name: 'Contract Agreement.pdf',
-    fullPath: '/sample-contract.pdf',
+    fullPath: 'attachment/sample-contract.pdf',
     type: 'TextDocument',
   },
   {
     name: 'Budget 2024.xlsx',
-    fullPath: '/budget-2024.xlsx',
+    fullPath: 'attachment/budget-2024.xlsx',
     type: 'Spreadsheet',
   },
   {
     name: 'Product Presentation.pptx',
-    fullPath: '/presentation.pptx',
+    fullPath: 'attachment/presentation.pptx',
     type: 'Presentation',
   },
   {
     name: 'Screenshot.png',
-    fullPath: '/screenshot.png',
+    fullPath: 'attachment/screenshot.png',
     type: 'Image',
   },
   {
     name: 'Archive.zip',
-    fullPath: '/archive.zip',
+    fullPath: 'attachment/archive.zip',
     type: 'Archive',
   },
 ];
