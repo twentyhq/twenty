@@ -28,7 +28,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -37,8 +37,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<ObjectRecord> {
-    const authContext = toValidateAuthContext;
-
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',

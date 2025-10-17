@@ -15,7 +15,6 @@ export enum CommonQueryNames {
   destroyMany = 'destroyMany',
   deleteOne = 'deleteOne',
   deleteMany = 'deleteMany',
-
 }
 
 export interface FindOneQueryArgs {
@@ -64,5 +63,3 @@ export interface DeleteManyQueryArgs {
   selectedFieldsResult: CommonSelectedFieldsResult;
   filter: ObjectRecordFilter;
 }
-
-

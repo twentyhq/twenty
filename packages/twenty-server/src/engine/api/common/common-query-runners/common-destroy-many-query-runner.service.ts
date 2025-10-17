@@ -27,7 +27,7 @@ import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.
 export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -37,7 +37,6 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<ObjectRecord[]> {
     this.validate(args);
-    const authContext = toValidateAuthContext;
 
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(

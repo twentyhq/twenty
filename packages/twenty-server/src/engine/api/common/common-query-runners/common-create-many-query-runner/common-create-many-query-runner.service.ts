@@ -36,7 +36,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -45,8 +45,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<ObjectRecord[]> {
-    const authContext = toValidateAuthContext;
-
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',

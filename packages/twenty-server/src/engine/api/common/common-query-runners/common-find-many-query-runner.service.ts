@@ -36,7 +36,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -51,7 +51,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     pageInfo: CommonPageInfo;
   }> {
     this.validate(args);
-    const authContext = toValidateAuthContext;
 
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
