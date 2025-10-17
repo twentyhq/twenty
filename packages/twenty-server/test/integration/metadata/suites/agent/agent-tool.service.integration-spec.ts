@@ -50,6 +50,8 @@ describe('AgentToolGeneratorService Integration', () => {
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
         context.testWorkspaceId,
+        undefined,
+        [context.testRoleId],
       );
 
       expect(tools).toBeDefined();
@@ -93,6 +95,8 @@ describe('AgentToolGeneratorService Integration', () => {
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
         context.testWorkspaceId,
+        undefined,
+        [context.testRoleId],
       );
 
       expect(tools).toBeDefined();
@@ -149,6 +153,8 @@ describe('AgentToolGeneratorService Integration', () => {
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
         context.testWorkspaceId,
+        undefined,
+        [context.testRoleId],
       );
 
       expect(Object.keys(tools)).toHaveLength(7);
