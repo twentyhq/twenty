@@ -60,14 +60,9 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'team-collaboration-best-practices' },
     ],
     'Integrations & APIs': [
-      { fileName: 'integrations' },
+      { fileName: 'apis-overview' },
       { fileName: 'api-webhooks' },
-      { fileName: 'api-types-overview' },
-      { fileName: 'api-access' },
-      { fileName: 'custom-api-documentation' },
-      { fileName: 'api-best-practices' },
-      { fileName: 'api-rate-limits' },
-      { fileName: 'third-party-integrations' },
+      { fileName: 'integrations' },
     ],
     'Reporting': [
       { fileName: 'reporting' },
@@ -88,16 +83,11 @@ export const USER_GUIDE_INDEX = {
     'Pricing': [
       { fileName: 'pricing' },
       { fileName: 'billing-and-pricing-faq' },
-      { fileName: 'workflow-credits-pricing' },
     ],
     'Resources': [
       { fileName: 'resources' },
       { fileName: 'glossary' },
       { fileName: 'github' },
-      { fileName: 'troubleshooting-common-issues' },
-      { fileName: 'form-integration' },
-      { fileName: 'email-marketing' },
-      { fileName: 'business-process-integration' },
     ],
   },
   Developers: {
