@@ -61,7 +61,10 @@ export class ToolService {
         (roleId: string) => rolesPermissions[roleId],
       );
 
-      objectPermissions = computePermissionIntersection(allRolePermissions);
+      objectPermissions =
+        allRolePermissions.length === 1
+          ? allRolePermissions[0]
+          : computePermissionIntersection(allRolePermissions);
     } else {
       return tools;
     }
