@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   convertToModelMessages,
@@ -13,21 +12,20 @@ import {
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { AgentActorContextService } from 'src/engine/metadata-modules/agent/services/agent-actor-context.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { RoleContext } from 'src/engine/metadata-modules/role/types/role-context.type';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -49,7 +47,6 @@ export class AgentExecutionService implements AgentExecutionContext {
 
   constructor(
     private readonly agentHandoffToolService: AgentHandoffToolService,
-    private readonly fileService: FileService,
     private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
@@ -58,8 +55,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiBillingService: AIBillingService,
     private readonly agentActorContextService: AgentActorContextService,
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
+    private readonly agentService: AgentService,
   ) {}
 
   async prepareAIRequestConfig({
@@ -67,14 +63,14 @@ export class AgentExecutionService implements AgentExecutionContext {
     system,
     agent,
     actorContext,
-    roleContext,
+    roleIds,
     excludeHandoffTools = false,
   }: {
     system: string;
     agent: AgentEntity | null;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     actorContext?: ActorMetadata;
-    roleContext?: RoleContext;
+    roleIds?: string[];
     excludeHandoffTools?: boolean;
   }) {
     try {
@@ -96,7 +92,7 @@ export class AgentExecutionService implements AgentExecutionContext {
             agent.id,
             agent.workspaceId,
             actorContext,
-            roleContext,
+            roleIds,
           );
 
         let handoffTools = {};
@@ -254,9 +250,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
   }) {
     try {
-      const agent = await this.agentRepository.findOneOrFail({
-        where: { id: agentId },
-      });
+      const agent = await this.agentService.findOneAgent(agentId, workspace.id);
 
       let contextString = '';
 
@@ -270,10 +264,9 @@ export class AgentExecutionService implements AgentExecutionContext {
         contextString = `\n\nCONTEXT:\n${contextPart}`;
       }
 
-      const { actorContext, roleContext } =
+      const { actorContext, roleId } =
         await this.agentActorContextService.buildUserAndAgentActorContext(
           userWorkspaceId,
-          agent.id,
           workspace.id,
         );
 
@@ -282,7 +275,7 @@ export class AgentExecutionService implements AgentExecutionContext {
         agent,
         messages,
         actorContext,
-        roleContext,
+        roleIds: [roleId, ...(agent?.roleId ? [agent?.roleId] : [])],
       });
 
       this.logger.log(

@@ -11,7 +11,6 @@ import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/c
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RoleContext } from 'src/engine/metadata-modules/role/types/role-context.type';
 import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 @Injectable()
@@ -32,7 +31,7 @@ export class AgentToolGeneratorService {
     agentId: string,
     workspaceId: string,
     actorContext?: ActorMetadata,
-    roleContext?: RoleContext,
+    roleIds?: string[],
   ): Promise<ToolSet> {
     let tools: ToolSet = {};
 
@@ -42,18 +41,9 @@ export class AgentToolGeneratorService {
 
       tools = { ...actionTools };
 
-      const effectiveRoleIdOrIds = roleContext?.roleIds
-        ? roleContext.roleIds
-        : roleContext?.roleId || agent.roleId;
-
-      if (!effectiveRoleIdOrIds) {
+      if (!roleIds) {
         return tools;
       }
-
-      const roleIds =
-        typeof effectiveRoleIdOrIds === 'string'
-          ? [effectiveRoleIdOrIds]
-          : effectiveRoleIdOrIds;
 
       const roles = await this.roleRepository.find({
         where: { id: In(roleIds), workspaceId },
@@ -75,20 +65,17 @@ export class AgentToolGeneratorService {
               PermissionFlagType.WORKFLOWS,
             );
 
-      const toolRoleContext =
-        roles.length === 1 ? { roleId: roleIds[0] } : { roleIds };
-
       if (hasWorkflowPermission) {
         const workflowTools = this.workflowToolService.generateWorkflowTools(
           workspaceId,
-          toolRoleContext,
+          { roleIds },
         );
 
         tools = { ...tools, ...workflowTools };
       }
 
       const databaseTools = await this.toolService.listTools(
-        toolRoleContext,
+        { roleIds },
         workspaceId,
         actorContext,
       );
@@ -96,7 +83,7 @@ export class AgentToolGeneratorService {
       tools = { ...tools, ...databaseTools };
 
       const roleActionTools = await this.toolAdapterService.getTools(
-        toolRoleContext,
+        { roleIds },
         workspaceId,
       );
 
