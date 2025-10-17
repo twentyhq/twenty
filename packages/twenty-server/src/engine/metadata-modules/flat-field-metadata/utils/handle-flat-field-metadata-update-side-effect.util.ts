@@ -4,6 +4,10 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { handleEnumFlatFieldMetadataUpdateSideEffects } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-enum-flat-field-metadata-update-side-effects.util';
 import {
+  FieldMetadataDeactivationSideEffect,
+  handleFieldMetadataDeactivationSideEffects,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-field-metadata-deactivation-side-effects.util';
+import {
   type FieldMetadataUpdateIndexSideEffect,
   handleIndexChangesDuringFieldUpdate,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util';
@@ -13,7 +17,8 @@ import { type FlatViewGroupsToDeleteUpdateAndCreate } from 'src/engine/metadata-
 export type FlatFieldMetadataUpdateSideEffects =
   FlatViewFiltersToDeleteAndUpdate &
     FlatViewGroupsToDeleteUpdateAndCreate &
-    FieldMetadataUpdateIndexSideEffect;
+    FieldMetadataUpdateIndexSideEffect &
+    FieldMetadataDeactivationSideEffect;
 
 type HandleFlatFieldMetadataUpdateSideEffectArgs = FromTo<
   FlatFieldMetadata,
@@ -26,6 +31,7 @@ type HandleFlatFieldMetadataUpdateSideEffectArgs = FromTo<
     | 'flatFieldMetadataMaps'
     | 'flatViewFilterMaps'
     | 'flatViewGroupMaps'
+    | 'flatViewMaps'
   >;
 
 export const handleFlatFieldMetadataUpdateSideEffect = ({
@@ -36,6 +42,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
   flatFieldMetadataMaps,
   flatViewFilterMaps,
   flatViewGroupMaps,
+  flatViewMaps,
 }: HandleFlatFieldMetadataUpdateSideEffectArgs): FlatFieldMetadataUpdateSideEffects => {
   const {
     flatViewFiltersToDelete,
@@ -62,6 +69,12 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
     flatFieldMetadataMaps,
   });
 
+  const { flatViewsToDelete } = handleFieldMetadataDeactivationSideEffects({
+    flatViewMaps,
+    fromFlatFieldMetadata,
+    toFlatFieldMetadata,
+  });
+
   return {
     flatIndexMetadatasToUpdate,
     flatViewFiltersToDelete,
@@ -71,5 +84,6 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
     flatIndexMetadatasToDelete,
     flatIndexMetadatasToCreate,
     flatViewGroupsToUpdate,
+    flatViewsToDelete,
   };
 };

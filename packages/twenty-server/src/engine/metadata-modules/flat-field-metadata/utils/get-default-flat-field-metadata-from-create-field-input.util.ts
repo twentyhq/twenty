@@ -57,5 +57,6 @@ export const getDefaultFlatFieldMetadata = ({
     applicationId: null,
     viewFilterIds: [],
     viewGroupIds: [],
+    viewIds: [],
   } as const satisfies FlatFieldMetadata;
 };

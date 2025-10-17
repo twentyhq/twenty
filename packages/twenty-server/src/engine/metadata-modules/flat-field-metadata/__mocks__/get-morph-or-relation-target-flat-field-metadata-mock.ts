@@ -35,6 +35,7 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     viewFilterIds: [],
     viewGroupIds: [],
     viewFieldIds: [],
+    viewIds: [],
     createdAt,
     updatedAt: createdAt,
     description: 'default flat field metadata description',
