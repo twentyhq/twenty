@@ -54,7 +54,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
       relations: ['fields', 'indexMetadatas', 'views'],
     });
 
-    const objectCache = objectMetadatas.reduce(
+    return objectMetadatas.reduce(
       (flatObjectMetadataMaps, objectMetadataEntity) => {
         const flatObjectMetadata =
           fromObjectMetadataEntityToFlatObjectMetadata(objectMetadataEntity);
@@ -66,7 +66,5 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
       },
       EMPTY_FLAT_ENTITY_MAPS,
     );
-
-    return objectCache;
   }
 }

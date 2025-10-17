@@ -10,7 +10,7 @@ export const getFlatEntitiesByApplicationId = <T extends FlatEntity>(
   const universalIdentifiers =
     maps.universalIdentifiersByApplicationId[applicationId];
 
-  if (!universalIdentifiers || universalIdentifiers.length === 0) {
+  if (!isDefined(universalIdentifiers)) {
     return [];
   }
 
