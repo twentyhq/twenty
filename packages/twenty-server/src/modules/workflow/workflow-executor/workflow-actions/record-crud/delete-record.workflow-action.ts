@@ -14,6 +14,7 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
@@ -25,12 +26,14 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly deleteRecordService: DeleteRecordService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
   async execute({
     currentStepId,
     steps,
     context,
+    runInfo,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = findStepOrThrow({
       steps,
@@ -69,10 +72,14 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       );
     }
 
+    const executionContext =
+      await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
     const toolOutput = await this.deleteRecordService.execute({
       objectName: workflowActionInput.objectName,
       objectRecordId: workflowActionInput.objectRecordId,
       workspaceId,
+      roleId: executionContext.roleId,
       soft: true,
     });
 

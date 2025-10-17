@@ -15,20 +15,26 @@ import {
   ServerlessFunctionManifest,
   ServerlessFunctionTriggerManifest,
 } from 'src/engine/core-modules/application/types/application.types';
+import { ApplicationVariableService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
+import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { ApplicationVariableService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -46,6 +52,7 @@ export class ApplicationSyncService {
     private readonly databaseEventTriggerV2Service: DatabaseEventTriggerV2Service,
     private readonly cronTriggerV2Service: CronTriggerV2Service,
     private readonly routeTriggerV2Service: RouteTriggerV2Service,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -794,5 +801,110 @@ export class ApplicationSyncService {
         workspaceId,
       );
     }
+  }
+
+  public async deleteApplication({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }) {
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatIndexMaps: existingFlatIndexMetadataMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatObjectMetadataMaps',
+          'flatIndexMaps',
+          'flatFieldMetadataMaps',
+        ],
+      },
+    );
+
+    const application = await this.applicationService.findByUniversalIdentifier(
+      applicationUniversalIdentifier,
+      workspaceId,
+    );
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application with universalIdentifier ${applicationUniversalIdentifier} not found`,
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    const flatObjectMetadataMapsByApplicationId =
+      getFlatEntitiesByApplicationId(
+        existingFlatObjectMetadataMaps,
+        application.id,
+      );
+
+    const fromFlatObjectMetadataMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: flatObjectMetadataMapsByApplicationId.map((obj) => obj.id),
+      flatEntityMaps: existingFlatObjectMetadataMaps,
+    });
+
+    const flatIndexMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
+      existingFlatIndexMetadataMaps,
+      application.id,
+    );
+
+    const fromFlatIndexMetadataMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: flatIndexMetadataMapsByApplicationId.map(
+        (field) => field.id,
+      ),
+      flatEntityMaps: existingFlatIndexMetadataMaps,
+    });
+
+    const flatFieldMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
+      existingFlatFieldMetadataMaps,
+      application.id,
+    );
+
+    const fromFlatFieldMetadataMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: flatFieldMetadataMapsByApplicationId.map((idx) => idx.id),
+      flatEntityMaps: existingFlatFieldMetadataMaps,
+    });
+
+    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      {
+        fromToAllFlatEntityMaps: {
+          flatObjectMetadataMaps: {
+            from: fromFlatObjectMetadataMaps,
+            to: EMPTY_FLAT_ENTITY_MAPS,
+          },
+          flatIndexMaps: {
+            from: fromFlatIndexMetadataMaps,
+            to: EMPTY_FLAT_ENTITY_MAPS,
+          },
+          flatFieldMetadataMaps: {
+            from: fromFlatFieldMetadataMaps,
+            to: EMPTY_FLAT_ENTITY_MAPS,
+          },
+        },
+        workspaceId,
+        buildOptions: {
+          isSystemBuild: true,
+          inferDeletionFromMissingEntities: {
+            ...Object.values(ALL_METADATA_NAME).reduce(
+              (acc, metadataName) => ({
+                ...acc,
+                [metadataName]: true,
+              }),
+              {} as Partial<Record<AllMetadataName, boolean>>,
+            ),
+          },
+        },
+      },
+    );
+
+    await this.applicationService.delete(
+      applicationUniversalIdentifier,
+      workspaceId,
+    );
   }
 }

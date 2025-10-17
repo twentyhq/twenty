@@ -23,7 +23,7 @@
     "drizzle-kit": "^0.20.14",
     "facepaint": "^1.2.1",
     "gray-matter": "^4.0.3",
-    "next": "^15.5.4",
+    "next": "^14.2.0",
     "next-mdx-remote": "^4.4.1",
     "next-runtime-env": "^3.3.0",
     "postgres": "^3.4.3",
@@ -31,8 +31,8 @@
     "twenty-ui": "workspace:*"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^15.5.4",
+    "@next/eslint-plugin-next": "^14.2.0",
     "@types/facepaint": "^1.2.5",
-    "eslint-config-next": "^15.5.4"
+    "eslint-config-next": "^14.2.0"
   }
 }

@@ -1,7 +1,5 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType } from '@nestjs/graphql';
 
-import GraphQLJSON from 'graphql-type-json';
-import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   IsDefined,
   IsEnum,
@@ -10,6 +8,8 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
@@ -52,4 +52,10 @@ export class CreateViewFilterInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
+
+  @HideField()
+  universalIdentifier?: string;
+
+  @HideField()
+  applicationId?: string;
 }

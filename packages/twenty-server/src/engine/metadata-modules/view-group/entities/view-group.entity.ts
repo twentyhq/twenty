@@ -22,7 +22,10 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 @Index('IDX_VIEW_GROUP_VIEW_ID', ['viewId'], {
   where: '"deletedAt" IS NULL',
 })
-export class ViewGroupEntity extends SyncableEntity {
+export class ViewGroupEntity
+  extends SyncableEntity
+  implements Required<ViewGroupEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
