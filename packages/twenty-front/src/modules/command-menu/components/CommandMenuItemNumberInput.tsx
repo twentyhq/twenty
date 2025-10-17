@@ -8,7 +8,7 @@ import {
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
 
-const ERROR_STATE_WITHOUT_MESSAGE = ' ';
+const ERROR_STATE_WITHOUT_MESSAGE = '';
 
 type CommandMenuItemNumberInputProps = {
   value: string;
