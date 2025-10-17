@@ -8,7 +8,7 @@ import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-en
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/is-property-update.type';
+import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
@@ -44,9 +44,10 @@ export class FlatViewValidatorService {
     }
 
     const kanbanAggregateOperationFieldMetadataIdUpdate =
-      flatEntityUpdates.find((update) =>
-        isPropertyUpdate(update, 'kanbanAggregateOperationFieldMetadataId'),
-      );
+      findFlatEntityPropertyUpdate({
+        property: 'kanbanAggregateOperationFieldMetadataId',
+        flatEntityUpdates,
+      });
 
     if (
       isDefined(kanbanAggregateOperationFieldMetadataIdUpdate) &&
