@@ -890,6 +890,11 @@ export class ApplicationSyncService {
         },
       },
     );
+
+    await this.applicationService.delete(
+      applicationUniversalIdentifier,
+      workspaceId,
+    );
   }
 
   private getEntitiesByApplicationId<T extends FlatEntity>(
