@@ -60,6 +60,9 @@ export class AgentDTO {
   @HideField()
   workspaceId: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId?: string;
+
   @IsDateString()
   @Field()
   createdAt: Date;

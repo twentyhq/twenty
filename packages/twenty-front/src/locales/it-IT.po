@@ -22,7 +22,7 @@ msgstr ""
 #: src/modules/billing/hooks/useBillingWording.ts
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid " billed annually"
-msgstr ""
+msgstr " fatturato annualmente"
 
 #. js-lingui-id: /8h/VA
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
@@ -72,7 +72,7 @@ msgstr ": Oggi"
 #. js-lingui-id: N/lIUf
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid ". The change will be applied the {beautifiedRenewDate}."
-msgstr ""
+msgstr ". La modifica verrà applicata il {beautifiedRenewDate}."
 
 #. js-lingui-id: 4tCM3o
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
@@ -127,7 +127,7 @@ msgstr "{formattedCreatedRecordsProgress} su {formattedRecordsToImportCount} rec
 #. js-lingui-id: 2EPGDl
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
 msgid "{graphTypeLabel} Chart"
-msgstr ""
+msgstr "Grafico {graphTypeLabel}"
 
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
@@ -152,7 +152,7 @@ msgstr "{roleTargetName} verrà assegnato al ruolo \"{newRoleName}\"."
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/components/WorkflowIteratorSubStepSwitcher.tsx
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
-msgstr ""
+msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# elemento} other {# elementi}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -190,7 +190,7 @@ msgstr "10.000 esecuzioni di nodi del workflow"
 #. js-lingui-id: bM5lnW
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h - {hour12Label}"
-msgstr ""
+msgstr "12h - {hour12Label}"
 
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -221,7 +221,7 @@ msgstr "20.000 esecuzioni di nodi del workflow"
 #. js-lingui-id: mwTnop
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h - {hour24Label}"
-msgstr ""
+msgstr "24h - {hour24Label}"
 
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -266,17 +266,17 @@ msgstr "Una email di verifica è stata inviata a"
 #. js-lingui-id: DqlQy+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Ability to add more than one email address"
-msgstr ""
+msgstr "Possibilità di aggiungere più di un indirizzo email"
 
 #. js-lingui-id: XkK/Vw
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Ability to add more than one phone number"
-msgstr ""
+msgstr "Possibilità di aggiungere più di un numero di telefono"
 
 #. js-lingui-id: ICtlXD
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Ability to add more than one URL"
-msgstr ""
+msgstr "Possibilità di aggiungere più di un URL"
 
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -401,13 +401,13 @@ msgstr "Chiavi API attive create da te o dal tuo team."
 #. js-lingui-id: QXX2VR
 #: src/modules/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem.tsx
 msgid "Add \"{trimmedName}\" to options"
-msgstr ""
+msgstr "Aggiungi \"{trimmedName}\" alle opzioni"
 
 #. js-lingui-id: m3/V2n
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Add a node"
-msgstr ""
+msgstr "Aggiungi un nodo"
 
 #. js-lingui-id: KKfos4
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
@@ -434,7 +434,7 @@ msgstr "Aggiungi Blocco"
 #. js-lingui-id: 3O3+7h
 #: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
 msgid "Add Emailing Domain"
-msgstr ""
+msgstr "Aggiungi Dominio Emailing"
 
 #. js-lingui-id: DpV70M
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -473,7 +473,7 @@ msgstr "Aggiungi ingressi al tuo modulo"
 #. js-lingui-id: NQ8llq
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
 msgid "Add item"
-msgstr ""
+msgstr "Aggiungi elemento"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
@@ -518,7 +518,7 @@ msgstr "Aggiungi Campo di Output"
 #. js-lingui-id: wTsnV9
 #: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
 msgid "Add Public Domain"
-msgstr ""
+msgstr "Aggiungi Dominio Pubblico"
 
 #. js-lingui-id: O8tK4v
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
@@ -533,7 +533,7 @@ msgstr "Aggiungi provider di identità SSO"
 #. js-lingui-id: FQArA8
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
 msgid "Add these records to verify your domain."
-msgstr ""
+msgstr "Aggiungi questi record per verificare il tuo dominio."
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -793,7 +793,7 @@ msgstr "Consenti agli utenti di accedere con e-mail e password."
 #. js-lingui-id: VD5bNu
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "An error occurred while checking user existence"
-msgstr ""
+msgstr "Si è verificato un errore durante il controllo dell'esistenza dell'utente"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -817,7 +817,7 @@ msgstr "e"
 #. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
 msgid "Any field"
-msgstr ""
+msgstr "Qualsiasi campo"
 
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -914,7 +914,7 @@ msgstr "API e Webhook"
 #. js-lingui-id: BnUHmx
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Apostrophe and dot - {apostropheAndDotExample}"
-msgstr ""
+msgstr "Apostrofo e punto - {apostropheAndDotExample}"
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -982,18 +982,18 @@ msgstr "Assegnare {roleTargetName}?"
 #. js-lingui-id: gJL5Xx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Assign roles to specify each agent's access permissions"
-msgstr ""
+msgstr "Assegna ruoli per specificare le autorizzazioni di accesso di ogni agente"
 
 #. js-lingui-id: j95x1l
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Assign roles to specify each API key's access permissions"
-msgstr ""
+msgstr "Assegna ruoli per specificare le autorizzazioni di accesso di ogni chiave API"
 
 #. js-lingui-id: rfYmIr
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Assign roles to specify each member's access permissions"
-msgstr ""
+msgstr "Assegna ruoli per specificare le autorizzazioni di accesso di ogni membro"
 
 #. js-lingui-id: krsgB0
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -1043,27 +1043,27 @@ msgstr "Assegnazione"
 #. js-lingui-id: UHs3Ds
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
 msgid "at {firstTime} and {secondTime}"
-msgstr ""
+msgstr "alle {firstTime} e {secondTime}"
 
 #. js-lingui-id: FpXNVu
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
 msgid "at {formattedTime}"
-msgstr ""
+msgstr "alle {formattedTime}"
 
 #. js-lingui-id: EbOhpt
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "at {minuteNumStr} minutes past the hour"
-msgstr ""
+msgstr "al minuto {minuteNumStr} passato l\\"
 
 #. js-lingui-id: B4LoNY
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
 msgid "at {remainingTimes} and {lastTime}"
-msgstr ""
+msgstr "alle {remainingTimes} e {lastTime}"
 
 #. js-lingui-id: MTsGe4
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "at 1 minute past the hour"
-msgstr ""
+msgstr "al 1 minuto passato l'ora"
 
 #. js-lingui-id: H8QGSx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
@@ -1078,17 +1078,17 @@ msgstr "Deve essere abilitato almeno un metodo di autenticazione"
 #. js-lingui-id: tqMllA
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "at minutes {firstValue} and {secondValue}"
-msgstr ""
+msgstr "al minuto {firstValue} e {secondValue}"
 
 #. js-lingui-id: r+gFlA
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "at minutes {remainingValues} and {lastValue}"
-msgstr ""
+msgstr "al minuto {remainingValues} e {lastValue}"
 
 #. js-lingui-id: PuQ8VT
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "at the top of the hour"
-msgstr ""
+msgstr "all'inizio dell'ora"
 
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -1165,7 +1165,7 @@ msgstr "Media"
 #. js-lingui-id: li9In6
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Axis name"
-msgstr ""
+msgstr "Nome asse"
 
 #. js-lingui-id: iH8pgl
 #: src/pages/onboarding/BookCall.tsx
@@ -1182,27 +1182,27 @@ msgstr "Torna al contenuto"
 #. js-lingui-id: GoBp8L
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Bar"
-msgstr ""
+msgstr "Barra"
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
 msgid "between {startMonth} and {endMonth}"
-msgstr ""
+msgstr "tra {startMonth} e {endMonth}"
 
 #. js-lingui-id: N7WQ1K
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
 msgid "between {startTime} and {endTime}"
-msgstr ""
+msgstr "tra {startTime} e {endTime}"
 
 #. js-lingui-id: FE1Mq4
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "between minute {start} and {end}"
-msgstr ""
+msgstr "tra il minuto {start} e {end}"
 
 #. js-lingui-id: cQ8mjx
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 msgid "between the {startOrdinal} and {endOrdinal} of the month"
-msgstr ""
+msgstr "tra il {startOrdinal} e {endOrdinal} del mese"
 
 #. js-lingui-id: R+w/Va
 #: src/pages/settings/SettingsBilling.tsx
@@ -1244,7 +1244,7 @@ msgstr "Booleano"
 #. js-lingui-id: njBeMm
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 msgid "Both"
-msgstr ""
+msgstr "Entrambi"
 
 #. js-lingui-id: qDsMss
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -1317,12 +1317,12 @@ msgstr "Sincronizzazione del calendario"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Calendar view"
-msgstr ""
+msgstr "Vista Calendario"
 
 #. js-lingui-id: nhn/TI
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Calendar View"
-msgstr ""
+msgstr "Vista Calendario"
 
 #. js-lingui-id: EUpfsd
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -1359,27 +1359,27 @@ msgstr "Annulla"
 #. js-lingui-id: HYLdMN
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel Edition"
-msgstr ""
+msgstr "Annulla Edizione"
 
 #. js-lingui-id: dV4HC5
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel interval switching"
-msgstr ""
+msgstr "Annulla il cambio di intervallo"
 
 #. js-lingui-id: M5CqkG
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel interval switching?"
-msgstr ""
+msgstr "Annulla il cambio di intervallo?"
 
 #. js-lingui-id: /Dmw1h
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel metered tier switching"
-msgstr ""
+msgstr "Annulla il cambio di livello misurato"
 
 #. js-lingui-id: Q/chGD
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel metered tier switching?"
-msgstr ""
+msgstr "Annulla il cambio di livello misurato?"
 
 #. js-lingui-id: rRK/Lf
 #: src/modules/billing/components/SettingsBillingContent.tsx
@@ -1389,12 +1389,12 @@ msgstr "Annulla piano"
 #. js-lingui-id: 8eSMLX
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel plan switching"
-msgstr ""
+msgstr "Annulla il cambio di piano"
 
 #. js-lingui-id: f6KFEf
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel plan switching?"
-msgstr ""
+msgstr "Annulla il cambio di piano?"
 
 #. js-lingui-id: N6gPiD
 #: src/modules/billing/components/SettingsBillingContent.tsx
@@ -1405,7 +1405,7 @@ msgstr "Annulla l'abbonamento"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Cannot impersonate selected user"
-msgstr ""
+msgstr "Impossibile impersonare l'utente selezionato"
 
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1425,7 +1425,7 @@ msgstr "Cambia email"
 #. js-lingui-id: Vf6hT6
 #: src/modules/workflow/workflow-steps/components/WorkflowActionFooter.tsx
 msgid "Change node type"
-msgstr ""
+msgstr "Cambia il tipo di nodo"
 
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
@@ -1447,7 +1447,7 @@ msgstr "Cambiare sotto-dominio?"
 #. js-lingui-id: 9m7pJA
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Monthly?"
-msgstr ""
+msgstr "Cambio a mensile?"
 
 #. js-lingui-id: C8G9Mq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1457,7 +1457,7 @@ msgstr "Passare al piano Organizzazione?"
 #. js-lingui-id: t7uUc+
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Pro Plan?"
-msgstr ""
+msgstr "Cambio a piano Pro?"
 
 #. js-lingui-id: N8mUQE
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1473,7 +1473,7 @@ msgstr "Registro modifiche"
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
 msgid "Chart"
-msgstr ""
+msgstr "Grafico"
 
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
@@ -1483,7 +1483,7 @@ msgstr "Chat"
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
 msgid "Check verification"
-msgstr ""
+msgstr "Controlla verifica"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -1573,7 +1573,7 @@ msgstr "Fare clic sul segno di spunta per applicare le modifiche."
 #. js-lingui-id: WTlZnA
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 msgid "Click to add your first widget"
-msgstr ""
+msgstr "Fai clic per aggiungere il tuo primo widget"
 
 #. js-lingui-id: d0rtA5
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
@@ -1631,7 +1631,7 @@ msgstr "Codice colore"
 #. js-lingui-id: 1HfW/F
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Colors"
-msgstr ""
+msgstr "Colori"
 
 #. js-lingui-id: P8gRog
 #: src/modules/spreadsheet-import/utils/setColumn.ts
@@ -1652,7 +1652,7 @@ msgstr "Icona del comando"
 #. js-lingui-id: A9u+7N
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Commas and dot - {commasAndDotExample}"
-msgstr ""
+msgstr "Virgole e punto - {commasAndDotExample}"
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -1668,7 +1668,7 @@ msgstr "Aziende"
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "completed"
-msgstr ""
+msgstr "completato"
 
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -1696,7 +1696,7 @@ msgstr "Configura e personalizza le preferenze del calendario."
 #. js-lingui-id: 5i71HM
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Configure and verify domains for emailing from this workspace."
-msgstr ""
+msgstr "Configura e verifica i domini per inviare email da questo spazio di lavoro."
 
 #. js-lingui-id: 6MDr1S
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -1706,7 +1706,7 @@ msgstr "Configura le impostazioni CalDAV per sincronizzare i tuoi eventi del cal
 #. js-lingui-id: ahqAfe
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Configure date, time, number, timezone, and calendar start day"
-msgstr ""
+msgstr "Configura data, ora, numero, fuso orario e giorno di inizio calendario"
 
 #. js-lingui-id: ghdb7+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -1716,12 +1716,12 @@ msgstr "Configura come visualizzare i tuoi eventi nel calendario"
 #. js-lingui-id: EZzl/g
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Configure iFrame"
-msgstr ""
+msgstr "Configura iFrame"
 
 #. js-lingui-id: 3La0aM
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
 msgid "Configure iFrame Widget"
-msgstr ""
+msgstr "Configura Widget iFrame"
 
 #. js-lingui-id: jbuOOX
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -1761,7 +1761,7 @@ msgstr "Conferma"
 #. js-lingui-id: qmnX/6
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm changing your current credit plan."
-msgstr ""
+msgstr "Conferma il cambio del tuo piano di credito attuale."
 
 #. js-lingui-id: FbJ7Si
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -1771,12 +1771,12 @@ msgstr "Conferma l'eliminazione del ruolo {roleName}? Questo non può essere ann
 #. js-lingui-id: kZkFSm
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
-msgstr ""
+msgstr "Conferma il downgrade"
 
 #. js-lingui-id: DDbn3x
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm upgrade"
-msgstr ""
+msgstr "Conferma l'upgrade"
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -2026,7 +2026,7 @@ msgstr "Crea vista personalizzata"
 #. js-lingui-id: QWedEU
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 msgid "Create date field"
-msgstr ""
+msgstr "Crea campo data"
 
 #. js-lingui-id: d0DCww
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2124,7 +2124,7 @@ msgstr "Utilizzo dei Crediti"
 #. js-lingui-id: hdSacI
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credits by period"
-msgstr ""
+msgstr "Crediti per periodo"
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -2139,7 +2139,7 @@ msgstr "valute"
 #. js-lingui-id: Hp1l6f
 #: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 msgid "Current"
-msgstr ""
+msgstr "Attuale"
 
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -2244,7 +2244,7 @@ msgstr "Eliminazione dati"
 #. js-lingui-id: xpZXLn
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Data labels"
-msgstr ""
+msgstr "Etichette dati"
 
 #. js-lingui-id: 5cNMFz
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -2267,7 +2267,7 @@ msgstr "Modello dati - Impostazioni"
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Data on display"
-msgstr ""
+msgstr "Dati visualizzati"
 
 #. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -2296,7 +2296,7 @@ msgstr "Data"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 msgid "Date field"
-msgstr ""
+msgstr "Campo data"
 
 #. js-lingui-id: Lhd0oQ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
@@ -2313,7 +2313,7 @@ msgstr "giorno"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Day"
-msgstr ""
+msgstr "Giorno"
 
 #. js-lingui-id: J/Upwb
 #: src/utils/date-utils.ts
@@ -2477,7 +2477,7 @@ msgstr "Elimina chiave API"
 #. js-lingui-id: ikGfT5
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboard"
-msgstr ""
+msgstr "Elimina cruscotto"
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -2661,7 +2661,7 @@ msgstr "Mostra testo su più righe"
 #. js-lingui-id: RDL+lZ
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
 msgid "DNS Records"
-msgstr ""
+msgstr "Record DNS"
 
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
@@ -2691,7 +2691,7 @@ msgstr "Dominio"
 #. js-lingui-id: OjtVhh
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 msgid "Domain not found"
-msgstr ""
+msgstr "Dominio non trovato"
 
 #. js-lingui-id: AZ4xlc
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2727,13 +2727,13 @@ msgstr "Non sincronizzare email da team@ support@ noreply@..."
 #. js-lingui-id: bd+DPX
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Dots and comma - {dotsAndCommaExample}"
-msgstr ""
+msgstr "Punti e virgola - {dotsAndCommaExample}"
 
 #. js-lingui-id: LE8J+K
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Downgrade"
-msgstr ""
+msgstr "Downgrade"
 
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -2753,7 +2753,7 @@ msgstr "Trascina il file qui..."
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowActionFooter.tsx
 msgid "Duplicate node"
-msgstr ""
+msgstr "Nodo duplicato"
 
 #. js-lingui-id: KIjvtr
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2769,7 +2769,7 @@ msgstr "Es. integrazione backoffice"
 #. js-lingui-id: BtKcxf
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
 msgid "e.g., Analytics Dashboard"
-msgstr ""
+msgstr "ad es., Dashboard Analitica"
 
 #. js-lingui-id: GhTFTJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -2779,7 +2779,7 @@ msgstr "es., riepilogo, stato, conteggio"
 #. js-lingui-id: 79hamt
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Each slice represents"
-msgstr ""
+msgstr "Ogni sezione rappresenta"
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -2831,7 +2831,7 @@ msgstr "Modificare struttura e campi dati CRM"
 #. js-lingui-id: GpnfNN
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit Dashboard"
-msgstr ""
+msgstr "Modifica Cruscotto"
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -2847,17 +2847,17 @@ msgstr "Modifica campi"
 #. js-lingui-id: JTcEch
 #: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 msgid "Edit Graph"
-msgstr ""
+msgstr "Modifica Grafico"
 
 #. js-lingui-id: WXPnsc
 #: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 msgid "Edit iFrame"
-msgstr ""
+msgstr "Modifica iFrame"
 
 #. js-lingui-id: mY8UAQ
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
 msgid "Edit iFrame Widget"
-msgstr ""
+msgstr "Modifica Widget iFrame"
 
 #. js-lingui-id: h2KoTu
 #: src/modules/billing/components/SettingsBillingContent.tsx
@@ -2913,7 +2913,7 @@ msgstr "Email copiata negli appunti"
 #. js-lingui-id: GXLHVG
 #: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
 msgid "Email Editor"
-msgstr ""
+msgstr "Editor di email"
 
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -2959,19 +2959,19 @@ msgstr "Email/Dominio"
 #. js-lingui-id: H2lcB9
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 msgid "Emailing domain created successfully. Please verify the domain to start using it."
-msgstr ""
+msgstr "Dominio di email creato con successo. Verifica il dominio per iniziare a usarlo."
 
 #. js-lingui-id: XDpopO
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
 msgid "Emailing domain deleted successfully"
-msgstr ""
+msgstr "Dominio di email eliminato con successo"
 
 #. js-lingui-id: axQccV
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Emailing Domains"
-msgstr ""
+msgstr "Domini di email"
 
 #. js-lingui-id: BXEcos
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -2984,7 +2984,7 @@ msgstr "Email"
 #. js-lingui-id: Ft+sR1
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr ""
+msgstr "Le email dalla lista di blocco verranno ignorate. Gestisci la lista di blocco nella pagina delle impostazioni degli “Account”."
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3024,7 +3024,7 @@ msgstr "Posta in arrivo vuota"
 #. js-lingui-id: hGwouC
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Empty Node"
-msgstr ""
+msgstr "Nodo Vuoto"
 
 #. js-lingui-id: 3hSGoJ
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -3037,7 +3037,7 @@ msgstr "Oggetto vuoto"
 #. js-lingui-id: gZo0V9
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
 msgid "Enable model-specific features"
-msgstr ""
+msgstr "Abilita le funzionalità specifiche del modello"
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -3082,7 +3082,7 @@ msgstr "Inserisci il nome dell'agente*"
 #. js-lingui-id: wgNkIh
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
 msgid "Enter an item"
-msgstr ""
+msgstr "Inserisci un elemento"
 
 #. js-lingui-id: kOybqX
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
@@ -3097,25 +3097,25 @@ msgstr "Inserisci nel formato <0>Unicode</0>"
 #. js-lingui-id: O6t21f
 #: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/EditLinkPopover.tsx
 msgid "Enter link"
-msgstr ""
+msgstr "Inserisci link"
 
 #. js-lingui-id: O0qPMN
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number between 0 and 23"
-msgstr ""
+msgstr "Immettere un numero tra 0 e 23"
 
 #. js-lingui-id: Y2uwqs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number between 0 and 59"
-msgstr ""
+msgstr "Immettere un numero tra 0 e 59"
 
 #. js-lingui-id: ahwn7G
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number greater than 1"
-msgstr ""
+msgstr "Immettere un numero maggiore di 1"
 
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -3161,7 +3161,7 @@ msgstr "Variabile di ambiente"
 #. js-lingui-id: SlfejT
 #: src/modules/ai/components/ErrorStepRenderer.tsx
 msgid "Error"
-msgstr ""
+msgstr "Errore"
 
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -3216,17 +3216,17 @@ msgstr "Errore durante la convalida del dominio di accesso approvato"
 #. js-lingui-id: pt7mmi
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling interval switching."
-msgstr ""
+msgstr "Errore durante l'annullamento del cambio di intervallo."
 
 #. js-lingui-id: a1gs9Y
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling metered tier switching."
-msgstr ""
+msgstr "Errore durante l'annullamento del cambio di livello misurato."
 
 #. js-lingui-id: FS6DQK
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling plan switching."
-msgstr ""
+msgstr "Errore durante l'annullamento del cambio di piano."
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -3236,12 +3236,12 @@ msgstr "Errore durante la conclusione del periodo di prova. Si prega di contatta
 #. js-lingui-id: QEee5f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription to {oppositPlan} Plan."
-msgstr ""
+msgstr "Errore durante il passaggio alla sottoscrizione {oppositPlan}."
 
 #. js-lingui-id: QPJi2W
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription."
-msgstr ""
+msgstr "Errore durante il cambio di abbonamento."
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -3262,73 +3262,73 @@ msgstr "Gli eventi a cui hai partecipato sono mostrati in rosso."
 #. js-lingui-id: lbS/kF
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "every {stepNum} days"
-msgstr ""
+msgstr "ogni {stepNum} giorni"
 
 #. js-lingui-id: HzFFPM
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 msgid "every {stepNumStr} days"
-msgstr ""
+msgstr "ogni {stepNumStr} giorni"
 
 #. js-lingui-id: iRozlI
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 msgid "every {stepNumStr} days, between the {startOrdinal} and {endOrdinal} of the month"
-msgstr ""
+msgstr "ogni {stepNumStr} giorni, tra il {startOrdinal} e {endOrdinal} del mese"
 
 #. js-lingui-id: iCnbJU
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
 msgid "every {stepNumStr} hours"
-msgstr ""
+msgstr "ogni {stepNumStr} ore"
 
 #. js-lingui-id: rMowgz
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
 msgid "every {stepNumStr} hours, between {startTime} and {endTime}"
-msgstr ""
+msgstr "ogni {stepNumStr} ore, tra {startTime} e {endTime}"
 
 #. js-lingui-id: Yw2okP
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "every {stepNumStr} minutes"
-msgstr ""
+msgstr "ogni {stepNumStr} minuti"
 
 #. js-lingui-id: wl8cvK
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "every {stepNumStr} minutes, between minute {start} and {end}"
-msgstr ""
+msgstr "ogni {stepNumStr} minuti, tra il minuto {start} e {end}"
 
 #. js-lingui-id: hBdF6X
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
 msgid "every {stepNumStr} months"
-msgstr ""
+msgstr "ogni {stepNumStr} mesi"
 
 #. js-lingui-id: 3dpG6g
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
 msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
-msgstr ""
+msgstr "ogni {stepNumStr} mesi, tra {startMonth} e {endMonth}"
 
 #. js-lingui-id: LhmFKG
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 msgid "every day"
-msgstr ""
+msgstr "ogni giorno"
 
 #. js-lingui-id: XWj/lX
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
 msgid "every hour"
-msgstr ""
+msgstr "ogni ora"
 
 #. js-lingui-id: a9EHxw
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "every minute"
-msgstr ""
+msgstr "ogni minuto"
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -3452,7 +3452,7 @@ msgstr "Esporta CSV"
 #. js-lingui-id: KVvnDa
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Export dashboard"
-msgstr ""
+msgstr "Esporta cruscotto"
 
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3517,7 +3517,7 @@ msgstr "Crediti extra usati"
 #. js-lingui-id: 7Bj3x9
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Failed"
-msgstr ""
+msgstr "Fallito"
 
 #. js-lingui-id: w/6jdn
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -3557,7 +3557,7 @@ msgstr "Caricamento del file {fileName} non riuscito"
 #. js-lingui-id: wJb11y
 #: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
 msgid "Failed to upload image: "
-msgstr ""
+msgstr "Caricamento dell'immagine fallito: "
 
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
@@ -3583,7 +3583,7 @@ msgstr "Flag delle funzionalità e impersonificazione"
 #. js-lingui-id: AXjA78
 #: src/modules/command-menu/pages/page-layout/utils/getFieldLabelWithSubField.ts
 msgid "Field"
-msgstr ""
+msgstr "Campo"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -3630,7 +3630,7 @@ msgstr "Autorizzazioni dei Campi"
 #. js-lingui-id: hT0Flb
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "fifth"
-msgstr ""
+msgstr "quinto"
 
 #. js-lingui-id: uTDtiS
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -3666,7 +3666,7 @@ msgstr "Termina il flusso con errori"
 #. js-lingui-id: eYwdpC
 #: src/modules/ai/components/ReasoningSummaryDisplay.tsx
 msgid "Finished thinking"
-msgstr ""
+msgstr "Pensiero concluso"
 
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3676,7 +3676,7 @@ msgstr "Finlandese"
 #. js-lingui-id: hy+Mfg
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "first"
-msgstr ""
+msgstr "primo"
 
 #. js-lingui-id: syyeb9
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -3707,12 +3707,12 @@ msgstr "Nome"
 #. js-lingui-id: ylQd2j
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Flow"
-msgstr ""
+msgstr "Flusso"
 
 #. js-lingui-id: HSh8u/
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Folders"
-msgstr ""
+msgstr "Cartelle"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
@@ -3732,17 +3732,17 @@ msgstr "Formato es. d-MMM-y (qqq''yy)"
 #. js-lingui-id: xMJhWJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
-msgstr ""
+msgstr "Formato: [Minuto] [Ora] [Giorno del Mese] [Mese] [Giorno della settimana]"
 
 #. js-lingui-id: 4JsQoY
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Formats"
-msgstr ""
+msgstr "Formati"
 
 #. js-lingui-id: 1hxId5
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "fourth"
-msgstr ""
+msgstr "quarto"
 
 #. js-lingui-id: a8nooQ
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -3757,7 +3757,7 @@ msgstr "Francese"
 #. js-lingui-id: qR8gT9
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "from {startDay} to {endDay}"
-msgstr ""
+msgstr "dal {startDay} al {endDay}"
 
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -3778,7 +3778,7 @@ msgstr "Funzioni - Impostazioni"
 #. js-lingui-id: IZUMtC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge"
-msgstr ""
+msgstr "Indicatore"
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4069,7 +4069,7 @@ msgstr "Se hai perso questa chiave, puoi rigenerarla, ma sappi che qualsiasi scr
 #. js-lingui-id: YdCuhS
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
 msgid "IframeConfiguration is not supported"
-msgstr ""
+msgstr "La configurazione di iFrame non è supportata"
 
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -4111,12 +4111,12 @@ msgstr "Impersonificazione"
 #. js-lingui-id: n3ohBy
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Impersonate workspace users"
-msgstr ""
+msgstr "Impersonare gli utenti dello spazio di lavoro"
 
 #. js-lingui-id: yImXof
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonation is disabled for this workspace"
-msgstr ""
+msgstr "L'impersonificazione è disabilitata per questo spazio di lavoro"
 
 #. js-lingui-id: l3s5ri
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -4127,7 +4127,7 @@ msgstr "Importa"
 #. js-lingui-id: sqOGcv
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import all emails"
-msgstr ""
+msgstr "Importa tutte le email"
 
 #. js-lingui-id: 2CeOI3
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -4137,7 +4137,7 @@ msgstr "Importa CSV"
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
-msgstr ""
+msgstr "Importa solo cartelle/etichette selezionate"
 
 #. js-lingui-id: eECp4f
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4235,7 +4235,7 @@ msgstr "Interagisci con i dati del tuo spazio di lavoro"
 #. js-lingui-id: jyjroS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Interval switching has been cancelled."
-msgstr ""
+msgstr "Il cambio di intervallo è stato annullato."
 
 #. js-lingui-id: ggS/0k
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
@@ -4255,7 +4255,7 @@ msgstr "Provider di autenticazione non valido"
 #. js-lingui-id: ER/0YT
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Invalid cron expression"
-msgstr ""
+msgstr "Espressione cron non valida"
 
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -4287,23 +4287,23 @@ msgstr "Valori del modulo non validi"
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
-msgstr ""
+msgstr "Valore dell'ora non valido '{newHour}'. Deve essere un intero compreso tra 0 e 23"
 
 #. js-lingui-id: fLMLtY
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
-msgstr ""
+msgstr "Valore dell'ora non valido '{newHour}'. Deve essere un intero maggiore di 1"
 
 #. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
-msgstr ""
+msgstr "Valore dei minuti non valido '{newMinute}'. Deve essere un intero compreso tra 0 e 59"
 
 #. js-lingui-id: 942L1w
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
-msgstr ""
+msgstr "Valore dei minuti non valido '{newMinute}'. Deve essere un intero maggiore di 1"
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -4512,7 +4512,7 @@ msgstr "Kanban"
 #. js-lingui-id: 7sMeHQ
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "Key"
-msgstr ""
+msgstr "Chiave"
 
 #. js-lingui-id: h6S9Yz
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -4645,12 +4645,12 @@ msgstr "Chiaro"
 #. js-lingui-id: Qds9fe
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Limit how many values can be added to this field"
-msgstr ""
+msgstr "Limita quanti valori possono essere aggiunti a questo campo"
 
 #. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line"
-msgstr ""
+msgstr "Linea"
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
@@ -4685,7 +4685,7 @@ msgstr "Caricamento dei dati metrici..."
 #. js-lingui-id: tVSmFT
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Loading more..."
-msgstr ""
+msgstr "Caricamento altro..."
 
 #. js-lingui-id: Z3FXyt
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -4705,7 +4705,7 @@ msgstr "Disconnetti"
 #. js-lingui-id: hykMbH
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Logged in as {impersonatedUser}"
-msgstr ""
+msgstr "Accesso effettuato come {impersonatedUser}"
 
 #. js-lingui-id: VLuNNu
 #: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
@@ -4730,7 +4730,7 @@ msgstr "Cerca utenti per impersonificarli."
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
-msgstr ""
+msgstr "ciclo"
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -4802,22 +4802,22 @@ msgstr "Capacità massima d'importazione: {formatSpreadsheetMaxRecordImportCapac
 #. js-lingui-id: DBiUDH
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Maximum email addresses"
-msgstr ""
+msgstr "Indirizzi email massimi"
 
 #. js-lingui-id: iwCoSG
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Maximum phone numbers"
-msgstr ""
+msgstr "Numeri di telefono massimi"
 
 #. js-lingui-id: aiuTYK
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Maximum URLs"
-msgstr ""
+msgstr "URL massimi"
 
 #. js-lingui-id: ZEH/cb
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Maximum values"
-msgstr ""
+msgstr "Valori massimi"
 
 #. js-lingui-id: nA8kxD
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
@@ -4896,7 +4896,7 @@ msgstr "Generazione del file di metadata fallita"
 #. js-lingui-id: onCJJ6
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Metered tier switching has been cancelled."
-msgstr ""
+msgstr "Il cambio di livello misurato è stato annullato."
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -4934,7 +4934,7 @@ msgstr "mese"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Month"
-msgstr ""
+msgstr "Mese"
 
 #. js-lingui-id: rdfE9o
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -5044,7 +5044,7 @@ msgstr "Barra di navigazione"
 #. js-lingui-id: dVQ33h
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Navigate to next dashboard"
-msgstr ""
+msgstr "Vai al cruscotto successivo"
 
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5064,7 +5064,7 @@ msgstr "Vai al workflow successivo"
 #. js-lingui-id: /Qu2VT
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Navigate to previous dashboard"
-msgstr ""
+msgstr "Vai al cruscotto precedente"
 
 #. js-lingui-id: 2tw9bo
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5130,7 +5130,7 @@ msgstr "Nuovo dominio di accesso approvato"
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 msgid "New Emailing Domain"
-msgstr ""
+msgstr "Nuovo dominio di email"
 
 #. js-lingui-id: 8YPqRx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -5229,7 +5229,7 @@ msgstr "Nessun agente corrisponde alla tua ricerca"
 #. js-lingui-id: B85wFV
 #: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
 msgid "No AI Agent found."
-msgstr ""
+msgstr "Nessun agente AI trovato."
 
 #. js-lingui-id: 9mx36q
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -5269,7 +5269,7 @@ msgstr "Nessun paese"
 #. js-lingui-id: B6C0XJ
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "No Data"
-msgstr ""
+msgstr "Nessun dato"
 
 #. js-lingui-id: 7tCnBa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
@@ -5279,7 +5279,7 @@ msgstr "Nessun dato disponibile per la tabella remota"
 #. js-lingui-id: VwYM0e
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "No data available. Click edit to configure this widget."
-msgstr ""
+msgstr "Nessun dato disponibile. Fai clic su modifica per configurare questo widget."
 
 #. js-lingui-id: pxvJ9B
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -5294,7 +5294,7 @@ msgstr "Nessun dato trovato"
 #. js-lingui-id: 5K0pqs
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Date field"
-msgstr ""
+msgstr "Nessun campo data"
 
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
@@ -5399,7 +5399,7 @@ msgstr "Nessuna autorizzazione è stata impostata per gli oggetti individuali."
 #. js-lingui-id: ePgApM
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "No record is required to trigger this workflow"
-msgstr ""
+msgstr "Non è richiesto alcun record per attivare questo flusso di lavoro"
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -5442,7 +5442,7 @@ msgstr "Nessuna variabile trovata"
 #. js-lingui-id: xyEjfo
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 msgid "No widgets yet"
-msgstr ""
+msgstr "Ancora nessun widget"
 
 #. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -5534,7 +5534,7 @@ msgstr "Numero"
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Number format"
-msgstr ""
+msgstr "Formato numerico"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -5594,48 +5594,48 @@ msgstr "Fuori dai sentieri battuti"
 #. js-lingui-id: jcwJgk
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 msgid "on the {firstDay} and {secondDay} of the month"
-msgstr ""
+msgstr "il {firstDay} e {secondDay} del mese"
 
 #. js-lingui-id: GSNAUy
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on the {ordinal} {dayName} of the month"
-msgstr ""
+msgstr "il {ordinal} {dayName} del mese"
 
 #. js-lingui-id: s+rd/k
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 msgid "on the {ordinalDay} of the month"
-msgstr ""
+msgstr "il {ordinalDay} del mese"
 
 #. js-lingui-id: Q4spp9
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 msgid "on the {remainingDays} and {lastDay} of the month"
-msgstr ""
+msgstr "il {remainingDays} e {lastDay} del mese"
 
 #. js-lingui-id: aJ++Ko
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on the last {dayName} of the month"
-msgstr ""
+msgstr "l'ultimo {dayName} del mese"
 
 #. js-lingui-id: MhQi70
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 msgid "on the last day of the month"
-msgstr ""
+msgstr "l'ultimo giorno del mese"
 
 #. js-lingui-id: irOZkJ
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 msgid "on the weekday closest to the {ordinalDay} of the month"
-msgstr ""
+msgstr "il giorno feriale più vicino al {ordinalDay} del mese"
 
 #. js-lingui-id: qF20Rl
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on weekdays"
-msgstr ""
+msgstr "nei giorni feriali"
 
 #. js-lingui-id: gLM6bK
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
 msgid "on weekdays only"
-msgstr ""
+msgstr "solo nei giorni feriali"
 
 #. js-lingui-id: 4e9dd8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
@@ -5651,34 +5651,34 @@ msgstr "Solo data e partecipanti verranno condivisi con il tuo team."
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
 msgid "only in {firstMonth} and {secondMonth}"
-msgstr ""
+msgstr "solo in {firstMonth} e {secondMonth}"
 
 #. js-lingui-id: scO7qS
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
 msgid "only in {monthName}"
-msgstr ""
+msgstr "solo in {monthName}"
 
 #. js-lingui-id: nZ4jBc
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
 msgid "only in {remainingMonths} and {lastMonth}"
-msgstr ""
+msgstr "solo nei {remainingMonths} e {lastMonth}"
 
 #. js-lingui-id: G+ijJ2
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
-msgstr ""
+msgstr "solo il {dayName}"
 
 #. js-lingui-id: rPnv5P
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {firstDay} and {secondDay}"
-msgstr ""
+msgstr "solo il {firstDay} e {secondDay}"
 
 #. js-lingui-id: pYaMbU
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "solo il {remainingDays} e {lastDay}"
 
 #. js-lingui-id: 50ETCF
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
@@ -5808,7 +5808,7 @@ msgstr "Incolla il codice qui sotto"
 #. js-lingui-id: UbRKMZ
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Pending"
-msgstr ""
+msgstr "In sospeso"
 
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -5851,7 +5851,7 @@ msgstr "Percentuale"
 #. js-lingui-id: rDky0a
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Permanently destroy dashboard"
-msgstr ""
+msgstr "Distruggi definitivamente il cruscotto"
 
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5892,7 +5892,7 @@ msgstr "Numero di telefono copiato negli appunti"
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowDropdownStepOutputItems.tsx
 msgid "Pick a {objectLabel} record"
-msgstr ""
+msgstr "Seleziona un record di {objectLabel}"
 
 #. js-lingui-id: N0+GsR
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -5903,7 +5903,7 @@ msgstr "Immagine"
 #. js-lingui-id: ZjVniv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie"
-msgstr ""
+msgstr "Torta"
 
 #. js-lingui-id: GdgCoi
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5913,12 +5913,12 @@ msgstr "Piano"
 #. js-lingui-id: XduPHC
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan switching has been cancelled."
-msgstr ""
+msgstr "Il cambio di piano è stato annullato."
 
 #. js-lingui-id: VUi6Nf
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Please check your cron expression syntax."
-msgstr ""
+msgstr "Si prega di verificare la sintassi dell'espressione cron."
 
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -6016,7 +6016,7 @@ msgstr "Email Principale"
 #. js-lingui-id: 1hKEom
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "Priority"
-msgstr ""
+msgstr "Priorità"
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -6055,7 +6055,7 @@ msgstr "Fornisci i dettagli del tuo provider OIDC"
 #. js-lingui-id: AULPv1
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Provision a complete and secure hosting environment on these domains."
-msgstr ""
+msgstr "Crea un ambiente di hosting completo e sicuro su questi domini."
 
 #. js-lingui-id: YJgRqq
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -6066,28 +6066,28 @@ msgstr "Pseudoinglese"
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Public domain"
-msgstr ""
+msgstr "Dominio pubblico"
 
 #. js-lingui-id: +fsX3t
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Public Domain"
-msgstr ""
+msgstr "Dominio Pubblico"
 
 #. js-lingui-id: Rjk8Vl
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Public domain created successfully"
-msgstr ""
+msgstr "Dominio pubblico creato con successo"
 
 #. js-lingui-id: za+Mr9
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Public domain successfully deleted"
-msgstr ""
+msgstr "Dominio pubblico eliminato con successo"
 
 #. js-lingui-id: g55kfn
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Public Domains"
-msgstr ""
+msgstr "Domini Pubblici"
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
@@ -6333,7 +6333,7 @@ msgstr "Ripristina"
 #. js-lingui-id: XRAM5d
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Restore dashboard"
-msgstr ""
+msgstr "Ripristina cruscotto"
 
 #. js-lingui-id: y4Ib1n
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -6434,17 +6434,17 @@ msgstr "Salva come nuova vista"
 #. js-lingui-id: 7GK4Vt
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Save Dashboard"
-msgstr ""
+msgstr "Salva Cruscotto"
 
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
-msgstr ""
+msgstr "Pianifica"
 
 #. js-lingui-id: Qp0P63
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule runs in UTC timezone."
-msgstr ""
+msgstr "La pianificazione avviene nel fuso orario UTC."
 
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -6484,7 +6484,7 @@ msgstr "Cerca un campo..."
 #. js-lingui-id: WXvlVa
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Search a role..."
-msgstr ""
+msgstr "Cerca un ruolo..."
 
 #. js-lingui-id: xdl79x
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -6538,7 +6538,7 @@ msgstr "Cerca chiavi API"
 #. js-lingui-id: yI4D/V
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
 msgid "Search colors"
-msgstr ""
+msgstr "Cerca colori"
 
 #. js-lingui-id: 3UPqHL
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableSearchInput.tsx
@@ -6570,7 +6570,7 @@ msgstr "Cerca campi"
 #. js-lingui-id: rXrG+N
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Search folders..."
-msgstr ""
+msgstr "Cerca cartelle..."
 
 #. js-lingui-id: ofuw3g
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -6590,12 +6590,12 @@ msgstr "Icona di ricerca"
 #. js-lingui-id: two5rl
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 msgid "Search objects"
-msgstr ""
+msgstr "Cerca oggetti"
 
 #. js-lingui-id: pGn7U0
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 msgid "Search operations"
-msgstr ""
+msgstr "Cerca operazioni"
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -6621,7 +6621,7 @@ msgstr "Posti"
 #. js-lingui-id: ZuduiH
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "second"
-msgstr ""
+msgstr "secondo"
 
 #. js-lingui-id: ku//5b
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -6747,13 +6747,13 @@ msgstr "Seleziona un agente di destinazione"
 #. js-lingui-id: jL3gox
 #: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
 msgid "Select a value"
-msgstr ""
+msgstr "Seleziona un valore"
 
 #. js-lingui-id: YcJS1T
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Select action"
-msgstr ""
+msgstr "Seleziona Azione"
 
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -6784,7 +6784,7 @@ msgstr "Seleziona file"
 #. js-lingui-id: i568hB
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Select Graph Type"
-msgstr ""
+msgstr "Seleziona Tipo di Grafico"
 
 #. js-lingui-id: llc/hA
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -6890,7 +6890,7 @@ msgstr "Imposta il nome del tuo dominio personalizzato e configura i record DNS.
 #. js-lingui-id: d+3DrP
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Set the name of your public domain and configure your DNS records."
-msgstr ""
+msgstr "Imposta il nome del tuo dominio pubblico e configura i record DNS."
 
 #. js-lingui-id: tn41zE
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
@@ -7081,12 +7081,12 @@ msgstr "Alcuni"
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Some folders"
-msgstr ""
+msgstr "Alcune cartelle"
 
 #. js-lingui-id: yHwG3y
 #: src/modules/command-menu/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Soon"
-msgstr ""
+msgstr "Presto"
 
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -7105,7 +7105,7 @@ msgstr "Ordina"
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Sort by"
-msgstr ""
+msgstr "Ordina per"
 
 #. js-lingui-id: wdxz7K
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -7116,7 +7116,7 @@ msgstr "Fonte"
 #. js-lingui-id: IEtmGM
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Spaces and comma - {spacesAndCommaExample}"
-msgstr ""
+msgstr "Spazi e virgola - {spacesAndCommaExample}"
 
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -7156,7 +7156,7 @@ msgstr "Inizia il Tuo Abbonamento"
 #. js-lingui-id: hTX65V
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
 msgid "Started verification process"
-msgstr ""
+msgstr "Processo di verifica iniziato"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -7174,7 +7174,7 @@ msgstr "Stato"
 #. js-lingui-id: I8EmDx
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
-msgstr ""
+msgstr "Termina l'impersonificazione"
 
 #. js-lingui-id: qn1Xxf
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
@@ -7252,7 +7252,7 @@ msgstr "Abbonamento attivato."
 #. js-lingui-id: gvXPJz
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to {oppositPlan} Plan."
-msgstr ""
+msgstr "La sottoscrizione è stata cambiata al piano {oppositPlan}."
 
 #. js-lingui-id: A5YO8f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -7262,7 +7262,7 @@ msgstr "L'abbonamento è stato cambiato all'annuale."
 #. js-lingui-id: nQcG+x
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
-msgstr ""
+msgstr "La sottoscrizione sarà cambiata a mensile il {beautifiedRenewDate}."
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -7298,7 +7298,7 @@ msgstr "Svedese"
 #. js-lingui-id: dpXnFC
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Monthly"
-msgstr ""
+msgstr "Passa a mensile"
 
 #. js-lingui-id: GCMizN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -7308,7 +7308,7 @@ msgstr "Passa a Organizzazione"
 #. js-lingui-id: GPKudC
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Pro"
-msgstr ""
+msgstr "Passa al Pro"
 
 #. js-lingui-id: eCX1DT
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -7363,7 +7363,7 @@ msgstr "Impostazioni di sistema - {systemDateFormatLabel}"
 #. js-lingui-id: uKM6SP
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "System Settings - {systemNumberFormatLabel}"
-msgstr ""
+msgstr "Impostazioni di sistema - {systemNumberFormatLabel}"
 
 #. js-lingui-id: 0ZgB1e
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -7406,7 +7406,7 @@ msgstr "Attività"
 #. js-lingui-id: lKXcJz
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Temporary Failure"
-msgstr ""
+msgstr "Errore temporaneo"
 
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -7457,7 +7457,7 @@ msgstr "Descrizione di questo campo"
 #. js-lingui-id: HUoA4b
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 msgid "The domain name you want to use for emailing"
-msgstr ""
+msgstr "Il nome di dominio che vuoi usare per inviare email"
 
 #. js-lingui-id: VGZYbZ
 #: src/pages/settings/SettingsProfile.tsx
@@ -7499,7 +7499,7 @@ msgstr "La pagina che cerchi è sparita o non è mai esistita. Torniamo in carre
 #. js-lingui-id: jrCR2X
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The selected record will be passed to your workflow"
-msgstr ""
+msgstr "Il record selezionato verrà passato al tuo workflow"
 
 #. js-lingui-id: 3lMl10
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
@@ -7509,7 +7509,7 @@ msgstr "Il(i) record selezionato(i) verrà passato ai tuoi Workflow"
 #. js-lingui-id: f1lGdk
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The selected records will be passed to your workflow"
-msgstr ""
+msgstr "I record selezionati verranno passati al tuo workflow"
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -7564,12 +7564,12 @@ msgstr "Errore durante l'aggiornamento della password."
 #. js-lingui-id: Ed99mE
 #: src/modules/ai/components/ReasoningSummaryDisplay.tsx
 msgid "Thinking..."
-msgstr ""
+msgstr "In elaborazione..."
 
 #. js-lingui-id: 9ItHLu
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "third"
-msgstr ""
+msgstr "terzo"
 
 #. js-lingui-id: UlykKR
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -7639,12 +7639,12 @@ msgstr "Questa settimana"
 #. js-lingui-id: h4VeOo
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "This will cancel the scheduled interval change and keep your current billing interval ({currentIntervalLabel})."
-msgstr ""
+msgstr "Questo annullerà il cambio di intervallo programmato e manterrà il tuo intervallo di fatturazione attuale ({currentIntervalLabel})."
 
 #. js-lingui-id: XpARoU
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "This will cancel the scheduled plan change and keep your current plan ({planKeyWord})."
-msgstr ""
+msgstr "Questo annullerà il cambio di piano programmato e manterrà il tuo piano attuale ({planKeyWord})."
 
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -7671,7 +7671,7 @@ msgstr "Fuso orario"
 #. js-lingui-id: cklVjM
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Timeline"
-msgstr ""
+msgstr "Sequenza temporale"
 
 #. js-lingui-id: /VwdtK
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -7688,7 +7688,7 @@ msgstr "Oggi"
 #. js-lingui-id: GFxnQR
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Toggle all folders"
-msgstr ""
+msgstr "Attiva/disattiva tutte le cartelle"
 
 #. js-lingui-id: XArpJK
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
@@ -7734,13 +7734,13 @@ msgstr "Scatenante"
 #. js-lingui-id: SzG8Sm
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Trigger at hour (UTC)"
-msgstr ""
+msgstr "Attiva all'ora (UTC)"
 
 #. js-lingui-id: 4QBmLn
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Trigger at minute (UTC)"
-msgstr ""
+msgstr "Attiva al minuto (UTC)"
 
 #. js-lingui-id: jGYsS/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -7773,7 +7773,7 @@ msgstr "Prova un'altra email"
 #. js-lingui-id: ouRvqq
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "TTL"
-msgstr ""
+msgstr "TTL"
 
 #. js-lingui-id: Kz91g/
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -7783,7 +7783,7 @@ msgstr "Turco"
 #. js-lingui-id: YIjS4q
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
 msgid "Twitter/X Search"
-msgstr ""
+msgstr "Cerca Twitter/X"
 
 #. js-lingui-id: tuvLv1
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -7876,7 +7876,7 @@ msgstr "Flusso di lavoro senza titolo"
 #. js-lingui-id: b26MvX
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Upcoming execution times ({timeZone})"
-msgstr ""
+msgstr "Prossimi orari di esecuzione ({timeZone})"
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -7903,7 +7903,7 @@ msgstr "Aggiorna la configurazione del tuo account. Configura qualsiasi combinaz
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Upgrade"
-msgstr ""
+msgstr "Aggiorna"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -7933,7 +7933,7 @@ msgstr "Carica il file XML con le tue informazioni di connessione"
 #. js-lingui-id: IagCbF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -8045,7 +8045,7 @@ msgstr "Variabile aggiornata con successo."
 #. js-lingui-id: QDEWii
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Verified"
-msgstr ""
+msgstr "Verificato"
 
 #. js-lingui-id: uSMfoN
 #: src/utils/title-utils.ts
@@ -8164,7 +8164,7 @@ msgstr "Ti invieremo un link per verificare la proprietà del dominio"
 #. js-lingui-id: LnnVIT
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
 msgid "Web Search"
-msgstr ""
+msgstr "Cerca sul Web"
 
 #. js-lingui-id: Tvdycs
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -8204,7 +8204,7 @@ msgstr "Webhooks"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Week"
-msgstr ""
+msgstr "Settimana"
 
 #. js-lingui-id: ke0EDP
 #: src/pages/auth/SignInUp.tsx
@@ -8230,12 +8230,12 @@ msgstr "Quando la chiave sarà disabilitata"
 #. js-lingui-id: Z4rkzJ
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
 msgid "Widget Title"
-msgstr ""
+msgstr "Titolo del Widget"
 
 #. js-lingui-id: fANaAS
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "Widget type"
-msgstr ""
+msgstr "Tipo di Widget"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -8284,7 +8284,7 @@ msgstr "Workspace"
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
 msgid "Workspace creation failed"
-msgstr ""
+msgstr "Creazione dello spazio di lavoro non riuscita"
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -8337,12 +8337,12 @@ msgstr "Scrivi una descrizione per questo agente"
 #. js-lingui-id: SHqkdn
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 msgid "X axis"
-msgstr ""
+msgstr "Asse X"
 
 #. js-lingui-id: fplGg6
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 msgid "Y axis"
-msgstr ""
+msgstr "Asse Y"
 
 #. js-lingui-id: 7qI8sJ
 #: src/utils/date-utils.ts
@@ -8370,7 +8370,7 @@ msgstr "sì"
 #. js-lingui-id: l75CjT
 #: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
 msgid "Yes"
-msgstr ""
+msgstr "Sì"
 
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
@@ -8399,52 +8399,50 @@ msgstr "Puoi impostare qualsiasi combinazione di IMAP (ricezione email), SMTP (i
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
+msgid "You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr ""
-"Non puoi modificare questa connessione perché ha tabelle tracciate.\n"
+msgstr "Non puoi modificare questa connessione perché ha tabelle tracciate.\n"
 "Se hai bisogno di apportare modifiche, crea una nuova connessione o desincronizza prima le tabelle."
 
 #. js-lingui-id: CjCGSm
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "You do not have permission to access the {fieldsList} {fieldWord}"
-msgstr ""
+msgstr "Non hai il permesso di accedere ai {fieldsList} {fieldWord}"
 
 #. js-lingui-id: eqUj2Z
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "You do not have permission to access the {objectName} object"
-msgstr ""
+msgstr "Non hai il permesso di accedere all'oggetto {objectName}"
 
 #. js-lingui-id: D0mU8n
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "You do not have permission to view this widget"
-msgstr ""
+msgstr "Non hai il permesso di visualizzare questo widget"
 
 #. js-lingui-id: M2lYgq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You have scheduled a metered tier change. Do you want to cancel it?"
-msgstr ""
+msgstr "Hai programmato un cambio di livello misurato. Vuoi annullarlo?"
 
 #. js-lingui-id: z8eKS7
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "you will be charged ${enterprisePrice} per user per month"
-msgstr ""
+msgstr "ti verrà addebitato ${enterprisePrice} per utente al mese"
 
 #. js-lingui-id: u3S6u8
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "You will be charged ${monthlyPrice} per user per month billed monthly. The change will be applied the {beautifiedRenewDate}."
-msgstr ""
+msgstr "Sarai addebitato ${monthlyPrice} per utente al mese fatturato mensilmente. La modifica verrà applicata il {beautifiedRenewDate}."
 
 #. js-lingui-id: /T5zAB
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "You will be charged ${proPrice} per user per month"
-msgstr ""
+msgstr "Ti verrà addebitato ${proPrice} per utente al mese"
 
 #. js-lingui-id: W3k5LA
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "You will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
-msgstr ""
+msgstr "Sarai addebitato ${yearlyPrice} per utente all'anno fatturato annualmente. Verrà applicato un prorata con la tua sottoscrizione attuale."
 
 #. js-lingui-id: C2d+Xk
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -8484,12 +8482,12 @@ msgstr "Il tuo nome come sarà visualizzato sull'app"
 #. js-lingui-id: QOd24n
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "Your trial period will end, and "
-msgstr ""
+msgstr "Il periodo di prova terminerà, e "
 
 #. js-lingui-id: 2Fkd7s
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
-msgstr ""
+msgstr "Il periodo di prova terminerà, e ti sarà addebitato ${yearlyPrice} per utente all'anno fatturato annualmente. Verrà applicato un prorata con la tua sottoscrizione attuale."
 
 #. js-lingui-id: YQK8fJ
 #: src/pages/auth/SignInUp.tsx

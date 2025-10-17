@@ -4,9 +4,9 @@ import { type ReactNode } from 'react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Tag } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { type Agent } from '~/generated-metadata/graphql';
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 
 export type SettingsAIAgentTableRowProps = {
   action: ReactNode;
@@ -52,11 +52,7 @@ export const SettingsAIAgentTableRow = ({
         <OverflowingTextWithTooltip text={agent.label} />
       </StyledNameTableCell>
       <TableCell>
-        <Tag
-          text={agent.isCustom ? 'Custom' : 'Standard'}
-          color={agent.isCustom ? 'orange' : 'blue'}
-          weight="medium"
-        />
+        <SettingsItemTypeTag item={agent} />
       </TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledAIAgentTableRow>

@@ -4,5 +4,4 @@ export type ServerlessFunctionCode = {
   src: {
     'index.ts': string;
   } & Sources;
-  '.env'?: string;
 };

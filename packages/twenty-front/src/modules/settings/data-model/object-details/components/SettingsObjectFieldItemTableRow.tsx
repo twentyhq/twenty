@@ -15,7 +15,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
+import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
   isDefined,
@@ -28,6 +28,7 @@ import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -64,6 +65,10 @@ export const SettingsObjectFieldItemTableRow = ({
 }: SettingsObjectFieldItemTableRowProps) => {
   const { fieldMetadataItem, identifierType, objectMetadataItem } =
     settingsObjectDetailTableItem;
+
+  const readonly = isObjectMetadataReadOnly({
+    objectMetadataItem,
+  });
 
   const isRemoteObjectField = objectMetadataItem.isRemote;
 
@@ -118,6 +123,10 @@ export const SettingsObjectFieldItemTableRow = ({
   const handleDisableField = async (
     activeFieldMetadatItem: FieldMetadataItem,
   ) => {
+    if (readonly) {
+      return;
+    }
+
     await deactivateMetadataField(
       activeFieldMetadatItem.id,
       objectMetadataItem.id,
@@ -146,13 +155,17 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const handleSetLabelIdentifierField = (
     activeFieldMetadatItem: FieldMetadataItem,
-  ) =>
+  ) => {
+    if (readonly) {
+      return;
+    }
     updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
       updatePayload: {
         labelIdentifierFieldMetadataId: activeFieldMetadatItem.id,
       },
     });
+  };
 
   const [, setActiveSettingsObjectFields] = useRecoilState(
     settingsObjectFieldsFamilyState({
@@ -195,6 +208,17 @@ export const SettingsObjectFieldItemTableRow = ({
     isDefined(relationObjectMetadataItem?.namePlural) &&
     !relationObjectMetadataItem.isSystem;
 
+  const morphRelationLabel =
+    fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
+      ? `${fieldMetadataItem.morphRelations?.length} Objects`
+      : undefined;
+
+  const label = morphRelationLabel
+    ? morphRelationLabel
+    : relationType === RelationType.MANY_TO_ONE
+      ? relationObjectMetadataItem?.labelSingular
+      : relationObjectMetadataItem?.labelPlural;
+
   return (
     <StyledObjectFieldTableRow
       onClick={
@@ -226,11 +250,7 @@ export const SettingsObjectFieldItemTableRow = ({
       <TableCell>
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
-          label={
-            relationType === RelationType.MANY_TO_ONE
-              ? relationObjectMetadataItem?.labelSingular
-              : relationObjectMetadataItem?.labelPlural
-          }
+          label={label}
           labelDetail={
             fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
           }
@@ -254,6 +274,7 @@ export const SettingsObjectFieldItemTableRow = ({
           mode === 'view' ? (
             <SettingsObjectFieldActiveActionDropdown
               isCustomField={fieldMetadataItem.isCustom === true}
+              readonly={readonly}
               fieldMetadataItemId={fieldMetadataItem.id}
               onEdit={() =>
                 navigate(SettingsPath.ObjectFieldEdit, {
@@ -284,6 +305,7 @@ export const SettingsObjectFieldItemTableRow = ({
         ) : mode === 'view' ? (
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={fieldMetadataItem.isCustom === true}
+            readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
             onEdit={() =>
               navigate(SettingsPath.ObjectFieldEdit, {

@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const TWENTY_API_KEY = '<SET_YOUR_TWENTY_API>';
-
 export const main = async (params: { recipient: string }): Promise<object> => {
   const { recipient } = params;
 
@@ -10,7 +8,7 @@ export const main = async (params: { recipient: string }): Promise<object> => {
     url: 'http://localhost:3000/rest/postCards',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${TWENTY_API_KEY}`,
+      Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
     },
     data: { name: recipient ?? 'Unknown' },
   };
@@ -20,8 +18,9 @@ export const main = async (params: { recipient: string }): Promise<object> => {
 
     console.log(`New post card to "${recipient}" created`);
 
-    return { data };
+    return data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };

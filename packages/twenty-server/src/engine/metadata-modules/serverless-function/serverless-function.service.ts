@@ -45,11 +45,6 @@ export class ServerlessFunctionService {
     private readonly auditService: AuditService,
   ) {}
 
-  // @ts-expect-error legacy noImplicitAny
-  async findManyServerlessFunctions(where) {
-    return this.serverlessFunctionRepository.findBy(where);
-  }
-
   async hasServerlessFunctionPublishedVersion(serverlessFunctionId: string) {
     return await this.serverlessFunctionRepository.exists({
       where: {
@@ -101,7 +96,10 @@ export class ServerlessFunctionService {
           id,
           workspaceId,
         },
-        relations: ['serverlessFunctionLayer'],
+        relations: [
+          'serverlessFunctionLayer',
+          'application.applicationVariables',
+        ],
       });
 
     const resultServerlessFunction = await this.serverlessService.execute(

@@ -59,11 +59,11 @@ export const useCreatePageLayoutIframeWidget = (
         }
 
         const widgetId = uuidv4();
-        const defaultSize = { w: 6, h: 6 };
+        const defaultIframeSize = { w: 6, h: 6 };
         const minimumSize = DEFAULT_WIDGET_SIZE.minimum;
         const position = getDefaultWidgetPosition(
           pageLayoutDraggedArea,
-          defaultSize,
+          defaultIframeSize,
           minimumSize,
         );
 
@@ -86,6 +86,8 @@ export const useCreatePageLayoutIframeWidget = (
           y: position.y,
           w: position.w,
           h: position.h,
+          minW: minimumSize.w,
+          minH: minimumSize.h,
         };
 
         const updatedLayouts = getUpdatedTabLayouts(

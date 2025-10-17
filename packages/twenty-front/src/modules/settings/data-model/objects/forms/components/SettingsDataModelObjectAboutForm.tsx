@@ -139,7 +139,11 @@ export const SettingsDataModelObjectAboutForm = ({
             render={({ field: { onChange, value } }) => (
               <IconPicker
                 selectedIconKey={value}
+                disabled={disableEdition}
                 onChange={({ iconKey }) => {
+                  if (disableEdition) {
+                    return;
+                  }
                   onChange(iconKey);
                   onNewDirtyField?.();
                 }}
@@ -170,9 +174,10 @@ export const SettingsDataModelObjectAboutForm = ({
               }}
               onBlur={() => onNewDirtyField?.()}
               disabled={
-                objectMetadataItem &&
-                !objectMetadataItem?.isCustom &&
-                isLabelSyncedWithName
+                disableEdition ||
+                (objectMetadataItem &&
+                  !objectMetadataItem?.isCustom &&
+                  isLabelSyncedWithName)
               }
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
@@ -201,9 +206,10 @@ export const SettingsDataModelObjectAboutForm = ({
               }}
               onBlur={() => onNewDirtyField?.()}
               disabled={
-                objectMetadataItem &&
-                !objectMetadataItem?.isCustom &&
-                isLabelSyncedWithName
+                disableEdition ||
+                (objectMetadataItem &&
+                  !objectMetadataItem?.isCustom &&
+                  isLabelSyncedWithName)
               }
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
@@ -222,6 +228,7 @@ export const SettingsDataModelObjectAboutForm = ({
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             onBlur={() => onNewDirtyField?.()}
+            disabled={disableEdition}
           />
         )}
       />
@@ -326,6 +333,7 @@ export const SettingsDataModelObjectAboutForm = ({
                         description={t`Should changing an object's label also change the API?`}
                         checked={value ?? true}
                         advancedMode
+                        disabled={disableEdition}
                         onChange={(value) => {
                           onChange(value);
                           const isCustomObject =

@@ -18,9 +18,11 @@ export type SettingsDataModelFieldBooleanFormValues = z.infer<
 
 type SettingsDataModelFieldBooleanFormProps = {
   existingFieldMetadataId: string;
+  disabled?: boolean;
 };
 
 export const SettingsDataModelFieldBooleanForm = ({
+  disabled,
   existingFieldMetadataId,
 }: SettingsDataModelFieldBooleanFormProps) => {
   const { t } = useLingui();
@@ -46,6 +48,7 @@ export const SettingsDataModelFieldBooleanForm = ({
             onChange={onChange}
             dropdownId="object-field-default-value-select-boolean"
             dropdownWidth={120}
+            disabled={disabled}
             needIconCheck={false}
             options={BOOLEAN_DATA_MODEL_SELECT_OPTIONS.map((option) => ({
               ...option,
