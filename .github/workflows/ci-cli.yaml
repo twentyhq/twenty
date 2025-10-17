@@ -69,6 +69,8 @@ jobs:
         image: redis
         ports:
           - 6379:6379
+    env:
+      NODE_ENV: test
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
