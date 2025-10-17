@@ -46,6 +46,7 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
+import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -338,6 +339,7 @@ export class LambdaDriver implements ServerlessDriver {
       const executorPayload = {
         params: payload,
         code: compiledCode,
+        env: buildEnvVar(serverlessFunction),
       };
 
       const params: InvokeCommandInput = {

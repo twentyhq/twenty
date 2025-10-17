@@ -204,11 +204,22 @@ export type AppTokenEdge = {
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
+  applicationVariables: Array<ApplicationVariable>;
   description: Scalars['String'];
   id: Scalars['UUID'];
   name: Scalars['String'];
   objects: Array<Object>;
   serverlessFunctions: Array<ServerlessFunction>;
+  version: Scalars['String'];
+};
+
+export type ApplicationVariable = {
+  __typename?: 'ApplicationVariable';
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  isSecret: Scalars['Boolean'];
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type ApprovedAccessDomain = {
@@ -1793,6 +1804,7 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
+  updateOneApplicationVariable: Scalars['Boolean'];
   updateOneCronTrigger: CronTrigger;
   updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
@@ -2497,6 +2509,13 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 
 export type MutationUpdateOneAgentArgs = {
   input: UpdateAgentInput;
+};
+
+
+export type MutationUpdateOneApplicationVariableArgs = {
+  applicationId: Scalars['UUID'];
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 
