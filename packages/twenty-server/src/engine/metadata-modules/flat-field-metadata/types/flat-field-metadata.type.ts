@@ -12,7 +12,7 @@ export const FIELD_METADATA_RELATION_PROPERTIES = [
   'application',
   'viewFilters',
   'viewGroups',
-  'views'
+  'views',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 
 export type FieldMetadataEntityRelationProperties =

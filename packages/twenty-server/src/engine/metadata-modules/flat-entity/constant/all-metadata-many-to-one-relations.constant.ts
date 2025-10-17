@@ -18,40 +18,39 @@ type MetadataNameAndRelations = {
       };
 };
 
-export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY =
-  {
-    fieldMetadata: {
-      objectMetadataId: 'objectMetadata',
-    },
-    objectMetadata: {},
-    view: {
-      kanbanAggregateOperationFieldMetadataId: 'fieldMetadata',
-      calendarFieldMetadataId: 'fieldMetadata',
-      objectMetadataId: 'objectMetadata',
-    },
-    viewField: {
-      viewId: 'view',
-      fieldMetadataId: 'fieldMetadata',
-    },
-    viewGroup: {
-      viewId: 'view',
-      fieldMetadataId: 'fieldMetadata',
-    },
-    index: {
-      objectMetadataId: 'objectMetadata',
-    },
-    serverlessFunction: {},
-    cronTrigger: {
-      serverlessFunctionId: 'serverlessFunction',
-    },
-    databaseEventTrigger: {
-      serverlessFunctionId: 'serverlessFunction',
-    },
-    routeTrigger: {
-      serverlessFunctionId: 'serverlessFunction',
-    },
-    viewFilter: {
-      viewId: 'view',
-      fieldMetadataId: 'fieldMetadata',
-    },
-  } as const satisfies MetadataNameAndRelations;
+export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
+  fieldMetadata: {
+    objectMetadataId: 'objectMetadata',
+  },
+  objectMetadata: {},
+  view: {
+    kanbanAggregateOperationFieldMetadataId: 'fieldMetadata',
+    calendarFieldMetadataId: 'fieldMetadata',
+    objectMetadataId: 'objectMetadata',
+  },
+  viewField: {
+    viewId: 'view',
+    fieldMetadataId: 'fieldMetadata',
+  },
+  viewGroup: {
+    viewId: 'view',
+    fieldMetadataId: 'fieldMetadata',
+  },
+  index: {
+    objectMetadataId: 'objectMetadata',
+  },
+  serverlessFunction: {},
+  cronTrigger: {
+    serverlessFunctionId: 'serverlessFunction',
+  },
+  databaseEventTrigger: {
+    serverlessFunctionId: 'serverlessFunction',
+  },
+  routeTrigger: {
+    serverlessFunctionId: 'serverlessFunction',
+  },
+  viewFilter: {
+    viewId: 'view',
+    fieldMetadataId: 'fieldMetadata',
+  },
+} as const satisfies MetadataNameAndRelations;
