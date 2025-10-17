@@ -25,6 +25,7 @@ import { SEARCH_FIELDS_FOR_COMPANY } from 'src/modules/company/standard-objects/
 import { SEARCH_FIELDS_FOR_CUSTOM_OBJECT } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { SEARCH_FIELDS_FOR_NOTES } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { SEARCH_FIELDS_FOR_OPPORTUNITY } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { SEARCH_FIELDS_FOR_PERSON } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SEARCH_FIELDS_FOR_TASKS } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { SEARCH_FIELDS_FOR_WORKSPACE_MEMBER } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { SEARCH_FIELDS_FOR_WORKFLOW_RUNS } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -39,7 +40,7 @@ const hasAsExpressionSetting = (
   'asExpression' in settings;
 
 @Command({
-  name: 'upgrade:1-9:regenerate-search-vectors',
+  name: 'upgrade:1-10:regenerate-search-vectors',
   description:
     'Regenerate searchVector generated columns using unaccent-aware expressions for every searchable object',
 })
@@ -48,6 +49,7 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
     string,
     FieldTypeAndNameMetadata[]
   > = {
+    [STANDARD_OBJECT_IDS.person]: SEARCH_FIELDS_FOR_PERSON,
     [STANDARD_OBJECT_IDS.company]: SEARCH_FIELDS_FOR_COMPANY,
     [STANDARD_OBJECT_IDS.opportunity]: SEARCH_FIELDS_FOR_OPPORTUNITY,
     [STANDARD_OBJECT_IDS.task]: SEARCH_FIELDS_FOR_TASKS,
@@ -86,63 +88,38 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const isDryRun = Boolean(options.dryRun);
 
+    const searchableObjects = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+        isSearchable: true,
+      },
+      relations: ['fields'],
+    });
+
+    if (searchableObjects.length === 0) {
+      this.logger.log(
+        `No searchable objects found for workspace ${workspaceId}, skipping search vector regeneration`,
+      );
+
+      return;
+    }
+
+    const indexMetadatas = await this.indexMetadataRepository.find({
+      where: {
+        objectMetadataId: In(
+          searchableObjects.map((objectMetadata) => objectMetadata.id),
+        ),
+      },
+      relations: ['indexFieldMetadatas'],
+    });
+
     try {
       await queryRunner.startTransaction();
 
-      const searchableObjects = await this.objectMetadataRepository.find({
-        where: {
-          workspaceId,
-          isSearchable: true,
-        },
-        relations: ['fields'],
-      });
-
-      if (searchableObjects.length === 0) {
-        this.logger.log(
-          `No searchable objects found for workspace ${workspaceId}, skipping search vector regeneration`,
-        );
-
-        await this.handleDryRun(queryRunner, isDryRun);
-
-        return;
-      }
-
-      const indexMetadatas = await this.indexMetadataRepository.find({
-        where: {
-          objectMetadataId: In(
-            searchableObjects.map((objectMetadata) => objectMetadata.id),
-          ),
-        },
-        relations: ['indexFieldMetadatas'],
-      });
-      const indexMetadatasByObjectId = new Map<string, IndexMetadataEntity[]>();
-
-      for (const indexMetadata of indexMetadatas) {
-        const existing = indexMetadatasByObjectId.get(
-          indexMetadata.objectMetadataId,
-        );
-
-        if (existing) {
-          existing.push(indexMetadata);
-        } else {
-          indexMetadatasByObjectId.set(indexMetadata.objectMetadataId, [
-            indexMetadata,
-          ]);
-        }
-      }
-
       for (const objectMetadata of searchableObjects) {
-        if (objectMetadata.standardId === STANDARD_OBJECT_IDS.person) {
-          this.logger.log(
-            `Skipping person object for workspace ${workspaceId} – handled by 1.8 migration`,
-          );
-
+        if (objectMetadata.standardId === STANDARD_OBJECT_IDS.dashboard) {
           continue;
         }
-
-        const fieldsById = new Map(
-          objectMetadata.fields.map((field) => [field.id, field]),
-        );
 
         const searchVectorFieldMetadata = objectMetadata.fields.find(
           (field) => field.name === SEARCH_VECTOR_FIELD.name,
@@ -174,14 +151,14 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
           isCustom: objectMetadata.isCustom,
         });
 
-        const searchVectorIndexes = (
-          indexMetadatasByObjectId.get(objectMetadata.id) ?? []
-        ).filter((indexMetadata) =>
-          indexMetadata.indexFieldMetadatas.some(
-            (indexFieldMetadata) =>
-              indexFieldMetadata.fieldMetadataId ===
-              searchVectorFieldMetadata.id,
-          ),
+        const searchVectorIndexes = indexMetadatas.filter(
+          (indexMetadata) =>
+            indexMetadata.objectMetadataId === objectMetadata.id &&
+            indexMetadata.indexFieldMetadatas.some(
+              (indexFieldMetadata) =>
+                indexFieldMetadata.fieldMetadataId ===
+                searchVectorFieldMetadata.id,
+            ),
         );
 
         for (const indexMetadata of searchVectorIndexes) {
@@ -220,9 +197,10 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
           );
 
           const columns = sortedIndexFields
-            .map(
-              (indexFieldMetadata) =>
-                fieldsById.get(indexFieldMetadata.fieldMetadataId)?.name,
+            .map((indexFieldMetadata) =>
+              objectMetadata.fields.find(
+                (field) => field.id === indexFieldMetadata.fieldMetadataId,
+              )?.name,
             )
             .filter((columnName): columnName is string => Boolean(columnName));
 
@@ -277,32 +255,34 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
     searchVectorFieldMetadata: FieldMetadataEntity;
   }): string | undefined {
     if (objectMetadata.standardId) {
-      const searchFields =
-        this.standardObjectSearchFields[objectMetadata.standardId];
+      const searchFields = this.standardObjectSearchFields[objectMetadata.standardId];
 
       if (searchFields) {
         return getTsVectorColumnExpressionFromFields(searchFields);
       }
-
-      if (objectMetadata.standardId === STANDARD_OBJECT_IDS.person) {
-        return undefined;
-      }
     }
 
     if (objectMetadata.isCustom) {
-      return getTsVectorColumnExpressionFromFields(
-        SEARCH_FIELDS_FOR_CUSTOM_OBJECT,
-      );
+      return getTsVectorColumnExpressionFromFields(SEARCH_FIELDS_FOR_CUSTOM_OBJECT);
     }
 
-    const storedExpression = hasAsExpressionSetting(
+    const storedExpressionFromSettings = hasAsExpressionSetting(
       searchVectorFieldMetadata.settings,
     )
       ? searchVectorFieldMetadata.settings.asExpression
       : undefined;
 
-    if (storedExpression) {
-      return storedExpression;
+    if (storedExpressionFromSettings) {
+      return storedExpressionFromSettings;
+    }
+
+    const storedExpressionFromEntity = Reflect.get(
+      searchVectorFieldMetadata,
+      'asExpression',
+    );
+
+    if (typeof storedExpressionFromEntity === 'string') {
+      return storedExpressionFromEntity;
     }
 
     return undefined;
