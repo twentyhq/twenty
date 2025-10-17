@@ -22,9 +22,6 @@ describe('AgentToolGeneratorService Integration', () => {
       };
 
       jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(context.testAgent as any);
-      jest
         .spyOn(context.roleRepository, 'find')
         .mockResolvedValue([roleWithFullPermissions]);
       jest
@@ -72,9 +69,6 @@ describe('AgentToolGeneratorService Integration', () => {
 
     it('should generate read-only tools for agent with read permissions only', async () => {
       jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(context.testAgent as any);
-      jest
         .spyOn(context.roleRepository, 'find')
         .mockResolvedValue([context.testRole]);
       jest
@@ -118,12 +112,6 @@ describe('AgentToolGeneratorService Integration', () => {
     });
 
     it('should return only http request tool for agent without role', async () => {
-      const agentWithoutRole = { ...context.testAgent, roleId: null };
-
-      jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(agentWithoutRole as any);
-
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
         context.testWorkspaceId,
@@ -140,9 +128,6 @@ describe('AgentToolGeneratorService Integration', () => {
         namePlural: 'workflows',
       };
 
-      jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(context.testAgent as any);
       jest
         .spyOn(context.roleRepository, 'find')
         .mockResolvedValue([context.testRole]);
