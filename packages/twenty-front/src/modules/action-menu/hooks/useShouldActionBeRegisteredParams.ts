@@ -52,9 +52,14 @@ export const useShouldActionBeRegisteredParams = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const hasAnySoftDeleteFilterOnViewFromFilters = useRecoilComponentValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
+  
+  // When viewing a deleted record directly (e.g., through command menu), 
+  // treat it as if we're in a deleted records view
+  const hasAnySoftDeleteFilterOnView = 
+    hasAnySoftDeleteFilterOnViewFromFilters || isDefined(selectedRecord?.deletedAt);
 
   const isShowPage =
     useRecoilComponentValue(contextStoreCurrentViewTypeComponentState) ===
