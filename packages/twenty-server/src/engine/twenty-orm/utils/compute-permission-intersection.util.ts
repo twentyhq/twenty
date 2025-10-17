@@ -1,11 +1,11 @@
 import {
-  type ObjectsPermissionsDeprecated,
+  type ObjectsPermissions,
   type RestrictedFieldPermissions,
 } from 'twenty-shared/types';
 
 export const computePermissionIntersection = (
-  permissionsArray: ObjectsPermissionsDeprecated[],
-): ObjectsPermissionsDeprecated => {
+  permissionsArray: ObjectsPermissions[],
+): ObjectsPermissions => {
   if (permissionsArray.length === 0) {
     return {};
   }
@@ -14,7 +14,7 @@ export const computePermissionIntersection = (
     return permissionsArray[0];
   }
 
-  const result: ObjectsPermissionsDeprecated = {};
+  const result: ObjectsPermissions = {};
 
   const allObjectMetadataIds = new Set<string>();
 
@@ -25,27 +25,32 @@ export const computePermissionIntersection = (
   }
 
   for (const objectMetadataId of allObjectMetadataIds) {
-    let canRead = true;
-    let canUpdate = true;
-    let canSoftDelete = true;
-    let canDestroy = true;
+    let canReadObjectRecords = true;
+    let canUpdateObjectRecords = true;
+    let canSoftDeleteObjectRecords = true;
+    let canDestroyObjectRecords = true;
     const restrictedFields: Record<string, RestrictedFieldPermissions> = {};
 
     for (const permissions of permissionsArray) {
       const objPerm = permissions[objectMetadataId];
 
       if (!objPerm) {
-        canRead = false;
-        canUpdate = false;
-        canSoftDelete = false;
-        canDestroy = false;
+        canReadObjectRecords = false;
+        canUpdateObjectRecords = false;
+        canSoftDeleteObjectRecords = false;
+        canDestroyObjectRecords = false;
         continue;
       }
 
-      canRead = canRead && objPerm.canRead === true;
-      canUpdate = canUpdate && objPerm.canUpdate === true;
-      canSoftDelete = canSoftDelete && objPerm.canSoftDelete === true;
-      canDestroy = canDestroy && objPerm.canDestroy === true;
+      canReadObjectRecords =
+        canReadObjectRecords && objPerm.canReadObjectRecords === true;
+      canUpdateObjectRecords =
+        canUpdateObjectRecords && objPerm.canUpdateObjectRecords === true;
+      canSoftDeleteObjectRecords =
+        canSoftDeleteObjectRecords &&
+        objPerm.canSoftDeleteObjectRecords === true;
+      canDestroyObjectRecords =
+        canDestroyObjectRecords && objPerm.canDestroyObjectRecords === true;
 
       if (objPerm.restrictedFields) {
         for (const [fieldName, fieldPerm] of Object.entries(
@@ -75,10 +80,10 @@ export const computePermissionIntersection = (
     }
 
     result[objectMetadataId] = {
-      canRead,
-      canUpdate,
-      canSoftDelete,
-      canDestroy,
+      canReadObjectRecords,
+      canUpdateObjectRecords,
+      canSoftDeleteObjectRecords,
+      canDestroyObjectRecords,
       restrictedFields,
     };
   }

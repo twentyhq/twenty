@@ -33,10 +33,6 @@ describe('AgentToolGeneratorService Integration', () => {
           data: {
             [context.testRoleId]: {
               [context.testObjectMetadata.id]: {
-                canRead: true,
-                canUpdate: true,
-                canSoftDelete: true,
-                canDestroy: true,
                 canReadObjectRecords: true,
                 canUpdateObjectRecords: true,
                 canSoftDeleteObjectRecords: true,
@@ -80,10 +76,6 @@ describe('AgentToolGeneratorService Integration', () => {
           data: {
             [context.testRoleId]: {
               [context.testObjectMetadata.id]: {
-                canRead: true,
-                canUpdate: false,
-                canSoftDelete: false,
-                canDestroy: false,
                 canReadObjectRecords: true,
                 canUpdateObjectRecords: false,
                 canSoftDeleteObjectRecords: false,
@@ -140,10 +132,6 @@ describe('AgentToolGeneratorService Integration', () => {
           data: {
             [context.testRoleId]: {
               [workflowObject.id]: {
-                canRead: true,
-                canUpdate: true,
-                canSoftDelete: true,
-                canDestroy: false,
                 canReadObjectRecords: true,
                 canUpdateObjectRecords: true,
                 canSoftDeleteObjectRecords: true,

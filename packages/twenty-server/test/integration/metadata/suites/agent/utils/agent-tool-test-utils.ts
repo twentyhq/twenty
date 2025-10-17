@@ -338,10 +338,6 @@ export const setupBasicPermissions = (context: AgentToolTestContext) => {
       data: {
         [context.testRoleId]: {
           [context.testObjectMetadata.id]: {
-            canRead: true,
-            canUpdate: true,
-            canSoftDelete: true,
-            canDestroy: false,
             canReadObjectRecords: true,
             canUpdateObjectRecords: true,
             canSoftDeleteObjectRecords: true,

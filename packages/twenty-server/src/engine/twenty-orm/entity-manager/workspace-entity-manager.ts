@@ -1,5 +1,8 @@
 import isEmpty from 'lodash.isempty';
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import {
+  type ObjectsPermissions,
+  type ObjectsPermissionsByRoleId,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type DeleteResult,
@@ -62,7 +65,7 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
-  objectRecordsPermissions?: ObjectsPermissionsDeprecated;
+  objectRecordsPermissions?: ObjectsPermissions;
 };
 
 export class WorkspaceEntityManager extends EntityManager {
@@ -87,8 +90,8 @@ export class WorkspaceEntityManager extends EntityManager {
 
   private getPermissionsForRole(
     roleId: string,
-    permissionsPerRoleId: Record<string, ObjectsPermissionsDeprecated>,
-  ): ObjectsPermissionsDeprecated {
+    permissionsPerRoleId: ObjectsPermissionsByRoleId,
+  ): ObjectsPermissions {
     if (!isDefined(permissionsPerRoleId?.[roleId])) {
       throw new PermissionsException(
         `No permissions found for role in datasource (roleId: ${roleId})`,
@@ -155,7 +158,7 @@ export class WorkspaceEntityManager extends EntityManager {
     queryRunner?: QueryRunner,
     options: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
+      objectRecordsPermissions?: ObjectsPermissions;
     } = {
       shouldBypassPermissionChecks: false,
       objectRecordsPermissions: {},
@@ -223,7 +226,7 @@ export class WorkspaceEntityManager extends EntityManager {
     conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
+      objectRecordsPermissions?: ObjectsPermissions;
     },
     selectedColumns: string[] | '*' = '*',
   ): Promise<InsertResult> {
@@ -412,7 +415,7 @@ export class WorkspaceEntityManager extends EntityManager {
     operationType: OperationType;
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
+      objectRecordsPermissions?: ObjectsPermissions;
     };
     selectedColumns: string[];
     updatedColumns?: string[];

@@ -80,7 +80,7 @@ export class ToolService {
         return;
       }
 
-      if (objectPermission.canUpdate) {
+      if (objectPermission.canUpdateObjectRecords) {
         tools[`create_${objectMetadata.nameSingular}`] = {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           inputSchema: getRecordInputSchema(objectMetadata),
@@ -112,7 +112,7 @@ export class ToolService {
         };
       }
 
-      if (objectPermission.canRead) {
+      if (objectPermission.canReadObjectRecords) {
         tools[`find_${objectMetadata.nameSingular}`] = {
           description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination. Returns an array of matching records with their full data.`,
           inputSchema: generateFindToolSchema(objectMetadata),
@@ -145,7 +145,7 @@ export class ToolService {
         };
       }
 
-      if (objectPermission.canSoftDelete) {
+      if (objectPermission.canSoftDeleteObjectRecords) {
         tools[`soft_delete_${objectMetadata.nameSingular}`] = {
           description: `Soft delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record remains in the database but is hidden from normal queries. This is reversible and preserves all data. Use this for temporary removal.`,
           inputSchema: generateSoftDeleteToolSchema(),
