@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const destroyViewOperationFactory = ({
+export const destroyCoreViewQueryFactory = ({
   viewId,
 }: {
   viewId: string;

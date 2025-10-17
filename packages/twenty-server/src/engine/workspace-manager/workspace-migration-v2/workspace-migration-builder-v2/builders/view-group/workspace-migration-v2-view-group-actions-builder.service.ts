@@ -59,6 +59,24 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatViewGroupToValidate.fieldMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+    });
+
+    const updatedFlatFieldMetadataMaps =
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...flatFieldMetadata,
+          viewGroupIds: [
+            ...flatFieldMetadata.viewGroupIds,
+            flatViewGroupToValidate.id,
+          ],
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      });
+
     return {
       status: 'success',
       action: {
@@ -66,7 +84,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
         viewGroup: flatViewGroupToValidate,
       },
       dependencyOptimisticFlatEntityMaps: {
-        ...dependencyOptimisticFlatEntityMaps,
+        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
         flatViewMaps: updatedFlatViewMaps,
       },
     };
@@ -112,6 +130,24 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
         })
       : dependencyOptimisticFlatEntityMaps.flatViewMaps;
 
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewGroupToValidate.fieldMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+    });
+
+    const updatedFlatFieldMetadataMaps = isDefined(flatFieldMetadata)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...flatFieldMetadata,
+            viewGroupIds: flatFieldMetadata.viewGroupIds.filter(
+              (id) => id !== flatViewGroupToValidate.id,
+            ),
+          },
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps;
+
     return {
       status: 'success',
       action: {
@@ -119,7 +155,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
         viewGroupId: flatViewGroupToValidate.id,
       },
       dependencyOptimisticFlatEntityMaps: {
-        ...dependencyOptimisticFlatEntityMaps,
+        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
         flatViewMaps: updatedFlatViewMaps,
       },
     };

@@ -1,14 +1,16 @@
 import gql from 'graphql-tag';
 import { VIEW_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 
-export const updateViewOperationFactory = ({
+import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
+
+export const updateCoreViewQueryFactory = ({
   gqlFields = VIEW_GQL_FIELDS,
   viewId,
-  data = {},
+  input,
 }: {
   gqlFields?: string;
   viewId: string;
-  data?: object;
+  input: UpdateViewInput;
 }) => ({
   query: gql`
     mutation UpdateCoreView($id: String!, $input: UpdateViewInput!) {
@@ -19,6 +21,6 @@ export const updateViewOperationFactory = ({
   `,
   variables: {
     id: viewId,
-    input: data,
+    input,
   },
 });

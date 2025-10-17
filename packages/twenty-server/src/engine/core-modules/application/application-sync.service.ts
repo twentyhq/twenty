@@ -28,6 +28,7 @@ import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/type
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { ApplicationVariableService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -35,6 +36,7 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly applicationVariableService: ApplicationVariableService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
@@ -106,7 +108,7 @@ export class ApplicationSyncService {
           workspaceId,
         );
 
-      return await this.applicationService.create({
+      const application = await this.applicationService.create({
         universalIdentifier: manifest.universalIdentifier,
         name: manifest.name,
         description: manifest.description,
@@ -115,6 +117,13 @@ export class ApplicationSyncService {
         serverlessFunctionLayerId: serverlessFunctionLayer.id,
         workspaceId,
       });
+
+      await this.applicationVariableService.upsertManyApplicationVariables({
+        env: manifest.env,
+        applicationId: application.id,
+      });
+
+      return application;
     }
 
     await this.serverlessFunctionLayerService.update(
@@ -129,6 +138,11 @@ export class ApplicationSyncService {
       name: manifest.name,
       description: manifest.description,
       version: manifest.version,
+    });
+
+    await this.applicationVariableService.upsertManyApplicationVariables({
+      env: manifest.env,
+      applicationId: application.id,
     });
 
     return application;

@@ -13,6 +13,9 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
+import { FillNullServerlessFunctionLayerIdCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-fill-null-serverless-function-layer-id.command';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 
 @Module({
   imports: [
@@ -21,6 +24,8 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
       FieldMetadataEntity,
       ObjectMetadataEntity,
       IndexMetadataEntity,
+      ServerlessFunctionEntity,
+      ServerlessFunctionLayerEntity,
     ]),
     IndexMetadataModule,
     WorkspaceMigrationRunnerModule,
@@ -31,12 +36,14 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     MigrateWorkflowStepFilterOperandValueCommand,
     MigrateChannelSyncStagesCommand,
     DeduplicateUniqueFieldsCommand,
+    FillNullServerlessFunctionLayerIdCommand,
     RegeneratePersonSearchVectorWithPhonesCommand,
   ],
   exports: [
     MigrateChannelSyncStagesCommand,
     MigrateWorkflowStepFilterOperandValueCommand,
     DeduplicateUniqueFieldsCommand,
+    FillNullServerlessFunctionLayerIdCommand,
     RegeneratePersonSearchVectorWithPhonesCommand,
   ],
 })

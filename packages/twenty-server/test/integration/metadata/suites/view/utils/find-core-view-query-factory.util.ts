@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { VIEW_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 
-export const findViewOperationFactory = ({
+export const findCoreViewQueryFactory = ({
   gqlFields = VIEW_GQL_FIELDS,
   viewId,
 }: {
