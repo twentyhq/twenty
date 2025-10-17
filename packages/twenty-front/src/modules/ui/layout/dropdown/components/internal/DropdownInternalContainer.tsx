@@ -153,7 +153,6 @@ export const DropdownInternalContainer = ({
     }
   `;
 
-
   return (
     <>
       {hotkey && onHotkeyTriggered && (
@@ -181,6 +180,6 @@ export const DropdownInternalContainer = ({
           </OverlayContainer>
         </StyledDropdownContentContainer>
       </FloatingPortal>
-      </>
-      );
-    };
+    </>
+  );
+};
