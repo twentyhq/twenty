@@ -1,16 +1,17 @@
 import { randomUUID } from 'crypto';
 
+import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-fields.constants';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { createViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/create-view-filter-group-operation-factory.util';
-import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { ViewFilterOperand } from 'twenty-shared/types';
 import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
+import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -418,17 +419,16 @@ describe('group-by resolvers (integration)', () => {
       );
 
       // create a view with a filter: city eq cityToKeep
-      const createViewResponse = await makeGraphqlAPIRequest(
-        createViewOperationFactory({
-          data: {
-            name: 'People View City Keep',
-            objectMetadataId: personObjectMetadataId,
-            icon: 'Icon123',
-          },
-        }),
-      );
+      const { data: createViewData } = await createOneCoreView({
+        input: {
+          name: 'People View City Keep',
+          objectMetadataId: personObjectMetadataId,
+          icon: 'Icon123',
+        },
+        expectToFail: false,
+      });
 
-      viewId = createViewResponse.body.data.createCoreView.id as string;
+      viewId = createViewData.createCoreView.id;
 
       // create a filter group and a filter for the view
       const viewFilterGroupResponse = await makeGraphqlAPIRequest(
@@ -509,18 +509,17 @@ describe('group-by resolvers (integration)', () => {
       );
 
       // create a view with any field filter
-      const createViewResponse = await makeGraphqlAPIRequest(
-        createViewOperationFactory({
-          data: {
-            name: 'People View City Keep',
-            objectMetadataId: personObjectMetadataId,
-            icon: 'Icon123',
-            anyFieldFilterValue: cityA,
-          },
-        }),
-      );
+      const { data: createViewData } = await createOneCoreView({
+        input: {
+          name: 'People View City Keep',
+          objectMetadataId: personObjectMetadataId,
+          icon: 'Icon123',
+          anyFieldFilterValue: cityA,
+        },
+        expectToFail: false,
+      });
 
-      viewId = createViewResponse.body.data.createCoreView.id as string;
+      viewId = createViewData.createCoreView.id;
 
       const response = await makeGraphqlAPIRequest(
         groupByOperationFactory({
@@ -545,6 +544,192 @@ describe('group-by resolvers (integration)', () => {
           expect.objectContaining({ groupByDimensionValues: [cityB] }),
         ]),
       );
+    });
+  });
+
+  describe('omitNullValues', () => {
+    describe('numeric aggregates', () => {
+      const zeroGroupCompanyId1 = randomUUID();
+      const zeroGroupCompanyId2 = randomUUID();
+      const positiveGroupCompanyId = randomUUID();
+      const zeroCity = 'ZeroCity';
+      const positiveCity = 'PositiveCity';
+
+      beforeAll(async () => {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: zeroGroupCompanyId1,
+              name: 'Zero City One',
+              address: { addressCity: zeroCity },
+              employees: 0,
+            },
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: zeroGroupCompanyId2,
+              name: 'Zero City Two',
+              address: { addressCity: zeroCity },
+              employees: 0,
+            },
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: {
+              id: positiveGroupCompanyId,
+              name: 'Positive City One',
+              address: { addressCity: positiveCity },
+              employees: 8,
+            },
+          }),
+        );
+      });
+
+      afterAll(async () => {
+        for (const id of [
+          zeroGroupCompanyId1,
+          zeroGroupCompanyId2,
+          positiveGroupCompanyId,
+        ]) {
+          await makeGraphqlAPIRequest(
+            destroyOneOperationFactory({
+              objectMetadataSingularName: 'company',
+              gqlFields: 'id',
+              recordId: id,
+            }),
+          );
+        }
+      });
+
+      it('filters out groups with zero numeric aggregates when enabled', async () => {
+        const baseOperation = {
+          objectMetadataSingularName: 'company',
+          objectMetadataPluralName: 'companies',
+          groupBy: [{ address: { addressCity: true } }],
+          gqlFields: `
+            sumEmployees
+          `,
+        };
+
+        const responseWithoutFilter = await makeGraphqlAPIRequest(
+          groupByOperationFactory(baseOperation),
+        );
+
+        expect(responseWithoutFilter.body.errors).toBeUndefined();
+
+        const groupsWithoutFilter =
+          responseWithoutFilter.body.data.companiesGroupBy;
+
+        const zeroAggregateGroup = groupsWithoutFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === zeroCity,
+        );
+
+        expect(zeroAggregateGroup).toBeDefined();
+        expect(zeroAggregateGroup.sumEmployees).toBe(0);
+
+        const responseWithFilter = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            ...baseOperation,
+            omitNullValues: true,
+          }),
+        );
+
+        expect(responseWithFilter.body.errors).toBeUndefined();
+
+        const groupsWithFilter = responseWithFilter.body.data.companiesGroupBy;
+
+        expect(
+          groupsWithFilter.find(
+            (group: any) => group.groupByDimensionValues?.[0] === zeroCity,
+          ),
+        ).toBeUndefined();
+
+        const positiveAggregateGroup = groupsWithFilter.find(
+          (group: any) => group.groupByDimensionValues?.[0] === positiveCity,
+        );
+
+        expect(positiveAggregateGroup).toBeDefined();
+        expect(positiveAggregateGroup.sumEmployees).toBeGreaterThan(0);
+      });
+    });
+
+    describe('non-numeric aggregates', () => {
+      const dateCityPersonId1 = randomUUID();
+      const dateCityPersonId2 = randomUUID();
+      const dateCity = 'DateCity';
+
+      beforeAll(async () => {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            data: {
+              id: dateCityPersonId1,
+              name: { firstName: 'Date', lastName: 'One' },
+              city: dateCity,
+              createdAt: '2025-04-01T00:00:00.000Z',
+            },
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            data: {
+              id: dateCityPersonId2,
+              name: { firstName: 'Date', lastName: 'Two' },
+              city: dateCity,
+              createdAt: '2025-04-02T00:00:00.000Z',
+            },
+          }),
+        );
+      });
+
+      afterAll(async () => {
+        for (const id of [dateCityPersonId1, dateCityPersonId2]) {
+          await makeGraphqlAPIRequest(
+            destroyOneOperationFactory({
+              objectMetadataSingularName: 'person',
+              gqlFields: 'id',
+              recordId: id,
+            }),
+          );
+        }
+      });
+
+      it('does not throw error for date aggregates when enabled', async () => {
+        const response = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            objectMetadataSingularName: 'person',
+            objectMetadataPluralName: 'people',
+            groupBy: [{ city: true }],
+            gqlFields: `
+              minCreatedAt
+            `,
+            omitNullValues: true,
+          }),
+        );
+
+        expect(response.body.errors).toBeUndefined();
+
+        const groups = response.body.data.peopleGroupBy;
+
+        const dateCityGroup = groups.find(
+          (group: any) => group.groupByDimensionValues?.[0] === dateCity,
+        );
+
+        expect(dateCityGroup).toBeDefined();
+        expect(dateCityGroup.minCreatedAt).toBe('2025-04-01T00:00:00.000Z');
+      });
     });
   });
 });

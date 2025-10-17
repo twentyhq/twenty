@@ -1,3 +1,4 @@
+import isEmpty from 'lodash.isempty';
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import {
@@ -31,10 +32,36 @@ export const deleteFlatEntityFromFlatEntityMapsOrThrow = <
     flatEntityMaps.idByUniversalIdentifier,
   ).filter(([_universalIdentifier, id]) => id !== entityToDeleteId);
 
+  const updatedUniversalIdentifiersByApplicationIdEntries = Object.entries(
+    flatEntityMaps.universalIdentifiersByApplicationId,
+  )
+    .map(([applicationId, universalIdentifiers]) => {
+      const stillPresentUniversalIdentifiers = universalIdentifiers?.filter(
+        (universalIdentifier) =>
+          updatedIdByUniversalIdentifierEntries.some(
+            ([existingUniversalIdentifier]) =>
+              existingUniversalIdentifier === universalIdentifier,
+          ),
+      );
+
+      if (
+        isDefined(stillPresentUniversalIdentifiers) ||
+        isEmpty(stillPresentUniversalIdentifiers)
+      ) {
+        return undefined;
+      }
+
+      return [applicationId, stillPresentUniversalIdentifiers];
+    })
+    .filter(isDefined);
+
   return {
     byId: removePropertiesFromRecord(flatEntityMaps.byId, [entityToDeleteId]),
     idByUniversalIdentifier: Object.fromEntries(
       updatedIdByUniversalIdentifierEntries,
+    ),
+    universalIdentifiersByApplicationId: Object.fromEntries(
+      updatedUniversalIdentifiersByApplicationIdEntries,
     ),
   };
 };

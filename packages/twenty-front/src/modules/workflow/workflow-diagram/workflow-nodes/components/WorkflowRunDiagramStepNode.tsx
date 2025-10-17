@@ -3,11 +3,14 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowRunDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
 import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
@@ -19,7 +22,8 @@ import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/wo
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
-import { useTheme } from '@emotion/react';
+import { getNodeIterationCount } from '@/workflow/workflow-diagram/workflow-nodes/utils/getNodeIterationCount';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
 import { useContext } from 'react';
@@ -33,7 +37,7 @@ const StyledNodeLabelWithCounterPart = styled(WorkflowNodeLabelWithCounterPart)`
   column-gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledNodeCounter = styled.div`
+const StyledStatusIconsContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
@@ -52,6 +56,25 @@ const StyledColorIcon = styled.div<{
   justify-content: center;
   width: 14px;
   background: ${({ color }) => color};
+`;
+
+const StyledIterationCounter = styled.div<{
+  runStatus?: WorkflowRunStepStatus;
+}>`
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+
+  ${({ theme, runStatus }) => {
+    const colors = getWorkflowDiagramColors({ theme, runStatus });
+    return css`
+      color: ${colors.unselected.color};
+    `;
+  }}
+`;
+
+const StyledRightPartContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const WorkflowRunDiagramStepNode = ({
@@ -82,6 +105,15 @@ export const WorkflowRunDiagramStepNode = ({
   const setCommandMenuNavigationStack = useSetRecoilState(
     commandMenuNavigationStackState,
   );
+
+  const workflowRun = useWorkflowRun({ workflowRunId });
+
+  const stepInfo = workflowRun?.state?.stepInfos[data.stepId];
+
+  const iterationCount =
+    data.nodeType === 'action' && isDefined(stepInfo)
+      ? getNodeIterationCount({ stepInfo })
+      : 0;
 
   const handleClick = () => {
     if (!isDefined(workflowId)) {
@@ -122,29 +154,37 @@ export const WorkflowRunDiagramStepNode = ({
               {capitalize(data.nodeType)}
             </WorkflowNodeLabel>
 
-            {(data.runStatus === StepStatus.SUCCESS ||
-              data.runStatus === StepStatus.STOPPED) && (
-              <StyledNodeCounter>
-                <StyledColorIcon color={theme.tag.background.turquoise}>
-                  <IconCheck color={theme.tag.text.turquoise} size={14} />
-                </StyledColorIcon>
-              </StyledNodeCounter>
-            )}
+            <StyledRightPartContainer>
+              {iterationCount > 0 && (
+                <StyledIterationCounter runStatus={data.runStatus}>
+                  {iterationCount}
+                </StyledIterationCounter>
+              )}
 
-            {data.runStatus === StepStatus.FAILED && (
-              <StyledNodeCounter>
-                <StyledColorIcon color={theme.tag.background.red}>
-                  <IconX color={theme.tag.text.red} size={14} />
-                </StyledColorIcon>
-              </StyledNodeCounter>
-            )}
+              {(data.runStatus === StepStatus.SUCCESS ||
+                data.runStatus === StepStatus.STOPPED) && (
+                <StyledStatusIconsContainer>
+                  <StyledColorIcon color={theme.tag.background.turquoise}>
+                    <IconCheck color={theme.tag.text.turquoise} size={14} />
+                  </StyledColorIcon>
+                </StyledStatusIconsContainer>
+              )}
 
-            {(data.runStatus === StepStatus.RUNNING ||
-              data.runStatus === StepStatus.PENDING) && (
-              <StyledNodeCounter>
-                <Loader color="yellow" />
-              </StyledNodeCounter>
-            )}
+              {data.runStatus === StepStatus.FAILED && (
+                <StyledStatusIconsContainer>
+                  <StyledColorIcon color={theme.tag.background.red}>
+                    <IconX color={theme.tag.text.red} size={14} />
+                  </StyledColorIcon>
+                </StyledStatusIconsContainer>
+              )}
+
+              {(data.runStatus === StepStatus.RUNNING ||
+                data.runStatus === StepStatus.PENDING) && (
+                <StyledStatusIconsContainer>
+                  <Loader color="yellow" />
+                </StyledStatusIconsContainer>
+              )}
+            </StyledRightPartContainer>
           </StyledNodeLabelWithCounterPart>
 
           <WorkflowNodeTitle runStatus={data.runStatus}>

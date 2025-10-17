@@ -12,7 +12,7 @@ import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-mana
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   workspaceId: string;
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'id'>;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'applicationId'>;
 };
 
 export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
@@ -21,13 +21,14 @@ export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
 // This could be replaced totally by an import schema + its transpilation when it's ready
 export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   workspaceId,
-  flatObjectMetadata: { id: objectMetadataId },
+  flatObjectMetadata: { id: objectMetadataId, applicationId },
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
   const createdAt = new Date();
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
     type: FieldMetadataType.UUID,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: true,
     objectMetadataId,
@@ -47,6 +48,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: 'uuid',
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -56,12 +58,14 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const nameField: FlatFieldMetadata<FieldMetadataType.TEXT> = {
     type: FieldMetadataType.TEXT,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -81,6 +85,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: false,
     defaultValue: "''",
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -90,12 +95,14 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const createdAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -115,6 +122,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: 'now',
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -124,12 +132,14 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const updatedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -149,6 +159,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: 'now',
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -158,12 +169,14 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const deletedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -183,6 +196,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: null,
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -192,12 +206,14 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const createdByField: FlatFieldMetadata<FieldMetadataType.ACTOR> = {
     type: FieldMetadataType.ACTOR,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -217,7 +233,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: { name: "''", source: "'MANUAL'" },
-
+    viewFilterIds: [],
     createdAt,
     updatedAt: createdAt,
     options: null,
@@ -226,12 +242,14 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const positionField: FlatFieldMetadata<FieldMetadataType.POSITION> = {
     type: FieldMetadataType.POSITION,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -251,6 +269,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: 0,
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -260,11 +279,13 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
     type: FieldMetadataType.TS_VECTOR,
     viewFieldIds: [],
+    viewGroupIds: [],
     id: v4(),
     isLabelSyncedWithName: false,
     isUnique: false,
@@ -285,6 +306,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: null,
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -297,6 +319,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
       generatedType: 'STORED',
     },
     morphId: null,
+    applicationId: applicationId ?? null,
   };
 
   return {

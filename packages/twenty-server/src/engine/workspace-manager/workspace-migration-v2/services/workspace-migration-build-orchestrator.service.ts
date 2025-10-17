@@ -127,6 +127,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
                   ...flatFieldMetadataMaps?.from.idByUniversalIdentifier,
                   ...flatFieldMetadataMaps?.to.idByUniversalIdentifier,
                 },
+                universalIdentifiersByApplicationId: {
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
+                    ?.universalIdentifiersByApplicationId,
+                  ...flatFieldMetadataMaps?.from
+                    .universalIdentifiersByApplicationId,
+                  ...flatFieldMetadataMaps?.to
+                    .universalIdentifiersByApplicationId,
+                },
               },
             },
             ///

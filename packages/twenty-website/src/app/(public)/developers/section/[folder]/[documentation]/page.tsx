@@ -7,7 +7,7 @@ import { formatSlug } from '@/shared-utils/formatSlug';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata(props: PageProps<'/developers/section/[folder]/[documentation]'>): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ folder: string; documentation: string }> }): Promise<Metadata> {
   const { folder, documentation } = await props.params;
   const basePath = `/src/content/developers/${folder}`;
   const formattedSlug = formatSlug(documentation);
@@ -18,7 +18,7 @@ export async function generateMetadata(props: PageProps<'/developers/section/[fo
   };
 }
 
-export default async function DocsSlug(props: PageProps<'/developers/section/[folder]/[documentation]'>) {
+export default async function DocsSlug(props: { params: Promise<{ folder: string; documentation: string }> }) {
   const { folder, documentation } = await props.params;
   const basePath = `/src/content/developers/${folder}`;
   const mainPost = await fetchArticleFromSlug(documentation, basePath);

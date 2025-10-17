@@ -1,8 +1,5 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -16,7 +13,6 @@ import { CreateAgentHandoffInput } from 'src/engine/metadata-modules/agent/dtos/
 import { RemoveAgentHandoffInput } from 'src/engine/metadata-modules/agent/dtos/remove-agent-handoff.input';
 
 import { AgentHandoffService } from './agent-handoff.service';
-import { AgentEntity } from './agent.entity';
 import { AgentService } from './agent.service';
 
 import { AgentHandoffDTO } from './dtos/agent-handoff.dto';
@@ -29,8 +25,6 @@ import { UpdateAgentInput } from './dtos/update-agent.input';
 @Resolver()
 export class AgentResolver {
   constructor(
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentService: AgentService,
     private readonly agentHandoffService: AgentHandoffService,
   ) {}
