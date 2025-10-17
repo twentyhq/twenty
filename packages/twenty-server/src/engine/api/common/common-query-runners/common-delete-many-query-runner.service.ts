@@ -30,7 +30,7 @@ import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -40,7 +40,6 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<ObjectRecord[]> {
     this.validate(args, objectMetadataItemWithFieldMaps);
-    const authContext = toValidateAuthContext;
 
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
