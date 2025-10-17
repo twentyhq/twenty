@@ -21,38 +21,22 @@ import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import {
-  SEARCH_FIELDS_FOR_COMPANY,
-} from 'src/modules/company/standard-objects/company.workspace-entity';
-import {
-  SEARCH_FIELDS_FOR_CUSTOM_OBJECT,
-} from 'src/engine/twenty-orm/custom.workspace-entity';
-import {
-  SEARCH_FIELDS_FOR_NOTES,
-} from 'src/modules/note/standard-objects/note.workspace-entity';
-import {
-  SEARCH_FIELDS_FOR_OPPORTUNITY,
-} from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
-import {
-  SEARCH_FIELDS_FOR_TASKS,
-} from 'src/modules/task/standard-objects/task.workspace-entity';
-import {
-  SEARCH_FIELDS_FOR_WORKSPACE_MEMBER,
-} from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import {
-  SEARCH_FIELDS_FOR_WORKFLOW_RUNS,
-} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import {
-  SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS,
-} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import {
-  SEARCH_FIELDS_FOR_WORKFLOWS,
-} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { SEARCH_FIELDS_FOR_COMPANY } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { SEARCH_FIELDS_FOR_CUSTOM_OBJECT } from 'src/engine/twenty-orm/custom.workspace-entity';
+import { SEARCH_FIELDS_FOR_NOTES } from 'src/modules/note/standard-objects/note.workspace-entity';
+import { SEARCH_FIELDS_FOR_OPPORTUNITY } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { SEARCH_FIELDS_FOR_TASKS } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { SEARCH_FIELDS_FOR_WORKSPACE_MEMBER } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { SEARCH_FIELDS_FOR_WORKFLOW_RUNS } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { SEARCH_FIELDS_FOR_WORKFLOWS } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 const hasAsExpressionSetting = (
   settings: FieldMetadataEntity['settings'],
 ): settings is { asExpression?: string } =>
-  typeof settings === 'object' && settings !== null && 'asExpression' in settings;
+  typeof settings === 'object' &&
+  settings !== null &&
+  'asExpression' in settings;
 
 @Command({
   name: 'upgrade:1-9:regenerate-search-vectors',
@@ -60,7 +44,10 @@ const hasAsExpressionSetting = (
     'Regenerate searchVector generated columns using unaccent-aware expressions for every searchable object',
 })
 export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
-  private readonly standardObjectSearchFields: Record<string, FieldTypeAndNameMetadata[]> = {
+  private readonly standardObjectSearchFields: Record<
+    string,
+    FieldTypeAndNameMetadata[]
+  > = {
     [STANDARD_OBJECT_IDS.company]: SEARCH_FIELDS_FOR_COMPANY,
     [STANDARD_OBJECT_IDS.opportunity]: SEARCH_FIELDS_FOR_OPPORTUNITY,
     [STANDARD_OBJECT_IDS.task]: SEARCH_FIELDS_FOR_TASKS,
@@ -93,6 +80,7 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
     await this.ensureUnaccentFunction();
 
     const queryRunner = this.coreDataSource.createQueryRunner();
+
     await queryRunner.connect();
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
@@ -128,12 +116,16 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
       const indexMetadatasByObjectId = new Map<string, IndexMetadataEntity[]>();
 
       for (const indexMetadata of indexMetadatas) {
-        const existing = indexMetadatasByObjectId.get(indexMetadata.objectMetadataId);
+        const existing = indexMetadatasByObjectId.get(
+          indexMetadata.objectMetadataId,
+        );
 
         if (existing) {
           existing.push(indexMetadata);
         } else {
-          indexMetadatasByObjectId.set(indexMetadata.objectMetadataId, [indexMetadata]);
+          indexMetadatasByObjectId.set(indexMetadata.objectMetadataId, [
+            indexMetadata,
+          ]);
         }
       }
 
@@ -180,11 +172,14 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
           isCustom: objectMetadata.isCustom,
         });
 
-        const searchVectorIndexes = (indexMetadatasByObjectId.get(objectMetadata.id) ?? []).filter(
-          (indexMetadata) =>
-            indexMetadata.indexFieldMetadatas.some(
-              (indexFieldMetadata) => indexFieldMetadata.fieldMetadataId === searchVectorFieldMetadata.id,
-            ),
+        const searchVectorIndexes = (
+          indexMetadatasByObjectId.get(objectMetadata.id) ?? []
+        ).filter((indexMetadata) =>
+          indexMetadata.indexFieldMetadatas.some(
+            (indexFieldMetadata) =>
+              indexFieldMetadata.fieldMetadataId ===
+              searchVectorFieldMetadata.id,
+          ),
         );
 
         for (const indexMetadata of searchVectorIndexes) {
@@ -223,7 +218,10 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
           );
 
           const columns = sortedIndexFields
-            .map((indexFieldMetadata) => fieldsById.get(indexFieldMetadata.fieldMetadataId)?.name)
+            .map(
+              (indexFieldMetadata) =>
+                fieldsById.get(indexFieldMetadata.fieldMetadataId)?.name,
+            )
             .filter((columnName): columnName is string => Boolean(columnName));
 
           if (columns.length === 0) {
@@ -277,7 +275,8 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
     searchVectorFieldMetadata: FieldMetadataEntity;
   }): string | undefined {
     if (objectMetadata.standardId) {
-      const searchFields = this.standardObjectSearchFields[objectMetadata.standardId];
+      const searchFields =
+        this.standardObjectSearchFields[objectMetadata.standardId];
 
       if (searchFields) {
         return getTsVectorColumnExpressionFromFields(searchFields);
@@ -289,7 +288,9 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
     }
 
     if (objectMetadata.isCustom) {
-      return getTsVectorColumnExpressionFromFields(SEARCH_FIELDS_FOR_CUSTOM_OBJECT);
+      return getTsVectorColumnExpressionFromFields(
+        SEARCH_FIELDS_FOR_CUSTOM_OBJECT,
+      );
     }
 
     const storedExpression = hasAsExpressionSetting(
