@@ -174,6 +174,40 @@ export const getUpdateOneResponse200 = (
   };
 };
 
+export const getDeleteManyResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'namePlural'>,
+  fromMetadata = false,
+) => {
+  const one = fromMetadata ? 'One' : '';
+
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`delete${one}${capitalize(item.namePlural)}`]: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'string',
+                      format: 'uuid',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
 export const getDeleteResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
   fromMetadata = false,

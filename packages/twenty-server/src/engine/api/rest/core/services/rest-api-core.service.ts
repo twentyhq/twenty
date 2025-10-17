@@ -113,9 +113,9 @@ export class RestApiCoreService {
     if (isCommonApiEnabled && !isSoftDelete && !isDefined(recordId))
       return await this.restApiDestroyManyHandler.handle(request);
 
-    if (isCommonApiEnabled && isSoftDelete && !isDefined(recordId))
-      return await this.restApiDeleteOneHandler.handle(request);
     if (isCommonApiEnabled && isSoftDelete && isDefined(recordId))
+      return await this.restApiDeleteOneHandler.handle(request);
+    if (isCommonApiEnabled && isSoftDelete && !isDefined(recordId))
       return await this.restApiDeleteManyHandler.handle(request);
 
     if (!isCommonApiEnabled && !isSoftDelete && isDefined(recordId))

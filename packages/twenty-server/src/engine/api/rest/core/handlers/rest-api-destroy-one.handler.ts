@@ -7,7 +7,6 @@ import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api
 
 import { CommonDestroyOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
@@ -22,7 +21,7 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
 
   async commonHandle(request: AuthenticatedRequest) {
     try {
-      const { id, depth } = this.parseRequestArgs(request);
+      const { id } = this.parseRequestArgs(request);
 
       const {
         authContext,
@@ -31,7 +30,6 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
       } = await this.buildCommonOptions(request);
 
       const selectedFieldsResult = await this.computeSelectedFields({
-        depth,
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
         authContext,
@@ -66,7 +64,6 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
 
     return {
       id,
-      depth: parseDepthRestRequest(request),
     };
   }
 
