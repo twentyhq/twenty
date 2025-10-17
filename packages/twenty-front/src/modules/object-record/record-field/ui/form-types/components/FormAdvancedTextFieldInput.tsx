@@ -84,7 +84,7 @@ type FormAdvancedTextFieldInputProps = {
   onImageUploadError?: (error: Error, file: File) => void;
   enableFullScreen?: boolean;
   fullScreenBreadcrumbs?: BreadcrumbProps['links'];
-  maxHeight: number;
+  minHeight: number;
   maxWidth: number;
 };
 
@@ -101,7 +101,7 @@ export const FormAdvancedTextFieldInput = ({
   onImageUploadError,
   enableFullScreen = true,
   fullScreenBreadcrumbs,
-  maxHeight,
+  minHeight,
   maxWidth,
 }: FormAdvancedTextFieldInputProps) => {
   const instanceId = useId();
@@ -183,7 +183,7 @@ export const FormAdvancedTextFieldInput = ({
             <FormAdvancedTextFieldEditor
               editor={editor}
               readonly={readonly}
-              maxHeight={maxHeight}
+              minHeight={minHeight}
               maxWidth={maxWidth}
             />
           </StyledFullScreenEditorContainer>
@@ -207,7 +207,7 @@ export const FormAdvancedTextFieldInput = ({
               <FormAdvancedTextFieldEditor
                 editor={editor}
                 readonly={readonly}
-                maxHeight={maxHeight}
+                minHeight={minHeight}
                 maxWidth={maxWidth}
               />
             )}

@@ -16,14 +16,14 @@ const EditorWrapper = ({
   placeholder = 'Enter text content...',
   defaultValue = null,
   onUpdate = fn(),
-  maxHeight = 200,
+  minHeight = 200,
   maxWidth = 800,
 }: {
   readonly?: boolean;
   placeholder?: string;
   defaultValue?: string | null;
   onUpdate?: (content: string) => void;
-  maxHeight?: number;
+  minHeight?: number;
   maxWidth?: number;
 }) => {
   const editor = useAdvancedTextEditor({
@@ -51,7 +51,7 @@ const EditorWrapper = ({
     <FormAdvancedTextFieldEditor
       editor={editor}
       readonly={readonly}
-      maxHeight={maxHeight}
+      minHeight={minHeight}
       maxWidth={maxWidth}
     />
   );
@@ -289,7 +289,7 @@ export const Interactive: Story = {
 
 export const CustomSize: Story = {
   args: {
-    maxHeight: 300,
+    minHeight: 300,
     maxWidth: 600,
     placeholder: 'This editor has custom dimensions...',
   },

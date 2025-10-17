@@ -7,7 +7,7 @@ import { EditorContent, type Editor } from '@tiptap/react';
 
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;
-  maxHeight: number;
+  minHeight: number;
   maxWidth: number;
 }>`
   height: 100%;
@@ -20,7 +20,7 @@ const StyledEditorContainer = styled.div<{
     flex-grow: 1;
     width: 100%;
     height: 100%;
-    min-height: ${({ maxHeight }) => maxHeight}px;
+    min-height: ${({ minHeight }) => minHeight}px;
     max-width: ${({ maxWidth }) => maxWidth}px;
     margin: 0 auto;
   }
@@ -80,20 +80,20 @@ const StyledEditorContainer = styled.div<{
 type FormAdvancedTextFieldEditorProps = {
   readonly: boolean | undefined;
   editor: Editor;
-  maxHeight: number;
+  minHeight: number;
   maxWidth: number;
 };
 
 export const FormAdvancedTextFieldEditor = ({
   readonly,
   editor,
-  maxHeight,
+  minHeight,
   maxWidth,
 }: FormAdvancedTextFieldEditorProps) => {
   return (
     <StyledEditorContainer
       readonly={readonly}
-      maxHeight={maxHeight}
+      minHeight={minHeight}
       maxWidth={maxWidth}
     >
       <EditorContent className="editor-content" editor={editor} />
