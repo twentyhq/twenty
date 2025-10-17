@@ -5,7 +5,6 @@ import { ObjectRecord } from 'twenty-shared/types';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { ATTACHMENT_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/attachment-data-seeds.constant';
 import { CALENDAR_EVENT_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 import {
   CalendarEventParticipantDataSeed,
@@ -49,7 +48,6 @@ type TimelineActivitySeedData = Pick<
   createdAt: string; // ISO string for raw insertion
   updatedAt: string; // ISO string for raw insertion
   happensAt: string; // ISO string for raw insertion
-  attachmentId: string | null;
 };
 
 type ActivityTargetInfo = {
@@ -64,7 +62,7 @@ type CreateTimelineActivityParams = {
 };
 
 type CreateLinkedActivityParams = {
-  activityType: 'note' | 'task' | 'calendarEvent' | 'message' | 'attachment';
+  activityType: 'note' | 'task' | 'calendarEvent' | 'message';
   recordSeed: RecordSeedWithId;
   index: number;
   activityIndex: number;
@@ -82,7 +80,6 @@ type ObjectMetadataIds = {
   taskMetadataId: string;
   calendarEventMetadataId: string;
   messageMetadataId: string;
-  attachmentMetadataId: string;
 };
 
 @Injectable()
@@ -95,7 +92,6 @@ export class TimelineActivitySeederService {
     opportunity: '0851',
     calendarEvent: '0701',
     message: '0751',
-    attachment: '0901',
   } as const;
 
   private readonly TARGET_CODES = {
@@ -109,7 +105,6 @@ export class TimelineActivitySeederService {
     'task',
     'calendarEvent',
     'message',
-    'attachment',
   ]);
 
   constructor(private readonly objectMetadataService: ObjectMetadataService) {}
@@ -120,7 +115,7 @@ export class TimelineActivitySeederService {
       return `linked-${activityType}.created`;
     }
 
-    // Calendar events, messages, and attachments use the new format: {type}.linked
+    // Calendar events and messages use the new format: {type}.linked
     return `${activityType}.linked`;
   }
 
@@ -147,7 +142,6 @@ export class TimelineActivitySeederService {
       { type: 'note', seeds: NOTE_DATA_SEEDS },
       { type: 'task', seeds: TASK_DATA_SEEDS },
       { type: 'opportunity', seeds: OPPORTUNITY_DATA_SEEDS },
-      { type: 'attachment', seeds: ATTACHMENT_DATA_SEEDS },
     ];
 
     // Calendar events and messages only appear as linked activities
@@ -176,12 +170,7 @@ export class TimelineActivitySeederService {
           metadataIds,
         );
         const linkedActivities = this.computeLinkedTimelineActivityRecords({
-          activityType: type as
-            | 'note'
-            | 'task'
-            | 'calendarEvent'
-            | 'message'
-            | 'attachment',
+          activityType: type as 'note' | 'task' | 'calendarEvent' | 'message',
           recordSeed: seed,
           index,
           activityIndex,
@@ -233,7 +222,6 @@ export class TimelineActivitySeederService {
       task: metadataIds.taskMetadataId,
       calendarEvent: metadataIds.calendarEventMetadataId,
       message: metadataIds.messageMetadataId,
-      attachment: metadataIds.attachmentMetadataId,
     };
 
     return metadataMap[type as keyof typeof metadataMap] || '';
@@ -270,7 +258,6 @@ export class TimelineActivitySeederService {
           'noteId',
           'taskId',
           'opportunityId',
-          'attachmentId',
           'createdAt',
           'updatedAt',
           'happensAt',
@@ -308,7 +295,6 @@ export class TimelineActivitySeederService {
       noteId: null,
       taskId: null,
       opportunityId: null,
-      attachmentId: null,
       createdAt: creationDate,
       updatedAt: creationDate,
       happensAt: creationDate,
@@ -374,12 +360,6 @@ export class TimelineActivitySeederService {
         stage: recordSeed.stage,
         closeDate: recordSeed.closeDate,
       }),
-      attachment: () => ({
-        ...commonProperties,
-        name: recordSeed.name,
-        type: recordSeed.type,
-        fullPath: recordSeed.fullPath,
-      }),
       calendarEvent: () => ({
         ...commonProperties,
         title: recordSeed.title,
@@ -410,7 +390,7 @@ export class TimelineActivitySeederService {
     calendarEventParticipants,
     messageParticipants,
   }: {
-    activityType: 'note' | 'task' | 'calendarEvent' | 'message' | 'attachment';
+    activityType: 'note' | 'task' | 'calendarEvent' | 'message';
     recordSeed: RecordSeedWithId;
     index: number;
     activityIndex: number;
@@ -442,7 +422,7 @@ export class TimelineActivitySeederService {
   }
 
   private getActivityTargetInfos(
-    activityType: 'note' | 'task' | 'calendarEvent' | 'message' | 'attachment',
+    activityType: 'note' | 'task' | 'calendarEvent' | 'message',
     recordSeed: RecordSeedWithId,
     calendarEventParticipants: CalendarEventParticipantDataSeed[],
     messageParticipants: MessageParticipantDataSeed[],
@@ -454,7 +434,6 @@ export class TimelineActivitySeederService {
         this.getCalendarEventTargetInfos(recordSeed, calendarEventParticipants),
       message: () =>
         this.getMessageTargetInfos(recordSeed, messageParticipants),
-      attachment: () => this.getAttachmentTargetInfos(recordSeed),
     };
 
     const getter = targetGetters[activityType];
@@ -572,48 +551,6 @@ export class TimelineActivitySeederService {
     return targetInfos;
   }
 
-  private getAttachmentTargetInfos(
-    recordSeed: RecordSeedWithId,
-  ): ActivityTargetInfo[] {
-    const targetInfos: ActivityTargetInfo[] = [];
-
-    // Check if attachment is linked to a person
-    if (recordSeed.personId) {
-      targetInfos.push({
-        targetType: 'person',
-        targetId: recordSeed.personId as string,
-      });
-
-      // Also link to the person's company if available
-      const person = PERSON_DATA_SEEDS_MAP.get(recordSeed.personId as string);
-
-      if (person?.companyId) {
-        targetInfos.push({
-          targetType: 'company',
-          targetId: person.companyId as string,
-        });
-      }
-    }
-
-    // Check if attachment is linked to a company
-    if (recordSeed.companyId) {
-      targetInfos.push({
-        targetType: 'company',
-        targetId: recordSeed.companyId as string,
-      });
-    }
-
-    // Check if attachment is linked to an opportunity
-    if (recordSeed.opportunityId) {
-      targetInfos.push({
-        targetType: 'opportunity',
-        targetId: recordSeed.opportunityId as string,
-      });
-    }
-
-    return targetInfos;
-  }
-
   private computeLinkedActivityRecord({
     activityType,
     recordSeed,
@@ -644,7 +581,6 @@ export class TimelineActivitySeederService {
       noteId: null,
       taskId: null,
       opportunityId: null,
-      attachmentId: null,
       createdAt: creationDate,
       updatedAt: creationDate,
       happensAt: creationDate,
@@ -657,7 +593,7 @@ export class TimelineActivitySeederService {
     linkedActivity[targetIdKey] = targetInfo.targetId;
 
     // Only set activity ID for entities that have corresponding columns
-    const entitiesWithColumns = new Set(['note', 'task', 'attachment']);
+    const entitiesWithColumns = new Set(['note', 'task']);
 
     if (entitiesWithColumns.has(activityType)) {
       const activityIdKey = `${activityType}Id`;
@@ -703,17 +639,6 @@ export class TimelineActivitySeederService {
           receivedAt: recordSeed.receivedAt,
         },
       }),
-      attachment: () => ({
-        linkedRecordCachedName: String(
-          recordSeed.name || `Attachment ${index + 1}`,
-        ),
-        linkedProperties: {
-          ...baseProperties,
-          name: recordSeed.name,
-          type: recordSeed.type,
-          fullPath: recordSeed.fullPath,
-        },
-      }),
       default: () => ({
         linkedRecordCachedName: String(
           recordSeed.title || `${activityType} ${index + 1}`,
@@ -757,7 +682,6 @@ export class TimelineActivitySeederService {
       { name: 'task', key: 'taskMetadataId' },
       { name: 'calendarEvent', key: 'calendarEventMetadataId' },
       { name: 'message', key: 'messageMetadataId' },
-      { name: 'attachment', key: 'attachmentMetadataId' },
     ];
 
     const metadataResults = await Promise.all(
@@ -783,7 +707,6 @@ export class TimelineActivitySeederService {
       taskMetadataId: metadataResults[1]?.id || '',
       calendarEventMetadataId: metadataResults[2]?.id || '',
       messageMetadataId: metadataResults[3]?.id || '',
-      attachmentMetadataId: metadataResults[4]?.id || '',
     };
   }
 }
