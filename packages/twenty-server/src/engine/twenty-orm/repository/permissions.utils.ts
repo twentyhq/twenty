@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import {
-  type ObjectsPermissionsDeprecated,
+  type ObjectsPermissions,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,7 +38,7 @@ export type OperationType =
 type ValidateOperationIsPermittedOrThrowArgs = {
   entityName: string;
   operationType: OperationType;
-  objectsPermissions: ObjectsPermissionsDeprecated;
+  objectsPermissions: ObjectsPermissions;
   objectMetadataMaps: ObjectMetadataMaps;
   selectedColumns: string[] | '*';
   allFieldsSelected: boolean;
@@ -86,7 +86,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
   switch (operationType) {
     case 'select':
-      if (!permissionsForEntity?.canRead) {
+      if (!permissionsForEntity?.canReadObjectRecords) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -102,7 +102,7 @@ export const validateOperationIsPermittedOrThrow = ({
       break;
     case 'insert':
     case 'update':
-      if (!permissionsForEntity?.canUpdate) {
+      if (!permissionsForEntity?.canUpdateObjectRecords) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -124,7 +124,7 @@ export const validateOperationIsPermittedOrThrow = ({
       }
       break;
     case 'delete':
-      if (!permissionsForEntity?.canDestroy) {
+      if (!permissionsForEntity?.canDestroyObjectRecords) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -139,7 +139,7 @@ export const validateOperationIsPermittedOrThrow = ({
       break;
     case 'restore':
     case 'soft-delete':
-      if (!permissionsForEntity?.canSoftDelete) {
+      if (!permissionsForEntity?.canSoftDeleteObjectRecords) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -166,7 +166,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
 type ValidateQueryIsPermittedOrThrowArgs = {
   expressionMap: QueryExpressionMap;
-  objectsPermissions: ObjectsPermissionsDeprecated;
+  objectsPermissions: ObjectsPermissions;
   objectMetadataMaps: ObjectMetadataMaps;
   shouldBypassPermissionChecks: boolean;
 };

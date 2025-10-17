@@ -3,9 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Record } from 'cloudflare/core';
 import {
-  ObjectsPermissions,
-  type ObjectsPermissionsByRoleIdDeprecated,
-  type ObjectsPermissionsDeprecated,
+  type ObjectsPermissions,
+  type ObjectsPermissionsByRoleId,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -48,7 +47,7 @@ export class WorkspacePermissionsCacheService {
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
     private readonly getRolesPermissionsFromCacheWithRecomputeService: GetDataFromCacheWithRecomputeService<
       string,
-      ObjectsPermissionsByRoleIdDeprecated
+      ObjectsPermissionsByRoleId
     >,
     private readonly getUserWorkspaceRoleMapFromCacheWithRecomputeService: GetDataFromCacheWithRecomputeService<
       string,
@@ -67,9 +66,7 @@ export class WorkspacePermissionsCacheService {
     workspaceId: string;
     roleIds?: string[];
   }): Promise<void> {
-    let currentRolesPermissions:
-      | ObjectsPermissionsByRoleIdDeprecated
-      | undefined;
+    let currentRolesPermissions: ObjectsPermissionsByRoleId | undefined;
 
     if (roleIds) {
       currentRolesPermissions =
@@ -124,7 +121,7 @@ export class WorkspacePermissionsCacheService {
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<CacheResult<string, ObjectsPermissionsByRoleIdDeprecated>> {
+  }): Promise<CacheResult<string, ObjectsPermissionsByRoleId>> {
     return this.getRolesPermissionsFromCacheWithRecomputeService.getFromCacheWithRecompute(
       {
         workspaceId,
@@ -194,7 +191,7 @@ export class WorkspacePermissionsCacheService {
   }: {
     workspaceId: string;
     roleIds?: string[];
-  }): Promise<ObjectsPermissionsByRoleIdDeprecated> {
+  }): Promise<ObjectsPermissionsByRoleId> {
     let roles: RoleEntity[] = [];
 
     roles = await this.roleRepository.find({
@@ -208,11 +205,10 @@ export class WorkspacePermissionsCacheService {
     const workspaceObjectMetadataCollection =
       await this.getWorkspaceObjectMetadataCollection(workspaceId);
 
-    const permissionsByRoleId: ObjectsPermissionsByRoleIdDeprecated = {};
+    const permissionsByRoleId: ObjectsPermissionsByRoleId = {};
 
     for (const role of roles) {
-      const objectRecordsPermissions: ObjectsPermissionsDeprecated &
-        ObjectsPermissions = {};
+      const objectRecordsPermissions: ObjectsPermissions = {};
 
       for (const objectMetadata of workspaceObjectMetadataCollection) {
         const { id: objectMetadataId, isSystem, standardId } = objectMetadata;
@@ -288,10 +284,6 @@ export class WorkspacePermissionsCacheService {
         }
 
         objectRecordsPermissions[objectMetadataId] = {
-          canRead,
-          canUpdate,
-          canSoftDelete,
-          canDestroy,
           canReadObjectRecords: canRead,
           canUpdateObjectRecords: canUpdate,
           canSoftDeleteObjectRecords: canSoftDelete,

@@ -12,7 +12,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 
 export type AgentActorContext = {
   actorContext: ActorMetadata;
-  roleId: string | undefined;
+  roleId: string;
 };
 
 @Injectable()
@@ -23,7 +23,7 @@ export class AgentActorContextService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async buildUserActorContext(
+  async buildUserAndAgentActorContext(
     userWorkspaceId: string,
     workspaceId: string,
   ): Promise<AgentActorContext> {
@@ -66,6 +66,16 @@ export class AgentActorContextService {
       workspaceMemberId: workspaceMember.id,
     });
 
-    return { actorContext, roleId };
+    if (!roleId) {
+      throw new AgentException(
+        'User role not found',
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+
+    return {
+      actorContext,
+      roleId,
+    };
   }
 }

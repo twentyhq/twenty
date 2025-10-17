@@ -18,6 +18,8 @@ import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/c
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 
 @Injectable()
 export class ToolService {
@@ -32,7 +34,7 @@ export class ToolService {
   ) {}
 
   async listTools(
-    roleId: string,
+    rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     actorContext?: ActorMetadata,
   ): Promise<ToolSet> {
@@ -43,7 +45,29 @@ export class ToolService {
         workspaceId,
       });
 
-    const objectPermissions = rolesPermissions[roleId];
+    let objectPermissions;
+
+    if ('unionOf' in rolePermissionConfig) {
+      if (rolePermissionConfig.unionOf.length === 1) {
+        objectPermissions = rolesPermissions[rolePermissionConfig.unionOf[0]];
+      } else {
+        // TODO: Implement union logic for multiple roles
+        throw new Error(
+          'Union permission logic for multiple roles not yet implemented',
+        );
+      }
+    } else if ('intersectionOf' in rolePermissionConfig) {
+      const allRolePermissions = rolePermissionConfig.intersectionOf.map(
+        (roleId: string) => rolesPermissions[roleId],
+      );
+
+      objectPermissions =
+        allRolePermissions.length === 1
+          ? allRolePermissions[0]
+          : computePermissionIntersection(allRolePermissions);
+    } else {
+      return tools;
+    }
 
     const allObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
@@ -65,7 +89,7 @@ export class ToolService {
         return;
       }
 
-      if (objectPermission.canUpdate) {
+      if (objectPermission.canUpdateObjectRecords) {
         tools[`create_${objectMetadata.nameSingular}`] = {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           inputSchema: getRecordInputSchema(objectMetadata),
@@ -74,7 +98,7 @@ export class ToolService {
               objectName: objectMetadata.nameSingular,
               objectRecord: parameters.input,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
               createdBy: actorContext,
             });
           },
@@ -91,13 +115,13 @@ export class ToolService {
               objectRecordId: id,
               objectRecord,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
             });
           },
         };
       }
 
-      if (objectPermission.canRead) {
+      if (objectPermission.canReadObjectRecords) {
         tools[`find_${objectMetadata.nameSingular}`] = {
           description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination. Returns an array of matching records with their full data.`,
           inputSchema: generateFindToolSchema(objectMetadata),
@@ -110,7 +134,7 @@ export class ToolService {
               limit,
               offset,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
             });
           },
         };
@@ -124,13 +148,13 @@ export class ToolService {
               filter: { id: { eq: parameters.input.id } },
               limit: 1,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
             });
           },
         };
       }
 
-      if (objectPermission.canSoftDelete) {
+      if (objectPermission.canSoftDeleteObjectRecords) {
         tools[`soft_delete_${objectMetadata.nameSingular}`] = {
           description: `Soft delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record remains in the database but is hidden from normal queries. This is reversible and preserves all data. Use this for temporary removal.`,
           inputSchema: generateSoftDeleteToolSchema(),
@@ -139,7 +163,7 @@ export class ToolService {
               objectName: objectMetadata.nameSingular,
               objectRecordId: parameters.input.id,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
               soft: true,
             });
           },
@@ -153,7 +177,7 @@ export class ToolService {
               objectMetadata.nameSingular,
               parameters.input,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
             );
           },
         };
@@ -167,14 +191,14 @@ export class ToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
-    roleId: string,
+    rolePermissionConfig: RolePermissionConfig,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          { roleId },
+          rolePermissionConfig,
         );
 
       const { filter } = parameters;

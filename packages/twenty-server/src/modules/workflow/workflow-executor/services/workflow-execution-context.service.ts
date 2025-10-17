@@ -49,10 +49,14 @@ export class WorkflowExecutionContextService {
       });
     }
 
+    const rolePermissionConfig = roleId
+      ? { unionOf: [roleId] }
+      : { shouldBypassPermissionChecks: true as const };
+
     return {
       isActingOnBehalfOfUser,
       initiator: workflowRun.createdBy,
-      roleId,
+      rolePermissionConfig,
     };
   }
 }

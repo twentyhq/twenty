@@ -27,7 +27,7 @@ export class DeleteRecordService {
       objectName,
       objectRecordId,
       workspaceId,
-      roleId,
+      rolePermissionConfig,
       soft = true,
     } = params;
 
@@ -52,7 +52,7 @@ export class DeleteRecordService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          roleId ? { roleId } : { shouldBypassPermissionChecks: true },
+          rolePermissionConfig,
         );
 
       const { objectMetadataItemWithFieldsMaps } =

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -17,6 +17,7 @@ import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permi
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
 export class PermissionsService {
@@ -188,30 +189,97 @@ export class PermissionsService {
     );
   }
 
+  public async checkRolesPermissions(
+    rolePermissionConfig: RolePermissionConfig,
+    workspaceId: string,
+    setting: PermissionFlagType,
+  ): Promise<boolean> {
+    try {
+      if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
+        return true;
+      }
+
+      let roleIds: string[] = [];
+      let useIntersection = false;
+
+      if ('intersectionOf' in rolePermissionConfig) {
+        roleIds = rolePermissionConfig.intersectionOf;
+        useIntersection = true;
+      } else if ('unionOf' in rolePermissionConfig) {
+        roleIds = rolePermissionConfig.unionOf;
+        useIntersection = false;
+      }
+
+      if (roleIds.length === 0) {
+        return false;
+      }
+
+      const roles = await this.roleRepository.find({
+        where: { id: In(roleIds), workspaceId },
+        relations: ['permissionFlags'],
+      });
+
+      if (roles.length !== roleIds.length) {
+        return false;
+      }
+
+      return useIntersection
+        ? roles.every((role) => this.checkRolePermissions(role, setting))
+        : roles.some((role) => this.checkRolePermissions(role, setting));
+    } catch {
+      return false;
+    }
+  }
+
   public async hasToolPermission(
-    roleId: string,
+    rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     flag: PermissionFlagType,
   ): Promise<boolean> {
     try {
-      const role = await this.roleRepository.findOne({
-        where: { id: roleId, workspaceId },
-        relations: ['permissionFlags'],
-      });
-
-      if (!role) {
-        return false;
-      }
-
-      if (role.canAccessAllTools === true) {
+      if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
         return true;
       }
 
-      const permissionFlags = role.permissionFlags ?? [];
+      let roleIds: string[] = [];
+      let useIntersection = false;
 
-      return permissionFlags.some(
-        (permissionFlag) => permissionFlag.flag === flag,
-      );
+      if ('intersectionOf' in rolePermissionConfig) {
+        roleIds = rolePermissionConfig.intersectionOf;
+        useIntersection = true;
+      } else if ('unionOf' in rolePermissionConfig) {
+        roleIds = rolePermissionConfig.unionOf;
+        useIntersection = false;
+      }
+
+      if (roleIds.length === 0) {
+        return false;
+      }
+
+      const roles = await this.roleRepository.find({
+        where: { id: In(roleIds), workspaceId },
+        relations: ['permissionFlags'],
+      });
+
+      if (roles.length !== roleIds.length) {
+        return false;
+      }
+
+      const checkRoleHasPermission = (role: RoleEntity) => {
+        if (role.canAccessAllTools === true) {
+          return true;
+        }
+
+        const permissionFlags = role.permissionFlags ?? [];
+
+        return permissionFlags.some(
+          (permissionFlag: { flag: string }) => permissionFlag.flag === flag,
+        );
+      };
+
+      return useIntersection
+        ? roles.every(checkRoleHasPermission)
+        : roles.some(checkRoleHasPermission);
     } catch {
       return false;
     }

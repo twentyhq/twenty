@@ -1,4 +1,4 @@
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type EntityTarget,
@@ -28,13 +28,13 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { type WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 export class WorkspaceUpdateQueryBuilder<
   T extends ObjectLiteral,
 > extends UpdateQueryBuilder<T> {
-  private objectRecordsPermissions: ObjectsPermissionsDeprecated;
+  private objectRecordsPermissions: ObjectsPermissions;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   private authContext?: AuthContext;
@@ -50,7 +50,7 @@ export class WorkspaceUpdateQueryBuilder<
 
   constructor(
     queryBuilder: UpdateQueryBuilder<T>,
-    objectRecordsPermissions: ObjectsPermissionsDeprecated,
+    objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,

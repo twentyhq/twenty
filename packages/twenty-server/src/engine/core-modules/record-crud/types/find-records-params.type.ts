@@ -3,6 +3,8 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+
 export type FindRecordsParams = {
   objectName: string;
   filter?:
@@ -14,5 +16,5 @@ export type FindRecordsParams = {
   limit?: number;
   offset?: number;
   workspaceId: string;
-  roleId?: string;
+  rolePermissionConfig?: RolePermissionConfig;
 };

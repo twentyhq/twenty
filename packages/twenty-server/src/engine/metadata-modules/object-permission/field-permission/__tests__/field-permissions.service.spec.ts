@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { In, type Repository } from 'typeorm';
 
 import {
@@ -53,13 +53,9 @@ describe('FieldPermissionService', () => {
     isEditable: true,
   } as RoleEntity;
 
-  const mockRolesPermissions: ObjectsPermissionsByRoleIdDeprecated = {
+  const mockRolesPermissions: ObjectsPermissionsByRoleId = {
     [testRoleId]: {
       [testObjectMetadataId]: {
-        canRead: true,
-        canUpdate: true,
-        canSoftDelete: false,
-        canDestroy: false,
         canReadObjectRecords: true,
         canUpdateObjectRecords: true,
         canSoftDeleteObjectRecords: false,
@@ -67,10 +63,6 @@ describe('FieldPermissionService', () => {
         restrictedFields: {},
       },
       [fieldRelationMock.objectMetadataId]: {
-        canRead: true,
-        canUpdate: true,
-        canSoftDelete: false,
-        canDestroy: false,
         canReadObjectRecords: true,
         canUpdateObjectRecords: true,
         canSoftDeleteObjectRecords: false,

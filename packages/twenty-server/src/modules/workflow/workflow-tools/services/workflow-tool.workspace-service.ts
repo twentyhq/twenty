@@ -8,6 +8,7 @@ import type { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/wor
 import type { UpdateWorkflowVersionPositionsInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-positions-input.dto';
 import type { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-step-input.dto';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
@@ -43,7 +44,10 @@ export class WorkflowToolWorkspaceService {
     private readonly recordPositionService: RecordPositionService,
   ) {}
 
-  generateWorkflowTools(workspaceId: string, roleId: string): ToolSet {
+  generateWorkflowTools(
+    workspaceId: string,
+    rolePermissionConfig: RolePermissionConfig,
+  ): ToolSet {
     const tools: ToolSet = {};
 
     tools.create_complete_workflow = {
@@ -88,7 +92,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
           const workflowId = await this.createWorkflow({
             workspaceId,
             name: parameters.name,
-            roleId,
+            rolePermissionConfig,
           });
 
           const workflowVersionId = await this.createWorkflowVersion({
@@ -96,7 +100,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
             workflowId,
             trigger: parameters.trigger,
             steps: parameters.steps,
-            roleId,
+            rolePermissionConfig,
           });
 
           if (parameters.stepPositions && parameters.stepPositions.length > 0) {
@@ -132,7 +136,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
               workspaceId,
               workflowId,
               workflowVersionId,
-              roleId,
+              rolePermissionConfig,
             });
           }
 
@@ -400,17 +404,17 @@ This is the most efficient way for AI to create workflows as it handles all the 
   private async createWorkflow({
     workspaceId,
     name,
-    roleId,
+    rolePermissionConfig,
   }: {
     workspaceId: string;
     name: string;
-    roleId: string;
+    rolePermissionConfig: RolePermissionConfig;
   }): Promise<string> {
     const workflowRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'workflow',
-        { roleId },
+        rolePermissionConfig,
       );
 
     const workflowPosition =
@@ -440,19 +444,19 @@ This is the most efficient way for AI to create workflows as it handles all the 
     workflowId,
     trigger,
     steps,
-    roleId,
+    rolePermissionConfig,
   }: {
     workspaceId: string;
     workflowId: string;
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
-    roleId: string;
+    rolePermissionConfig: RolePermissionConfig;
   }): Promise<string> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'workflowVersion',
-        { roleId },
+        rolePermissionConfig,
       );
 
     const versionPosition =
@@ -484,18 +488,18 @@ This is the most efficient way for AI to create workflows as it handles all the 
     workspaceId,
     workflowId,
     workflowVersionId,
-    roleId,
+    rolePermissionConfig,
   }: {
     workspaceId: string;
     workflowId: string;
     workflowVersionId: string;
-    roleId: string;
+    rolePermissionConfig: RolePermissionConfig;
   }) {
     const workflowRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'workflow',
-        { roleId },
+        rolePermissionConfig,
       );
 
     await workflowRepository.update(workflowId, {

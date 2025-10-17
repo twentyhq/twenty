@@ -28,7 +28,8 @@ export class CreateRecordService {
   ) {}
 
   async execute(params: CreateRecordParams): Promise<ToolOutput> {
-    const { objectName, objectRecord, workspaceId, roleId } = params;
+    const { objectName, objectRecord, workspaceId, rolePermissionConfig } =
+      params;
 
     if (!workspaceId) {
       return {
@@ -43,7 +44,7 @@ export class CreateRecordService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          roleId ? { roleId } : { shouldBypassPermissionChecks: true },
+          rolePermissionConfig,
         );
 
       const { objectMetadataItemWithFieldsMaps } =

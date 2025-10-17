@@ -37,7 +37,7 @@ export class FindRecordsService {
       limit,
       offset = 0,
       workspaceId,
-      roleId,
+      rolePermissionConfig,
     } = params;
 
     if (!workspaceId) {
@@ -53,7 +53,7 @@ export class FindRecordsService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          roleId ? { roleId } : { shouldBypassPermissionChecks: true },
+          rolePermissionConfig,
         );
 
       const { objectMetadataItemWithFieldsMaps, objectMetadataMaps } =

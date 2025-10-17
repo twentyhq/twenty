@@ -22,11 +22,8 @@ describe('AgentToolGeneratorService Integration', () => {
       };
 
       jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(context.testAgent as any);
-      jest
-        .spyOn(context.roleRepository, 'findOne')
-        .mockResolvedValue(roleWithFullPermissions);
+        .spyOn(context.roleRepository, 'find')
+        .mockResolvedValue([roleWithFullPermissions]);
       jest
         .spyOn(
           context.workspacePermissionsCacheService,
@@ -36,10 +33,6 @@ describe('AgentToolGeneratorService Integration', () => {
           data: {
             [context.testRoleId]: {
               [context.testObjectMetadata.id]: {
-                canRead: true,
-                canUpdate: true,
-                canSoftDelete: true,
-                canDestroy: true,
                 canReadObjectRecords: true,
                 canUpdateObjectRecords: true,
                 canSoftDeleteObjectRecords: true,
@@ -57,6 +50,8 @@ describe('AgentToolGeneratorService Integration', () => {
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
         context.testWorkspaceId,
+        undefined,
+        [context.testRoleId],
       );
 
       expect(tools).toBeDefined();
@@ -72,11 +67,8 @@ describe('AgentToolGeneratorService Integration', () => {
 
     it('should generate read-only tools for agent with read permissions only', async () => {
       jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(context.testAgent as any);
-      jest
-        .spyOn(context.roleRepository, 'findOne')
-        .mockResolvedValue(context.testRole);
+        .spyOn(context.roleRepository, 'find')
+        .mockResolvedValue([context.testRole]);
       jest
         .spyOn(
           context.workspacePermissionsCacheService,
@@ -86,10 +78,6 @@ describe('AgentToolGeneratorService Integration', () => {
           data: {
             [context.testRoleId]: {
               [context.testObjectMetadata.id]: {
-                canRead: true,
-                canUpdate: false,
-                canSoftDelete: false,
-                canDestroy: false,
                 canReadObjectRecords: true,
                 canUpdateObjectRecords: false,
                 canSoftDeleteObjectRecords: false,
@@ -107,6 +95,8 @@ describe('AgentToolGeneratorService Integration', () => {
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
         context.testWorkspaceId,
+        undefined,
+        [context.testRoleId],
       );
 
       expect(tools).toBeDefined();
@@ -118,12 +108,6 @@ describe('AgentToolGeneratorService Integration', () => {
     });
 
     it('should return only http request tool for agent without role', async () => {
-      const agentWithoutRole = { ...context.testAgent, roleId: null };
-
-      jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(agentWithoutRole as any);
-
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
         context.testWorkspaceId,
@@ -141,11 +125,8 @@ describe('AgentToolGeneratorService Integration', () => {
       };
 
       jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(context.testAgent as any);
-      jest
-        .spyOn(context.roleRepository, 'findOne')
-        .mockResolvedValue(context.testRole);
+        .spyOn(context.roleRepository, 'find')
+        .mockResolvedValue([context.testRole]);
       jest
         .spyOn(
           context.workspacePermissionsCacheService,
@@ -155,10 +136,6 @@ describe('AgentToolGeneratorService Integration', () => {
           data: {
             [context.testRoleId]: {
               [workflowObject.id]: {
-                canRead: true,
-                canUpdate: true,
-                canSoftDelete: true,
-                canDestroy: false,
                 canReadObjectRecords: true,
                 canUpdateObjectRecords: true,
                 canSoftDeleteObjectRecords: true,
@@ -176,6 +153,8 @@ describe('AgentToolGeneratorService Integration', () => {
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
         context.testWorkspaceId,
+        undefined,
+        [context.testRoleId],
       );
 
       expect(Object.keys(tools)).toHaveLength(7);

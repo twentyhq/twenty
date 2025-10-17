@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -24,58 +23,43 @@ export class AgentToolGeneratorService {
     private readonly toolService: ToolService,
     private readonly workflowToolService: WorkflowToolService,
     private readonly permissionsService: PermissionsService,
-    private readonly agentService: AgentService,
   ) {}
 
   async generateToolsForAgent(
     agentId: string,
     workspaceId: string,
     actorContext?: ActorMetadata,
-    roleIdOverride?: string,
+    roleIds?: string[],
   ): Promise<ToolSet> {
     let tools: ToolSet = {};
 
     try {
-      const agent = await this.agentService.findOneAgent(agentId, workspaceId);
       const actionTools = await this.toolAdapterService.getTools();
 
       tools = { ...actionTools };
 
-      const effectiveRoleId = roleIdOverride || agent.roleId;
-
-      if (!effectiveRoleId) {
-        return tools;
-      }
-
-      const role = await this.roleRepository.findOne({
-        where: {
-          id: effectiveRoleId,
-          workspaceId,
-        },
-        relations: ['permissionFlags'],
-      });
-
-      if (!role) {
+      if (!roleIds) {
         return tools;
       }
 
       const hasWorkflowPermission =
-        this.permissionsService.checkRolePermissions(
-          role,
+        await this.permissionsService.checkRolesPermissions(
+          { intersectionOf: roleIds },
+          workspaceId,
           PermissionFlagType.WORKFLOWS,
         );
 
       if (hasWorkflowPermission) {
         const workflowTools = this.workflowToolService.generateWorkflowTools(
           workspaceId,
-          effectiveRoleId,
+          { intersectionOf: roleIds },
         );
 
         tools = { ...tools, ...workflowTools };
       }
 
       const databaseTools = await this.toolService.listTools(
-        effectiveRoleId,
+        { intersectionOf: roleIds },
         workspaceId,
         actorContext,
       );
@@ -83,7 +67,7 @@ export class AgentToolGeneratorService {
       tools = { ...tools, ...databaseTools };
 
       const roleActionTools = await this.toolAdapterService.getTools(
-        effectiveRoleId,
+        { intersectionOf: roleIds },
         workspaceId,
       );
 

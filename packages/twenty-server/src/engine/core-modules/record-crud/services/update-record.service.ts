@@ -32,7 +32,7 @@ export class UpdateRecordService {
       objectRecord,
       fieldsToUpdate,
       workspaceId,
-      roleId,
+      rolePermissionConfig,
     } = params;
 
     if (!workspaceId) {
@@ -56,7 +56,7 @@ export class UpdateRecordService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          roleId ? { roleId } : { shouldBypassPermissionChecks: true },
+          rolePermissionConfig,
         );
 
       const previousObjectRecord = await repository.findOne({

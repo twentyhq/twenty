@@ -7,6 +7,7 @@ import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.ty
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
 export class ToolAdapterService {
@@ -15,7 +16,10 @@ export class ToolAdapterService {
     private readonly permissionsService: PermissionsService,
   ) {}
 
-  async getTools(roleId?: string, workspaceId?: string): Promise<ToolSet> {
+  async getTools(
+    rolePermissionConfig?: RolePermissionConfig,
+    workspaceId?: string,
+  ): Promise<ToolSet> {
     const tools: ToolSet = {};
 
     for (const toolType of this.toolRegistry.getAllToolTypes()) {
@@ -23,9 +27,9 @@ export class ToolAdapterService {
 
       if (!tool.flag) {
         tools[toolType.toLowerCase()] = this.createToolSet(tool);
-      } else if (roleId && workspaceId) {
+      } else if (rolePermissionConfig && workspaceId) {
         const hasPermission = await this.permissionsService.hasToolPermission(
-          roleId,
+          rolePermissionConfig,
           workspaceId,
           tool.flag as PermissionFlagType,
         );

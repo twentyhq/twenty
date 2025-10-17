@@ -1,4 +1,4 @@
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import {
   type DeepPartial,
   type FindManyOptions,
@@ -20,7 +20,7 @@ describe('WorkspaceRepository', () => {
   let mockEntityManager: jest.Mocked<WorkspaceEntityManager>;
   let mockInternalContext: WorkspaceInternalContext;
   let mockFeatureFlagMap: FeatureFlagMap;
-  let mockObjectRecordsPermissions: ObjectsPermissionsDeprecated;
+  let mockObjectRecordsPermissions: ObjectsPermissions;
   let mockQueryRunner: QueryRunner;
 
   beforeEach(() => {
@@ -71,10 +71,10 @@ describe('WorkspaceRepository', () => {
     );
     mockObjectRecordsPermissions = {
       'test-entity': {
-        canRead: true,
-        canUpdate: false,
-        canSoftDelete: false,
-        canDestroy: false,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: false,
+        canSoftDeleteObjectRecords: false,
+        canDestroyObjectRecords: false,
         restrictedFields: {},
       },
     };
