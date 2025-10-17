@@ -61,6 +61,20 @@ export class WorkspaceSyncMetadataService {
   }> {
     let workspaceMigrations: WorkspaceMigrationEntity[] = [];
     const storage = new WorkspaceSyncStorage();
+
+    // Disable logging for metadata sync to improve performance
+    const originalLogger = this.coreDataSource.logger;
+    const noOpLogger = {
+      logQuery: () => {},
+      logQueryError: () => {},
+      logQuerySlow: () => {},
+      logSchemaBuild: () => {},
+      logMigration: () => {},
+      log: () => {},
+    };
+
+    this.coreDataSource.logger = noOpLogger;
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     this.logger.log('Syncing standard objects and fields metadata');
@@ -258,6 +272,8 @@ export class WorkspaceSyncMetadataService {
       }
       throw error;
     } finally {
+      this.coreDataSource.logger = originalLogger;
+
       await queryRunner.release();
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         context.workspaceId,

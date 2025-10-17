@@ -100,31 +100,52 @@ export class DevSeederMetadataService {
       );
     }
 
-    for (const obj of config.objects) {
-      await this.seedCustomObject({
-        dataSourceId: dataSourceMetadata.id,
-        workspaceId,
-        objectMetadataSeed: obj.seed,
-      });
+    // Disable logging for metadata seeding to improve performance
+    const originalLogger = this.coreDataSource.logger;
+    const noOpLogger = {
+      logQuery: () => {},
+      logQueryError: () => {},
+      logQuerySlow: () => {},
+      logSchemaBuild: () => {},
+      logMigration: () => {},
+      log: () => {},
+    };
 
-      if (obj.fields) {
+    this.coreDataSource.logger = noOpLogger;
+
+    try {
+      for (const obj of config.objects) {
+        await this.seedCustomObject({
+          dataSourceId: dataSourceMetadata.id,
+          workspaceId,
+          objectMetadataSeed: obj.seed,
+        });
+
+        if (obj.fields) {
+          await this.seedCustomFields({
+            workspaceId,
+            objectMetadataNameSingular: obj.seed.nameSingular,
+            fieldMetadataSeeds: obj.fields,
+          });
+        }
+      }
+
+      for (const fieldConfig of config.fields) {
         await this.seedCustomFields({
           workspaceId,
-          objectMetadataNameSingular: obj.seed.nameSingular,
-          fieldMetadataSeeds: obj.fields,
+          objectMetadataNameSingular: fieldConfig.objectName,
+          fieldMetadataSeeds: fieldConfig.seeds,
         });
       }
-    }
 
-    for (const fieldConfig of config.fields) {
-      await this.seedCustomFields({
+      await this.seedCoreViews({
         workspaceId,
-        objectMetadataNameSingular: fieldConfig.objectName,
-        fieldMetadataSeeds: fieldConfig.seeds,
+        dataSourceMetadata,
+        featureFlags,
       });
+    } finally {
+      this.coreDataSource.logger = originalLogger;
     }
-
-    await this.seedCoreViews({ workspaceId, dataSourceMetadata, featureFlags });
   }
 
   private async seedCustomObject({
@@ -209,11 +230,27 @@ export class DevSeederMetadataService {
       return;
     }
 
-    for (const relation of config.relations) {
-      await this.seedCustomRelation({
-        workspaceId,
-        relation,
-      });
+    const originalLogger = this.coreDataSource.logger;
+    const noOpLogger = {
+      logQuery: () => {},
+      logQueryError: () => {},
+      logQuerySlow: () => {},
+      logSchemaBuild: () => {},
+      logMigration: () => {},
+      log: () => {},
+    };
+
+    this.coreDataSource.logger = noOpLogger;
+
+    try {
+      for (const relation of config.relations) {
+        await this.seedCustomRelation({
+          workspaceId,
+          relation,
+        });
+      }
+    } finally {
+      this.coreDataSource.logger = originalLogger;
     }
   }
 

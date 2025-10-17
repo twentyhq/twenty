@@ -40,71 +40,88 @@ export class DevSeederService {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
-    await seedCoreSchema({
-      dataSource: this.coreDataSource,
-      workspaceId,
-      seedBilling: isBillingEnabled,
-      appVersion,
-    });
+    // Disable logging for the entire seeding process to improve performance
+    const originalLogger = this.coreDataSource.logger;
+    const noOpLogger = {
+      logQuery: () => {},
+      logQueryError: () => {},
+      logQuerySlow: () => {},
+      logSchemaBuild: () => {},
+      logMigration: () => {},
+      log: () => {},
+    };
 
-    const schemaName =
-      await this.workspaceDataSourceService.createWorkspaceDBSchema(
+    this.coreDataSource.logger = noOpLogger;
+
+    try {
+      await seedCoreSchema({
+        dataSource: this.coreDataSource,
         workspaceId,
+        seedBilling: isBillingEnabled,
+        appVersion,
+      });
+
+      const schemaName =
+        await this.workspaceDataSourceService.createWorkspaceDBSchema(
+          workspaceId,
+        );
+
+      const dataSourceMetadata =
+        await this.dataSourceService.createDataSourceMetadata(
+          workspaceId,
+          schemaName,
+        );
+
+      const featureFlags =
+        await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
+      await this.workspaceSyncMetadataService.synchronize({
+        workspaceId: workspaceId,
+        dataSourceId: dataSourceMetadata.id,
+        featureFlags,
+      });
+
+      await this.devSeederMetadataService.seed({
+        dataSourceMetadata,
+        workspaceId,
+        featureFlags,
+      });
+
+      await this.devSeederMetadataService.seedRelations({
+        workspaceId,
+      });
+
+      await this.devSeederPermissionsService.initPermissions(workspaceId);
+
+      await seedPageLayouts(this.coreDataSource, 'core', workspaceId);
+      await seedPageLayoutTabs(this.coreDataSource, 'core', workspaceId);
+
+      const objectMetadataRepository =
+        this.coreDataSource.getRepository(ObjectMetadataEntity);
+      const objectMetadataItems = await objectMetadataRepository.find({
+        where: { workspaceId },
+        relations: { fields: true },
+      });
+
+      await seedPageLayoutWidgets(
+        this.coreDataSource,
+        'core',
+        workspaceId,
+        objectMetadataItems,
       );
 
-    const dataSourceMetadata =
-      await this.dataSourceService.createDataSourceMetadata(
+      await this.devSeederDataService.seed({
+        schemaName: dataSourceMetadata.schema,
         workspaceId,
-        schemaName,
-      );
+        featureFlags,
+      });
 
-    const featureFlags =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
-
-    await this.workspaceSyncMetadataService.synchronize({
-      workspaceId: workspaceId,
-      dataSourceId: dataSourceMetadata.id,
-      featureFlags,
-    });
-
-    await this.devSeederMetadataService.seed({
-      dataSourceMetadata,
-      workspaceId,
-      featureFlags,
-    });
-
-    await this.devSeederMetadataService.seedRelations({
-      workspaceId,
-    });
-
-    await this.devSeederPermissionsService.initPermissions(workspaceId);
-
-    await seedPageLayouts(this.coreDataSource, 'core', workspaceId);
-    await seedPageLayoutTabs(this.coreDataSource, 'core', workspaceId);
-
-    const objectMetadataRepository =
-      this.coreDataSource.getRepository(ObjectMetadataEntity);
-    const objectMetadataItems = await objectMetadataRepository.find({
-      where: { workspaceId },
-      relations: { fields: true },
-    });
-
-    await seedPageLayoutWidgets(
-      this.coreDataSource,
-      'core',
-      workspaceId,
-      objectMetadataItems,
-    );
-
-    await this.devSeederDataService.seed({
-      schemaName: dataSourceMetadata.schema,
-      workspaceId,
-      featureFlags,
-    });
-
-    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
-    await this.flatEntityMapsCacheService.flushFlatEntityMaps({
-      workspaceId,
-    });
+      await this.workspaceCacheStorageService.flush(workspaceId, undefined);
+      await this.flatEntityMapsCacheService.flushFlatEntityMaps({
+        workspaceId,
+      });
+    } finally {
+      this.coreDataSource.logger = originalLogger;
+    }
   }
 }

@@ -4,6 +4,13 @@ export class InitCommon1760694401570 implements MigrationInterface {
   name = 'InitCommon1760694401570';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    const workspaceTableExists = await queryRunner.hasTable('core.workspace');
+
+    if (workspaceTableExists) {
+      // Tables already exist from previous migrations, skip this init migration
+      return;
+    }
+
     await queryRunner.query(`
       CREATE TABLE "core"."_typeorm_generated_columns_and_materialized_views" (
         "type" character varying NOT NULL,

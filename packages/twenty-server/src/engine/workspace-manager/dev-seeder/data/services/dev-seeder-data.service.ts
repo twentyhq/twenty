@@ -312,7 +312,6 @@ export class DevSeederDataService {
         },
       );
     } finally {
-      // Restore original logger
       this.coreDataSource.logger = originalLogger;
     }
   }
