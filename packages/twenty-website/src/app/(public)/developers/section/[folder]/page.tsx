@@ -6,7 +6,7 @@ import { getDocsArticles } from '@/content/user-guide/constants/getDocsArticles'
 import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
 import { formatSlug } from '@/shared-utils/formatSlug';
 
-export async function generateMetadata(props: PageProps<'/developers/section/[folder]'>): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ folder: string }> }): Promise<Metadata> {
   const { folder } = await props.params;
   const formattedSlug = formatSlug(folder);
   const basePath = '/src/content/developers';
@@ -17,7 +17,7 @@ export async function generateMetadata(props: PageProps<'/developers/section/[fo
   };
 }
 
-export default async function DocsSlug(props: PageProps<'/developers/section/[folder]'>) {
+export default async function DocsSlug(props: { params: Promise<{ folder: string }> }) {
   const { folder } = await props.params;
   const filePath = `src/content/developers/${folder}/`;
   const docsArticleCards = getDocsArticles(filePath);
