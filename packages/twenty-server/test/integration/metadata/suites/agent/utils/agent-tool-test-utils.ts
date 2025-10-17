@@ -161,6 +161,7 @@ export const createAgentToolTestModule =
           useValue: {
             hasToolPermission: jest.fn(),
             checkRolePermissions: jest.fn().mockReturnValue(true),
+            checkRolesPermissions: jest.fn().mockResolvedValue(true),
           },
         },
         {
