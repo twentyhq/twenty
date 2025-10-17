@@ -5,58 +5,60 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useParams } from 'react-router-dom';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/display';
+import { IconInfoCircle, IconSettings, IconBroadcast } from 'twenty-ui/display';
 import { SettingsApplicationDetailSkeletonLoader } from '~/pages/settings/applications/components/SettingsApplicationDetailSkeletonLoader';
-import { SettingsServerlessFunctionsTable } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTable';
-import { SettingsAIAgentsTable } from '~/pages/settings/ai/components/SettingsAIAgentsTable';
-import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectTable';
-import { useRecoilValue } from 'recoil';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
+import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
+import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
+
+const APPLICATION_DETAIL_ID = 'application-detail-id';
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    APPLICATION_DETAIL_ID,
+  );
 
-  const { data, loading } = useFindOneApplicationQuery({
+  const { data } = useFindOneApplicationQuery({
     variables: { id: applicationId },
     skip: !applicationId,
   });
 
-  if (!isDefined(data?.findOneApplication)) {
-    return;
-  }
+  const application = data?.findOneApplication;
 
-  const {
-    name: applicationName,
-    serverlessFunctions,
-    agents,
-    objects,
-  } = data.findOneApplication;
+  const applicationName = application?.name;
 
-  const shouldDisplayServerlessFunctions =
-    !loading &&
-    isDefined(serverlessFunctions) &&
-    serverlessFunctions?.length > 0;
-
-  const shouldDisplayAgents =
-    !loading && isDefined(agents) && agents.length > 0;
-
-  const shouldDisplayObjects =
-    !loading && isDefined(objects) && objects.length > 0;
-
-  const objectIds = objects.map((object) => object.id);
-
-  const applicationObjectMetadataItems = shouldDisplayObjects
-    ? objectMetadataItems.filter((objectMetadataItem) =>
-        objectIds.includes(objectMetadataItem.id),
-      )
-    : [];
-
-  const title = loading
+  const title = !isDefined(application)
     ? t`Application details`
-    : data?.findOneApplication?.name;
+    : applicationName;
+
+  const tabs = [
+    { id: 'about', title: 'About', Icon: IconInfoCircle },
+    { id: 'settings', title: 'Settings', Icon: IconSettings },
+    { id: 'content', title: 'Content', Icon: IconBroadcast },
+  ];
+
+  const renderActiveTabContent = () => {
+    switch (activeTabId) {
+      case 'about':
+        return <SettingsApplicationDetailAboutTab application={application} />;
+      case 'settings':
+        return (
+          <SettingsApplicationDetailSettingsTab application={application} />
+        );
+      case 'content':
+        return (
+          <SettingsApplicationDetailContentTab application={application} />
+        );
+      default:
+        return <></>;
+    }
+  };
 
   return (
     <SubMenuTopBarContainer
@@ -70,43 +72,15 @@ export const SettingsApplicationDetails = () => {
           children: t`Applications`,
           href: getSettingsPath(SettingsPath.Applications),
         },
-        { children: `${applicationName}` },
+        { children: `${title}` },
       ]}
     >
       <SettingsPageContainer>
-        {loading && <SettingsApplicationDetailSkeletonLoader />}
-        {shouldDisplayServerlessFunctions && (
-          <Section>
-            <H2Title
-              title={t`Application serverless functions`}
-              description={t`Serverless functions created by application`}
-            />
-            <SettingsServerlessFunctionsTable
-              serverlessFunctions={serverlessFunctions}
-            />
-          </Section>
-        )}
-        {shouldDisplayAgents && (
-          <Section>
-            <H2Title
-              title={t`Application agents`}
-              description={t`Agents created by application`}
-            />
-            <SettingsAIAgentsTable agents={agents} withSearchBar={false} />
-          </Section>
-        )}
-        {shouldDisplayObjects && (
-          <Section>
-            <H2Title
-              title={t`Application objects`}
-              description={t`Objects created by application`}
-            />
-            <SettingsObjectTable
-              activeObjects={applicationObjectMetadataItems}
-              inactiveObjects={[]}
-              withSearchBar={false}
-            />
-          </Section>
+        <TabList tabs={tabs} componentInstanceId={APPLICATION_DETAIL_ID} />
+        {!isDefined(application) ? (
+          <SettingsApplicationDetailSkeletonLoader />
+        ) : (
+          renderActiveTabContent()
         )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
