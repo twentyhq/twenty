@@ -5,6 +5,7 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
+import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -36,6 +37,13 @@ const StyledInputModeOnlyContainer = styled.div`
   overflow: hidden;
   padding-left: 8px;
   width: 100%;
+`;
+
+const StyledOverlayContainer = styled(OverlayContainer)<{
+  columnIndex: number;
+}>`
+  width: var(${({ columnIndex }) => 
+    getRecordTableColumnFieldWidthCSSVariableName(columnIndex)});
 `;
 
 export type RecordTableCellEditModeProps = {
@@ -108,14 +116,15 @@ export const RecordTableCellEditMode = ({
           {children}
         </StyledInputModeOnlyContainer>
       ) : (
-        <OverlayContainer
+        <StyledOverlayContainer
           ref={refs.setFloating}
           style={floatingStyles}
           borderRadius="sm"
           hasDangerBorder={isFieldInError}
+          columnIndex={cellPosition.column}
         >
           {children}
-        </OverlayContainer>
+        </StyledOverlayContainer>
       )}
     </StyledEditableCellEditModeContainer>
   );
