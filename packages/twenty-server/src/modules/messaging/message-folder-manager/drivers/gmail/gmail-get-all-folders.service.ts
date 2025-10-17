@@ -5,9 +5,9 @@ import {
   MessageFolderDriver,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
-import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
   private readonly logger = new Logger(GmailGetAllFoldersService.name);
 
   constructor(
-    private readonly gmailClientProvider: GmailClientProvider,
+    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
     private readonly gmailHandleErrorService: GmailHandleErrorService,
   ) {}
 
@@ -26,12 +26,16 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
   async getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id' | 'handle'
+      'provider' | 'refreshToken' | 'accessToken' | 'id' | 'handle'
     >,
   ): Promise<MessageFolder[]> {
     try {
-      const gmailClient =
-        await this.gmailClientProvider.getGmailClient(connectedAccount);
+      const oAuth2Client =
+        await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
+          connectedAccount,
+        );
+
+      const gmailClient = oAuth2Client.gmail({ version: 'v1' });
 
       const response = await gmailClient.users.labels
         .list({ userId: 'me' })

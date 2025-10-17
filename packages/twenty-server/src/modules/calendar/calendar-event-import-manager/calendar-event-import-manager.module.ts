@@ -23,6 +23,7 @@ import { MicrosoftCalendarDriverModule } from 'src/modules/calendar/calendar-eve
 import { CalendarEventListFetchJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
 import { CalendarOngoingStaleJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
+import { CalendarAccountAuthenticationService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-account-authentication.service';
 import { CalendarEventImportErrorHandlerService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-exception-handler.service';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
@@ -51,6 +52,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     MetricsModule,
   ],
   providers: [
+    CalendarAccountAuthenticationService,
     CalendarChannelSyncStatusService,
     CalendarEventsImportService,
     CalendarFetchEventsService,

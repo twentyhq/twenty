@@ -10,7 +10,12 @@ export interface MessageFolderDriver {
   getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id' | 'handle' | 'connectionParameters'
+      | 'provider'
+      | 'accessToken'
+      | 'refreshToken'
+      | 'id'
+      | 'handle'
+      | 'connectionParameters'
     >,
   ): Promise<MessageFolder[]>;
 }

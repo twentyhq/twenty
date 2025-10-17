@@ -21,7 +21,7 @@ export class GmailGetMessagesService {
     messageIds: string[],
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'accessToken' | 'refreshToken' | 'id' | 'handle' | 'handleAliases'
+      'accessToken' | 'id' | 'handle' | 'handleAliases'
     >,
   ): Promise<MessageWithParticipants[]> {
     const { messageIdsByBatch, batchResponses } =
