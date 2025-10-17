@@ -16,20 +16,17 @@ import { ImapClientProvider } from 'src/modules/messaging/message-import-manager
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
-import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
-
-export interface MessageAttachment {
-  filename: string;
-  content: Buffer;
-  contentType: string;
-}
 
 interface SendMessageInput {
   body: string;
   subject: string;
   to: string;
   html: string;
-  attachments?: MessageAttachment[];
+  attachments: {
+    filename: string;
+    content: Buffer;
+    contentType: string;
+  }[];
 }
 
 @Injectable()
@@ -58,37 +55,29 @@ export class MessagingSendMessageService {
 
         const fromEmail = data.email;
         const fromName = data.name;
-        const boundary = `boundary_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-        const headers: string[] = [];
+        const mail = new MailComposer({
+          from: isDefined(fromName)
+            ? `"${fromName}" <${fromEmail}>`
+            : `${fromEmail}`,
+          to: sendMessageInput.to,
+          subject: sendMessageInput.subject,
+          text: sendMessageInput.body,
+          html: sendMessageInput.html,
+          ...(sendMessageInput.attachments &&
+          sendMessageInput.attachments.length > 0
+            ? {
+                attachments: sendMessageInput.attachments.map((attachment) => ({
+                  filename: attachment.filename,
+                  content: attachment.content,
+                  contentType: attachment.contentType,
+                })),
+              }
+            : {}),
+        });
 
-        if (isDefined(fromName)) {
-          headers.push(`From: "${mimeEncode(fromName)}" <${fromEmail}>`);
-        } else {
-          headers.push(`From: ${fromEmail}`);
-        }
-
-        headers.push(
-          `To: ${sendMessageInput.to}`,
-          `Subject: ${mimeEncode(sendMessageInput.subject)}`,
-          'MIME-Version: 1.0',
-          `Content-Type: multipart/alternative; boundary="${boundary}"`,
-          '',
-          `--${boundary}`,
-          'Content-Type: text/plain; charset="UTF-8"',
-          '',
-          sendMessageInput.body,
-          '',
-          `--${boundary}`,
-          'Content-Type: text/html; charset="UTF-8"',
-          '',
-          sendMessageInput.html,
-          '',
-          `--${boundary}--`,
-        );
-
-        const message = headers.join('\n');
-        const encodedMessage = Buffer.from(message).toString('base64');
+        const messageBuffer = await mail.compile().build();
+        const encodedMessage = Buffer.from(messageBuffer).toString('base64');
 
         await gmailClient.users.messages.send({
           userId: 'me',
@@ -111,6 +100,17 @@ export class MessagingSendMessageService {
             content: sendMessageInput.html,
           },
           toRecipients: [{ emailAddress: { address: sendMessageInput.to } }],
+          ...(sendMessageInput.attachments &&
+          sendMessageInput.attachments.length > 0
+            ? {
+                attachments: sendMessageInput.attachments.map((attachment) => ({
+                  '@odata.type': '#microsoft.graph.fileAttachment',
+                  name: attachment.filename,
+                  contentType: attachment.contentType,
+                  contentBytes: attachment.content.toString('base64'),
+                })),
+              }
+            : {}),
         };
 
         const response = await microsoftClient
