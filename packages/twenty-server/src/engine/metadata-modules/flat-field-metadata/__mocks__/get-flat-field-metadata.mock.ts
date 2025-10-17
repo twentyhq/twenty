@@ -21,6 +21,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   return {
     viewFilterIds: [],
     viewGroupIds: [],
+    viewIds: [],
     viewFieldIds: [],
     createdAt,
     updatedAt: createdAt,
