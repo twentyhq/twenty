@@ -1,5 +1,5 @@
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { WorkflowAttachmentRow } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowAttachmentRow';
+import { WorkflowAttachmentChip } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowAttachmentChip';
 import { useUploadWorkflowFile } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useUploadWorkflowFile';
 import { type WorkflowAttachmentType } from '@/workflow/workflow-steps/workflow-actions/email-action/types/WorkflowAttachmentType';
 import styled from '@emotion/styled';
@@ -132,7 +132,7 @@ export const WorkflowSendEmailAttachments = ({
         {files.length > 0 ? (
           <StyledChipsContainer>
             {files.map((file: WorkflowAttachmentType) => (
-              <WorkflowAttachmentRow
+              <WorkflowAttachmentChip
                 key={file.id}
                 file={file}
                 onRemove={() => handleRemoveFile(file.id)}

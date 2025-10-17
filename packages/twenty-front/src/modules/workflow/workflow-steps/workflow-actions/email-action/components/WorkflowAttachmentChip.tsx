@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { AvatarChip } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
 
-type WorkflowAttachmentRowProps = {
+type WorkflowAttachmentChipProps = {
   file: WorkflowAttachmentType;
   onRemove: () => void;
   readonly?: boolean;
@@ -57,11 +57,11 @@ const StyledDelete = styled.button`
   }
 `;
 
-export const WorkflowAttachmentRow = ({
+export const WorkflowAttachmentChip = ({
   file,
   onRemove,
   readonly = false,
-}: WorkflowAttachmentRowProps) => {
+}: WorkflowAttachmentChipProps) => {
   const iconColors = useFileTypeColors();
   const theme = useTheme();
 

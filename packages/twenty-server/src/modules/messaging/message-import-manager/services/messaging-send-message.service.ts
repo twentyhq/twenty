@@ -16,6 +16,7 @@ import { ImapClientProvider } from 'src/modules/messaging/message-import-manager
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
+import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
 interface SendMessageInput {
   body: string;
@@ -58,7 +59,7 @@ export class MessagingSendMessageService {
 
         const mail = new MailComposer({
           from: isDefined(fromName)
-            ? `"${fromName}" <${fromEmail}>`
+            ? `"${mimeEncode(fromName)}" <${fromEmail}>`
             : `${fromEmail}`,
           to: sendMessageInput.to,
           subject: sendMessageInput.subject,
