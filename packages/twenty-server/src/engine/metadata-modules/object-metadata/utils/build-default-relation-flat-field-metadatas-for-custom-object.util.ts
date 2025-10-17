@@ -63,6 +63,7 @@ const generateSourceFlatFieldMetadata = ({
   }
 
   return {
+    viewIds: [],
     viewFilterIds: [],
     viewFieldIds: [],
     viewGroupIds: [],
@@ -131,6 +132,7 @@ const generateTargetFlatFieldMetadata = ({
   return {
     morphId: null,
     viewFieldIds: [],
+    viewIds: [],
     viewFilterIds: [],
     viewGroupIds: [],
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,

@@ -57,6 +57,27 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
           dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
       });
 
+    const flatFieldMetadata = isDefined(
+      flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
+    )
+      ? findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId:
+            flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : undefined;
+    const updatedFlatFiedlMetadataMaps = isDefined(flatFieldMetadata)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...flatFieldMetadata,
+            viewIds: [...flatFieldMetadata.viewIds, flatViewToValidate.id],
+          },
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps;
+
     return {
       status: 'success',
       action: {
@@ -64,6 +85,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         view: flatViewToValidate,
       },
       dependencyOptimisticFlatEntityMaps: {
+        flatFieldMetadataMaps: updatedFlatFiedlMetadataMaps,
         flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
       },
     };
@@ -107,6 +129,30 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         })
       : dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
 
+    const flatFieldMetadata = isDefined(
+      flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
+    )
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId:
+            flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : undefined;
+
+    const updatedFlatFieldMetadataMaps = isDefined(flatFieldMetadata)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...flatFieldMetadata,
+            viewIds: flatFieldMetadata.viewIds.filter(
+              (id) => id !== flatViewToValidate.id,
+            ),
+          },
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps;
+
     return {
       status: 'success',
       action: {
@@ -114,6 +160,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         viewId: flatViewToValidate.id,
       },
       dependencyOptimisticFlatEntityMaps: {
+        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
         flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
       },
     };
