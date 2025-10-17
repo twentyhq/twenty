@@ -391,7 +391,11 @@ export class DevSeederDataService {
   }
 
   private async seedAttachmentFiles(workspaceId: string): Promise<void> {
-    const sampleFilesDir = join(__dirname, '../constants/sample-files');
+    // Use source directory path (files aren't copied to dist during build)
+    const sampleFilesDir = join(
+      __dirname,
+      '../../../../../src/engine/workspace-manager/dev-seeder/data/sample-files',
+    );
 
     const filesToCreate = [
       'sample-contract.pdf',
