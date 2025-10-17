@@ -110,7 +110,16 @@ export class GraphqlQueryParser {
       isForwardPagination,
     );
 
-    return queryBuilder.orderBy(parsedOrderBys);
+    Object.entries(parsedOrderBys).forEach(([expression, direction]) => {
+      queryBuilder.addOrderBy(
+        // TODO: dirty. Avoid using replace on regex
+        expression,
+        direction.order,
+        direction.nulls,
+      );
+    });
+
+    return queryBuilder;
   }
 
   public applyGroupByOrderToBuilder(

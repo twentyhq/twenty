@@ -111,5 +111,11 @@ export interface WorkspaceFieldMetadataArgs {
    */
   readonly asExpression?: string;
 
+  /**
+   * Storage backend for the field metadata.
+   * Defaults to 'postgres' if not specified.
+   */
+  readonly storage?: 'postgres' | 'redis';
+
   readonly isLabelSyncedWithName: boolean;
 }

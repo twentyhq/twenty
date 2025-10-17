@@ -47,7 +47,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: 'uuid',
-
+    storage: 'postgres',
     createdAt,
     updatedAt: createdAt,
     options: null,
@@ -82,6 +82,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isUIReadOnly: false,
     defaultValue: "''",
 
+    storage: 'postgres',
     createdAt,
     updatedAt: createdAt,
     options: null,
@@ -115,7 +116,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: 'now',
-
+    storage: 'postgres',
     createdAt,
     updatedAt: createdAt,
     options: null,
@@ -149,7 +150,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: 'now',
-
+    storage: 'postgres',
     createdAt,
     updatedAt: createdAt,
     options: null,
@@ -183,7 +184,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: null,
-
+    storage: 'postgres',
     createdAt,
     updatedAt: createdAt,
     options: null,
@@ -217,7 +218,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: { name: "''", source: "'MANUAL'" },
-
+    storage: 'postgres',
     createdAt,
     updatedAt: createdAt,
     options: null,
@@ -251,7 +252,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: 0,
-
+    storage: 'postgres',
     createdAt,
     updatedAt: createdAt,
     options: null,
@@ -285,7 +286,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: null,
-
+    storage: 'postgres',
     createdAt,
     updatedAt: createdAt,
     options: null,

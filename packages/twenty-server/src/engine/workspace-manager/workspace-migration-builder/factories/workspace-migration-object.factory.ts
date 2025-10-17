@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
@@ -79,7 +80,11 @@ export class WorkspaceMigrationObjectFactory {
       ];
 
       for (const field of objectMetadata.fields) {
-        if (field.type === FieldMetadataType.RELATION) {
+        if (
+          field.type === FieldMetadataType.RELATION ||
+          !isDefined(field.storage) ||
+          field.storage !== 'postgres'
+        ) {
           continue;
         }
 

@@ -5,6 +5,8 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
+
 export const buildColumnsToSelect = ({
   select,
   relations,
@@ -29,17 +31,39 @@ export const buildColumnsToSelect = ({
     objectMetadataMaps,
   );
 
+  // Map selected field names to fieldMetadataIds to inspect storage types
+  const columnNameToFieldId = getColumnNameToFieldMetadataIdMap(
+    objectMetadataItemWithFieldMaps,
+  );
+
   const fieldsToSelect: Record<string, boolean> = Object.entries(select)
     .filter(
       ([_columnName, value]) => value === true && typeof value !== 'object',
     )
-    .reduce((acc, [columnName]) => ({ ...acc, [columnName]: true }), {});
+    .reduce(
+      (acc, [columnName]) => {
+        const fieldId = columnNameToFieldId[columnName];
+
+        if (
+          fieldId &&
+          objectMetadataItemWithFieldMaps.fieldsById[fieldId]?.storage !==
+            'postgres'
+        ) {
+          return acc;
+        }
+
+        return { ...acc, [columnName]: true };
+      },
+      {} as Record<string, boolean>,
+    );
 
   for (const columnName of requiredRelationColumns) {
     fieldsToSelect[columnName] = true;
   }
 
-  return { ...fieldsToSelect, id: true };
+  const { id, ...fieldsToSelectWithoutId } = fieldsToSelect;
+
+  return fieldsToSelectWithoutId;
 };
 
 const getRequiredRelationColumns = (

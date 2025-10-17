@@ -42,6 +42,10 @@ import {
   type WORKSPACE_ENTITY_CREATED_EVENT,
   type WorkspaceEntityCreatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/workspace-entity/workspace-entity-created';
+import {
+  type OBJECT_RECORD_VIEWED_EVENT,
+  type ObjectRecordViewedTrackEvent,
+} from 'src/engine/core-modules/audit/utils/events/object-event/object-record-viewed';
 
 // Define all track event names
 export type TrackEventName =
@@ -52,6 +56,7 @@ export type TrackEventName =
   | typeof WORKSPACE_ENTITY_CREATED_EVENT
   | typeof MONITORING_EVENT
   | typeof OBJECT_RECORD_CREATED_EVENT
+  | typeof OBJECT_RECORD_VIEWED_EVENT
   | typeof OBJECT_RECORD_UPDATED_EVENT
   | typeof OBJECT_RECORD_DELETED_EVENT
   | typeof OBJECT_RECORD_UPSERTED_EVENT
@@ -70,6 +75,7 @@ export interface TrackEvents {
   [OBJECT_RECORD_CREATED_EVENT]: ObjectRecordCreatedTrackEvent;
   [OBJECT_RECORD_UPDATED_EVENT]: ObjectRecordUpdatedTrackEvent;
   [OBJECT_RECORD_UPSERTED_EVENT]: ObjectRecordUpsertedTrackEvent;
+  [OBJECT_RECORD_VIEWED_EVENT]: ObjectRecordViewedTrackEvent;
 }
 
 export type TrackEventProperties<T extends TrackEventName> =

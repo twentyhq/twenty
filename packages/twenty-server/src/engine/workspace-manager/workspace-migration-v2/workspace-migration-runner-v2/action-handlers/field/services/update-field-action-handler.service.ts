@@ -145,6 +145,13 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
+    if (
+      currentFlatFieldMetadata.storage &&
+      currentFlatFieldMetadata.storage !== 'postgres'
+    ) {
+      return;
+    }
+
     let optimisticFlatFieldMetadata = structuredClone(currentFlatFieldMetadata);
 
     for (const update of updates) {

@@ -34,6 +34,8 @@ import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-meta
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
+import { EXTERNAL_STORAGE_ALIAS } from 'src/engine/twenty-orm/utils/external-storage-alias.constant';
+import { wrapperWithDoubleQuoteWhenUpperCase } from 'src/engine/api/graphql/graphql-query-runner/utils/wrapper-with-double-quote-when-uppercase';
 
 export type OrderByCondition = {
   order: 'ASC' | 'DESC';
@@ -79,7 +81,18 @@ export class GraphqlQueryOrderFieldParser {
             const orderByCasting =
               this.getOptionalOrderByCasting(fieldMetadata);
 
-            acc[`"${objectNameSingular}"."${key}"${orderByCasting}`] =
+            const isExternal =
+              isDefined(fieldMetadata.storage) &&
+              fieldMetadata.storage !== 'postgres';
+
+            // @todo when I use wrapperWithDoubleQuoteWhenUpperCase for external field the getMany works but the order fail
+            const selector = isExternal
+              ? wrapperWithDoubleQuoteWhenUpperCase(
+                  `${EXTERNAL_STORAGE_ALIAS}${fieldMetadata.name}`,
+                )
+              : `${objectNameSingular}.${fieldMetadata.name}`;
+
+            acc[`${selector}${orderByCasting}`] =
               convertOrderByToFindOptionsOrder(
                 value as OrderByDirection,
                 isForwardPagination,

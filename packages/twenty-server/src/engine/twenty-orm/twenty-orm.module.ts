@@ -17,6 +17,10 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { RedisFieldRepository } from 'src/engine/twenty-orm/repository/redis-fields.repository';
+import { RedisFieldsDataSource } from 'src/engine/twenty-orm/datasource/redis-fields-data-source.service';
+import { RedisStorageDriver } from 'src/engine/twenty-orm/storage/drivers/redis-storage.driver';
+import { RedisFieldSqlFactory } from 'src/engine/twenty-orm/factories/redis-field-sql.factory';
 
 import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
 
@@ -42,10 +46,16 @@ import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
     ...entitySchemaFactories,
     TwentyORMManager,
     TwentyORMGlobalManager,
+    RedisFieldRepository,
+    RedisFieldsDataSource,
+    RedisStorageDriver,
+    RedisFieldSqlFactory,
   ],
   exports: [
     EntitySchemaFactory,
     TwentyORMManager,
+    RedisFieldRepository,
+    RedisStorageDriver,
     TwentyORMGlobalManager,
     PgPoolSharedModule,
     ScopedWorkspaceContextFactory,

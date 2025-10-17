@@ -47,6 +47,7 @@ export const getMockFieldMetadataEntity = <
     createdAt: new Date(),
     updatedAt: new Date(),
     isActive: true,
+    storage: 'postgres',
     ...overrides,
   };
 };

@@ -54,5 +54,6 @@ export const getDefaultFlatFieldMetadata = ({
     updatedAt: createdAt,
     isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
     morphId: null,
+    storage: 'postgres',
   } as const satisfies FlatFieldMetadata;
 };

@@ -95,6 +95,7 @@ const generateSourceFlatFieldMetadata = ({
     ]),
     workspaceId,
     morphId: null,
+    storage: 'postgres',
   };
 };
 
@@ -161,6 +162,7 @@ const generateTargetFlatFieldMetadata = ({
       targetFlatObjectMetadata.id,
       standardId,
     ]),
+    storage: 'postgres',
   };
 };
 

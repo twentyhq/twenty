@@ -57,6 +57,7 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     relationTargetFieldMetadataId,
     relationTargetObjectMetadataId,
     morphId: null,
+    storage: 'postgres',
     ...overrides,
     defaultValue: null,
     options: null,

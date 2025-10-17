@@ -87,6 +87,10 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       flatEntityId: fieldMetadataId,
     });
 
+    if (fieldMetadata.storage && fieldMetadata.storage !== 'postgres') {
+      return;
+    }
+
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
       flatObjectMetadata,
