@@ -80,15 +80,11 @@
       "options": {
         "cwd": "packages/twenty-cli",
         "commands": [
-          "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --verbose && NODE_ENV=test npx jest --config ./jest.e2e.config.ts"
+          "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && NODE_ENV=test npx jest --config ./jest.e2e.config.ts"
         ]
       },
       "parallel": false,
       "dependsOn": [
-        {
-          "target": "build",
-          "projects": "dependencies"
-        },
         {
           "target": "database:reset",
           "projects": "twenty-server"

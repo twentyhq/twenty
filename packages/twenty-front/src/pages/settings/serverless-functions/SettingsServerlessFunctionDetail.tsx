@@ -9,8 +9,7 @@ import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -24,11 +23,14 @@ import { t } from '@lingui/core/macro';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
 import { flattenSources } from '@/serverless-functions/utils/flattenSources';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '', applicationId = '' } = useParams();
+
+  const navigate = useNavigate();
 
   const { data } = useFindOneApplicationQuery({
     variables: { id: applicationId },
@@ -37,9 +39,11 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const applicationName = data?.findOneApplication?.name;
 
-  const [activeTabId, setActiveTabId] = useRecoilComponentState(
+  const instanceId = `${SERVERLESS_FUNCTION_DETAIL_ID}-${serverlessFunctionId}`;
+
+  const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
-    SERVERLESS_FUNCTION_DETAIL_ID,
+    instanceId,
   );
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
@@ -84,8 +88,8 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   const handleTestFunction = async () => {
+    navigate('#test');
     await testServerlessFunction();
-    setActiveTabId('test');
   };
 
   const tabs = [
@@ -97,17 +101,11 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const flattenedCode = flattenSources(formValues.code);
 
-  const files = flattenedCode
-    .map((file) => {
-      const language = file.path === '.env' ? 'ini' : 'typescript';
-
-      return {
-        path: file.path,
-        language,
-        content: file.content,
-      };
-    })
-    .reverse();
+  const files = flattenedCode.map((file) => ({
+    path: file.path,
+    language: 'typescript',
+    content: file.content,
+  }));
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
@@ -138,9 +136,7 @@ export const SettingsServerlessFunctionDetail = () => {
         return (
           <SettingsServerlessFunctionSettingsTab
             formValues={formValues}
-            serverlessFunctionId={serverlessFunctionId}
             onChange={onChange}
-            onCodeChange={onCodeChange}
           />
         );
       default:
@@ -171,10 +167,7 @@ export const SettingsServerlessFunctionDetail = () => {
         ]}
       >
         <SettingsPageContainer>
-          <TabList
-            tabs={tabs}
-            componentInstanceId={SERVERLESS_FUNCTION_DETAIL_ID}
-          />
+          <TabList tabs={tabs} componentInstanceId={instanceId} />
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>

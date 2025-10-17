@@ -16,6 +16,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { ApplicationVariableModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless
     ObjectMetadataModule,
     DataSourceModule,
     AgentModule,
+    ApplicationVariableModule,
     ServerlessFunctionLayerModule,
     ServerlessFunctionModule,
     DatabaseEventTriggerModule,

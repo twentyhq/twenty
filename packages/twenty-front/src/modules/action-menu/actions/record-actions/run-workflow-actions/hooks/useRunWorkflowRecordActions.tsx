@@ -11,11 +11,9 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRunWorkflowRecordActions = ({
   objectMetadataItem,
@@ -25,9 +23,6 @@ export const useRunWorkflowRecordActions = ({
   skip?: boolean;
 }) => {
   const { getIcon } = useIcons();
-  const isIteratorEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
-  );
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
@@ -55,7 +50,6 @@ export const useRunWorkflowRecordActions = ({
         >,
       ) => {
         if (
-          isIteratorEnabled &&
           isDefined(activeWorkflowVersion?.trigger) &&
           isBulkRecordsManualTrigger(activeWorkflowVersion.trigger)
         ) {
@@ -91,7 +85,7 @@ export const useRunWorkflowRecordActions = ({
           }
         }
       },
-    [runWorkflowVersion, isIteratorEnabled, objectMetadataItem],
+    [runWorkflowVersion, objectMetadataItem],
   );
 
   return activeWorkflowVersions
