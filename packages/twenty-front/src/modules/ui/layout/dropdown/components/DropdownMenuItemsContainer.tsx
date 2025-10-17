@@ -20,7 +20,7 @@ const StyledExternalContainer = styled.div<{
   box-sizing: border-box;
 `;
 
-const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
+const StyledScrollableContainer = styled.div<{ maxHeight?: number; hideScrollbar?: boolean }>`
   box-sizing: border-box;
 
   display: flex;
@@ -28,6 +28,21 @@ const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
   width: 100%;
 
   overflow-y: auto;
+
+  /* optionally hide native scrollbars across browsers when requested */
+  ${({ hideScrollbar }) =>
+    hideScrollbar
+      ? `
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+
+    &::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+  `
+      : ''}
 `;
 
 const StyledInternalContainer = styled.div`
@@ -44,16 +59,20 @@ export const DropdownMenuItemsContainer = ({
   children,
   hasMaxHeight,
   scrollable = true,
+  hideScrollbar = false,
 }: {
   children: React.ReactNode;
   hasMaxHeight?: boolean;
   scrollable?: boolean;
+  hideScrollbar?: boolean;
 }) => {
   return scrollable === true ? (
     <StyledScrollableContainer
       maxHeight={
         hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
       }
+      hideScrollbar={hideScrollbar}
+      data-scrollable="true"
     >
       <StyledExternalContainer role="listbox">
         <StyledInternalContainer>{children}</StyledInternalContainer>

@@ -141,17 +141,18 @@ export const DropdownInternalContainer = ({
   const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
 
   const hideScrollbarCss = `
-    /* Hide scrollbars for any scrollable descendant inside this dropdown portal */
-    #${dropdownId}-options * {
+    /* Scoped: hide scrollbars only for scrollable wrappers we mark inside this dropdown */
+    #${dropdownId}-options [data-scrollable="true"] {
       scrollbar-width: none !important; /* Firefox */
       -ms-overflow-style: none !important; /* IE 10+ */
     }
-    #${dropdownId}-options *::-webkit-scrollbar {
+    #${dropdownId}-options [data-scrollable="true"]::-webkit-scrollbar {
       display: none !important; /* Safari/WebKit */
       width: 0 !important;
       height: 0 !important;
     }
   `;
+
 
   return (
     <>
