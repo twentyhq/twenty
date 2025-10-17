@@ -2,7 +2,7 @@ import { type RoleContext } from 'src/engine/metadata-modules/role/types/role-co
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export const buildPermissionOptions = (
-  roleContext: RoleContext,
+  roleContext: RoleContext = {},
 ): RolePermissionConfig | undefined => {
   if (roleContext.shouldBypassPermissionChecks) {
     return { shouldBypassPermissionChecks: true };
@@ -15,4 +15,6 @@ export const buildPermissionOptions = (
   if (roleContext.roleIds) {
     return { roleIds: { intersection: roleContext.roleIds } };
   }
+
+  return { shouldBypassPermissionChecks: true };
 };

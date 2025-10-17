@@ -44,7 +44,7 @@ export class CreateRecordService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          buildPermissionOptions(roleContext || {}),
+          buildPermissionOptions(roleContext),
         );
 
       const { objectMetadataItemWithFieldsMaps } =
