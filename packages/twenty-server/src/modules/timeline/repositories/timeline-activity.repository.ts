@@ -98,7 +98,7 @@ export class TimelineActivityRepository {
       ),
       name: In(payloads.map((payload) => payload.name)),
       workspaceMemberId: In(
-        payloads.map((payload) => payload.workspaceMemberId || null),
+        payloads.map((payload) => payload.workspaceMemberId),
       ),
       createdAt: MoreThan(tenMinutesAgo),
     };
