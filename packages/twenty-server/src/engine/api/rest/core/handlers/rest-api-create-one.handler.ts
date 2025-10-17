@@ -6,7 +6,7 @@ import {
 
 import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
@@ -59,7 +59,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
   }
 
   private formatRestResponse(record: ObjectRecord, objectNameSingular: string) {
-    return { data: { [objectNameSingular]: record } };
+    return { data: { [`create${capitalize(objectNameSingular)}`]: record } };
   }
 
   private parseRequestArgs(request: AuthenticatedRequest) {
