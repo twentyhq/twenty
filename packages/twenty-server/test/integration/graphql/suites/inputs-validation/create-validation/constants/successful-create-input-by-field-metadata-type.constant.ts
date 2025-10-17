@@ -216,10 +216,10 @@ export const successfulCreateInputByFieldMetadataType: {
     },
     {
       input: {
-        selectField: null,
+        multiSelectField: null,
       },
       validateInput: (record: Record<string, any>) => {
-        return record.selectField === null;
+        return record.multiSelectField === null;
       },
     },
   ],
