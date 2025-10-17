@@ -79,7 +79,7 @@ export const PageLayoutRendererContent = () => {
             isInRightDrawer={isInRightDrawer}
           />
 
-          <PageLayoutGridLayout activeTabId={pinnedLeftTab.id} />
+          <PageLayoutGridLayout tabId={pinnedLeftTab.id} />
         </ShowPageLeftContainer>
       )}
 
@@ -97,7 +97,9 @@ export const PageLayoutRendererContent = () => {
             componentInstanceId={`scroll-wrapper-page-layout-${currentPageLayout.id}`}
             defaultEnableXScroll={false}
           >
-            <PageLayoutGridLayout activeTabId={activeTabId} />
+            {isDefined(activeTabId) && (
+              <PageLayoutGridLayout tabId={activeTabId} />
+            )}
           </StyledScrollWrapper>
         </StyledTabsAndDashboardContainer>
       </StyledShowPageRightContainer>
