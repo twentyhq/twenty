@@ -109,7 +109,9 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
 
       const indexMetadatas = await this.indexMetadataRepository.find({
         where: {
-          objectMetadataId: In(searchableObjects.map((item) => item.id)),
+          objectMetadataId: In(
+            searchableObjects.map((objectMetadata) => objectMetadata.id),
+          ),
         },
         relations: ['indexFieldMetadatas'],
       });

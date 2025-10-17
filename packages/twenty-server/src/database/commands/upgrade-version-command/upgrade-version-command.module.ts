@@ -28,7 +28,6 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     V1_7_UpgradeVersionCommandModule,
     V1_8_UpgradeVersionCommandModule,
     V1_9_UpgradeVersionCommandModule,
-    V1_9_UpgradeVersionCommandModule,
     WorkspaceSyncMetadataModule,
   ],
   providers: [UpgradeCommand],
