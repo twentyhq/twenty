@@ -14,6 +14,9 @@ import {
 
 import { ApplicationVariable } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @Entity({ name: 'application', schema: 'core' })
 @Index('IDX_APPLICATION_WORKSPACE_ID', ['workspaceId'])
@@ -59,11 +62,33 @@ export class ApplicationEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
+  @OneToMany(() => AgentEntity, (agent) => agent.application, {
+    onDelete: 'CASCADE',
+  })
+  agents: Relation<AgentEntity[]>;
+
+  @OneToMany(
+    () => ServerlessFunctionEntity,
+    (serverlessFunction) => serverlessFunction.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  serverlessFunctions: Relation<ServerlessFunctionEntity[]>;
+
+  @OneToMany(() => ObjectMetadataEntity, (object) => object.application, {
+    onDelete: 'CASCADE',
+  })
+  objects: Relation<ObjectMetadataEntity[]>;
+
   @OneToMany(
     () => ApplicationVariable,
     (applicationVariable) => applicationVariable.application,
+    {
+      onDelete: 'CASCADE',
+    },
   )
-  applicationVariables: Relation<ApplicationVariable>[];
+  applicationVariables: Relation<ApplicationVariable[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
