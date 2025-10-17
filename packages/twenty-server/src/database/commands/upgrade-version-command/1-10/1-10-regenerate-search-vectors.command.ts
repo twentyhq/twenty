@@ -81,10 +81,6 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
   }: RunOnWorkspaceArgs): Promise<void> {
     await this.ensureUnaccentFunction();
 
-    const queryRunner = this.coreDataSource.createQueryRunner();
-
-    await queryRunner.connect();
-
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const isDryRun = Boolean(options.dryRun);
 
@@ -113,7 +109,12 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
       relations: ['indexFieldMetadatas'],
     });
 
+    let queryRunner: QueryRunner | undefined;
+
     try {
+      queryRunner = this.coreDataSource.createQueryRunner();
+
+      await queryRunner.connect();
       await queryRunner.startTransaction();
 
       for (const objectMetadata of searchableObjects) {
@@ -234,7 +235,7 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
 
       await this.handleDryRun(queryRunner, isDryRun);
     } catch (error) {
-      if (queryRunner.isTransactionActive) {
+      if (queryRunner && queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
       }
 
@@ -244,7 +245,9 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
 
       throw error;
     } finally {
-      await queryRunner.release();
+      if (queryRunner) {
+        await queryRunner.release();
+      }
     }
   }
 
