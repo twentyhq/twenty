@@ -391,11 +391,11 @@ export class DevSeederDataService {
   }
 
   private async seedAttachmentFiles(workspaceId: string): Promise<void> {
-    // Use source directory path (files aren't copied to dist during build)
-    const sampleFilesDir = join(
-      __dirname,
-      '../../../../../src/engine/workspace-manager/dev-seeder/data/sample-files',
-    );
+    // Files are copied to dist/assets during build via nest-cli.json
+    const IS_BUILT = __dirname.includes('/dist/');
+    const sampleFilesDir = IS_BUILT
+      ? join(__dirname, '../../assets/dev-seeder/data/sample-files')
+      : join(__dirname, '../sample-files');
 
     const filesToCreate = [
       'sample-contract.pdf',
