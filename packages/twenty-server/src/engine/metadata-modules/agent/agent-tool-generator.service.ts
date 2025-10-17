@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ToolSet } from 'ai';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
@@ -42,37 +42,24 @@ export class AgentToolGeneratorService {
         return tools;
       }
 
-      const roles = await this.roleRepository.find({
-        where: { id: In(roleIds), workspaceId },
-        relations: ['permissionFlags'],
-      });
-
-      if (roles.length !== roleIds.length) {
-        return tools;
-      }
-
       const hasWorkflowPermission =
-        roles.length === 1
-          ? this.permissionsService.checkRolePermissions(
-              roles[0],
-              PermissionFlagType.WORKFLOWS,
-            )
-          : this.permissionsService.checkRolesPermissions(
-              roles,
-              PermissionFlagType.WORKFLOWS,
-            );
+        await this.permissionsService.checkRolesPermissions(
+          { intersectionOf: roleIds },
+          workspaceId,
+          PermissionFlagType.WORKFLOWS,
+        );
 
       if (hasWorkflowPermission) {
         const workflowTools = this.workflowToolService.generateWorkflowTools(
           workspaceId,
-          { roleIds },
+          { intersectionOf: roleIds },
         );
 
         tools = { ...tools, ...workflowTools };
       }
 
       const databaseTools = await this.toolService.listTools(
-        { roleIds },
+        { intersectionOf: roleIds },
         workspaceId,
         actorContext,
       );
@@ -80,7 +67,7 @@ export class AgentToolGeneratorService {
       tools = { ...tools, ...databaseTools };
 
       const roleActionTools = await this.toolAdapterService.getTools(
-        { roleIds },
+        { intersectionOf: roleIds },
         workspaceId,
       );
 

@@ -85,7 +85,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
           actorContext: executionContext.isActingOnBehalfOfUser
             ? executionContext.initiator
             : undefined,
-          roleContext: { roleId: executionContext.roleId },
+          rolePermissionConfig: executionContext.roleId
+            ? { unionOf: [executionContext.roleId] }
+            : { shouldBypassPermissionChecks: true },
         },
       );
 

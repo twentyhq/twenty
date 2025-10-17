@@ -12,7 +12,6 @@ import { type UpdateRecordParams } from 'src/engine/core-modules/record-crud/typ
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { buildPermissionOptions } from 'src/engine/twenty-orm/utils/build-permission-options.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
@@ -33,7 +32,7 @@ export class UpdateRecordService {
       objectRecord,
       fieldsToUpdate,
       workspaceId,
-      roleContext,
+      rolePermissionConfig,
     } = params;
 
     if (!workspaceId) {
@@ -57,7 +56,7 @@ export class UpdateRecordService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          buildPermissionOptions(roleContext),
+          rolePermissionConfig,
         );
 
       const previousObjectRecord = await repository.findOne({

@@ -30,7 +30,6 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { buildPermissionOptions } from 'src/engine/twenty-orm/utils/build-permission-options.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Injectable()
@@ -336,10 +335,11 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       try {
         const repository = executionArgs.workspaceDataSource.getRepository(
           relationField.objectMetadata.nameSingular,
-          buildPermissionOptions({
-            shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
-            roleId: executionArgs.roleId,
-          }),
+          executionArgs.isExecutedByApiKey
+            ? { shouldBypassPermissionChecks: true }
+            : executionArgs.roleId
+              ? { unionOf: [executionArgs.roleId] }
+              : undefined,
         );
 
         const whereCondition = { [relationField.joinColumnName]: In(fromIds) };

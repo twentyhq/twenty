@@ -40,7 +40,6 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { buildPermissionOptions } from 'src/engine/twenty-orm/utils/build-permission-options.util';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -156,7 +155,11 @@ export abstract class GraphqlQueryBaseResolverService<
 
       const repository = workspaceDataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
-        buildPermissionOptions({ shouldBypassPermissionChecks, roleId }),
+        shouldBypassPermissionChecks
+          ? { shouldBypassPermissionChecks: true }
+          : roleId
+            ? { unionOf: [roleId] }
+            : undefined,
         authContext,
       );
 

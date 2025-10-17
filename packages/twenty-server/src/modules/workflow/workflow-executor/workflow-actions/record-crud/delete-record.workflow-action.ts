@@ -79,7 +79,9 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       objectName: workflowActionInput.objectName,
       objectRecordId: workflowActionInput.objectRecordId,
       workspaceId,
-      roleContext: { roleId: executionContext.roleId },
+      rolePermissionConfig: executionContext.roleId
+        ? { unionOf: [executionContext.roleId] }
+        : { shouldBypassPermissionChecks: true },
       soft: true,
     });
 

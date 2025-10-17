@@ -125,7 +125,7 @@ export class McpService {
       );
 
       const toolSet = await this.toolService.listTools(
-        { roleId },
+        { unionOf: [roleId] },
         workspace.id,
       );
 

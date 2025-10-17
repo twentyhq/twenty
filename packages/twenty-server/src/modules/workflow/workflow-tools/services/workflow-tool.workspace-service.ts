@@ -7,9 +7,8 @@ import { RecordPositionService } from 'src/engine/core-modules/record-position/s
 import type { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import type { UpdateWorkflowVersionPositionsInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-positions-input.dto';
 import type { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-step-input.dto';
-import { RoleContext } from 'src/engine/metadata-modules/role/types/role-context.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { buildPermissionOptions } from 'src/engine/twenty-orm/utils/build-permission-options.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
@@ -47,13 +46,9 @@ export class WorkflowToolWorkspaceService {
 
   generateWorkflowTools(
     workspaceId: string,
-    roleContext: RoleContext,
+    rolePermissionConfig: RolePermissionConfig,
   ): ToolSet {
     const tools: ToolSet = {};
-
-    if (!roleContext.roleId && !roleContext.roleIds) {
-      return tools;
-    }
 
     tools.create_complete_workflow = {
       description: `Create a complete workflow with trigger, steps, and connections in a single operation.
@@ -97,7 +92,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
           const workflowId = await this.createWorkflow({
             workspaceId,
             name: parameters.name,
-            roleContext,
+            rolePermissionConfig,
           });
 
           const workflowVersionId = await this.createWorkflowVersion({
@@ -105,7 +100,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
             workflowId,
             trigger: parameters.trigger,
             steps: parameters.steps,
-            roleContext,
+            rolePermissionConfig,
           });
 
           if (parameters.stepPositions && parameters.stepPositions.length > 0) {
@@ -141,7 +136,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
               workspaceId,
               workflowId,
               workflowVersionId,
-              roleContext,
+              rolePermissionConfig,
             });
           }
 
@@ -409,20 +404,17 @@ This is the most efficient way for AI to create workflows as it handles all the 
   private async createWorkflow({
     workspaceId,
     name,
-    roleContext,
+    rolePermissionConfig,
   }: {
     workspaceId: string;
     name: string;
-    roleContext: {
-      roleId?: string;
-      roleIds?: string[];
-    };
+    rolePermissionConfig: RolePermissionConfig;
   }): Promise<string> {
     const workflowRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'workflow',
-        buildPermissionOptions(roleContext),
+        rolePermissionConfig,
       );
 
     const workflowPosition =
@@ -452,24 +444,19 @@ This is the most efficient way for AI to create workflows as it handles all the 
     workflowId,
     trigger,
     steps,
-    roleContext,
+    rolePermissionConfig,
   }: {
     workspaceId: string;
     workflowId: string;
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
-    roleContext: {
-      roleId?: string;
-      roleIds?: string[];
-    };
+    rolePermissionConfig: RolePermissionConfig;
   }): Promise<string> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'workflowVersion',
-        roleContext.roleId
-          ? { roleId: roleContext.roleId }
-          : { roleIds: { intersection: roleContext.roleIds! } },
+        rolePermissionConfig,
       );
 
     const versionPosition =
@@ -501,21 +488,18 @@ This is the most efficient way for AI to create workflows as it handles all the 
     workspaceId,
     workflowId,
     workflowVersionId,
-    roleContext,
+    rolePermissionConfig,
   }: {
     workspaceId: string;
     workflowId: string;
     workflowVersionId: string;
-    roleContext: {
-      roleId?: string;
-      roleIds?: string[];
-    };
+    rolePermissionConfig: RolePermissionConfig;
   }) {
     const workflowRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'workflow',
-        buildPermissionOptions(roleContext),
+        rolePermissionConfig,
       );
 
     await workflowRepository.update(workflowId, {

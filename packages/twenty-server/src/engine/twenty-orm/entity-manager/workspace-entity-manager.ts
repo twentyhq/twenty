@@ -110,30 +110,37 @@ export class WorkspaceEntityManager extends EntityManager {
     const dataSource = this.connection;
 
     let objectPermissions = {};
-
-    const hasRoleIds =
-      rolePermissionConfig && 'roleIds' in rolePermissionConfig;
+    let shouldBypassPermissionChecks = false;
     const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
 
-    if (hasRoleIds && 'union' in rolePermissionConfig.roleIds) {
-      // TODO: Implement union logic for combining permissions across roles
-      throw new Error('Union permission logic not yet implemented');
+    if (
+      rolePermissionConfig &&
+      'shouldBypassPermissionChecks' in rolePermissionConfig
+    ) {
+      shouldBypassPermissionChecks = true;
     }
 
-    if (hasRoleIds && 'intersection' in rolePermissionConfig.roleIds) {
-      const allRolePermissions = rolePermissionConfig.roleIds.intersection.map(
+    if (rolePermissionConfig && 'unionOf' in rolePermissionConfig) {
+      if (rolePermissionConfig.unionOf.length === 1) {
+        objectPermissions = this.getPermissionsForRole(
+          rolePermissionConfig.unionOf[0],
+          objectPermissionsByRoleId,
+        );
+      } else {
+        // TODO: Implement union logic for combining permissions across multiple roles
+        throw new Error(
+          'Union permission logic for multiple roles not yet implemented',
+        );
+      }
+    }
+
+    if (rolePermissionConfig && 'intersectionOf' in rolePermissionConfig) {
+      const allRolePermissions = rolePermissionConfig.intersectionOf.map(
         (roleId: string) =>
           this.getPermissionsForRole(roleId, objectPermissionsByRoleId),
       );
 
       objectPermissions = computePermissionIntersection(allRolePermissions);
-    }
-
-    if (rolePermissionConfig && 'roleId' in rolePermissionConfig) {
-      objectPermissions = this.getPermissionsForRole(
-        rolePermissionConfig.roleId,
-        objectPermissionsByRoleId,
-      );
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
@@ -143,9 +150,7 @@ export class WorkspaceEntityManager extends EntityManager {
       dataSource.featureFlagMap,
       this.queryRunner,
       objectPermissions,
-      rolePermissionConfig &&
-        'shouldBypassPermissionChecks' in rolePermissionConfig &&
-        rolePermissionConfig.shouldBypassPermissionChecks,
+      shouldBypassPermissionChecks,
       authContext,
     );
 

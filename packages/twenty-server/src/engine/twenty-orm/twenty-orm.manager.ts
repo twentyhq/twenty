@@ -74,7 +74,7 @@ export class TwentyORMManager {
 
     return workspaceDataSource.getRepository<T>(
       objectMetadataName,
-      roleId ? { roleId } : undefined,
+      roleId ? { unionOf: [roleId] } : undefined,
     );
   }
 

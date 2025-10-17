@@ -10,7 +10,6 @@ import {
 import { type DeleteRecordParams } from 'src/engine/core-modules/record-crud/types/delete-record-params.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { buildPermissionOptions } from 'src/engine/twenty-orm/utils/build-permission-options.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
@@ -28,7 +27,7 @@ export class DeleteRecordService {
       objectName,
       objectRecordId,
       workspaceId,
-      roleContext,
+      rolePermissionConfig,
       soft = true,
     } = params;
 
@@ -53,7 +52,7 @@ export class DeleteRecordService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          buildPermissionOptions(roleContext),
+          rolePermissionConfig,
         );
 
       const { objectMetadataItemWithFieldsMaps } =

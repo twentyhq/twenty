@@ -190,7 +190,7 @@ export class AgentExecutionService implements AgentExecutionContext {
 
             const repository = workspaceDataSource.getRepository(
               recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-              { roleId },
+              { unionOf: [roleId] },
             );
 
             const restrictedFields =

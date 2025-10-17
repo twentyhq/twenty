@@ -17,6 +17,7 @@ import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permi
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
 export class PermissionsService {
@@ -188,31 +189,26 @@ export class PermissionsService {
     );
   }
 
-  public checkRolesPermissions(
-    roles: RoleEntity[],
-    setting: PermissionFlagType,
-  ): boolean {
-    if (roles.length === 0) {
-      return false;
-    }
-
-    return roles.every((role) => this.checkRolePermissions(role, setting));
-  }
-
-  public async hasToolPermission(
-    roleContext: {
-      roleId?: string;
-      roleIds?: string[];
-    },
+  public async checkRolesPermissions(
+    rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
-    flag: PermissionFlagType,
+    setting: PermissionFlagType,
   ): Promise<boolean> {
     try {
-      const roleIds = roleContext.roleIds
-        ? roleContext.roleIds
-        : roleContext.roleId
-          ? [roleContext.roleId]
-          : [];
+      if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
+        return true;
+      }
+
+      let roleIds: string[] = [];
+      let useIntersection = false;
+
+      if ('intersectionOf' in rolePermissionConfig) {
+        roleIds = rolePermissionConfig.intersectionOf;
+        useIntersection = true;
+      } else if ('unionOf' in rolePermissionConfig) {
+        roleIds = rolePermissionConfig.unionOf;
+        useIntersection = false;
+      }
 
       if (roleIds.length === 0) {
         return false;
@@ -227,7 +223,49 @@ export class PermissionsService {
         return false;
       }
 
-      return roles.every((role) => {
+      return useIntersection
+        ? roles.every((role) => this.checkRolePermissions(role, setting))
+        : roles.some((role) => this.checkRolePermissions(role, setting));
+    } catch {
+      return false;
+    }
+  }
+
+  public async hasToolPermission(
+    rolePermissionConfig: RolePermissionConfig,
+    workspaceId: string,
+    flag: PermissionFlagType,
+  ): Promise<boolean> {
+    try {
+      if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
+        return true;
+      }
+
+      let roleIds: string[] = [];
+      let useIntersection = false;
+
+      if ('intersectionOf' in rolePermissionConfig) {
+        roleIds = rolePermissionConfig.intersectionOf;
+        useIntersection = true;
+      } else if ('unionOf' in rolePermissionConfig) {
+        roleIds = rolePermissionConfig.unionOf;
+        useIntersection = false;
+      }
+
+      if (roleIds.length === 0) {
+        return false;
+      }
+
+      const roles = await this.roleRepository.find({
+        where: { id: In(roleIds), workspaceId },
+        relations: ['permissionFlags'],
+      });
+
+      if (roles.length !== roleIds.length) {
+        return false;
+      }
+
+      const checkRoleHasPermission = (role: RoleEntity) => {
         if (role.canAccessAllTools === true) {
           return true;
         }
@@ -235,9 +273,13 @@ export class PermissionsService {
         const permissionFlags = role.permissionFlags ?? [];
 
         return permissionFlags.some(
-          (permissionFlag) => permissionFlag.flag === flag,
+          (permissionFlag: { flag: string }) => permissionFlag.flag === flag,
         );
-      });
+      };
+
+      return useIntersection
+        ? roles.every(checkRoleHasPermission)
+        : roles.some(checkRoleHasPermission);
     } catch {
       return false;
     }

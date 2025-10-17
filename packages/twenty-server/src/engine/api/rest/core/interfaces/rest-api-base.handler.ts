@@ -176,7 +176,7 @@ export abstract class RestApiBaseHandler {
     const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
       {
-        roleId,
+        unionOf: [roleId],
       },
     );
 

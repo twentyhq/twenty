@@ -16,10 +16,9 @@ import {
 import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { type RoleContext } from 'src/engine/metadata-modules/role/types/role-context.type';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { buildPermissionOptions } from 'src/engine/twenty-orm/utils/build-permission-options.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 
 @Injectable()
@@ -35,7 +34,7 @@ export class ToolService {
   ) {}
 
   async listTools(
-    roleContext: RoleContext,
+    rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     actorContext?: ActorMetadata,
   ): Promise<ToolSet> {
@@ -48,11 +47,18 @@ export class ToolService {
 
     let objectPermissions;
 
-    if (roleContext.roleId) {
-      objectPermissions = rolesPermissions[roleContext.roleId];
-    } else if (roleContext.roleIds) {
-      const allRolePermissions = roleContext.roleIds.map(
-        (roleId) => rolesPermissions[roleId],
+    if ('unionOf' in rolePermissionConfig) {
+      if (rolePermissionConfig.unionOf.length === 1) {
+        objectPermissions = rolesPermissions[rolePermissionConfig.unionOf[0]];
+      } else {
+        // TODO: Implement union logic for multiple roles
+        throw new Error(
+          'Union permission logic for multiple roles not yet implemented',
+        );
+      }
+    } else if ('intersectionOf' in rolePermissionConfig) {
+      const allRolePermissions = rolePermissionConfig.intersectionOf.map(
+        (roleId: string) => rolesPermissions[roleId],
       );
 
       objectPermissions = computePermissionIntersection(allRolePermissions);
@@ -89,7 +95,7 @@ export class ToolService {
               objectName: objectMetadata.nameSingular,
               objectRecord: parameters.input,
               workspaceId,
-              roleContext,
+              rolePermissionConfig,
               createdBy: actorContext,
             });
           },
@@ -106,7 +112,7 @@ export class ToolService {
               objectRecordId: id,
               objectRecord,
               workspaceId,
-              roleContext,
+              rolePermissionConfig,
             });
           },
         };
@@ -125,7 +131,7 @@ export class ToolService {
               limit,
               offset,
               workspaceId,
-              roleContext,
+              rolePermissionConfig,
             });
           },
         };
@@ -139,7 +145,7 @@ export class ToolService {
               filter: { id: { eq: parameters.input.id } },
               limit: 1,
               workspaceId,
-              roleContext,
+              rolePermissionConfig,
             });
           },
         };
@@ -154,7 +160,7 @@ export class ToolService {
               objectName: objectMetadata.nameSingular,
               objectRecordId: parameters.input.id,
               workspaceId,
-              roleContext,
+              rolePermissionConfig,
               soft: true,
             });
           },
@@ -168,7 +174,7 @@ export class ToolService {
               objectMetadata.nameSingular,
               parameters.input,
               workspaceId,
-              roleContext,
+              rolePermissionConfig,
             );
           },
         };
@@ -182,17 +188,14 @@ export class ToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
-    roleContext: {
-      roleId?: string;
-      roleIds?: string[];
-    },
+    rolePermissionConfig: RolePermissionConfig,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          buildPermissionOptions(roleContext),
+          rolePermissionConfig,
         );
 
       const { filter } = parameters;
