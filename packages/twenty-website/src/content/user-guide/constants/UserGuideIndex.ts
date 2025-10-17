@@ -8,6 +8,7 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'configure-workspace-in-three-steps' },
       { fileName: 'implementation-services' },
       { fileName: 'migrating-from-other-crms' },
+      { fileName: 'import-export-data' },
     ],
     'Data Model': [
       { fileName: 'customize-your-data-model' },
@@ -19,6 +20,7 @@ export const USER_GUIDE_INDEX = {
     ],
     'Core CRM Features': [
       { fileName: 'creating-records' },
+      { fileName: 'favorites-management' },
       { fileName: 'core-crm-features' },
       { fileName: 'lead-management' },
       { fileName: 'sales-pipeline-management' },
@@ -43,6 +45,7 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'workflow-credits' },
       { fileName: 'sales-automation-recipes' },
       { fileName: 'external-tool-integration' },
+      { fileName: 'marketing-other-use-cases' },
       { fileName: 'workflow-troubleshooting' },
     ],
     'Collaboration': [
@@ -56,7 +59,7 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'team-collaboration-productivity' },
       { fileName: 'team-collaboration-best-practices' },
     ],
-    'Integrations': [
+    'Integrations & APIs': [
       { fileName: 'integrations' },
       { fileName: 'api-webhooks' },
       { fileName: 'api-types-overview' },
@@ -64,21 +67,22 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'custom-api-documentation' },
       { fileName: 'api-best-practices' },
       { fileName: 'api-rate-limits' },
-      { fileName: 'import-export-data' },
       { fileName: 'third-party-integrations' },
     ],
     'Reporting': [
       { fileName: 'reporting' },
-      { fileName: 'custom-reports' },
-      { fileName: 'sales-dashboards' },
-      { fileName: 'performance-metrics' },
-      { fileName: 'data-export-strategies' },
+      { fileName: 'reporting-overview' },
     ],
     'Settings': [
       { fileName: 'settings' },
+      { fileName: 'profile-settings' },
+      { fileName: 'experience-settings' },
+      { fileName: 'email-calendar-setup' },
+      { fileName: 'workspace-settings' },
+      { fileName: 'member-management' },
       { fileName: 'permissions' },
-      { fileName: 'user-management' },
-      { fileName: 'advanced-security-configuration' },
+      { fileName: 'domains-settings' },
+      { fileName: 'releases-settings' },
       { fileName: 'settings-faq' },
     ],
     'Pricing': [
@@ -89,10 +93,8 @@ export const USER_GUIDE_INDEX = {
     'Resources': [
       { fileName: 'resources' },
       { fileName: 'glossary' },
-      { fileName: 'tips' },
       { fileName: 'github' },
       { fileName: 'troubleshooting-common-issues' },
-      { fileName: 'marketing-other-use-cases' },
       { fileName: 'form-integration' },
       { fileName: 'email-marketing' },
       { fileName: 'business-process-integration' },
