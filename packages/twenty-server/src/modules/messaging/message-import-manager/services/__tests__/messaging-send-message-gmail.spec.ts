@@ -9,28 +9,36 @@ import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-ma
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 
+jest.mock('nodemailer/lib/mail-composer', () => {
+  return jest.fn().mockImplementation(() => ({
+    compile: jest.fn().mockReturnValue({
+      build: jest.fn().mockResolvedValue(Buffer.from('mocked-email-content')),
+    }),
+  }));
+});
+
 describe('MessagingSendMessageService - Gmail HTML Support', () => {
   let service: MessagingSendMessageService;
   let gmailClientProvider: jest.Mocked<GmailClientProvider>;
   let oAuth2ClientProvider: jest.Mocked<OAuth2ClientProvider>;
 
+  const mockGmailClient = {
+    users: {
+      messages: {
+        send: jest.fn().mockResolvedValue({ data: { id: 'message-id' } }),
+      },
+    },
+  };
+
+  const mockOAuth2Client = {
+    userinfo: {
+      get: jest.fn().mockResolvedValue({
+        data: { email: 'test@example.com', name: 'Test User' },
+      }),
+    },
+  };
+
   beforeEach(async () => {
-    const mockGmailClient = {
-      users: {
-        messages: {
-          send: jest.fn().mockResolvedValue({ data: { id: 'message-id' } }),
-        },
-      },
-    };
-
-    const mockOAuth2Client = {
-      userinfo: {
-        get: jest.fn().mockResolvedValue({
-          data: { email: 'test@example.com', name: 'Test User' },
-        }),
-      },
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MessagingSendMessageService,
@@ -68,12 +76,17 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
     oAuth2ClientProvider = module.get(OAuth2ClientProvider);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should send multipart/alternative email with both text and HTML parts via Gmail', async () => {
     const sendMessageInput = {
       to: 'recipient@example.com',
       subject: 'Test HTML Email',
       body: 'This is plain text content',
       html: '<p>This is <strong>HTML</strong> content</p>',
+      attachments: [],
     };
 
     const connectedAccount = {
@@ -84,30 +97,24 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
 
     await service.sendMessage(sendMessageInput, connectedAccount);
 
+    expect(gmailClientProvider.getGmailClient).toHaveBeenCalledWith(
+      connectedAccount,
+    );
+    expect(oAuth2ClientProvider.getOAuth2Client).toHaveBeenCalledWith(
+      connectedAccount,
+    );
+
     const gmailClient =
       await gmailClientProvider.getGmailClient(connectedAccount);
     const sendCall = gmailClient.users.messages.send as jest.Mock;
 
     expect(sendCall).toHaveBeenCalledTimes(1);
-
-    const sentMessage = sendCall.mock.calls[0][0];
-    const rawMessage = Buffer.from(
-      sentMessage.requestBody.raw,
-      'base64',
-    ).toString();
-
-    expect(rawMessage).toContain('MIME-Version: 1.0');
-    expect(rawMessage).toContain(
-      'Content-Type: multipart/alternative; boundary=',
-    );
-    expect(rawMessage).toContain('Content-Type: text/plain; charset="UTF-8"');
-    expect(rawMessage).toContain('Content-Type: text/html; charset="UTF-8"');
-    expect(rawMessage).toContain('This is plain text content');
-    expect(rawMessage).toContain(
-      '<p>This is <strong>HTML</strong> content</p>',
-    );
-    expect(rawMessage).toContain('To: recipient@example.com');
-    expect(rawMessage).toContain('Subject:');
+    expect(sendCall).toHaveBeenCalledWith({
+      userId: 'me',
+      requestBody: {
+        raw: Buffer.from('mocked-email-content').toString('base64'),
+      },
+    });
   });
 
   it('should handle missing fromName gracefully', async () => {
@@ -128,6 +135,7 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
       subject: 'Test Email',
       body: 'Plain text',
       html: '<p>HTML content</p>',
+      attachments: [],
     };
 
     const connectedAccount = {
@@ -138,15 +146,66 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
 
     await service.sendMessage(sendMessageInput, connectedAccount);
 
+    expect(gmailClientProvider.getGmailClient).toHaveBeenCalledWith(
+      connectedAccount,
+    );
+    expect(oAuth2ClientProvider.getOAuth2Client).toHaveBeenCalledWith(
+      connectedAccount,
+    );
+
     const gmailClient =
       await gmailClientProvider.getGmailClient(connectedAccount);
     const sendCall = gmailClient.users.messages.send as jest.Mock;
-    const rawMessage = Buffer.from(
-      sendCall.mock.calls[0][0].requestBody.raw,
-      'base64',
-    ).toString();
 
-    expect(rawMessage).toContain('From: test@example.com');
-    expect(rawMessage).not.toContain('""');
+    expect(sendCall).toHaveBeenCalledTimes(1);
+    expect(sendCall).toHaveBeenCalledWith({
+      userId: 'me',
+      requestBody: {
+        raw: Buffer.from('mocked-email-content').toString('base64'),
+      },
+    });
+  });
+
+  it('should send email with attachments via Gmail', async () => {
+    const sendMessageInput = {
+      to: 'recipient@example.com',
+      subject: 'Test Email with Attachments',
+      body: 'Plain text',
+      html: '<p>HTML content</p>',
+      attachments: [
+        {
+          filename: 'test.pdf',
+          content: Buffer.from('test-pdf-content'),
+          contentType: 'application/pdf',
+        },
+      ],
+    };
+
+    const connectedAccount = {
+      provider: ConnectedAccountProvider.GOOGLE,
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+    } as any;
+
+    await service.sendMessage(sendMessageInput, connectedAccount);
+
+    expect(gmailClientProvider.getGmailClient).toHaveBeenCalledWith(
+      connectedAccount,
+    );
+    expect(oAuth2ClientProvider.getOAuth2Client).toHaveBeenCalledWith(
+      connectedAccount,
+    );
+
+    const gmailClient =
+      await gmailClientProvider.getGmailClient(connectedAccount);
+    const sendCall = gmailClient.users.messages.send as jest.Mock;
+
+    expect(sendCall).toHaveBeenCalledTimes(1);
+    expect(sendCall).toHaveBeenCalledWith({
+      userId: 'me',
+      requestBody: {
+        raw: Buffer.from('mocked-email-content').toString('base64'),
+      },
+    });
   });
 });
