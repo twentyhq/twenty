@@ -14,8 +14,13 @@ import { type CommonSelectedFields } from 'src/engine/api/common/types/common-se
 export enum CommonQueryNames {
   FIND_ONE = 'findOne',
   FIND_MANY = 'findMany',
+  CREATE_ONE = 'createOne',
   CREATE_MANY = 'createMany',
   GROUP_BY = 'groupBy',
+  DESTROY_MANY = 'destroyMany',
+  DESTROY_ONE = 'destroyOne',
+  DELETE_MANY = 'deleteMany',
+  DELETE_ONE = 'deleteOne',
 }
 
 export interface FindOneQueryArgs {
@@ -56,3 +61,23 @@ export type CommonQueryArgs =
   | FindOneQueryArgs
   | FindManyQueryArgs
   | GroupByQueryArgs;
+
+export interface DestroyOneQueryArgs {
+  selectedFields: CommonSelectedFields;
+  id: string;
+}
+
+export interface DestroyManyQueryArgs {
+  selectedFields: CommonSelectedFields;
+  filter: ObjectRecordFilter;
+}
+
+export interface DeleteOneQueryArgs {
+  selectedFields: CommonSelectedFields;
+  id: string;
+}
+
+export interface DeleteManyQueryArgs {
+  selectedFields: CommonSelectedFields;
+  filter: ObjectRecordFilter;
+}
