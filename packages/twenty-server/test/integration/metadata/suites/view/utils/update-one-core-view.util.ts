@@ -1,10 +1,11 @@
-import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
-import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateCoreViewQueryFactory } from 'test/integration/metadata/suites/view/utils/update-core-view-query-factory.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+
+import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 
 export const updateOneCoreView = async ({
   viewId,
@@ -43,4 +44,3 @@ export const updateOneCoreView = async ({
 
   return { data: response.body.data, errors: response.body.errors };
 };
-

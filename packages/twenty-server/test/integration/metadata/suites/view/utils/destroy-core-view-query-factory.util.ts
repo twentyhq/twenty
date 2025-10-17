@@ -14,4 +14,3 @@ export const destroyCoreViewQueryFactory = ({
     id: viewId,
   },
 });
-

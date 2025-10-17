@@ -25,9 +25,7 @@ export const createTestViewWithGraphQL = async (
   });
 
   if (errors) {
-    throw new Error(
-      `Failed to create test view: ${JSON.stringify(errors)}`,
-    );
+    throw new Error(`Failed to create test view: ${JSON.stringify(errors)}`);
   }
 
   if (!data) {

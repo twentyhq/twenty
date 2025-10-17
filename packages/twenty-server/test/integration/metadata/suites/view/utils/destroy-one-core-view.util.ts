@@ -35,4 +35,3 @@ export const destroyOneCoreView = async ({
 
   return { data: response.body.data, errors: response.body.errors };
 };
-
