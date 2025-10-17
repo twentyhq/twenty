@@ -5,9 +5,9 @@ import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticat
 export const parseSoftDeleteRestRequest = (
   request: AuthenticatedRequest,
 ): boolean => {
-  if (!isDefined(request.query.softDelete)) {
+  if (!isDefined(request.query.soft_delete)) {
     return false;
   }
 
-  return request.query.softDelete === 'true';
+  return request.query.soft_delete === 'true';
 };

@@ -10,6 +10,7 @@ import {
 import {
   getCreateManyResponse201,
   getCreateOneResponse201,
+  getDeleteManyResponse200,
   getDeleteResponse200,
   getFindDuplicatesResponse200,
   getFindManyResponse200,
@@ -79,6 +80,20 @@ export const computeManyResultPath = (
         '401': { $ref: '#/components/responses/401' },
       },
     },
+    delete: {
+      tags: [item.namePlural],
+      summary: `Delete Many ${item.namePlural}`,
+      operationId: `deleteMany${capitalize(item.namePlural)}`,
+      parameters: [
+        { $ref: '#/components/parameters/filter' },
+        { $ref: '#/components/parameters/softDelete' },
+      ],
+      responses: {
+        '200': getDeleteManyResponse200(item),
+        '400': { $ref: '#/components/responses/400' },
+        '401': { $ref: '#/components/responses/401' },
+      },
+    },
   } as OpenAPIV3_1.PathItemObject;
 };
 
@@ -105,7 +120,10 @@ export const computeSingleResultPath = (
       tags: [item.namePlural],
       summary: `Delete One ${item.nameSingular}`,
       operationId: `deleteOne${capitalize(item.nameSingular)}`,
-      parameters: [{ $ref: '#/components/parameters/idPath' }],
+      parameters: [
+        { $ref: '#/components/parameters/idPath' },
+        { $ref: '#/components/parameters/softDelete' },
+      ],
       responses: {
         '200': getDeleteResponse200(item),
         '400': { $ref: '#/components/responses/400' },

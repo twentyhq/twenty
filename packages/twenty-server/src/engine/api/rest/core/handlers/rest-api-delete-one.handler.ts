@@ -21,7 +21,7 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
 
   async handle(request: AuthenticatedRequest) {
     try {
-      const { id, depth } = this.parseRequestArgs(request);
+      const { id } = this.parseRequestArgs(request);
 
       const {
         authContext,
@@ -30,7 +30,6 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
       } = await this.buildCommonOptions(request);
 
       const selectedFieldsResult = await this.computeSelectedFields({
-        depth,
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
         authContext,
