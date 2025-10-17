@@ -14,30 +14,25 @@ const isRunningCommand = (): boolean => {
 };
 
 const getLoggingConfig = (): LogLevel[] => {
-  // ORM_QUERY_LOGGING can be: 'disabled', 'server-only', 'always'
-  const ormQueryLogging = process.env.ORM_QUERY_LOGGING || 'disabled';
-
-  if (ormQueryLogging === 'disabled') {
-    return ['error'];
-  }
-
-  if (ormQueryLogging === 'server-only') {
-    if (isRunningCommand()) {
-      return ['error'];
-    }
-
-    return ['query', 'error'];
-  }
-
-  if (ormQueryLogging === 'always') {
-    return ['query', 'error'];
-  }
-
   if (process.env.NODE_ENV === 'test') {
     return [];
   }
+  const ormQueryLogging = process.env.ORM_QUERY_LOGGING || 'disabled';
 
-  return ['error'];
+  switch (ormQueryLogging) {
+    case 'disabled':
+      return ['error'];
+    case 'server-only':
+      if (isRunningCommand()) {
+        return ['error'];
+      }
+
+      return ['query', 'error'];
+    case 'always':
+      return ['query', 'error'];
+    default:
+      return ['error'];
+  }
 };
 
 const isJest = process.argv.some((arg) => arg.includes('jest'));
