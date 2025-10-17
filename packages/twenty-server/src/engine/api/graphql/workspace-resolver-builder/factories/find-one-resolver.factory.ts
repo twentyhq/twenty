@@ -10,7 +10,6 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -43,19 +42,10 @@ export class FindOneResolverFactory
 
       if (isCommonApiEnabled) {
         try {
-          const graphqlQueryParser = new GraphqlQueryParser(
-            internalContext.objectMetadataItemWithFieldMaps,
-            internalContext.objectMetadataMaps,
-          );
-
-          const selectedFieldsResult = graphqlQueryParser.parseSelectedFields(
-            internalContext.objectMetadataItemWithFieldMaps,
-            graphqlFields(info),
-            internalContext.objectMetadataMaps,
-          );
+          const selectedFields = graphqlFields(info);
 
           const record = await this.commonFindOneQueryRunnerService.run({
-            args: { ...args, selectedFieldsResult },
+            args: { ...args, selectedFields },
             authContext: internalContext.authContext,
             objectMetadataMaps: internalContext.objectMetadataMaps,
             objectMetadataItemWithFieldMaps:

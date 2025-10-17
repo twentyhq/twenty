@@ -1,13 +1,15 @@
 //TODO : Refacto-common - remove this comment - This parser is a copy of the OrderByInputFactory without objectMetadata dependency. Validation will be done in common layer
 
-import { BadRequestException } from '@nestjs/common';
-
 import { OrderByDirection } from 'twenty-shared/types';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 import { addDefaultOrderById } from 'src/engine/api/rest/input-request-parsers/order-by-parser-utils/add-default-order-by-id.util';
+import {
+  RestInputRequestParserException,
+  RestInputRequestParserExceptionCode,
+} from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 
 export const parseOrderByRestRequest = (
@@ -33,12 +35,13 @@ export const parseOrderByRestRequest = (
 
       // fields -> [field_1] ; direction -> AscNullsFirst
       if (!(direction in OrderByDirection)) {
-        throw new BadRequestException(
+        throw new RestInputRequestParserException(
           `'order_by' direction '${direction}' invalid. Allowed values are '${Object.values(
             OrderByDirection,
           ).join(
             "', '",
           )}'. eg: ?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3`,
+          RestInputRequestParserExceptionCode.INVALID_ORDER_BY_QUERY_PARAM,
         );
       }
 

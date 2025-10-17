@@ -1,4 +1,7 @@
-import { BadRequestException } from '@nestjs/common';
+import {
+  RestInputRequestParserException,
+  RestInputRequestParserExceptionCode,
+} from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 
 export const checkFilterQuery = (filterQuery: string): void => {
   const countOpenedBrackets = (filterQuery.match(/\(/g) || []).length;
@@ -13,8 +16,9 @@ export const checkFilterQuery = (filterQuery: string): void => {
             Math.abs(diff) > 1 ? 's are' : ' is'
           }`;
 
-    throw new BadRequestException(
+    throw new RestInputRequestParserException(
       `'filter' invalid. ${hint} missing in the query`,
+      RestInputRequestParserExceptionCode.INVALID_FILTER_QUERY_PARAM,
     );
   }
 

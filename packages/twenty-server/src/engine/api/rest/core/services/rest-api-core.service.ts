@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,6 +8,7 @@ import { RestApiDeleteOneHandler } from 'src/engine/api/rest/core/handlers/rest-
 import { RestApiFindDuplicatesHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-duplicates.handler';
 import { RestApiFindManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-many.handler';
 import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-one.handler';
+import { RestApiGroupByHandler } from 'src/engine/api/rest/core/handlers/rest-api-group-by.handler';
 import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
@@ -24,6 +25,7 @@ export class RestApiCoreService {
     private readonly restApiFindOneHandler: RestApiFindOneHandler,
     private readonly restApiFindManyHandler: RestApiFindManyHandler,
     private readonly restApiFindDuplicatesHandler: RestApiFindDuplicatesHandler,
+    private readonly restApiGroupByHandler: RestApiGroupByHandler,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -82,6 +84,18 @@ export class RestApiCoreService {
       } else {
         return await this.restApiFindManyHandler.handle(request);
       }
+    }
+  }
+
+  async groupBy(request: AuthenticatedRequest) {
+    const isCommonApiEnabled = await this.isCommonApiEnabled(request);
+
+    if (isCommonApiEnabled) {
+      return await this.restApiGroupByHandler.handle(request);
+    } else {
+      throw new BadRequestException(
+        'Activate feature flag to use GroupBy in the REST API',
+      );
     }
   }
 }

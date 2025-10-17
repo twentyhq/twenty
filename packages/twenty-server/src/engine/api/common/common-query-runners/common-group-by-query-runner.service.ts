@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
-  FieldMetadataType,
-  ObjectRecord,
   PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
 } from 'twenty-shared/types';
@@ -16,26 +14,30 @@ import {
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
-import {
-  GraphqlQueryBaseResolverService,
-  GraphqlQueryResolverExecutionArgs,
-} from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
+import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
-import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
-import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
+import {
+  CommonQueryNames,
+  GroupByQueryArgs,
+} from 'src/engine/api/common/types/common-query-args.type';
+import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
 import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
 import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -43,10 +45,7 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
 @Injectable()
-export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolverService<
-  GroupByResolverArgs,
-  IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[]
-> {
+export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService {
   constructor(
     private readonly viewFilterService: ViewFilterService,
     private readonly viewFilterGroupService: ViewFilterGroupService,
@@ -55,50 +54,81 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     super();
   }
 
-  async resolve(
-    executionArgs: GraphqlQueryResolverExecutionArgs<GroupByResolverArgs>,
-    _featureFlagsMap: Record<FeatureFlagKey, boolean>,
-  ): Promise<IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[]> {
-    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+  async run({
+    args,
+    authContext,
+    objectMetadataMaps,
+    objectMetadataItemWithFieldMaps,
+  }: {
+    args: GroupByQueryArgs;
+    authContext: AuthContext;
+    objectMetadataMaps: ObjectMetadataMaps;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+  }): Promise<CommonGroupByOutputItem[]> {
+    if (!isWorkspaceAuthContext(authContext)) {
+      throw new CommonQueryRunnerException(
+        'Invalid auth context',
+        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
+      );
+    }
+
+    const { repository } = await this.prepareQueryRunnerContext({
+      authContext,
+      objectMetadataItemWithFieldMaps,
+    });
+
+    //TODO : Refacto-common - QueryParser should be common branded service
+    const commonQueryParser = new GraphqlQueryParser(
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+    );
+
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
+      objectMetadataItemWithFieldMaps,
+      args.selectedFields,
+      objectMetadataMaps,
+    );
+
+    const processedArgs = await this.processQueryArgs({
+      authContext,
+      objectMetadataItemWithFieldMaps,
+      args,
+    });
 
     const objectMetadataNameSingular =
       objectMetadataItemWithFieldMaps.nameSingular;
 
-    let queryBuilder = executionArgs.repository.createQueryBuilder(
+    let queryBuilder = repository.createQueryBuilder(
       objectMetadataNameSingular,
     );
 
-    let appliedFilters =
-      executionArgs.args.filter ?? ({} as ObjectRecordFilter);
+    let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
 
-    if (executionArgs.args.viewId) {
+    if (args.viewId) {
       appliedFilters = await this.addFiltersFromView({
-        executionArgs,
+        args: processedArgs,
+        authContext,
         objectMetadataItemWithFieldMaps,
         appliedFilters,
       });
     }
 
-    executionArgs.graphqlQueryParser.applyFilterToBuilder(
+    commonQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataNameSingular,
       appliedFilters,
     );
 
-    executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
-      queryBuilder,
-      appliedFilters,
-    );
+    commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields:
-        executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
+      selectedAggregatedFields: selectedFieldsResult.aggregate,
       queryBuilder,
       objectMetadataNameSingular,
     });
 
     const groupByFields = parseGroupByArgs(
-      executionArgs.args,
+      processedArgs,
       objectMetadataItemWithFieldMaps,
     );
 
@@ -138,35 +168,9 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       }
     });
 
-    if (executionArgs.args.omitNullValues) {
-      const aggregateFields =
-        executionArgs.graphqlQuerySelectedFieldsResult.aggregate ?? {};
-
-      Object.values(aggregateFields).forEach((aggregationField) => {
-        const aggregateExpression =
-          ProcessAggregateHelper.getAggregateExpression(
-            aggregationField,
-            objectMetadataNameSingular,
-          );
-
-        if (aggregateExpression) {
-          queryBuilder.andHaving(`${aggregateExpression} IS NOT NULL`);
-
-          const isNumericReturningAggregate = this.isNumericReturningAggregate(
-            aggregationField.aggregateOperation,
-            aggregationField.fromFieldType,
-          );
-
-          if (isNumericReturningAggregate) {
-            queryBuilder.andHaving(`${aggregateExpression} != 0`);
-          }
-        }
-      });
-    }
-
-    executionArgs.graphqlQueryParser.applyGroupByOrderToBuilder(
+    commonQueryParser.applyGroupByOrderToBuilder(
       queryBuilder,
-      executionArgs.args.orderBy ?? [],
+      processedArgs.orderBy ?? [],
       groupByFields,
     );
 
@@ -175,33 +179,33 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     return formatResultWithGroupByDimensionValues(
       result,
       groupByDefinitions,
-      Object.keys(executionArgs.graphqlQuerySelectedFieldsResult.aggregate),
+      Object.keys(selectedFieldsResult.aggregate),
     );
   }
 
   private async addFiltersFromView({
-    executionArgs,
+    args,
     objectMetadataItemWithFieldMaps,
     appliedFilters,
+    authContext,
   }: {
-    executionArgs: GraphqlQueryResolverExecutionArgs<GroupByResolverArgs>;
+    args: GroupByQueryArgs;
+    authContext: WorkspaceAuthContext;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     appliedFilters: ObjectRecordFilter;
   }): Promise<ObjectRecordFilter> {
-    assertIsDefinedOrThrow(executionArgs.args.viewId);
+    assertIsDefinedOrThrow(args.viewId);
 
-    const workspaceId = executionArgs.options.authContext.workspace?.id;
-
-    assertIsDefinedOrThrow(workspaceId, WorkspaceNotFoundDefaultError);
+    const workspaceId = authContext.workspace.id;
 
     const viewFilters = await this.viewFilterService.findByViewId(
       workspaceId,
-      executionArgs.args.viewId,
+      args.viewId,
     );
 
     const viewFilterGroups = await this.viewFilterGroupService.findByViewId(
       workspaceId,
-      executionArgs.args.viewId,
+      args.viewId,
     );
 
     const recordFilters = viewFilters.map((viewFilter) => {
@@ -249,10 +253,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     let view: ViewEntity | null = viewFilters[0]?.view;
 
     if (!view) {
-      view = await this.viewService.findById(
-        executionArgs.args.viewId,
-        workspaceId,
-      );
+      view = await this.viewService.findById(args.viewId, workspaceId);
     }
 
     const { recordGqlOperationFilter: anyFieldFilter } =
@@ -270,41 +271,30 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     return appliedFilters;
   }
 
-  private isNumericReturningAggregate(
-    operation: AggregateOperations,
-    fromFieldType: FieldMetadataType,
-  ): boolean {
-    if (
-      operation === AggregateOperations.COUNT ||
-      operation === AggregateOperations.COUNT_UNIQUE_VALUES ||
-      operation === AggregateOperations.COUNT_EMPTY ||
-      operation === AggregateOperations.COUNT_NOT_EMPTY ||
-      operation === AggregateOperations.COUNT_TRUE ||
-      operation === AggregateOperations.COUNT_FALSE ||
-      operation === AggregateOperations.PERCENTAGE_EMPTY ||
-      operation === AggregateOperations.PERCENTAGE_NOT_EMPTY
-    ) {
-      return true;
-    }
+  async processQueryArgs({
+    authContext,
+    objectMetadataItemWithFieldMaps,
+    args,
+  }: {
+    authContext: WorkspaceAuthContext;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    args: GroupByQueryArgs;
+  }): Promise<GroupByQueryArgs> {
+    const hookedArgs =
+      (await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItemWithFieldMaps.nameSingular,
+        CommonQueryNames.groupBy,
+        args,
+        //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
+      )) as GroupByQueryArgs;
 
-    if (
-      operation === AggregateOperations.MIN ||
-      operation === AggregateOperations.MAX ||
-      operation === AggregateOperations.AVG ||
-      operation === AggregateOperations.SUM
-    ) {
-      return [
-        FieldMetadataType.NUMBER,
-        FieldMetadataType.NUMERIC,
-        FieldMetadataType.CURRENCY,
-      ].includes(fromFieldType);
-    }
-
-    return false;
+    return {
+      ...hookedArgs,
+      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
+        hookedArgs.filter,
+        objectMetadataItemWithFieldMaps,
+      ),
+    };
   }
-
-  async validate(
-    _args: GroupByResolverArgs<ObjectRecordFilter>,
-    _options: WorkspaceQueryRunnerOptions,
-  ): Promise<void> {}
 }

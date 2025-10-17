@@ -3,13 +3,17 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { FieldMetadataType, ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+
+type SelectFields = {
+  [key: string]: boolean | SelectFields;
+};
 
 @Injectable()
 export class RestToCommonSelectedFieldsHandler {
@@ -23,17 +27,16 @@ export class RestToCommonSelectedFieldsHandler {
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     depth: Depth | undefined;
-  }): CommonSelectedFieldsResult => {
+  }): CommonSelectedFields => {
     const restrictedFields =
       objectsPermissions[objectMetadataMapItem.id].restrictedFields;
 
-    const { relations, relationsSelectFields } =
-      this.getRelationsAndRelationsSelectFields({
-        objectMetadataMaps,
-        objectMetadataMapItem,
-        objectsPermissions,
-        depth,
-      });
+    const relationsSelectFields = this.getRelationsAndRelationsSelectFields({
+      objectMetadataMaps,
+      objectMetadataMapItem,
+      objectsPermissions,
+      depth,
+    });
 
     const selectableFields = getAllSelectableFields({
       restrictedFields,
@@ -43,12 +46,8 @@ export class RestToCommonSelectedFieldsHandler {
     });
 
     return {
-      select: {
-        ...selectableFields,
-        ...relationsSelectFields,
-      },
-      relations,
-      aggregate: {},
+      ...selectableFields,
+      ...relationsSelectFields,
     };
   };
 
@@ -63,20 +62,9 @@ export class RestToCommonSelectedFieldsHandler {
     objectsPermissions: ObjectsPermissions;
     depth: Depth | undefined;
   }) {
-    if (!isDefined(depth) || depth === 0) {
-      return {
-        relations: {},
-        relationsSelectFields: {},
-      };
-    }
+    if (!isDefined(depth) || depth === 0) return {};
 
-    let relations: { [key: string]: boolean | { [key: string]: boolean } } = {};
-
-    let relationsSelectFields: {
-      [key: string]:
-        | boolean
-        | { [key: string]: boolean | { [key: string]: boolean } };
-    } = {};
+    let relationsSelectFields: SelectFields = {};
 
     for (const field of Object.values(objectMetadataMapItem.fieldsById)) {
       if (!isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION))
@@ -104,35 +92,23 @@ export class RestToCommonSelectedFieldsHandler {
         depth === MAX_DEPTH &&
         isDefined(field.relationTargetObjectMetadataId)
       ) {
-        const {
-          relations: depth2Relations,
-          relationsSelectFields: depth2RelationsSelectFields,
-        } = this.getRelationsAndRelationsSelectFields({
-          objectMetadataMaps,
-          objectMetadataMapItem: relationTargetObjectMetadata,
-          objectsPermissions,
-          depth: 1,
-        }) as {
-          relations: { [key: string]: boolean };
-          relationsSelectFields: {
-            [key: string]: boolean;
-          };
-        };
-
-        relations[field.name] = depth2Relations as {
-          [key: string]: boolean;
-        };
+        const depth2RelationsSelectFields =
+          this.getRelationsAndRelationsSelectFields({
+            objectMetadataMaps,
+            objectMetadataMapItem: relationTargetObjectMetadata,
+            objectsPermissions,
+            depth: 1,
+          });
 
         relationsSelectFields[field.name] = {
           ...relationFieldSelectFields,
           ...depth2RelationsSelectFields,
         };
       } else {
-        relations[field.name] = true;
         relationsSelectFields[field.name] = relationFieldSelectFields;
       }
     }
 
-    return { relations, relationsSelectFields };
+    return relationsSelectFields;
   }
 }

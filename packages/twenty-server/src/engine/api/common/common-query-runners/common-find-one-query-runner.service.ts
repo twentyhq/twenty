@@ -28,7 +28,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -37,8 +37,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<ObjectRecord> {
-    const authContext = toValidateAuthContext;
-
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',
@@ -55,6 +53,18 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       authContext,
       objectMetadataItemWithFieldMaps,
     });
+
+    //TODO : Refacto-common - QueryParser should be common branded service
+    const commonQueryParser = new GraphqlQueryParser(
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+    );
+
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
+      objectMetadataItemWithFieldMaps,
+      args.selectedFields,
+      objectMetadataMaps,
+    );
 
     const processedArgs = await this.processQueryArgs({
       authContext,
@@ -76,12 +86,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    //TODO : Refacto-common - QueryParser should be common branded service
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -94,8 +98,8 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     );
 
     const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      select: selectedFieldsResult.select,
+      relations: selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     });
@@ -115,13 +119,13 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const objectRecords = [objectRecord] as ObjectRecord[];
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,
         //TODO : Refacto-common - To fix when switching processNestedRelationsHelper to Common
-        relations: args.selectedFieldsResult.relations as Record<
+        relations: selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
@@ -130,7 +134,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks,
-        selectedFields: args.selectedFieldsResult.select,
+        selectedFields: selectedFieldsResult.select,
       });
     }
 
