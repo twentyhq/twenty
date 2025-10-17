@@ -1,6 +1,10 @@
 import gql from 'graphql-tag';
 
-export const deleteViewOperationFactory = ({ viewId }: { viewId: string }) => ({
+export const deleteCoreViewQueryFactory = ({
+  viewId,
+}: {
+  viewId: string;
+}) => ({
   query: gql`
     mutation DeleteCoreView($id: String!) {
       deleteCoreView(id: $id)
@@ -10,3 +14,4 @@ export const deleteViewOperationFactory = ({ viewId }: { viewId: string }) => ({
     id: viewId,
   },
 });
+
