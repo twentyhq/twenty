@@ -84,7 +84,12 @@ export const RecordDetailMorphRelationSectionDropdownManyToOne = () => {
 
     if (!selectedMorphItem?.recordId) return;
 
-    onSubmit?.({ newValue: { id: selectedMorphItem.recordId } });
+    onSubmit?.({
+      newValue: {
+        id: selectedMorphItem.recordId,
+        objectMetadataId: selectedMorphItem.objectMetadataId,
+      },
+    });
   };
 
   const { openSingleRecordPicker } = useSingleRecordPickerOpen();

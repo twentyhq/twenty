@@ -1,6 +1,5 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { recordStoreMorphOneToManyValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilValue } from 'recoil';
 import { CustomError, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -29,7 +28,11 @@ export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
     morphRelationObjectNameSingularWithValues
       .map((recordWithObjectNameSingular) => ({
         ...recordWithObjectNameSingular,
-        value: (recordWithObjectNameSingular.value as ObjectRecord[]) ?? [],
+        value: Array.isArray(recordWithObjectNameSingular.value)
+          ? recordWithObjectNameSingular.value
+          : recordWithObjectNameSingular.value
+            ? [recordWithObjectNameSingular.value]
+            : [],
       }))
       .filter((recordWithObjectNameSingular) =>
         isNonEmptyArray(recordWithObjectNameSingular.value),
@@ -54,9 +57,5 @@ export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
         }));
       },
     );
-  // console.log(recordsWithObjectNameSingular);
-  // if (recordId === 'f0dcb041-a731-4e28-abb6-aa4e4fafc8c9') {
-  //   debugger;
-  // }
   return recordsWithObjectNameSingular;
 };

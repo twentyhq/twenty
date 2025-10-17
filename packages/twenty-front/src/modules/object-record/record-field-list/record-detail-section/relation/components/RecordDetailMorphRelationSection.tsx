@@ -7,7 +7,6 @@ import {
   FieldInputEventContext,
   type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -17,6 +16,8 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { RecordDetailRelationRecordsList } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationRecordsList';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
 import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
+import { useMorphPersistManyToOne } from '@/object-record/record-field/ui/meta-types/input/hooks/useMorphPersistManyToOne';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type RecordDetailMorphRelationSectionProps = {
   loading: boolean;
@@ -57,15 +58,49 @@ export const RecordDetailMorphRelationSection = ({
       objectMetadataItemToFind.nameSingular === objectMetadataNameSingular,
   );
 
-  const persistField = usePersistField({
-    objectMetadataItemId: objectMetadataItem?.id ?? '',
+  if (!objectMetadataItem) {
+    throw new CustomError(
+      'Object metadata item not found',
+      'OBJECT_METADATA_ITEM_NOT_FOUND',
+    );
+  }
+
+  const { persistMorphManyToOne } = useMorphPersistManyToOne({
+    objectMetadataNameSingular: objectMetadataItem.nameSingular,
   });
 
   const handleSubmit: FieldInputEvent = ({ newValue }) => {
-    persistField({
+    if (!isDefined(newValue)) {
+      throw new CustomError(
+        'Value to persist is required',
+        'VALUE_TO_PERSIST_IS_REQUIRED',
+      );
+    }
+
+    const { id, objectMetadataId } = newValue as {
+      id: string;
+      objectMetadataId: string;
+    };
+
+    if (!isDefined(id)) {
+      throw new CustomError('Id is required', 'ID_IS_REQUIRED');
+    }
+    const targetObjectMetadataNameSingular = objectMetadataItems.find(
+      (objectMetadataItem) => objectMetadataItem.id === objectMetadataId,
+    )?.nameSingular;
+
+    if (!isDefined(targetObjectMetadataNameSingular)) {
+      throw new CustomError(
+        'Target object metadata name singular is required',
+        'TARGET_OBJECT_METADATA_NAME_SINGULAR_IS_REQUIRED',
+      );
+    }
+
+    persistMorphManyToOne({
       recordId,
       fieldDefinition,
-      valueToPersist: newValue,
+      valueToPersist: id,
+      targetObjectMetadataNameSingular,
     });
   };
 
