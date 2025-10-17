@@ -62,7 +62,7 @@ export const PageLayoutRendererContent = () => {
     return null;
   }
 
-  const tabsToRender = currentPageLayout.tabs.filter(
+  const tabsToRenderInTabList = currentPageLayout.tabs.filter(
     (tab) => tab.selfDisplayMode !== 'pinned-left',
   );
   const pinnedLeftTab = currentPageLayout.tabs.find(
@@ -86,7 +86,7 @@ export const PageLayoutRendererContent = () => {
       <StyledShowPageRightContainer>
         <StyledTabsAndDashboardContainer>
           <StyledTabList
-            tabs={tabsToRender}
+            tabs={tabsToRenderInTabList}
             behaveAsLinks={false}
             componentInstanceId={getTabListInstanceIdFromPageLayoutId(
               currentPageLayout.id,
