@@ -21,12 +21,10 @@ import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessagingSendMessageService,
-  type MessageAttachment,
-} from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
+import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { parseEmailBody } from 'src/utils/parse-email-body';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
 
 @Injectable()
 export class SendEmailTool implements Tool {
