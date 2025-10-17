@@ -20,6 +20,7 @@ import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/objec
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { buildPermissionOptions } from 'src/engine/twenty-orm/utils/build-permission-options.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Injectable()
@@ -147,7 +148,7 @@ export class ProcessNestedRelationsV2Helper {
 
     const targetObjectRepository = workspaceDataSource.getRepository(
       targetObjectMetadata.nameSingular,
-      { shouldBypassPermissionChecks, roleId },
+      buildPermissionOptions({ shouldBypassPermissionChecks, roleId }),
     );
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;

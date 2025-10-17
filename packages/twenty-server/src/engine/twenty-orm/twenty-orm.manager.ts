@@ -72,9 +72,10 @@ export class TwentyORMManager {
       roleId = roleTarget?.roleId;
     }
 
-    return workspaceDataSource.getRepository<T>(objectMetadataName, {
-      roleId,
-    });
+    return workspaceDataSource.getRepository<T>(
+      objectMetadataName,
+      roleId ? { roleId } : undefined,
+    );
   }
 
   async getDatasource() {

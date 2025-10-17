@@ -23,6 +23,7 @@ import {
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { type WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 type CreateQueryBuilderOptions = {
   calledByWorkspaceEntityManager?: boolean;
@@ -60,11 +61,7 @@ export class WorkspaceDataSource extends DataSource {
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    permissionOptions?: {
-      shouldBypassPermissionChecks?: boolean;
-      roleId?: string;
-      roleIds?: { intersection: string[] };
-    },
+    permissionOptions?: RolePermissionConfig,
     authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
     return this.manager.getRepository(target, permissionOptions, authContext);

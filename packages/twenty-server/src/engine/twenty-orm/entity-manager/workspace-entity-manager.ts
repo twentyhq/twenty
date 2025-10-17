@@ -53,6 +53,7 @@ import {
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -84,51 +85,52 @@ export class WorkspaceEntityManager extends EntityManager {
     return this.connection.featureFlagMap;
   }
 
+  private getPermissionsForRole(
+    roleId: string,
+    permissionsPerRoleId: Record<string, ObjectsPermissionsDeprecated>,
+  ): ObjectsPermissionsDeprecated {
+    if (!isDefined(permissionsPerRoleId?.[roleId])) {
+      throw new PermissionsException(
+        `No permissions found for role in datasource (roleId: ${roleId})`,
+        PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
+      );
+    }
+
+    return permissionsPerRoleId[roleId];
+  }
+
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    permissionOptions?: {
-      shouldBypassPermissionChecks?: boolean;
-      roleId?: string;
-      roleIds?: { intersection: string[] };
-    },
+    rolePermissionConfig?: RolePermissionConfig,
     authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection;
 
     let objectPermissions = {};
 
-    if (permissionOptions?.roleIds?.intersection) {
-      const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
+    const hasRoleIds =
+      rolePermissionConfig && 'roleIds' in rolePermissionConfig;
+    const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
 
-      const allRolePermissions = permissionOptions.roleIds.intersection.map(
-        (roleId) => {
-          if (!isDefined(objectPermissionsByRoleId?.[roleId])) {
-            throw new PermissionsException(
-              `No permissions found for role in datasource (roleId: ${roleId})`,
-              PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
-            );
-          }
+    if (hasRoleIds && 'union' in rolePermissionConfig.roleIds) {
+      // TODO: Implement union logic for combining permissions across roles
+      throw new Error('Union permission logic not yet implemented');
+    }
 
-          return objectPermissionsByRoleId[roleId];
-        },
+    if (hasRoleIds && 'intersection' in rolePermissionConfig.roleIds) {
+      const allRolePermissions = rolePermissionConfig.roleIds.intersection.map(
+        (roleId: string) =>
+          this.getPermissionsForRole(roleId, objectPermissionsByRoleId),
       );
 
       objectPermissions = computePermissionIntersection(allRolePermissions);
-    } else if (permissionOptions?.roleId) {
-      const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
+    }
 
-      if (!isDefined(objectPermissionsByRoleId?.[permissionOptions.roleId])) {
-        throw new PermissionsException(
-          `No permissions found for role in datasource (missing ${
-            !isDefined(objectPermissionsByRoleId)
-              ? 'objectPermissionsByRoleId object'
-              : `roleId in objectPermissionsByRoleId object (${permissionOptions.roleId})`
-          })`,
-          PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
-        );
-      } else {
-        objectPermissions = objectPermissionsByRoleId[permissionOptions.roleId];
-      }
+    if (rolePermissionConfig && 'roleId' in rolePermissionConfig) {
+      objectPermissions = this.getPermissionsForRole(
+        rolePermissionConfig.roleId,
+        objectPermissionsByRoleId,
+      );
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
@@ -138,7 +140,9 @@ export class WorkspaceEntityManager extends EntityManager {
       dataSource.featureFlagMap,
       this.queryRunner,
       objectPermissions,
-      permissionOptions?.shouldBypassPermissionChecks,
+      rolePermissionConfig &&
+        'shouldBypassPermissionChecks' in rolePermissionConfig &&
+        rolePermissionConfig.shouldBypassPermissionChecks,
       authContext,
     );
 
