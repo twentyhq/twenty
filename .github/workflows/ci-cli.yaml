@@ -69,8 +69,6 @@ jobs:
         image: redis
         ports:
           - 6379:6379
-    env:
-      NODE_ENV: test
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -82,10 +80,7 @@ jobs:
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
       - name: CLI / Run E2E Tests
-        uses: ./.github/workflows/actions/nx-affected
-        with:
-          tag: scope:cli
-          tasks: 'test:e2e'
+        run: npx nx test:e2e twenty-cli
   ci-cli-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
