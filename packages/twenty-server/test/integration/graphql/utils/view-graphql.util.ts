@@ -1,34 +1,36 @@
-import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 
+import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
-import { createViewOperationFactory } from './create-view-operation-factory.util';
 import { createViewData } from './view-data-factory.util';
-
-interface CreateViewResponse extends Record<string, unknown> {
-  createCoreView: ViewEntity;
-}
 
 export const createTestViewWithGraphQL = async (
   overrides: Partial<ViewEntity> = {},
 ): Promise<ViewEntity> => {
-  const input = createViewData(overrides);
+  const viewData = createViewData(overrides);
+  const input: CreateViewInput = {
+    name: viewData.name,
+    objectMetadataId: viewData.objectMetadataId as string,
+    icon: viewData.icon,
+    type: viewData.type,
+    position: viewData.position,
+    isCompact: viewData.isCompact,
+    openRecordIn: viewData.openRecordIn,
+  };
 
-  const operation = createViewOperationFactory({ data: input });
-  const response = (await makeGraphqlAPIRequest(
-    operation,
-  )) as GraphQLResponse<CreateViewResponse>;
+  const { data, errors } = await createOneCoreView({
+    input,
+    expectToFail: false,
+  });
 
-  if (response.body.errors) {
-    throw new Error(
-      `Failed to create test view: ${JSON.stringify(response.body.errors)}`,
-    );
+  if (errors) {
+    throw new Error(`Failed to create test view: ${JSON.stringify(errors)}`);
   }
 
-  if (!response.body.data) {
+  if (!data) {
     throw new Error('No data returned from createTestViewWithGraphQL');
   }
 
-  return response.body.data.createCoreView;
+  return data.createCoreView;
 };

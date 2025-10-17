@@ -1,9 +1,7 @@
-import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
-import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import {
   assertViewStructure,
   cleanupViewRecords,
@@ -56,30 +54,29 @@ describe('Create core view', () => {
   });
 
   it('should create a new view with all properties', async () => {
-    const input = {
+    const { data, errors } = await createOneCoreView({
+      input: {
+        name: 'Kanban View',
+        objectMetadataId: testObjectMetadataId,
+        icon: 'IconDeal',
+        type: ViewType.KANBAN,
+        position: 1,
+        isCompact: true,
+        openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+      },
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+    assertViewStructure(data.createCoreView, {
       name: 'Kanban View',
       objectMetadataId: testObjectMetadataId,
-      icon: 'IconDeal',
       type: ViewType.KANBAN,
       key: null,
+      icon: 'IconDeal',
       position: 1,
       isCompact: true,
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-    };
-
-    const operation = createViewOperationFactory({ data: input });
-    const response = await makeGraphqlAPIRequest(operation);
-
-    assertGraphQLSuccessfulResponse(response);
-    assertViewStructure(response.body.data.createCoreView, {
-      name: input.name,
-      objectMetadataId: input.objectMetadataId,
-      type: input.type,
-      key: null,
-      icon: input.icon,
-      position: input.position,
-      isCompact: input.isCompact,
-      openRecordIn: input.openRecordIn,
     });
   });
 
@@ -90,11 +87,13 @@ describe('Create core view', () => {
       icon: 'IconList',
     };
 
-    const operation = createViewOperationFactory({ data: input });
-    const response = await makeGraphqlAPIRequest(operation);
+    const { data, errors } = await createOneCoreView({
+      input,
+      expectToFail: false,
+    });
 
-    assertGraphQLSuccessfulResponse(response);
-    assertViewStructure(response.body.data.createCoreView, {
+    expect(errors).toBeUndefined();
+    assertViewStructure(data.createCoreView, {
       name: input.name,
       objectMetadataId: input.objectMetadataId,
       icon: input.icon,
