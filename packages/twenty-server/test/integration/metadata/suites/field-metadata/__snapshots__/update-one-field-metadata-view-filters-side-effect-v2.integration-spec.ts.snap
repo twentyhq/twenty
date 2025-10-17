@@ -1,0 +1,221 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should handle adding new options while maintaining existing view filter 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should handle no changes update of options while maintaining existing view filter values 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+    "OPTION_2",
+    "OPTION_3",
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should handle partial deletion of selected options in view filter 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should handle reordering of options while maintaining view filter values 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should throw error if view filter value is not a stringified JSON array 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Unexpected invalid view filter value for filter 20202020-e3b5-4fa7-85aa-9b1950fc7bf5",
+  },
+]
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should update related multi selected options view filter 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0_UPDATED",
+    "OPTION_1",
+    "OPTION_2_UPDATED",
+    "OPTION_3",
+    "OPTION_4_UPDATED",
+    "OPTION_5",
+    "OPTION_6_UPDATED",
+    "OPTION_7",
+    "OPTION_8_UPDATED",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should update related solo selected option view filter 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_5_UPDATED",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 SELECT should handle adding new options while maintaining existing view filter 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 SELECT should handle no changes update of options while maintaining existing view filter values 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+    "OPTION_2",
+    "OPTION_3",
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 SELECT should handle partial deletion of selected options in view filter 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 SELECT should handle reordering of options while maintaining view filter values 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 SELECT should throw error if view filter value is not a stringified JSON array 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Unexpected invalid view filter value for filter 20202020-e3b5-4fa7-85aa-9b1950fc7bf5",
+  },
+]
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 SELECT should update related multi selected options view filter 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0_UPDATED",
+    "OPTION_1",
+    "OPTION_2_UPDATED",
+    "OPTION_3",
+    "OPTION_4_UPDATED",
+    "OPTION_5",
+    "OPTION_6_UPDATED",
+    "OPTION_7",
+    "OPTION_8_UPDATED",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
+`;
+
+exports[`update-one-field-metadata-view-filters-side-effect-v2 SELECT should update related solo selected option view filter 1`] = `
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_5_UPDATED",
+  ],
+  "viewFilterGroupId": null,
+}
+`;

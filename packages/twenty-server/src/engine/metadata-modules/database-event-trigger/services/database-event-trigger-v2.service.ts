@@ -13,11 +13,8 @@ import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-e
 import { fromCreateDatabaseEventTriggerInputToFlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/utils/from-create-database-event-trigger-input-to-flat-database-event-trigger.util';
 import { fromUpdateDatabaseEventTriggerInputToFlatDatabaseEventTriggerToUpdateOrThrow } from 'src/engine/metadata-modules/database-event-trigger/utils/from-update-database-event-trigger-input-to-flat-database-event-trigger-to-update-or-throw.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -52,22 +49,17 @@ export class DatabaseEventTriggerV2Service {
         workspaceId,
       });
 
-    const toFlatDatabaseEventTriggerMaps = addFlatEntityToFlatEntityMapsOrThrow(
-      {
-        flatEntity: flatDatabaseEventTriggerToCreate,
-        flatEntityMaps: existingFlatDatabaseEventTriggerMaps,
-      },
-    );
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatDatabaseEventTriggerMaps: {
-              from: existingFlatDatabaseEventTriggerMaps,
-              to: toFlatDatabaseEventTriggerMaps,
-            },
+            flatDatabaseEventTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatDatabaseEventTriggerMaps,
+              flatEntityToCreate: [flatDatabaseEventTriggerToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps:
@@ -129,25 +121,19 @@ export class DatabaseEventTriggerV2Service {
         },
       );
 
-    const fromFlatDatabaseEventTriggerMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: [optimisticallyUpdatedFlatDatabaseEventTrigger.id],
-      flatEntityMaps: existingFlatDatabaseEventTriggerMaps,
-    });
-    const toFlatDatabaseEventTriggerMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: optimisticallyUpdatedFlatDatabaseEventTrigger,
-        flatEntityMaps: fromFlatDatabaseEventTriggerMaps,
-      });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatDatabaseEventTriggerMaps: {
-              from: existingFlatDatabaseEventTriggerMaps,
-              to: toFlatDatabaseEventTriggerMaps,
-            },
+            flatDatabaseEventTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatDatabaseEventTriggerMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [
+                optimisticallyUpdatedFlatDatabaseEventTrigger,
+              ],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps:
@@ -216,24 +202,16 @@ export class DatabaseEventTriggerV2Service {
       );
     }
 
-    const fromFlatDatabaseEventTriggerMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: [existingFlatDatabaseEventTrigger.id],
-      flatEntityMaps: existingFlatDatabaseEventTriggerMaps,
-    });
-    const toFlatDatabaseEventTriggerMaps =
-      deleteFlatEntityFromFlatEntityMapsOrThrow({
-        flatEntityMaps: fromFlatDatabaseEventTriggerMaps,
-        entityToDeleteId: existingFlatDatabaseEventTrigger.id,
-      });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatDatabaseEventTriggerMaps: {
-              from: fromFlatDatabaseEventTriggerMaps,
-              to: toFlatDatabaseEventTriggerMaps,
-            },
+            flatDatabaseEventTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatDatabaseEventTriggerMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [existingFlatDatabaseEventTrigger],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
