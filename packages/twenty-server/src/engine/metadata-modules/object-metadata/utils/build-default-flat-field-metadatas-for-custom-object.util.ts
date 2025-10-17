@@ -28,6 +28,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     type: FieldMetadataType.UUID,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: true,
     objectMetadataId,
@@ -47,6 +48,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: 'uuid',
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -63,6 +65,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     type: FieldMetadataType.TEXT,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -82,6 +85,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: false,
     defaultValue: "''",
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -98,6 +102,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     type: FieldMetadataType.DATE_TIME,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -117,6 +122,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: 'now',
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -133,6 +139,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     type: FieldMetadataType.DATE_TIME,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -152,6 +159,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: 'now',
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -168,6 +176,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     type: FieldMetadataType.DATE_TIME,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -187,6 +196,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: null,
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -203,6 +213,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     type: FieldMetadataType.ACTOR,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -222,7 +233,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: false,
     isUIReadOnly: true,
     defaultValue: { name: "''", source: "'MANUAL'" },
-
+    viewFilterIds: [],
     createdAt,
     updatedAt: createdAt,
     options: null,
@@ -238,6 +249,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     type: FieldMetadataType.POSITION,
     id: v4(),
     viewFieldIds: [],
+    viewGroupIds: [],
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
@@ -257,6 +269,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: 0,
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,
@@ -272,6 +285,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
     type: FieldMetadataType.TS_VECTOR,
     viewFieldIds: [],
+    viewGroupIds: [],
     id: v4(),
     isLabelSyncedWithName: false,
     isUnique: false,
@@ -292,6 +306,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isSystem: true,
     isUIReadOnly: true,
     defaultValue: null,
+    viewFilterIds: [],
 
     createdAt,
     updatedAt: createdAt,

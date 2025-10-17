@@ -59,6 +59,23 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatViewFilterToValidate.fieldMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+    });
+    const updatedFlatFieldMetadataMaps =
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...flatFieldMetadata,
+          viewFilterIds: [
+            ...flatFieldMetadata.viewFilterIds,
+            flatViewFilterToValidate.id,
+          ],
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      });
+
     return {
       status: 'success',
       action: {
@@ -66,7 +83,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
         viewFilter: flatViewFilterToValidate,
       },
       dependencyOptimisticFlatEntityMaps: {
-        ...dependencyOptimisticFlatEntityMaps,
+        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
         flatViewMaps: updatedFlatViewMaps,
       },
     };
