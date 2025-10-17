@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { readFile } from 'fs/promises';
+import { join } from 'path';
+
 import { DataSource } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
@@ -258,6 +262,7 @@ export class DevSeederDataService {
     private readonly coreDataSource: DataSource,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly timelineActivitySeederService: TimelineActivitySeederService,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   public async seed({
@@ -303,6 +308,8 @@ export class DevSeederDataService {
             schemaName,
             workspaceId,
           });
+
+          await this.seedAttachmentFiles(workspaceId);
 
           await prefillWorkflows(
             entityManager,
@@ -381,5 +388,49 @@ export class DevSeederDataService {
       .orIgnore()
       .values(recordSeeds)
       .execute();
+  }
+
+  private async seedAttachmentFiles(workspaceId: string): Promise<void> {
+    const sampleFilesDir = join(__dirname, '../constants/sample-files');
+
+    const filesToCreate = [
+      'sample-contract.pdf',
+      'budget-2024.xlsx',
+      'presentation.pptx',
+      'screenshot.png',
+      'archive.zip',
+    ];
+
+    for (const filename of filesToCreate) {
+      try {
+        const filePath = join(sampleFilesDir, filename);
+        const fileBuffer = await readFile(filePath);
+
+        await this.fileStorageService.write({
+          file: fileBuffer,
+          name: filename,
+          folder: `workspace-${workspaceId}/attachment`,
+          mimeType: this.getMimeType(filename),
+        });
+      } catch (error) {
+        console.warn(
+          `Warning: Failed to seed file ${filename}`,
+          error instanceof Error ? error.message : error,
+        );
+      }
+    }
+  }
+
+  private getMimeType(filename: string): string {
+    const ext = filename.split('.').pop()?.toLowerCase();
+    const mimeTypes: Record<string, string> = {
+      pdf: 'application/pdf',
+      xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      png: 'image/png',
+      zip: 'application/zip',
+    };
+
+    return mimeTypes[ext || ''] || 'application/octet-stream';
   }
 }
