@@ -37,6 +37,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
+import { FillNullServerlessFunctionLayerIdCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-fill-null-serverless-function-layer-id.command';
 
 @Command({
   name: 'upgrade',
@@ -93,6 +94,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly deduplicateUniqueFieldsCommand: DeduplicateUniqueFieldsCommand,
     protected readonly regeneratePersonSearchVectorWithPhonesCommand: RegeneratePersonSearchVectorWithPhonesCommand,
     protected readonly migrateChannelSyncStagesCommand: MigrateChannelSyncStagesCommand,
+    protected readonly fillNullServerlessFunctionLayerIdCommand: FillNullServerlessFunctionLayerIdCommand,
   ) {
     super(
       workspaceRepository,
@@ -192,6 +194,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.deduplicateUniqueFieldsCommand,
         this.regeneratePersonSearchVectorWithPhonesCommand,
         this.migrateChannelSyncStagesCommand,
+        this.fillNullServerlessFunctionLayerIdCommand,
       ],
       afterSyncMetadata: [],
     };
