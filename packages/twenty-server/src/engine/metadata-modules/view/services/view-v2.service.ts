@@ -161,10 +161,11 @@ export class ViewV2Service {
         },
       );
 
-    const flatViewFromDeleteInput = fromDeleteViewInputToFlatViewOrThrow({
-      deleteViewInput,
-      flatViewMaps: existingFlatViewMaps,
-    });
+    const optimisticallyUpdatedFlatViewWithDeletedAt =
+      fromDeleteViewInputToFlatViewOrThrow({
+        deleteViewInput,
+        flatViewMaps: existingFlatViewMaps,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -173,8 +174,8 @@ export class ViewV2Service {
             flatViewMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatViewMaps,
               flatEntityToCreate: [],
-              flatEntityToDelete: [flatViewFromDeleteInput],
-              flatEntityToUpdate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatViewWithDeletedAt],
             }),
           },
           buildOptions: {
