@@ -117,7 +117,8 @@ export class WorkspaceEntityManager extends EntityManager {
       rolePermissionConfig &&
       'shouldBypassPermissionChecks' in rolePermissionConfig
     ) {
-      shouldBypassPermissionChecks = true;
+      shouldBypassPermissionChecks =
+        rolePermissionConfig.shouldBypassPermissionChecks;
     }
 
     if (rolePermissionConfig && 'unionOf' in rolePermissionConfig) {
