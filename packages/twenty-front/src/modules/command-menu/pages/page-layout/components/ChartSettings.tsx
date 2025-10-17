@@ -222,6 +222,13 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
               const settingValue = getChartSettingsValues(item.id);
               const stringValue = isString(settingValue) ? settingValue : '';
 
+              const placeholder =
+                item.id === CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE
+                  ? t`Min`
+                  : item.id === CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE
+                    ? t`Max`
+                    : t`Auto`;
+
               return (
                 <SelectableListItem key={item.id} itemId={item.id}>
                   <CommandMenuItem
@@ -233,7 +240,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                         value={stringValue}
                         onChange={handleInputChange}
                         onValidate={createRangeValidator(item.id)}
-                        placeholder={t`Auto`}
+                        placeholder={placeholder}
                       />
                     }
                   />

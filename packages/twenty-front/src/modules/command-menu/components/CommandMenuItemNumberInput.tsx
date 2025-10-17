@@ -1,4 +1,5 @@
 import { TextInput } from '@/ui/input/components/TextInput';
+import styled from '@emotion/styled';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,13 +8,23 @@ import {
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
 
+const ERROR_STATE_WITHOUT_MESSAGE = ' ';
+
 type CommandMenuItemNumberInputProps = {
   value: string;
   onChange: (value: number | null) => void;
   onValidate?: (value: number | null) => boolean;
   placeholder?: string;
 };
-
+const StyledRightAlignedTextInput = styled(TextInput)`
+  input {
+    :focus {
+      color: ${({ theme }) => theme.font.color.primary};
+    }
+    color: ${({ theme }) => theme.font.color.tertiary};
+    text-align: right;
+  }
+`;
 export const CommandMenuItemNumberInput = ({
   value,
   onChange,
@@ -51,6 +62,10 @@ export const CommandMenuItemNumberInput = ({
     setHasError(false);
   };
 
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    event.target.select();
+  };
+
   const handleBlur = () => {
     handleCommit();
   };
@@ -65,15 +80,15 @@ export const CommandMenuItemNumberInput = ({
   };
 
   return (
-    <TextInput
-      type="number"
+    <StyledRightAlignedTextInput
       value={draftValue}
       sizeVariant="sm"
       onChange={handleChange}
+      onFocus={handleFocus}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
-      error={hasError ? ' ' : undefined}
+      error={hasError ? ERROR_STATE_WITHOUT_MESSAGE : undefined}
       noErrorHelper
     />
   );
