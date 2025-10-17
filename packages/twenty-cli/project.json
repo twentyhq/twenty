@@ -86,10 +86,6 @@
       "parallel": false,
       "dependsOn": [
         {
-          "target": "build",
-          "projects": "dependencies"
-        },
-        {
           "target": "database:reset",
           "projects": "twenty-server"
         },
