@@ -1,4 +1,3 @@
-import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
@@ -16,7 +15,6 @@ export type ServerlessFunctionEntityRelationProperties =
     | DatabaseEventTrigger
     | RouteTrigger
     | Workspace
-    | ApplicationEntity
     | ServerlessFunctionLayerEntity
   >;
 

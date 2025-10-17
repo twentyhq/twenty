@@ -6,11 +6,13 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ApplicationVariable } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'application', schema: 'core' })
@@ -56,6 +58,12 @@ export class ApplicationEntity {
   })
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
+
+  @OneToMany(
+    () => ApplicationVariable,
+    (applicationVariable) => applicationVariable.application,
+  )
+  applicationVariables: Relation<ApplicationVariable>[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
