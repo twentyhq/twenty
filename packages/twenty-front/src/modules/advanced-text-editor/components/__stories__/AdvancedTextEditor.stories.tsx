@@ -1,8 +1,8 @@
-import { FormAdvancedTextFieldEditor } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldEditor';
+import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
+import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { useAdvancedTextEditor } from '~/hooks/useAdvancedTextEditor';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -48,7 +48,7 @@ const EditorWrapper = ({
   }
 
   return (
-    <FormAdvancedTextFieldEditor
+    <AdvancedTextEditor
       editor={editor}
       readonly={readonly}
       minHeight={minHeight}
@@ -58,8 +58,7 @@ const EditorWrapper = ({
 };
 
 const meta: Meta<typeof EditorWrapper> = {
-  title:
-    'Modules/ObjectRecord/RecordField/FormTypes/FormAdvancedTextFieldEditor',
+  title: 'Modules/AdvancedTextEditor/AdvancedTextEditor',
   component: EditorWrapper,
   parameters: {
     msw: graphqlMocks,

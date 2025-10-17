@@ -1,4 +1,4 @@
-import { ResizableImageView } from '@/object-record/record-field/ui/extensions/resizable-image/ResizableImageView';
+import { ResizableImageView } from '@/advanced-text-editor/extensions/resizable-image/ResizableImageView';
 import {
   type ImageOptions,
   Image as TiptapImage,

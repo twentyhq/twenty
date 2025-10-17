@@ -1,4 +1,5 @@
-import { FormAdvancedTextFieldEditor } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldEditor';
+import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
+import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
@@ -17,7 +18,6 @@ import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { useAdvancedTextEditor } from '~/hooks/useAdvancedTextEditor';
 
 const StyledAdvancedTextFieldContainer = styled(FormFieldInputContainer)`
   flex-grow: 1;
@@ -180,7 +180,7 @@ export const FormAdvancedTextFieldInput = ({
     ? renderFullScreenModal(
         <div data-globally-prevent-click-outside="true">
           <StyledFullScreenEditorContainer>
-            <FormAdvancedTextFieldEditor
+            <AdvancedTextEditor
               editor={editor}
               readonly={readonly}
               minHeight={minHeight}
@@ -204,7 +204,7 @@ export const FormAdvancedTextFieldInput = ({
         <StyledAdvancedTextFieldFieldContainer>
           <StyledAdvancedTextFieldInnerContainer>
             {!isFullScreen && (
-              <FormAdvancedTextFieldEditor
+              <AdvancedTextEditor
                 editor={editor}
                 readonly={readonly}
                 minHeight={minHeight}
