@@ -19,7 +19,9 @@ export const getMockFieldMetadataEntity = <
   overrides: GetMockFieldMetadataEntityOverride<T>,
 ): FieldMetadataEntity => {
   return {
+    viewFilters: [],
     viewFields: [],
+    viewGroups: [],
     morphId: null,
     fieldPermissions: [],
     icon: null,

@@ -1,15 +1,10 @@
 import { TEST_NOT_EXISTING_VIEW_ID } from 'test/integration/constants/test-view-ids.constants';
-import {
-  assertGraphQLErrorResponseWithSnapshot,
-  assertGraphQLSuccessfulResponse,
-} from 'test/integration/graphql/utils/graphql-test-assertions.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateViewOperationFactory } from 'test/integration/graphql/utils/update-view-operation-factory.util';
-import { updateViewData } from 'test/integration/graphql/utils/view-data-factory.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { updateOneCoreView } from 'test/integration/metadata/suites/view/utils/update-one-core-view.util';
 import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
@@ -71,32 +66,35 @@ describe('Update core view', () => {
       expectToFail: false,
     });
 
-    const updateInput = updateViewData({
+    const updateInput = {
+      id: view.id,
+      name: 'Updated View',
+      type: ViewType.KANBAN,
+      isCompact: true,
+    };
+
+    const { data, errors } = await updateOneCoreView({
+      viewId: view.id,
+      input: updateInput,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data.updateCoreView).toMatchObject({
+      id: view.id,
       name: 'Updated View',
       type: ViewType.KANBAN,
       isCompact: true,
     });
-
-    const operation = updateViewOperationFactory({
-      viewId: view.id,
-      data: updateInput,
-    });
-    const response = await makeGraphqlAPIRequest(operation);
-
-    assertGraphQLSuccessfulResponse(response);
-    expect(response.body.data.updateCoreView).toMatchObject({
-      id: view.id,
-      ...updateInput,
-    });
   });
 
   it('should throw error when updating non-existent view', async () => {
-    const operation = updateViewOperationFactory({
+    const { errors } = await updateOneCoreView({
       viewId: TEST_NOT_EXISTING_VIEW_ID,
-      data: { name: 'Non-existent View' },
+      input: { id: TEST_NOT_EXISTING_VIEW_ID, name: 'Non-existent View' },
+      expectToFail: true,
     });
-    const response = await makeGraphqlAPIRequest(operation);
 
-    assertGraphQLErrorResponseWithSnapshot(response);
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

@@ -19,6 +19,8 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
 
   return {
+    viewFilterIds: [],
+    viewGroupIds: [],
     viewFieldIds: [],
     createdAt,
     updatedAt: createdAt,

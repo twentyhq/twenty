@@ -37,8 +37,8 @@ export const getDefaultFlatFieldMetadata = ({
     ),
     isSystem: false,
     isUnique: createFieldInput.isUnique ?? null,
-    label: createFieldInput.label ?? null,
-    name: createFieldInput.name ?? null,
+    label: createFieldInput.label,
+    name: createFieldInput.name,
     objectMetadataId: createFieldInput.objectMetadataId,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
@@ -54,5 +54,7 @@ export const getDefaultFlatFieldMetadata = ({
     updatedAt: createdAt,
     isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
     morphId: null,
+    viewFilterIds: [],
+    viewGroupIds: [],
   } as const satisfies FlatFieldMetadata;
 };

@@ -132,6 +132,8 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "universalIdentifier": Any<String>,
         "updatedAt": Any<ClockDate>,
         "viewFieldIds": [],
+        "viewFilterIds": [],
+        "viewGroupIds": [],
         "workspaceId": Any<String>,
       },
       {
@@ -165,6 +167,8 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "universalIdentifier": Any<String>,
         "updatedAt": Any<ClockDate>,
         "viewFieldIds": [],
+        "viewFilterIds": [],
+        "viewGroupIds": [],
         "workspaceId": Any<String>,
       },
       {
@@ -196,6 +200,8 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "universalIdentifier": Any<String>,
         "updatedAt": Any<ClockDate>,
         "viewFieldIds": [],
+        "viewFilterIds": [],
+        "viewGroupIds": [],
         "workspaceId": Any<String>,
       },
       {
@@ -229,6 +235,8 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "universalIdentifier": Any<String>,
         "updatedAt": Any<ClockDate>,
         "viewFieldIds": [],
+        "viewFilterIds": [],
+        "viewGroupIds": [],
         "workspaceId": Any<String>,
       },
     ],
