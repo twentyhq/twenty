@@ -33,6 +33,7 @@ import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-ve
 import { MigrateChannelSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-channel-sync-stages.command';
 import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-workflow-step-filter-operand-value';
 import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-regenerate-person-search-vector-with-phones.command';
+import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-9/1-9-regenerate-search-vectors.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -95,6 +96,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly regeneratePersonSearchVectorWithPhonesCommand: RegeneratePersonSearchVectorWithPhonesCommand,
     protected readonly migrateChannelSyncStagesCommand: MigrateChannelSyncStagesCommand,
     protected readonly fillNullServerlessFunctionLayerIdCommand: FillNullServerlessFunctionLayerIdCommand,
+
+    // 1.9 Commands
+    protected readonly regenerateSearchVectorsCommand: RegenerateSearchVectorsCommand,
   ) {
     super(
       workspaceRepository,
@@ -199,6 +203,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
+    const commands_190: VersionCommands = {
+      beforeSyncMetadata: [this.regenerateSearchVectorsCommand],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '0.53.0': commands_053,
       '0.54.0': commands_054,
@@ -213,6 +222,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.6.0': commands_160,
       '1.7.0': commands_170,
       '1.8.0': commands_180,
+      '1.9.0': commands_190,
     };
   }
 
