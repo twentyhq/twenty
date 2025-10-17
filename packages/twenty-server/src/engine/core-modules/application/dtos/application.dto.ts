@@ -6,6 +6,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { ApplicationVariableDTO } from 'src/engine/core-modules/applicationVariable/dtos/application-variable.dto';
 
 @ObjectType('Application')
 export class ApplicationDTO {
@@ -22,6 +23,10 @@ export class ApplicationDTO {
   @Field()
   description: string;
 
+  @IsString()
+  @Field()
+  version: string;
+
   @Field(() => [AgentDTO])
   agents: AgentDTO[];
 
@@ -30,4 +35,7 @@ export class ApplicationDTO {
 
   @Field(() => [ObjectMetadataDTO])
   objects: ObjectMetadataDTO[];
+
+  @Field(() => [ApplicationVariableDTO])
+  applicationVariables: ApplicationVariableDTO[];
 }

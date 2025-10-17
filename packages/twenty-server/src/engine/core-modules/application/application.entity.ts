@@ -18,6 +18,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { ApplicationVariable } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 
 @Entity({ name: 'application', schema: 'core' })
 @Index('IDX_APPLICATION_WORKSPACE_ID', ['workspaceId'])
@@ -85,6 +86,15 @@ export class ApplicationEntity {
     onDelete: 'CASCADE',
   })
   objects: Relation<ObjectMetadataEntity[]>;
+
+  @OneToMany(
+    () => ApplicationVariable,
+    (applicationVariable) => applicationVariable.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  applicationVariables: Relation<ApplicationVariable[]>;
 
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',
