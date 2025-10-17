@@ -272,25 +272,49 @@ export class DevSeederDataService {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    await this.coreDataSource.transaction(
-      async (entityManager: WorkspaceEntityManager) => {
-        await this.seedRecordsInBatches({
-          entityManager,
-          schemaName,
-          workspaceId,
-          featureFlags,
-          objectMetadataItems,
-        });
+    // Disable logging by replacing the logger with a no-op
+    const originalLogger = this.coreDataSource.logger;
 
-        await this.timelineActivitySeederService.seedTimelineActivities({
-          entityManager,
-          schemaName,
-          workspaceId,
-        });
+    // Create a no-op logger that ignores all log calls
+    const noOpLogger = {
+      logQuery: () => {},
+      logQueryError: () => {},
+      logQuerySlow: () => {},
+      logSchemaBuild: () => {},
+      logMigration: () => {},
+      log: () => {},
+    };
 
-        await prefillWorkflows(entityManager, schemaName, objectMetadataItems);
-      },
-    );
+    this.coreDataSource.logger = noOpLogger;
+
+    try {
+      await this.coreDataSource.transaction(
+        async (entityManager: WorkspaceEntityManager) => {
+          await this.seedRecordsInBatches({
+            entityManager,
+            schemaName,
+            workspaceId,
+            featureFlags,
+            objectMetadataItems,
+          });
+
+          await this.timelineActivitySeederService.seedTimelineActivities({
+            entityManager,
+            schemaName,
+            workspaceId,
+          });
+
+          await prefillWorkflows(
+            entityManager,
+            schemaName,
+            objectMetadataItems,
+          );
+        },
+      );
+    } finally {
+      // Restore original logger
+      this.coreDataSource.logger = originalLogger;
+    }
   }
 
   private async seedRecordsInBatches({
@@ -357,7 +381,6 @@ export class DevSeederDataService {
       .into(`${schemaName}.${tableName}`, pgColumns)
       .orIgnore()
       .values(recordSeeds)
-      .returning('*')
       .execute();
   }
 }
