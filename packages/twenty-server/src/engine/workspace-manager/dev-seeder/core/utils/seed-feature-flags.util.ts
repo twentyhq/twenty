@@ -77,11 +77,6 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
         workspaceId: workspaceId,
         value: true,
