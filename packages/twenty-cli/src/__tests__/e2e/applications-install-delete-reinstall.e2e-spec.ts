@@ -39,13 +39,10 @@ describe.each(COVERED_APPLICATION_FOLDERS)(
       expect(result.success).toBe(true);
     });
 
-    it.failing(
-      `should successfully re-install ${applicationName} application`,
-      async () => {
-        const result = await syncCommand.execute(appPath);
+    it(`should successfully re-install ${applicationName} application`, async () => {
+      const result = await syncCommand.execute(appPath);
 
-        expect(result.success).toBe(true);
-      },
-    );
+      expect(result.success).toBe(true);
+    });
   },
 );
