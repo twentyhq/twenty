@@ -220,6 +220,7 @@
     "@yarnpkg/types": "^4.0.0",
     "rimraf": "^5.0.5",
     "twenty-emails": "workspace:*",
+    "twenty-sdk": "workspace:*",
     "twenty-shared": "workspace:*"
   },
   "engines": {

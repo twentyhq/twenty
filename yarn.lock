@@ -51968,7 +51968,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-sdk@workspace:packages/twenty-sdk":
+"twenty-sdk@workspace:*, twenty-sdk@workspace:packages/twenty-sdk":
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
@@ -52179,6 +52179,7 @@ __metadata:
     tsdav: "npm:^2.1.5"
     tslib: "npm:2.8.1"
     twenty-emails: "workspace:*"
+    twenty-sdk: "workspace:*"
     twenty-shared: "workspace:*"
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"

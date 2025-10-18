@@ -14,7 +14,15 @@ import {
   assertViewGroupStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
+import { createClient } from 'twenty-sdk/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+const client = createClient({
+  url: `http://localhost:${APP_PORT}/metadata`,
+  headers: {
+    Authorization: `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`,
+  },
+});
 
 describe('View Group Resolver', () => {
   let testViewId: string;
@@ -125,24 +133,44 @@ describe('View Group Resolver', () => {
 
   describe('createCoreViewGroup', () => {
     it('should create a new view group', async () => {
-      const { data } = await createOneCoreViewGroup({
-        expectToFail: false,
-        input: {
-          viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
-          isVisible: false,
-          fieldValue: 'inactive',
-          position: 1,
+      const data = await client.mutation({
+        createCoreViewGroup: {
+          id: true,
+          fieldMetadataId: true,
+          fieldValue: true,
+          isVisible: true,
+          position: true,
+          viewId: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+          __args: {
+            input: {
+              viewId: testViewId,
+              fieldMetadataId: testFieldMetadataId,
+              isVisible: false,
+              fieldValue: 'inactive',
+              position: 1,
+            },
+          },
         },
       });
 
-      assertViewGroupStructure(data.createCoreViewGroup, {
-        fieldMetadataId: testFieldMetadataId,
-        isVisible: false,
-        fieldValue: 'inactive',
-        position: 1,
-        viewId: testViewId,
-      });
+      expect(data).toMatchInlineSnapshot(`
+{
+  "createCoreViewGroup": {
+    "createdAt": "2025-10-18T07:01:05.266Z",
+    "deletedAt": null,
+    "fieldMetadataId": "29cf96f4-1506-428a-b2ee-21edb072e8f5",
+    "fieldValue": "inactive",
+    "id": "daf7f32a-7312-448a-8855-ee7cd0ff0dbe",
+    "isVisible": false,
+    "position": 1,
+    "updatedAt": "2025-10-18T07:01:05.266Z",
+    "viewId": "3763119b-9149-44bf-b546-50adf2cd159d",
+  },
+}
+`);
     });
 
     it('should create a view group with null fieldValue', async () => {
