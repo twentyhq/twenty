@@ -1,48 +1,82 @@
-# Generated Code - DO NOT EDIT
+# Generated SDK Code
 
-⚠️ **This directory contains auto-generated code from GenQL.**
+This directory contains auto-generated TypeScript SDK code for Twenty's GraphQL APIs.
 
-## ⚠️ Important
+**⚠️ DO NOT EDIT FILES IN THIS DIRECTORY MANUALLY**
 
-**DO NOT manually edit any files in this directory!**
+All files here are generated using [GenQL](https://genql.dev/) and will be overwritten when regenerated.
 
-All code in this folder is automatically generated from the Twenty GraphQL API schema. Any manual changes will be overwritten when the SDK is regenerated.
+## Directories
 
-## Regenerating the SDK
+### `metadata/`
+Generated from the Twenty Metadata API (`/metadata` endpoint).
 
-To regenerate the SDK after schema changes:
+- **Purpose**: Manage workspace metadata (objects, fields, relations, indexes, etc.)
+- **Authentication**: None required
+- **Generation Command**: `npx nx regenerate:metadata twenty-sdk`
+
+### `core/`
+Generated from the Twenty Core API (`/graphql` endpoint).
+
+- **Purpose**: Access dynamically generated workspace resolvers (e.g., `createCompany`, `updatePerson`, etc.)
+- **Authentication**: Required (Bearer token)
+- **Generation Command**: `npx nx regenerate:core twenty-sdk`
+
+## Regeneration Process
+
+When you need to update the SDK after schema changes:
 
 ```bash
-# From the package root
-npm run regenerate:metadata
+# 1. Ensure twenty-server is running with test database seeded
+# 2. Run the appropriate regeneration command
 
-# Or using the script directly
-bash scripts/regenerate-metadata.sh
-
-# Or manually
-npx genql --endpoint http://localhost:3000/metadata --output src/generated/metadata
+npx nx regenerate:metadata twenty-sdk  # For metadata API
+npx nx regenerate:core twenty-sdk      # For core workspace API
 ```
 
-## What's Generated
+### Authentication for Core API Generation
 
-- **`metadata/`** - Type-safe SDK for Twenty's Metadata GraphQL API
-  - `index.ts` - Client creation and exports
-  - `schema.ts` - TypeScript type definitions
-  - `schema.graphql` - GraphQL schema
-  - `types.ts` - Type mappings
-  - `runtime/` - GenQL runtime utilities
+The `regenerate:core` command uses a mock admin token from the test database:
+- **User**: Apple Jane (Admin)
+- **Workspace**: Apple workspace (test data)
+- **Token Expiry**: 2036 (long-lived for testing)
 
-## Making Changes
+This token is defined in `packages/twenty-server/jest-integration.config.ts` as `APPLE_JANE_ADMIN_ACCESS_TOKEN`.
 
-If you need to customize the SDK:
+## How It Works
 
-1. **For client configuration** - Edit `src/index.ts` to re-export with custom wrappers
-2. **For helper functions** - Create them outside of `src/generated/`
-3. **For examples** - Add them to the `examples/` directory
+GenQL analyzes the GraphQL schema via introspection and generates:
 
-## Source
+1. **`schema.ts`** - TypeScript types for all GraphQL types
+2. **`types.ts`** - Type mappings for the SDK
+3. **`index.ts`** - Main SDK client with `createClient` function
+4. **`runtime/`** - GenQL runtime utilities (fetcher, batcher, etc.)
+5. **`schema.graphql`** - Raw GraphQL schema for reference
 
-This code is generated from:
-- **Endpoint**: `http://localhost:3000/metadata`
-- **Generator**: GenQL (https://genql.dev/)
+## Usage
 
+```typescript
+// Import the generated SDK
+import { createClient } from 'twenty-sdk/core';
+
+// Create a client instance
+const client = createClient({
+  url: 'http://localhost:3000/graphql',
+  headers: {
+    Authorization: 'Bearer YOUR_TOKEN',
+  },
+});
+
+// Use it with full type safety
+const result = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        // TypeScript will autocomplete available fields!
+      },
+    },
+  },
+});
+```

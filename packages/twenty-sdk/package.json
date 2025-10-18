@@ -30,16 +30,25 @@
       "types": "./dist/generated/metadata/index.d.ts",
       "import": "./dist/generated/metadata.mjs",
       "require": "./dist/generated/metadata.cjs"
+    },
+    "./core": {
+      "types": "./dist/generated/core/index.d.ts",
+      "import": "./dist/generated/core.mjs",
+      "require": "./dist/generated/core.cjs"
     }
   },
   "files": [
     "dist",
-    "metadata"
+    "metadata",
+    "core"
   ],
   "typesVersions": {
     "*": {
       "metadata": [
         "dist/generated/metadata/index.d.ts"
+      ],
+      "core": [
+        "dist/generated/core/index.d.ts"
       ]
     }
   }
