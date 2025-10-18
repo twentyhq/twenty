@@ -3,22 +3,16 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-sdk/src",
   "projectType": "library",
-  "tags": [
-    "scope:sdk"
-  ],
+  "tags": ["scope:sdk"],
   "targets": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "{projectRoot}/dist"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
     },
     "regenerate:metadata": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cd {projectRoot} && genql --endpoint http://localhost:3000/metadata --output src/generated/metadata",
+        "command": "genql --endpoint http://localhost:3000/metadata --output src/generated/metadata",
         "cwd": "{projectRoot}"
       }
     },
@@ -39,4 +33,3 @@
     }
   }
 }
-

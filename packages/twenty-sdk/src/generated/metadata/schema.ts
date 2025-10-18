@@ -1,8 +1,4 @@
 // @ts-nocheck
-/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-
 export type Scalars = {
     String: string,
     UUID: any,
@@ -24,7 +20,7 @@ export interface ApiKey {
     id: Scalars['UUID']
     name: Scalars['String']
     expiresAt: Scalars['DateTime']
-    revokedAt: (Scalars['DateTime'] | null)
+    revokedAt?: Scalars['DateTime']
     workspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -52,11 +48,11 @@ export interface TwoFactorAuthenticationMethodDTO {
 
 export interface ObjectPermission {
     objectMetadataId: Scalars['UUID']
-    canReadObjectRecords: (Scalars['Boolean'] | null)
-    canUpdateObjectRecords: (Scalars['Boolean'] | null)
-    canSoftDeleteObjectRecords: (Scalars['Boolean'] | null)
-    canDestroyObjectRecords: (Scalars['Boolean'] | null)
-    restrictedFields: (Scalars['JSON'] | null)
+    canReadObjectRecords?: Scalars['Boolean']
+    canUpdateObjectRecords?: Scalars['Boolean']
+    canSoftDeleteObjectRecords?: Scalars['Boolean']
+    canDestroyObjectRecords?: Scalars['Boolean']
+    restrictedFields?: Scalars['JSON']
     __typename: 'ObjectPermission'
 }
 
@@ -64,16 +60,16 @@ export interface UserWorkspace {
     id: Scalars['UUID']
     user: User
     userId: Scalars['UUID']
-    workspace: (Workspace | null)
+    workspace?: Workspace
     workspaceId: Scalars['UUID']
     locale: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
-    permissionFlags: (PermissionFlagType[] | null)
-    objectPermissions: (ObjectPermission[] | null)
-    objectsPermissions: (ObjectPermission[] | null)
-    twoFactorAuthenticationMethodSummary: (TwoFactorAuthenticationMethodDTO[] | null)
+    deletedAt?: Scalars['DateTime']
+    permissionFlags?: PermissionFlagType[]
+    objectPermissions?: ObjectPermission[]
+    objectsPermissions?: ObjectPermission[]
+    twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodDTO[]
     __typename: 'UserWorkspace'
 }
 
@@ -83,32 +79,32 @@ export interface Webhook {
     id: Scalars['UUID']
     targetUrl: Scalars['String']
     operations: Scalars['String'][]
-    description: (Scalars['String'] | null)
+    description?: Scalars['String']
     secret: Scalars['String']
     workspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     workspace: Workspace
     __typename: 'Webhook'
 }
 
 export interface Agent {
     id: Scalars['UUID']
-    standardId: (Scalars['UUID'] | null)
+    standardId?: Scalars['UUID']
     name: Scalars['String']
     label: Scalars['String']
-    icon: (Scalars['String'] | null)
-    description: (Scalars['String'] | null)
+    icon?: Scalars['String']
+    description?: Scalars['String']
     prompt: Scalars['String']
     modelId: Scalars['String']
-    responseFormat: (Scalars['JSON'] | null)
-    roleId: (Scalars['UUID'] | null)
+    responseFormat?: Scalars['JSON']
+    roleId?: Scalars['UUID']
     isCustom: Scalars['Boolean']
-    applicationId: (Scalars['UUID'] | null)
+    applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    modelConfiguration: (Scalars['JSON'] | null)
+    modelConfiguration?: Scalars['JSON']
     __typename: 'Agent'
 }
 
@@ -123,15 +119,15 @@ export interface WorkspaceMember {
     name: FullName
     userEmail: Scalars['String']
     colorScheme: Scalars['String']
-    avatarUrl: (Scalars['String'] | null)
-    locale: (Scalars['String'] | null)
-    calendarStartDay: (Scalars['Int'] | null)
-    timeZone: (Scalars['String'] | null)
-    dateFormat: (WorkspaceMemberDateFormatEnum | null)
-    timeFormat: (WorkspaceMemberTimeFormatEnum | null)
-    roles: (Role[] | null)
-    userWorkspaceId: (Scalars['UUID'] | null)
-    numberFormat: (WorkspaceMemberNumberFormatEnum | null)
+    avatarUrl?: Scalars['String']
+    locale?: Scalars['String']
+    calendarStartDay?: Scalars['Int']
+    timeZone?: Scalars['String']
+    dateFormat?: WorkspaceMemberDateFormatEnum
+    timeFormat?: WorkspaceMemberTimeFormatEnum
+    roles?: Role[]
+    userWorkspaceId?: Scalars['UUID']
+    numberFormat?: WorkspaceMemberNumberFormatEnum
     __typename: 'WorkspaceMember'
 }
 
@@ -152,8 +148,8 @@ export interface FieldPermission {
     objectMetadataId: Scalars['UUID']
     fieldMetadataId: Scalars['UUID']
     roleId: Scalars['UUID']
-    canReadFieldValue: (Scalars['Boolean'] | null)
-    canUpdateFieldValue: (Scalars['Boolean'] | null)
+    canReadFieldValue?: Scalars['Boolean']
+    canUpdateFieldValue?: Scalars['Boolean']
     __typename: 'FieldPermission'
 }
 
@@ -168,16 +164,16 @@ export interface ApiKeyForRole {
     id: Scalars['UUID']
     name: Scalars['String']
     expiresAt: Scalars['DateTime']
-    revokedAt: (Scalars['DateTime'] | null)
+    revokedAt?: Scalars['DateTime']
     __typename: 'ApiKeyForRole'
 }
 
 export interface Role {
     id: Scalars['UUID']
-    standardId: (Scalars['UUID'] | null)
+    standardId?: Scalars['UUID']
     label: Scalars['String']
-    description: (Scalars['String'] | null)
-    icon: (Scalars['String'] | null)
+    description?: Scalars['String']
+    icon?: Scalars['String']
     isEditable: Scalars['Boolean']
     canBeAssignedToUsers: Scalars['Boolean']
     canBeAssignedToAgents: Scalars['Boolean']
@@ -191,9 +187,9 @@ export interface Role {
     canUpdateAllObjectRecords: Scalars['Boolean']
     canSoftDeleteAllObjectRecords: Scalars['Boolean']
     canDestroyAllObjectRecords: Scalars['Boolean']
-    permissionFlags: (PermissionFlag[] | null)
-    objectPermissions: (ObjectPermission[] | null)
-    fieldPermissions: (FieldPermission[] | null)
+    permissionFlags?: PermissionFlag[]
+    objectPermissions?: ObjectPermission[]
+    fieldPermissions?: FieldPermission[]
     __typename: 'Role'
 }
 
@@ -203,12 +199,12 @@ export interface CoreViewField {
     isVisible: Scalars['Boolean']
     size: Scalars['Float']
     position: Scalars['Float']
-    aggregateOperation: (AggregateOperations | null)
+    aggregateOperation?: AggregateOperations
     viewId: Scalars['UUID']
     workspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     __typename: 'CoreViewField'
 }
 
@@ -216,14 +212,14 @@ export type AggregateOperations = 'MIN' | 'MAX' | 'AVG' | 'SUM' | 'COUNT' | 'COU
 
 export interface CoreViewFilterGroup {
     id: Scalars['UUID']
-    parentViewFilterGroupId: (Scalars['UUID'] | null)
+    parentViewFilterGroupId?: Scalars['UUID']
     logicalOperator: ViewFilterGroupLogicalOperator
-    positionInViewFilterGroup: (Scalars['Float'] | null)
+    positionInViewFilterGroup?: Scalars['Float']
     viewId: Scalars['UUID']
     workspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     __typename: 'CoreViewFilterGroup'
 }
 
@@ -234,14 +230,14 @@ export interface CoreViewFilter {
     fieldMetadataId: Scalars['UUID']
     operand: ViewFilterOperand
     value: Scalars['JSON']
-    viewFilterGroupId: (Scalars['UUID'] | null)
-    positionInViewFilterGroup: (Scalars['Float'] | null)
-    subFieldName: (Scalars['String'] | null)
+    viewFilterGroupId?: Scalars['UUID']
+    positionInViewFilterGroup?: Scalars['Float']
+    subFieldName?: Scalars['String']
     viewId: Scalars['UUID']
     workspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     __typename: 'CoreViewFilter'
 }
 
@@ -257,7 +253,7 @@ export interface CoreViewGroup {
     workspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     __typename: 'CoreViewGroup'
 }
 
@@ -269,7 +265,7 @@ export interface CoreViewSort {
     workspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     __typename: 'CoreViewSort'
 }
 
@@ -280,21 +276,21 @@ export interface CoreView {
     name: Scalars['String']
     objectMetadataId: Scalars['UUID']
     type: ViewType
-    key: (ViewKey | null)
+    key?: ViewKey
     icon: Scalars['String']
     position: Scalars['Float']
     isCompact: Scalars['Boolean']
     isCustom: Scalars['Boolean']
     openRecordIn: ViewOpenRecordIn
-    kanbanAggregateOperation: (AggregateOperations | null)
-    kanbanAggregateOperationFieldMetadataId: (Scalars['UUID'] | null)
-    calendarFieldMetadataId: (Scalars['UUID'] | null)
+    kanbanAggregateOperation?: AggregateOperations
+    kanbanAggregateOperationFieldMetadataId?: Scalars['UUID']
+    calendarFieldMetadataId?: Scalars['UUID']
     workspaceId: Scalars['UUID']
-    anyFieldFilterValue: (Scalars['String'] | null)
-    calendarLayout: (ViewCalendarLayout | null)
+    anyFieldFilterValue?: Scalars['String']
+    calendarLayout?: ViewCalendarLayout
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     viewFields: CoreViewField[]
     viewFilters: CoreViewFilter[]
     viewFilterGroups: CoreViewFilterGroup[]
@@ -313,39 +309,39 @@ export type ViewCalendarLayout = 'DAY' | 'WEEK' | 'MONTH'
 
 export interface Workspace {
     id: Scalars['UUID']
-    displayName: (Scalars['String'] | null)
-    logo: (Scalars['String'] | null)
-    inviteHash: (Scalars['String'] | null)
-    deletedAt: (Scalars['DateTime'] | null)
+    displayName?: Scalars['String']
+    logo?: Scalars['String']
+    inviteHash?: Scalars['String']
+    deletedAt?: Scalars['DateTime']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     allowImpersonation: Scalars['Boolean']
     isPublicInviteLinkEnabled: Scalars['Boolean']
     trashRetentionDays: Scalars['Float']
-    workspaceMembersCount: (Scalars['Float'] | null)
+    workspaceMembersCount?: Scalars['Float']
     activationStatus: WorkspaceActivationStatus
-    views: (CoreView[] | null)
-    viewFields: (CoreViewField[] | null)
-    viewFilters: (CoreViewFilter[] | null)
-    viewFilterGroups: (CoreViewFilterGroup[] | null)
-    viewGroups: (CoreViewGroup[] | null)
-    viewSorts: (CoreViewSort[] | null)
+    views?: CoreView[]
+    viewFields?: CoreViewField[]
+    viewFilters?: CoreViewFilter[]
+    viewFilterGroups?: CoreViewFilterGroup[]
+    viewGroups?: CoreViewGroup[]
+    viewSorts?: CoreViewSort[]
     metadataVersion: Scalars['Float']
     databaseUrl: Scalars['String']
     databaseSchema: Scalars['String']
     subdomain: Scalars['String']
-    customDomain: (Scalars['String'] | null)
+    customDomain?: Scalars['String']
     isGoogleAuthEnabled: Scalars['Boolean']
     isTwoFactorAuthenticationEnforced: Scalars['Boolean']
     isPasswordAuthEnabled: Scalars['Boolean']
     isMicrosoftAuthEnabled: Scalars['Boolean']
     isCustomDomainEnabled: Scalars['Boolean']
-    defaultRole: (Role | null)
-    defaultAgent: (Agent | null)
-    version: (Scalars['String'] | null)
-    featureFlags: (FeatureFlagDTO[] | null)
+    defaultRole?: Role
+    defaultAgent?: Agent
+    version?: Scalars['String']
+    featureFlags?: FeatureFlagDTO[]
     billingSubscriptions: BillingSubscription[]
-    currentBillingSubscription: (BillingSubscription | null)
+    currentBillingSubscription?: BillingSubscription
     hasValidEnterpriseKey: Scalars['Boolean']
     workspaceUrls: WorkspaceUrls
     __typename: 'Workspace'
@@ -367,25 +363,25 @@ export interface User {
     firstName: Scalars['String']
     lastName: Scalars['String']
     email: Scalars['String']
-    defaultAvatarUrl: (Scalars['String'] | null)
+    defaultAvatarUrl?: Scalars['String']
     isEmailVerified: Scalars['Boolean']
-    disabled: (Scalars['Boolean'] | null)
-    passwordHash: (Scalars['String'] | null)
+    disabled?: Scalars['Boolean']
+    passwordHash?: Scalars['String']
     canImpersonate: Scalars['Boolean']
     canAccessFullAdminPanel: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     locale: Scalars['String']
-    workspaceMember: (WorkspaceMember | null)
+    workspaceMember?: WorkspaceMember
     userWorkspaces: UserWorkspace[]
-    onboardingStatus: (OnboardingStatus | null)
-    currentWorkspace: (Workspace | null)
-    currentUserWorkspace: (UserWorkspace | null)
-    userVars: (Scalars['JSONObject'] | null)
-    workspaceMembers: (WorkspaceMember[] | null)
-    deletedWorkspaceMembers: (DeletedWorkspaceMember[] | null)
-    supportUserHash: (Scalars['String'] | null)
+    onboardingStatus?: OnboardingStatus
+    currentWorkspace?: Workspace
+    currentUserWorkspace?: UserWorkspace
+    userVars?: Scalars['JSONObject']
+    workspaceMembers?: WorkspaceMember[]
+    deletedWorkspaceMembers?: DeletedWorkspaceMember[]
+    supportUserHash?: Scalars['String']
     workspaces: UserWorkspace[]
     availableWorkspaces: AvailableWorkspaces
     __typename: 'User'
@@ -408,12 +404,12 @@ export interface PageLayoutWidget {
     pageLayoutTabId: Scalars['UUID']
     title: Scalars['String']
     type: WidgetType
-    objectMetadataId: (Scalars['UUID'] | null)
+    objectMetadataId?: Scalars['UUID']
     gridPosition: GridPosition
-    configuration: (WidgetConfiguration | null)
+    configuration?: WidgetConfiguration
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     __typename: 'PageLayoutWidget'
 }
 
@@ -426,20 +422,20 @@ export interface BarChartConfiguration {
     aggregateFieldMetadataId: Scalars['UUID']
     aggregateOperation: ExtendedAggregateOperations
     primaryAxisGroupByFieldMetadataId: Scalars['UUID']
-    primaryAxisGroupBySubFieldName: (Scalars['String'] | null)
-    primaryAxisOrderBy: (GraphOrderBy | null)
-    secondaryAxisGroupByFieldMetadataId: (Scalars['UUID'] | null)
-    secondaryAxisGroupBySubFieldName: (Scalars['String'] | null)
-    secondaryAxisOrderBy: (GraphOrderBy | null)
-    omitNullValues: (Scalars['Boolean'] | null)
-    axisNameDisplay: (AxisNameDisplay | null)
-    displayDataLabel: (Scalars['Boolean'] | null)
-    rangeMin: (Scalars['Float'] | null)
-    rangeMax: (Scalars['Float'] | null)
-    description: (Scalars['String'] | null)
-    color: (Scalars['String'] | null)
-    filter: (Scalars['JSON'] | null)
-    groupMode: (BarChartGroupMode | null)
+    primaryAxisGroupBySubFieldName?: Scalars['String']
+    primaryAxisOrderBy?: GraphOrderBy
+    secondaryAxisGroupByFieldMetadataId?: Scalars['UUID']
+    secondaryAxisGroupBySubFieldName?: Scalars['String']
+    secondaryAxisOrderBy?: GraphOrderBy
+    omitNullValues?: Scalars['Boolean']
+    axisNameDisplay?: AxisNameDisplay
+    displayDataLabel?: Scalars['Boolean']
+    rangeMin?: Scalars['Float']
+    rangeMax?: Scalars['Float']
+    description?: Scalars['String']
+    color?: Scalars['String']
+    filter?: Scalars['JSON']
+    groupMode?: BarChartGroupMode
     __typename: 'BarChartConfiguration'
 }
 
@@ -466,19 +462,19 @@ export interface LineChartConfiguration {
     aggregateFieldMetadataId: Scalars['UUID']
     aggregateOperation: ExtendedAggregateOperations
     primaryAxisGroupByFieldMetadataId: Scalars['UUID']
-    primaryAxisGroupBySubFieldName: (Scalars['String'] | null)
-    primaryAxisOrderBy: (GraphOrderBy | null)
-    secondaryAxisGroupByFieldMetadataId: (Scalars['UUID'] | null)
-    secondaryAxisGroupBySubFieldName: (Scalars['String'] | null)
-    secondaryAxisOrderBy: (GraphOrderBy | null)
-    omitNullValues: (Scalars['Boolean'] | null)
-    axisNameDisplay: (AxisNameDisplay | null)
-    displayDataLabel: (Scalars['Boolean'] | null)
-    rangeMin: (Scalars['Float'] | null)
-    rangeMax: (Scalars['Float'] | null)
-    description: (Scalars['String'] | null)
-    color: (Scalars['String'] | null)
-    filter: (Scalars['JSON'] | null)
+    primaryAxisGroupBySubFieldName?: Scalars['String']
+    primaryAxisOrderBy?: GraphOrderBy
+    secondaryAxisGroupByFieldMetadataId?: Scalars['UUID']
+    secondaryAxisGroupBySubFieldName?: Scalars['String']
+    secondaryAxisOrderBy?: GraphOrderBy
+    omitNullValues?: Scalars['Boolean']
+    axisNameDisplay?: AxisNameDisplay
+    displayDataLabel?: Scalars['Boolean']
+    rangeMin?: Scalars['Float']
+    rangeMax?: Scalars['Float']
+    description?: Scalars['String']
+    color?: Scalars['String']
+    filter?: Scalars['JSON']
     __typename: 'LineChartConfiguration'
 }
 
@@ -487,12 +483,12 @@ export interface PieChartConfiguration {
     aggregateFieldMetadataId: Scalars['UUID']
     aggregateOperation: ExtendedAggregateOperations
     groupByFieldMetadataId: Scalars['UUID']
-    groupBySubFieldName: (Scalars['String'] | null)
-    orderBy: (GraphOrderBy | null)
-    displayDataLabel: (Scalars['Boolean'] | null)
-    description: (Scalars['String'] | null)
-    color: (Scalars['String'] | null)
-    filter: (Scalars['JSON'] | null)
+    groupBySubFieldName?: Scalars['String']
+    orderBy?: GraphOrderBy
+    displayDataLabel?: Scalars['Boolean']
+    description?: Scalars['String']
+    color?: Scalars['String']
+    filter?: Scalars['JSON']
     __typename: 'PieChartConfiguration'
 }
 
@@ -500,11 +496,11 @@ export interface NumberChartConfiguration {
     graphType: GraphType
     aggregateFieldMetadataId: Scalars['UUID']
     aggregateOperation: ExtendedAggregateOperations
-    label: (Scalars['String'] | null)
-    displayDataLabel: (Scalars['Boolean'] | null)
-    format: (Scalars['String'] | null)
-    description: (Scalars['String'] | null)
-    filter: (Scalars['JSON'] | null)
+    label?: Scalars['String']
+    displayDataLabel?: Scalars['Boolean']
+    format?: Scalars['String']
+    description?: Scalars['String']
+    filter?: Scalars['JSON']
     __typename: 'NumberChartConfiguration'
 }
 
@@ -512,10 +508,10 @@ export interface GaugeChartConfiguration {
     graphType: GraphType
     aggregateFieldMetadataId: Scalars['UUID']
     aggregateOperation: ExtendedAggregateOperations
-    displayDataLabel: (Scalars['Boolean'] | null)
-    color: (Scalars['String'] | null)
-    description: (Scalars['String'] | null)
-    filter: (Scalars['JSON'] | null)
+    displayDataLabel?: Scalars['Boolean']
+    color?: Scalars['String']
+    description?: Scalars['String']
+    filter?: Scalars['JSON']
     __typename: 'GaugeChartConfiguration'
 }
 
@@ -529,10 +525,10 @@ export interface PageLayoutTab {
     title: Scalars['String']
     position: Scalars['Float']
     pageLayoutId: Scalars['UUID']
-    widgets: (PageLayoutWidget[] | null)
+    widgets?: PageLayoutWidget[]
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     __typename: 'PageLayoutTab'
 }
 
@@ -540,30 +536,30 @@ export interface PageLayout {
     id: Scalars['UUID']
     name: Scalars['String']
     type: PageLayoutType
-    objectMetadataId: (Scalars['UUID'] | null)
-    tabs: (PageLayoutTab[] | null)
+    objectMetadataId?: Scalars['UUID']
+    tabs?: PageLayoutTab[]
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    deletedAt: (Scalars['DateTime'] | null)
+    deletedAt?: Scalars['DateTime']
     __typename: 'PageLayout'
 }
 
 export type PageLayoutType = 'RECORD_INDEX' | 'RECORD_PAGE' | 'DASHBOARD'
 
 export interface StandardOverrides {
-    label: (Scalars['String'] | null)
-    description: (Scalars['String'] | null)
-    icon: (Scalars['String'] | null)
-    translations: (Scalars['JSON'] | null)
+    label?: Scalars['String']
+    description?: Scalars['String']
+    icon?: Scalars['String']
+    translations?: Scalars['JSON']
     __typename: 'StandardOverrides'
 }
 
 export interface ObjectStandardOverrides {
-    labelSingular: (Scalars['String'] | null)
-    labelPlural: (Scalars['String'] | null)
-    description: (Scalars['String'] | null)
-    icon: (Scalars['String'] | null)
-    translations: (Scalars['JSON'] | null)
+    labelSingular?: Scalars['String']
+    labelPlural?: Scalars['String']
+    description?: Scalars['String']
+    icon?: Scalars['String']
+    translations?: Scalars['JSON']
     __typename: 'ObjectStandardOverrides'
 }
 
@@ -573,23 +569,23 @@ export interface Object {
     namePlural: Scalars['String']
     labelSingular: Scalars['String']
     labelPlural: Scalars['String']
-    description: (Scalars['String'] | null)
-    icon: (Scalars['String'] | null)
-    standardOverrides: (ObjectStandardOverrides | null)
-    shortcut: (Scalars['String'] | null)
+    description?: Scalars['String']
+    icon?: Scalars['String']
+    standardOverrides?: ObjectStandardOverrides
+    shortcut?: Scalars['String']
     isCustom: Scalars['Boolean']
     isRemote: Scalars['Boolean']
     isActive: Scalars['Boolean']
     isSystem: Scalars['Boolean']
     isUIReadOnly: Scalars['Boolean']
     isSearchable: Scalars['Boolean']
-    applicationId: (Scalars['UUID'] | null)
+    applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    labelIdentifierFieldMetadataId: (Scalars['UUID'] | null)
-    imageIdentifierFieldMetadataId: (Scalars['UUID'] | null)
+    labelIdentifierFieldMetadataId?: Scalars['UUID']
+    imageIdentifierFieldMetadataId?: Scalars['UUID']
     isLabelSyncedWithName: Scalars['Boolean']
-    duplicateCriteria: (Scalars['String'][][] | null)
+    duplicateCriteria?: Scalars['String'][][]
     fieldsList: Field[]
     indexMetadataList: Index[]
     fields: ObjectFieldsConnection
@@ -602,24 +598,24 @@ export interface Field {
     type: FieldMetadataType
     name: Scalars['String']
     label: Scalars['String']
-    description: (Scalars['String'] | null)
-    icon: (Scalars['String'] | null)
-    standardOverrides: (StandardOverrides | null)
-    isCustom: (Scalars['Boolean'] | null)
-    isActive: (Scalars['Boolean'] | null)
-    isSystem: (Scalars['Boolean'] | null)
-    isUIReadOnly: (Scalars['Boolean'] | null)
-    isNullable: (Scalars['Boolean'] | null)
-    isUnique: (Scalars['Boolean'] | null)
-    defaultValue: (Scalars['JSON'] | null)
-    options: (Scalars['JSON'] | null)
-    settings: (Scalars['JSON'] | null)
-    isLabelSyncedWithName: (Scalars['Boolean'] | null)
+    description?: Scalars['String']
+    icon?: Scalars['String']
+    standardOverrides?: StandardOverrides
+    isCustom?: Scalars['Boolean']
+    isActive?: Scalars['Boolean']
+    isSystem?: Scalars['Boolean']
+    isUIReadOnly?: Scalars['Boolean']
+    isNullable?: Scalars['Boolean']
+    isUnique?: Scalars['Boolean']
+    defaultValue?: Scalars['JSON']
+    options?: Scalars['JSON']
+    settings?: Scalars['JSON']
+    isLabelSyncedWithName?: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    relation: (Relation | null)
-    morphRelations: (Relation[] | null)
-    object: (Object | null)
+    relation?: Relation
+    morphRelations?: Relation[]
+    object?: Object
     __typename: 'Field'
 }
 
@@ -639,9 +635,9 @@ export interface IndexField {
 export interface Index {
     id: Scalars['UUID']
     name: Scalars['String']
-    isCustom: (Scalars['Boolean'] | null)
+    isCustom?: Scalars['Boolean']
     isUnique: Scalars['Boolean']
-    indexWhereClause: (Scalars['String'] | null)
+    indexWhereClause?: Scalars['String']
     indexType: IndexType
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -665,13 +661,13 @@ export interface IndexEdge {
 
 export interface PageInfo {
     /** true if paging forward and there are more records. */
-    hasNextPage: (Scalars['Boolean'] | null)
+    hasNextPage?: Scalars['Boolean']
     /** true if paging backwards and there are more records. */
-    hasPreviousPage: (Scalars['Boolean'] | null)
+    hasPreviousPage?: Scalars['Boolean']
     /** The cursor of the first returned record. */
-    startCursor: (Scalars['ConnectionCursor'] | null)
+    startCursor?: Scalars['ConnectionCursor']
     /** The cursor of the last returned record. */
-    endCursor: (Scalars['ConnectionCursor'] | null)
+    endCursor?: Scalars['ConnectionCursor']
     __typename: 'PageInfo'
 }
 
@@ -781,9 +777,9 @@ export interface BillingPriceLicensedDTO {
 export type SubscriptionInterval = 'Month' | 'Year'
 
 export interface BillingPriceTierDTO {
-    upTo: (Scalars['Float'] | null)
-    flatAmount: (Scalars['Float'] | null)
-    unitAmount: (Scalars['Float'] | null)
+    upTo?: Scalars['Float']
+    flatAmount?: Scalars['Float']
+    unitAmount?: Scalars['Float']
     __typename: 'BillingPriceTierDTO'
 }
 
@@ -798,7 +794,7 @@ export interface BillingPriceMeteredDTO {
 export interface BillingProduct {
     name: Scalars['String']
     description: Scalars['String']
-    images: (Scalars['String'][] | null)
+    images?: Scalars['String'][]
     metadata: BillingProductMetadata
     __typename: 'BillingProduct'
 }
@@ -806,25 +802,25 @@ export interface BillingProduct {
 export interface BillingLicensedProduct {
     name: Scalars['String']
     description: Scalars['String']
-    images: (Scalars['String'][] | null)
+    images?: Scalars['String'][]
     metadata: BillingProductMetadata
-    prices: (BillingPriceLicensedDTO[] | null)
+    prices?: BillingPriceLicensedDTO[]
     __typename: 'BillingLicensedProduct'
 }
 
 export interface BillingMeteredProduct {
     name: Scalars['String']
     description: Scalars['String']
-    images: (Scalars['String'][] | null)
+    images?: Scalars['String'][]
     metadata: BillingProductMetadata
-    prices: (BillingPriceMeteredDTO[] | null)
+    prices?: BillingPriceMeteredDTO[]
     __typename: 'BillingMeteredProduct'
 }
 
 export interface BillingSubscriptionItemDTO {
     id: Scalars['UUID']
     hasReachedCurrentPeriodCap: Scalars['Boolean']
-    quantity: (Scalars['Float'] | null)
+    quantity?: Scalars['Float']
     stripePriceId: Scalars['String']
     billingProduct: BillingProductDTO
     __typename: 'BillingSubscriptionItemDTO'
@@ -832,7 +828,7 @@ export interface BillingSubscriptionItemDTO {
 
 export interface BillingSubscriptionSchedulePhaseItem {
     price: Scalars['String']
-    quantity: (Scalars['Float'] | null)
+    quantity?: Scalars['Float']
     __typename: 'BillingSubscriptionSchedulePhaseItem'
 }
 
@@ -846,9 +842,9 @@ export interface BillingSubscriptionSchedulePhase {
 export interface BillingSubscription {
     id: Scalars['UUID']
     status: SubscriptionStatus
-    interval: (SubscriptionInterval | null)
-    billingSubscriptionItems: (BillingSubscriptionItemDTO[] | null)
-    currentPeriodEnd: (Scalars['DateTime'] | null)
+    interval?: SubscriptionInterval
+    billingSubscriptionItems?: BillingSubscriptionItemDTO[]
+    currentPeriodEnd?: Scalars['DateTime']
     metadata: Scalars['JSON']
     phases: BillingSubscriptionSchedulePhase[]
     __typename: 'BillingSubscription'
@@ -887,7 +883,7 @@ export interface SignedFileDTO {
 
 export interface ServerlessFunctionLayer {
     id: Scalars['UUID']
-    applicationId: (Scalars['UUID'] | null)
+    applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'ServerlessFunctionLayer'
@@ -895,7 +891,7 @@ export interface ServerlessFunctionLayer {
 
 export interface ServerlessFunctionExecutionResult {
     /** Execution result in JSON format */
-    data: (Scalars['JSON'] | null)
+    data?: Scalars['JSON']
     /** Execution Logs */
     logs: Scalars['String']
     /** Execution duration in milliseconds */
@@ -903,7 +899,7 @@ export interface ServerlessFunctionExecutionResult {
     /** Execution status */
     status: ServerlessFunctionExecutionStatus
     /** Execution error in JSON format */
-    error: (Scalars['JSON'] | null)
+    error?: Scalars['JSON']
     __typename: 'ServerlessFunctionExecutionResult'
 }
 
@@ -942,14 +938,14 @@ export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 export interface ServerlessFunction {
     id: Scalars['UUID']
     name: Scalars['String']
-    description: (Scalars['String'] | null)
+    description?: Scalars['String']
     runtime: Scalars['String']
     timeoutSeconds: Scalars['Float']
-    latestVersion: (Scalars['String'] | null)
+    latestVersion?: Scalars['String']
     publishedVersions: Scalars['String'][]
-    cronTriggers: (CronTrigger[] | null)
-    databaseEventTriggers: (DatabaseEventTrigger[] | null)
-    routeTriggers: (RouteTrigger[] | null)
+    cronTriggers?: CronTrigger[]
+    databaseEventTriggers?: DatabaseEventTrigger[]
+    routeTriggers?: RouteTrigger[]
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'ServerlessFunction'
@@ -957,7 +953,7 @@ export interface ServerlessFunction {
 
 export interface BillingEndTrialPeriodOutput {
     /** Updated subscription status */
-    status: (SubscriptionStatus | null)
+    status?: SubscriptionStatus
     /** Boolean that confirms if a payment method was found */
     hasPaymentMethod: Scalars['Boolean']
     __typename: 'BillingEndTrialPeriodOutput'
@@ -981,7 +977,7 @@ export interface BillingPlanOutput {
 }
 
 export interface BillingSessionOutput {
-    url: (Scalars['String'] | null)
+    url?: Scalars['String']
     __typename: 'BillingSessionOutput'
 }
 
@@ -1015,7 +1011,7 @@ export interface SendInvitationsOutput {
 }
 
 export interface WorkspaceUrls {
-    customUrl: (Scalars['String'] | null)
+    customUrl?: Scalars['String']
     subdomainUrl: Scalars['String']
     __typename: 'WorkspaceUrls'
 }
@@ -1035,12 +1031,12 @@ export type SSOIdentityProviderStatus = 'Active' | 'Inactive' | 'Error'
 
 export interface AvailableWorkspace {
     id: Scalars['UUID']
-    displayName: (Scalars['String'] | null)
-    loginToken: (Scalars['String'] | null)
-    personalInviteToken: (Scalars['String'] | null)
-    inviteHash: (Scalars['String'] | null)
+    displayName?: Scalars['String']
+    loginToken?: Scalars['String']
+    personalInviteToken?: Scalars['String']
+    inviteHash?: Scalars['String']
     workspaceUrls: WorkspaceUrls
-    logo: (Scalars['String'] | null)
+    logo?: Scalars['String']
     sso: SSOConnection[]
     __typename: 'AvailableWorkspace'
 }
@@ -1055,8 +1051,8 @@ export interface DeletedWorkspaceMember {
     id: Scalars['UUID']
     name: FullName
     userEmail: Scalars['String']
-    avatarUrl: (Scalars['String'] | null)
-    userWorkspaceId: (Scalars['UUID'] | null)
+    avatarUrl?: Scalars['String']
+    userWorkspaceId?: Scalars['UUID']
     __typename: 'DeletedWorkspaceMember'
 }
 
@@ -1103,8 +1099,8 @@ export interface AuthProviders {
 export interface PublicWorkspaceDataOutput {
     id: Scalars['UUID']
     authProviders: AuthProviders
-    logo: (Scalars['String'] | null)
-    displayName: (Scalars['String'] | null)
+    logo?: Scalars['String']
+    displayName?: Scalars['String']
     workspaceUrls: WorkspaceUrls
     __typename: 'PublicWorkspaceDataOutput'
 }
@@ -1114,26 +1110,26 @@ export interface AgentChatMessagePart {
     messageId: Scalars['UUID']
     orderIndex: Scalars['Int']
     type: Scalars['String']
-    textContent: (Scalars['String'] | null)
-    reasoningContent: (Scalars['String'] | null)
-    toolName: (Scalars['String'] | null)
-    toolCallId: (Scalars['String'] | null)
-    toolInput: (Scalars['JSON'] | null)
-    toolOutput: (Scalars['JSON'] | null)
-    state: (Scalars['String'] | null)
-    errorMessage: (Scalars['String'] | null)
-    errorDetails: (Scalars['JSON'] | null)
-    sourceUrlSourceId: (Scalars['String'] | null)
-    sourceUrlUrl: (Scalars['String'] | null)
-    sourceUrlTitle: (Scalars['String'] | null)
-    sourceDocumentSourceId: (Scalars['String'] | null)
-    sourceDocumentMediaType: (Scalars['String'] | null)
-    sourceDocumentTitle: (Scalars['String'] | null)
-    sourceDocumentFilename: (Scalars['String'] | null)
-    fileMediaType: (Scalars['String'] | null)
-    fileFilename: (Scalars['String'] | null)
-    fileUrl: (Scalars['String'] | null)
-    providerMetadata: (Scalars['JSON'] | null)
+    textContent?: Scalars['String']
+    reasoningContent?: Scalars['String']
+    toolName?: Scalars['String']
+    toolCallId?: Scalars['String']
+    toolInput?: Scalars['JSON']
+    toolOutput?: Scalars['JSON']
+    state?: Scalars['String']
+    errorMessage?: Scalars['String']
+    errorDetails?: Scalars['JSON']
+    sourceUrlSourceId?: Scalars['String']
+    sourceUrlUrl?: Scalars['String']
+    sourceUrlTitle?: Scalars['String']
+    sourceDocumentSourceId?: Scalars['String']
+    sourceDocumentMediaType?: Scalars['String']
+    sourceDocumentTitle?: Scalars['String']
+    sourceDocumentFilename?: Scalars['String']
+    fileMediaType?: Scalars['String']
+    fileFilename?: Scalars['String']
+    fileUrl?: Scalars['String']
+    providerMetadata?: Scalars['JSON']
     createdAt: Scalars['DateTime']
     __typename: 'AgentChatMessagePart'
 }
@@ -1150,7 +1146,7 @@ export interface AgentChatMessage {
 export interface AgentChatThread {
     id: Scalars['UUID']
     agentId: Scalars['UUID']
-    title: (Scalars['String'] | null)
+    title?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'AgentChatThread'
@@ -1158,7 +1154,7 @@ export interface AgentChatThread {
 
 export interface AgentHandoffDTO {
     id: Scalars['UUID']
-    description: (Scalars['String'] | null)
+    description?: Scalars['String']
     toAgent: Agent
     __typename: 'AgentHandoffDTO'
 }
@@ -1215,7 +1211,7 @@ export interface EditSsoOutput {
 }
 
 export interface WorkspaceNameAndId {
-    displayName: (Scalars['String'] | null)
+    displayName?: Scalars['String']
     id: Scalars['UUID']
     __typename: 'WorkspaceNameAndId'
 }
@@ -1358,7 +1354,7 @@ export interface OnDbEventDTO {
     objectNameSingular: Scalars['String']
     eventDate: Scalars['DateTime']
     record: Scalars['JSON']
-    updatedFields: (Scalars['String'][] | null)
+    updatedFields?: Scalars['String'][]
     __typename: 'OnDbEventDTO'
 }
 
@@ -1367,7 +1363,7 @@ export interface OnDbEventDTO {
 export type DatabaseEventAction = 'CREATED' | 'UPDATED' | 'DELETED' | 'DESTROYED' | 'RESTORED' | 'UPSERTED'
 
 export interface UserMappingOptionsUser {
-    user: (Scalars['String'] | null)
+    user?: Scalars['String']
     __typename: 'UserMappingOptionsUser'
 }
 
@@ -1376,20 +1372,20 @@ export interface RemoteServer {
     foreignDataWrapperId: Scalars['UUID']
     foreignDataWrapperType: Scalars['String']
     label: Scalars['String']
-    foreignDataWrapperOptions: (Scalars['JSON'] | null)
-    userMappingOptions: (UserMappingOptionsUser | null)
-    schema: (Scalars['String'] | null)
+    foreignDataWrapperOptions?: Scalars['JSON']
+    userMappingOptions?: UserMappingOptionsUser
+    schema?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'RemoteServer'
 }
 
 export interface RemoteTable {
-    id: (Scalars['UUID'] | null)
+    id?: Scalars['UUID']
     name: Scalars['String']
     status: RemoteTableStatus
-    schema: (Scalars['String'] | null)
-    schemaPendingUpdates: (DistantTableUpdate[] | null)
+    schema?: Scalars['String']
+    schemaPendingUpdates?: DistantTableUpdate[]
     __typename: 'RemoteTable'
 }
 
@@ -1404,12 +1400,12 @@ export type DistantTableUpdate = 'TABLE_DELETED' | 'COLUMNS_DELETED' | 'COLUMNS_
 export interface ConfigVariable {
     name: Scalars['String']
     description: Scalars['String']
-    value: (Scalars['JSON'] | null)
+    value?: Scalars['JSON']
     isSensitive: Scalars['Boolean']
     source: ConfigSource
     isEnvOnly: Scalars['Boolean']
     type: ConfigVariableType
-    options: (Scalars['JSON'] | null)
+    options?: Scalars['JSON']
     __typename: 'ConfigVariable'
 }
 
@@ -1451,8 +1447,8 @@ export interface SystemHealth {
 export interface UserInfo {
     id: Scalars['UUID']
     email: Scalars['String']
-    firstName: (Scalars['String'] | null)
-    lastName: (Scalars['String'] | null)
+    firstName?: Scalars['String']
+    lastName?: Scalars['String']
     __typename: 'UserInfo'
 }
 
@@ -1460,7 +1456,7 @@ export interface WorkspaceInfo {
     id: Scalars['UUID']
     name: Scalars['String']
     allowImpersonation: Scalars['Boolean']
-    logo: (Scalars['String'] | null)
+    logo?: Scalars['String']
     totalUsers: Scalars['Float']
     workspaceUrls: WorkspaceUrls
     users: UserInfo[]
@@ -1475,7 +1471,7 @@ export interface UserLookup {
 }
 
 export interface VersionInfo {
-    currentVersion: (Scalars['String'] | null)
+    currentVersion?: Scalars['String']
     latestVersion: Scalars['String']
     __typename: 'VersionInfo'
 }
@@ -1492,9 +1488,9 @@ export interface AdminPanelHealthServiceData {
     label: Scalars['String']
     description: Scalars['String']
     status: AdminPanelHealthServiceStatus
-    errorMessage: (Scalars['String'] | null)
-    details: (Scalars['String'] | null)
-    queues: (AdminPanelWorkerQueueHealth[] | null)
+    errorMessage?: Scalars['String']
+    details?: Scalars['String']
+    queues?: AdminPanelWorkerQueueHealth[]
     __typename: 'AdminPanelHealthServiceData'
 }
 
@@ -1517,8 +1513,8 @@ export interface WorkerQueueMetrics {
     active: Scalars['Float']
     delayed: Scalars['Float']
     failureRate: Scalars['Float']
-    failedData: (Scalars['Float'][] | null)
-    completedData: (Scalars['Float'][] | null)
+    failedData?: Scalars['Float'][]
+    completedData?: Scalars['Float'][]
     __typename: 'WorkerQueueMetrics'
 }
 
@@ -1526,7 +1522,7 @@ export interface QueueMetricsData {
     queueName: Scalars['String']
     workers: Scalars['Float']
     timeRange: QueueMetricsTimeRange
-    details: (WorkerQueueMetrics | null)
+    details?: WorkerQueueMetrics
     data: QueueMetricsSeries[]
     __typename: 'QueueMetricsData'
 }
@@ -1569,8 +1565,8 @@ export interface Application {
 }
 
 export interface TimelineCalendarEventParticipant {
-    personId: (Scalars['UUID'] | null)
-    workspaceMemberId: (Scalars['UUID'] | null)
+    personId?: Scalars['UUID']
+    workspaceMemberId?: Scalars['UUID']
     firstName: Scalars['String']
     lastName: Scalars['String']
     displayName: Scalars['String']
@@ -1588,7 +1584,7 @@ export interface LinkMetadata {
 export interface LinksMetadata {
     primaryLinkLabel: Scalars['String']
     primaryLinkUrl: Scalars['String']
-    secondaryLinks: (LinkMetadata[] | null)
+    secondaryLinks?: LinkMetadata[]
     __typename: 'LinksMetadata'
 }
 
@@ -1628,7 +1624,7 @@ export interface VerificationRecord {
     type: Scalars['String']
     key: Scalars['String']
     value: Scalars['String']
-    priority: (Scalars['Float'] | null)
+    priority?: Scalars['Float']
     __typename: 'VerificationRecord'
 }
 
@@ -1639,8 +1635,8 @@ export interface EmailingDomain {
     domain: Scalars['String']
     driver: EmailingDomainDriver
     status: EmailingDomainStatus
-    verificationRecords: (VerificationRecord[] | null)
-    verifiedAt: (Scalars['DateTime'] | null)
+    verificationRecords?: VerificationRecord[]
+    verifiedAt?: Scalars['DateTime']
     __typename: 'EmailingDomain'
 }
 
@@ -1655,33 +1651,33 @@ export interface AutocompleteResultDto {
 }
 
 export interface LocationDto {
-    lat: (Scalars['Float'] | null)
-    lng: (Scalars['Float'] | null)
+    lat?: Scalars['Float']
+    lng?: Scalars['Float']
     __typename: 'LocationDto'
 }
 
 export interface PlaceDetailsResultDto {
-    state: (Scalars['String'] | null)
-    postcode: (Scalars['String'] | null)
-    city: (Scalars['String'] | null)
-    country: (Scalars['String'] | null)
-    location: (LocationDto | null)
+    state?: Scalars['String']
+    postcode?: Scalars['String']
+    city?: Scalars['String']
+    country?: Scalars['String']
+    location?: LocationDto
     __typename: 'PlaceDetailsResultDto'
 }
 
 export interface ConnectionParametersOutput {
     host: Scalars['String']
     port: Scalars['Float']
-    username: (Scalars['String'] | null)
+    username?: Scalars['String']
     password: Scalars['String']
-    secure: (Scalars['Boolean'] | null)
+    secure?: Scalars['Boolean']
     __typename: 'ConnectionParametersOutput'
 }
 
 export interface ImapSmtpCaldavConnectionParameters {
-    IMAP: (ConnectionParametersOutput | null)
-    SMTP: (ConnectionParametersOutput | null)
-    CALDAV: (ConnectionParametersOutput | null)
+    IMAP?: ConnectionParametersOutput
+    SMTP?: ConnectionParametersOutput
+    CALDAV?: ConnectionParametersOutput
     __typename: 'ImapSmtpCaldavConnectionParameters'
 }
 
@@ -1690,7 +1686,7 @@ export interface ConnectedImapSmtpCaldavAccount {
     handle: Scalars['String']
     provider: Scalars['String']
     accountOwnerId: Scalars['UUID']
-    connectionParameters: (ImapSmtpCaldavConnectionParameters | null)
+    connectionParameters?: ImapSmtpCaldavConnectionParameters
     __typename: 'ConnectedImapSmtpCaldavAccount'
 }
 
@@ -1701,8 +1697,8 @@ export interface ImapSmtpCaldavConnectionSuccess {
 }
 
 export interface TimelineThreadParticipant {
-    personId: (Scalars['UUID'] | null)
-    workspaceMemberId: (Scalars['UUID'] | null)
+    personId?: Scalars['UUID']
+    workspaceMemberId?: Scalars['UUID']
     firstName: Scalars['String']
     lastName: Scalars['String']
     displayName: Scalars['String']
@@ -1745,7 +1741,7 @@ export interface SearchRecord {
     recordId: Scalars['UUID']
     objectNameSingular: Scalars['String']
     label: Scalars['String']
-    imageUrl: (Scalars['String'] | null)
+    imageUrl?: Scalars['String']
     tsRankCD: Scalars['Float']
     tsRank: Scalars['Float']
     __typename: 'SearchRecord'
@@ -1758,7 +1754,7 @@ export interface SearchResultEdge {
 }
 
 export interface SearchResultPageInfo {
-    endCursor: (Scalars['String'] | null)
+    endCursor?: Scalars['String']
     hasNextPage: Scalars['Boolean']
     __typename: 'SearchResultPageInfo'
 }
@@ -1775,8 +1771,8 @@ export interface WorkflowRun {
 }
 
 export interface WorkflowVersionStepChanges {
-    triggerDiff: (Scalars['JSON'] | null)
-    stepsDiff: (Scalars['JSON'] | null)
+    triggerDiff?: Scalars['JSON']
+    stepsDiff?: Scalars['JSON']
     __typename: 'WorkflowVersionStepChanges'
 }
 
@@ -1792,8 +1788,8 @@ export interface WorkflowAction {
     type: Scalars['String']
     settings: Scalars['JSON']
     valid: Scalars['Boolean']
-    nextStepIds: (Scalars['UUID'][] | null)
-    position: (WorkflowStepPosition | null)
+    nextStepIds?: Scalars['UUID'][]
+    position?: WorkflowStepPosition
     __typename: 'WorkflowAction'
 }
 
@@ -1804,8 +1800,8 @@ export interface WorkflowVersionDTO {
     updatedAt: Scalars['String']
     workflowId: Scalars['UUID']
     status: Scalars['String']
-    trigger: (Scalars['JSON'] | null)
-    steps: (Scalars['JSON'] | null)
+    trigger?: Scalars['JSON']
+    steps?: Scalars['JSON']
     __typename: 'WorkflowVersionDTO'
 }
 
@@ -1821,8 +1817,8 @@ export interface BillingTrialPeriodDTO {
 }
 
 export interface NativeModelCapabilities {
-    webSearch: (Scalars['Boolean'] | null)
-    twitterSearch: (Scalars['Boolean'] | null)
+    webSearch?: Scalars['Boolean']
+    twitterSearch?: Scalars['Boolean']
     __typename: 'NativeModelCapabilities'
 }
 
@@ -1832,7 +1828,7 @@ export interface ClientAIModelConfig {
     provider: ModelProvider
     inputCostPer1kTokensInCredits: Scalars['Float']
     outputCostPer1kTokensInCredits: Scalars['Float']
-    nativeCapabilities: (NativeModelCapabilities | null)
+    nativeCapabilities?: NativeModelCapabilities
     __typename: 'ClientAIModelConfig'
 }
 
@@ -1840,29 +1836,29 @@ export type ModelProvider = 'NONE' | 'OPENAI' | 'ANTHROPIC' | 'OPENAI_COMPATIBLE
 
 export interface Billing {
     isBillingEnabled: Scalars['Boolean']
-    billingUrl: (Scalars['String'] | null)
+    billingUrl?: Scalars['String']
     trialPeriods: BillingTrialPeriodDTO[]
     __typename: 'Billing'
 }
 
 export interface Support {
     supportDriver: SupportDriver
-    supportFrontChatId: (Scalars['String'] | null)
+    supportFrontChatId?: Scalars['String']
     __typename: 'Support'
 }
 
 export type SupportDriver = 'NONE' | 'FRONT'
 
 export interface Sentry {
-    environment: (Scalars['String'] | null)
-    release: (Scalars['String'] | null)
-    dsn: (Scalars['String'] | null)
+    environment?: Scalars['String']
+    release?: Scalars['String']
+    dsn?: Scalars['String']
     __typename: 'Sentry'
 }
 
 export interface Captcha {
-    provider: (CaptchaDriverType | null)
-    siteKey: (Scalars['String'] | null)
+    provider?: CaptchaDriverType
+    siteKey?: Scalars['String']
     __typename: 'Captcha'
 }
 
@@ -1890,23 +1886,23 @@ export interface Query {
     object: Object
     objects: ObjectConnection
     getCoreViewFields: CoreViewField[]
-    getCoreViewField: (CoreViewField | null)
+    getCoreViewField?: CoreViewField
     getCoreViews: CoreView[]
-    getCoreView: (CoreView | null)
+    getCoreView?: CoreView
     getCoreViewSorts: CoreViewSort[]
-    getCoreViewSort: (CoreViewSort | null)
+    getCoreViewSort?: CoreViewSort
     getCoreViewGroups: CoreViewGroup[]
-    getCoreViewGroup: (CoreViewGroup | null)
+    getCoreViewGroup?: CoreViewGroup
     getCoreViewFilterGroups: CoreViewFilterGroup[]
-    getCoreViewFilterGroup: (CoreViewFilterGroup | null)
+    getCoreViewFilterGroup?: CoreViewFilterGroup
     getCoreViewFilters: CoreViewFilter[]
-    getCoreViewFilter: (CoreViewFilter | null)
+    getCoreViewFilter?: CoreViewFilter
     index: Index
     indexMetadatas: IndexConnection
     findOneServerlessFunction: ServerlessFunction
     findManyServerlessFunctions: ServerlessFunction[]
     getAvailablePackages: Scalars['JSON']
-    getServerlessFunctionSourceCode: (Scalars['JSON'] | null)
+    getServerlessFunctionSourceCode?: Scalars['JSON']
     findOneDatabaseEventTrigger: DatabaseEventTrigger
     findManyDatabaseEventTriggers: DatabaseEventTrigger[]
     findOneCronTrigger: CronTrigger
@@ -1918,7 +1914,7 @@ export interface Query {
     findWorkspaceFromInviteHash: Workspace
     validatePasswordResetToken: ValidatePasswordResetToken
     apiKeys: ApiKey[]
-    apiKey: (ApiKey | null)
+    apiKey?: ApiKey
     currentUser: User
     findWorkspaceInvitations: WorkspaceInvitation[]
     billingPortalSession: BillingSessionOutput
@@ -1942,13 +1938,13 @@ export interface Query {
     findManyRemoteServersByType: RemoteServer[]
     findDistantTablesWithStatus: RemoteTable[]
     getPageLayouts: PageLayout[]
-    getPageLayout: (PageLayout | null)
+    getPageLayout?: PageLayout
     getPageLayoutTabs: PageLayoutTab[]
     getPageLayoutTab: PageLayoutTab
     getPageLayoutWidgets: PageLayoutWidget[]
     getPageLayoutWidget: PageLayoutWidget
     webhooks: Webhook[]
-    webhook: (Webhook | null)
+    webhook?: Webhook
     search: SearchResultConnection
     getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount
     getAutoCompleteAddress: AutocompleteResultDto[]
@@ -1959,7 +1955,7 @@ export interface Query {
     getQueueMetrics: QueueMetricsData
     versionInfo: VersionInfo
     getDatabaseConfigVariable: ConfigVariable
-    getPostgresCredentials: (PostgresCredentials | null)
+    getPostgresCredentials?: PostgresCredentials
     findManyPublicDomains: PublicDomain[]
     getEmailingDomains: EmailingDomain[]
     getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal
@@ -2041,8 +2037,8 @@ export interface Mutation {
     emailPasswordResetLink: EmailPasswordResetLink
     updatePasswordViaResetToken: InvalidatePassword
     createApiKey: ApiKey
-    updateApiKey: (ApiKey | null)
-    revokeApiKey: (ApiKey | null)
+    updateApiKey?: ApiKey
+    revokeApiKey?: ApiKey
     assignRoleToApiKey: Scalars['Boolean']
     initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput
     initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput
@@ -2070,7 +2066,7 @@ export interface Mutation {
     updateWorkspace: Workspace
     uploadWorkspaceLogo: SignedFileDTO
     deleteCurrentWorkspace: Workspace
-    checkCustomDomainValidRecords: (DomainValidRecords | null)
+    checkCustomDomainValidRecords?: DomainValidRecords
     createOneAgent: Agent
     updateOneAgent: Agent
     deleteOneAgent: Agent
@@ -2118,7 +2114,7 @@ export interface Mutation {
     destroyPageLayoutWidget: Scalars['Boolean']
     restorePageLayoutWidget: PageLayoutWidget
     createWebhook: Webhook
-    updateWebhook: (Webhook | null)
+    updateWebhook?: Webhook
     deleteWebhook: Scalars['Boolean']
     startChannelSync: ChannelSyncSuccess
     saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess
@@ -2146,7 +2142,7 @@ export interface Mutation {
     disablePostgresProxy: PostgresCredentials
     createPublicDomain: PublicDomain
     deletePublicDomain: Scalars['Boolean']
-    checkPublicDomainValidRecords: (DomainValidRecords | null)
+    checkPublicDomainValidRecords?: DomainValidRecords
     createEmailingDomain: EmailingDomain
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
@@ -2731,16 +2727,16 @@ export interface ObjectGenqlSelection{
     duplicateCriteria?: boolean | number
     fieldsList?: FieldGenqlSelection
     indexMetadataList?: IndexGenqlSelection
-    fields?: (ObjectFieldsConnectionGenqlSelection & { __args?: {
+    fields?: (ObjectFieldsConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging?: CursorPaging, 
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
-    filter?: FieldFilter} })
-    indexMetadatas?: (ObjectIndexMetadatasConnectionGenqlSelection & { __args?: {
+    filter: FieldFilter} })
+    indexMetadatas?: (ObjectIndexMetadatasConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging?: CursorPaging, 
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
-    filter?: IndexFilter} })
+    filter: IndexFilter} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -2810,16 +2806,16 @@ export interface IndexGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     indexFieldMetadataList?: IndexFieldGenqlSelection
-    objectMetadata?: (IndexObjectMetadataConnectionGenqlSelection & { __args?: {
+    objectMetadata?: (IndexObjectMetadataConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging?: CursorPaging, 
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
-    filter?: ObjectFilter} })
-    indexFieldMetadatas?: (IndexIndexFieldMetadatasConnectionGenqlSelection & { __args?: {
+    filter: ObjectFilter} })
+    indexFieldMetadatas?: (IndexIndexFieldMetadatasConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging?: CursorPaging, 
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
-    filter?: IndexFieldFilter} })
+    filter: IndexFieldFilter} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4144,11 +4140,11 @@ export interface QueryGenqlSelection{
     object?: (ObjectGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
-    objects?: (ObjectConnectionGenqlSelection & { __args?: {
+    objects?: (ObjectConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging?: CursorPaging, 
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
-    filter?: ObjectFilter} })
+    filter: ObjectFilter} })
     getCoreViewFields?: (CoreViewFieldGenqlSelection & { __args: {viewId: Scalars['String']} })
     getCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {id: Scalars['String']} })
     getCoreViews?: (CoreViewGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null)} })
@@ -4164,11 +4160,11 @@ export interface QueryGenqlSelection{
     index?: (IndexGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
-    indexMetadatas?: (IndexConnectionGenqlSelection & { __args?: {
+    indexMetadatas?: (IndexConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging?: CursorPaging, 
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
-    filter?: IndexFilter} })
+    filter: IndexFilter} })
     findOneServerlessFunction?: (ServerlessFunctionGenqlSelection & { __args: {input: ServerlessFunctionIdInput} })
     findManyServerlessFunctions?: ServerlessFunctionGenqlSelection
     getAvailablePackages?: { __args: {input: ServerlessFunctionIdInput} }
@@ -4204,11 +4200,11 @@ export interface QueryGenqlSelection{
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
-    fields?: (FieldConnectionGenqlSelection & { __args?: {
+    fields?: (FieldConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging?: CursorPaging, 
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
-    filter?: FieldFilter} })
+    filter: FieldFilter} })
     getSSOIdentityProviders?: FindAvailableSSOIDPOutputGenqlSelection
     findOneRemoteServerById?: (RemoteServerGenqlSelection & { __args: {input: RemoteServerIdInput} })
     findManyRemoteServersByType?: (RemoteServerGenqlSelection & { __args: {input: RemoteServerTypeInput} })
@@ -4254,7 +4250,7 @@ export interface GetServerlessFunctionSourceCodeInput {
 /** The id of the function. */
 id: Scalars['ID'],
 /** The version of the function */
-version?: Scalars['String']}
+version: Scalars['String']}
 
 export interface DatabaseEventTriggerIdInput {id: Scalars['String']}
 
@@ -4368,7 +4364,7 @@ export interface MutationGenqlSelection{
     sendInvitations?: (SendInvitationsOutputGenqlSelection & { __args: {emails: Scalars['String'][]} })
     skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
     skipBookOnboardingStep?: OnboardingStepSuccessGenqlSelection
-    checkoutSession?: (BillingSessionOutputGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan?: BillingPlanKey, requirePaymentMethod?: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
+    checkoutSession?: (BillingSessionOutputGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
     switchSubscriptionInterval?: BillingUpdateOutputGenqlSelection
     switchBillingPlan?: BillingUpdateOutputGenqlSelection
     cancelSwitchBillingPlan?: BillingUpdateOutputGenqlSelection
@@ -4569,7 +4565,7 @@ id: Scalars['UUID'],
 /** Payload in JSON format */
 payload: Scalars['JSON'],
 /** Version of the serverless function to execute */
-version?: Scalars['String']}
+version: Scalars['String']}
 
 export interface PublishServerlessFunctionInput {
 /** The id of the function. */
@@ -4603,7 +4599,7 @@ update: UpdateRouteTriggerInputUpdates}
 
 export interface UpdateRouteTriggerInputUpdates {path: Scalars['String'],isAuthRequired: Scalars['Boolean'],httpMethod: HTTPMethod}
 
-export interface CreateRouteTriggerInput {path: Scalars['String'],isAuthRequired?: Scalars['Boolean'],httpMethod?: HTTPMethod,serverlessFunctionId: Scalars['String']}
+export interface CreateRouteTriggerInput {path: Scalars['String'],isAuthRequired: Scalars['Boolean'],httpMethod: HTTPMethod,serverlessFunctionId: Scalars['String']}
 
 export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
 

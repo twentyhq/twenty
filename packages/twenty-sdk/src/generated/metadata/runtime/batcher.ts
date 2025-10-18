@@ -46,13 +46,8 @@ function dispatchQueueBatch(client: QueryBatcher, queue: Queue): void {
     if (batchedQuery.length === 1) {
         batchedQuery = batchedQuery[0]
     }
-    (() => {
-        try {
-            return client.fetcher(batchedQuery);
-        } catch(e) {
-            return Promise.reject(e);
-        }
-    })().then((responses: any) => {
+
+    client.fetcher(batchedQuery).then((responses: any) => {
         if (queue.length === 1 && !Array.isArray(responses)) {
             if (responses.errors && responses.errors.length) {
                 queue[0].reject(
@@ -77,11 +72,6 @@ function dispatchQueueBatch(client: QueryBatcher, queue: Queue): void {
             }
         }
     })
-    .catch((e) => {
-        for (let i = 0; i < queue.length; i++) {
-            queue[i].reject(e)
-        }
-    });
 }
 
 /**

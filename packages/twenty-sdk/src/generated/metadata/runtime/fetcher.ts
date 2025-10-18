@@ -30,32 +30,33 @@ export const createFetcher = ({
     if (!url && !fetcher) {
         throw new Error('url or fetcher is required')
     }
-
-    fetcher = fetcher || (async (body) => {
-        let headersObject =
-            typeof headers == 'function' ? await headers() : headers
-        headersObject = headersObject || {}
-        if (typeof fetch === 'undefined' && !_fetch) {
-            throw new Error(
-                'Global `fetch` function is not available, pass a fetch polyfill to Genql `createClient`',
-            )
+    if (!fetcher) {
+        fetcher = async (body) => {
+            let headersObject =
+                typeof headers == 'function' ? await headers() : headers
+            headersObject = headersObject || {}
+            if (typeof fetch === 'undefined' && !_fetch) {
+                throw new Error(
+                    'Global `fetch` function is not available, pass a fetch polyfill to Genql `createClient`',
+                )
+            }
+            let fetchImpl = _fetch || fetch
+            const res = await fetchImpl(url!, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...headersObject,
+                },
+                method: 'POST',
+                body: JSON.stringify(body),
+                ...rest,
+            })
+            if (!res.ok) {
+                throw new Error(`${res.statusText}: ${await res.text()}`)
+            }
+            const json = await res.json()
+            return json
         }
-        let fetchImpl = _fetch || fetch
-        const res = await fetchImpl(url!, {
-            headers: {
-                'Content-Type': 'application/json',
-                ...headersObject,
-            },
-            method: 'POST',
-            body: JSON.stringify(body),
-            ...rest,
-        })
-        if (!res.ok) {
-            throw new Error(`${res.statusText}: ${await res.text()}`)
-        }
-        const json = await res.json()
-        return json
-    })
+    }
 
     if (!batch) {
         return async (body) => {

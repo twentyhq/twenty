@@ -7,9 +7,7 @@
   "types": "dist/index.d.ts",
   "license": "AGPL-3.0",
   "scripts": {
-    "build": "npx vite build",
-    "regenerate:metadata": "bash scripts/regenerate-metadata.sh",
-    "test:metadata": "tsx examples/test-metadata-sdk.ts"
+    "build": "npx vite build"
   },
   "engines": {
     "node": "^24.5.0",
