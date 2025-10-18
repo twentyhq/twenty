@@ -1,0 +1,48 @@
+{
+  "name": "twenty-sdk",
+  "version": "0.1.0",
+  "description": "Type-safe SDK for Twenty CRM GraphQL APIs",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "license": "AGPL-3.0",
+  "scripts": {
+    "build": "npx vite build",
+    "regenerate:metadata": "bash scripts/regenerate-metadata.sh",
+    "test:metadata": "tsx examples/test-metadata-sdk.ts"
+  },
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
+  },
+  "devDependencies": {
+    "@genql/cli": "^3.0.3",
+    "vite": "^7.0.0",
+    "vite-plugin-dts": "3.8.1",
+    "vite-tsconfig-paths": "^4.2.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./metadata": {
+      "types": "./dist/generated/metadata/index.d.ts",
+      "import": "./dist/generated/metadata.mjs",
+      "require": "./dist/generated/metadata.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "metadata"
+  ],
+  "typesVersions": {
+    "*": {
+      "metadata": [
+        "dist/generated/metadata/index.d.ts"
+      ]
+    }
+  }
+}

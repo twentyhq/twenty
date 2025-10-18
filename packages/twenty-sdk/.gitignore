@@ -1,0 +1,10 @@
+dist
+node_modules
+*.log
+.DS_Store
+.vite
+.cache
+
+# Don't ignore the generated SDK files in src/generated/
+# They are committed to the repo as library source code
+

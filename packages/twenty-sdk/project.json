@@ -1,0 +1,42 @@
+{
+  "name": "twenty-sdk",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-sdk/src",
+  "projectType": "library",
+  "tags": [
+    "scope:sdk"
+  ],
+  "targets": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ]
+    },
+    "regenerate:metadata": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd {projectRoot} && genql --endpoint http://localhost:3000/metadata --output src/generated/metadata",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {},
+    "lint": {
+      "options": {},
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "fmt": {
+      "options": {
+        "files": "src"
+      },
+      "configurations": {
+        "fix": {}
+      }
+    }
+  }
+}
+
