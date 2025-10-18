@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":"non-uuid"} 1`] = `"Invalid UUID"`;
+
+exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":[]} 1`] = `"UUID must be a string"`;
+
+exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":{}} 1`] = `"UUID must be a string"`;
+
+exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":1} 1`] = `"UUID must be a string"`;
+
+exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":true} 1`] = `"UUID must be a string"`;
+
+exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":"non-uuid"} 1`] = `"["invalid input syntax for type uuid: \\"non-uuid\\""]"`;
+
+exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":[]} 1`] = `"["invalid input syntax for type uuid: \\"{}\\""]"`;
+
+exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":{}} 1`] = `"["invalid input syntax for type uuid: \\"{}\\""]"`;
+
+exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":1} 1`] = `"["invalid input syntax for type uuid: \\"1\\""]"`;
+
+exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":true} 1`] = `"["invalid input syntax for type uuid: \\"true\\""]"`;
