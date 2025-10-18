@@ -60,15 +60,11 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       );
     }
 
-    const {
-      workspaceDataSource,
-      repository,
-      roleId,
-      shouldBypassPermissionChecks,
-    } = await this.prepareQueryRunnerContext({
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    });
+    const { workspaceDataSource, repository, rolePermissionConfig } =
+      await this.prepareQueryRunnerContext({
+        authContext,
+        objectMetadataItemWithFieldMaps,
+      });
 
     const processedArgs = await this.processQueryArgs({
       authContext,
@@ -195,8 +191,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource,
-        roleId,
-        shouldBypassPermissionChecks,
+        rolePermissionConfig,
         selectedFields: processedArgs.selectedFieldsResult.select,
       });
     }

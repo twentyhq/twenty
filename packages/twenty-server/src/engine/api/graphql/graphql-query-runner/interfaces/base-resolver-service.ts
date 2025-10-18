@@ -40,6 +40,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -49,8 +50,7 @@ export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
   isExecutedByApiKey: boolean;
-  roleId?: string;
-  shouldBypassPermissionChecks: boolean;
+  rolePermissionConfig?: RolePermissionConfig;
 };
 
 @Injectable()
@@ -177,6 +177,12 @@ export abstract class GraphqlQueryBaseResolverService<
           options.objectMetadataMaps,
         );
 
+      const rolePermissionConfig = shouldBypassPermissionChecks
+        ? { shouldBypassPermissionChecks: true as const }
+        : roleId
+          ? { unionOf: [roleId] }
+          : undefined;
+
       const graphqlQueryResolverExecutionArgs = {
         args: computedArgs,
         options,
@@ -185,8 +191,7 @@ export abstract class GraphqlQueryBaseResolverService<
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
         isExecutedByApiKey: isDefined(authContext.apiKey),
-        roleId,
-        shouldBypassPermissionChecks,
+        rolePermissionConfig,
       };
       const results = await this.resolve(
         graphqlQueryResolverExecutionArgs,
