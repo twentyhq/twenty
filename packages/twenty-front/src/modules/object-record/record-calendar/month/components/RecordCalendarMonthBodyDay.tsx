@@ -17,7 +17,7 @@ const StyledContainer = styled.div<{
   display: flex;
   width: calc(100% / 7);
   flex-direction: column;
-  min-height: 122px;
+  flex: 1;
   padding: ${({ theme }) => theme.spacing(1)};
   background: ${({ theme }) => theme.background.primary};
   min-width: 0;
