@@ -138,7 +138,6 @@ describe('WorkspaceEntityManager', () => {
         IS_PAGE_LAYOUT_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_ENABLED: false,
         IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
-        IS_WORKFLOW_ITERATOR_ENABLED: false,
         IS_CALENDAR_VIEW_ENABLED: false,
         IS_GROUP_BY_ENABLED: true,
         IS_PUBLIC_DOMAIN_ENABLED: false,
@@ -177,7 +176,6 @@ describe('WorkspaceEntityManager', () => {
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_DYNAMIC_SEARCH_FIELDS_ENABLED: false,
         IS_COMMON_API_ENABLED: false,
-        IS_WORKFLOW_ITERATOR_ENABLED: false,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;

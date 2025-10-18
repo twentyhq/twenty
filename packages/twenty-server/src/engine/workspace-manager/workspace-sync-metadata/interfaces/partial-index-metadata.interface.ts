@@ -8,6 +8,8 @@ export type PartialIndexMetadata = Omit<
   | 'createdAt'
   | 'updatedAt'
   | 'universalIdentifier'
+  | 'application'
+  | 'applicationId'
 > & {
   columns: string[];
 };

@@ -14,7 +14,11 @@ import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-m
 type MicrosoftGraphFolder = {
   id: string;
   displayName: string;
+  childFolderCount?: number;
+  parentFolderId?: string;
 };
+
+const MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT = 999;
 
 @Injectable()
 export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
@@ -37,6 +41,8 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
 
       const response = await microsoftClient
         .api('/me/mailFolders')
+        .version('beta')
+        .top(MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT)
         .get()
         .catch((error) => {
           this.logger.error(

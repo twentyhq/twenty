@@ -1,6 +1,5 @@
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { type EditorProps, type Monaco } from '@monaco-editor/react';
-import dotenv from 'dotenv';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useParams } from 'react-router-dom';
@@ -35,7 +34,6 @@ export const SettingsServerlessFunctionCodeEditor = ({
   });
 
   const currentFile = files.find((file) => file.path === currentFilePath);
-  const environmentVariablesFile = files.find((file) => file.path === '.env');
 
   const handleEditorDidMount = async (
     editor: editor.IStandaloneCodeEditor,
@@ -67,11 +65,10 @@ export const SettingsServerlessFunctionCodeEditor = ({
         target: monaco.languages.typescript.ScriptTarget.ESNext,
       });
 
-      if (isDefined(environmentVariablesFile)) {
-        const environmentVariables = dotenv.parse(
-          environmentVariablesFile.content,
-        );
+      // TODO load that with proper env variables
+      const environmentVariables = {};
 
+      if (isDefined(environmentVariables)) {
         const environmentDefinition = `
           declare namespace NodeJS {
             interface ProcessEnv {
