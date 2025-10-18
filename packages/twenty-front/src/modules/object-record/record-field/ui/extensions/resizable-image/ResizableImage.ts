@@ -1,4 +1,4 @@
-import { ResizableImageView } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/ResizableImageView';
+import { ResizableImageView } from '@/object-record/record-field/ui/extensions/resizable-image/ResizableImageView';
 import {
   type ImageOptions,
   Image as TiptapImage,

@@ -1,7 +1,7 @@
 import {
   UploadImagePlugin,
   type UploadImagePluginProps,
-} from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/UploadImagePlugin';
+} from '@/object-record/record-field/ui/extensions/resizable-image/UploadImagePlugin';
 import { Extension } from '@tiptap/core';
 
 type UploadImageOptions = Omit<UploadImagePluginProps, 'editor'> & {};

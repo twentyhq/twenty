@@ -1,5 +1,5 @@
+import { StyledBubbleMenuContainer } from '@/object-record/record-field/ui/components/TextBubbleMenu';
 import { BubbleMenuIconButton } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/BubbleMenuIconButton';
-import { StyledBubbleMenuContainer } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/TextBubbleMenu';
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';

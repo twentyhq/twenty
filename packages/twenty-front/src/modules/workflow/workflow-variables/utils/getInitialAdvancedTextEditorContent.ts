@@ -5,7 +5,7 @@ import { logError } from '~/utils/logError';
 // Previous format of the email body was plain text,
 // but from now on we will save it as JSON.
 // So it will fail to parse the content, that's why we have this fallback.
-export const getInitialEmailEditorContent = (
+export const getInitialAdvancedTextEditorContent = (
   rawContent: string,
 ): JSONContent => {
   // Handle empty or null content
