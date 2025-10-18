@@ -45,9 +45,18 @@ export const useCommandMenuHotKeys = () => {
 
   useGlobalHotkeys({
     keys: ['ctrl+k', 'meta+k'],
-    callback: () => {
-      closeKeyboardShortcutMenu();
-      toggleCommandMenu();
+    callback: (e: KeyboardEvent) => {
+      const active = document.activeElement;
+      const isInEditor = active?.closest('.editor');
+      if (isInEditor !== null) {
+        return true;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        closeKeyboardShortcutMenu();
+        toggleCommandMenu();
+      }
     },
     containsModifier: true,
     dependencies: [closeKeyboardShortcutMenu, toggleCommandMenu],
