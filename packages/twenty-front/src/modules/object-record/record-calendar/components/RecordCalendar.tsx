@@ -18,7 +18,7 @@ import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: inherit;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(1)};
