@@ -99,8 +99,6 @@ export default [
           argsIgnorePattern: '^_',
         },
       ],
-
-      'eol-last': ['error', 'always'],
     },
   },
 

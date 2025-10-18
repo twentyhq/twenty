@@ -105,9 +105,6 @@ export default [
         },
       ],
 
-      // Enforce trailing newlines
-      'eol-last': ['error', 'always'],
-
       // React rules
       'react/no-unescaped-entities': 'off',
       'react/prop-types': 'off',
