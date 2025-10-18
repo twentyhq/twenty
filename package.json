@@ -244,6 +244,7 @@
       "packages/twenty-shared",
       "packages/twenty-apps",
       "packages/twenty-cli",
+      "packages/twenty-sdk",
       "tools/eslint-rules"
     ]
   }

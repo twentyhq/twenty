@@ -1,0 +1,54 @@
+{
+  "name": "twenty-sdk",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-sdk/src",
+  "projectType": "library",
+  "tags": ["scope:sdk"],
+  "targets": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "regenerate:metadata": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && npx genql --endpoint http://localhost:3000/metadata --output src/generated/metadata",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": [
+        {
+          "target": "start:ci-if-needed",
+          "projects": "twenty-server"
+        }
+      ]
+    },
+    "regenerate:core": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && npx genql --endpoint http://localhost:3000/graphql --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik' --output src/generated/core",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": [
+        {
+          "target": "start:ci-if-needed",
+          "projects": "twenty-server"
+        }
+      ]
+    },
+    "typecheck": {},
+    "lint": {
+      "options": {},
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "fmt": {
+      "options": {
+        "files": "src"
+      },
+      "configurations": {
+        "fix": {}
+      }
+    }
+  }
+}
