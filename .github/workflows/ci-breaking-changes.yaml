@@ -124,13 +124,14 @@ jobs:
       - name: Setup current branch database
         run: |
           npx nx reset:env twenty-server
-          # Function to set or update environment variable
           set_env_var() {
             local var_name="$1"
             local var_value="$2"
             local env_file="packages/twenty-server/.env"
             
-            if grep -q "^${var_name}=" "$env_file"; then
+            echo "" >> "$env_file"
+            
+            if grep -q "^${var_name}=" "$env_file" 2>/dev/null; then
               sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "$env_file"
             else
               echo "${var_name}=${var_value}" >> "$env_file"
@@ -276,13 +277,14 @@ jobs:
       - name: Setup main branch database
         run: |
           npx nx reset:env twenty-server
-          # Function to set or update environment variable
           set_env_var() {
             local var_name="$1"
             local var_value="$2"
             local env_file="packages/twenty-server/.env"
             
-            if grep -q "^${var_name}=" "$env_file"; then
+            echo "" >> "$env_file"
+            
+            if grep -q "^${var_name}=" "$env_file" 2>/dev/null; then
               sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "$env_file"
             else
               echo "${var_name}=${var_value}" >> "$env_file"
