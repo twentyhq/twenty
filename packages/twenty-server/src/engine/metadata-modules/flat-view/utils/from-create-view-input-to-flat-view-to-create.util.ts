@@ -20,9 +20,10 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     );
 
   const createdAt = new Date();
+  const viewId = createViewInput.id ?? v4();
 
   return {
-    id: createViewInput.id ?? v4(),
+    id: viewId,
     objectMetadataId,
     workspaceId,
     name: createViewInput.name,
@@ -42,9 +43,10 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     position: createViewInput.position ?? 0,
     type: createViewInput.type ?? ViewType.TABLE,
-    universalIdentifier: v4(),
+    universalIdentifier: createViewInput.universalIdentifier ?? viewId,
     viewFieldIds: [],
     viewFilterIds: [],
     viewGroupIds: [],
+    applicationId: createViewInput.applicationId ?? null,
   };
 };

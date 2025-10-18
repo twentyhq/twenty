@@ -223,7 +223,7 @@ export class TimelineActivityService {
 
           return {
             name: `linked-${activityType}.${action}`,
-            workspaceMemberId: event.workspaceMemberId ?? '',
+            workspaceMemberId: event.workspaceMemberId,
             recordId: activityTarget[targetColumn.replace(/Id$/, '')],
             linkedRecordCachedName: activityTitle,
             linkedRecordId: activityId,

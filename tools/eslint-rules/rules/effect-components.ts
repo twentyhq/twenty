@@ -1,9 +1,9 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/utils';
+import { ESLintUtils, type TSESTree } from '@typescript-eslint/utils';
 import {
   isIdentifier,
   isVariableDeclarator,
 } from '@typescript-eslint/utils/ast-utils';
-import { RuleContext } from '@typescript-eslint/utils/ts-eslint';
+import { type RuleContext } from '@typescript-eslint/utils/ts-eslint';
 
 // NOTE: The rule will be available in ESLint configs as "@nx/workspace-effect-components"
 export const RULE_NAME = 'effect-components';

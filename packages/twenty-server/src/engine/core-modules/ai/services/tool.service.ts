@@ -14,6 +14,7 @@ import {
   getRecordInputSchema,
 } from 'src/engine/metadata-modules/agent/utils/agent-tool-schema.utils';
 import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
+import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -30,7 +31,11 @@ export class ToolService {
     private readonly findRecordsService: FindRecordsService,
   ) {}
 
-  async listTools(roleId: string, workspaceId: string): Promise<ToolSet> {
+  async listTools(
+    roleId: string,
+    workspaceId: string,
+    actorContext?: ActorMetadata,
+  ): Promise<ToolSet> {
     const tools: ToolSet = {};
 
     const { data: rolesPermissions } =
@@ -70,6 +75,7 @@ export class ToolService {
               objectRecord: parameters.input,
               workspaceId,
               roleId,
+              createdBy: actorContext,
             });
           },
         };

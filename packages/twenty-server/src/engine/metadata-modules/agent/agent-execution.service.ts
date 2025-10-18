@@ -24,7 +24,9 @@ import { type Workspace } from 'src/engine/core-modules/workspace/workspace.enti
 import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
+import { AgentActorContextService } from 'src/engine/metadata-modules/agent/services/agent-actor-context.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -54,6 +56,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiBillingService: AIBillingService,
+    private readonly agentActorContextService: AgentActorContextService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
   ) {}
@@ -62,11 +65,15 @@ export class AgentExecutionService implements AgentExecutionContext {
     messages,
     system,
     agent,
+    actorContext,
+    roleIdOverride,
     excludeHandoffTools = false,
   }: {
     system: string;
     agent: AgentEntity | null;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
+    actorContext?: ActorMetadata;
+    roleIdOverride?: string;
     excludeHandoffTools?: boolean;
   }) {
     try {
@@ -87,6 +94,8 @@ export class AgentExecutionService implements AgentExecutionContext {
           await this.agentToolGeneratorService.generateToolsForAgent(
             agent.id,
             agent.workspaceId,
+            actorContext,
+            roleIdOverride,
           );
 
         let handoffTools = {};
@@ -261,10 +270,18 @@ export class AgentExecutionService implements AgentExecutionContext {
         contextString = `\n\nCONTEXT:\n${contextPart}`;
       }
 
+      const { actorContext, roleId } =
+        await this.agentActorContextService.buildUserActorContext(
+          userWorkspaceId,
+          workspace.id,
+        );
+
       const aiRequestConfig = await this.prepareAIRequestConfig({
         system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}${contextString}`,
         agent,
         messages,
+        actorContext,
+        roleIdOverride: roleId,
       });
 
       this.logger.log(

@@ -7,16 +7,15 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ApplicationVariable } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @Entity({ name: 'application', schema: 'core' })
@@ -57,15 +56,11 @@ export class ApplicationEntity {
   @Column({ nullable: false, type: 'uuid' })
   serverlessFunctionLayerId: string;
 
-  @OneToOne(
-    () => ServerlessFunctionLayerEntity,
-    (serverlessFunctionLayer) => serverlessFunctionLayer.application,
-    {
-      onDelete: 'CASCADE',
-    },
-  )
-  @JoinColumn({ name: 'serverlessFunctionLayerId' })
-  serverlessFunctionLayer: Relation<ServerlessFunctionLayerEntity>;
+  @ManyToOne(() => Workspace, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: Relation<Workspace>;
 
   @OneToMany(() => AgentEntity, (agent) => agent.application, {
     onDelete: 'CASCADE',
@@ -86,11 +81,14 @@ export class ApplicationEntity {
   })
   objects: Relation<ObjectMetadataEntity[]>;
 
-  @ManyToOne(() => Workspace, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  @OneToMany(
+    () => ApplicationVariable,
+    (applicationVariable) => applicationVariable.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  applicationVariables: Relation<ApplicationVariable[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
