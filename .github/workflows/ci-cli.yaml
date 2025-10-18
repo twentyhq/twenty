@@ -81,6 +81,7 @@ jobs:
       - name: Server / Append billing config to .env.test
         working-directory: packages/twenty-server
         run: |
+          echo "" >> .env.test
           echo "IS_BILLING_ENABLED=true" >> .env.test
           echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test

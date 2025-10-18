@@ -33,6 +33,7 @@ jobs:
           echo "Setting up .env file..."
           cp .env.example .env
           echo "Generating secrets..."
+          echo "" >> .env
           echo "# === Randomly generated secrets ===" >>.env
           echo "APP_SECRET=$(openssl rand -base64 32)" >>.env
           echo "PGPASSWORD_SUPERUSER=$(openssl rand -hex 16)" >>.env

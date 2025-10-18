@@ -140,6 +140,7 @@ jobs:
         run: |
           cd packages/twenty-front
           touch .env
+          echo "" >> .env
           echo "REACT_APP_SERVER_BASE_URL: $REACT_APP_SERVER_BASE_URL" >> .env
       - name: Publish to Chromatic
         run: npx nx run twenty-front:chromatic:ci
