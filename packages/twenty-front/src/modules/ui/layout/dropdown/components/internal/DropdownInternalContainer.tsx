@@ -140,6 +140,19 @@ export const DropdownInternalContainer = ({
 
   const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
 
+  const hideScrollbarCss = `
+    /* Scoped: hide scrollbars only for scrollable wrappers we mark inside this dropdown */
+    #${dropdownId}-options [data-scrollable="true"] {
+      scrollbar-width: none !important; /* Firefox */
+      -ms-overflow-style: none !important; /* IE 10+ */
+    }
+    #${dropdownId}-options [data-scrollable="true"]::-webkit-scrollbar {
+      display: none !important; /* Safari/WebKit */
+      width: 0 !important;
+      height: 0 !important;
+    }
+  `;
+
   return (
     <>
       {hotkey && onHotkeyTriggered && (
@@ -151,6 +164,7 @@ export const DropdownInternalContainer = ({
       )}
 
       <FloatingPortal>
+        <style>{hideScrollbarCss}</style>
         <StyledDropdownContentContainer
           ref={floatingUiRefs.setFloating}
           style={dropdownMenuStyles}

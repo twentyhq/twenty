@@ -200,7 +200,7 @@ export const SettingsMorphRelationMultiSelect = ({
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
-                <DropdownMenuItemsContainer hasMaxHeight>
+                <DropdownMenuItemsContainer hasMaxHeight hideScrollbar>
                   <SelectableList
                     selectableListInstanceId={dropdownId}
                     focusId={dropdownId}
