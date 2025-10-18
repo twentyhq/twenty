@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
 import { useFindManyPublicDomainsQuery } from '~/generated-metadata/graphql';
@@ -28,12 +29,17 @@ export const SettingsPublicDomainsListCard = () => {
 
   const publicDomains = data?.findManyPublicDomains;
 
+  useEffect(() => {
+    if (publicDomains?.length === 0) {
+      setSelectedPublicDomain(undefined);
+    }
+  }, [publicDomains, setSelectedPublicDomain]);
+
   if (loading || !publicDomains) {
     return null;
   }
 
   if (publicDomains.length === 0) {
-    setSelectedPublicDomain(undefined);
     return (
       <StyledLink to={getSettingsPath(SettingsPath.PublicDomain)}>
         <SettingsCard title={t`Add Public Domain`} Icon={<IconMailCog />} />
