@@ -15,15 +15,14 @@ describe.each(COVERED_APPLICATION_FOLDERS)(
       expect(existsSync(appPath)).toBe(true);
     });
 
-    // TODO uncomment when reinstall is fix to cleanup gracefully
-    // afterAll(async () => {
-    //   const result = await deleteCommand.execute({
-    //     appPath,
-    //     askForConfirmation: false,
-    //   });
+    afterAll(async () => {
+      const result = await deleteCommand.execute({
+        appPath,
+        askForConfirmation: false,
+      });
 
-    //   expect(result.success).toBe(true);
-    // });
+      expect(result.success).toBe(true);
+    });
 
     it(`should successfully install ${applicationName} application`, async () => {
       const result = await syncCommand.execute(appPath);
@@ -40,13 +39,10 @@ describe.each(COVERED_APPLICATION_FOLDERS)(
       expect(result.success).toBe(true);
     });
 
-    it.failing(
-      `should successfully re-install ${applicationName} application`,
-      async () => {
-        const result = await syncCommand.execute(appPath);
+    it(`should successfully re-install ${applicationName} application`, async () => {
+      const result = await syncCommand.execute(appPath);
 
-        expect(result.success).toBe(true);
-      },
-    );
+      expect(result.success).toBe(true);
+    });
   },
 );

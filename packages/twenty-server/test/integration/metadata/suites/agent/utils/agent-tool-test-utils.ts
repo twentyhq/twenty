@@ -5,6 +5,7 @@ import { type Repository } from 'typeorm';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
@@ -210,7 +211,10 @@ export const createAgentToolTestModule =
       icon: 'IconTest',
       isCustom: false,
       applicationId: null,
-      application: null,
+      application: {} as ApplicationEntity,
+      standardId: null,
+      deletedAt: null,
+      universalIdentifier: testAgentId,
       description: 'Test agent for integration tests',
       prompt: 'You are a test agent',
       modelId: 'gpt-4o',

@@ -21,5 +21,6 @@ export const fromCreateDatabaseEventTriggerInputToFlatDatabaseEventTrigger = ({
     workspaceId,
     createdAt: now,
     updatedAt: now,
+    applicationId: createDatabaseEventTriggerInput.applicationId ?? null,
   };
 };
