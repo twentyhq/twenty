@@ -12,6 +12,7 @@ import {
   type WorkflowUpdateRecordActionSettings,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-settings.type';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
+import { type WorkflowDelayActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-settings.type';
 
 export enum WorkflowActionType {
   CODE = 'CODE',
@@ -26,6 +27,7 @@ export enum WorkflowActionType {
   AI_AGENT = 'AI_AGENT',
   ITERATOR = 'ITERATOR',
   EMPTY = 'EMPTY',
+  DELAY = 'DELAY',
 }
 
 type BaseWorkflowAction = {
@@ -100,6 +102,11 @@ export type WorkflowEmptyAction = BaseWorkflowAction & {
   type: WorkflowActionType.EMPTY;
 };
 
+export type WorkflowDelayAction = BaseWorkflowAction & {
+  type: WorkflowActionType.DELAY;
+  settings: WorkflowDelayActionSettings;
+};
+
 export type WorkflowAction =
   | WorkflowCodeAction
   | WorkflowSendEmailAction
@@ -112,4 +119,5 @@ export type WorkflowAction =
   | WorkflowHttpRequestAction
   | WorkflowAiAgentAction
   | WorkflowIteratorAction
-  | WorkflowEmptyAction;
+  | WorkflowEmptyAction
+  | WorkflowDelayAction;

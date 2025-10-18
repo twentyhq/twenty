@@ -79,13 +79,13 @@ describe('getActionIconColorOrThrow', () => {
   });
 
   describe('FILTER action type', () => {
-    it('should throw an error for FILTER action type', () => {
+    it('should return green color for FILTER action type', () => {
       const result = getActionIconColorOrThrow({
         theme: mockTheme,
         actionType: 'FILTER',
       });
 
-      expect(result).toBe(mockTheme.font.color.tertiary);
+      expect(result).toBe(mockTheme.color.green60);
     });
   });
 
