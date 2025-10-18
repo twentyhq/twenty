@@ -1,5 +1,6 @@
 import { type DataSource } from 'typeorm';
 
+import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
@@ -43,6 +44,7 @@ export const seedCoreSchema = async ({
   }
 
   if (seedBilling) {
+    await seedBillingCustomers(dataSource, schemaName, workspaceId);
     await seedBillingSubscriptions(dataSource, schemaName, workspaceId);
   }
 };

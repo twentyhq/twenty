@@ -48,6 +48,8 @@ const mocks: MockedResponse[] = [
               node {
                 __typename
                 avatarUrl
+                createdAt
+                deletedAt
                 id
                 name {
                   firstName
@@ -178,6 +180,7 @@ const mocks: MockedResponse[] = [
                     }
                   }
                 }
+                updatedAt
               }
               cursor
             }
