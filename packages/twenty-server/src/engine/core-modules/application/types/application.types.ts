@@ -11,19 +11,19 @@ export type PackageJson = {
     npm: string;
     yarn: string;
   };
-  env: Record<
-    string,
-    {
-      key: string;
-      value?: string;
-      description?: string;
-      isSecret: boolean;
-    }
-  >;
+  env?: EnvManifest;
   icon?: string;
   version: string;
   dependencies?: object;
   devDependencies?: object;
+};
+
+export type EnvManifest = Record<string, EnvVariableManifest>;
+
+export type EnvVariableManifest = {
+  value?: string;
+  description?: string;
+  isSecret: boolean;
 };
 
 export type AppManifest = PackageJson & {

@@ -108,6 +108,11 @@ export class ServerlessFunctionService {
       version,
     );
 
+    if (this.twentyConfigService.get('SERVERLESS_LOGS_ENABLED')) {
+      /* eslint-disable no-console */
+      console.log(resultServerlessFunction.logs);
+    }
+
     this.auditService
       .createContext({
         workspaceId,

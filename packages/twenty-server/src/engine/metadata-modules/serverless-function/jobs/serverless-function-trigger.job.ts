@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -16,22 +16,17 @@ export type ServerlessFunctionTriggerJobData = {
   scope: Scope.REQUEST,
 })
 export class ServerlessFunctionTriggerJob {
-  private readonly logger = new Logger(ServerlessFunctionTriggerJob.name);
-
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
   ) {}
 
   @Process(ServerlessFunctionTriggerJob.name)
   async handle(data: ServerlessFunctionTriggerJobData) {
-    const result =
-      await this.serverlessFunctionService.executeOneServerlessFunction(
-        data.serverlessFunctionId,
-        data.workspaceId,
-        data.payload || {},
-        'draft',
-      );
-
-    this.logger.log(result.logs);
+    await this.serverlessFunctionService.executeOneServerlessFunction(
+      data.serverlessFunctionId,
+      data.workspaceId,
+      data.payload || {},
+      'draft',
+    );
   }
 }
