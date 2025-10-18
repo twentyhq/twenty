@@ -120,7 +120,6 @@ export abstract class GraphqlQueryBaseResolverService<
       )) as Input;
 
       let roleId: string | undefined;
-      let shouldBypassPermissionChecks = false;
 
       if (isDefined(authContext.apiKey)) {
         roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
@@ -152,14 +151,12 @@ export abstract class GraphqlQueryBaseResolverService<
           PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
         );
       }
-
+      const rolePermissionConfig: RolePermissionConfig | undefined = roleId
+        ? { unionOf: [roleId] }
+        : undefined;
       const repository = workspaceDataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
-        shouldBypassPermissionChecks
-          ? { shouldBypassPermissionChecks: true }
-          : roleId
-            ? { unionOf: [roleId] }
-            : undefined,
+        rolePermissionConfig,
         authContext,
       );
 
@@ -176,12 +173,6 @@ export abstract class GraphqlQueryBaseResolverService<
           selectedFields,
           options.objectMetadataMaps,
         );
-
-      const rolePermissionConfig = shouldBypassPermissionChecks
-        ? { shouldBypassPermissionChecks: true as const }
-        : roleId
-          ? { unionOf: [roleId] }
-          : undefined;
 
       const graphqlQueryResolverExecutionArgs = {
         args: computedArgs,
