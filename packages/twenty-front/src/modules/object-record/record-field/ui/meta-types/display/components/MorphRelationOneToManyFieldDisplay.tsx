@@ -3,6 +3,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useMorphRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMorphRelationFromManyFieldDisplay';
 
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { Fragment, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,19 +25,21 @@ export const MorphRelationOneToManyFieldDisplay = () => {
         .map((morphValueWithObjectNameSingular) => {
           return (
             <Fragment key={morphValueWithObjectNameSingular.objectNameSingular}>
-              {morphValueWithObjectNameSingular.value.map((record) => {
-                return (
-                  <RecordChip
-                    key={record.id}
-                    objectNameSingular={
-                      morphValueWithObjectNameSingular.objectNameSingular
-                    }
-                    record={record}
-                    forceDisableClick={disableChipClick}
-                    triggerEvent={triggerEvent}
-                  />
-                );
-              })}
+              {morphValueWithObjectNameSingular.value.map(
+                (record: ObjectRecord) => {
+                  return (
+                    <RecordChip
+                      key={record.id}
+                      objectNameSingular={
+                        morphValueWithObjectNameSingular.objectNameSingular
+                      }
+                      record={record}
+                      forceDisableClick={disableChipClick}
+                      triggerEvent={triggerEvent}
+                    />
+                  );
+                },
+              )}
             </Fragment>
           );
         })}

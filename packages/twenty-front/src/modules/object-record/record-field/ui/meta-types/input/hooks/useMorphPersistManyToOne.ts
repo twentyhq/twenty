@@ -111,7 +111,7 @@ export const useMorphPersistManyToOne = ({
 
         return;
       },
-    [updateOneRecord, objectMetadataItems, objectMetadataNameSingular],
+    [objectMetadataItems, updateOneRecord, objectMetadataNameSingular],
   );
 
   return { persistMorphManyToOne };

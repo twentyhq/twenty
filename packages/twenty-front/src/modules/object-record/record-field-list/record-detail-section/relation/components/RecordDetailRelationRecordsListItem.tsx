@@ -84,12 +84,16 @@ type RecordDetailRelationRecordsListItemProps = {
   isExpanded: boolean;
   onClick: (relationRecordId: string) => void;
   relationRecord: ObjectRecord;
+  relationObjectMetadataNameSingular: string;
+  relationFieldMetadataId: string;
 };
 
 export const RecordDetailRelationRecordsListItem = ({
   isExpanded,
   onClick,
   relationRecord,
+  relationObjectMetadataNameSingular,
+  relationFieldMetadataId,
 }: RecordDetailRelationRecordsListItemProps) => {
   const {
     fieldDefinition,
@@ -101,11 +105,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const { openModal } = useModal();
 
-  const {
-    relationFieldMetadataId,
-    relationObjectMetadataNameSingular,
-    relationType,
-  } = fieldDefinition.metadata as FieldRelationMetadata;
+  const { relationType } = fieldDefinition.metadata as FieldRelationMetadata;
 
   const isToOneObject = relationType === RelationType.MANY_TO_ONE;
   const { objectMetadataItem: relationObjectMetadataItem } =

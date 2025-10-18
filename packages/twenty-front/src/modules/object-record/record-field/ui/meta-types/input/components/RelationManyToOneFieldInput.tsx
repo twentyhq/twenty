@@ -2,6 +2,8 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { useRelationField } from '../../hooks/useRelationField';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
@@ -15,13 +17,24 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
 
 export const RelationManyToOneFieldInput = () => {
   const { t } = useLingui();
   const { fieldDefinition, recordId } = useRelationField<ObjectRecord>();
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const { fieldMetadataItem, objectMetadataItem } = getFieldMetadataItemById({
+    fieldMetadataId: fieldDefinition.fieldMetadataId,
+    objectMetadataItems,
+  });
+  if (!fieldMetadataItem || !objectMetadataItem) {
+    throw new CustomError(
+      'Field metadata item or object metadata item not found',
+      'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
+    );
+  }
   const { onSubmit, onCancel } = useContext(FieldInputEventContext);
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
@@ -46,9 +59,17 @@ export const RelationManyToOneFieldInput = () => {
   const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
     ({ id }) => id === fieldDefinition.metadata.relationFieldMetadataId,
   );
+  if (!relationFieldMetadataItem) {
+    throw new CustomError(
+      'Relation field metadata item not found',
+      'RELATION_FIELD_METADATA_ITEM_NOT_FOUND',
+    );
+  }
 
   const { createNewRecordAndOpenRightDrawer } =
     useAddNewRecordAndOpenRightDrawer({
+      fieldMetadataItem,
+      objectMetadataItem,
       relationObjectMetadataNameSingular:
         fieldDefinition.metadata.relationObjectMetadataNameSingular,
       relationObjectMetadataItem,

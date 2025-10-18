@@ -1,13 +1,11 @@
 import { useCallback, useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
-import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
-import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { useUpdateMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateMorphRelationOneToManyFieldInput';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
@@ -15,59 +13,44 @@ import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-r
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { CustomError } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
-export const RecordDetailRelationSectionDropdownToMany = () => {
+export const RecordDetailMorphRelationSectionDropdownOneToMany = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
-  const { fieldMetadataId } = fieldDefinition;
-  const {
-    fieldName,
-    relationFieldMetadataId,
-    relationObjectMetadataNameSingular,
-  } = fieldDefinition.metadata as FieldRelationMetadata;
 
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const { fieldMetadataItem, objectMetadataItem } = getFieldMetadataItemById({
-    fieldMetadataId,
-    objectMetadataItems,
-  });
-
-  if (!fieldMetadataItem || !objectMetadataItem) {
-    throw new CustomError(
-      'Field metadata item or object metadata item not found',
-      'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
-    );
-  }
-
-  const { objectMetadataItem: relationObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: relationObjectMetadataNameSingular,
-    });
-
-  const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
-    ({ id }) => id === relationFieldMetadataId,
+  assertFieldMetadata(
+    FieldMetadataType.MORPH_RELATION,
+    isFieldMorphRelation,
+    fieldDefinition,
   );
-  if (!relationFieldMetadataItem) {
-    throw new CustomError(
-      'Relation field metadata item not found',
-      'RELATION_FIELD_METADATA_ITEM_NOT_FOUND',
-    );
-  }
 
-  const fieldValue = useRecoilValue<
-    ({ id: string } & Record<string, any>) | ObjectRecord[] | null
-  >(recordStoreFamilySelector({ recordId, fieldName }));
+  const { morphRelations } = fieldDefinition.metadata;
+  const { objectMetadataItems } = useObjectMetadataItems();
 
-  const relationRecords: ObjectRecord[] = (fieldValue as ObjectRecord[]) ?? [];
+  const relationObjectMetadataItems = morphRelations
+    .map((morphRelation) => morphRelation.targetObjectMetadata)
+    .map((relationObjectMetadataItem) =>
+      objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.id === relationObjectMetadataItem.id,
+      ),
+    )
+    .filter(isDefined);
+
+  const recordsWithObjectNameSingular =
+    useGetMorphRelationRelatedRecordsWithObjectNameSingular({
+      recordId,
+      morphRelations: morphRelations,
+    });
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
@@ -106,30 +89,30 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
     setMultipleRecordPickerSearchFilter('');
   }, [setMultipleRecordPickerSearchFilter]);
 
-  const { updateRelation } = useUpdateRelationOneToManyFieldInput();
-
-  const { createNewRecordAndOpenRightDrawer } =
-    useAddNewRecordAndOpenRightDrawer({
-      fieldMetadataItem,
-      objectMetadataItem,
-      relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
-
   const handleOpenRelationPickerDropdown = () => {
-    setMultipleRecordPickerSearchableObjectMetadataItems([
-      relationObjectMetadataItem,
-    ]);
+    setMultipleRecordPickerSearchableObjectMetadataItems(
+      relationObjectMetadataItems,
+    );
     setMultipleRecordPickerSearchFilter('');
     setMultipleRecordPickerPickableMorphItems(
-      relationRecords.map((record) => ({
-        recordId: record.id,
-        objectMetadataId: relationObjectMetadataItem.id,
-        isSelected: true,
-        isMatchingSearchFilter: true,
-      })),
+      recordsWithObjectNameSingular.map((record) => {
+        const objectMetadataId = morphRelations.find(
+          (morphRelation) =>
+            morphRelation.targetObjectMetadata.nameSingular ===
+            record.objectNameSingular,
+        )?.targetObjectMetadata.id;
+        if (!objectMetadataId) {
+          throw new CustomError(
+            'Sorry, we could not determine the correct object type for this related record. Please contact support if the issue persists.',
+          );
+        }
+        return {
+          recordId: record.value.id,
+          objectMetadataId: objectMetadataId,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        };
+      }),
     );
 
     openMultipleRecordPicker(dropdownId);
@@ -137,21 +120,28 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
     multipleRecordPickerPerformSearch({
       multipleRecordPickerInstanceId: dropdownId,
       forceSearchFilter: '',
-      forceSearchableObjectMetadataItems: [relationObjectMetadataItem],
-      forcePickableMorphItems: relationRecords.map((record) => ({
-        recordId: record.id,
-        objectMetadataId: relationObjectMetadataItem.id,
-        isSelected: true,
-        isMatchingSearchFilter: true,
-      })),
+      forceSearchableObjectMetadataItems: relationObjectMetadataItems,
+      forcePickableMorphItems: recordsWithObjectNameSingular.map((record) => {
+        const objectMetadataId = morphRelations.find(
+          (morphRelation) =>
+            morphRelation.targetObjectMetadata.nameSingular ===
+            record.objectNameSingular,
+        )?.targetObjectMetadata.id;
+        if (!objectMetadataId) {
+          throw new Error('ObjectMetadataId is required');
+        }
+        return {
+          recordId: record.value.id,
+          objectMetadataId: objectMetadataId,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        };
+      }),
     });
   };
 
-  const handleCreateNew = (searchString?: string) => {
-    closeDropdown(dropdownId);
-
-    createNewRecordAndOpenRightDrawer?.(searchString);
-  };
+  const { updateMorphRelationOneToMany } =
+    useUpdateMorphRelationOneToManyFieldInput();
 
   return (
     <Dropdown
@@ -170,9 +160,9 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
         <MultipleRecordPicker
           focusId={dropdownId}
           componentInstanceId={dropdownId}
-          onCreate={handleCreateNew}
-          objectMetadataItemIdForCreate={relationObjectMetadataItem.id}
-          onChange={updateRelation}
+          onChange={(morphItem) => {
+            updateMorphRelationOneToMany(morphItem);
+          }}
           onSubmit={() => {
             closeDropdown(dropdownId);
           }}
@@ -184,6 +174,7 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
               ? 'search-bar-on-bottom'
               : 'search-bar-on-top'
           }
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
       }
     />

@@ -9,6 +9,7 @@ import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-
 import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection';
+import { RecordDetailMorphRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSection';
 import { RecordDetailRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
@@ -22,6 +23,7 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type RecordFieldListProps = {
   instanceId: string;
@@ -212,37 +214,50 @@ export const RecordFieldList = ({
           objectNameSingular={objectNameSingular}
         />
       )}
-      {boxedRelationFieldMetadataItems?.map((fieldMetadataItem, index) => (
-        <FieldContext.Provider
-          key={objectRecordId + fieldMetadataItem.id}
-          value={{
-            recordId: objectRecordId,
-            isLabelIdentifier: false,
-            fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-              field: fieldMetadataItem,
-              position: index,
-              objectMetadataItem,
-            }),
-            useUpdateRecord: useUpdateOneObjectRecordMutation,
-            isDisplayModeFixHeight: true,
-            isRecordFieldReadOnly: isRecordFieldReadOnly({
-              isRecordReadOnly,
-              objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
-                objectPermissionsByObjectMetadataId,
-                objectMetadataId: objectMetadataItem.id,
+      {boxedRelationFieldMetadataItems
+        .filter(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.type === FieldMetadataType.RELATION ||
+            fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION,
+        )
+        .map((fieldMetadataItem, index) => (
+          <FieldContext.Provider
+            key={objectRecordId + fieldMetadataItem.id}
+            value={{
+              recordId: objectRecordId,
+              isLabelIdentifier: false,
+              fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                field: fieldMetadataItem,
+                position: index,
+                objectMetadataItem,
               }),
-              fieldMetadataItem: {
-                id: fieldMetadataItem.id,
-                isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
-              },
-            }),
-          }}
-        >
-          <RecordDetailRelationSection
-            loading={isPrefetchLoading || recordLoading}
-          />
-        </FieldContext.Provider>
-      ))}
+              useUpdateRecord: useUpdateOneObjectRecordMutation,
+              isDisplayModeFixHeight: true,
+              isRecordFieldReadOnly: isRecordFieldReadOnly({
+                isRecordReadOnly,
+                objectPermissions:
+                  getObjectPermissionsFromMapByObjectMetadataId({
+                    objectPermissionsByObjectMetadataId,
+                    objectMetadataId: objectMetadataItem.id,
+                  }),
+                fieldMetadataItem: {
+                  id: fieldMetadataItem.id,
+                  isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+                },
+              }),
+            }}
+          >
+            {fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION ? (
+              <RecordDetailMorphRelationSection
+                loading={isPrefetchLoading || recordLoading}
+              />
+            ) : (
+              <RecordDetailRelationSection
+                loading={isPrefetchLoading || recordLoading}
+              />
+            )}
+          </FieldContext.Provider>
+        ))}
 
       <RecordFieldListCellHoveredPortal
         objectMetadataItem={objectMetadataItem}

@@ -5,7 +5,9 @@ import { useUpdateActivityTargetFromCell } from '@/activities/inline-cell/hooks/
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useRelationField } from '@/object-record/record-field/ui/meta-types/hooks/useRelationField';
@@ -22,7 +24,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const RelationOneToManyFieldInput = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
@@ -34,6 +36,17 @@ export const RelationOneToManyFieldInput = () => {
 
   const { updateRelation } = useUpdateRelationOneToManyFieldInput();
   const fieldName = fieldDefinition.metadata.fieldName;
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const { fieldMetadataItem, objectMetadataItem } = getFieldMetadataItemById({
+    fieldMetadataId: fieldDefinition.fieldMetadataId,
+    objectMetadataItems,
+  });
+  if (!fieldMetadataItem || !objectMetadataItem) {
+    throw new CustomError(
+      'Field metadata item or object metadata item not found',
+      'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
+    );
+  }
   const objectMetadataNameSingular =
     fieldDefinition.metadata.objectMetadataNameSingular;
 
@@ -73,9 +86,17 @@ export const RelationOneToManyFieldInput = () => {
   const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
     ({ id }) => id === relationFieldDefinition.metadata.relationFieldMetadataId,
   );
+  if (!relationFieldMetadataItem) {
+    throw new CustomError(
+      'Relation field metadata item not found',
+      'RELATION_FIELD_METADATA_ITEM_NOT_FOUND',
+    );
+  }
 
   const { createNewRecordAndOpenRightDrawer } =
     useAddNewRecordAndOpenRightDrawer({
+      fieldMetadataItem,
+      objectMetadataItem,
       relationObjectMetadataNameSingular:
         relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
       relationObjectMetadataItem,

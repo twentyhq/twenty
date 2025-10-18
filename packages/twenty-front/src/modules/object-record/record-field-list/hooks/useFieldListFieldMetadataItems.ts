@@ -45,7 +45,8 @@ export const useFieldListFieldMetadataItems = ({
           (fieldMetadataItem.name !== 'createdAt' &&
             fieldMetadataItem.name !== 'deletedAt')) &&
         (showRelationSections ||
-          fieldMetadataItem.type !== FieldMetadataType.RELATION),
+          (fieldMetadataItem.type !== FieldMetadataType.RELATION &&
+            fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION)),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
@@ -63,7 +64,8 @@ export const useFieldListFieldMetadataItems = ({
           fieldMetadataItem.type !== FieldMetadataType.RICH_TEXT_V2,
       ),
     (fieldMetadataItem) =>
-      fieldMetadataItem.type === FieldMetadataType.RELATION
+      fieldMetadataItem.type === FieldMetadataType.RELATION ||
+      fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
         ? 'relationFieldMetadataItems'
         : 'inlineFieldMetadataItems',
   );
@@ -78,22 +80,35 @@ export const useFieldListFieldMetadataItems = ({
         fieldMetadataItem.name === 'taskTargets'),
   );
 
-  const boxedRelationFieldMetadataItems = (
-    relationFieldMetadataItems ?? []
-  ).filter(
-    (fieldMetadataItem) =>
-      !(
-        (objectNameSingular === CoreObjectNameSingular.Note &&
-          fieldMetadataItem.name === 'noteTargets') ||
-        (objectNameSingular === CoreObjectNameSingular.Task &&
-          fieldMetadataItem.name === 'taskTargets')
-      ) &&
-      isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id) &&
-      getObjectPermissionsForObject(
-        objectPermissionsByObjectMetadataId,
-        fieldMetadataItem.relation?.targetObjectMetadata.id,
-      ).canReadObjectRecords,
-  );
+  const boxedRelationFieldMetadataItems = (relationFieldMetadataItems ?? [])
+    .filter(
+      (fieldMetadataItem) =>
+        !(
+          (objectNameSingular === CoreObjectNameSingular.Note &&
+            fieldMetadataItem.name === 'noteTargets') ||
+          (objectNameSingular === CoreObjectNameSingular.Task &&
+            fieldMetadataItem.name === 'taskTargets')
+        ),
+    )
+    .filter((fieldMetadataItem) => {
+      const canReadRelation =
+        isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id) &&
+        getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          fieldMetadataItem.relation?.targetObjectMetadata.id,
+        ).canReadObjectRecords;
+
+      const canReadMorphRelation = fieldMetadataItem?.morphRelations?.every(
+        (morphRelation) =>
+          isDefined(morphRelation.targetObjectMetadata.id) &&
+          getObjectPermissionsForObject(
+            objectPermissionsByObjectMetadataId,
+            morphRelation.targetObjectMetadata.id,
+          ).canReadObjectRecords,
+      );
+
+      return canReadRelation || canReadMorphRelation;
+    });
 
   return {
     inlineFieldMetadataItems,
