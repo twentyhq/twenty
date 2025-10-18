@@ -11,6 +11,10 @@ export enum CommonQueryNames {
   findOne = 'findOne',
   findMany = 'findMany',
   createMany = 'createMany',
+  destroyOne = 'destroyOne',
+  destroyMany = 'destroyMany',
+  deleteOne = 'deleteOne',
+  deleteMany = 'deleteMany',
 }
 
 export interface FindOneQueryArgs {
@@ -38,4 +42,24 @@ export interface CreateOneQueryArgs {
   selectedFieldsResult: CommonSelectedFieldsResult;
   data: Partial<ObjectRecord>;
   upsert?: boolean;
+}
+
+export interface DestroyOneQueryArgs {
+  selectedFieldsResult: CommonSelectedFieldsResult;
+  id: string;
+}
+
+export interface DestroyManyQueryArgs {
+  selectedFieldsResult: CommonSelectedFieldsResult;
+  filter: ObjectRecordFilter;
+}
+
+export interface DeleteOneQueryArgs {
+  selectedFieldsResult: CommonSelectedFieldsResult;
+  id: string;
+}
+
+export interface DeleteManyQueryArgs {
+  selectedFieldsResult: CommonSelectedFieldsResult;
+  filter: ObjectRecordFilter;
 }
