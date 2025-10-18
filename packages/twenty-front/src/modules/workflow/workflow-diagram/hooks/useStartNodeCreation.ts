@@ -6,6 +6,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { useStoreApi } from '@xyflow/react';
 import { useCallback, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,6 +27,40 @@ export const useStartNodeCreation = () => {
     commandMenuNavigationStackState,
   );
 
+  const reactFlowStoreApi = useStoreApi();
+
+  const scheduleConnectionReset = useCallback(() => {
+    const run = () => {
+      reactFlowStoreApi.getState().cancelConnection?.();
+
+      /**
+       * ReactFlow relies on a document-level `pointerup` listener to release the
+       * provisional connection. Re-dispatching the event ensures the pointer
+       * capture clears even when the original gesture ended outside the canvas.
+       *
+       * Guards keep the code SSR/test friendly where `document` or
+       * `PointerEvent` might be undefined.
+       */
+      if (
+        typeof document !== 'undefined' &&
+        typeof PointerEvent !== 'undefined'
+      ) {
+        document.dispatchEvent(
+          new PointerEvent('pointerup', { bubbles: true }),
+        );
+      }
+    };
+
+    if (
+      typeof window !== 'undefined' &&
+      typeof window.requestAnimationFrame === 'function'
+    ) {
+      window.requestAnimationFrame(run);
+    } else {
+      run();
+    }
+  }, [reactFlowStoreApi]);
+
   /**
    * This function is used in a context where dependencies shouldn't change much.
    * That's why its wrapped in a `useCallback` hook. Removing memoization might break the app unexpectedly.
@@ -36,18 +71,23 @@ export const useStartNodeCreation = () => {
       nextStepId,
       position,
       connectionOptions,
+      sourceHandleId,
     }: {
       parentStepId: string | undefined;
       nextStepId: string | undefined;
       position?: { x: number; y: number };
       connectionOptions?: WorkflowStepConnectionOptions;
+      sourceHandleId?: string;
     }) => {
       setWorkflowInsertStepIds({
         parentStepId,
         nextStepId,
         position,
         connectionOptions,
+        sourceHandleId,
       });
+
+      scheduleConnectionReset();
 
       if (!isDefined(workflowVisualizerWorkflowId)) {
         return;
@@ -65,19 +105,25 @@ export const useStartNodeCreation = () => {
       isInRightDrawer,
       openWorkflowCreateStepInCommandMenu,
       setCommandMenuNavigationStack,
+      scheduleConnectionReset,
     ],
   );
 
   const isNodeCreationStarted = ({
     parentStepId,
     nextStepId,
+    sourceHandleId,
   }: {
     parentStepId?: string;
     nextStepId?: string;
+    sourceHandleId?: string;
   }) => {
     return (
       workflowInsertStepIds.parentStepId === parentStepId &&
-      workflowInsertStepIds.nextStepId === nextStepId
+      workflowInsertStepIds.nextStepId === nextStepId &&
+      (isDefined(sourceHandleId)
+        ? workflowInsertStepIds.sourceHandleId === sourceHandleId
+        : true)
     );
   };
 

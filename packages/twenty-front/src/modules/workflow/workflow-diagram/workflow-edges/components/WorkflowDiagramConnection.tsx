@@ -4,6 +4,9 @@ import {
 } from '@xyflow/react';
 import { useTheme } from '@emotion/react';
 import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowDiagramConnectionProps = ConnectionLineComponentProps;
 
@@ -14,6 +17,14 @@ export const WorkflowDiagramConnection = ({
   toY,
 }: WorkflowDiagramConnectionProps) => {
   const theme = useTheme();
+
+  const workflowInsertStepIds = useRecoilComponentValue(
+    workflowInsertStepIdsComponentState,
+  );
+
+  if (isDefined(workflowInsertStepIds?.parentStepId)) {
+    return null;
+  }
 
   const [path] = getBezierPath({
     sourceX: fromX,

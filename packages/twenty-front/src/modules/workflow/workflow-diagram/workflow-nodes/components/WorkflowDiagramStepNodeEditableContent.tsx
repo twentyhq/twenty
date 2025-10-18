@@ -93,6 +93,28 @@ export const WorkflowDiagramStepNodeEditableContent = ({
     actionType: data.nodeType === 'action' ? data.actionType : undefined,
   });
 
+  const defaultSourceHandleId = WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID;
+
+  const isDefaultHandleBeingConnected = isConnectingSource({
+    nodeId: id,
+    sourceHandleId: defaultSourceHandleId,
+  });
+
+  const nodeCreationStarted = isNodeCreationStarted({
+    parentStepId: data.stepId,
+    nextStepId: undefined,
+    sourceHandleId: defaultSourceHandleId,
+  });
+
+  const shouldRenderAddStepButton =
+    isDefined(data.defaultHandleOptions) &&
+    (!isConnectionInProgress ||
+      isDefaultHandleBeingConnected ||
+      nodeCreationStarted);
+
+  const shouldDisplayAddStepButton =
+    isHovered || selected || nodeCreationStarted;
+
   return (
     <>
       <WorkflowNodeContainer
@@ -129,13 +151,9 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         )}
       </WorkflowNodeContainer>
 
-      {!data.hasNextStepIds && !isConnectionInProgress && (
+      {shouldRenderAddStepButton && (
         <StyledAddStepButtonContainer
-          shouldDisplay={
-            isHovered ||
-            selected ||
-            isNodeCreationStarted({ parentStepId: data.stepId })
-          }
+          shouldDisplay={shouldDisplayAddStepButton}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleAddStepButtonContainerClick}
@@ -154,25 +172,22 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       )}
 
       <WorkflowDiagramHandleSource
-        id={WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID}
+        id={defaultSourceHandleId}
         type="source"
         position={Position.Bottom}
         selected={
           isSourceSelected({
             nodeId: id,
-            sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+            sourceHandle: defaultSourceHandleId,
           }) ||
           selected ||
-          isConnectingSource({
-            nodeId: id,
-            sourceHandleId: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
-          }) ||
+          isDefaultHandleBeingConnected ||
           (isNodeConnectable && isHovered)
         }
         hovered={
           isSourceHovered({
             nodeId: id,
-            sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+            sourceHandle: defaultSourceHandleId,
           }) || isHovered
         }
       />

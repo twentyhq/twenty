@@ -90,9 +90,18 @@ export type WorkflowDiagramEmptyTriggerNodeData = {
   };
 };
 
+export type WorkflowDiagramPlaceholderNodeData = {
+  nodeType: 'placeholder';
+  position: {
+    x: number;
+    y: number;
+  };
+};
+
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData
-  | WorkflowDiagramEmptyTriggerNodeData;
+  | WorkflowDiagramEmptyTriggerNodeData
+  | WorkflowDiagramPlaceholderNodeData;
 
 export type WorkflowRunDiagramNodeData = Exclude<
   WorkflowDiagramStepNodeData,
@@ -117,6 +126,9 @@ export type WorkflowDiagramDefaultEdgeData = {
 
 export type WorkflowDiagramEdgeData = WorkflowDiagramDefaultEdgeData;
 
-export type WorkflowDiagramNodeType = 'default' | 'empty-trigger';
+export type WorkflowDiagramNodeType =
+  | 'default'
+  | 'empty-trigger'
+  | 'placeholder';
 
 export type WorkflowDiagramEdgeType = 'blank' | 'editable' | 'readonly';
