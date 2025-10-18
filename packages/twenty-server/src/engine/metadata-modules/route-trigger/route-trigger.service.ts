@@ -1,5 +1,7 @@
 import {
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,6 +11,8 @@ import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+
+import type { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import {
   HTTPMethod,
@@ -133,11 +137,32 @@ export class RouteTriggerService {
       ...routeTriggerWithPathParams.pathParams,
     };
 
-    return await this.serverlessFunctionService.executeOneServerlessFunction(
-      routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
-      routeTriggerWithPathParams.routeTrigger.workspaceId,
-      executionParams,
-      'draft',
-    );
+    const result =
+      await this.serverlessFunctionService.executeOneServerlessFunction(
+        routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
+        routeTriggerWithPathParams.routeTrigger.workspaceId,
+        executionParams,
+        'draft',
+      );
+
+    return this.formatServerlessControllerResponse(result);
   }
+
+  formatServerlessControllerResponse = (result: ServerlessExecuteResult) => {
+    if (!isDefined(result)) {
+      return result;
+    }
+
+    if (result.error) {
+      throw new HttpException(
+        {
+          errorType: result.error.errorType,
+          message: result.error.errorMessage,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return result.data;
+  };
 }
