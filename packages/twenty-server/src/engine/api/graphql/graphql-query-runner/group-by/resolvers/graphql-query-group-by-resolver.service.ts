@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
-  FieldMetadataType,
   ObjectRecord,
   PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
@@ -26,7 +25,6 @@ import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runne
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
@@ -138,32 +136,6 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       }
     });
 
-    if (executionArgs.args.omitNullValues) {
-      const aggregateFields =
-        executionArgs.graphqlQuerySelectedFieldsResult.aggregate ?? {};
-
-      Object.values(aggregateFields).forEach((aggregationField) => {
-        const aggregateExpression =
-          ProcessAggregateHelper.getAggregateExpression(
-            aggregationField,
-            objectMetadataNameSingular,
-          );
-
-        if (aggregateExpression) {
-          queryBuilder.andHaving(`${aggregateExpression} IS NOT NULL`);
-
-          const isNumericReturningAggregate = this.isNumericReturningAggregate(
-            aggregationField.aggregateOperation,
-            aggregationField.fromFieldType,
-          );
-
-          if (isNumericReturningAggregate) {
-            queryBuilder.andHaving(`${aggregateExpression} != 0`);
-          }
-        }
-      });
-    }
-
     executionArgs.graphqlQueryParser.applyGroupByOrderToBuilder(
       queryBuilder,
       executionArgs.args.orderBy ?? [],
@@ -264,39 +236,6 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     ]);
 
     return appliedFilters;
-  }
-
-  private isNumericReturningAggregate(
-    operation: AggregateOperations,
-    fromFieldType: FieldMetadataType,
-  ): boolean {
-    if (
-      operation === AggregateOperations.COUNT ||
-      operation === AggregateOperations.COUNT_UNIQUE_VALUES ||
-      operation === AggregateOperations.COUNT_EMPTY ||
-      operation === AggregateOperations.COUNT_NOT_EMPTY ||
-      operation === AggregateOperations.COUNT_TRUE ||
-      operation === AggregateOperations.COUNT_FALSE ||
-      operation === AggregateOperations.PERCENTAGE_EMPTY ||
-      operation === AggregateOperations.PERCENTAGE_NOT_EMPTY
-    ) {
-      return true;
-    }
-
-    if (
-      operation === AggregateOperations.MIN ||
-      operation === AggregateOperations.MAX ||
-      operation === AggregateOperations.AVG ||
-      operation === AggregateOperations.SUM
-    ) {
-      return [
-        FieldMetadataType.NUMBER,
-        FieldMetadataType.NUMERIC,
-        FieldMetadataType.CURRENCY,
-      ].includes(fromFieldType);
-    }
-
-    return false;
   }
 
   async validate(

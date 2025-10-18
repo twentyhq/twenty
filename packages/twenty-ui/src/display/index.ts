@@ -296,6 +296,8 @@ export {
   IconMailCog,
   IconMailX,
   IconMap,
+  IconMathMax,
+  IconMathMin,
   IconMathXy,
   IconMaximize,
   IconMessage,

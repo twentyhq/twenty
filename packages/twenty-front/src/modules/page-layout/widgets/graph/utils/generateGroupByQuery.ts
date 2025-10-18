@@ -20,14 +20,12 @@ export const generateGroupByQuery = ({
       $groupBy: [${capitalizedSingular}GroupByInput!]
       $filter: ${capitalizedSingular}FilterInput
       $orderBy: [${capitalizedSingular}OrderByWithGroupByInput!]
-      $omitNullValues: Boolean
       $viewId: UUID
     ) {
       ${queryFieldName}(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
-        omitNullValues: $omitNullValues
         viewId: $viewId
       ) {
         groupByDimensionValues${aggregateOperations.length > 0 ? `\n        ${aggregateOperations.join('\n        ')}` : ''}

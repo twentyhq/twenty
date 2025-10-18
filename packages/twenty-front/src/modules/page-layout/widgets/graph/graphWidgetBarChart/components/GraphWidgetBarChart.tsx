@@ -40,6 +40,8 @@ type GraphWidgetBarChartProps = {
   layout?: 'vertical' | 'horizontal';
   groupMode?: 'grouped' | 'stacked';
   seriesLabels?: Record<string, string>;
+  rangeMin?: number;
+  rangeMax?: number;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -65,6 +67,8 @@ export const GraphWidgetBarChart = ({
   layout = 'vertical',
   groupMode = 'grouped',
   seriesLabels,
+  rangeMin,
+  rangeMax,
   displayType,
   decimals,
   prefix,
@@ -180,7 +184,12 @@ export const GraphWidgetBarChart = ({
           padding={0.3}
           groupMode={groupMode}
           layout={layout}
-          valueScale={{ type: 'linear' }}
+          valueScale={{
+            type: 'linear',
+            min: rangeMin ?? 'auto',
+            max: rangeMax ?? 'auto',
+            clamp: true,
+          }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
           defs={defs}

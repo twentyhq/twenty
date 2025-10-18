@@ -1,10 +1,12 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { getGroupByQueryName } from '@/page-layout/utils/getGroupByQueryName';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToBarChartData';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToBarChartData';
@@ -105,6 +107,20 @@ export const transformGroupByDataToBarChartData = ({
     };
   }
 
+  const filteredResults = filterGroupByResults({
+    rawResults,
+    filterOptions: {
+      rangeMin: configuration.rangeMin ?? undefined,
+      rangeMax: configuration.rangeMax ?? undefined,
+      omitNullValues: configuration.omitNullValues ?? false,
+    },
+    aggregateField,
+    aggregateOperation:
+      configuration.aggregateOperation as unknown as ExtendedAggregateOperations,
+    aggregateOperationFromRawResult: aggregateOperation,
+    objectMetadataItem,
+  });
+
   const showXAxis =
     configuration.axisNameDisplay === AxisNameDisplay.X ||
     configuration.axisNameDisplay === AxisNameDisplay.BOTH;
@@ -123,7 +139,7 @@ export const transformGroupByDataToBarChartData = ({
 
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToBarChartData({
-        rawResults,
+        rawResults: filteredResults,
         groupByFieldX,
         groupByFieldY,
         aggregateField,
@@ -133,7 +149,7 @@ export const transformGroupByDataToBarChartData = ({
         primaryAxisSubFieldName,
       })
     : transformOneDimensionalGroupByToBarChartData({
-        rawResults,
+        rawResults: filteredResults,
         groupByFieldX,
         aggregateField,
         configuration,
