@@ -21,6 +21,12 @@ export type Message = Omit<
   direction: MessageDirection;
 };
 
+export type MessageAttachment = {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+};
+
 export type MessageParticipant = Omit<
   MessageParticipantWorkspaceEntity,
   | 'id'

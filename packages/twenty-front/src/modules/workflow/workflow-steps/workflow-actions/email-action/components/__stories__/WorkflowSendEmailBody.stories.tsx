@@ -25,6 +25,7 @@ const DEFAULT_ACTION: WorkflowSendEmailAction = {
       email: '',
       subject: '',
       body: '',
+      files: [],
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -44,6 +45,7 @@ const RICH_CONTENT_ACTION: WorkflowSendEmailAction = {
       connectedAccountId: 'test-account-id',
       email: 'user@example.com',
       subject: 'Welcome to Twenty!',
+      files: [],
       body: JSON.stringify({
         type: 'doc',
         content: [

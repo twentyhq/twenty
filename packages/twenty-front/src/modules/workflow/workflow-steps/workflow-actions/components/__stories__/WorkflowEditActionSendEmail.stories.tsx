@@ -28,6 +28,7 @@ const DEFAULT_ACTION: WorkflowSendEmailAction = {
       email: '',
       subject: '',
       body: '',
+      files: [],
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -52,6 +53,7 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
       email: 'test@twenty.com',
       subject: 'Welcome to Twenty!',
       body: 'Dear Tim,\n\nWelcome to Twenty! We are excited to have you on board.\n\nBest regards,\nThe Team',
+      files: [],
     },
     outputSchema: {},
     errorHandlingOptions: {
