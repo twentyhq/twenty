@@ -3,7 +3,7 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { type IconComponent } from 'twenty-ui/display';
+import { AppTooltip, type IconComponent } from 'twenty-ui/display';
 
 const StyledHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -89,15 +89,23 @@ export const SidePanelHeader = ({
     });
   };
 
+  // Create a unique ID for the tooltip anchor
+  const tooltipId = `side-panel-icon-tooltip-${headerType.replace(/\s+/g, '-')}`;
+
   return (
     <StyledHeader data-testid="side-panel-header">
-      <StyledHeaderIconContainer>
+      <StyledHeaderIconContainer id={tooltipId}>
         <Icon
           color={iconColor}
           stroke={theme.icon.stroke.sm}
           size={theme.icon.size.lg}
         />
       </StyledHeaderIconContainer>
+      <AppTooltip
+        anchorSelect={`#${tooltipId}`}
+        content={headerType}
+        place="top"
+      />
       <StyledHeaderInfo>
         <StyledHeaderTitle>
           <TitleInput
