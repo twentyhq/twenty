@@ -11,14 +11,15 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import {
-  DragDropContext,
-  type DragStart,
-  type OnDragEndResponder,
+    DragDropContext,
+    type DragStart,
+    type OnDragEndResponder,
 } from '@hello-pangea/dnd';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
   min-width: 1000px;
 `;
 

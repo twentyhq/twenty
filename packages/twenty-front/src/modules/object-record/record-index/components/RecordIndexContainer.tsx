@@ -34,6 +34,12 @@ const StyledContainerWithPadding = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledCalendarContainer = styled.div`
+  box-sizing: border-box;
+  height: 100%;
+  margin-left: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const RecordIndexContainer = () => {
   const [recordIndexViewType] = useRecoilState(recordIndexViewTypeState);
 
@@ -86,12 +92,12 @@ export const RecordIndexContainer = () => {
           </StyledContainerWithPadding>
         )}
         {recordIndexViewType === ViewType.Calendar && (
-          <StyledContainerWithPadding>
+          <StyledCalendarContainer>
             <RecordIndexCalendarContainer
               recordCalendarInstanceId={recordIndexId}
               viewBarInstanceId={recordIndexId}
             />
-          </StyledContainerWithPadding>
+          </StyledCalendarContainer>
         )}
       </StyledContainer>
     </>
