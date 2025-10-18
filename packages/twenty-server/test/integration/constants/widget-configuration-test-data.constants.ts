@@ -268,6 +268,12 @@ export function getValidConfigForWidgetType(widgetType: string): any {
     }
     case 'VIEW':
     case 'FIELDS':
+    case 'TIMELINE':
+    case 'TASKS':
+    case 'NOTES':
+    case 'FILES':
+    case 'EMAILS':
+    case 'CALENDAR':
       return null;
     default:
       return null;

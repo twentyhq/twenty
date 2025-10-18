@@ -24,6 +24,7 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
       title: 'Fields',
       position: 100,
       layoutMode: 'vertical-list',
+      selfDisplayMode: 'pinned-left',
       pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -67,7 +68,7 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
           id: 'default-widget-timeline',
           pageLayoutTabId: 'default-tab-timeline',
           title: 'Timeline',
-          type: WidgetType.VIEW,
+          type: WidgetType.TIMELINE,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -100,7 +101,7 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
           id: 'default-widget-tasks',
           pageLayoutTabId: 'default-tab-tasks',
           title: 'Tasks',
-          type: WidgetType.VIEW,
+          type: WidgetType.TASKS,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -133,7 +134,7 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
           id: 'default-widget-notes',
           pageLayoutTabId: 'default-tab-notes',
           title: 'Notes',
-          type: WidgetType.VIEW,
+          type: WidgetType.NOTES,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -166,7 +167,7 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
           id: 'default-widget-files',
           pageLayoutTabId: 'default-tab-files',
           title: 'Files',
-          type: WidgetType.VIEW,
+          type: WidgetType.FILES,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -199,7 +200,7 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
           id: 'default-widget-emails',
           pageLayoutTabId: 'default-tab-emails',
           title: 'Emails',
-          type: WidgetType.VIEW,
+          type: WidgetType.EMAILS,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -232,7 +233,7 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
           id: 'default-widget-calendar',
           pageLayoutTabId: 'default-tab-calendar',
           title: 'Calendar',
-          type: WidgetType.VIEW,
+          type: WidgetType.CALENDAR,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',

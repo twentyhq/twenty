@@ -8,6 +8,7 @@ import { type PageLayoutWidget } from '~/generated/graphql';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 type FieldsWidgetProps = {

@@ -4305,9 +4305,15 @@ export type Webhook = {
 export type WidgetConfiguration = BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | NumberChartConfiguration | PieChartConfiguration;
 
 export enum WidgetType {
+  CALENDAR = 'CALENDAR',
+  EMAILS = 'EMAILS',
   FIELDS = 'FIELDS',
+  FILES = 'FILES',
   GRAPH = 'GRAPH',
   IFRAME = 'IFRAME',
+  NOTES = 'NOTES',
+  TASKS = 'TASKS',
+  TIMELINE = 'TIMELINE',
   VIEW = 'VIEW'
 }
 

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type ReactElement } from 'react';
+import { type ReactNode } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -24,7 +24,7 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 `;
 
 export type ShowPageContainerProps = {
-  children: ReactElement[] | ReactElement;
+  children: ReactNode;
 };
 
 export const ShowPageContainer = ({ children }: ShowPageContainerProps) => {
