@@ -30,7 +30,7 @@ const StyledContainer = styled.div`
 
 const StyledContainerWithPadding = styled.div`
   box-sizing: border-box;
-  height: calc(100% - ${({ theme }) => theme.spacing(10)});
+  height=100% ; 
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
