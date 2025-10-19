@@ -18,6 +18,7 @@ import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constant
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 
 @Injectable()
@@ -35,7 +36,7 @@ export class AiAgentExecutorService {
     agentId: string,
     workspaceId: string,
     actorContext?: ActorMetadata,
-    roleIdOverride?: string,
+    rolePermissionConfig?: RolePermissionConfig,
   ): Promise<ToolSet> {
     const roleTarget = await this.roleTargetsRepository.findOne({
       where: {
@@ -45,21 +46,33 @@ export class AiAgentExecutorService {
       select: ['roleId'],
     });
 
-    const effectiveRoleId = roleIdOverride || roleTarget?.roleId;
+    const agentRoleId = roleTarget?.roleId;
 
-    if (!effectiveRoleId) {
-      const actionTools = await this.toolAdapterService.getTools();
+    if (!rolePermissionConfig && !agentRoleId) {
+      return await this.toolAdapterService.getTools();
+    }
 
-      return { ...actionTools };
+    let effectiveRoleContext: RolePermissionConfig;
+
+    if (
+      rolePermissionConfig &&
+      ('intersectionOf' in rolePermissionConfig ||
+        'unionOf' in rolePermissionConfig)
+    ) {
+      effectiveRoleContext = rolePermissionConfig;
+    } else if (agentRoleId) {
+      effectiveRoleContext = { unionOf: [agentRoleId] };
+    } else {
+      return await this.toolAdapterService.getTools();
     }
 
     const actionTools = await this.toolAdapterService.getTools(
-      effectiveRoleId,
+      effectiveRoleContext,
       workspaceId,
     );
 
     const databaseTools = await this.toolService.listTools(
-      effectiveRoleId,
+      effectiveRoleContext,
       workspaceId,
       actorContext,
     );
@@ -75,20 +88,25 @@ export class AiAgentExecutorService {
     schema,
     userPrompt,
     actorContext,
-    roleId,
+    rolePermissionConfig,
   }: {
     agent: AgentEntity | null;
     schema: OutputSchema;
     userPrompt: string;
     actorContext?: ActorMetadata;
-    roleId?: string;
+    rolePermissionConfig?: RolePermissionConfig;
   }): Promise<AgentExecutionResult> {
     try {
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       const tools = agent
-        ? await this.getTools(agent.id, agent.workspaceId, actorContext, roleId)
+        ? await this.getTools(
+            agent.id,
+            agent.workspaceId,
+            actorContext,
+            rolePermissionConfig,
+          )
         : {};
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);

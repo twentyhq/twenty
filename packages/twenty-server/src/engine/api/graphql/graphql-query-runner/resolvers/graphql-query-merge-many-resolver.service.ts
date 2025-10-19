@@ -47,7 +47,6 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
     const { ids, conflictPriorityIndex, dryRun } = executionArgs.args;
-    const { roleId } = executionArgs;
 
     const recordsToMerge = await this.fetchRecordsToMerge(executionArgs, ids);
 
@@ -96,12 +95,11 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       mergedData,
     );
 
-    if (roleId) {
+    if (executionArgs.rolePermissionConfig) {
       await this.processNestedRelations({
         executionArgs,
         updatedRecords: [updatedRecord],
         authContext,
-        roleId,
       });
     }
 
@@ -335,8 +333,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       try {
         const repository = executionArgs.workspaceDataSource.getRepository(
           relationField.objectMetadata.nameSingular,
-          executionArgs.isExecutedByApiKey,
-          executionArgs.roleId,
+          executionArgs.rolePermissionConfig,
         );
 
         const whereCondition = { [relationField.joinColumnName]: In(fromIds) };
@@ -363,12 +360,10 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     executionArgs,
     updatedRecords,
     authContext,
-    roleId,
   }: {
     executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>;
     updatedRecords: ObjectRecord[];
     authContext: AuthContext;
-    roleId: string;
   }): Promise<void> {
     const { objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
@@ -382,9 +377,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
-        roleId,
-        shouldBypassPermissionChecks:
-          executionArgs.shouldBypassPermissionChecks,
+        rolePermissionConfig: executionArgs.rolePermissionConfig,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

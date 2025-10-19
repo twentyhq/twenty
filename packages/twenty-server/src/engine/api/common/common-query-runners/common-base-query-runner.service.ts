@@ -79,19 +79,18 @@ export abstract class CommonBaseQueryRunnerService {
       workspace.id,
     );
 
+    const rolePermissionConfig = { unionOf: [roleId] };
+
     const repository = workspaceDataSource.getRepository(
       objectMetadataItemWithFieldMaps.nameSingular,
-      false,
-      roleId,
+      rolePermissionConfig,
       authContext,
     );
 
     return {
       workspaceDataSource,
       repository,
-      isExecutedByApiKey: isDefined(authContext.apiKey),
-      roleId,
-      shouldBypassPermissionChecks: false,
+      rolePermissionConfig,
     };
   }
 

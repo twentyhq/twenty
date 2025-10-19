@@ -31,6 +31,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService {
@@ -62,15 +63,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       }
     });
 
-    const {
-      workspaceDataSource,
-      repository,
-      roleId,
-      shouldBypassPermissionChecks,
-    } = await this.prepareQueryRunnerContext({
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    });
+    const { workspaceDataSource, repository, rolePermissionConfig } =
+      await this.prepareQueryRunnerContext({
+        authContext,
+        objectMetadataItemWithFieldMaps,
+      });
 
     const processedArgs = await this.processQueryArgs({
       authContext,
@@ -98,10 +95,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      roleId,
+      rolePermissionConfig,
       authContext,
       workspaceDataSource,
-      shouldBypassPermissionChecks,
     });
 
     return upsertedRecords;
@@ -371,19 +367,17 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     records,
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
-    roleId,
+    rolePermissionConfig,
     authContext,
     workspaceDataSource,
-    shouldBypassPermissionChecks,
   }: {
     args: CreateManyQueryArgs;
     records: ObjectRecord[];
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
-    roleId?: string;
+    rolePermissionConfig?: RolePermissionConfig;
     authContext: AuthContext;
     workspaceDataSource: WorkspaceDataSource;
-    shouldBypassPermissionChecks: boolean;
   }): Promise<void> {
     if (!args.selectedFieldsResult.relations) {
       return;
@@ -401,8 +395,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       limit: QUERY_MAX_RECORDS,
       authContext,
       workspaceDataSource,
-      roleId,
-      shouldBypassPermissionChecks,
+      rolePermissionConfig,
       selectedFields: args.selectedFieldsResult.select,
     });
   }

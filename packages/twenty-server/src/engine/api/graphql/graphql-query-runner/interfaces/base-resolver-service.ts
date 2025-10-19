@@ -40,6 +40,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -49,8 +50,7 @@ export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
   isExecutedByApiKey: boolean;
-  roleId?: string;
-  shouldBypassPermissionChecks: boolean;
+  rolePermissionConfig?: RolePermissionConfig;
 };
 
 @Injectable()
@@ -120,7 +120,6 @@ export abstract class GraphqlQueryBaseResolverService<
       )) as Input;
 
       let roleId: string | undefined;
-      let shouldBypassPermissionChecks = false;
 
       if (isDefined(authContext.apiKey)) {
         roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
@@ -152,11 +151,12 @@ export abstract class GraphqlQueryBaseResolverService<
           PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
         );
       }
-
+      const rolePermissionConfig: RolePermissionConfig | undefined = roleId
+        ? { unionOf: [roleId] }
+        : undefined;
       const repository = workspaceDataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
-        shouldBypassPermissionChecks,
-        roleId,
+        rolePermissionConfig,
         authContext,
       );
 
@@ -182,8 +182,7 @@ export abstract class GraphqlQueryBaseResolverService<
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
         isExecutedByApiKey: isDefined(authContext.apiKey),
-        roleId,
-        shouldBypassPermissionChecks,
+        rolePermissionConfig,
       };
       const results = await this.resolve(
         graphqlQueryResolverExecutionArgs,
