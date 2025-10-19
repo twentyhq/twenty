@@ -37,6 +37,7 @@ jobs:
           cp packages/twenty-docker/.env.example packages/twenty-docker/.env
           
           echo "Generating secrets..."
+          echo "" >> packages/twenty-docker/.env
           echo "# === Randomly generated secrets ===" >> packages/twenty-docker/.env
           echo "APP_SECRET=$(openssl rand -base64 32)" >> packages/twenty-docker/.env
           echo "PG_DATABASE_PASSWORD=$(openssl rand -hex 16)" >> packages/twenty-docker/.env
@@ -60,6 +61,7 @@ jobs:
           # Update the SERVER_URL with the tunnel URL
           echo "Setting SERVER_URL to ${{ steps.expose-tunnel.outputs.tunnel-url }}"
           sed -i '/SERVER_URL=/d' .env
+          echo "" >> .env
           echo "SERVER_URL=${{ steps.expose-tunnel.outputs.tunnel-url }}" >> .env
           
           # Start the services

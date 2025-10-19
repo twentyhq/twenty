@@ -65,6 +65,7 @@ export const createAgentToolTestModule =
           provide: getRepositoryToken(RoleEntity),
           useValue: {
             findOne: jest.fn(),
+            find: jest.fn(),
           },
         },
         {
@@ -161,6 +162,7 @@ export const createAgentToolTestModule =
           useValue: {
             hasToolPermission: jest.fn(),
             checkRolePermissions: jest.fn().mockReturnValue(true),
+            checkRolesPermissions: jest.fn().mockResolvedValue(true),
           },
         },
         {
@@ -341,10 +343,6 @@ export const setupBasicPermissions = (context: AgentToolTestContext) => {
       data: {
         [context.testRoleId]: {
           [context.testObjectMetadata.id]: {
-            canRead: true,
-            canUpdate: true,
-            canSoftDelete: true,
-            canDestroy: false,
             canReadObjectRecords: true,
             canUpdateObjectRecords: true,
             canSoftDeleteObjectRecords: true,
