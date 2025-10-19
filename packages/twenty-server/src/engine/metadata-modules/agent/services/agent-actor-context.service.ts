@@ -61,17 +61,17 @@ export class AgentActorContextService {
       workspaceId,
     });
 
-    const actorContext = buildCreatedByFromFullNameMetadata({
-      fullNameMetadata: workspaceMember.name,
-      workspaceMemberId: workspaceMember.id,
-    });
-
     if (!roleId) {
       throw new AgentException(
         'User role not found',
         AgentExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
+
+    const actorContext = buildCreatedByFromFullNameMetadata({
+      fullNameMetadata: workspaceMember.name,
+      workspaceMemberId: workspaceMember.id,
+    });
 
     return {
       actorContext,
