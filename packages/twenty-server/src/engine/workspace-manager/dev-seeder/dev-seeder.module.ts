@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
@@ -36,6 +37,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     UserRoleModule,
     ApiKeyModule,
     FeatureFlagModule,
+    FileStorageModule,
     WorkspaceSyncMetadataModule,
     TypeOrmModule.forFeature([Workspace, ObjectMetadataEntity]),
     ObjectPermissionModule,

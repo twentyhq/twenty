@@ -1,4 +1,4 @@
-import { isDefined } from 'class-validator';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FlatEntityMapsException,
@@ -31,6 +31,21 @@ export const addFlatEntityToFlatEntityMapsOrThrow = <T extends FlatEntity>({
     idByUniversalIdentifier: {
       ...flatEntityMaps.idByUniversalIdentifier,
       [flatEntity.universalIdentifier]: flatEntity.id,
+    },
+    universalIdentifiersByApplicationId: {
+      ...flatEntityMaps.universalIdentifiersByApplicationId,
+      ...(isDefined(flatEntity.applicationId)
+        ? {
+            [flatEntity.applicationId]: Array.from(
+              new Set([
+                ...(flatEntityMaps.universalIdentifiersByApplicationId?.[
+                  flatEntity.applicationId
+                ] ?? []),
+                flatEntity.universalIdentifier,
+              ]),
+            ),
+          }
+        : {}),
     },
   };
 };

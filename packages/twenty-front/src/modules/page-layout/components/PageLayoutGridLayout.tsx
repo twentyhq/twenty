@@ -13,7 +13,6 @@ import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -63,7 +62,11 @@ const StyledVerticalListContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const PageLayoutGridLayout = () => {
+type PageLayoutGridLayoutProps = {
+  tabId: string;
+};
+
+export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   const isRecordPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
   );
@@ -84,19 +87,11 @@ export const PageLayoutGridLayout = () => {
     pageLayoutCurrentLayoutsComponentState,
   );
 
-  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
-
   const { currentPageLayout } = useCurrentPageLayout();
 
-  const activeTab = currentPageLayout?.tabs.find(
-    (tab) => tab.id === activeTabId,
-  );
+  const activeTab = currentPageLayout?.tabs.find((tab) => tab.id === tabId);
 
-  if (
-    !isDefined(activeTabId) ||
-    !isDefined(currentPageLayout) ||
-    !isDefined(activeTab)
-  ) {
+  if (!isDefined(currentPageLayout) || !isDefined(activeTab)) {
     return null;
   }
 
@@ -107,7 +102,7 @@ export const PageLayoutGridLayout = () => {
 
   const layouts = isLayoutEmpty
     ? EMPTY_LAYOUT
-    : (pageLayoutCurrentLayouts[activeTabId] ?? EMPTY_LAYOUT);
+    : (pageLayoutCurrentLayouts[tabId] ?? EMPTY_LAYOUT);
 
   const Widgets = isLayoutEmpty ? (
     <div key="empty-placeholder" data-select-disable="true">

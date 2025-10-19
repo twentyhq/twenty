@@ -10,8 +10,10 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import {
   GraphOrderBy,
   GraphType,
@@ -270,7 +272,18 @@ const meta: Meta<typeof PageLayoutRenderer> = {
       <MemoryRouter>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <Story />
+            <LayoutRenderingProvider
+              value={{
+                isInRightDrawer: false,
+                layoutType: PageLayoutType.DASHBOARD,
+                targetRecordIdentifier: {
+                  targetObjectNameSingular: CoreObjectNameSingular.Dashboard,
+                  id: mixedGraphsPageLayoutMocks.id,
+                },
+              }}
+            >
+              <Story />
+            </LayoutRenderingProvider>
           </CoreClientProviderWrapper>
         </JestMetadataAndApolloMocksWrapper>
       </MemoryRouter>

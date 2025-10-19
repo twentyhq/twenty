@@ -8,6 +8,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -53,24 +54,17 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
       relations: ['fields', 'indexMetadatas', 'views'],
     });
 
-    const flatObjectMetadataMaps = objectMetadatas.reduce<
-      FlatEntityMaps<FlatObjectMetadata>
-    >((flatEntityMaps, object) => {
-      const flatObjectMetadata =
-        fromObjectMetadataEntityToFlatObjectMetadata(object);
+    return objectMetadatas.reduce(
+      (flatObjectMetadataMaps, objectMetadataEntity) => {
+        const flatObjectMetadata =
+          fromObjectMetadataEntityToFlatObjectMetadata(objectMetadataEntity);
 
-      return {
-        byId: {
-          ...flatEntityMaps.byId,
-          [flatObjectMetadata.id]: flatObjectMetadata,
-        },
-        idByUniversalIdentifier: {
-          ...flatEntityMaps.idByUniversalIdentifier,
-          [flatObjectMetadata.universalIdentifier]: flatObjectMetadata.id,
-        },
-      };
-    }, EMPTY_FLAT_ENTITY_MAPS);
-
-    return flatObjectMetadataMaps;
+        return addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatObjectMetadata,
+          flatEntityMaps: flatObjectMetadataMaps,
+        });
+      },
+      EMPTY_FLAT_ENTITY_MAPS,
+    );
   }
 }

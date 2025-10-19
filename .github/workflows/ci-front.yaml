@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
   STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-depot-ubuntu-24.04-8-runner
@@ -140,7 +140,8 @@ jobs:
         run: |
           cd packages/twenty-front
           touch .env
-          echo "REACT_APP_SERVER_BASE_URL: $REACT_APP_SERVER_BASE_URL" >> .env
+          echo "" >> .env
+          echo "REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL" >> .env
       - name: Publish to Chromatic
         run: npx nx run twenty-front:chromatic:ci
   front-task:

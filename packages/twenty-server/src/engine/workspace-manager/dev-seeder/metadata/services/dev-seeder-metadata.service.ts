@@ -124,7 +124,11 @@ export class DevSeederMetadataService {
       });
     }
 
-    await this.seedCoreViews({ workspaceId, dataSourceMetadata, featureFlags });
+    await this.seedCoreViews({
+      workspaceId,
+      dataSourceMetadata,
+      featureFlags,
+    });
   }
 
   private async seedCustomObject({
