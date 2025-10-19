@@ -273,7 +273,7 @@ export class PermissionsService {
         const permissionFlags = role.permissionFlags ?? [];
 
         return permissionFlags.some(
-          (permissionFlag: { flag: string }) => permissionFlag.flag === flag,
+          (permissionFlag) => permissionFlag.flag === flag,
         );
       };
 
