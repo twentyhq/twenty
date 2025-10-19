@@ -63,7 +63,9 @@ const generateSourceFlatFieldMetadata = ({
   }
 
   return {
+    viewFilterIds: [],
     viewFieldIds: [],
+    viewGroupIds: [],
     createdAt,
     updatedAt: createdAt,
     defaultValue: null,
@@ -95,6 +97,7 @@ const generateSourceFlatFieldMetadata = ({
     ]),
     workspaceId,
     morphId: null,
+    applicationId: sourceFlatObjectMetadata.applicationId ?? null,
   };
 };
 
@@ -129,6 +132,8 @@ const generateTargetFlatFieldMetadata = ({
   return {
     morphId: null,
     viewFieldIds: [],
+    viewFilterIds: [],
+    viewGroupIds: [],
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
     name: sourceFlatObjectMetadata.nameSingular,
     label: sourceFlatObjectMetadata.labelSingular,
@@ -161,6 +166,7 @@ const generateTargetFlatFieldMetadata = ({
       targetFlatObjectMetadata.id,
       standardId,
     ]),
+    applicationId: sourceFlatObjectMetadata.applicationId ?? null,
   };
 };
 

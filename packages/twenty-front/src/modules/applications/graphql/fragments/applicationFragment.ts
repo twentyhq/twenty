@@ -11,6 +11,14 @@ export const APPLICATION_FRAGMENT = gql`
     id
     name
     description
+    version
+    applicationVariables {
+      id
+      key
+      value
+      description
+      isSecret
+    }
     agents {
       ...AgentFields
     }

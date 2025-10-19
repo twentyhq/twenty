@@ -213,6 +213,8 @@ export class WorkspaceSchemaEnumManagerService {
           oldColumnName,
           newColumnName: columnName,
           oldToNewEnumOptionMap,
+          columnDefinition,
+          oldEnumTypeName: oldEnumName,
         });
       }
 
@@ -315,49 +317,116 @@ export class WorkspaceSchemaEnumManagerService {
     oldColumnName,
     newColumnName,
     oldToNewEnumOptionMap,
+    columnDefinition,
+    oldEnumTypeName,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;
     oldColumnName: string;
     newColumnName: string;
+    oldEnumTypeName: string;
     oldToNewEnumOptionMap: Record<string, string>;
+    columnDefinition: WorkspaceSchemaColumnDefinition;
   }): Promise<void> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-    const safeOldColumnName = removeSqlDDLInjection(oldColumnName);
-    const safeNewColumnName = removeSqlDDLInjection(newColumnName);
-
     const newEnumTypeName = computePostgresEnumName({
       tableName,
       columnName: newColumnName,
     });
 
-    if (Object.keys(oldToNewEnumOptionMap).length === 0) {
-      return;
-    }
-
+    const safeSchemaName = removeSqlDDLInjection(schemaName);
+    const safeTableName = removeSqlDDLInjection(tableName);
+    const safeOldColumnName = removeSqlDDLInjection(oldColumnName);
+    const safeNewColumnName = removeSqlDDLInjection(newColumnName);
     const caseStatements = Object.entries(oldToNewEnumOptionMap)
       .map(
         ([oldEnumOption, newEnumOption]) =>
           `WHEN '${removeSqlDDLInjection(oldEnumOption)}' THEN '${removeSqlDDLInjection(newEnumOption)}'::"${safeSchemaName}"."${newEnumTypeName}"`,
       )
       .join(' ');
-
     const mappedValuesCondition = Object.keys(oldToNewEnumOptionMap)
       .map((oldValue) => `'${removeSqlDDLInjection(oldValue)}'`)
       .join(', ');
 
-    // Update rows with mapped enum values
-    const updateMappedSql = `
-        UPDATE "${safeSchemaName}"."${safeTableName}" 
-        SET "${safeNewColumnName}" = 
-          CASE "${safeOldColumnName}"::text 
-            ${caseStatements}
-          END
-        WHERE "${safeOldColumnName}" IS NOT NULL 
-          AND "${safeOldColumnName}"::text IN (${mappedValuesCondition})`;
+    const sqlQuery = columnDefinition.isArray
+      ? this.updateArrayEnum({
+          safeSchemaName,
+          safeTableName,
+          safeOldColumnName,
+          safeNewColumnName,
+          newEnumTypeName,
+          oldEnumTypeName,
+          caseStatements,
+          mappedValuesCondition,
+        })
+      : this.updateAtomicEnum({
+          safeSchemaName,
+          safeTableName,
+          safeOldColumnName,
+          safeNewColumnName,
+          caseStatements,
+          mappedValuesCondition,
+        });
 
-    await queryRunner.query(updateMappedSql);
+    await queryRunner.query(sqlQuery);
+  }
+
+  private updateArrayEnum({
+    safeNewColumnName,
+    safeOldColumnName,
+    safeSchemaName,
+    safeTableName,
+    newEnumTypeName,
+    oldEnumTypeName,
+    caseStatements,
+    mappedValuesCondition,
+  }: {
+    safeSchemaName: string;
+    safeTableName: string;
+    safeOldColumnName: string;
+    safeNewColumnName: string;
+    newEnumTypeName: string;
+    oldEnumTypeName: string;
+    caseStatements: string;
+    mappedValuesCondition: string;
+  }) {
+    return `
+          UPDATE "${safeSchemaName}"."${safeTableName}" 
+          SET "${safeNewColumnName}" = (
+            SELECT array_agg(
+              CASE unnest_value::text 
+                ${caseStatements}
+                ELSE unnest_value::text::"${safeSchemaName}"."${newEnumTypeName}"
+              END
+            )
+            FROM unnest("${safeOldColumnName}") AS unnest_value
+          )
+          WHERE "${safeOldColumnName}" IS NOT NULL 
+            AND "${safeOldColumnName}" && ARRAY[${mappedValuesCondition}]::"${safeSchemaName}"."${oldEnumTypeName}"[]`;
+  }
+
+  private updateAtomicEnum({
+    safeNewColumnName,
+    safeOldColumnName,
+    safeSchemaName,
+    safeTableName,
+    caseStatements,
+    mappedValuesCondition,
+  }: {
+    caseStatements: string;
+    mappedValuesCondition: string;
+    safeSchemaName: string;
+    safeTableName: string;
+    safeOldColumnName: string;
+    safeNewColumnName: string;
+  }) {
+    return `
+          UPDATE "${safeSchemaName}"."${safeTableName}" 
+          SET "${safeNewColumnName}" = 
+            CASE "${safeOldColumnName}"::text 
+              ${caseStatements}
+            END
+          WHERE "${safeOldColumnName}" IS NOT NULL 
+            AND "${safeOldColumnName}"::text IN (${mappedValuesCondition})`;
   }
 }

@@ -21653,3 +21653,8 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = PERSON_DATA_SEEDS_RAW.map(
     position: index + 1,
   }),
 );
+
+// Map for O(1) lookups by person ID
+export const PERSON_DATA_SEEDS_MAP = new Map<string, PersonDataSeed>(
+  PERSON_DATA_SEEDS.map((p) => [p.id, p]),
+);

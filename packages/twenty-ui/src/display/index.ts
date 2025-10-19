@@ -107,6 +107,7 @@ export {
   IconBrandLinkedin,
   IconBrandX,
   IconBriefcase,
+  IconBroadcast,
   IconBrowserMaximize,
   IconBuildingSkyscraper,
   IconCalendar,

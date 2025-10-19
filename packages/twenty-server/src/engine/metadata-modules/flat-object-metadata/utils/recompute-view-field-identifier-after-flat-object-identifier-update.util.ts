@@ -66,6 +66,7 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         deletedAt: null,
         universalIdentifier: viewFieldId,
         aggregateOperation: null,
+        applicationId: existingFlatObjectMetadata.applicationId,
       };
 
       accumulator.flatViewFieldToCreate.push(flatViewFieldToCreate);

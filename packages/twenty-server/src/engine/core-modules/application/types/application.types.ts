@@ -11,6 +11,15 @@ export type PackageJson = {
     npm: string;
     yarn: string;
   };
+  env: Record<
+    string,
+    {
+      key: string;
+      value?: string;
+      description?: string;
+      isSecret: boolean;
+    }
+  >;
   icon?: string;
   version: string;
   dependencies?: object;
