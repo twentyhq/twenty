@@ -9,6 +9,7 @@ import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.ty
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 const createMockToolRegistry = () => ({
   getAllToolTypes: jest.fn(),
@@ -18,7 +19,7 @@ const createMockToolRegistry = () => ({
 const createMockPermissions = () => ({
   hasToolPermission: jest.fn<
     Promise<boolean>,
-    [string, string, PermissionFlagType]
+    [RolePermissionConfig, string, PermissionFlagType]
   >(),
 });
 
