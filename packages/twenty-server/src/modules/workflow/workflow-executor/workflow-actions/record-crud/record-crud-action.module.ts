@@ -8,9 +8,15 @@ import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
+import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 
 @Module({
-  imports: [RecordCrudModule, RecordTransformerModule, WorkflowCommonModule],
+  imports: [
+    RecordCrudModule,
+    RecordTransformerModule,
+    WorkflowCommonModule,
+    RecordPositionModule,
+  ],
   providers: [
     ScopedWorkspaceContextFactory,
     CreateRecordWorkflowAction,

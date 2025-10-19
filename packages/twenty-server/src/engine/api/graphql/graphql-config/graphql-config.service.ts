@@ -1,8 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ContextIdFactory, ModuleRef } from '@nestjs/core';
-import { type GqlOptionsFactory, GraphQLSchemaHost } from '@nestjs/graphql';
+import { type GqlOptionsFactory } from '@nestjs/graphql';
 
-import { mergeSchemas } from '@graphql-tools/schema';
 import {
   type YogaDriverConfig,
   type YogaDriverServerContext,
@@ -49,7 +48,6 @@ export class GraphQLConfigService
     private readonly moduleRef: ModuleRef,
     private readonly metricsService: MetricsService,
     private readonly dataloaderService: DataloaderService,
-    private readonly graphQLSchemaHost: GraphQLSchemaHost,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -187,17 +185,6 @@ export class GraphQLConfigService
       },
     );
 
-    // Get the workspace schema
-    const workspaceSchema = await workspaceFactory.createGraphQLSchema(data);
-
-    // Get the core schema that contains enum registrations
-    const coreSchema = this.graphQLSchemaHost.schema;
-
-    // Merge the core schema (with enums) and workspace schema
-    const mergedSchema = mergeSchemas({
-      schemas: [coreSchema, workspaceSchema],
-    });
-
-    return mergedSchema;
+    return await workspaceFactory.createGraphQLSchema(data);
   }
 }

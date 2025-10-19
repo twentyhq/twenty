@@ -67,48 +67,6 @@ export class WorkflowCommonWorkspaceService {
       },
     });
 
-    if (workflowVersion?.steps) {
-      const hasInvalidUpsertSteps = workflowVersion.steps.some(
-        (step) =>
-          step.type === WorkflowActionType.UPSERT_RECORD &&
-          step.settings?.input?.upsertCriteria?.matchFields?.length === 0,
-      );
-
-      if (hasInvalidUpsertSteps) {
-        const fixedSteps = workflowVersion.steps.map((step) => {
-          if (
-            step.type === WorkflowActionType.UPSERT_RECORD &&
-            step.settings?.input?.upsertCriteria?.matchFields?.length === 0
-          ) {
-            return {
-              ...step,
-              settings: {
-                ...step.settings,
-                input: {
-                  ...step.settings.input,
-                  upsertCriteria: {
-                    ...step.settings.input.upsertCriteria,
-                    matchFields: ['id'],
-                  },
-                },
-              },
-            };
-          }
-
-          return step;
-        });
-
-        await workflowVersionRepository.update(workflowVersionId, {
-          steps: fixedSteps,
-        });
-
-        return this.getValidWorkflowVersionOrFail({
-          ...workflowVersion,
-          steps: fixedSteps,
-        });
-      }
-    }
-
     return this.getValidWorkflowVersionOrFail(workflowVersion);
   }
 

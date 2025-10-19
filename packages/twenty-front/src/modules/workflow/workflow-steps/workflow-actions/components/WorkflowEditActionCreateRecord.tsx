@@ -7,17 +7,14 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
-import {
-  type WorkflowCreateRecordAction,
-  type WorkflowUpsertRecordAction,
-} from '@/workflow/types/Workflow';
+import { type WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
@@ -25,21 +22,17 @@ import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { RelationType } from '~/generated-metadata/graphql';
-import { WorkflowFieldsMultiSelect } from '../../../components/WorkflowEditUpdateEventFieldsMultiSelect';
 
 type WorkflowEditActionCreateRecordProps = {
-  action: WorkflowCreateRecordAction | WorkflowUpsertRecordAction;
+  action: WorkflowCreateRecordAction;
   actionOptions:
     | {
         readonly: true;
       }
     | {
         readonly?: false;
-        onActionUpdate: (
-          action: WorkflowCreateRecordAction | WorkflowUpsertRecordAction,
-        ) => void;
+        onActionUpdate: (action: WorkflowCreateRecordAction) => void;
       };
-  mode?: 'create' | 'upsert';
 };
 
 type RelationManyToOneField = {
@@ -51,17 +44,31 @@ type CreateRecordFormData = {
   [field: string]: RelationManyToOneField | JsonValue;
 };
 
-type UpsertRecordFormData = CreateRecordFormData & {
-  matchFields: string[];
-  fieldsToUpdate?: string[];
+const sortByViewFieldPosition = (
+  a: { viewFieldPosition?: number },
+  b: { viewFieldPosition?: number },
+) => {
+  if (isDefined(a.viewFieldPosition) && isDefined(b.viewFieldPosition)) {
+    return a.viewFieldPosition - b.viewFieldPosition;
+  }
+
+  if (isDefined(a.viewFieldPosition)) {
+    return -1;
+  }
+
+  if (isDefined(b.viewFieldPosition)) {
+    return 1;
+  }
+
+  return 0;
 };
 
 export const WorkflowEditActionCreateRecord = ({
   action,
   actionOptions,
-  mode = 'create',
 }: WorkflowEditActionCreateRecordProps) => {
   const theme = useTheme();
+
   const { getIcon } = useIcons();
 
   const { activeNonSystemObjectMetadataItems } =
@@ -81,34 +88,13 @@ export const WorkflowEditActionCreateRecord = ({
         value: item.nameSingular,
       }));
 
-  const [formData, setFormData] = useState<
-    CreateRecordFormData | UpsertRecordFormData
-  >(() => {
-    const baseFormData = {
-      objectName: action.settings.input.objectName,
-      ...action.settings.input.objectRecord,
-    };
-
-    if (mode === 'upsert') {
-      const upsertInput = action.settings.input as {
-        objectName: string;
-        objectRecord: Record<string, JsonValue>;
-        upsertCriteria?: { matchFields: string[] };
-        fieldsToUpdate?: string[];
-      };
-
-      const upsertFormData: UpsertRecordFormData = {
-        ...baseFormData,
-        matchFields: upsertInput.upsertCriteria?.matchFields || ['id'],
-        fieldsToUpdate: upsertInput.fieldsToUpdate || [],
-      };
-      return upsertFormData;
-    }
-
-    return baseFormData;
+  const [formData, setFormData] = useState<CreateRecordFormData>({
+    objectName: action.settings.input.objectName,
+    ...action.settings.input.objectRecord,
   });
 
   const isFormDisabled = actionOptions.readonly;
+
   const objectNameSingular = formData.objectName;
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -121,49 +107,36 @@ export const WorkflowEditActionCreateRecord = ({
     objectMetadataItemId: objectMetadataItem?.id ?? '',
   });
 
-  const inlineFieldMetadataItems = useMemo(() => {
-    if (!objectMetadataItem?.fields) return [];
+  const viewFields = indexView?.viewFields ?? [];
 
-    const viewFields = indexView?.viewFields ?? [];
+  const inlineFieldMetadataItems = objectMetadataItem?.fields
+    .filter((fieldMetadataItem) =>
+      shouldDisplayFormField({ fieldMetadataItem, actionType: action.type }),
+    )
+    .map((fieldMetadataItem) => {
+      const viewField = viewFields.find(
+        (viewField) => viewField.fieldMetadataId === fieldMetadataItem.id,
+      );
+      return {
+        ...fieldMetadataItem,
+        viewFieldPosition: viewField?.position,
+      };
+    })
+    .sort(sortByViewFieldPosition);
 
-    return objectMetadataItem.fields
-      .filter((fieldMetadataItem) =>
-        shouldDisplayFormField({ fieldMetadataItem, actionType: action.type }),
+  const inlineFieldDefinitions = isDefined(objectMetadataItem)
+    ? inlineFieldMetadataItems?.map((fieldMetadataItem) =>
+        formatFieldMetadataItemAsFieldDefinition({
+          field: fieldMetadataItem,
+          objectMetadataItem,
+          showLabel: true,
+          labelWidth: 90,
+        }),
       )
-      .map((fieldMetadataItem) => {
-        const viewField = viewFields.find(
-          (viewField) => viewField.fieldMetadataId === fieldMetadataItem.id,
-        );
-        return {
-          ...fieldMetadataItem,
-          viewFieldPosition: viewField?.position,
-        };
-      })
-      .sort((a, b) => {
-        if (isDefined(a.viewFieldPosition) && isDefined(b.viewFieldPosition)) {
-          return a.viewFieldPosition - b.viewFieldPosition;
-        }
-        if (isDefined(a.viewFieldPosition)) return -1;
-        if (isDefined(b.viewFieldPosition)) return 1;
-        return 0;
-      });
-  }, [objectMetadataItem, indexView, action.type]);
-
-  const inlineFieldDefinitions = useMemo(() => {
-    if (!isDefined(objectMetadataItem) || !inlineFieldMetadataItems) return [];
-
-    return inlineFieldMetadataItems.map((fieldMetadataItem) =>
-      formatFieldMetadataItemAsFieldDefinition({
-        field: fieldMetadataItem,
-        objectMetadataItem,
-        showLabel: true,
-        labelWidth: 90,
-      }),
-    );
-  }, [objectMetadataItem, inlineFieldMetadataItems]);
+    : [];
 
   const handleFieldChange = (
-    fieldName: keyof (CreateRecordFormData | UpsertRecordFormData),
+    fieldName: keyof CreateRecordFormData,
     updatedValue: JsonValue,
   ) => {
     const fieldDefinition = inlineFieldDefinitions?.find(
@@ -184,68 +157,34 @@ export const WorkflowEditActionCreateRecord = ({
         }
       : updatedValue;
 
-    const newFormData = {
+    const newFormData: CreateRecordFormData = {
       ...formData,
       [fieldName]: fieldValue,
     };
 
     setFormData(newFormData);
+
     saveAction(newFormData);
   };
 
   const saveAction = useDebouncedCallback(
-    async (formData: CreateRecordFormData | UpsertRecordFormData) => {
+    async (formData: CreateRecordFormData) => {
       if (actionOptions.readonly === true) {
         return;
       }
 
-      if (mode === 'upsert') {
-        const upsertFormData = formData as UpsertRecordFormData;
+      const { objectName: updatedObjectName, ...updatedOtherFields } = formData;
 
-        if (
-          !upsertFormData.matchFields ||
-          upsertFormData.matchFields.length === 0
-        ) {
-          return;
-        }
-
-        actionOptions.onActionUpdate({
-          ...action,
-          settings: {
-            ...action.settings,
-            input: {
-              objectName: upsertFormData.objectName,
-              objectRecord: Object.fromEntries(
-                Object.entries(upsertFormData).filter(
-                  ([key]) =>
-                    !['objectName', 'matchFields', 'fieldsToUpdate'].includes(
-                      key,
-                    ),
-                ),
-              ),
-              upsertCriteria: {
-                matchFields: upsertFormData.matchFields,
-              },
-              fieldsToUpdate: upsertFormData.fieldsToUpdate,
-            },
+      actionOptions.onActionUpdate({
+        ...action,
+        settings: {
+          ...action.settings,
+          input: {
+            objectName: updatedObjectName,
+            objectRecord: updatedOtherFields,
           },
-        } as WorkflowCreateRecordAction | WorkflowUpsertRecordAction);
-      } else {
-        actionOptions.onActionUpdate({
-          ...action,
-          settings: {
-            ...action.settings,
-            input: {
-              objectName: formData.objectName,
-              objectRecord: Object.fromEntries(
-                Object.entries(formData).filter(
-                  ([key]) => key !== 'objectName',
-                ),
-              ),
-            },
-          },
-        } as WorkflowCreateRecordAction | WorkflowUpsertRecordAction);
-      }
+        },
+      });
     },
     1_000,
   );
@@ -259,7 +198,7 @@ export const WorkflowEditActionCreateRecord = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: mode === 'upsert' ? 'Upsert Record' : 'Create Record',
+      defaultTitle: 'Create Record',
     });
 
   return (
@@ -283,7 +222,7 @@ export const WorkflowEditActionCreateRecord = ({
       />
       <WorkflowStepBody>
         <Select
-          dropdownId={`workflow-edit-action-${mode}-object-name`}
+          dropdownId="workflow-edit-action-record-create-object-name"
           label="Object"
           fullWidth
           disabled={isFormDisabled}
@@ -291,11 +230,12 @@ export const WorkflowEditActionCreateRecord = ({
           emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
           onChange={(updatedObjectName) => {
-            const newFormData = {
+            const newFormData: CreateRecordFormData = {
               objectName: updatedObjectName,
-            } as CreateRecordFormData | UpsertRecordFormData;
+            };
 
             setFormData(newFormData);
+
             saveAction(newFormData);
           }}
           withSearchInput
@@ -304,38 +244,6 @@ export const WorkflowEditActionCreateRecord = ({
         />
 
         <HorizontalSeparator noMargin />
-
-        {mode === 'upsert' && objectMetadataItem && (
-          <>
-            <WorkflowFieldsMultiSelect
-              label="Match Fields (Required)"
-              placeholder="Select fields to match on"
-              objectMetadataItem={objectMetadataItem}
-              handleFieldsChange={(matchFields) =>
-                handleFieldChange('matchFields', matchFields)
-              }
-              readonly={isFormDisabled ?? false}
-              defaultFields={(formData as UpsertRecordFormData).matchFields}
-            />
-
-            <HorizontalSeparator noMargin />
-
-            <WorkflowFieldsMultiSelect
-              label="Fields to Update (Optional)"
-              placeholder="Update all fields"
-              objectMetadataItem={objectMetadataItem}
-              handleFieldsChange={(fieldsToUpdate) =>
-                handleFieldChange('fieldsToUpdate', fieldsToUpdate)
-              }
-              readonly={isFormDisabled ?? false}
-              defaultFields={
-                (formData as UpsertRecordFormData).fieldsToUpdate || []
-              }
-            />
-
-            <HorizontalSeparator noMargin />
-          </>
-        )}
 
         {inlineFieldDefinitions?.map((fieldDefinition) => {
           const isFieldRelationManyToOne =
@@ -356,13 +264,7 @@ export const WorkflowEditActionCreateRecord = ({
               defaultValue={currentValue}
               field={fieldDefinition}
               onChange={(value) => {
-                handleFieldChange(
-                  fieldDefinition.metadata.fieldName as keyof (
-                    | CreateRecordFormData
-                    | UpsertRecordFormData
-                  ),
-                  value,
-                );
+                handleFieldChange(fieldDefinition.metadata.fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}
               readonly={isFormDisabled}
