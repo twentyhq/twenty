@@ -27,11 +27,21 @@ export const formatResultWithGroupByDimensionValues = (
     for (const groupByColumn of groupByColumnsWithQuotes) {
       dimensionValues.push(group[groupByColumn.alias]);
     }
+
+    // Sanitize NaN values in the group object to prevent GraphQL Float serialization errors
+    const sanitizedGroup = Object.entries(group).reduce<Record<string, unknown>>(
+      (acc, [key, value]) => {
+        acc[key] = typeof value === 'number' && Number.isNaN(value) ? null : value;
+        return acc;
+      },
+      {},
+    );
+
     const groupWithValueMappedToUnaliasedColumn = {
-      ...group,
+      ...sanitizedGroup,
       ...groupByColumnsWithQuotes.reduce<Record<string, unknown>>(
         (acc, groupByColumn) => {
-          const value = group[groupByColumn.alias];
+          const value = sanitizedGroup[groupByColumn.alias];
 
           acc[removeQuotes(groupByColumn.columnNameWithQuotes)] =
             getTranslatedValueIfApplicable(

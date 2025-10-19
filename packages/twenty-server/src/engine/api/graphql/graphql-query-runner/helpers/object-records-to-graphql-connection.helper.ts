@@ -112,10 +112,17 @@ export class ObjectRecordsToGraphqlConnectionHelper {
           return acc;
         }
 
+        // Guard against NaN values that would cause GraphQL Float serialization errors
+        // Convert NaN to null to ensure proper GraphQL type compatibility
+        const sanitizedValue =
+          typeof aggregatedFieldValue === 'number' &&
+          Number.isNaN(aggregatedFieldValue)
+            ? null
+            : aggregatedFieldValue;
+
         return {
           ...acc,
-          [aggregatedFieldName]:
-            objectRecordsAggregatedValues[aggregatedFieldName],
+          [aggregatedFieldName]: sanitizedValue,
         };
       },
       {},
