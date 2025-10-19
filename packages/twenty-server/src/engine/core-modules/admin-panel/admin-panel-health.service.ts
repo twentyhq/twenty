@@ -199,7 +199,7 @@ export class AdminPanelHealthService {
     queueName: MessageQueue,
     timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneDay,
   ): Promise<QueueMetricsData> {
-    const redis = this.redisClient.getClient();
+    const redis = this.redisClient.getQueueClient();
     const queue = new Queue(queueName, { connection: redis });
 
     try {
