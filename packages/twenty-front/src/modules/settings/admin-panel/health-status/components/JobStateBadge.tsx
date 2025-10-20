@@ -13,7 +13,8 @@ const JOB_STATE_COLORS: Record<JobState, TagColor> = {
   [JobState.active]: 'blue',
   [JobState.waiting]: 'gray',
   [JobState.delayed]: 'orange',
-  [JobState.paused]: 'purple',
+  [JobState.prioritized]: 'blue',
+  [JobState.waitingChildren]: 'gray',
 };
 
 const StyledContainer = styled.div`
