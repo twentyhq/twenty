@@ -49,6 +49,7 @@ export interface GroupByQueryArgs {
   filter?: ObjectRecordFilter;
   orderBy?: OrderByWithGroupBy;
   groupBy: ObjectRecordGroupBy;
+  omitNullValues?: boolean;
   viewId?: string;
 }
 
