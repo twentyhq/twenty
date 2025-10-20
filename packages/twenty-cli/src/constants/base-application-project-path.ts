@@ -1,6 +1,10 @@
 import { join } from 'path';
 
+const BASE_PATH = join(__dirname, '../constants');
+
 export const BASE_APPLICATION_PROJECT_PATH = join(
-  __dirname,
-  '../constants/base-application-project',
+  BASE_PATH,
+  'base-application-project',
 );
+
+export const BASE_SCHEMAS_PATH = join(BASE_PATH, 'schemas');
