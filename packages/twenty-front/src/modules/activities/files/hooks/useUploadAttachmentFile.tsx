@@ -47,7 +47,7 @@ export const useUploadAttachmentFile = () => {
     const attachmentToCreate = {
       name: file.name,
       fullPath: attachmentPath,
-      type: getFileType(file.name),
+      fileCategory: getFileType(file.name),
       [targetableObjectFieldIdName]: targetableObject.id,
     } as Partial<Attachment>;
 

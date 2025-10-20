@@ -1,0 +1,11 @@
+export enum AttachmentFileCategory {
+  ARCHIVE = 'ARCHIVE',
+  AUDIO = 'AUDIO',
+  IMAGE = 'IMAGE',
+  PRESENTATION = 'PRESENTATION',
+  SPREADSHEET = 'SPREADSHEET',
+  TEXT_DOCUMENT = 'TEXT_DOCUMENT',
+  VIDEO = 'VIDEO',
+  OTHER = 'OTHER',
+}
+

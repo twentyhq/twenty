@@ -2,7 +2,7 @@ export type Attachment = {
   id: string;
   name: string;
   fullPath: string;
-  type: AttachmentType;
+  fileCategory: AttachmentFileCategory;
   companyId: string;
   personId: string;
   // Deprecated: Use createdBy instead
@@ -16,12 +16,12 @@ export type Attachment = {
   __typename: string;
 };
 
-export type AttachmentType =
-  | 'Archive'
-  | 'Audio'
-  | 'Image'
-  | 'Presentation'
-  | 'Spreadsheet'
-  | 'TextDocument'
-  | 'Video'
-  | 'Other';
+export type AttachmentFileCategory =
+  | 'ARCHIVE'
+  | 'AUDIO'
+  | 'IMAGE'
+  | 'PRESENTATION'
+  | 'SPREADSHEET'
+  | 'TEXT_DOCUMENT'
+  | 'VIDEO'
+  | 'OTHER';

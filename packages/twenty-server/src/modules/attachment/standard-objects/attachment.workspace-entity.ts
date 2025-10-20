@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { AttachmentFileCategory, FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -59,14 +59,75 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   })
   fullPath: string;
 
+  // Deprecated: Use fileCategory instead
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
-    label: msg`Type`,
-    description: msg`Attachment type`,
+    label: msg`Type (deprecated)`,
+    description: msg`Attachment type (deprecated - use fileCategory)`,
     icon: 'IconList',
   })
   type: string;
+
+  @WorkspaceField({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.fileCategory,
+    type: FieldMetadataType.SELECT,
+    label: msg`File category`,
+    description: msg`Attachment file category`,
+    icon: 'IconList',
+    options: [
+      {
+        value: AttachmentFileCategory.ARCHIVE,
+        label: 'Archive',
+        position: 0,
+        color: 'gray',
+      },
+      {
+        value: AttachmentFileCategory.AUDIO,
+        label: 'Audio',
+        position: 1,
+        color: 'pink',
+      },
+      {
+        value: AttachmentFileCategory.IMAGE,
+        label: 'Image',
+        position: 2,
+        color: 'yellow',
+      },
+      {
+        value: AttachmentFileCategory.PRESENTATION,
+        label: 'Presentation',
+        position: 3,
+        color: 'orange',
+      },
+      {
+        value: AttachmentFileCategory.SPREADSHEET,
+        label: 'Spreadsheet',
+        position: 4,
+        color: 'turquoise',
+      },
+      {
+        value: AttachmentFileCategory.TEXT_DOCUMENT,
+        label: 'Text Document',
+        position: 5,
+        color: 'blue',
+      },
+      {
+        value: AttachmentFileCategory.VIDEO,
+        label: 'Video',
+        position: 6,
+        color: 'purple',
+      },
+      {
+        value: AttachmentFileCategory.OTHER,
+        label: 'Other',
+        position: 7,
+        color: 'gray',
+      },
+    ],
+    defaultValue: `'${AttachmentFileCategory.OTHER}'`,
+  })
+  fileCategory: string;
 
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.createdBy,
@@ -79,7 +140,6 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
 
   // Deprecated: Use createdBy composite field instead
-  // This relation is kept for backward compatibility during migration
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.author,
     type: RelationType.MANY_TO_ONE,

@@ -12,6 +12,7 @@ export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
 export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
+export { AttachmentFileCategory } from './AttachmentFileCategory';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
