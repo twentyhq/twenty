@@ -72,6 +72,9 @@ export const useRecordsFieldVisibleGqlFields = ({
       : {}),
     ...(hasPosition ? { position: true } : {}),
     ...allDepthOneGqlFields,
+    createdAt: true,
+    updatedAt: true,
+    deletedAt: true,
     noteTargets: generateDepthRecordGqlFieldsFromObject({
       objectMetadataItem: noteTargetObjectMetadataItem,
       objectMetadataItems,

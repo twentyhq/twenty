@@ -23,5 +23,6 @@ export const fromCreateRouteTriggerInputToFlatRouteTrigger = ({
     workspaceId,
     createdAt: now,
     updatedAt: now,
+    applicationId: createRouteTriggerInput.applicationId ?? null,
   };
 };

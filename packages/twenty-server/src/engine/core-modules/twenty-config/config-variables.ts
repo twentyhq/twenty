@@ -446,6 +446,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
+    description:
+      'Configure whether console logs from serverless functions are displayed in the terminal',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  SERVERLESS_LOGS_ENABLED: false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerlessConfig,
     description: 'Throttle limit for serverless function execution',
     type: ConfigVariableType.NUMBER,
   })
