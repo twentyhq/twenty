@@ -5,7 +5,13 @@ export type Attachment = {
   type: AttachmentType;
   companyId: string;
   personId: string;
-  authorId: string;
+  // Deprecated: Use createdBy instead
+  authorId?: string;
+  createdBy?: {
+    source: string;
+    workspaceMemberId: string | null;
+    name: string;
+  };
   createdAt: string;
   __typename: string;
 };

@@ -1,3 +1,4 @@
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { NOTE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
 import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
@@ -10,10 +11,11 @@ type AttachmentDataSeed = {
   name: string;
   fullPath: string;
   type: string;
+  // Deprecated: Use createdBy instead
   authorId: string | null;
-  // createdBySource: string;
-  // createdByWorkspaceMemberId: string;
-  // createdByName: string;
+  createdBySource: string;
+  createdByWorkspaceMemberId: string;
+  createdByName: string;
   personId: string | null;
   companyId: string | null;
   noteId: string | null;
@@ -26,10 +28,10 @@ export const ATTACHMENT_DATA_SEED_COLUMNS: (keyof AttachmentDataSeed)[] = [
   'name',
   'fullPath',
   'type',
-  'authorId',
-  // 'createdBySource',
-  // 'createdByWorkspaceMemberId',
-  // 'createdByName',
+  'authorId', // Deprecated: kept for backward compatibility during migration
+  'createdBySource',
+  'createdByWorkspaceMemberId',
+  'createdByName',
   'personId',
   'companyId',
   'noteId',
@@ -172,10 +174,11 @@ const GENERATE_ATTACHMENT_SEEDS = (): AttachmentDataSeed[] => {
       name: NAME_VARIATION.name,
       fullPath: FILE_TEMPLATE.fullPath,
       type: NAME_VARIATION.type,
+      // Deprecated: Use createdBy fields instead
       authorId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      // createdBySource: 'MANUAL',
-      //createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      //createdByName: 'Tim A',
+      createdBySource: FieldActorSource.MANUAL,
+      createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      createdByName: 'Tim A',
       personId,
       companyId,
       noteId,
