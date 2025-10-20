@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
@@ -179,9 +179,9 @@ export class AdminPanelResolver {
     queueName: string,
     @Args('state', { type: () => JobState, nullable: true })
     state?: JobState,
-    @Args('limit', { type: () => Number, nullable: true, defaultValue: 50 })
+    @Args('limit', { type: () => Int, nullable: true, defaultValue: 50 })
     limit?: number,
-    @Args('offset', { type: () => Number, nullable: true, defaultValue: 0 })
+    @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
     offset?: number,
   ): Promise<QueueJobsResponse> {
     return await this.adminPanelQueueService.getQueueJobs(

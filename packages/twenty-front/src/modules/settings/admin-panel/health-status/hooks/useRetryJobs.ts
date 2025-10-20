@@ -1,5 +1,5 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRetryJobsMutation } from '~/generated-metadata/graphql';
 
@@ -27,10 +27,11 @@ export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
             message: t`All failed jobs have been retried`,
           });
         } else if (retriedCount > 0) {
-          const jobText = retriedCount === 1 ? 'job' : 'jobs';
-
           enqueueSuccessSnackBar({
-            message: t`Successfully retried ${retriedCount} ${jobText}`,
+            message: plural(retriedCount, {
+              one: `Successfully retried ${retriedCount} job`,
+              other: `Successfully retried ${retriedCount} jobs`,
+            }),
           });
         } else {
           enqueueErrorSnackBar({

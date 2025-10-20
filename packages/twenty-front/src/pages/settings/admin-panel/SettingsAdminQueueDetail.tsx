@@ -1,7 +1,7 @@
 import { QueueJobsTable } from '@/settings/admin-panel/health-status/components/QueueJobsTable';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -23,14 +23,20 @@ export const SettingsAdminQueueDetail = () => {
   }
 
   const formatDuration = (seconds: number) => {
-    const hours = seconds / 3600;
-    const days = seconds / 86400;
+    const hours = Math.floor(seconds / 3600);
+    const days = Math.floor(seconds / 86400);
 
     if (days >= 1) {
-      return `${days} ${days === 1 ? 'day' : 'days'}`;
+      return plural(days, {
+        one: `${days} day`,
+        other: `${days} days`,
+      });
     }
 
-    return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+    return plural(hours, {
+      one: `${hours} hour`,
+      other: `${hours} hours`,
+    });
   };
 
   const completedDuration = retentionConfig

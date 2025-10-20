@@ -1,5 +1,5 @@
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 
 type DeleteJobsConfirmationModalProps = {
   modalId: string;
@@ -14,11 +14,15 @@ export const DeleteJobsConfirmationModal = ({
   onConfirm,
   onClose,
 }: DeleteJobsConfirmationModalProps) => {
-  const jobText = jobCount === 1 ? 'Job' : 'Jobs';
-  const pronounText = jobCount === 1 ? 'it' : 'them';
+  const title = plural(jobCount, {
+    one: `Delete ${jobCount} Job`,
+    other: `Delete ${jobCount} Jobs`,
+  });
 
-  const title = t`Delete ${jobCount} ${jobText}`;
-  const subtitle = t`This will permanently remove ${pronounText} from the queue. This action cannot be undone.`;
+  const subtitle = plural(jobCount, {
+    one: `This will permanently remove it from the queue. This action cannot be undone.`,
+    other: `This will permanently remove them from the queue. This action cannot be undone.`,
+  });
 
   return (
     <ConfirmationModal

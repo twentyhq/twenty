@@ -59,7 +59,7 @@ export class AdminPanelQueueService {
             processedOn: job.processedOn,
             finishedOn: job.finishedOn,
             attemptsMade: job.attemptsMade,
-            returnvalue: job.returnvalue,
+            returnValue: job.returnvalue,
             logs,
             stacktrace: job.stacktrace,
           };

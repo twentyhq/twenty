@@ -7,3 +7,4 @@ export const QUEUE_RETENTION_SECONDS = {
   failedMaxAge: QUEUE_RETENTION_FAILED.age,
   failedMaxCount: QUEUE_RETENTION_FAILED.count,
 } as const;
+

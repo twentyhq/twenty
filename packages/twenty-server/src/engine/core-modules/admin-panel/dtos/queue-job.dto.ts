@@ -34,7 +34,7 @@ export class QueueJob {
   attemptsMade: number;
 
   @Field(() => GraphQLJSON, { nullable: true })
-  returnvalue?: object;
+  returnValue?: object;
 
   @Field(() => [String], { nullable: true })
   logs?: string[];

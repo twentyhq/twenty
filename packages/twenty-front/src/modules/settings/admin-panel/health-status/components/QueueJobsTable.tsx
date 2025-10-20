@@ -13,14 +13,14 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconRefresh, IconTrash } from 'twenty-ui/display';
 import { Button, Checkbox } from 'twenty-ui/input';
 import {
-    JobState,
-    type QueueJob,
-    useGetQueueJobsQuery,
+  JobState,
+  type QueueJob,
+  useGetQueueJobsQuery,
 } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -252,7 +252,10 @@ export const QueueJobsTable = ({
           {selectedCount > 0 && (
             <Button
               Icon={IconTrash}
-              title={`Delete ${selectedCount} Job${selectedCount === 1 ? '' : 's'}`}
+              title={plural(selectedCount, {
+                one: `Delete ${selectedCount} Job`,
+                other: `Delete ${selectedCount} Jobs`,
+              })}
               onClick={handleDeleteSelected}
               disabled={isDeleting || loading}
               size="small"
@@ -263,7 +266,10 @@ export const QueueJobsTable = ({
           {allSelectedAreFailed && (
             <Button
               Icon={IconRefresh}
-              title={`Retry ${selectedCount} Job${selectedCount === 1 ? '' : 's'}`}
+              title={plural(selectedCount, {
+                one: `Retry ${selectedCount} Job`,
+                other: `Retry ${selectedCount} Jobs`,
+              })}
               onClick={handleRetrySelected}
               disabled={isRetrying || loading}
               size="small"

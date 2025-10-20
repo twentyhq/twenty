@@ -1,5 +1,5 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useDeleteJobsMutation } from '~/generated-metadata/graphql';
 
@@ -22,10 +22,11 @@ export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
       const deletedCount = result.data?.deleteJobs;
 
       if (deletedCount !== undefined && deletedCount > 0) {
-        const jobText = deletedCount === 1 ? 'job' : 'jobs';
-
         enqueueSuccessSnackBar({
-          message: t`Successfully deleted ${deletedCount} ${jobText}`,
+          message: plural(deletedCount, {
+            one: `Successfully deleted ${deletedCount} job`,
+            other: `Successfully deleted ${deletedCount} jobs`,
+          }),
         });
 
         onSuccess?.();

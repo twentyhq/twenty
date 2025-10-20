@@ -4,8 +4,8 @@ export const GET_QUEUE_JOBS = gql`
   query GetQueueJobs(
     $queueName: String!
     $state: JobState
-    $limit: Float
-    $offset: Float
+    $limit: Int
+    $offset: Int
   ) {
     getQueueJobs(
       queueName: $queueName

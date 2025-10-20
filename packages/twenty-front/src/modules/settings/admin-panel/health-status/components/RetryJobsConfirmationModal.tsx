@@ -1,5 +1,5 @@
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 
 type RetryJobsConfirmationModalProps = {
   modalId: string;
@@ -14,13 +14,15 @@ export const RetryJobsConfirmationModal = ({
   onConfirm,
   onClose,
 }: RetryJobsConfirmationModalProps) => {
-  const jobText = jobCount === 1 ? 'Job' : 'Jobs';
-  const pronounText = jobCount === 1 ? 'It' : 'They';
-  const jobTypeText = jobCount === 1 ? 'job' : 'jobs';
+  const title = plural(jobCount, {
+    one: `Retry ${jobCount} Job`,
+    other: `Retry ${jobCount} Jobs`,
+  });
 
-  const title = t`Retry ${jobCount} ${jobText}`;
-
-  const subtitle = t`This will retry the selected ${jobTypeText}. ${pronounText} will be re-executed from the beginning.`;
+  const subtitle = plural(jobCount, {
+    one: `This will retry the selected job. It will be re-executed from the beginning.`,
+    other: `This will retry the selected jobs. They will be re-executed from the beginning.`,
+  });
 
   return (
     <ConfirmationModal
