@@ -42772,7 +42772,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:^14.2.0":
+"next@npm:^14.2.25":
   version: 14.2.33
   resolution: "next@npm:14.2.33"
   dependencies:
@@ -51994,7 +51994,7 @@ __metadata:
     eslint-config-next: "npm:^14.2.0"
     facepaint: "npm:^1.2.1"
     gray-matter: "npm:^4.0.3"
-    next: "npm:^14.2.0"
+    next: "npm:^14.2.25"
     next-mdx-remote: "npm:^4.4.1"
     next-runtime-env: "npm:^3.3.0"
     postgres: "npm:^3.4.3"
