@@ -1,4 +1,4 @@
-import { ResizableImageView } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/ResizableImageView';
+import { ResizableImageView } from '@/advanced-text-editor/extensions/resizable-image/ResizableImageView';
 import {
   type ImageOptions,
   Image as TiptapImage,

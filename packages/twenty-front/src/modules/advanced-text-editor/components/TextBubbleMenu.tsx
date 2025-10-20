@@ -1,8 +1,8 @@
-import { BubbleMenuIconButton } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/BubbleMenuIconButton';
-import { EditLinkPopover } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/EditLinkPopover';
-import { TurnIntoBlockDropdown } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/TurnIntoBlockDropdown';
-import { useTextBubbleState } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useTextBubbleState';
-import { isTextSelected } from '@/workflow/workflow-steps/workflow-actions/email-action/utils/isTextSelected';
+import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMenuIconButton';
+import { EditLinkPopover } from '@/advanced-text-editor/components/EditLinkPopover';
+import { TurnIntoBlockDropdown } from '@/advanced-text-editor/components/TurnIntoBlockDropdown';
+import { useTextBubbleState } from '@/advanced-text-editor/hooks/useTextBubbleState';
+import { isTextSelected } from '@/advanced-text-editor/utils/isTextSelected';
 import styled from '@emotion/styled';
 import { type Editor } from '@tiptap/core';
 import { BubbleMenu } from '@tiptap/react/menus';

@@ -1,8 +1,8 @@
+import { useTurnIntoBlockOptions } from '@/advanced-text-editor/hooks/useTurnIntoBlockOptions';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
-import { useTurnIntoBlockOptions } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useTurnIntoBlockOptions';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type Editor } from '@tiptap/react';
