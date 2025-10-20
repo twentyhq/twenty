@@ -16,6 +16,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
@@ -252,4 +253,8 @@ export class Workspace {
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true })
   version: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true, default: 'auto' })
+  routerModel: ModelId;
 }

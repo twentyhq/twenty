@@ -78,6 +78,7 @@ export const USER_QUERY_FRAGMENT = gql`
       defaultAgent {
         id
       }
+      routerModel
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
     }

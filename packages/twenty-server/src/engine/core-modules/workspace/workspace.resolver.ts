@@ -252,6 +252,11 @@ export class WorkspaceResolver {
     }
   }
 
+  @ResolveField(() => String, { nullable: true })
+  async routerModel(@Parent() workspace: Workspace): Promise<string | null> {
+    return workspace.routerModel;
+  }
+
   @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
