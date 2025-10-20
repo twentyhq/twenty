@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json",
+  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/agent.schema.json",
   "title": "Twenty Agent Manifest",
   "description": "Schema for Twenty AI agent configuration files",
   "type": "object",

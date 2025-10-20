@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { getSchemaUrls } from './schema-validator';
 import * as fs from 'fs-extra';
-import { BASE_APPLICATION_PROJECT_PATH } from '../constants/base-application-project-path';
+import { BASE_APPLICATION_PROJECT_PATH } from '../constants/constants-path';
 import { writeJsoncFile } from '../utils/jsonc-parser';
 import { join } from 'path';
 import path from 'path';

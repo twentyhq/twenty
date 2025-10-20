@@ -21,6 +21,7 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
+import { MESSAGE_QUEUE_PRIORITY } from 'src/engine/core-modules/message-queue/message-queue-priority.constant';
 
 export type BullMQDriverOptions = QueueOptions;
 
@@ -174,7 +175,7 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
 
     const queueOptions: JobsOptions = {
       jobId: options?.id ? `${options.id}-${v4()}` : undefined, // We add V4() to id to make sure ids are uniques so we can add a waiting job when a job related with the same option.id is running
-      priority: options?.priority,
+      priority: options?.priority ?? MESSAGE_QUEUE_PRIORITY[queueName],
       attempts: 1 + (options?.retryLimit || 0),
       removeOnComplete: {
         age: QUEUE_RETENTION.completedMaxAge,
@@ -184,6 +185,7 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
         age: QUEUE_RETENTION.failedMaxAge,
         count: QUEUE_RETENTION.failedMaxCount,
       },
+      delay: options?.delay,
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
