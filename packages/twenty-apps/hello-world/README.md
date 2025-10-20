@@ -14,6 +14,10 @@ This example will gradually gain complexity and capabilities as the twenty-cli m
 
 ## Install to your Twenty workspace
 
+```bash
+cp .env.example .env
+```
+
 - replace `<SET_YOUR_TWENTY_API>` with your apiKey
 
 ```bash
