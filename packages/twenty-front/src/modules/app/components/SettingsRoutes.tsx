@@ -350,6 +350,14 @@ const SettingsAdminIndicatorHealthStatus = lazy(() =>
   })),
 );
 
+const SettingsAdminQueueDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminQueueDetail').then(
+    (module) => ({
+      default: module.SettingsAdminQueueDetail,
+    }),
+  ),
+);
+
 const SettingsAdminConfigVariableDetails = lazy(() =>
   import(
     '~/pages/settings/admin-panel/SettingsAdminConfigVariableDetails'
@@ -635,6 +643,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelQueueDetail}
+            element={<SettingsAdminQueueDetail />}
           />
 
           <Route

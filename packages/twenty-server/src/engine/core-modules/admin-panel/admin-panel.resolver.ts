@@ -4,14 +4,17 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
+import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
+import { QueueJobsResponse } from 'src/engine/core-modules/admin-panel/dtos/queue-jobs-response.dto';
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { JobState } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
@@ -43,6 +46,7 @@ export class AdminPanelResolver {
   constructor(
     private adminService: AdminPanelService,
     private adminPanelHealthService: AdminPanelHealthService,
+    private adminPanelQueueService: AdminPanelQueueService,
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -107,7 +111,7 @@ export class AdminPanelResolver {
     queueName: string,
     @Args('timeRange', {
       nullable: true,
-      defaultValue: QueueMetricsTimeRange.OneDay,
+      defaultValue: QueueMetricsTimeRange.OneHour,
       type: () => QueueMetricsTimeRange,
     })
     timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneHour,
@@ -166,5 +170,53 @@ export class AdminPanelResolver {
     await this.twentyConfigService.delete(key);
 
     return true;
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Query(() => QueueJobsResponse)
+  async getQueueJobs(
+    @Args('queueName', { type: () => String })
+    queueName: string,
+    @Args('state', { type: () => JobState, nullable: true })
+    state?: JobState,
+    @Args('limit', { type: () => Number, nullable: true, defaultValue: 50 })
+    limit?: number,
+    @Args('offset', { type: () => Number, nullable: true, defaultValue: 0 })
+    offset?: number,
+  ): Promise<QueueJobsResponse> {
+    return await this.adminPanelQueueService.getQueueJobs(
+      queueName as MessageQueue,
+      state,
+      limit,
+      offset,
+    );
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => Number)
+  async retryJobs(
+    @Args('queueName', { type: () => String })
+    queueName: string,
+    @Args('jobIds', { type: () => [String] })
+    jobIds: string[],
+  ): Promise<number> {
+    return await this.adminPanelQueueService.retryJobs(
+      queueName as MessageQueue,
+      jobIds,
+    );
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => Number)
+  async deleteJobs(
+    @Args('queueName', { type: () => String })
+    queueName: string,
+    @Args('jobIds', { type: () => [String] })
+    jobIds: string[],
+  ): Promise<number> {
+    return await this.adminPanelQueueService.deleteJobs(
+      queueName as MessageQueue,
+      jobIds,
+    );
   }
 }

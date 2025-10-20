@@ -1644,6 +1644,16 @@ export type InvalidatePassword = {
   success: Scalars['Boolean'];
 };
 
+/** Job state in the queue */
+export enum JobState {
+  active = 'active',
+  completed = 'completed',
+  delayed = 'delayed',
+  failed = 'failed',
+  paused = 'paused',
+  waiting = 'waiting'
+}
+
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
@@ -1765,6 +1775,7 @@ export type Mutation = {
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
+  deleteJobs: Scalars['Float'];
   deleteOneAgent: Agent;
   deleteOneCronTrigger: CronTrigger;
   deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
@@ -1821,6 +1832,7 @@ export type Mutation = {
   restorePageLayout: PageLayout;
   restorePageLayoutTab: PageLayoutTab;
   restorePageLayoutWidget: PageLayoutWidget;
+  retryJobs: Scalars['Float'];
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -2174,6 +2186,12 @@ export type MutationDeleteFileArgs = {
 };
 
 
+export type MutationDeleteJobsArgs = {
+  jobIds: Array<Scalars['String']>;
+  queueName: Scalars['String'];
+};
+
+
 export type MutationDeleteOneAgentArgs = {
   input: AgentIdInput;
 };
@@ -2440,6 +2458,12 @@ export type MutationRestorePageLayoutTabArgs = {
 
 export type MutationRestorePageLayoutWidgetArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationRetryJobsArgs = {
+  jobIds: Array<Scalars['String']>;
+  queueName: Scalars['String'];
 };
 
 
@@ -3147,6 +3171,7 @@ export type Query = {
   getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
+  getQueueJobs: QueueJobsResponse;
   getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
@@ -3407,6 +3432,14 @@ export type QueryGetPublicWorkspaceDataByDomainArgs = {
 };
 
 
+export type QueryGetQueueJobsArgs = {
+  limit?: InputMaybe<Scalars['Float']>;
+  offset?: InputMaybe<Scalars['Float']>;
+  queueName: Scalars['String'];
+  state?: InputMaybe<JobState>;
+};
+
+
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
@@ -3501,6 +3534,31 @@ export type QueryWebhookArgs = {
   input: GetWebhookDto;
 };
 
+export type QueueJob = {
+  __typename?: 'QueueJob';
+  attemptsMade: Scalars['Float'];
+  data?: Maybe<Scalars['JSON']>;
+  failedReason?: Maybe<Scalars['String']>;
+  finishedOn?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  logs?: Maybe<Array<Scalars['String']>>;
+  name: Scalars['String'];
+  processedOn?: Maybe<Scalars['Float']>;
+  returnvalue?: Maybe<Scalars['JSON']>;
+  stacktrace?: Maybe<Array<Scalars['String']>>;
+  state: JobState;
+  timestamp?: Maybe<Scalars['Float']>;
+};
+
+export type QueueJobsResponse = {
+  __typename?: 'QueueJobsResponse';
+  count: Scalars['Float'];
+  hasMore: Scalars['Boolean'];
+  jobs: Array<QueueJob>;
+  retentionConfig: QueueRetentionConfig;
+  totalCount: Scalars['Float'];
+};
+
 export type QueueMetricsData = {
   __typename?: 'QueueMetricsData';
   data: Array<QueueMetricsSeries>;
@@ -3529,6 +3587,14 @@ export enum QueueMetricsTimeRange {
   SevenDays = 'SevenDays',
   TwelveHours = 'TwelveHours'
 }
+
+export type QueueRetentionConfig = {
+  __typename?: 'QueueRetentionConfig';
+  completedMaxAge: Scalars['Float'];
+  completedMaxCount: Scalars['Float'];
+  failedMaxAge: Scalars['Float'];
+  failedMaxCount: Scalars['Float'];
+};
 
 export type Relation = {
   __typename?: 'Relation';
@@ -5340,12 +5406,38 @@ export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetVersionInfoQuery = { __typename?: 'Query', versionInfo: { __typename?: 'VersionInfo', currentVersion?: string | null, latestVersion: string } };
 
+export type DeleteJobsMutationVariables = Exact<{
+  queueName: Scalars['String'];
+  jobIds: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type DeleteJobsMutation = { __typename?: 'Mutation', deleteJobs: number };
+
+export type RetryJobsMutationVariables = Exact<{
+  queueName: Scalars['String'];
+  jobIds: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type RetryJobsMutation = { __typename?: 'Mutation', retryJobs: number };
+
 export type GetIndicatorHealthStatusQueryVariables = Exact<{
   indicatorId: HealthIndicatorId;
 }>;
 
 
 export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', id: HealthIndicatorId, label: string, description: string, status: AdminPanelHealthServiceStatus, errorMessage?: string | null, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', id: string, queueName: string, status: AdminPanelHealthServiceStatus }> | null } };
+
+export type GetQueueJobsQueryVariables = Exact<{
+  queueName: Scalars['String'];
+  state?: InputMaybe<JobState>;
+  limit?: InputMaybe<Scalars['Float']>;
+  offset?: InputMaybe<Scalars['Float']>;
+}>;
+
+
+export type GetQueueJobsQuery = { __typename?: 'Query', getQueueJobs: { __typename?: 'QueueJobsResponse', count: number, totalCount: number, hasMore: boolean, jobs: Array<{ __typename?: 'QueueJob', id: string, name: string, data?: any | null, state: JobState, timestamp?: number | null, failedReason?: string | null, processedOn?: number | null, finishedOn?: number | null, attemptsMade: number, returnvalue?: any | null, logs?: Array<string> | null, stacktrace?: Array<string> | null }>, retentionConfig: { __typename?: 'QueueRetentionConfig', completedMaxAge: number, completedMaxCount: number, failedMaxAge: number, failedMaxCount: number } } };
 
 export type GetQueueMetricsQueryVariables = Exact<{
   queueName: Scalars['String'];
@@ -10166,6 +10258,70 @@ export function useGetVersionInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetVersionInfoQueryHookResult = ReturnType<typeof useGetVersionInfoQuery>;
 export type GetVersionInfoLazyQueryHookResult = ReturnType<typeof useGetVersionInfoLazyQuery>;
 export type GetVersionInfoQueryResult = Apollo.QueryResult<GetVersionInfoQuery, GetVersionInfoQueryVariables>;
+export const DeleteJobsDocument = gql`
+    mutation DeleteJobs($queueName: String!, $jobIds: [String!]!) {
+  deleteJobs(queueName: $queueName, jobIds: $jobIds)
+}
+    `;
+export type DeleteJobsMutationFn = Apollo.MutationFunction<DeleteJobsMutation, DeleteJobsMutationVariables>;
+
+/**
+ * __useDeleteJobsMutation__
+ *
+ * To run a mutation, you first call `useDeleteJobsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteJobsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteJobsMutation, { data, loading, error }] = useDeleteJobsMutation({
+ *   variables: {
+ *      queueName: // value for 'queueName'
+ *      jobIds: // value for 'jobIds'
+ *   },
+ * });
+ */
+export function useDeleteJobsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteJobsMutation, DeleteJobsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteJobsMutation, DeleteJobsMutationVariables>(DeleteJobsDocument, options);
+      }
+export type DeleteJobsMutationHookResult = ReturnType<typeof useDeleteJobsMutation>;
+export type DeleteJobsMutationResult = Apollo.MutationResult<DeleteJobsMutation>;
+export type DeleteJobsMutationOptions = Apollo.BaseMutationOptions<DeleteJobsMutation, DeleteJobsMutationVariables>;
+export const RetryJobsDocument = gql`
+    mutation RetryJobs($queueName: String!, $jobIds: [String!]!) {
+  retryJobs(queueName: $queueName, jobIds: $jobIds)
+}
+    `;
+export type RetryJobsMutationFn = Apollo.MutationFunction<RetryJobsMutation, RetryJobsMutationVariables>;
+
+/**
+ * __useRetryJobsMutation__
+ *
+ * To run a mutation, you first call `useRetryJobsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRetryJobsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [retryJobsMutation, { data, loading, error }] = useRetryJobsMutation({
+ *   variables: {
+ *      queueName: // value for 'queueName'
+ *      jobIds: // value for 'jobIds'
+ *   },
+ * });
+ */
+export function useRetryJobsMutation(baseOptions?: Apollo.MutationHookOptions<RetryJobsMutation, RetryJobsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RetryJobsMutation, RetryJobsMutationVariables>(RetryJobsDocument, options);
+      }
+export type RetryJobsMutationHookResult = ReturnType<typeof useRetryJobsMutation>;
+export type RetryJobsMutationResult = Apollo.MutationResult<RetryJobsMutation>;
+export type RetryJobsMutationOptions = Apollo.BaseMutationOptions<RetryJobsMutation, RetryJobsMutationVariables>;
 export const GetIndicatorHealthStatusDocument = gql`
     query GetIndicatorHealthStatus($indicatorId: HealthIndicatorId!) {
   getIndicatorHealthStatus(indicatorId: $indicatorId) {
@@ -10211,6 +10367,71 @@ export function useGetIndicatorHealthStatusLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetIndicatorHealthStatusQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusQuery>;
 export type GetIndicatorHealthStatusLazyQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusLazyQuery>;
 export type GetIndicatorHealthStatusQueryResult = Apollo.QueryResult<GetIndicatorHealthStatusQuery, GetIndicatorHealthStatusQueryVariables>;
+export const GetQueueJobsDocument = gql`
+    query GetQueueJobs($queueName: String!, $state: JobState, $limit: Float, $offset: Float) {
+  getQueueJobs(
+    queueName: $queueName
+    state: $state
+    limit: $limit
+    offset: $offset
+  ) {
+    jobs {
+      id
+      name
+      data
+      state
+      timestamp
+      failedReason
+      processedOn
+      finishedOn
+      attemptsMade
+      returnvalue
+      logs
+      stacktrace
+    }
+    count
+    totalCount
+    hasMore
+    retentionConfig {
+      completedMaxAge
+      completedMaxCount
+      failedMaxAge
+      failedMaxCount
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetQueueJobsQuery__
+ *
+ * To run a query within a React component, call `useGetQueueJobsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetQueueJobsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetQueueJobsQuery({
+ *   variables: {
+ *      queueName: // value for 'queueName'
+ *      state: // value for 'state'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetQueueJobsQuery(baseOptions: Apollo.QueryHookOptions<GetQueueJobsQuery, GetQueueJobsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetQueueJobsQuery, GetQueueJobsQueryVariables>(GetQueueJobsDocument, options);
+      }
+export function useGetQueueJobsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQueueJobsQuery, GetQueueJobsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetQueueJobsQuery, GetQueueJobsQueryVariables>(GetQueueJobsDocument, options);
+        }
+export type GetQueueJobsQueryHookResult = ReturnType<typeof useGetQueueJobsQuery>;
+export type GetQueueJobsLazyQueryHookResult = ReturnType<typeof useGetQueueJobsLazyQuery>;
+export type GetQueueJobsQueryResult = Apollo.QueryResult<GetQueueJobsQuery, GetQueueJobsQueryVariables>;
 export const GetQueueMetricsDocument = gql`
     query GetQueueMetrics($queueName: String!, $timeRange: QueueMetricsTimeRange) {
   getQueueMetrics(queueName: $queueName, timeRange: $timeRange) {

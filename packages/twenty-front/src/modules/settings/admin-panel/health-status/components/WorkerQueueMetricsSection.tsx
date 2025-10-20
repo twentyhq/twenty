@@ -4,7 +4,10 @@ import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { lazy, Suspense, useState } from 'react';
-import { H2Title } from 'twenty-ui/display';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { H2Title, IconList } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
   type AdminPanelWorkerQueueHealth,
@@ -22,9 +25,15 @@ type WorkerQueueMetricsSectionProps = {
 };
 
 const StyledControlsContainer = styled.div`
-  display: flex;
   align-items: flex-start;
+  display: flex;
   justify-content: space-between;
+`;
+
+const StyledRightControls = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledContainer = styled.div`
@@ -43,17 +52,28 @@ export const WorkerQueueMetricsSection = ({
       <Section>
         <StyledControlsContainer>
           <H2Title title={queue.queueName} description={t`Queue performance`} />
-          <Select
-            dropdownId={`timerange-${queue.queueName}`}
-            value={timeRange}
-            options={WORKER_QUEUE_METRICS_SELECT_OPTIONS.map((option) => ({
-              ...option,
-              label: t(option.label),
-            }))}
-            onChange={setTimeRange}
-            needIconCheck
-            selectSizeVariant="small"
-          />
+          <StyledRightControls>
+            <Button
+              Icon={IconList}
+              title={t`View Jobs`}
+              size="small"
+              variant="secondary"
+              to={getSettingsPath(SettingsPath.AdminPanelQueueDetail, {
+                queueName: queue.queueName,
+              })}
+            />
+            <Select
+              dropdownId={`timerange-${queue.queueName}`}
+              value={timeRange}
+              options={WORKER_QUEUE_METRICS_SELECT_OPTIONS.map((option) => ({
+                ...option,
+                label: t(option.label),
+              }))}
+              onChange={setTimeRange}
+              needIconCheck
+              selectSizeVariant="small"
+            />
+          </StyledRightControls>
         </StyledControlsContainer>
       </Section>
       <Suspense fallback={<ChartSkeletonLoader />}>
