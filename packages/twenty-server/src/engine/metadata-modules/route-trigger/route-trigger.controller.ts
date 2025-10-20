@@ -15,11 +15,11 @@ import { Request } from 'express';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { RouteTriggerService } from 'src/engine/metadata-modules/route-trigger/route-trigger.service';
-import { RouteTriggerExceptionFilter } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger-exception-filter';
+import { RouteTriggerRestApiExceptionFilter } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger-rest-api-exception-filter';
 
 @Controller('s')
 @UseGuards(PublicEndpointGuard)
-@UseFilters(RouteTriggerExceptionFilter)
+@UseFilters(RouteTriggerRestApiExceptionFilter)
 export class RouteTriggerController {
   constructor(private readonly routeTriggerService: RouteTriggerService) {}
 
