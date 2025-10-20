@@ -1607,8 +1607,9 @@ export enum JobState {
   completed = 'completed',
   delayed = 'delayed',
   failed = 'failed',
-  paused = 'paused',
-  waiting = 'waiting'
+  prioritized = 'prioritized',
+  waiting = 'waiting',
+  waitingChildren = 'waitingChildren'
 }
 
 export type LineChartConfiguration = {

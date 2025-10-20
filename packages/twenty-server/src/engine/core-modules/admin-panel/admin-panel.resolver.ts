@@ -14,7 +14,10 @@ import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-p
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
-import { JobState } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
+import {
+  JobState,
+  JobStateEnum,
+} from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
@@ -177,7 +180,7 @@ export class AdminPanelResolver {
   async getQueueJobs(
     @Args('queueName', { type: () => String })
     queueName: string,
-    @Args('state', { type: () => JobState })
+    @Args('state', { type: () => JobStateEnum })
     state: JobState,
     @Args('limit', { type: () => Int, nullable: true, defaultValue: 50 })
     limit?: number,

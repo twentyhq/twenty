@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { Job, Queue } from 'bullmq';
+import { Queue } from 'bullmq';
 
 import { JobState } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
@@ -29,34 +29,24 @@ export class AdminPanelQueueService {
       const start = validOffset;
       const end = validOffset + validLimit - 1;
 
-      const jobs = await queue.getJobs(
-        [state] as (
-          | 'completed'
-          | 'failed'
-          | 'active'
-          | 'waiting'
-          | 'delayed'
-          | 'paused'
-        )[],
-        start,
-        end,
-        false,
-      );
+      const jobs = await queue.getJobs([state], start, end, false);
 
-      const transformedJobs = jobs.map((job) => ({
-        id: job.id!,
-        name: job.name,
-        data: job.data,
-        state: this.getJobState(job),
-        timestamp: job.timestamp,
-        failedReason: job.failedReason,
-        processedOn: job.processedOn,
-        finishedOn: job.finishedOn,
-        attemptsMade: job.attemptsMade,
-        returnValue: job.returnValue,
-        logs: undefined,
-        stackTrace: job.stackTrace,
-      }));
+      const transformedJobs = await Promise.all(
+        jobs.map(async (job) => ({
+          id: job.id!,
+          name: job.name,
+          data: job.data,
+          state: await job.getState(),
+          timestamp: job.timestamp,
+          failedReason: job.failedReason,
+          processedOn: job.processedOn,
+          finishedOn: job.finishedOn,
+          attemptsMade: job.attemptsMade,
+          returnValue: job.returnValue,
+          logs: undefined,
+          stackTrace: job.stackTrace,
+        })),
+      );
 
       const hasMore = jobs.length === validLimit;
 
@@ -67,7 +57,8 @@ export class AdminPanelQueueService {
         'active',
         'waiting',
         'delayed',
-        'paused',
+        'prioritized',
+        'waiting-children',
       );
 
       const totalCountForState = (() => {
@@ -82,8 +73,10 @@ export class AdminPanelQueueService {
             return jobCounts.waiting ?? 0;
           case 'delayed':
             return jobCounts.delayed ?? 0;
-          case 'paused':
-            return jobCounts.paused ?? 0;
+          case 'prioritized':
+            return jobCounts.prioritized ?? 0;
+          case 'waiting-children':
+            return jobCounts['waiting-children'] ?? 0;
           default:
             return jobs.length;
         }
@@ -193,19 +186,5 @@ export class AdminPanelQueueService {
     } finally {
       await queue.close();
     }
-  }
-
-  private getJobState(job: Job): JobState {
-    if (job.finishedOn) {
-      return job.failedReason ? JobState.failed : JobState.completed;
-    }
-    if (job.processedOn) {
-      return JobState.active;
-    }
-    if (job.delay) {
-      return JobState.delayed;
-    }
-
-    return JobState.waiting;
   }
 }

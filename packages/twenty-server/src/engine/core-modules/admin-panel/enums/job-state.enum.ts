@@ -1,15 +1,22 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-export enum JobState {
+import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
+
+export type JobState = BullMQJobState;
+
+// Create a GraphQL enum that matches BullMQ's JobState
+// This is only used for GraphQL schema generation
+export enum JobStateEnum {
   completed = 'completed',
   failed = 'failed',
   active = 'active',
   waiting = 'waiting',
   delayed = 'delayed',
-  paused = 'paused',
+  prioritized = 'prioritized',
+  waitingChildren = 'waiting-children',
 }
 
-registerEnumType(JobState, {
+registerEnumType(JobStateEnum, {
   name: 'JobState',
   description: 'Job state in the queue',
 });
