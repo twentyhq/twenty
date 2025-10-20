@@ -1,0 +1,19 @@
+{
+  "name": "twenty-sdk",
+  "version": "0.0.1",
+  "license": "AGPL-3.0",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "typescript": "5.9.2",
+    "vite": "^7.0.0",
+    "vite-plugin-dts": "3.8.1"
+  }
+}
