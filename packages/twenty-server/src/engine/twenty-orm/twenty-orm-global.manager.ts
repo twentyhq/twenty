@@ -4,6 +4,7 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
@@ -15,30 +16,19 @@ export class TwentyORMGlobalManager {
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntity: Type<T>,
-    options?: {
-      shouldBypassPermissionChecks?: boolean;
-      roleId?: string;
-    },
+    options?: RolePermissionConfig,
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     objectMetadataName: string,
-    options?: {
-      shouldBypassPermissionChecks?: boolean;
-      roleId?: string;
-    },
+    options?: RolePermissionConfig,
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntityOrObjectMetadataName: Type<T> | string,
-    options: {
-      shouldBypassPermissionChecks?: boolean;
-      roleId?: string;
-    } = {
-      shouldBypassPermissionChecks: false,
-    },
+    options?: RolePermissionConfig,
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
 
@@ -55,8 +45,7 @@ export class TwentyORMGlobalManager {
 
     const repository = workspaceDataSource.getRepository<T>(
       objectMetadataName,
-      options.shouldBypassPermissionChecks,
-      options.roleId,
+      options,
     );
 
     return repository;
