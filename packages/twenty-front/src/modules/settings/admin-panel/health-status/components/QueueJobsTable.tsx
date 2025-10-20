@@ -18,9 +18,9 @@ import { useState } from 'react';
 import { IconRefresh, IconTrash } from 'twenty-ui/display';
 import { Button, Checkbox } from 'twenty-ui/input';
 import {
-    JobState,
-    type QueueJob,
-    useGetQueueJobsQuery,
+  JobState,
+  type QueueJob,
+  useGetQueueJobsQuery,
 } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
