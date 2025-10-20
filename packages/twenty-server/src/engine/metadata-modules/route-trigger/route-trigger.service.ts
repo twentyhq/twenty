@@ -6,8 +6,6 @@ import { Request } from 'express';
 import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
-import type { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
-
 import {
   HTTPMethod,
   RouteTrigger,
@@ -148,10 +146,6 @@ export class RouteTriggerService {
         'draft',
       );
 
-    return this.formatServerlessControllerResponse(result);
-  }
-
-  formatServerlessControllerResponse = (result: ServerlessExecuteResult) => {
     if (!isDefined(result)) {
       return result;
     }
@@ -164,5 +158,5 @@ export class RouteTriggerService {
     }
 
     return result.data;
-  };
+  }
 }
