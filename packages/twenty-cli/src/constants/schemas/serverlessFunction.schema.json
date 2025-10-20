@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/serverlessFunction.schema.json",
+  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/serverlessFunction.schema.json",
   "title": "Twenty Serverless Function Manifest",
   "description": "Schema for Twenty AI serverless function configuration files",
   "type": "object",
@@ -41,7 +41,7 @@
       "description": "Serverless function's triggers",
       "items": {
         "anyOf": [
-          { "$ref": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/trigger.schema.json" },
+          { "$ref": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/trigger.schema.json" },
           {
             "type": "object",
             "required": ["$ref"],

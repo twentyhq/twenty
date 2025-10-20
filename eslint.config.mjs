@@ -54,6 +54,10 @@ export default [
           allow: [],
           depConstraints: [
             {
+              sourceTag: 'scope:sdk',
+              onlyDependOnLibsWithTags: ['scope:sdk'],
+            },
+            {
               sourceTag: 'scope:shared',
               onlyDependOnLibsWithTags: ['scope:shared'],
             },
@@ -123,7 +127,7 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { 
+        {
           prefer: 'type-imports',
           fixStyle: 'inline-type-imports'
         },
