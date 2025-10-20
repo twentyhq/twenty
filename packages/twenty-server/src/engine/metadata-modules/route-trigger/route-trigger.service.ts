@@ -1,10 +1,4 @@
-import {
-  ForbiddenException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -20,11 +14,11 @@ import {
 } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import {
+  RouteTriggerException,
+  RouteTriggerExceptionCode,
+} from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
 
 @Injectable()
 export class RouteTriggerService {
@@ -55,9 +49,9 @@ export class RouteTriggerService {
 
     assertIsDefinedOrThrow(
       workspace,
-      new AuthException(
+      new RouteTriggerException(
         'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+        RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
       ),
     );
 
@@ -85,7 +79,10 @@ export class RouteTriggerService {
       }
     }
 
-    throw new NotFoundException('No Route trigger found');
+    throw new RouteTriggerException(
+      'No Route trigger found',
+      RouteTriggerExceptionCode.TRIGGER_NOT_FOUND,
+    );
   }
 
   private async validateWorkspaceFromRequest({
@@ -99,11 +96,17 @@ export class RouteTriggerService {
       await this.accessTokenService.validateTokenByRequest(request);
 
     if (!isDefined(workspace)) {
-      throw new NotFoundException('Workspace not found');
+      throw new RouteTriggerException(
+        'Workspace not found',
+        RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
+      );
     }
 
     if (workspace.id !== workspaceId) {
-      throw new ForbiddenException('Invalid Workspace');
+      throw new RouteTriggerException(
+        'You are not authorized',
+        RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
   }
 
@@ -154,12 +157,9 @@ export class RouteTriggerService {
     }
 
     if (result.error) {
-      throw new HttpException(
-        {
-          errorType: result.error.errorType,
-          message: result.error.errorMessage,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      throw new RouteTriggerException(
+        result.error.errorMessage,
+        RouteTriggerExceptionCode.SERVERLESS_FUNCTION_EXECUTION_ERROR,
       );
     }
 
