@@ -20,6 +20,7 @@ const StyledEditorContainer = styled.div<{
   .editor-content {
     flex-grow: 1;
     width: 100%;
+    height: 100%;
     min-height: ${EMAIL_EDITOR_MIN_HEIGHT}px;
     max-width: ${EMAIL_EDITOR_MAX_WIDTH}px;
     margin: 0 auto;
