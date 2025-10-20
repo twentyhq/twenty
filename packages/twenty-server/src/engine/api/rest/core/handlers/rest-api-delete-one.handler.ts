@@ -29,14 +29,14 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
-      const selectedFieldsResult = await this.computeSelectedFields({
+      const selectedFields = await this.computeSelectedFields({
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
         authContext,
       });
 
       const record = await this.commonDeleteOneQueryRunnerService.run({
-        args: { id, selectedFieldsResult },
+        args: { id, selectedFields },
         authContext,
         objectMetadataMaps,
         objectMetadataItemWithFieldMaps,

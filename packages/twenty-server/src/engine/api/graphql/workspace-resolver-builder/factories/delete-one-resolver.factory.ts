@@ -11,7 +11,6 @@ import {
 import { type WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { CommonDeleteOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-delete-one-query-runner.service';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { GraphqlQueryDeleteOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-delete-one-resolver.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -45,20 +44,11 @@ export class DeleteOneResolverFactory
       const featureFlagsMap = workspaceDataSource.featureFlagMap;
 
       if (featureFlagsMap[FeatureFlagKey.IS_COMMON_API_ENABLED]) {
-        const graphqlQueryParser = new GraphqlQueryParser(
-          internalContext.objectMetadataItemWithFieldMaps,
-          internalContext.objectMetadataMaps,
-        );
-
-        const selectedFieldsResult = graphqlQueryParser.parseSelectedFields(
-          internalContext.objectMetadataItemWithFieldMaps,
-          graphqlFields(info),
-          internalContext.objectMetadataMaps,
-        );
+        const selectedFields = graphqlFields(info);
 
         try {
           const record = await this.commonDeleteOneQueryRunnerService.run({
-            args: { ...args, selectedFieldsResult },
+            args: { ...args, selectedFields },
             authContext: internalContext.authContext,
             objectMetadataMaps: internalContext.objectMetadataMaps,
             objectMetadataItemWithFieldMaps:

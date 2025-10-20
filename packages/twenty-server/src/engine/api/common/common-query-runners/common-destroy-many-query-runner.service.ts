@@ -15,6 +15,7 @@ import {
   CommonQueryNames,
   DestroyManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
@@ -22,6 +23,7 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
 export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerService {
@@ -45,15 +47,22 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
       );
     }
 
-    const {
-      workspaceDataSource,
-      repository,
-      roleId,
-      shouldBypassPermissionChecks,
-    } = await this.prepareQueryRunnerContext({
-      authContext,
+    const { workspaceDataSource, repository, rolePermissionConfig } =
+      await this.prepareQueryRunnerContext({
+        authContext,
+        objectMetadataItemWithFieldMaps,
+      });
+
+    const commonQueryParser = new GraphqlQueryParser(
       objectMetadataItemWithFieldMaps,
-    });
+      objectMetadataMaps,
+    );
+
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
+      objectMetadataItemWithFieldMaps,
+      args.selectedFields,
+      objectMetadataMaps,
+    );
 
     const processedArgs = await this.processQueryArgs({
       authContext,
@@ -65,11 +74,6 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -77,8 +81,8 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
     );
 
     const columnsToReturn = buildColumnsToReturn({
-      select: processedArgs.selectedFieldsResult.select,
-      relations: processedArgs.selectedFieldsResult.relations,
+      select: selectedFieldsResult.select,
+      relations: selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     });
@@ -91,14 +95,13 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
     const deletedRecords = deletedObjectRecords.generatedMaps as ObjectRecord[];
 
     await this.processNestedRelationsIfNeeded({
-      args: processedArgs,
       records: deletedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      roleId,
+      rolePermissionConfig,
       authContext,
       workspaceDataSource,
-      shouldBypassPermissionChecks,
+      selectedFieldsResult,
     });
 
     const enrichedRecords = await this.enrichResultsWithGettersAndHooks({
@@ -113,25 +116,23 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
   }
 
   private async processNestedRelationsIfNeeded({
-    args,
     records,
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
-    roleId,
+    rolePermissionConfig,
     authContext,
     workspaceDataSource,
-    shouldBypassPermissionChecks,
+    selectedFieldsResult,
   }: {
-    args: DestroyManyQueryArgs;
     records: ObjectRecord[];
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
-    roleId?: string;
     authContext: AuthContext;
+    rolePermissionConfig?: RolePermissionConfig;
     workspaceDataSource: WorkspaceDataSource;
-    shouldBypassPermissionChecks: boolean;
+    selectedFieldsResult: CommonSelectedFieldsResult;
   }): Promise<void> {
-    if (!args.selectedFieldsResult.relations) {
+    if (!selectedFieldsResult.relations) {
       return;
     }
 
@@ -140,16 +141,15 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
       parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
       parentObjectRecords: records,
       //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
-      relations: args.selectedFieldsResult.relations as Record<
+      relations: selectedFieldsResult.relations as Record<
         string,
         FindOptionsRelations<ObjectLiteral>
       >,
       limit: QUERY_MAX_RECORDS,
       authContext,
       workspaceDataSource,
-      roleId,
-      shouldBypassPermissionChecks,
-      selectedFields: args.selectedFieldsResult.select,
+      rolePermissionConfig,
+      selectedFields: selectedFieldsResult.select,
     });
   }
 
