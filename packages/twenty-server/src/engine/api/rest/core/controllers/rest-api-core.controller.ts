@@ -67,7 +67,7 @@ export class RestApiCoreController {
   }
 
   //TODO: Refacto-common - Document this endpoint
-  @Get('*/group')
+  @Get('*/groupBy')
   async handleApiGroupBy(
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,
