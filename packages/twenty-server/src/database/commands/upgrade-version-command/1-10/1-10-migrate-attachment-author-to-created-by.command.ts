@@ -63,49 +63,42 @@ export class MigrateAttachmentAuthorToCreatedByCommand extends ActiveOrSuspended
 
     let migratedCount = 0;
 
-    // Process attachments in batches to avoid memory issues
-    const batchSize = 100;
+    for (const attachment of attachments) {
+      const { id, authorId } = attachment;
 
-    for (let i = 0; i < attachments.length; i += batchSize) {
-      const batch = attachments.slice(i, i + batchSize);
-
-      for (const attachment of batch) {
-        const { id, authorId } = attachment;
-
-        if (!isDefined(authorId)) {
-          continue;
-        }
-
-        const workspaceMember = await workspaceMemberRepository.findOne({
-          where: { id: authorId },
-        });
-
-        if (!isDefined(workspaceMember)) {
-          this.logger.warn(
-            `Workspace member ${authorId} not found for attachment ${id}, skipping`,
-          );
-          continue;
-        }
-
-        const firstName = workspaceMember.name?.firstName || '';
-        const lastName = workspaceMember.name?.lastName || '';
-        const displayName =
-          firstName || lastName ? `${firstName} ${lastName}`.trim() : 'Unknown';
-
-        await attachmentRepository.update(
-          { id },
-          {
-            createdBy: {
-              source: FieldActorSource.MANUAL,
-              workspaceMemberId: workspaceMember.id,
-              name: displayName,
-              context: {},
-            },
-          },
-        );
-
-        migratedCount++;
+      if (!isDefined(authorId)) {
+        continue;
       }
+
+      const workspaceMember = await workspaceMemberRepository.findOne({
+        where: { id: authorId },
+      });
+
+      if (!isDefined(workspaceMember)) {
+        this.logger.warn(
+          `Workspace member ${authorId} not found for attachment ${id}, skipping`,
+        );
+        continue;
+      }
+
+      const firstName = workspaceMember.name?.firstName || '';
+      const lastName = workspaceMember.name?.lastName || '';
+      const displayName =
+        firstName || lastName ? `${firstName} ${lastName}`.trim() : 'Unknown';
+
+      await attachmentRepository.update(
+        { id },
+        {
+          createdBy: {
+            source: FieldActorSource.MANUAL,
+            workspaceMemberId: workspaceMember.id,
+            name: displayName,
+            context: {},
+          },
+        },
+      );
+
+      migratedCount++;
     }
 
     this.logger.log(
