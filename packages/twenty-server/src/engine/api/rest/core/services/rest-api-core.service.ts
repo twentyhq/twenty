@@ -27,16 +27,35 @@ export class RestApiCoreService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
+  private async isCommonApiEnabled(request: AuthenticatedRequest) {
+    return await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_COMMON_API_ENABLED,
+      request.workspace.id,
+    );
+  }
+
   async delete(request: AuthenticatedRequest) {
     return await this.restApiDeleteOneHandler.handle(request);
   }
 
   async createOne(request: AuthenticatedRequest) {
-    return await this.restApiCreateOneHandler.handle(request);
+    const isCommonApiEnabled = await this.isCommonApiEnabled(request);
+
+    if (isCommonApiEnabled) {
+      return await this.restApiCreateOneHandler.commonHandle(request);
+    } else {
+      return await this.restApiCreateOneHandler.handle(request);
+    }
   }
 
   async createMany(request: AuthenticatedRequest) {
-    return await this.restApiCreateManyHandler.handle(request);
+    const isCommonApiEnabled = await this.isCommonApiEnabled(request);
+
+    if (isCommonApiEnabled) {
+      return await this.restApiCreateManyHandler.commonHandle(request);
+    } else {
+      return await this.restApiCreateManyHandler.handle(request);
+    }
   }
 
   async findDuplicates(request: AuthenticatedRequest) {
@@ -49,20 +68,20 @@ export class RestApiCoreService {
 
   async get(request: AuthenticatedRequest) {
     const { id: recordId } = parseCorePath(request);
+    const isCommonApiEnabled = await this.isCommonApiEnabled(request);
 
-    if (isDefined(recordId)) {
-      const isCommonApiEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_COMMON_API_ENABLED,
-        request.workspace.id,
-      );
-
-      if (isCommonApiEnabled) {
+    if (isCommonApiEnabled) {
+      if (isDefined(recordId)) {
         return await this.restApiFindOneHandler.commonHandle(request);
+      } else {
+        return await this.restApiFindManyHandler.commonHandle(request);
       }
-
-      return await this.restApiFindOneHandler.handle(request);
     } else {
-      return await this.restApiFindManyHandler.handle(request);
+      if (isDefined(recordId)) {
+        return await this.restApiFindOneHandler.handle(request);
+      } else {
+        return await this.restApiFindManyHandler.handle(request);
+      }
     }
   }
 }

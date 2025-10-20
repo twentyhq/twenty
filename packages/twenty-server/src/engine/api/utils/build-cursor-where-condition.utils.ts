@@ -1,7 +1,7 @@
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type ObjectRecord,
   type ObjectRecordCursorLeafCompositeValue,
   type ObjectRecordCursorLeafScalarValue,
   type ObjectRecordOrderBy,

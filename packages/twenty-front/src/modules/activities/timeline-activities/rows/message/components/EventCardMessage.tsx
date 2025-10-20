@@ -59,7 +59,7 @@ export const EventCardMessage = ({
   messageId: string;
   authorFullName: string;
 }) => {
-  const { upsertRecords } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
 
   const {
@@ -80,7 +80,7 @@ export const EventCardMessage = ({
       },
     },
     onCompleted: (data) => {
-      upsertRecords([data]);
+      upsertRecordsInStore([data]);
     },
   });
 

@@ -42,7 +42,7 @@ export const useLoadRecordIndexBoardColumn = ({
     objectNameSingular,
   });
   const { setRecordIdsForColumn } = useSetRecordIdsForColumn(recordBoardId);
-  const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const recordGroupDefinition = useRecoilValue(
     recordGroupDefinitionFamilyState(columnId),

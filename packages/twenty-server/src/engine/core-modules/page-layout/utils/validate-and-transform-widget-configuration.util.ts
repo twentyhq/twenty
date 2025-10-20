@@ -33,7 +33,8 @@ const validateGraphConfiguration = (
   }
 
   switch (graphType) {
-    case GraphType.BAR: {
+    case GraphType.VERTICAL_BAR:
+    case GraphType.HORIZONTAL_BAR: {
       const instance = plainToInstance(BarChartConfigurationDTO, configuration);
 
       const errors = validateSync(instance, {

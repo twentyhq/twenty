@@ -11,24 +11,27 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  type BarChartConfiguration,
-  type GraphOrderBy,
-  type LineChartConfiguration,
-} from '~/generated/graphql';
+import { type GraphOrderBy } from '~/generated/graphql';
 
 export const ChartSortByGroupByFieldDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const configuration = widgetInEditMode?.configuration as
-    | BarChartConfiguration
-    | LineChartConfiguration;
+  const configuration = widgetInEditMode?.configuration;
 
-  const currentOrderBy = configuration.orderByY;
+  if (
+    configuration?.__typename !== 'BarChartConfiguration' &&
+    configuration?.__typename !== 'LineChartConfiguration'
+  ) {
+    throw new Error('Invalid configuration type');
+  }
 
+  if (!isDefined(widgetInEditMode?.objectMetadataId)) {
+    throw new Error('No data source in chart');
+  }
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
@@ -45,15 +48,13 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
 
   const handleSelectSortOption = (orderBy: GraphOrderBy) => {
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        orderByY: orderBy,
-      },
+      configToUpdate: { secondaryAxisOrderBy: orderBy },
     });
     closeDropdown();
   };
 
   const { getGroupBySortOptionLabel } = useGraphGroupBySortOptionLabels({
-    objectMetadataId: widgetInEditMode?.objectMetadataId,
+    objectMetadataId: widgetInEditMode.objectMetadataId,
   });
 
   return (
@@ -78,13 +79,11 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
                 text={getGroupBySortOptionLabel({
                   graphOrderBy: sortOption.value,
                   groupByFieldMetadataId:
-                    'groupByFieldMetadataIdY' in configuration
-                      ? configuration.groupByFieldMetadataIdY
-                      : 'groupByFieldMetadataId' in configuration
-                        ? configuration.groupByFieldMetadataId
-                        : undefined,
+                    configuration.secondaryAxisGroupByFieldMetadataId,
                 })}
-                selected={currentOrderBy === sortOption.value}
+                selected={
+                  configuration.secondaryAxisOrderBy === sortOption.value
+                }
                 focused={selectedItemId === sortOption.value}
                 LeftIcon={sortOption.icon}
                 onClick={() => {

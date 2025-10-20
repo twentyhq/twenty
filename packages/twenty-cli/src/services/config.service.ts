@@ -14,7 +14,10 @@ export class ConfigService {
 
   private loadEnvironmentVariables(): void {
     // Load local .env file if it exists in current working directory
-    const localEnvPath = path.join(process.cwd(), '.env');
+    const localEnvPath = path.join(
+      process.cwd(),
+      process.env.NODE_ENV === 'test' ? '.env.e2e' : '.env',
+    );
     if (fs.existsSync(localEnvPath)) {
       loadDotenv({ path: localEnvPath });
     }
@@ -38,6 +41,7 @@ export class ConfigService {
 
       if (configExists) {
         const configContent = await fs.readFile(this.configPath, 'utf8');
+        // TODO parse using a zod schema
         fileConfig = JSON.parse(configContent || '{}');
       }
 

@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-import {
-  ObjectRecord,
-  ObjectRecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
@@ -21,14 +19,13 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
-export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<ObjectRecord> {
+export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
     authContext: toValidateAuthContext,
@@ -49,15 +46,11 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       );
     }
 
-    const {
-      workspaceDataSource,
-      repository,
-      roleId,
-      shouldBypassPermissionChecks,
-    } = await this.prepareQueryRunnerContext({
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    });
+    const { workspaceDataSource, repository, rolePermissionConfig } =
+      await this.prepareQueryRunnerContext({
+        authContext,
+        objectMetadataItemWithFieldMaps,
+      });
 
     const processedArgs = await this.processQueryArgs({
       authContext,
@@ -131,29 +124,20 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource,
-        roleId,
-        shouldBypassPermissionChecks,
+        rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
       });
     }
 
-    const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
-
-    const results = typeORMObjectRecordsParser.processRecord({
-      objectRecord: objectRecords[0],
-      objectName: objectMetadataItemWithFieldMaps.nameSingular,
-      take: 1,
-      totalCount: 1,
-    }) as ObjectRecord;
-
-    return this.enrichResultsWithGettersAndHooks({
-      results,
+    const enrichedResults = await this.enrichResultsWithGettersAndHooks({
+      results: objectRecords,
       authContext,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       operationName: CommonQueryNames.findOne,
     });
+
+    return enrichedResults[0];
   }
 
   async processQueryArgs({

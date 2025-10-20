@@ -1,7 +1,10 @@
 import { type GraphQLFieldResolver } from 'graphql';
-
 import {
   type ObjectRecord,
+  type OrderByWithGroupBy,
+} from 'twenty-shared/types';
+
+import {
   type ObjectRecordFilter,
   type ObjectRecordGroupBy,
   type ObjectRecordOrderBy,
@@ -70,7 +73,8 @@ export interface GroupByResolverArgs<Filter = ObjectRecordFilter> {
   filter?: Filter;
   groupBy: ObjectRecordGroupBy;
   viewId?: string;
-  orderBy?: ObjectRecordOrderBy;
+  orderBy?: OrderByWithGroupBy;
+  omitNullValues?: boolean;
 }
 
 export interface UpdateOneResolverArgs<

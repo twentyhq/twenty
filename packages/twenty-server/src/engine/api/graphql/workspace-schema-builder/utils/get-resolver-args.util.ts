@@ -177,6 +177,10 @@ export const getResolverArgs = (
           isNullable: true,
           isArray: true,
         },
+        omitNullValues: {
+          type: GraphQLBoolean,
+          isNullable: true,
+        },
         viewId: {
           type: UUIDScalarType,
           isNullable: true,

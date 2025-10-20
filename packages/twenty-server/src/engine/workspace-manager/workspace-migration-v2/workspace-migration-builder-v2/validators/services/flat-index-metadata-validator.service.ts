@@ -1,27 +1,28 @@
 import { Injectable } from '@nestjs/common';
 
-import { t, msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMapsExceptionCode } from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { isValidUniqueFieldDefaultValueCombination } from 'src/engine/metadata-modules/field-metadata/utils/is-valid-unique-input.util';
+import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { IndexExceptionCode } from 'src/engine/metadata-modules/flat-index-metadata/exceptions/index-exception-code';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { IndexRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 
-type IndexValidationArgs = {
-  flatIndexToValidate: FlatIndexMetadata;
-  optimisticFlatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
-  dependencyOptimisticFlatEntityMaps: IndexRelatedFlatEntityMaps;
-};
 @Injectable()
 export class FlatIndexValidatorService {
   public validateFlatIndexDeletion({
-    optimisticFlatIndexMaps,
-    flatIndexToValidate: { id: indexIdToDelete },
-  }: IndexValidationArgs): FailedFlatEntityValidation<FlatIndexMetadata> {
+    optimisticFlatEntityMaps: optimisticFlatIndexMaps,
+    flatEntityToValidate: { id: indexIdToDelete },
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.index
+  >): FailedFlatEntityValidation<FlatIndexMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatIndexMetadata> = {
       type: 'delete_index',
       errors: [],
@@ -46,17 +47,12 @@ export class FlatIndexValidatorService {
   }
 
   public validateFlatIndexCreation({
-    flatIndexToValidate,
-    optimisticFlatIndexMaps,
-    dependencyOptimisticFlatEntityMaps: {
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    },
-  }: {
-    flatIndexToValidate: FlatIndexMetadata;
-    optimisticFlatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
-    dependencyOptimisticFlatEntityMaps: IndexRelatedFlatEntityMaps;
-  }): FailedFlatEntityValidation<FlatIndexMetadata> {
+    flatEntityToValidate: flatIndexToValidate,
+    optimisticFlatEntityMaps: optimisticFlatIndexMaps,
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.index
+  >): FailedFlatEntityValidation<FlatIndexMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatIndexMetadata> = {
       type: 'create_index',
       errors: [],
@@ -81,7 +77,7 @@ export class FlatIndexValidatorService {
 
     const relatedObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (!isDefined(relatedObjectMetadata)) {
@@ -120,7 +116,8 @@ export class FlatIndexValidatorService {
       flatIndexToValidate.flatIndexFieldMetadatas.forEach((flatIndexField) => {
         const relatedFlatField = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: flatIndexField.fieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         });
 
         if (!isDefined(relatedFlatField)) {
@@ -139,6 +136,51 @@ export class FlatIndexValidatorService {
               message: t`Field does not belong to the indexed object`,
               userFriendlyMessage: msg`Field cannot be indexed as it belongs to a different object`,
             });
+          }
+
+          if (flatIndexToValidate.isUnique) {
+            if (
+              isDefined(relatedFlatField.defaultValue) &&
+              !isValidUniqueFieldDefaultValueCombination({
+                defaultValue: relatedFlatField.defaultValue,
+                isUnique: relatedFlatField.isUnique ?? false,
+                type: relatedFlatField.type,
+              })
+            ) {
+              const fieldName = relatedFlatField.name;
+              const fieldType = relatedFlatField.type;
+
+              validationResult.errors.push({
+                code: IndexExceptionCode.INDEX_FIELD_INVALID_DEFAULT_VALUE,
+                message: t`Unique index cannot be created for field ${fieldName} of type ${fieldType}`,
+                userFriendlyMessage: msg`${fieldType} fields cannot have a default value.`,
+              });
+            }
+
+            const isCompositeFieldWithNonIncludedUniqueConstraint =
+              isCompositeFlatFieldMetadata(relatedFlatField) &&
+              !compositeTypeDefinitions
+                .get(relatedFlatField.type)
+                ?.properties.some(
+                  (property) => property.isIncludedInUniqueConstraint,
+                );
+
+            if (
+              [
+                FieldMetadataType.MORPH_RELATION,
+                FieldMetadataType.RELATION,
+              ].includes(relatedFlatField.type) ||
+              isCompositeFieldWithNonIncludedUniqueConstraint
+            ) {
+              const fieldType = relatedFlatField.type;
+              const fieldName = relatedFlatField.name;
+
+              validationResult.errors.push({
+                code: IndexExceptionCode.INDEX_FIELD_INVALID_TYPE_FOR_UNIQUE,
+                message: t`Unique index cannot be created for field ${fieldName} of type ${fieldType}`,
+                userFriendlyMessage: msg`${fieldType} fields cannot be unique.`,
+              });
+            }
           }
         }
 

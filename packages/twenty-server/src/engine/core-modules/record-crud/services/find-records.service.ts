@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { OrderByDirection } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
 import {
   type ObjectRecordFilter,
   type ObjectRecordOrderBy,
-  OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -37,7 +37,7 @@ export class FindRecordsService {
       limit,
       offset = 0,
       workspaceId,
-      roleId,
+      rolePermissionConfig,
     } = params;
 
     if (!workspaceId) {
@@ -53,7 +53,7 @@ export class FindRecordsService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          roleId ? { roleId } : { shouldBypassPermissionChecks: true },
+          rolePermissionConfig,
         );
 
       const { objectMetadataItemWithFieldsMaps, objectMetadataMaps } =

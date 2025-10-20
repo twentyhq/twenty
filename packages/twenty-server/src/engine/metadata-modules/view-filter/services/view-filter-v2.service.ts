@@ -2,13 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/get-sub-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/metadata-modules/flat-view-filter/utils/from-create-view-filter-input-to-flat-view-filter-to-create.util';
 import { fromDeleteViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util';
 import { fromDestroyViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util';
@@ -58,19 +54,16 @@ export class ViewFilterV2Service {
         workspaceId,
       });
 
-    const toFlatViewFilterMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: flatViewFilterToCreate,
-      flatEntityMaps: existingFlatViewFilterMaps,
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewFilterMaps: {
-              from: existingFlatViewFilterMaps,
-              to: toFlatViewFilterMaps,
-            },
+            flatViewFilterMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFilterMaps,
+              flatEntityToCreate: [flatViewFilterToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatFieldMetadataMaps,
@@ -79,7 +72,6 @@ export class ViewFilterV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -134,19 +126,16 @@ export class ViewFilterV2Service {
         updateViewFilterInput,
       });
 
-    const toFlatViewFilterMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: optimisticallyUpdatedFlatViewFilter,
-      flatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewFilterMaps: {
-              from: existingFlatViewFilterMaps,
-              to: toFlatViewFilterMaps,
-            },
+            flatViewFilterMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFilterMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatViewFilter],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatViewMaps,
@@ -154,7 +143,6 @@ export class ViewFilterV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -209,19 +197,18 @@ export class ViewFilterV2Service {
         deleteViewFilterInput,
       });
 
-    const toFlatViewFilterMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-      flatEntity: optimisticallyUpdatedFlatViewFilterWithDeletedAt,
-      flatEntityMaps: existingFlatViewFilterMaps,
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewFilterMaps: {
-              from: existingFlatViewFilterMaps,
-              to: toFlatViewFilterMaps,
-            },
+            flatViewFilterMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFilterMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [
+                optimisticallyUpdatedFlatViewFilterWithDeletedAt,
+              ],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatFieldMetadataMaps,
@@ -229,7 +216,6 @@ export class ViewFilterV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -284,23 +270,16 @@ export class ViewFilterV2Service {
         flatViewFilterMaps: existingFlatViewFilterMaps,
       });
 
-    const fromFlatViewFilterMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: [existingViewFilterToDelete.id],
-      flatEntityMaps: existingFlatViewFilterMaps,
-    });
-    const toFlatViewFilterMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      flatEntityMaps: fromFlatViewFilterMaps,
-      entityToDeleteId: existingViewFilterToDelete.id,
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatViewFilterMaps: {
-              from: fromFlatViewFilterMaps,
-              to: toFlatViewFilterMaps,
-            },
+            flatViewFilterMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFilterMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [existingViewFilterToDelete],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatViewMaps: existingFlatViewMaps,
@@ -308,7 +287,9 @@ export class ViewFilterV2Service {
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              viewFilter: true,
+            },
           },
           workspaceId,
         },

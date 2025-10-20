@@ -5,12 +5,15 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { generateUpdateOneRecordMutation } from '@/object-metadata/utils/generateUpdateOneRecordMutation';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
@@ -29,6 +32,8 @@ type UpdateOneRecordArgs<UpdatedObjectRecord> = {
 };
 export const useUpdateOneRecordV2 = () => {
   const apolloCoreClient = useApolloCoreClient();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { registerObjectOperation } = useRegisterObjectOperation();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -133,6 +138,8 @@ export const useUpdateOneRecordV2 = () => {
         currentRecord: cachedRecordWithConnection,
         updatedRecord: optimisticRecordWithConnection,
         objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+        upsertRecordsInStore,
       });
     }
 
@@ -165,12 +172,19 @@ export const useUpdateOneRecordV2 = () => {
           const record = data?.[mutationResponseField];
           if (!isDefined(record)) return;
 
+          const recordToUpsert = getRecordFromRecordNode({
+            recordNode: record,
+          });
+          upsertRecordsInStore([recordToUpsert]);
+
           triggerUpdateRecordOptimisticEffect({
             cache,
             objectMetadataItem,
             currentRecord: computedOptimisticRecord,
             updatedRecord: record,
             objectMetadataItems,
+            objectPermissionsByObjectMetadataId,
+            upsertRecordsInStore,
           });
         },
       })
@@ -217,11 +231,17 @@ export const useUpdateOneRecordV2 = () => {
           currentRecord: optimisticRecordWithConnection,
           updatedRecord: cachedRecordWithConnection,
           objectMetadataItems,
+          upsertRecordsInStore,
+          objectPermissionsByObjectMetadataId,
         });
 
         throw error;
       });
 
+    registerObjectOperation(objectMetadataItem.nameSingular, {
+      type: 'update-one',
+      result: { updatedRecord, updateInput: updateOneRecordInput },
+    });
     return updatedRecord?.data?.[mutationResponseField] ?? null;
   };
 

@@ -3,147 +3,40 @@ import { Inject } from '@nestjs/common';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
-} from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
-import { AllFlatEntitiesByMetadataEngineName } from 'src/engine/core-modules/common/types/all-flat-entities-by-metadata-engine-name.type';
-import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
-import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import {
-  type DeletedCreatedUpdatedMatrix,
-  flatEntityDeletedCreatedUpdatedMatrixDispatcher,
-} from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
-import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { MetadataValidationRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
+import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/get-metadata-empty-workspace-migration-action-record.util';
+import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/failed-flat-entity-validate-and-build.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
+import { SuccessfulFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/successful-flat-entity-validate-and-build.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
-// TODO extract types in dedicated files
-export type CreatedDeletedUpdatedActions<
-  TActions extends WorkspaceMigrationActionV2,
-> = {
-  created: TActions[];
-  deleted: TActions[];
-  updated: TActions[];
-};
-
-export type SuccessfulEntityMigrationBuildResult<
-  TActions extends WorkspaceMigrationActionV2,
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> = {
-  status: 'success';
-  actions: CreatedDeletedUpdatedActions<TActions>;
-  optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
-  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-};
-
-export type FailedEntityMigrationBuildResult<
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> = {
-  status: 'fail';
-  errors: FailedFlatEntityValidation<TFlatEntity>[];
-  optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
-  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-};
-
-export type ValidateAndBuildArgs<
-  T extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps> | undefined,
-> = {
+export type ValidateAndBuildArgs<T extends AllMetadataName> = {
   buildOptions: WorkspaceMigrationBuilderOptions;
-  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
+  dependencyOptimisticFlatEntityMaps: MetadataValidationRelatedFlatEntityMaps<T>;
   workspaceId: string;
-} & FromTo<FlatEntityMaps<T>>;
+} & FromTo<MetadataFlatEntityMaps<T>>;
 
-export type ValidateAndBuildReturnType<
-  TActions extends WorkspaceMigrationActionV2,
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> =
-  | SuccessfulEntityMigrationBuildResult<
-      TActions,
-      TFlatEntity,
-      TRelatedFlatEntityMaps
-    >
-  | FailedEntityMigrationBuildResult<TFlatEntity, TRelatedFlatEntityMaps>;
+export type ValidateAndBuildReturnType<T extends AllMetadataName> =
+  | SuccessfulFlatEntityValidateAndBuild<T>
+  | FailedFlatEntityValidateAndBuild<T>;
 
-export type ValidateAndBuildActionsArgs<
-  T extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
-> = ValidateAndBuildArgs<T, TRelatedFlatEntityMaps> &
-  DeletedCreatedUpdatedMatrix<T>;
-
-export type ValidateAndBuilActionsReturnType<
-  TFlatEntity extends AllFlatEntities,
-  TActions extends WorkspaceMigrationActionV2,
-> = {
-  failed: FailedFlatEntityValidation<TFlatEntity>[];
-} & CreatedDeletedUpdatedActions<TActions>;
-
-export type FlatEntityValidationArgs<
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> = {
-  flatEntityToValidate: TFlatEntity;
-  optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
-  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-  workspaceId: string;
-  remainingFlatEntityMapsToValidate: FlatEntityMaps<TFlatEntity>;
-  buildOptions: WorkspaceMigrationBuilderOptions;
-};
-
-export type FlatEntityUpdateValidationArgs<
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> = Omit<
-  FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  'flatEntityToValidate' | 'remainingFlatEntityMapsToValidate'
-> & {
-  flatEntityUpdate: FromTo<TFlatEntity>;
-  remainingFlatEntityMapsToValidate: FromTo<FlatEntityMaps<TFlatEntity>>;
-};
-
-export type FlatEntityValidationReturnType<
-  TActions extends WorkspaceMigrationActionV2,
-  TFlatEntity extends AllFlatEntities,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
-> =
-  | {
-      status: 'success';
-      action: TActions | TActions[];
-      dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-    }
-  | ({
-      status: 'fail';
-    } & FailedFlatEntityValidation<TFlatEntity>);
-
-// TODO prastoin refactor the builder to building a selection of flatEntityMaps => simplify
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
-  T extends keyof AllFlatEntitiesByMetadataEngineName, // TODO refactor the whole generic to be inferred from this one only
-  TFlatEntity extends AllFlatEntities,
-  TActions extends WorkspaceMigrationActionV2,
-  TRelatedFlatEntityMaps extends
-    | Partial<AllFlatEntityMaps>
-    | undefined = undefined,
+  T extends AllMetadataName,
 > {
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
@@ -159,9 +52,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     from: fromFlatEntityMaps,
     to: toFlatEntityMaps,
     workspaceId,
-  }: ValidateAndBuildArgs<TFlatEntity, TRelatedFlatEntityMaps>): Promise<
-    ValidateAndBuildReturnType<TActions, TFlatEntity, TRelatedFlatEntityMaps>
-  > {
+  }: ValidateAndBuildArgs<T>): Promise<ValidateAndBuildReturnType<T>> {
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'validateAndBuild');
     this.logger.time(
       `EntityBuilder ${this.metadataName}`,
@@ -179,9 +70,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       createdFlatEntityMaps,
       deletedFlatEntityMaps,
       updatedFlatEntityMaps,
-    } = flatEntityDeletedCreatedUpdatedMatrixDispatcher({
+    } = flatEntityDeletedCreatedUpdatedMatrixDispatcher<T>({
       from: fromFlatEntities,
       to: toFlatEntities,
+      metadataName: this.metadataName,
       buildOptions,
     });
 
@@ -192,16 +84,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'entity processing');
 
     let optimisticFlatEntityMaps = structuredClone(fromFlatEntityMaps);
-    const validateAndBuildResult: ValidateAndBuilActionsReturnType<
-      TFlatEntity,
-      TActions
-    > = {
-      failed: [],
-      created: [],
-      deleted: [],
-      updated: [],
-    };
-
+    const actionsResult = getMetadataEmptyWorkspaceMigrationActionRecord(
+      this.metadataName,
+    );
+    const allValidationResult: FailedFlatEntityValidateAndBuild<T>['errors'] =
+      [];
     let remainingFlatEntityMapsToCreate = structuredClone(
       createdFlatEntityMaps,
     );
@@ -237,7 +124,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       });
 
       if (validationResult.status === 'fail') {
-        validateAndBuildResult.failed.push(validationResult);
+        allValidationResult.push(validationResult);
         continue;
       }
 
@@ -248,7 +135,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       dependencyOptimisticFlatEntityMaps =
         validationResult.dependencyOptimisticFlatEntityMaps;
 
-      validateAndBuildResult.created.push(
+      actionsResult.created.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
           : [validationResult.action]),
@@ -268,7 +155,8 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       deletedFlatEntityMaps,
     );
 
-    for (const flatEntityToDeleteId in buildOptions.inferDeletionFromMissingEntities
+    for (const flatEntityToDeleteId in buildOptions
+      .inferDeletionFromMissingEntities?.[this.metadataName]
       ? deletedFlatEntityMaps.byId
       : {}) {
       const flatEntityToDelete =
@@ -297,7 +185,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       });
 
       if (validationResult.status === 'fail') {
-        validateAndBuildResult.failed.push(validationResult);
+        allValidationResult.push(validationResult);
         continue;
       }
 
@@ -308,7 +196,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       dependencyOptimisticFlatEntityMaps =
         validationResult.dependencyOptimisticFlatEntityMaps;
 
-      validateAndBuildResult.deleted.push(
+      actionsResult.deleted.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
           : [validationResult.action]),
@@ -321,66 +209,58 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     );
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'update validation');
 
-    let remainingFlatEntityMapsToUpdate = structuredClone(
-      updatedFlatEntityMaps,
-    );
+    for (const flatEntityToUpdateId in updatedFlatEntityMaps.byId) {
+      const flatEntityToUpdate =
+        updatedFlatEntityMaps.byId[flatEntityToUpdateId];
 
-    for (const flatEntityToUpdateId in updatedFlatEntityMaps.to.byId) {
-      const flatEntityToUpdateFrom =
-        updatedFlatEntityMaps.from.byId[flatEntityToUpdateId];
-      const flatEntityToUpdateTo =
-        updatedFlatEntityMaps.to.byId[flatEntityToUpdateId];
-
-      if (
-        !isDefined(flatEntityToUpdateTo) ||
-        !isDefined(flatEntityToUpdateFrom)
-      ) {
+      if (!isDefined(flatEntityToUpdate)) {
         throw new FlatEntityMapsException(
-          'Could not find flat entity to update in maps should never occur',
+          'Could not find flat entity updates in maps dispatcher should never occur',
           FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
         );
       }
 
-      remainingFlatEntityMapsToUpdate.from =
-        deleteFlatEntityFromFlatEntityMapsOrThrow({
-          entityToDeleteId: flatEntityToUpdateId,
-          flatEntityMaps: remainingFlatEntityMapsToUpdate.from,
-        });
-      remainingFlatEntityMapsToUpdate.to =
-        deleteFlatEntityFromFlatEntityMapsOrThrow({
-          entityToDeleteId: flatEntityToUpdateId,
-          flatEntityMaps: remainingFlatEntityMapsToUpdate.to,
-        });
-
       const validationResult = await this.validateFlatEntityUpdate({
+        flatEntityUpdates: flatEntityToUpdate.updates,
+        flatEntityId: flatEntityToUpdateId,
         dependencyOptimisticFlatEntityMaps,
-        flatEntityUpdate: {
-          from: flatEntityToUpdateFrom,
-          to: flatEntityToUpdateTo,
-        },
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
-        remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToUpdate,
         buildOptions,
       });
 
-      if (validationResult === undefined) {
+      if (validationResult.status === 'fail') {
+        allValidationResult.push(validationResult);
         continue;
       }
 
-      if (validationResult.status === 'fail') {
-        validateAndBuildResult.failed.push(validationResult);
-        continue;
+      const existingFlatEntity = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatEntityToUpdateId,
+        flatEntityMaps: optimisticFlatEntityMaps,
+      });
+
+      if (!isDefined(existingFlatEntity)) {
+        throw new FlatEntityMapsException(
+          'Existing flat entity to update post successful validation is not defined, should never occur',
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
       }
+
+      const updatedFlatEntity = {
+        ...existingFlatEntity,
+        ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+          updates: flatEntityToUpdate.updates,
+        }),
+      };
 
       optimisticFlatEntityMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: flatEntityToUpdateTo,
+        flatEntity: updatedFlatEntity,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
       dependencyOptimisticFlatEntityMaps =
         validationResult.dependencyOptimisticFlatEntityMaps;
 
-      validateAndBuildResult.updated.push(
+      actionsResult.updated.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
           : [validationResult.action]),
@@ -396,10 +276,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       'entity processing',
     );
 
-    if (validateAndBuildResult.failed.length > 0) {
+    if (allValidationResult.length > 0) {
       return {
         status: 'fail',
-        errors: validateAndBuildResult.failed,
+        errors: allValidationResult,
         optimisticFlatEntityMaps,
         dependencyOptimisticFlatEntityMaps,
       };
@@ -412,44 +292,21 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
     return {
       status: 'success',
-      actions: {
-        created: validateAndBuildResult.created,
-        deleted: validateAndBuildResult.deleted,
-        updated: validateAndBuildResult.updated,
-      },
+      actions: actionsResult,
       optimisticFlatEntityMaps,
       dependencyOptimisticFlatEntityMaps,
     };
   }
 
   protected abstract validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      TActions,
-      TFlatEntity,
-      TRelatedFlatEntityMaps
-    >
-  >;
+    args: FlatEntityValidationArgs<T>,
+  ): Promise<FlatEntityValidationReturnType<T, 'created'>>;
 
   protected abstract validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      TActions,
-      TFlatEntity,
-      TRelatedFlatEntityMaps
-    >
-  >;
+    args: FlatEntityValidationArgs<T>,
+  ): Promise<FlatEntityValidationReturnType<T, 'deleted'>>;
 
   protected abstract validateFlatEntityUpdate(
-    args: FlatEntityUpdateValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  ): Promise<
-    | FlatEntityValidationReturnType<
-        TActions,
-        TFlatEntity,
-        TRelatedFlatEntityMaps
-      >
-    | undefined
-  >;
+    args: FlatEntityUpdateValidationArgs<T>,
+  ): Promise<FlatEntityValidationReturnType<T, 'updated'>>;
 }

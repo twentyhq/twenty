@@ -1,9 +1,10 @@
 import { SetMetadata } from '@nestjs/common';
 
-import { type ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/core-modules/common/constant/all-flat-entity-maps-properties.constant';
+import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 
 export const WORKSPACE_FLAT_MAP_CACHE_KEY = 'workspaceFlatMapCacheKey';
 
 export const WorkspaceFlatMapCache = (
-  cacheKey: (typeof ALL_FLAT_ENTITY_MAPS_PROPERTIES)[number],
+  cacheKey: MetadataToFlatEntityMapsKey<AllMetadataName>,
 ) => SetMetadata(WORKSPACE_FLAT_MAP_CACHE_KEY, cacheKey);

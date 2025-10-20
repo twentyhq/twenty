@@ -14,6 +14,7 @@ import {
   computeLimitParameters,
   computeOrderByParameters,
   computeStartingAfterParameters,
+  computeUpsertParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { convertObjectMetadataToSchemaProperties } from 'src/engine/utils/convert-object-metadata-to-schema-properties.util';
@@ -208,6 +209,7 @@ export const computeParameterComponents = (
     endingBefore: computeEndingBeforeParameters(),
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
+    upsert: computeUpsertParameters(),
     orderBy: computeOrderByParameters(),
     limit: computeLimitParameters(fromMetadata),
   };
@@ -1130,7 +1132,18 @@ export const computeMetadataSchemaComponents = (
               title: { type: 'string' },
               type: {
                 type: 'string',
-                enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
+                enum: [
+                  'VIEW',
+                  'IFRAME',
+                  'FIELDS',
+                  'GRAPH',
+                  'TIMELINE',
+                  'TASKS',
+                  'NOTES',
+                  'FILES',
+                  'EMAILS',
+                  'CALENDAR',
+                ],
                 default: 'VIEW',
               },
               objectMetadataId: { type: 'string', format: 'uuid' },

@@ -1,5 +1,6 @@
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCssVariableName';
 import { RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableVerticalScrollShadowVisibilityCssVariableName';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -8,7 +9,6 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
-import { useAssignRecordsToStore } from '@/object-record/record-table/virtualization/hooks/useAssignRecordsToStore';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { useReapplyRowSelection } from '@/object-record/record-table/virtualization/hooks/useReapplyRowSelection';
 import { useResetNumberOfRecordsToVirtualize } from '@/object-record/record-table/virtualization/hooks/useResetNumberOfRecordsToVirtualize';
@@ -92,7 +92,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
     useResetNumberOfRecordsToVirtualize();
 
   const { resetTableFocuses } = useResetTableFocuses(recordTableId);
-  const { assignRecordsToStore } = useAssignRecordsToStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
 
@@ -165,7 +165,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
             totalCount,
           });
 
-          assignRecordsToStore({ records });
+          upsertRecordsInStore(records);
 
           loadRecordsToVirtualRows({
             records,
@@ -210,7 +210,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       dataLoadingStatusByRealIndexCallbackState,
       recordIdByRealIndexCallbackState,
       resetNumberOfRecordsToVirtualize,
-      assignRecordsToStore,
+      upsertRecordsInStore,
       loadRecordsToVirtualRows,
       reapplyRowSelection,
     ],

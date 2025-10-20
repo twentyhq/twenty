@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { RouteTriggerResolver } from 'src/engine/metadata-modules/route-trigger/resolvers/route-trigger.resolver';
 import { RouteTriggerController } from 'src/engine/metadata-modules/route-trigger/route-trigger.controller';
 import { RouteTrigger } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
