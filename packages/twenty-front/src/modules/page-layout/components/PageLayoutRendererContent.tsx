@@ -71,7 +71,7 @@ export const PageLayoutRendererContent = () => {
   return (
     <ShowPageContainer>
       {isDefined(pinnedLeftTab) && (
-        <ShowPageLeftContainer forceMobile={false}>
+        <ShowPageLeftContainer>
           <SummaryCard
             objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
             objectRecordId={targetRecordIdentifier.id}
