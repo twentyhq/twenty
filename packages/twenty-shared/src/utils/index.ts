@@ -79,7 +79,6 @@ export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraints
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { parseJson } from './parseJson';
-export { pick } from './pick';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
 export { safeParseRelativeDateFilterValue } from './safeParseRelativeDateFilterValue';

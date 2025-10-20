@@ -29,7 +29,7 @@ import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined, pick } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -150,9 +150,10 @@ export const SettingsObjectFieldEdit = () => {
       const otherDirtyFields = omit(dirtyFields, 'relation');
 
       if (Object.keys(otherDirtyFields).length > 0) {
-        const formattedInput = pick(
-          formatFieldMetadataItemInput(formValues),
-          Object.keys(otherDirtyFields),
+        const formattedInput = Object.fromEntries(
+          Object.entries(formatFieldMetadataItemInput(formValues)).filter(
+            ([key]) => Object.keys(otherDirtyFields).includes(key),
+          ),
         );
 
         await updateOneFieldMetadataItem({

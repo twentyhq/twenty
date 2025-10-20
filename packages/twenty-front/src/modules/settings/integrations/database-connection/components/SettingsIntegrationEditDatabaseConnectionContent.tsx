@@ -16,7 +16,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Section } from '@react-email/components';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, pick } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, Info } from 'twenty-ui/display';
 import { type z } from 'zod';
 import {
@@ -74,11 +74,17 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
       formConfig.formState.dirtyFields,
     ) as (keyof SettingsIntegrationEditConnectionFormValues)[];
 
+    const dirtyFormValues = Object.fromEntries(
+      Object.entries(formValues).filter(([key]) =>
+        dirtyFieldKeys.includes(key as keyof typeof formValues),
+      ),
+    );
+
     try {
       await updateOneDatabaseConnection({
         ...formatValuesForUpdate({
           databaseKey,
-          formValues: pick(formValues, dirtyFieldKeys),
+          formValues: dirtyFormValues,
         }),
         id: connection?.id ?? '',
       });
