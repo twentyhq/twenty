@@ -1,8 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
 import { ApplicationVariable } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
+import { EnvManifest } from 'src/engine/core-modules/application/types/application.types';
 
 export class ApplicationVariableService {
   constructor(
@@ -27,16 +29,13 @@ export class ApplicationVariableService {
     env,
     applicationId,
   }: {
-    env: Record<
-      string,
-      {
-        value?: string;
-        description?: string;
-        isSecret: boolean;
-      }
-    >;
+    env?: EnvManifest;
     applicationId: string;
   }) {
+    if (!isDefined(env)) {
+      return;
+    }
+
     for (const [key, { value, description, isSecret }] of Object.entries(env)) {
       await this.applicationVariableRepository.upsert(
         {

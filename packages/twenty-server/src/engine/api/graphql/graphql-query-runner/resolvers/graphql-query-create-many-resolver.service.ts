@@ -55,8 +55,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
-    const { roleId } = executionArgs;
-
     const objectRecords = await this.insertOrUpsertRecords(executionArgs);
 
     const upsertedRecords = await this.fetchUpsertedRecords(
@@ -71,7 +69,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      roleId,
     });
 
     return this.formatRecordsForResponse(
@@ -462,13 +459,11 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     records,
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
-    roleId,
   }: {
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>;
     records: ObjectRecord[];
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
-    roleId?: string;
   }): Promise<void> {
     if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       return;
@@ -482,8 +477,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       limit: QUERY_MAX_RECORDS,
       authContext: executionArgs.options.authContext,
       workspaceDataSource: executionArgs.workspaceDataSource,
-      roleId,
-      shouldBypassPermissionChecks: executionArgs.shouldBypassPermissionChecks,
+      rolePermissionConfig: executionArgs.rolePermissionConfig,
       selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
     });
   }

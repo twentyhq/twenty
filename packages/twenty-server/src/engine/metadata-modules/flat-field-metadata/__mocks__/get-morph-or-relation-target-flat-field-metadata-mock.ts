@@ -32,6 +32,8 @@ export const getRelationTargetFlatFieldMetadataMock = ({
   const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
 
   return {
+    viewFilterIds: [],
+    viewGroupIds: [],
     viewFieldIds: [],
     createdAt,
     updatedAt: createdAt,
@@ -60,5 +62,6 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     ...overrides,
     defaultValue: null,
     options: null,
+    applicationId: faker.string.uuid(),
   };
 };

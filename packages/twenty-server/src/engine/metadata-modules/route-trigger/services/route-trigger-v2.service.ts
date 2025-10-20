@@ -3,11 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { CreateRouteTriggerInput } from 'src/engine/metadata-modules/route-trigger/dtos/create-route-trigger.input';
 import { RouteTriggerIdInput } from 'src/engine/metadata-modules/route-trigger/dtos/route-trigger-id.input';
 import { UpdateRouteTriggerInput } from 'src/engine/metadata-modules/route-trigger/dtos/update-route-trigger.input';
@@ -48,20 +45,17 @@ export class RouteTriggerV2Service {
         workspaceId,
       });
 
-    const toFlatRouteMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: flatRouteTriggerToCreate,
-      flatEntityMaps: existingFlatRouteMaps,
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatRouteTriggerMaps: {
-              from: existingFlatRouteMaps,
-              to: toFlatRouteMaps,
-            },
+            flatRouteTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatRouteMaps,
+              flatEntityToCreate: [flatRouteTriggerToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps:
@@ -114,24 +108,17 @@ export class RouteTriggerV2Service {
         updateRouteTriggerInput: routeTriggerInput,
       });
 
-    const fromFlatRouteMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: [optimisticallyUpdatedFlatRouteTrigger.id],
-      flatEntityMaps: existingFlatRouteMaps,
-    });
-    const toFlatRouteMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-      flatEntity: optimisticallyUpdatedFlatRouteTrigger,
-      flatEntityMaps: fromFlatRouteMaps,
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatRouteTriggerMaps: {
-              from: existingFlatRouteMaps,
-              to: toFlatRouteMaps,
-            },
+            flatRouteTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatRouteMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatRouteTrigger],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps:
@@ -192,23 +179,16 @@ export class RouteTriggerV2Service {
       );
     }
 
-    const fromFlatRouteMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: [existingFlatRoute.id],
-      flatEntityMaps: existingFlatRouteMaps,
-    });
-    const toFlatRouteMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      flatEntityMaps: fromFlatRouteMaps,
-      entityToDeleteId: existingFlatRoute.id,
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatRouteTriggerMaps: {
-              from: fromFlatRouteMaps,
-              to: toFlatRouteMaps,
-            },
+            flatRouteTriggerMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatRouteMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [existingFlatRoute],
+              flatEntityToUpdate: [],
+            }),
           },
           dependencyAllFlatEntityMaps: {
             flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
