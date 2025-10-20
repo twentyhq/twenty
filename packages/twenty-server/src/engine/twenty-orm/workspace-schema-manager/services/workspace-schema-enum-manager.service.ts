@@ -36,6 +36,9 @@ export class WorkspaceSchemaEnumManagerService {
 
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeEnumName = removeSqlDDLInjection(enumName);
+
+    await this.dropEnum({ queryRunner, schemaName, enumName: safeEnumName });
+
     const sql = `CREATE TYPE "${safeSchemaName}"."${safeEnumName}" AS ENUM (${sanitizedValues})`;
 
     await queryRunner.query(sql);
@@ -71,6 +74,9 @@ export class WorkspaceSchemaEnumManagerService {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeOldEnumName = removeSqlDDLInjection(oldEnumName);
     const safeNewEnumName = removeSqlDDLInjection(newEnumName);
+
+    await this.dropEnum({ queryRunner, schemaName, enumName: safeNewEnumName });
+
     const sql = `ALTER TYPE "${safeSchemaName}"."${safeOldEnumName}" RENAME TO "${safeNewEnumName}"`;
 
     await queryRunner.query(sql);
@@ -391,17 +397,17 @@ export class WorkspaceSchemaEnumManagerService {
     mappedValuesCondition: string;
   }) {
     return `
-          UPDATE "${safeSchemaName}"."${safeTableName}" 
+          UPDATE "${safeSchemaName}"."${safeTableName}"
           SET "${safeNewColumnName}" = (
             SELECT array_agg(
-              CASE unnest_value::text 
+              CASE unnest_value::text
                 ${caseStatements}
                 ELSE unnest_value::text::"${safeSchemaName}"."${newEnumTypeName}"
               END
             )
             FROM unnest("${safeOldColumnName}") AS unnest_value
           )
-          WHERE "${safeOldColumnName}" IS NOT NULL 
+          WHERE "${safeOldColumnName}" IS NOT NULL
             AND "${safeOldColumnName}" && ARRAY[${mappedValuesCondition}]::"${safeSchemaName}"."${oldEnumTypeName}"[]`;
   }
 
@@ -421,12 +427,12 @@ export class WorkspaceSchemaEnumManagerService {
     safeNewColumnName: string;
   }) {
     return `
-          UPDATE "${safeSchemaName}"."${safeTableName}" 
-          SET "${safeNewColumnName}" = 
-            CASE "${safeOldColumnName}"::text 
+          UPDATE "${safeSchemaName}"."${safeTableName}"
+          SET "${safeNewColumnName}" =
+            CASE "${safeOldColumnName}"::text
               ${caseStatements}
             END
-          WHERE "${safeOldColumnName}" IS NOT NULL 
+          WHERE "${safeOldColumnName}" IS NOT NULL
             AND "${safeOldColumnName}"::text IN (${mappedValuesCondition})`;
   }
 }
