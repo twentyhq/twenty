@@ -1,5 +1,5 @@
 {
-  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/trigger.schema.json",
+  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/trigger.schema.json",
   "type": "object",
   "required": ["universalIdentifier", "type"],
   "properties": {
