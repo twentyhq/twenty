@@ -1,14 +1,12 @@
-import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
+import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
-import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -46,7 +44,6 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 export const PageLayoutRendererContent = () => {
   const { currentPageLayout } = useCurrentPageLayout();
 
-  const targetRecordIdentifier = useTargetRecord();
   const { isInRightDrawer } = useLayoutRenderingContext();
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
@@ -74,15 +71,7 @@ export const PageLayoutRendererContent = () => {
   return (
     <ShowPageContainer>
       {isDefined(pinnedLeftTab) && (
-        <ShowPageLeftContainer>
-          <SummaryCard
-            objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-            objectRecordId={targetRecordIdentifier.id}
-            isInRightDrawer={isInRightDrawer}
-          />
-
-          <PageLayoutGridLayout tabId={pinnedLeftTab.id} />
-        </ShowPageLeftContainer>
+        <PageLayoutLeftPanel pinnedLeftTabId={pinnedLeftTab.id} />
       )}
 
       <StyledShowPageRightContainer>

@@ -1,5 +1,6 @@
 import { type DraftPageLayout } from '@/page-layout/types/draft-page-layout';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
+import { PageLayoutType } from '~/generated/graphql';
 
 type GetTabsByDisplayModeParams = {
   pageLayout: PageLayout | DraftPageLayout;
@@ -12,7 +13,11 @@ export const getTabsByDisplayMode = ({
   isMobile,
   isInRightDrawer,
 }: GetTabsByDisplayModeParams) => {
-  if (isMobile || isInRightDrawer) {
+  if (
+    isMobile ||
+    isInRightDrawer ||
+    pageLayout.type !== PageLayoutType.RECORD_PAGE
+  ) {
     return {
       tabsToRenderInTabList: pageLayout.tabs,
       pinnedLeftTab: undefined,
