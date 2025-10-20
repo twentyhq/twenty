@@ -1,5 +1,6 @@
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
+import { PageLayoutTabHeader } from '@/page-layout/components/PageLayoutTabHeader';
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
@@ -84,6 +85,9 @@ export const PageLayoutRendererContent = () => {
             )}
             onAddTab={handleAddTab}
           />
+
+          <PageLayoutTabHeader />
+
           <StyledScrollWrapper
             componentInstanceId={`scroll-wrapper-page-layout-${currentPageLayout.id}`}
             defaultEnableXScroll={false}
