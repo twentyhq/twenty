@@ -32,7 +32,7 @@ export const parseCorePath = (
     return { object: queryAction[1] };
   }
 
-  if (queryAction[1] === 'duplicates') {
+  if (queryAction[1] === 'duplicates' || queryAction[1] === 'group') {
     return { object: queryAction[0] };
   }
 

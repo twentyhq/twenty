@@ -21,6 +21,7 @@ import {
   CommonQueryNames,
   FindManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -36,7 +37,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -49,9 +50,9 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     aggregatedValues: Record<string, number>;
     totalCount: number;
     pageInfo: CommonPageInfo;
+    selectedFieldsResult: CommonSelectedFieldsResult;
   }> {
     this.validate(args);
-    const authContext = toValidateAuthContext;
 
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
@@ -66,6 +67,17 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         objectMetadataItemWithFieldMaps,
       });
 
+    const commonQueryParser = new GraphqlQueryParser(
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+    );
+
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
+      objectMetadataItemWithFieldMaps,
+      args.selectedFields,
+      objectMetadataMaps,
+    );
+
     const processedArgs = await this.processQueryArgs({
       authContext,
       objectMetadataItemWithFieldMaps,
@@ -79,11 +91,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     const aggregateQueryBuilder = queryBuilder.clone();
 
     let appliedFilters = processedArgs.filter ?? ({} as ObjectRecordFilter);
-
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
 
     commonQueryParser.applyFilterToBuilder(
       aggregateQueryBuilder,
@@ -136,7 +143,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: processedArgs.selectedFieldsResult.aggregate,
+      selectedAggregatedFields: selectedFieldsResult.aggregate,
       queryBuilder: aggregateQueryBuilder,
       objectMetadataNameSingular: objectMetadataItemWithFieldMaps.nameSingular,
     });
@@ -145,8 +152,8 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       processedArgs.first ?? processedArgs.last ?? QUERY_MAX_RECORDS;
 
     const columnsToSelect = buildColumnsToSelect({
-      select: processedArgs.selectedFieldsResult.select,
-      relations: processedArgs.selectedFieldsResult.relations,
+      select: selectedFieldsResult.select,
+      relations: selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     });
@@ -176,23 +183,23 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     const parentObjectRecordsAggregatedValues =
       await aggregateQueryBuilder.getRawOne();
 
-    if (processedArgs.selectedFieldsResult.relations) {
+    if (selectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,
         parentObjectRecordsAggregatedValues,
         //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
-        relations: processedArgs.selectedFieldsResult.relations as Record<
+        relations: selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
-        aggregate: processedArgs.selectedFieldsResult.aggregate,
+        aggregate: selectedFieldsResult.aggregate,
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
-        selectedFields: processedArgs.selectedFieldsResult.select,
+        selectedFields: selectedFieldsResult.select,
       });
     }
 
@@ -209,6 +216,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       aggregatedValues: parentObjectRecordsAggregatedValues,
       totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       pageInfo,
+      selectedFieldsResult,
     };
   }
 
