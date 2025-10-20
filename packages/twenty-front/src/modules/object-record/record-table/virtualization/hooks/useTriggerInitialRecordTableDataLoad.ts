@@ -11,7 +11,7 @@ import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/r
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { useReapplyRowSelection } from '@/object-record/record-table/virtualization/hooks/useReapplyRowSelection';
-import { useResetNumberOfRecordsToVirtualize } from '@/object-record/record-table/virtualization/hooks/useResetNumberOfRecordsToVirtualize';
+
 import { useResetTableFocuses } from '@/object-record/record-table/virtualization/hooks/useResetTableFocuses';
 import { useResetVirtualizedRowTreadmill } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizedRowTreadmill';
 import { dataLoadingStatusByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilyState';
@@ -21,6 +21,7 @@ import { lastRealIndexSetComponentState } from '@/object-record/record-table/vir
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
 import { scrollAtRealIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRealIndexComponentState';
+import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
@@ -88,8 +89,6 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const { scrollTableToPosition } = useScrollTableToPosition();
 
   const { resetVirtualizedRowTreadmill } = useResetVirtualizedRowTreadmill();
-  const { resetNumberOfRecordsToVirtualize } =
-    useResetNumberOfRecordsToVirtualize();
 
   const { resetTableFocuses } = useResetTableFocuses(recordTableId);
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -97,6 +96,11 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
 
   const { reapplyRowSelection } = useReapplyRowSelection();
+
+  const totalNumberOfRecordsToVirtualizeCallbackState =
+    useRecoilComponentCallbackState(
+      totalNumberOfRecordsToVirtualizeComponentState,
+    );
 
   const triggerInitialRecordTableDataLoad = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -153,18 +157,17 @@ export const useTriggerInitialRecordTableDataLoad = () => {
               null,
             );
           }
+
           const { records: findManyRecords, totalCount: findManyTotalCount } =
             await findManyRecordsLazy();
+
           records = findManyRecords;
           totalCount = findManyTotalCount;
         }
 
-        if (isDefined(records)) {
-          resetNumberOfRecordsToVirtualize({
-            records,
-            totalCount,
-          });
+        set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
 
+        if (isDefined(records)) {
           upsertRecordsInStore(records);
 
           loadRecordsToVirtualRows({
@@ -209,7 +212,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       findManyRecordsLazy,
       dataLoadingStatusByRealIndexCallbackState,
       recordIdByRealIndexCallbackState,
-      resetNumberOfRecordsToVirtualize,
+      totalNumberOfRecordsToVirtualizeCallbackState,
       upsertRecordsInStore,
       loadRecordsToVirtualRows,
       reapplyRowSelection,
