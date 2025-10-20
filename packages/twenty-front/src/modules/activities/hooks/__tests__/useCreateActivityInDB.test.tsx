@@ -1,7 +1,7 @@
 import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
-import pick from 'lodash.pick';
+import { pick } from 'twenty-shared/utils';
 
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

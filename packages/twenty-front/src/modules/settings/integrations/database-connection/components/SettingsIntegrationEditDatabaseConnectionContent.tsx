@@ -14,10 +14,9 @@ import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Section } from '@react-email/components';
-import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, pick } from 'twenty-shared/utils';
 import { H2Title, Info } from 'twenty-ui/display';
 import { type z } from 'zod';
 import {

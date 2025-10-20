@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
-import pick from 'lodash.pick';
+import { pick } from 'twenty-shared/utils';
 
 import { MetadataQueryBuilderFactory } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.factory';
 import { MCPMetadataToolsService } from 'src/engine/api/mcp/services/tools/mcp-metadata-tools.service';
