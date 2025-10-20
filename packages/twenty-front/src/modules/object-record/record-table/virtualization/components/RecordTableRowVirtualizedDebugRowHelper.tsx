@@ -11,12 +11,27 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
+const StyledDebugRow = styled.div`
+  position: absolute;
+  left: 250px;
+  top: 5px;
+  z-index: 20;
+  color: darkblue;
+  background-color: white;
+  border: 1px solid blue;
+  padding: 2px;
+  display: flex;
+  max-height: 16px;
+
+  overflow: hidden;
+`;
+
 const StyledDebugColumn = styled.div<{ width: number }>`
   height: 25px;
   max-height: 25px;
   min-width: ${({ width }) => width}px;
   max-width: ${({ width }) => width}px;
-  overflow: scroll;
+  overflow: hidden;
 
   display: flex;
   text-wrap-mode: nowrap;
@@ -62,21 +77,7 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
   const position = record?.position;
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        left: 250,
-        top: 5,
-        zIndex: 20,
-        color: 'darkblue',
-        backgroundColor: 'white',
-        border: '1px solid blue',
-        padding: 2,
-        display: 'flex',
-        maxHeight: 16,
-        overflow: 'clip',
-      }}
-    >
+    <StyledDebugRow>
       <StyledDebugColumn width={70}>virtual :{virtualIndex}</StyledDebugColumn>
       <StyledDebugColumn width={70}>real :{realIndex}</StyledDebugColumn>
       <StyledDebugColumn width={100}>pos :{position}</StyledDebugColumn>
@@ -91,6 +92,6 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
         id:
         {recordId}
       </StyledDebugColumn>
-    </div>
+    </StyledDebugRow>
   );
 };
