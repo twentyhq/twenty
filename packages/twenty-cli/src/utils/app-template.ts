@@ -17,6 +17,13 @@ export const copyBaseApplicationProject = async ({
 }) => {
   await fs.copy(BASE_APPLICATION_PROJECT_PATH, appDirectory);
 
+  await fs.rename(
+    join(appDirectory, 'gitignore'),
+    join(appDirectory, '.gitignore'),
+  );
+
+  await fs.copy(join(appDirectory, '.env.example'), join(appDirectory, '.env'));
+
   await createBasePackageJson({
     appName,
     appDescription,

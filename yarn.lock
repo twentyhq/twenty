@@ -51703,12 +51703,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
-    "@babel/preset-env": "npm:^7.26.9"
-    "@types/babel__preset-env": "npm:^7"
-    tsx: "npm:^4.19.3"
+    typescript: "npm:5.9.2"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"
-    vite-tsconfig-paths: "npm:^4.2.1"
   languageName: unknown
   linkType: soft
 
