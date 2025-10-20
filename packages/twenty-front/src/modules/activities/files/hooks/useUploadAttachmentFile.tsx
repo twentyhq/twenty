@@ -1,10 +1,7 @@
-import { useRecoilValue } from 'recoil';
-
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -15,7 +12,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useUploadAttachmentFile = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const coreClient = useApolloCoreClient();
   const [uploadFile] = useUploadFileMutation({ client: coreClient });
 
@@ -49,21 +45,10 @@ export const useUploadAttachmentFile = () => {
     });
 
     const attachmentToCreate = {
-      createdBy: currentWorkspaceMember
-        ? {
-            source: 'MANUAL',
-            workspaceMemberId: currentWorkspaceMember.id,
-            name: currentWorkspaceMember.name.firstName
-              ? `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`.trim()
-              : 'Unknown',
-          }
-        : undefined,
       name: file.name,
       fullPath: attachmentPath,
       type: getFileType(file.name),
       [targetableObjectFieldIdName]: targetableObject.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     } as Partial<Attachment>;
 
     const createdAttachment = await createOneAttachment(attachmentToCreate);
