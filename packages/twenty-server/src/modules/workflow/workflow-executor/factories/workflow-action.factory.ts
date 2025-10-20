@@ -16,6 +16,7 @@ import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
+import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record.workflow-action';
 import { ToolExecutorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-executor-workflow-action';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -24,6 +25,7 @@ export class WorkflowActionFactory {
   constructor(
     private readonly codeWorkflowAction: CodeWorkflowAction,
     private readonly createRecordWorkflowAction: CreateRecordWorkflowAction,
+    private readonly upsertRecordWorkflowAction: UpsertRecordWorkflowAction,
     private readonly updateRecordWorkflowAction: UpdateRecordWorkflowAction,
     private readonly deleteRecordWorkflowAction: DeleteRecordWorkflowAction,
     private readonly findRecordsWorkflowAction: FindRecordsWorkflowAction,
@@ -42,8 +44,9 @@ export class WorkflowActionFactory {
       case WorkflowActionType.SEND_EMAIL:
         return this.toolExecutorWorkflowAction;
       case WorkflowActionType.CREATE_RECORD:
-      case WorkflowActionType.UPSERT_RECORD:
         return this.createRecordWorkflowAction;
+      case WorkflowActionType.UPSERT_RECORD:
+        return this.upsertRecordWorkflowAction;
       case WorkflowActionType.UPDATE_RECORD:
         return this.updateRecordWorkflowAction;
       case WorkflowActionType.DELETE_RECORD:
