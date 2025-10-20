@@ -3,8 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
 
 import { JobState } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
+import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { QUEUE_RETENTION_SECONDS } from 'src/engine/core-modules/message-queue/utils/queue-retention.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class AdminPanelQueueService {
 
   async getQueueJobs(
     queueName: MessageQueue,
-    state?: JobState,
+    state: JobState,
     limit = 50,
     offset = 0,
   ) {
@@ -29,10 +29,8 @@ export class AdminPanelQueueService {
       const start = validOffset;
       const end = validOffset + validLimit - 1;
 
-      const stateToFetch = state || JobState.completed;
-
       const jobs = await queue.getJobs(
-        [stateToFetch] as (
+        [state] as (
           | 'completed'
           | 'failed'
           | 'active'
@@ -45,26 +43,20 @@ export class AdminPanelQueueService {
         false,
       );
 
-      const transformedJobs = await Promise.all(
-        jobs.map(async (job) => {
-          const logs = await this.getJobLogs(job);
-
-          return {
-            id: job.id!,
-            name: job.name,
-            data: job.data,
-            state: this.getJobState(job),
-            timestamp: job.timestamp,
-            failedReason: job.failedReason,
-            processedOn: job.processedOn,
-            finishedOn: job.finishedOn,
-            attemptsMade: job.attemptsMade,
-            returnValue: job.returnValue,
-            logs,
-            stackTrace: job.stackTrace,
-          };
-        }),
-      );
+      const transformedJobs = jobs.map((job) => ({
+        id: job.id!,
+        name: job.name,
+        data: job.data,
+        state: this.getJobState(job),
+        timestamp: job.timestamp,
+        failedReason: job.failedReason,
+        processedOn: job.processedOn,
+        finishedOn: job.finishedOn,
+        attemptsMade: job.attemptsMade,
+        returnValue: job.returnValue,
+        logs: undefined,
+        stackTrace: job.stackTrace,
+      }));
 
       const hasMore = jobs.length === validLimit;
 
@@ -79,7 +71,7 @@ export class AdminPanelQueueService {
       );
 
       const totalCountForState = (() => {
-        switch (stateToFetch) {
+        switch (state) {
           case 'completed':
             return jobCounts.completed ?? 0;
           case 'failed':
@@ -102,7 +94,7 @@ export class AdminPanelQueueService {
         count: jobs.length,
         totalCount: totalCountForState,
         hasMore,
-        retentionConfig: { ...QUEUE_RETENTION_SECONDS },
+        retentionConfig: { ...QUEUE_RETENTION },
       };
     } catch (error) {
       this.logger.error(
@@ -201,10 +193,6 @@ export class AdminPanelQueueService {
     } finally {
       await queue.close();
     }
-  }
-
-  private async getJobLogs(_job: Job): Promise<string[] | undefined> {
-    return undefined;
   }
 
   private getJobState(job: Job): JobState {

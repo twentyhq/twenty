@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -3433,10 +3433,10 @@ export type QueryGetPublicWorkspaceDataByDomainArgs = {
 
 
 export type QueryGetQueueJobsArgs = {
-  limit?: InputMaybe<Scalars['Float']>;
-  offset?: InputMaybe<Scalars['Float']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
   queueName: Scalars['String'];
-  state?: InputMaybe<JobState>;
+  state: JobState;
 };
 
 
@@ -5431,9 +5431,9 @@ export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicator
 
 export type GetQueueJobsQueryVariables = Exact<{
   queueName: Scalars['String'];
-  state?: InputMaybe<JobState>;
-  limit?: InputMaybe<Scalars['Float']>;
-  offset?: InputMaybe<Scalars['Float']>;
+  state: JobState;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -10368,7 +10368,7 @@ export type GetIndicatorHealthStatusQueryHookResult = ReturnType<typeof useGetIn
 export type GetIndicatorHealthStatusLazyQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusLazyQuery>;
 export type GetIndicatorHealthStatusQueryResult = Apollo.QueryResult<GetIndicatorHealthStatusQuery, GetIndicatorHealthStatusQueryVariables>;
 export const GetQueueJobsDocument = gql`
-    query GetQueueJobs($queueName: String!, $state: JobState, $limit: Float, $offset: Float) {
+    query GetQueueJobs($queueName: String!, $state: JobState!, $limit: Int, $offset: Int) {
   getQueueJobs(
     queueName: $queueName
     state: $state

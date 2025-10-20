@@ -18,12 +18,9 @@ import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/d
 import { type MessageQueueJob } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
-import {
-  QUEUE_RETENTION_COMPLETED,
-  QUEUE_RETENTION_FAILED,
-} from 'src/engine/core-modules/message-queue/utils/queue-retention.constants';
 
 export type BullMQDriverOptions = QueueOptions;
 
@@ -115,8 +112,14 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     const queueOptions: JobsOptions = {
       priority: options?.priority,
       repeat: options?.repeat,
-      removeOnComplete: QUEUE_RETENTION_COMPLETED,
-      removeOnFail: QUEUE_RETENTION_FAILED,
+      removeOnComplete: {
+        age: QUEUE_RETENTION.completedMaxAge,
+        count: QUEUE_RETENTION.completedMaxCount,
+      },
+      removeOnFail: {
+        age: QUEUE_RETENTION.failedMaxAge,
+        count: QUEUE_RETENTION.failedMaxCount,
+      },
     };
 
     await this.queueMap[queueName].upsertJobScheduler(
@@ -173,8 +176,14 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
       jobId: options?.id ? `${options.id}-${v4()}` : undefined, // We add V4() to id to make sure ids are uniques so we can add a waiting job when a job related with the same option.id is running
       priority: options?.priority,
       attempts: 1 + (options?.retryLimit || 0),
-      removeOnComplete: QUEUE_RETENTION_COMPLETED,
-      removeOnFail: QUEUE_RETENTION_FAILED,
+      removeOnComplete: {
+        age: QUEUE_RETENTION.completedMaxAge,
+        count: QUEUE_RETENTION.completedMaxCount,
+      },
+      removeOnFail: {
+        age: QUEUE_RETENTION.failedMaxAge,
+        count: QUEUE_RETENTION.failedMaxCount,
+      },
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);

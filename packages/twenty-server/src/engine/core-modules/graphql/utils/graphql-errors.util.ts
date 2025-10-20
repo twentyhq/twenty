@@ -1,10 +1,10 @@
 import { type MessageDescriptor } from '@lingui/core';
 import {
-    type ASTNode,
-    GraphQLError,
-    type GraphQLFormattedError,
-    type Source,
-    type SourceLocation,
+  type ASTNode,
+  GraphQLError,
+  type GraphQLFormattedError,
+  type Source,
+  type SourceLocation,
 } from 'graphql';
 
 import { CustomException } from 'src/utils/custom-exception';

@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export const GET_QUEUE_JOBS = gql`
   query GetQueueJobs(
     $queueName: String!
-    $state: JobState
+    $state: JobState!
     $limit: Int
     $offset: Int
   ) {

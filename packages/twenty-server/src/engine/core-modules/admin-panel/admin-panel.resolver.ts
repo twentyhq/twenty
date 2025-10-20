@@ -177,8 +177,8 @@ export class AdminPanelResolver {
   async getQueueJobs(
     @Args('queueName', { type: () => String })
     queueName: string,
-    @Args('state', { type: () => JobState, nullable: true })
-    state?: JobState,
+    @Args('state', { type: () => JobState })
+    state: JobState,
     @Args('limit', { type: () => Int, nullable: true, defaultValue: 50 })
     limit?: number,
     @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
