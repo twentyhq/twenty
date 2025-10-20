@@ -14,29 +14,27 @@ import { isDefined } from 'twenty-shared/utils';
 const StyledDebugRow = styled.div`
   position: absolute;
   left: 250px;
-  top: 5px;
+  top: ${({ theme }) => theme.spacing(1.25)};
   z-index: 20;
-  color: darkblue;
-  background-color: white;
-  border: 1px solid blue;
-  padding: 2px;
+  color: ${({ theme }) => theme.font.color.primary};
+  background-color: ${({ theme }) => theme.adaptiveColors.gray1};
+  border: 1px solid ${({ theme }) => theme.adaptiveColors.blue4};
+  padding: ${({ theme }) => theme.spacing(0.5)};
   display: flex;
-  max-height: 16px;
+  max-height: ${({ theme }) => theme.spacing(4)};
 
   overflow: hidden;
 `;
 
 const StyledDebugColumn = styled.div<{ width: number }>`
-  height: 25px;
-  max-height: 25px;
   min-width: ${({ width }) => width}px;
   max-width: ${({ width }) => width}px;
   overflow: hidden;
 
   display: flex;
   text-wrap-mode: nowrap;
-  padding-right: 2px;
-  padding-left: 2px;
+  padding-right: ${({ theme }) => theme.spacing(0.5)};
+  padding-left: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 type RecordTableRowVirtualizedDebugRowHelperProps = {
