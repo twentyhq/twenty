@@ -1,3 +1,4 @@
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useChangeView } from '@/views/hooks/useChangeView';
@@ -90,7 +91,10 @@ export const useCreateViewFromCurrentState = () => {
             name,
             icon: iconKey,
             type,
-            kanbanFieldMetadataId,
+            kanbanAggregateOperation: isDefined(kanbanFieldMetadataId)
+              ? AggregateOperations.MIN
+              : undefined,
+            kanbanAggregateOperationFieldMetadataId: kanbanFieldMetadataId,
             calendarFieldMetadataId,
           },
           shouldCopyFiltersAndSortsAndAggregate,
