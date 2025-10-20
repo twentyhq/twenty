@@ -7,7 +7,7 @@ import { formatSlug } from '@/shared-utils/formatSlug';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata(props: PageProps<'/twenty-ui/[slug]'>): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await props.params;
   const formattedSlug = formatSlug(slug);
   const basePath = '/src/content/twenty-ui';
@@ -18,7 +18,7 @@ export async function generateMetadata(props: PageProps<'/twenty-ui/[slug]'>): P
   };
 }
 
-export default async function TwentyUISlug(props: PageProps<'/twenty-ui/[slug]'>) {
+export default async function TwentyUISlug(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
   const basePath = '/src/content/twenty-ui';
   const mainPost = await fetchArticleFromSlug(slug, basePath);

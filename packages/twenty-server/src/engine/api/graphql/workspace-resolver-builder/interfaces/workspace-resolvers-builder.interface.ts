@@ -29,6 +29,7 @@ export enum ResolverArgsType {
   DestroyMany = 'DestroyMany',
   DestroyOne = 'DestroyOne',
   MergeMany = 'MergeMany',
+  GroupBy = 'GroupBy',
 }
 
 export interface FindManyResolverArgs<
@@ -74,6 +75,7 @@ export interface GroupByResolverArgs<Filter = ObjectRecordFilter> {
   groupBy: ObjectRecordGroupBy;
   viewId?: string;
   orderBy?: OrderByWithGroupBy;
+  omitNullValues?: boolean;
 }
 
 export interface UpdateOneResolverArgs<

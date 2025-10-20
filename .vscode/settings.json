@@ -1,6 +1,8 @@
 {
   "editor.formatOnSave": false,
-  "files.eol": "auto",
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
   "[typescript]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {

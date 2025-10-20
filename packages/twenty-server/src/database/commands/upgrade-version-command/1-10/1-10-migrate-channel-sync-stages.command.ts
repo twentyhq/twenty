@@ -23,7 +23,7 @@ import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-o
 import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Command({
-  name: 'upgrade:1-10:migrate-channel-sync-stages',
+  name: 'upgrade:1-8:migrate-channel-sync-stages',
   description:
     'Migrate message and calendar channel sync stages: add PENDING_CONFIGURATION, add MESSAGE_LIST_FETCH_SCHEDULED, migrate deprecated stages',
 })
@@ -143,11 +143,26 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         `Would migrate deprecated messageChannel sync stages for workspace ${workspaceId}`,
       );
     } else {
-      const messageChannelUpdateResult = await this.coreDataSource.query(
-        `UPDATE "${schemaName}"."${tableName}"
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let messageChannelUpdateResult: any;
+
+      try {
+        messageChannelUpdateResult = await this.coreDataSource.query(
+          `UPDATE "${schemaName}"."${tableName}"
          SET "syncStage" = 'MESSAGE_LIST_FETCH_PENDING'
          WHERE "syncStage" IN ('FULL_MESSAGE_LIST_FETCH_PENDING', 'PARTIAL_MESSAGE_LIST_FETCH_PENDING')`,
-      );
+        );
+      } catch {
+        await this.coreDataSource.query(
+          `ALTER TYPE ${schemaName}."messageChannel_syncStage_enum" ADD VALUE IF NOT EXISTS 'MESSAGE_LIST_FETCH_PENDING'`,
+        );
+
+        messageChannelUpdateResult = await this.coreDataSource.query(
+          `UPDATE "${schemaName}"."${tableName}"
+         SET "syncStage" = 'MESSAGE_LIST_FETCH_PENDING'
+         WHERE "syncStage" IN ('FULL_MESSAGE_LIST_FETCH_PENDING', 'PARTIAL_MESSAGE_LIST_FETCH_PENDING')`,
+        );
+      }
 
       const messageChannelRowsUpdated = messageChannelUpdateResult[1] || 0;
 
@@ -224,11 +239,26 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         `Would migrate deprecated calendarChannel sync stages for workspace ${workspaceId}`,
       );
     } else {
-      const calendarChannelUpdateResult = await this.coreDataSource.query(
-        `UPDATE "${schemaName}"."${tableName}"
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let calendarChannelUpdateResult: any;
+
+      try {
+        calendarChannelUpdateResult = await this.coreDataSource.query(
+          `UPDATE "${schemaName}"."${tableName}"
          SET "syncStage" = 'CALENDAR_EVENT_LIST_FETCH_PENDING'
          WHERE "syncStage" IN ('FULL_CALENDAR_EVENT_LIST_FETCH_PENDING', 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING')`,
-      );
+        );
+      } catch {
+        await this.coreDataSource.query(
+          `ALTER TYPE ${schemaName}."calendarChannel_syncStage_enum" ADD VALUE IF NOT EXISTS 'CALENDAR_EVENT_LIST_FETCH_PENDING'`,
+        );
+
+        calendarChannelUpdateResult = await this.coreDataSource.query(
+          `UPDATE "${schemaName}"."${tableName}"
+         SET "syncStage" = 'CALENDAR_EVENT_LIST_FETCH_PENDING'
+         WHERE "syncStage" IN ('FULL_CALENDAR_EVENT_LIST_FETCH_PENDING', 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING')`,
+        );
+      }
 
       const calendarChannelRowsUpdated = calendarChannelUpdateResult[1] || 0;
 
@@ -286,7 +316,16 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         option.value === MessageChannelSyncStage.PENDING_CONFIGURATION,
     );
 
-    if (hasMessageListFetchScheduled && hasPendingConfiguration) {
+    const hasMessageListFetchPending = fieldOptions.some(
+      (option) =>
+        option.value === MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+    );
+
+    if (
+      hasMessageListFetchScheduled &&
+      hasPendingConfiguration &&
+      hasMessageListFetchPending
+    ) {
       this.logger.log(
         `MessageChannel syncStage field metadata already migrated for workspace ${workspaceId}`,
       );
@@ -320,6 +359,14 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
       });
     }
 
+    if (!hasMessageListFetchPending) {
+      fieldOptions.push({
+        value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+        label: 'Messages list fetch pending',
+        position: 0,
+        color: 'blue',
+      });
+    }
     syncStageField.options = fieldOptions;
 
     await this.fieldMetadataRepository.save(syncStageField);
@@ -378,7 +425,17 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         option.value === CalendarChannelSyncStage.PENDING_CONFIGURATION,
     );
 
-    if (hasCalendarEventListFetchScheduled && hasPendingConfiguration) {
+    const hasCalendarEventListFetchPending = fieldOptions.some(
+      (option) =>
+        option.value ===
+        CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+    );
+
+    if (
+      hasCalendarEventListFetchScheduled &&
+      hasPendingConfiguration &&
+      hasCalendarEventListFetchPending
+    ) {
       this.logger.log(
         `CalendarChannel syncStage field metadata already migrated for workspace ${workspaceId}`,
       );
@@ -409,6 +466,15 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         label: 'Pending configuration',
         position: 9,
         color: 'gray',
+      });
+    }
+
+    if (!hasCalendarEventListFetchPending) {
+      fieldOptions.push({
+        value: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        label: 'Calendar event list fetch pending',
+        position: 0,
+        color: 'blue',
       });
     }
 

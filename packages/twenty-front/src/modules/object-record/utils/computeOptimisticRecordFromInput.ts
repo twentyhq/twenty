@@ -3,7 +3,7 @@ import { isNull, isUndefined } from '@sniptt/guards';
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getFieldMetadataFromGqlField } from '@/object-record/cache/utils/getFieldMetadataFromGqlField';
-import { getFieldMetadataMorphRelationFromGqlField } from '@/object-record/cache/utils/getFieldMetadataMorphRelationFromGqlField';
+import { getMorphRelationFromFieldMetadataAndGqlField } from '@/object-record/cache/utils/getMorphRelationFromFieldMetadataAndGqlField';
 import {
   getRecordFromCache,
   type GetRecordFromCacheArgs,
@@ -146,19 +146,19 @@ export const computeOptimisticRecordFromInput = ({
         );
       }
 
-      const relationFieldIdName = getForeignKeyNameFromRelationFieldName(
+      const relationGqlFieldWithId = getForeignKeyNameFromRelationFieldName(
         fieldMetadataItem.name,
       );
 
       const recordInputFieldIdValue: string | null | undefined =
-        recordInput[relationFieldIdName];
+        recordInput[relationGqlFieldWithId];
 
       if (isUndefined(recordInputFieldIdValue)) {
         continue;
       }
 
       if (isNull(recordInputFieldIdValue)) {
-        optimisticRecord[relationFieldIdName] = null;
+        optimisticRecord[relationGqlFieldWithId] = null;
         optimisticRecord[fieldMetadataItem.name] = null;
         continue;
       }
@@ -182,7 +182,7 @@ export const computeOptimisticRecordFromInput = ({
         objectPermissionsByObjectMetadataId,
       });
 
-      optimisticRecord[relationFieldIdName] = recordInputFieldIdValue;
+      optimisticRecord[relationGqlFieldWithId] = recordInputFieldIdValue;
 
       if (!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
         continue;
@@ -208,7 +208,7 @@ export const computeOptimisticRecordFromInput = ({
         );
       }
 
-      const relationFieldIdNames = fieldMetadataItem.morphRelations?.map(
+      const relationGqlFields = fieldMetadataItem.morphRelations?.map(
         (morphRelation) => {
           return computeMorphRelationFieldName({
             fieldName: fieldMetadataItem.name,
@@ -221,39 +221,25 @@ export const computeOptimisticRecordFromInput = ({
         },
       );
 
-      const relationFieldName = relationFieldIdNames?.find(
-        (relationFieldIdName) => recordInput[`${relationFieldIdName}Id`],
+      const relationGqlField = relationGqlFields?.find(
+        (relationGqlField) => recordInput[`${relationGqlField}Id`],
       );
 
-      const relationFieldIdName = `${relationFieldName}Id`;
+      const relationGqlFieldWithId = `${relationGqlField}Id`;
 
-      if (isUndefined(relationFieldName)) {
+      if (isUndefined(relationGqlField)) {
         continue;
       }
 
       const recordInputFieldIdValue: string | null | undefined =
-        recordInput[relationFieldIdName];
+        recordInput[relationGqlFieldWithId];
 
       if (isUndefined(recordInputFieldIdValue)) {
         continue;
       }
 
-      const relationIdFieldMetadataItem = getFieldMetadataFromGqlField({
-        objectMetadataItem,
-        gqlField: relationFieldName,
-      });
-
-      if (
-        !isDefined(relationIdFieldMetadataItem) &&
-        !isDefined(fieldMetadataItem.settings?.joinColumnName)
-      ) {
-        throw new Error(
-          'Should never occur, encountered unknown relationId within relations definitions',
-        );
-      }
-
       if (isNull(recordInputFieldIdValue)) {
-        optimisticRecord[relationFieldName] = null;
+        optimisticRecord[relationGqlField] = null;
         optimisticRecord[fieldMetadataItem.name] = null;
         continue;
       }
@@ -265,10 +251,10 @@ export const computeOptimisticRecordFromInput = ({
       }
 
       const fieldMetadataMorphRelation =
-        getFieldMetadataMorphRelationFromGqlField({
+        getMorphRelationFromFieldMetadataAndGqlField({
           objectMetadataItems,
           fieldMetadata: { morphRelations: fieldMetadataItem.morphRelations },
-          gqlField: relationFieldName,
+          gqlField: relationGqlField,
         });
 
       if (!isDefined(fieldMetadataMorphRelation?.targetObjectMetadata)) {
@@ -285,13 +271,13 @@ export const computeOptimisticRecordFromInput = ({
         objectPermissionsByObjectMetadataId,
       });
 
-      optimisticRecord[relationFieldIdName] = recordInputFieldIdValue;
+      optimisticRecord[relationGqlFieldWithId] = recordInputFieldIdValue;
 
       if (!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
         continue;
       }
 
-      optimisticRecord[relationFieldName] = cachedRecord;
+      optimisticRecord[relationGqlField] = cachedRecord;
     }
   }
 

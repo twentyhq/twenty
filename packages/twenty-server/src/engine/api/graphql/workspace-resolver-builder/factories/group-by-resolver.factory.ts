@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import graphqlFields from 'graphql-fields';
+
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
@@ -8,8 +10,12 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
+import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
 import { GraphqlQueryGroupByResolverService } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/graphql-query-group-by-resolver.service';
+import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 @Injectable()
 export class GroupByResolverFactory
@@ -19,6 +25,8 @@ export class GroupByResolverFactory
 
   constructor(
     private readonly graphqlQueryRunnerService: GraphqlQueryGroupByResolverService,
+    private readonly commonGroupByQueryRunnerService: CommonGroupByQueryRunnerService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   create(
@@ -27,6 +35,27 @@ export class GroupByResolverFactory
     const internalContext = context;
 
     return async (_source, args, _context, info) => {
+      const isCommonApiEnabled = await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_COMMON_API_ENABLED,
+        internalContext.authContext.workspace?.id as string,
+      );
+
+      if (isCommonApiEnabled) {
+        const selectedFields = graphqlFields(info);
+
+        try {
+          return await this.commonGroupByQueryRunnerService.run({
+            args: { ...args, selectedFields },
+            authContext: internalContext.authContext,
+            objectMetadataMaps: internalContext.objectMetadataMaps,
+            objectMetadataItemWithFieldMaps:
+              internalContext.objectMetadataItemWithFieldMaps,
+          });
+        } catch (error) {
+          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+        }
+      }
+
       const options: WorkspaceQueryRunnerOptions = {
         authContext: internalContext.authContext,
         info,

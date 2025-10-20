@@ -16,20 +16,6 @@ const StyledFormSection = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledIconNameRow = styled.div`
-  align-items: flex-start;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledIconContainer = styled.div`
-  flex-shrink: 0;
-`;
-
-const StyledNameContainer = styled.div`
-  flex: 1;
-`;
-
 export const SettingsApplicationDetailSkeletonLoader = () => {
   const theme = useTheme();
 
@@ -41,21 +27,6 @@ export const SettingsApplicationDetailSkeletonLoader = () => {
     >
       <StyledSkeletonContainer>
         <StyledFormSection>
-          <StyledIconNameRow>
-            <StyledIconContainer>
-              <Skeleton
-                width={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-              />
-            </StyledIconContainer>
-            <StyledNameContainer>
-              <Skeleton
-                height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                width="100%"
-              />
-            </StyledNameContainer>
-          </StyledIconNameRow>
-
           <Skeleton
             height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
             width="100%"
@@ -75,8 +46,6 @@ export const SettingsApplicationDetailSkeletonLoader = () => {
             height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
             width="100%"
           />
-
-          <Skeleton height={120} width="100%" />
         </StyledFormSection>
       </StyledSkeletonContainer>
     </SkeletonTheme>

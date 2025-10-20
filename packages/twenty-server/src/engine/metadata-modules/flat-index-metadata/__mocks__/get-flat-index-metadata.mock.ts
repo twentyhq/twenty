@@ -23,6 +23,7 @@ export const getFlatIndexMetadataMock = (
     name: 'defaultFlatIndexMetadataName',
     updatedAt: createdAt,
     workspaceId: faker.string.uuid(),
+    applicationId: faker.string.uuid(),
     ...overrides,
   };
 };

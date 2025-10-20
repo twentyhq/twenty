@@ -45,14 +45,12 @@ export class MigrateAttachmentAuthorToCreatedByCommand extends ActiveOrSuspended
         `Migrating attachment author to createdBy for workspace ${workspaceId}`,
       );
 
-      // Get workspace member repository to fetch workspace member details
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
         );
 
-      // Get all attachments that have an authorId but no createdBy set
       const attachments = await queryRunner.query(
         `
         SELECT id, "authorId"

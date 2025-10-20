@@ -41,3 +41,4 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
   ],
 })
 export class V1_10_UpgradeVersionCommandModule {}
+

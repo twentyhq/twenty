@@ -28,7 +28,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 @Command({
-  name: 'upgrade:1-10:deduplicate-unique-fields',
+  name: 'upgrade:1-8:deduplicate-unique-fields',
   description:
     'Deduplicate unique fields for workspaceMembers, companies and people because we changed the unique constraint',
 })
@@ -187,7 +187,7 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
   }) {
     const workspaceMemberRepository = dataSource.getRepository(
       'workspaceMember',
-      true,
+      { shouldBypassPermissionChecks: true },
     );
 
     const duplicates = await workspaceMemberRepository
@@ -245,7 +245,9 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
     dataSource: WorkspaceDataSource;
     dryRun: boolean;
   }) {
-    const companyRepository = dataSource.getRepository('company', true);
+    const companyRepository = dataSource.getRepository('company', {
+      shouldBypassPermissionChecks: true,
+    });
 
     const duplicates = await companyRepository
       .createQueryBuilder('company')
@@ -303,7 +305,9 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
     dataSource: WorkspaceDataSource;
     dryRun: boolean;
   }) {
-    const personRepository = dataSource.getRepository('person', true);
+    const personRepository = dataSource.getRepository('person', {
+      shouldBypassPermissionChecks: true,
+    });
 
     const duplicates = await personRepository
       .createQueryBuilder('person')
