@@ -266,7 +266,20 @@ export class WorkspaceEntityManager extends EntityManager {
         ),
     );
 
-    return this.createQueryBuilder(
+    const overwrites = [...conflictColumns, ...overwriteColumns].map(
+      (col) => col.databaseName,
+    );
+
+    const conflictTargets = conflictColumns.map((col) => col.databaseName);
+
+    const upsertOptions = {
+      skipUpdateIfNoValuesChanged: options.skipUpdateIfNoValuesChanged,
+      indexPredicate: options.indexPredicate,
+      upsertType:
+        options.upsertType || this.connection.driver.supportedUpsertTypes[0],
+    };
+
+    const queryBuilder = this.createQueryBuilder(
       undefined,
       undefined,
       undefined,
@@ -275,21 +288,10 @@ export class WorkspaceEntityManager extends EntityManager {
       .insert()
       .into(target)
       .values(entities)
-      .orUpdate(
-        [...conflictColumns, ...overwriteColumns].map(
-          (col) => col.databaseName,
-        ),
-        conflictColumns.map((col) => col.databaseName),
-        {
-          skipUpdateIfNoValuesChanged: options.skipUpdateIfNoValuesChanged,
-          indexPredicate: options.indexPredicate,
-          upsertType:
-            options.upsertType ||
-            this.connection.driver.supportedUpsertTypes[0],
-        },
-      )
-      .returning(selectedColumns)
-      .execute();
+      .orUpdate(overwrites, conflictTargets, upsertOptions)
+      .returning(selectedColumns);
+
+    return queryBuilder.execute();
   }
 
   override update<Entity extends ObjectLiteral>(

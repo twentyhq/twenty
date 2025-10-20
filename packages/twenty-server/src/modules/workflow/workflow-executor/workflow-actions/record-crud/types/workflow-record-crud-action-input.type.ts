@@ -40,8 +40,5 @@ export type WorkflowFindRecordsActionInput = {
 export type WorkflowUpsertRecordActionInput = {
   objectName: string;
   objectRecord: ObjectRecordProperties;
-  upsertCriteria: {
-    matchFields: string[];
-  };
   fieldsToUpdate?: string[];
 };

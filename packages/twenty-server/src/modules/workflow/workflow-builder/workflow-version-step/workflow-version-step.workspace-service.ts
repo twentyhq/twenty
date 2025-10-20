@@ -19,10 +19,7 @@ import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-bu
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
-import {
-  WorkflowActionType,
-  type WorkflowAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
 export class WorkflowVersionStepWorkspaceService {
@@ -65,7 +62,7 @@ export class WorkflowVersionStepWorkspaceService {
     const { builtStep, additionalCreatedSteps } =
       await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
         {
-          type: stepType as WorkflowActionType,
+          type: stepType,
           workspaceId,
           position,
           workflowVersionId,

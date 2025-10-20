@@ -74,7 +74,6 @@ export type WorkflowAction =
 
 export type WorkflowActionType = WorkflowAction['type'];
 export type WorkflowStep = WorkflowAction;
-export type WorkflowStepType = WorkflowStep['type'];
 
 export type WorkflowDatabaseEventTrigger = z.infer<
   typeof workflowDatabaseEventTriggerSchema
