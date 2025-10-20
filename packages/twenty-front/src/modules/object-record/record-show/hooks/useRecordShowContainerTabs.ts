@@ -5,7 +5,6 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/layouts/base-record-layout';
 import { COMPANY_RECORD_LAYOUT } from '@/object-record/record-show/layouts/company-record-layout';
-import { DASHBOARD_RECORD_LAYOUT } from '@/object-record/record-show/layouts/dashboard-record-layout';
 import { NOTE_RECORD_LAYOUT } from '@/object-record/record-show/layouts/note-record-layout';
 import { OPPORTUNITY_RECORD_LAYOUT } from '@/object-record/record-show/layouts/opportunity-record-layout';
 import { PERSON_RECORD_LAYOUT } from '@/object-record/record-show/layouts/person-record-layout';
@@ -34,7 +33,6 @@ const OBJECT_SPECIFIC_LAYOUTS: Partial<
   [CoreObjectNameSingular.Workflow]: WORKFLOW_RECORD_LAYOUT,
   [CoreObjectNameSingular.WorkflowVersion]: WORKFLOW_VERSION_RECORD_LAYOUT,
   [CoreObjectNameSingular.WorkflowRun]: WORKFLOW_RUN_RECORD_LAYOUT,
-  [CoreObjectNameSingular.Dashboard]: DASHBOARD_RECORD_LAYOUT,
 };
 
 export const useRecordShowContainerTabs = (
