@@ -39,12 +39,12 @@ export const formatResultWithGroupByDimensionValues = <
     const aggregateValues = aggregateFieldNames.reduce(
       (acc, fieldName) => {
         if (fieldName in group) {
-          acc[fieldName] = Number(group[fieldName]);
+          acc[fieldName] = group[fieldName];
         }
 
         return acc;
       },
-      {} as Record<string, number>,
+      {} as Record<string, string>,
     );
 
     formattedResult.push({

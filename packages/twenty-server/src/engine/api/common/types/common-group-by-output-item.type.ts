@@ -1,5 +1,5 @@
 type AggregateValues = {
-  [key: string]: number;
+  [key: string]: string;
 };
 
 type GroupByDimensionValues = {
