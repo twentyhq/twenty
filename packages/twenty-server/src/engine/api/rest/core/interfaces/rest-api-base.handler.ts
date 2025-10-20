@@ -13,6 +13,7 @@ import { In, type ObjectLiteral } from 'typeorm';
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
@@ -104,7 +105,9 @@ export abstract class RestApiBaseHandler {
 
   protected abstract handle(
     request: AuthenticatedRequest,
-  ): Promise<FormatResult | { data: FormatResult[] }>;
+  ): Promise<
+    FormatResult | { data: FormatResult[] } | CommonGroupByOutputItem[]
+  >;
 
   public async getRepositoryAndMetadataOrFail(request: AuthenticatedRequest) {
     const { workspace, apiKey, userWorkspaceId } = request;

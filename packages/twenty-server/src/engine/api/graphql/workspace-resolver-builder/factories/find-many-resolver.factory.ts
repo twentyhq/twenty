@@ -11,7 +11,6 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -43,26 +42,22 @@ export class FindManyResolverFactory
       );
 
       if (isCommonApiEnabled) {
-        const graphqlQueryParser = new GraphqlQueryParser(
-          internalContext.objectMetadataItemWithFieldMaps,
-          internalContext.objectMetadataMaps,
-        );
-
-        const selectedFieldsResult = graphqlQueryParser.parseSelectedFields(
-          internalContext.objectMetadataItemWithFieldMaps,
-          graphqlFields(info),
-          internalContext.objectMetadataMaps,
-        );
+        const selectedFields = graphqlFields(info);
 
         try {
-          const { records, aggregatedValues, totalCount, pageInfo } =
-            await this.commonFindManyQueryRunnerService.run({
-              args: { ...args, selectedFieldsResult },
-              authContext: internalContext.authContext,
-              objectMetadataMaps: internalContext.objectMetadataMaps,
-              objectMetadataItemWithFieldMaps:
-                internalContext.objectMetadataItemWithFieldMaps,
-            });
+          const {
+            records,
+            aggregatedValues,
+            totalCount,
+            pageInfo,
+            selectedFieldsResult,
+          } = await this.commonFindManyQueryRunnerService.run({
+            args: { ...args, selectedFields },
+            authContext: internalContext.authContext,
+            objectMetadataMaps: internalContext.objectMetadataMaps,
+            objectMetadataItemWithFieldMaps:
+              internalContext.objectMetadataItemWithFieldMaps,
+          });
 
           const typeORMObjectRecordsParser =
             new ObjectRecordsToGraphqlConnectionHelper(
