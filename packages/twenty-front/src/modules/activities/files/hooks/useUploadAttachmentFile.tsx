@@ -10,8 +10,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    FileFolder,
-    useUploadFileMutation,
+  FileFolder,
+  useUploadFileMutation,
 } from '~/generated-metadata/graphql';
 
 export const useUploadAttachmentFile = () => {
