@@ -8,7 +8,7 @@ import {
   SERVERLESS_FUNCTION_SCHEMA_URL,
   TRIGGER_SCHEMA_URL,
 } from '../constants/schemas';
-import { BASE_SCHEMAS_PATH } from '../constants/base-application-project-path';
+import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
 
 export class SchemaValidationError extends Error {
   constructor(
