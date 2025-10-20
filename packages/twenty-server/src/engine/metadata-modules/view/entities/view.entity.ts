@@ -106,7 +106,7 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     () => FieldMetadataEntity,
     (FieldMetadataEntity) => FieldMetadataEntity.views,
     {
-      onDelete: 'SET NULL',
+      onDelete: 'CASCADE',
       nullable: true,
     },
   )

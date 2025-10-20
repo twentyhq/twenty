@@ -68,6 +68,7 @@ export class FlatViewValidatorService {
   public validateFlatViewDeletion({
     flatEntityToValidate: { id: viewIdToDelete },
     optimisticFlatEntityMaps: optimisticFlatViewMaps,
+    dependencyOptimisticFlatEntityMaps: { flatFieldMetadataMaps },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<FlatView> {
@@ -87,14 +88,26 @@ export class FlatViewValidatorService {
         message: t`View not found`,
         userFriendlyMessage: msg`View not found`,
       });
-    } else {
-      if (!isDefined(existingFlatView.deletedAt)) {
-        validationResult.errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`View to delete has not been soft deleted`,
-          userFriendlyMessage: msg`View to delete has not been soft deleted`,
-        });
-      }
+      return validationResult;
+    }
+
+    const shouldValidateSoftDeletion = isDefined(
+      existingFlatView.kanbanAggregateOperationFieldMetadataId,
+    )
+      ? !isDefined(
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId:
+              existingFlatView.kanbanAggregateOperationFieldMetadataId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          }),
+        )
+      : true;
+    if (shouldValidateSoftDeletion && !isDefined(existingFlatView.deletedAt)) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View to delete has not been soft deleted`,
+        userFriendlyMessage: msg`View to delete has not been soft deleted`,
+      });
     }
 
     return validationResult;

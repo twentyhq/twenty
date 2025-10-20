@@ -38,7 +38,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
   }
 
   const flatViews = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityIds: toFlatFieldMetadata.viewIds,
+    flatEntityIds: fromFlatFieldMetadata.viewIds,
     flatEntityMaps: flatViewMaps,
   });
 
