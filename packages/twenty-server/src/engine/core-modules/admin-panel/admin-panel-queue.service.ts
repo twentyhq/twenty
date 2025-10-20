@@ -59,9 +59,9 @@ export class AdminPanelQueueService {
             processedOn: job.processedOn,
             finishedOn: job.finishedOn,
             attemptsMade: job.attemptsMade,
-            returnValue: job.returnvalue,
+            returnValue: job.returnValue,
             logs,
-            stacktrace: job.stacktrace,
+            stackTrace: job.stackTrace,
           };
         }),
       );

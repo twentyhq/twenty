@@ -1,10 +1,10 @@
 import { type MessageDescriptor } from '@lingui/core';
 import {
-  type ASTNode,
-  GraphQLError,
-  type GraphQLFormattedError,
-  type Source,
-  type SourceLocation,
+    type ASTNode,
+    GraphQLError,
+    type GraphQLFormattedError,
+    type Source,
+    type SourceLocation,
 } from 'graphql';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -13,7 +13,7 @@ declare module 'graphql' {
   export interface GraphQLErrorExtensions {
     exception?: {
       code?: string;
-      stacktrace?: ReadonlyArray<string>;
+      stackTrace?: ReadonlyArray<string>;
     };
   }
 }

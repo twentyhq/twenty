@@ -40,5 +40,5 @@ export class QueueJob {
   logs?: string[];
 
   @Field(() => [String], { nullable: true })
-  stacktrace?: string[];
+  stackTrace?: string[];
 }

@@ -64,9 +64,9 @@ export const JobDetailsExpandable = ({
 
   const hasData = job.data && Object.keys(job.data).length > 0;
   const hasReturnValue =
-    job.returnvalue && Object.keys(job.returnvalue).length > 0;
+    job.returnValue && Object.keys(job.returnValue).length > 0;
   const hasLogs = job.logs && job.logs.length > 0;
-  const hasStacktrace = job.stacktrace && job.stacktrace.length > 0;
+  const hasStacktrace = job.stackTrace && job.stackTrace.length > 0;
   const hasFailedReason = job.failedReason;
 
   const isAnyNode = () => true;
@@ -85,11 +85,11 @@ export const JobDetailsExpandable = ({
           </StyledSection>
         )}
 
-        {hasStacktrace && job.stacktrace && (
+        {hasStacktrace && job.stackTrace && (
           <StyledSection>
             <StyledSectionTitle>{t`Stack Trace`}</StyledSectionTitle>
             <StyledPreformattedText>
-              {job.stacktrace.join('\n')}
+              {job.stackTrace.join('\n')}
             </StyledPreformattedText>
           </StyledSection>
         )}
@@ -98,7 +98,7 @@ export const JobDetailsExpandable = ({
           <StyledSection>
             <StyledSectionTitle>{t`Return Value`}</StyledSectionTitle>
             <JsonTree
-              value={job.returnvalue}
+              value={job.returnValue}
               shouldExpandNodeInitially={isAnyNode}
               emptyArrayLabel={t`Empty Array`}
               emptyObjectLabel={t`Empty Object`}

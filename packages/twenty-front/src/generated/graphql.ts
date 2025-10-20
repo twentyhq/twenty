@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -3315,8 +3315,8 @@ export type QueryGetPublicWorkspaceDataByDomainArgs = {
 
 
 export type QueryGetQueueJobsArgs = {
-  limit?: InputMaybe<Scalars['Float']>;
-  offset?: InputMaybe<Scalars['Float']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
   queueName: Scalars['String'];
   state?: InputMaybe<JobState>;
 };
@@ -3404,8 +3404,8 @@ export type QueueJob = {
   logs?: Maybe<Array<Scalars['String']>>;
   name: Scalars['String'];
   processedOn?: Maybe<Scalars['Float']>;
-  returnvalue?: Maybe<Scalars['JSON']>;
-  stacktrace?: Maybe<Array<Scalars['String']>>;
+  returnValue?: Maybe<Scalars['JSON']>;
+  stackTrace?: Maybe<Array<Scalars['String']>>;
   state: JobState;
   timestamp?: Maybe<Scalars['Float']>;
 };

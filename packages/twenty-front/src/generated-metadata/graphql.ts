@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -3544,8 +3544,8 @@ export type QueueJob = {
   logs?: Maybe<Array<Scalars['String']>>;
   name: Scalars['String'];
   processedOn?: Maybe<Scalars['Float']>;
-  returnvalue?: Maybe<Scalars['JSON']>;
-  stacktrace?: Maybe<Array<Scalars['String']>>;
+  returnValue?: Maybe<Scalars['JSON']>;
+  stackTrace?: Maybe<Array<Scalars['String']>>;
   state: JobState;
   timestamp?: Maybe<Scalars['Float']>;
 };
@@ -5437,7 +5437,7 @@ export type GetQueueJobsQueryVariables = Exact<{
 }>;
 
 
-export type GetQueueJobsQuery = { __typename?: 'Query', getQueueJobs: { __typename?: 'QueueJobsResponse', count: number, totalCount: number, hasMore: boolean, jobs: Array<{ __typename?: 'QueueJob', id: string, name: string, data?: any | null, state: JobState, timestamp?: number | null, failedReason?: string | null, processedOn?: number | null, finishedOn?: number | null, attemptsMade: number, returnvalue?: any | null, logs?: Array<string> | null, stacktrace?: Array<string> | null }>, retentionConfig: { __typename?: 'QueueRetentionConfig', completedMaxAge: number, completedMaxCount: number, failedMaxAge: number, failedMaxCount: number } } };
+export type GetQueueJobsQuery = { __typename?: 'Query', getQueueJobs: { __typename?: 'QueueJobsResponse', count: number, totalCount: number, hasMore: boolean, jobs: Array<{ __typename?: 'QueueJob', id: string, name: string, data?: any | null, state: JobState, timestamp?: number | null, failedReason?: string | null, processedOn?: number | null, finishedOn?: number | null, attemptsMade: number, returnValue?: any | null, logs?: Array<string> | null, stackTrace?: Array<string> | null }>, retentionConfig: { __typename?: 'QueueRetentionConfig', completedMaxAge: number, completedMaxCount: number, failedMaxAge: number, failedMaxCount: number } } };
 
 export type GetQueueMetricsQueryVariables = Exact<{
   queueName: Scalars['String'];
@@ -10385,9 +10385,9 @@ export const GetQueueJobsDocument = gql`
       processedOn
       finishedOn
       attemptsMade
-      returnvalue
+      returnValue
       logs
-      stacktrace
+      stackTrace
     }
     count
     totalCount

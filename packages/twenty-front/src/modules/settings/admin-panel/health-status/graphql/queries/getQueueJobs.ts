@@ -23,9 +23,9 @@ export const GET_QUEUE_JOBS = gql`
         processedOn
         finishedOn
         attemptsMade
-        returnvalue
+        returnValue
         logs
-        stacktrace
+        stackTrace
       }
       count
       totalCount
