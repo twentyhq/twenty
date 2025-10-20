@@ -9,6 +9,7 @@ import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/
 import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
 import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { RESERVED_SUBDOMAINS } from 'src/engine/core-modules/workspace/constants/reserved-subdomains.constant';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -206,8 +207,14 @@ export class DomainManagerService {
   }
 
   async generateSubdomain(params?: { email?: string; displayName?: string }) {
-    const subdomain =
-      this.extractSubdomain(params) ?? generateRandomSubdomain();
+    let subdomain = this.extractSubdomain(params);
+
+    // If extracted subdomain is reserved, use random instead
+    if (subdomain && RESERVED_SUBDOMAINS.includes(subdomain)) {
+      subdomain = undefined;
+    }
+
+    subdomain = subdomain ?? generateRandomSubdomain();
 
     const existingWorkspaceCount = await this.workspaceRepository.countBy({
       subdomain,
