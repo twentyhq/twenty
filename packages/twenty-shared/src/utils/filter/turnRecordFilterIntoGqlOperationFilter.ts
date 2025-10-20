@@ -223,20 +223,28 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           const isValid = resolvedFilterValue instanceof Date;
           const date = isValid ? resolvedFilterValue : now;
 
-          return {
-            and: [
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  lte: endOfDay(date).toISOString(),
-                } as DateFilter,
-              },
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  gte: startOfDay(date).toISOString(),
-                } as DateFilter,
-              },
-            ],
-          };
+          if (filterType === 'DATE') {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                eq: date.toISOString(),
+              } as DateFilter,
+            };
+          } else {
+            return {
+              and: [
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    lte: endOfDay(date).toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    gte: startOfDay(date).toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            };
+          }
         }
         case RecordFilterOperand.IS_IN_PAST:
           return {
@@ -251,20 +259,28 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             } as DateFilter,
           };
         case RecordFilterOperand.IS_TODAY: {
-          return {
-            and: [
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  lte: endOfDay(now).toISOString(),
-                } as DateFilter,
-              },
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  gte: startOfDay(now).toISOString(),
-                } as DateFilter,
-              },
-            ],
-          };
+          if (filterType === 'DATE') {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                eq: now.toISOString(),
+              } as DateFilter,
+            };
+          } else {
+            return {
+              and: [
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    lte: endOfDay(now).toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    gte: startOfDay(now).toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            };
+          }
         }
         default:
           throw new Error(

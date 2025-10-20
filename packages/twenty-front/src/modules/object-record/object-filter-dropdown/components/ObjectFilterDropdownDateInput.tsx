@@ -5,8 +5,10 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { UserContext } from '@/users/contexts/UserContext';
 import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   ViewFilterOperand,
   type VariableDateViewFilterValueDirection,
@@ -14,8 +16,14 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, resolveDateViewFilterValue } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { formatDateString } from '~/utils/string/formatDateString';
+import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 export const ObjectFilterDropdownDateInput = () => {
+  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const dateLocale = useRecoilValue(dateLocaleState);
+
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -46,10 +54,26 @@ export const ObjectFilterDropdownDateInput = () => {
     setInternalDate(newDate);
 
     const newFilterValue = newDate?.toISOString() ?? '';
+
+    const formattedDateTime = formatDateTimeString({
+      value: newDate?.toISOString(),
+      timeZone,
+      dateFormat,
+      timeFormat,
+      localeCatalog: dateLocale.localeCatalog,
+    });
+
+    const formattedDate = formatDateString({
+      value: newDate?.toISOString(),
+      timeZone,
+      dateFormat,
+      localeCatalog: dateLocale.localeCatalog,
+    });
+
     const newDisplayValue = isDefined(newDate)
       ? isDateTimeInput
-        ? newDate.toLocaleString()
-        : newDate.toLocaleDateString()
+        ? formattedDateTime
+        : formattedDate
       : '';
 
     applyObjectFilterDropdownFilterValue(newFilterValue, newDisplayValue);
