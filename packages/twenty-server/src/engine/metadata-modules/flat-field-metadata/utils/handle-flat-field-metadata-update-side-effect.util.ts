@@ -48,6 +48,7 @@ export const FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS: FlatFieldMetadataUpd
     flatViewGroupsToUpdate: [],
     flatViewsToDelete: [],
     flatViewFieldsToDelete: [],
+    flatViewsToUpdate: [],
   };
 
 export const handleFlatFieldMetadataUpdateSideEffect = ({
@@ -74,6 +75,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       flatViewsToDelete,
       flatViewFieldsToDelete,
       flatViewFiltersToDelete,
+      flatViewsToUpdate,
     } = handleFieldMetadataDeactivationSideEffects({
       flatViewMaps,
       fromFlatFieldMetadata,
@@ -83,6 +85,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       flatViewGroupMaps,
     });
 
+    sideEffectResult.flatViewsToUpdate.push(...flatViewsToUpdate);
     sideEffectResult.flatViewsToDelete.push(...flatViewsToDelete);
     sideEffectResult.flatViewFieldsToDelete.push(...flatViewFieldsToDelete);
     sideEffectResult.flatViewFiltersToDelete.push(...flatViewFiltersToDelete);

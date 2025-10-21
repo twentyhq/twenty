@@ -119,6 +119,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     return {
       status: 'success',
       result: {
+        flatViewsToUpdate: [],
         flatViewsToDelete: [],
         flatViewGroupsToCreate: [],
         flatViewGroupsToDelete: [],
@@ -190,8 +191,9 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           flatViewFiltersToUpdate,
           flatIndexMetadatasToCreate,
           flatIndexMetadatasToDelete,
-          flatViewsToDelete: flatViewToDelete,
+          flatViewsToDelete,
           flatViewFieldsToDelete,
+          flatViewsToUpdate,
         } = handleFlatFieldMetadataUpdateSideEffect({
           flatViewFilterMaps,
           flatViewGroupMaps,
@@ -243,11 +245,15 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           ],
           flatViewsToDelete: [
             ...accumulator.flatViewsToDelete,
-            ...flatViewToDelete,
+            ...flatViewsToDelete,
           ],
           flatViewFieldsToDelete: [
             ...accumulator.flatViewFieldsToDelete,
             ...flatViewFieldsToDelete,
+          ],
+          flatViewsToUpdate: [
+            ...accumulator.flatViewsToUpdate,
+            ...flatViewsToUpdate,
           ],
         };
       },

@@ -185,7 +185,9 @@ export class FieldMetadataServiceV2 {
       flatViewGroupsToUpdate,
       flatViewFiltersToDelete,
       flatViewFiltersToUpdate,
-      flatViewsToDelete: flatViewToDelete,
+      flatViewFieldsToDelete,
+      flatViewsToUpdate,
+      flatViewsToDelete,
     } = inputTranspilationResult.result;
 
     const validateAndBuildResult =
@@ -223,7 +225,13 @@ export class FieldMetadataServiceV2 {
             flatViewMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatViewMaps,
               flatEntityToCreate: [],
-              flatEntityToDelete: flatViewToDelete,
+              flatEntityToDelete: flatViewsToDelete,
+              flatEntityToUpdate: flatViewsToUpdate,
+            }),
+            flatViewFieldMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFieldMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: flatViewFieldsToDelete,
               flatEntityToUpdate: [],
             }),
           },

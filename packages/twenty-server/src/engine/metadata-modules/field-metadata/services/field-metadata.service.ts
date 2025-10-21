@@ -365,21 +365,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       await queryRunner.commitTransaction();
 
-      if (fieldMetadataInput.isActive === false) {
-        const viewsRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-            fieldMetadataInput.workspaceId,
-            'view',
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
-
-        await viewsRepository.delete({
-          kanbanAggregateOperationFieldMetadataId: id,
-        });
-      }
-
       if (
         updatedFieldMetadata.isActive &&
         isSelectOrMultiSelectFieldMetadata(updatedFieldMetadata) &&
@@ -473,6 +458,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           },
         );
       }
+
+      await this.fieldMetadataRelatedRecordsService.resetViewKanbanAggregateOperation(
+        fieldMetadata,
+      );
 
       if (isFieldMetadataTypeRelation(fieldMetadata)) {
         const fieldMetadataIdsToDelete: string[] = [];

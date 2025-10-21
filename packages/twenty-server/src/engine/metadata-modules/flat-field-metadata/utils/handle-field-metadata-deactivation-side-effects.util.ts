@@ -22,6 +22,7 @@ type HandleFlatFieldMetadataDeactivationSideEffectsArgs = FromTo<
 
 export type FieldMetadataDeactivationSideEffect = {
   flatViewsToDelete: FlatView[];
+  flatViewsToUpdate: FlatView[];
   flatViewFieldsToDelete: FlatViewField[];
   flatViewFiltersToDelete: FlatViewFilter[];
 };
@@ -55,20 +56,33 @@ export const handleFieldMetadataDeactivationSideEffects = ({
   });
 
   // Note: We assume a view only has view groups related to one field
-  const relatedViewIds = [
+  const viewIdsToDelete = [
     ...new Set([
       ...Object.keys(flatViewGroupRecordByViewId),
-      ...fromFlatFieldMetadata.kanbanAggregateOperationViewIds,
       ...fromFlatFieldMetadata.calendarViewIds,
     ]),
   ];
 
   const flatViewsToDelete = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityIds: relatedViewIds,
+    flatEntityIds: viewIdsToDelete,
     flatEntityMaps: flatViewMaps,
   });
 
+  const viewIdsToUdpate =
+    fromFlatFieldMetadata.kanbanAggregateOperationViewIds.filter(
+      (viewId) => !viewIdsToDelete.includes(viewId),
+    );
+  const flatViewsToUpdate = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+    flatEntityIds: viewIdsToUdpate,
+    flatEntityMaps: flatViewMaps,
+  }).map((flatView) => ({
+    ...flatView,
+    kanbanAggregateOperation: null,
+    kanbanAggregateOperationFieldMetadataId: null,
+  }));
+
   return {
+    flatViewsToUpdate,
     flatViewsToDelete,
     flatViewFieldsToDelete,
     flatViewFiltersToDelete,
