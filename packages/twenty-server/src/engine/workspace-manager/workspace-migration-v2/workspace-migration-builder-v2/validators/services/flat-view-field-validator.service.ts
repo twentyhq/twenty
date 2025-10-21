@@ -118,6 +118,10 @@ export class FlatViewFieldValidatorService {
   public validateFlatViewFieldDeletion({
     flatEntityToValidate: { id: viewFieldIdToDelete },
     optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
+    dependencyOptimisticFlatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<FlatViewField> {
@@ -137,6 +141,37 @@ export class FlatViewFieldValidatorService {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View field to delete not found`,
         userFriendlyMessage: msg`View field to delete not found`,
+      });
+
+      return validationResult;
+    }
+
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: existingFlatViewField.fieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(flatFieldMetadata)) {
+      return validationResult;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatFieldMetadata.objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      return validationResult;
+    }
+
+    if (
+      flatObjectMetadata.labelIdentifierFieldMetadataId ===
+      existingFlatViewField.fieldMetadataId
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Label identifier view field cannot be deleted`,
+        userFriendlyMessage: msg`Label identifier view field cannot be deleted`,
       });
     }
 
