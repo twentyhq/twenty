@@ -37,6 +37,7 @@ export const SettingsAIRouterSettings = () => {
 
   const handleModelChange = async (value: string | number | boolean | null) => {
     const newValue = value as string;
+    const previousValue = currentWorkspace?.routerModel || 'auto';
     setSelectedModel(newValue);
 
     if (!currentWorkspace?.id) {
@@ -63,7 +64,7 @@ export const SettingsAIRouterSettings = () => {
     } catch (err) {
       setCurrentWorkspace({
         ...currentWorkspace,
-        routerModel: routerModel,
+        routerModel: previousValue,
       });
 
       enqueueErrorSnackBar({
