@@ -55,17 +55,3 @@ exports[`Standard object metadata update should succeed when updating labelSingu
   "shortcut": "C",
 }
 `;
-
-exports[`Standard object metadata update should succeed when updating shortcut 1`] = `
-{
-  "description": "A company",
-  "icon": "IconBuildingSkyscraper",
-  "id": Any<String>,
-  "isActive": true,
-  "labelPlural": "Companies",
-  "labelSingular": "Company",
-  "namePlural": "companies",
-  "nameSingular": "company",
-  "shortcut": "C",
-}
-`;

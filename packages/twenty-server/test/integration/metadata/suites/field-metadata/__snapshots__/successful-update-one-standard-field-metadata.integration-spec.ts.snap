@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Standard field metadata update should succeed when setting isActive to false 1`] = `
+{
+  "description": "The company name",
+  "icon": "IconBuildingSkyscraper",
+  "id": Any<String>,
+  "isActive": false,
+  "isCustom": false,
+  "label": "Name",
+  "name": "name",
+}
+`;
+
+exports[`Standard field metadata update should succeed when updating description 1`] = `
+{
+  "description": "The company name",
+  "icon": "IconBuildingSkyscraper",
+  "id": Any<String>,
+  "isActive": false,
+  "isCustom": false,
+  "label": "Name",
+  "name": "name",
+}
+`;
+
+exports[`Standard field metadata update should succeed when updating icon 1`] = `
+{
+  "description": "The company name",
+  "icon": "IconBuildingSkyscraper",
+  "id": Any<String>,
+  "isActive": false,
+  "isCustom": false,
+  "label": "Name",
+  "name": "name",
+}
+`;
+
+exports[`Standard field metadata update should succeed when updating label 1`] = `
+{
+  "description": "The company name",
+  "icon": "IconBuildingSkyscraper",
+  "id": Any<String>,
+  "isActive": false,
+  "isCustom": false,
+  "label": "Name",
+  "name": "name",
+}
+`;
