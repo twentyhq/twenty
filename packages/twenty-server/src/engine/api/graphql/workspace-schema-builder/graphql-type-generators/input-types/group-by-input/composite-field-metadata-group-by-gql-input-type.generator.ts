@@ -56,7 +56,7 @@ export class CompositeFieldMetadataGroupByGqlInputTypeGenerator {
       }
 
       // Skip hidden fields
-      if (property.hidden === true || property.hidden === 'input') {
+      if (property.hidden === true) {
         continue;
       }
 

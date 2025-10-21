@@ -66,7 +66,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
-      const selectedFieldsResult = await this.computeSelectedFields({
+      const selectedFields = await this.computeSelectedFields({
         depth,
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
@@ -74,7 +74,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
       });
 
       const record = await this.commonFindOneQueryRunnerService.run({
-        args: { filter, selectedFieldsResult },
+        args: { filter, selectedFields },
         authContext,
         objectMetadataMaps,
         objectMetadataItemWithFieldMaps,
