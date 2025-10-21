@@ -145,10 +145,7 @@ export class AgentStreamingService {
                   threadId,
                   uiMessage: {
                     ...responseMessage,
-                    parts: [
-                      routedStatusPart,
-                      ...responseMessage.parts,
-                    ] as typeof responseMessage.parts,
+                    parts: [routedStatusPart, ...responseMessage.parts],
                   },
                 });
               },
