@@ -15,7 +15,7 @@ import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Command({
-  name: 'upgrade:1-8:migrate-attachment-author-to-created-by',
+  name: 'upgrade:1-10:migrate-attachment-author-to-created-by',
   description:
     'Migrate attachment author field data to createdBy composite field',
 })
