@@ -14,8 +14,12 @@ import { type CommonSelectedFields } from 'src/engine/api/common/types/common-se
 export enum CommonQueryNames {
   findOne = 'findOne',
   findMany = 'findMany',
+  findDuplicates = 'findDuplicates',
   createMany = 'createMany',
   groupBy = 'groupBy',
+  createOne = 'createOne',
+  updateOne = 'updateOne',
+  updateMany = 'updateMany',
 }
 
 export interface FindOneQueryArgs {
@@ -57,3 +61,21 @@ export type CommonQueryArgs =
   | FindOneQueryArgs
   | FindManyQueryArgs
   | GroupByQueryArgs;
+
+export interface UpdateOneQueryArgs {
+  selectedFields: CommonSelectedFields;
+  id: string;
+  data: Partial<ObjectRecord>;
+}
+
+export interface UpdateManyQueryArgs {
+  selectedFields: CommonSelectedFields;
+  filter: ObjectRecordFilter;
+  data: Partial<ObjectRecord>;
+}
+
+export interface FindDuplicatesQueryArgs {
+  selectedFields: CommonSelectedFields;
+  data?: Partial<ObjectRecord>[];
+  ids?: string[];
+}

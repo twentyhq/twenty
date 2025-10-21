@@ -174,6 +174,33 @@ export const getUpdateOneResponse200 = (
   };
 };
 
+export const getUpdateManyResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'namePlural' | 'nameSingular'>,
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
+
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`update${capitalize(item.namePlural)}`]: {
+                  $ref: schemaRef,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
 export const getDeleteResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
   fromMetadata = false,

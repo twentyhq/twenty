@@ -15,6 +15,7 @@ import {
   getFindManyResponse200,
   getFindOneResponse200,
   getJsonResponse,
+  getUpdateManyResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -75,6 +76,21 @@ export const computeManyResultPath = (
       requestBody: getRequestBody(capitalize(item.nameSingular)),
       responses: {
         '201': getCreateOneResponse201(item),
+        '400': { $ref: '#/components/responses/400' },
+        '401': { $ref: '#/components/responses/401' },
+      },
+    },
+    patch: {
+      tags: [item.namePlural],
+      summary: `Update Many ${item.namePlural}`,
+      operationId: `UpdateMany${capitalize(item.namePlural)}`,
+      parameters: [
+        { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/filter' },
+      ],
+      requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
+      responses: {
+        '200': getUpdateManyResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },

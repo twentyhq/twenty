@@ -10,6 +10,7 @@ import { RestApiFindDuplicatesHandler } from 'src/engine/api/rest/core/handlers/
 import { RestApiFindManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-many.handler';
 import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-one.handler';
 import { RestApiGroupByHandler } from 'src/engine/api/rest/core/handlers/rest-api-group-by.handler';
+import { RestApiUpdateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-many.handler';
 import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
 import { CoreQueryBuilderModule } from 'src/engine/api/rest/core/query-builder/core-query-builder.module';
 import { coreQueryBuilderFactories } from 'src/engine/api/rest/core/query-builder/factories/factories';
@@ -33,6 +34,7 @@ const restApiCoreResolvers = [
   RestApiCreateOneHandler,
   RestApiCreateManyHandler,
   RestApiUpdateOneHandler,
+  RestApiUpdateManyHandler,
   RestApiFindOneHandler,
   RestApiFindManyHandler,
   RestApiFindDuplicatesHandler,
