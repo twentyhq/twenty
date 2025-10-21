@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType()
-export class TimelineCalendarEventParticipant {
+@ObjectType('TimelineCalendarEventParticipant')
+export class TimelineCalendarEventParticipantDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   personId: string | null;
 

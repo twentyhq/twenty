@@ -2,9 +2,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
 import isEmpty from 'lodash.isempty';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import {
   type FormatResult,
   RestApiBaseHandler,

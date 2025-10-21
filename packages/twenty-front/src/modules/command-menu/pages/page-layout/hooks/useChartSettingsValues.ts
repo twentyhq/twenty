@@ -128,7 +128,8 @@ export const useChartSettingsValues = ({
         return 'color' in configuration && isDefined(configuration.color)
           ? capitalize(configuration.color)
           : undefined;
-      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y: {
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_AGGREGATE: {
         const hasAggregateLabel = isDefined(aggregateField?.label);
         const hasAggregateOperation = isDefined(yAxisAggregateOperation);
 
@@ -155,6 +156,10 @@ export const useChartSettingsValues = ({
         return 'groupMode' in configuration
           ? configuration.groupMode !== 'GROUPED'
           : true;
+      case CHART_CONFIGURATION_SETTING_IDS.OMIT_NULL_VALUES:
+        return 'omitNullValues' in configuration
+          ? (configuration.omitNullValues ?? false)
+          : false;
       default:
         return '';
     }

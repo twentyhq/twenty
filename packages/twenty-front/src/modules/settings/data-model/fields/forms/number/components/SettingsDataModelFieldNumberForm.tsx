@@ -8,6 +8,7 @@ import { SettingsOptionCardContentCounter } from '@/settings/components/Settings
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { NUMBER_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions';
 import { Select } from '@/ui/input/components/Select';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { IconDecimal, IconEye } from 'twenty-ui/display';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
@@ -81,7 +82,10 @@ export const SettingsDataModelFieldNumberForm = ({
               <SettingsOptionCardContentCounter
                 Icon={IconDecimal}
                 title={t`Number of decimals`}
-                description={`E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimal${count > 1 ? 's' : ''}`}
+                description={plural(count, {
+                  one: `E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimal`,
+                  other: `E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimals`,
+                })}
                 value={count}
                 onChange={(value) => onChange({ type: type, decimals: value })}
                 disabled={disabled}

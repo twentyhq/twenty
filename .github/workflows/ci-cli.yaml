@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   changed-files-check:
@@ -20,6 +20,7 @@ jobs:
     with:
       files: |
         packages/twenty-cli/**
+        packages/twenty-server/**
   cli-test:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -44,11 +45,58 @@ jobs:
         with:
           tag: scope:cli
           tasks: ${{ matrix.task }}
+  cli-e2e-test:
+    timeout-minutes: 30
+    runs-on: depot-ubuntu-24.04-8
+    needs: [changed-files-check, cli-test]
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    services:
+      postgres:
+        image: twentycrm/twenty-postgres-spilo
+        env:
+          PGUSER_SUPERUSER: postgres
+          PGPASSWORD_SUPERUSER: postgres
+          ALLOW_NOSSL: 'true'
+          SPILO_PROVIDER: 'local'
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    env:
+      NODE_ENV: test
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+      - name: Server / Append billing config to .env.test
+        working-directory: packages/twenty-server
+        run: |
+          echo "" >> .env.test
+          echo "IS_BILLING_ENABLED=true" >> .env.test
+          echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
+          echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
+          echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
+          echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
+      - name: Server / Create Test DB
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+      - name: CLI / Run E2E Tests
+        run: npx nx test:e2e twenty-cli
   ci-cli-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check, cli-test]
+    needs: [changed-files-check, cli-test, cli-e2e-test]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')

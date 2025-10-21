@@ -27,7 +27,10 @@ export const computeBatchPath = (
       tags: [item.namePlural],
       summary: `Create Many ${item.namePlural}`,
       operationId: `createMany${capitalize(item.namePlural)}`,
-      parameters: [{ $ref: '#/components/parameters/depth' }],
+      parameters: [
+        { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/upsert' },
+      ],
       requestBody: getArrayRequestBody(capitalize(item.nameSingular)),
       responses: {
         '201': getCreateManyResponse201(item),
@@ -65,7 +68,10 @@ export const computeManyResultPath = (
       tags: [item.namePlural],
       summary: `Create One ${item.nameSingular}`,
       operationId: `createOne${capitalize(item.nameSingular)}`,
-      parameters: [{ $ref: '#/components/parameters/depth' }],
+      parameters: [
+        { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/upsert' },
+      ],
       requestBody: getRequestBody(capitalize(item.nameSingular)),
       responses: {
         '201': getCreateOneResponse201(item),

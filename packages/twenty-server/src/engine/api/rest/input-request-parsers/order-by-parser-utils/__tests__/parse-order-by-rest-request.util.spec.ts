@@ -1,4 +1,4 @@
-import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { OrderByDirection } from 'twenty-shared/types';
 
 import { parseOrderByRestRequest } from 'src/engine/api/rest/input-request-parsers/order-by-parser-utils/parse-order-by-rest-request.util';
 

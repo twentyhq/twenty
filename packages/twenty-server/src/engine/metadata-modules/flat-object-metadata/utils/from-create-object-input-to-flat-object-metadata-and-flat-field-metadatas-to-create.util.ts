@@ -48,6 +48,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       buildDefaultFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
           id: objectMetadataId,
+          applicationId: createObjectInput.applicationId ?? null,
         },
         workspaceId,
       });

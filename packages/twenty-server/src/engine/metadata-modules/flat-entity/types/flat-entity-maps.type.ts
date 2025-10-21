@@ -3,4 +3,5 @@ import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/f
 export type FlatEntityMaps<T extends FlatEntity> = {
   byId: Partial<Record<string, T>>;
   idByUniversalIdentifier: Partial<Record<string, string>>;
+  universalIdentifiersByApplicationId: Partial<Record<string, string[]>>;
 };

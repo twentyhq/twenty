@@ -1,12 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { QueueMetricsDataPoint } from 'src/engine/core-modules/admin-panel/dtos/queue-metrics-data-point.dto';
+import { QueueMetricsDataPointDTO } from 'src/engine/core-modules/admin-panel/dtos/queue-metrics-data-point.dto';
 
-@ObjectType()
-export class QueueMetricsSeries {
+@ObjectType('QueueMetricsSeries')
+export class QueueMetricsSeriesDTO {
   @Field(() => String)
   id: string;
 
-  @Field(() => [QueueMetricsDataPoint])
-  data: QueueMetricsDataPoint[];
+  @Field(() => [QueueMetricsDataPointDTO])
+  data: QueueMetricsDataPointDTO[];
 }

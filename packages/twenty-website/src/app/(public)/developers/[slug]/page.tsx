@@ -5,7 +5,7 @@ import DocsContent from '@/app/_components/docs/DocsContent';
 import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
 import { formatSlug } from '@/shared-utils/formatSlug';
 
-export async function generateMetadata(props: PageProps<'/developers/[slug]'>): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await props.params;
   const formattedSlug = formatSlug(slug);
   const basePath = '/src/content/developers';
@@ -16,7 +16,7 @@ export async function generateMetadata(props: PageProps<'/developers/[slug]'>): 
   };
 }
 
-export default async function DocsSlug(props: PageProps<'/developers/[slug]'>) {
+export default async function DocsSlug(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
   const basePath = '/src/content/developers';
   const mainPost = await fetchArticleFromSlug(slug, basePath);

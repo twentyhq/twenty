@@ -89,7 +89,7 @@ describe('QueryRunnerArgsFactory', () => {
       const result = await factory.create(
         args,
         options,
-        ResolverArgsType.CreateMany,
+        ResolverArgsType.CREATE_MANY,
       );
 
       expect(result).toEqual(args);
@@ -104,7 +104,7 @@ describe('QueryRunnerArgsFactory', () => {
       const result = await factory.create(
         args,
         options,
-        ResolverArgsType.CreateMany,
+        ResolverArgsType.CREATE_MANY,
       );
 
       const expectedArgs = {
@@ -140,7 +140,7 @@ describe('QueryRunnerArgsFactory', () => {
       const result = await factory.create(
         args,
         options,
-        ResolverArgsType.CreateMany,
+        ResolverArgsType.CREATE_MANY,
       );
 
       const expectedArgs = {
@@ -176,7 +176,7 @@ describe('QueryRunnerArgsFactory', () => {
       const result = await factory.create(
         args,
         options,
-        ResolverArgsType.FindMany,
+        ResolverArgsType.FIND_MANY,
       );
 
       expect(result).toEqual({
@@ -194,7 +194,7 @@ describe('QueryRunnerArgsFactory', () => {
       const result = await factory.create(
         args,
         options,
-        ResolverArgsType.FindOne,
+        ResolverArgsType.FIND_ONE,
       );
 
       expect(result).toEqual({
@@ -212,7 +212,7 @@ describe('QueryRunnerArgsFactory', () => {
       const result = await factory.create(
         args,
         options,
-        ResolverArgsType.FindDuplicates,
+        ResolverArgsType.FIND_DUPLICATES,
       );
 
       expect(result).toEqual({

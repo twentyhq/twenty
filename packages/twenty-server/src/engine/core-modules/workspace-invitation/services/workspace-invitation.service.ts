@@ -20,7 +20,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -46,7 +46,7 @@ export class WorkspaceInvitationService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly i18nService: I18nService,
     private readonly fileService: FileService,
   ) {}
@@ -281,7 +281,7 @@ export class WorkspaceInvitationService {
 
     for (const invitation of invitationsPr) {
       if (invitation.status === 'fulfilled') {
-        const link = this.domainManagerService.buildWorkspaceURL({
+        const link = this.workspaceDomainsService.buildWorkspaceURL({
           workspace,
           pathname: getAppPath(AppPath.Invite, {
             workspaceInviteHash: workspace?.inviteHash,

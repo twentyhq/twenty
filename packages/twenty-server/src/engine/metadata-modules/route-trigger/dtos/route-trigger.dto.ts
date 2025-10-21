@@ -19,12 +19,6 @@ export class RouteTriggerDTO {
   httpMethod: HTTPMethod;
 
   @Field()
-  serverlessFunctionId: string;
-
-  @Field()
-  workspaceId: string;
-
-  @Field()
   createdAt: Date;
 
   @Field()

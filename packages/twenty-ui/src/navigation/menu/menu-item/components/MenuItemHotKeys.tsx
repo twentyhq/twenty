@@ -23,8 +23,6 @@ const StyledCommandKey = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow.underline};
   display: flex;
   flex-direction: column;
-
-  height: ${({ theme }) => theme.spacing(5)};
   height: 18px;
   justify-content: center;
   text-align: center;

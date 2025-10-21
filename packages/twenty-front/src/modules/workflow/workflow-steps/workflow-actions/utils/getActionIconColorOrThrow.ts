@@ -17,14 +17,16 @@ export const getActionIconColorOrThrow = ({
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':
     case 'DELETE_RECORD':
+    case 'UPSERT_RECORD':
     case 'FIND_RECORDS':
       return theme.font.color.tertiary;
     case 'FORM':
       return theme.color.orange;
     case 'ITERATOR':
-    case 'FILTER':
     case 'EMPTY':
-      return theme.font.color.tertiary;
+    case 'FILTER':
+    case 'DELAY':
+      return theme.color.green60;
     case 'AI_AGENT':
       return theme.color.pink;
     default:

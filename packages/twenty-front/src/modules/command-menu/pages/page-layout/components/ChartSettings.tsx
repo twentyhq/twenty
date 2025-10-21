@@ -1,4 +1,5 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
@@ -8,6 +9,7 @@ import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/comp
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { GRAPH_TYPE_TO_CONFIG_TYPENAME } from '@/command-menu/pages/page-layout/constants/GraphTypeToConfigTypename';
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
@@ -15,6 +17,7 @@ import {
   CHART_CONFIGURATION_SETTING_IDS,
   CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP,
 } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -30,6 +33,8 @@ import {
 
 export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
+
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
@@ -101,15 +106,11 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
             const handleToggleChange = () => {
               const configKey =
-                item.id === CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS
+                item.id in CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP
                   ? CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP[
-                      CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS
+                      item.id as keyof typeof CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP
                     ]
-                  : item.id === CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS
-                    ? CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP[
-                        CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS
-                      ]
-                    : item.id;
+                  : item.id;
 
               setSelectedItemId(item.id);
 
@@ -140,6 +141,30 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                 dropdownComponentInstanceIdFromProps: item.id,
               });
             };
+
+            const handleFilterSettingsClick = () => {
+              navigatePageLayoutCommandMenu({
+                commandMenuPage: CommandMenuPages.PageLayoutGraphFilter,
+              });
+            };
+
+            if (item.id === CHART_CONFIGURATION_SETTING_IDS.FILTER) {
+              return (
+                <SelectableListItem
+                  key={item.id}
+                  itemId={item.id}
+                  onEnter={handleFilterSettingsClick}
+                >
+                  <CommandMenuItem
+                    id={item.id}
+                    label="Filter"
+                    Icon={item.Icon}
+                    hasSubMenu
+                    onClick={handleFilterSettingsClick}
+                  />
+                </SelectableListItem>
+              );
+            }
 
             return item.isBoolean ? (
               <SelectableListItem

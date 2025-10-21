@@ -5,13 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
-import { type WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { type DeletedWorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
+import { type WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromRoleEntitiesToRoleDtos } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import {
-  type WorkspaceMemberNumberFormatEnum,
   type WorkspaceMemberDateFormatEnum,
+  type WorkspaceMemberNumberFormatEnum,
   type WorkspaceMemberTimeFormatEnum,
   type WorkspaceMemberWorkspaceEntity,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -50,7 +50,7 @@ export class WorkspaceMemberTranspiler {
     userWorkspace,
     workspaceMemberEntity,
     userWorkspaceRoles,
-  }: ToWorkspaceMemberDtoArgs): WorkspaceMember {
+  }: ToWorkspaceMemberDtoArgs): WorkspaceMemberDTO {
     const {
       avatarUrl: avatarUrlFromEntity,
       id,
@@ -89,7 +89,7 @@ export class WorkspaceMemberTranspiler {
       roles,
       calendarStartDay,
       numberFormat: numberFormat as WorkspaceMemberNumberFormatEnum,
-    } satisfies WorkspaceMember;
+    } satisfies WorkspaceMemberDTO;
   }
 
   toWorkspaceMemberDtos(
@@ -103,7 +103,7 @@ export class WorkspaceMemberTranspiler {
   toDeletedWorkspaceMemberDto(
     workspaceMember: WorkspaceMemberWorkspaceEntity,
     userWorkspaceId?: string,
-  ): DeletedWorkspaceMember {
+  ): DeletedWorkspaceMemberDTO {
     const {
       avatarUrl: avatarUrlFromEntity,
       id,
@@ -127,13 +127,13 @@ export class WorkspaceMemberTranspiler {
       userEmail,
       avatarUrl,
       userWorkspaceId: userWorkspaceId ?? null,
-    } satisfies DeletedWorkspaceMember;
+    } satisfies DeletedWorkspaceMemberDTO;
   }
 
   toDeletedWorkspaceMemberDtos(
     workspaceMembers: WorkspaceMemberWorkspaceEntity[],
     userWorkspaceId?: string,
-  ): DeletedWorkspaceMember[] {
+  ): DeletedWorkspaceMemberDTO[] {
     return workspaceMembers.map((workspaceMember) =>
       this.toDeletedWorkspaceMemberDto(workspaceMember, userWorkspaceId),
     );

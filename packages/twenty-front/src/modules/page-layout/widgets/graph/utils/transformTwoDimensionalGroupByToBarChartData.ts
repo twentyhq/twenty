@@ -8,6 +8,7 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
+import { getSortedKeys } from '@/page-layout/widgets/graph/utils/getSortedKeys';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -101,7 +102,12 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     dataItem[yValue] = aggregateValue;
   });
 
-  const keys = Array.from(yValues);
+  // Sorting needed because yValues may be unordered despite BE orderBy, if there are empty groups
+  const keys = getSortedKeys({
+    orderByY: configuration.secondaryAxisOrderBy,
+    yValues: Array.from(yValues),
+  });
+
   const series: BarChartSeries[] = keys.map((key) => ({
     key,
     label: key,

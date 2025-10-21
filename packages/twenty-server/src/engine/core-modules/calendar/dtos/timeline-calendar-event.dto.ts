@@ -1,11 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { TimelineCalendarEventParticipant } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-participant.dto';
+import { TimelineCalendarEventParticipantDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-participant.dto';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
-@ObjectType()
-class LinkMetadata {
+@ObjectType('LinkMetadata')
+class LinkMetadataDTO {
   @Field()
   label: string;
 
@@ -13,20 +13,20 @@ class LinkMetadata {
   url: string;
 }
 
-@ObjectType()
-export class LinksMetadata {
+@ObjectType('LinksMetadata')
+export class LinksMetadataDTO {
   @Field()
   primaryLinkLabel: string;
 
   @Field()
   primaryLinkUrl: string;
 
-  @Field(() => [LinkMetadata], { nullable: true })
-  secondaryLinks: LinkMetadata[] | null;
+  @Field(() => [LinkMetadataDTO], { nullable: true })
+  secondaryLinks: LinkMetadataDTO[] | null;
 }
 
-@ObjectType()
-export class TimelineCalendarEvent {
+@ObjectType('TimelineCalendarEvent')
+export class TimelineCalendarEventDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
@@ -54,11 +54,11 @@ export class TimelineCalendarEvent {
   @Field()
   conferenceSolution: string;
 
-  @Field(() => LinksMetadata)
-  conferenceLink: LinksMetadata;
+  @Field(() => LinksMetadataDTO)
+  conferenceLink: LinksMetadataDTO;
 
-  @Field(() => [TimelineCalendarEventParticipant])
-  participants: TimelineCalendarEventParticipant[];
+  @Field(() => [TimelineCalendarEventParticipantDTO])
+  participants: TimelineCalendarEventParticipantDTO[];
 
   @Field(() => CalendarChannelVisibility)
   visibility: CalendarChannelVisibility;

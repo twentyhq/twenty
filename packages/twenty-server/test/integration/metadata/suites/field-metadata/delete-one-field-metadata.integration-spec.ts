@@ -90,7 +90,7 @@ describe('deleteOne', () => {
       });
     });
 
-    it('should reset kanban aggregate operation when deleting a field used as kanbanAggregateOperationFieldMetadataId', async () => {
+    it('should delete kanban aggregate operation when deleting a field used as kanbanAggregateOperationFieldMetadataId', async () => {
       const viewThatShouldBeUpdated = await findViewByIdWithRestApi(viewId);
 
       if (!isDefined(viewThatShouldBeUpdated)) {

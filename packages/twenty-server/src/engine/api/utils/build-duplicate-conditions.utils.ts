@@ -1,9 +1,7 @@
 import isEmpty from 'lodash.isempty';
+import { type ObjectRecord } from 'twenty-shared/types';
 
-import {
-  type ObjectRecord,
-  type ObjectRecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { settings } from 'src/engine/constants/settings';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';

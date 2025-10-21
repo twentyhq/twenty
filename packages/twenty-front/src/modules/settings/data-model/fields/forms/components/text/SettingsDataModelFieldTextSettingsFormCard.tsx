@@ -42,6 +42,7 @@ export const SettingsDataModelFieldTextSettingsFormCard = ({
             fieldType={FieldMetadataType.TEXT}
             existingFieldMetadataId={existingFieldMetadataId}
             objectNameSingular={objectNameSingular}
+            disabled={disabled}
           />
         </>
       }

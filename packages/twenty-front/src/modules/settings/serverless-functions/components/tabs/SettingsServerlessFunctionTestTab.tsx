@@ -21,9 +21,11 @@ const StyledCodeEditorContainer = styled.div`
 export const SettingsServerlessFunctionTestTab = ({
   handleExecute,
   serverlessFunctionId,
+  isTesting = false,
 }: {
   handleExecute: () => void;
   serverlessFunctionId: string;
+  isTesting?: boolean;
 }) => {
   const { t } = useLingui();
   const [serverlessFunctionTestData, setServerlessFunctionTestData] =
@@ -54,6 +56,7 @@ export const SettingsServerlessFunctionTestTab = ({
                 size="small"
                 Icon={IconPlayerPlay}
                 onClick={handleExecute}
+                disabled={isTesting}
               />,
             ]}
           />
@@ -67,6 +70,7 @@ export const SettingsServerlessFunctionTestTab = ({
         </StyledCodeEditorContainer>
         <ServerlessFunctionExecutionResult
           serverlessFunctionTestData={serverlessFunctionTestData}
+          isTesting={isTesting}
         />
       </StyledInputsContainer>
     </Section>
