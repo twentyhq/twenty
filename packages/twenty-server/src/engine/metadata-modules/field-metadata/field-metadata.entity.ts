@@ -208,9 +208,6 @@ export class FieldMetadataEntity<
   )
   kanbanAggregateOperationViews: Relation<ViewEntity[]>;
 
-  @OneToMany(
-    () => ViewEntity,
-    (view) => view.calendarFieldMetadata,
-  )
+  @OneToMany(() => ViewEntity, (view) => view.calendarFieldMetadata)
   calendarViews: Relation<ViewEntity[]>;
 }

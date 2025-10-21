@@ -203,9 +203,7 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
       expectToFail: false,
     });
 
-    expect(updatedViewWithoutAggregate).toEqual(
-      initialViewWithoutAggregate,
-    );
+    expect(updatedViewWithoutAggregate).toEqual(initialViewWithoutAggregate);
   });
 
   it('should not modify views when field not used as kanbanAggregateOperationFieldMetadataId is deactivated', async () => {
@@ -288,8 +286,12 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
       expectToFail: false,
     });
 
-    expect(initialViewWithAggregate.kanbanAggregateOperationFieldMetadataId).toBe(testSetup.aggregateFieldMetadataId);
-    expect(initialSecondViewWithAggregate.kanbanAggregateOperationFieldMetadataId).toBe(testSetup.aggregateFieldMetadataId);
+    expect(
+      initialViewWithAggregate.kanbanAggregateOperationFieldMetadataId,
+    ).toBe(testSetup.aggregateFieldMetadataId);
+    expect(
+      initialSecondViewWithAggregate.kanbanAggregateOperationFieldMetadataId,
+    ).toBe(testSetup.aggregateFieldMetadataId);
 
     await deactivateFieldAndVerify(testSetup.aggregateFieldMetadataId);
 

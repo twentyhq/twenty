@@ -295,4 +295,3 @@ describe('calendar-field-deactivation-deletes-views', () => {
     await verifyViewExists(kanbanViewWithSameObject.id, true);
   });
 });
-

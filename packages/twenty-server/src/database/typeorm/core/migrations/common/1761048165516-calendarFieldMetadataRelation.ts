@@ -17,4 +17,3 @@ export class CalendarFieldMetadataRelation1761048165516
     );
   }
 }
-
