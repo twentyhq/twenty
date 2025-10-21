@@ -79,18 +79,16 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           id,
           name,
           icon,
+          kanbanFieldMetadataId,
           calendarFieldMetadataId,
-          kanbanAggregateOperationFieldMetadataId,
-          kanbanAggregateOperation,
           type,
         }: Partial<
           Pick<
             GraphQLView,
             | 'id'
-            | 'kanbanAggregateOperationFieldMetadataId'
             | 'name'
-            | 'kanbanAggregateOperation'
             | 'icon'
+            | 'kanbanFieldMetadataId'
             | 'calendarFieldMetadataId'
             | 'type'
           >
@@ -131,11 +129,11 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               key: null,
               kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
                 ? sourceView.kanbanAggregateOperation
-                : (kanbanAggregateOperation ?? undefined),
+                : undefined,
               kanbanAggregateOperationFieldMetadataId:
                 shouldCopyFiltersAndSortsAndAggregate
                   ? sourceView.kanbanAggregateOperationFieldMetadataId
-                  : (kanbanAggregateOperationFieldMetadataId ?? undefined),
+                  : undefined,
               type: convertViewTypeToCore(viewType),
               objectMetadataId: sourceView.objectMetadataId,
               openRecordIn: convertViewOpenRecordInToCore(
@@ -168,21 +166,19 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         );
 
         if (type === ViewType.Kanban) {
-          if (!isDefined(kanbanAggregateOperationFieldMetadataId)) {
+          if (!isDefined(kanbanFieldMetadataId)) {
             throw new Error('Kanban view must have a kanban field');
           }
 
           const viewGroupsToCreate =
             objectMetadataItem.fields
-              ?.find(
-                (field) => field.id === kanbanAggregateOperationFieldMetadataId,
-              )
+              ?.find((field) => field.id === kanbanFieldMetadataId)
               ?.options?.map(
                 (option, index) =>
                   ({
                     id: v4(),
                     __typename: 'ViewGroup',
-                    fieldMetadataId: kanbanAggregateOperationFieldMetadataId,
+                    fieldMetadataId: kanbanFieldMetadataId,
                     fieldValue: option.value,
                     isVisible: true,
                     position: index,
@@ -195,7 +191,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             fieldValue: '',
             position: viewGroupsToCreate.length,
             isVisible: true,
-            fieldMetadataId: kanbanAggregateOperationFieldMetadataId,
+            fieldMetadataId: kanbanFieldMetadataId,
           } satisfies ViewGroup);
 
           await createViewGroupRecords(
