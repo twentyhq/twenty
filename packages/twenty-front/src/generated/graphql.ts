@@ -4186,7 +4186,7 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
-  routerModel?: InputMaybe<Scalars['String']>;
+  routerModel: Scalars['String'];
   subdomain?: InputMaybe<Scalars['String']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']>;
 };
@@ -4495,7 +4495,7 @@ export type Workspace = {
   isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
-  routerModel?: Maybe<Scalars['String']>;
+  routerModel: Scalars['String'];
   subdomain: Scalars['String'];
   trashRetentionDays: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
