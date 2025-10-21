@@ -1,4 +1,3 @@
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { formatNumberChartTrend } from '@/page-layout/widgets/graph/graphWidgetNumberChart/utils/formatNumberChartTrend';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -11,7 +10,7 @@ import {
 } from 'twenty-ui/display';
 
 type GraphWidgetNumberChartProps = {
-  value: number;
+  value: string;
   trendPercentage?: number;
 };
 
@@ -45,18 +44,14 @@ export const GraphWidgetNumberChart = ({
   trendPercentage,
 }: GraphWidgetNumberChartProps) => {
   const theme = useTheme();
-  const { formatNumber } = useNumberFormat();
-  const formattedValue = formatNumber(value);
+
   const formattedPercentage = isDefined(trendPercentage)
     ? formatNumberChartTrend(trendPercentage)
     : undefined;
 
   return (
     <StyledContainer>
-      <StyledH1Title
-        title={formattedValue}
-        fontColor={H1TitleFontColor.Primary}
-      />
+      <StyledH1Title title={value} fontColor={H1TitleFontColor.Primary} />
       {isDefined(trendPercentage) && (
         <StyledTrendIconContainer>
           <StyledTrendPercentageValue>

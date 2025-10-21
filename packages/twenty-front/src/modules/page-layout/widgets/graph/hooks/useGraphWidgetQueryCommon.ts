@@ -63,5 +63,6 @@ export const useGraphWidgetQueryCommon = ({
     objectMetadataItem,
     aggregateOperation,
     filterQueryVariables,
+    aggregateField,
   };
 };
