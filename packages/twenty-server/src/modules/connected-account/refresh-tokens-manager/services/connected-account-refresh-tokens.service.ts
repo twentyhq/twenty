@@ -4,8 +4,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
+import { isAccessTokenExpiredOrInvalid } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/utils/is-access-token-expired-or-invalid.util';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
@@ -25,7 +25,6 @@ export class ConnectedAccountRefreshTokensService {
   );
 
   constructor(
-    private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
@@ -34,7 +33,7 @@ export class ConnectedAccountRefreshTokensService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<ConnectedAccountTokens> {
-    const refreshToken = connectedAccount.refreshToken;
+    const { refreshToken, accessToken } = connectedAccount;
 
     if (!refreshToken) {
       throw new ConnectedAccountRefreshAccessTokenException(
@@ -42,6 +41,26 @@ export class ConnectedAccountRefreshTokensService {
         ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
       );
     }
+
+    const isAccessTokenValid = await this.checkAccessTokenValidity(
+      connectedAccount,
+      accessToken,
+    );
+
+    if (isAccessTokenValid) {
+      this.logger.debug(
+        `Reusing valid access token for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}`,
+      );
+
+      return {
+        accessToken,
+        refreshToken,
+      };
+    }
+
+    this.logger.log(
+      `Access token expired for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}, refreshing...`,
+    );
 
     const connectedAccountTokens = await this.refreshTokens(
       connectedAccount,
@@ -62,6 +81,30 @@ export class ConnectedAccountRefreshTokensService {
     return connectedAccountTokens;
   }
 
+  async checkAccessTokenValidity(
+    connectedAccount: ConnectedAccountWorkspaceEntity,
+    accessToken: string,
+  ): Promise<boolean> {
+    switch (connectedAccount.provider) {
+      case ConnectedAccountProvider.GOOGLE: {
+        // Google's OAuth2Client handles token auto-refresh internally, no need to check token validity
+        return true;
+      }
+      case ConnectedAccountProvider.MICROSOFT: {
+        const isExpired = isAccessTokenExpiredOrInvalid(accessToken);
+
+        return !isExpired;
+      }
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+        return true;
+      default:
+        return assertUnreachable(
+          connectedAccount.provider,
+          `Provider ${connectedAccount.provider} not supported`,
+        );
+    }
+  }
+
   async refreshTokens(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     refreshToken: string,
@@ -70,9 +113,10 @@ export class ConnectedAccountRefreshTokensService {
     try {
       switch (connectedAccount.provider) {
         case ConnectedAccountProvider.GOOGLE:
-          return await this.googleAPIRefreshAccessTokenService.refreshAccessToken(
+          return {
+            accessToken: '',
             refreshToken,
-          );
+          };
         case ConnectedAccountProvider.MICROSOFT:
           return await this.microsoftAPIRefreshAccessTokenService.refreshTokens(
             refreshToken,
