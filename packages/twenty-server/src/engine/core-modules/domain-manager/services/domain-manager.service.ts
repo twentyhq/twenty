@@ -10,7 +10,7 @@ import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/ut
 import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { RESERVED_SUBDOMAINS } from 'src/engine/core-modules/workspace/constants/reserved-subdomains.constant';
+import { RESERVED_SUBDOMAINS, subdomainPattern } from 'src/engine/core-modules/workspace/constants/reserved-subdomains.constant';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
@@ -209,8 +209,8 @@ export class DomainManagerService {
   async generateSubdomain(params?: { email?: string; displayName?: string }) {
     let subdomain = this.extractSubdomain(params);
 
-    // If extracted subdomain is reserved, use random instead
-    if (subdomain && RESERVED_SUBDOMAINS.includes(subdomain.toLowerCase())) {
+    // If extracted subdomain is reserved or matching the reserved subdomain pattern, use random instead
+    if (subdomain && (!subdomainPattern.test(subdomain) || RESERVED_SUBDOMAINS.includes(subdomain))) {
       subdomain = undefined;
     }
 

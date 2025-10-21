@@ -31,6 +31,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { RESERVED_SUBDOMAINS, subdomainPattern } from 'src/engine/core-modules/workspace/constants/reserved-subdomains.constant';
 import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
@@ -100,6 +101,20 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   }
 
   private async validateSubdomainUpdate(newSubdomain: string) {
+    if (!subdomainPattern.test(newSubdomain)) {
+      throw new WorkspaceException(
+        'Subdomain is reserved',
+        WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
+      );
+    }
+
+    if (RESERVED_SUBDOMAINS.includes(newSubdomain.toLowerCase())) {
+      throw new WorkspaceException(
+        'Subdomain is reserved',
+        WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
+      );
+    }
+
     const subdomainAvailable = await this.isSubdomainAvailable(newSubdomain);
 
     if (
