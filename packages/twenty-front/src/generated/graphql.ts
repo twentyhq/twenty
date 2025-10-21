@@ -4344,6 +4344,7 @@ export enum WorkflowActionType {
   AI_AGENT = 'AI_AGENT',
   CODE = 'CODE',
   CREATE_RECORD = 'CREATE_RECORD',
+  DELAY = 'DELAY',
   DELETE_RECORD = 'DELETE_RECORD',
   EMPTY = 'EMPTY',
   FILTER = 'FILTER',
