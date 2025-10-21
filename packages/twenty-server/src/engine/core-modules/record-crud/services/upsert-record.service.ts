@@ -135,7 +135,7 @@ export class UpsertRecordService {
         )
         .filter(isDefined);
 
-      await repository.upsert(transformedObjectRecord, {
+      const upsertResult = await repository.upsert(transformedObjectRecord, {
         conflictPaths: conflictPaths,
         indexPredicate:
           indexPredicate.length > 0
@@ -143,12 +143,34 @@ export class UpsertRecordService {
             : undefined,
       });
 
+      const upsertedRecordId = upsertResult.identifiers?.[0].id;
+
+      if (!isDefined(upsertedRecordId)) {
+        throw new RecordCrudException(
+          `Failed to upsert record in ${objectName}`,
+          RecordCrudExceptionCode.RECORD_UPSERT_FAILED,
+        );
+      }
+
+      const upsertedRecord = await repository.findOne({
+        where: {
+          id: upsertedRecordId,
+        },
+      });
+
+      if (!upsertedRecord) {
+        throw new RecordCrudException(
+          `Record not found after upsert with id ${upsertedRecordId} in ${objectName}`,
+          RecordCrudExceptionCode.RECORD_UPSERT_FAILED,
+        );
+      }
+
       this.logger.log(`Record upserted successfully in ${objectName}`);
 
       return {
         success: true,
         message: `Record upserted successfully in ${objectName}`,
-        result: transformedObjectRecord,
+        result: upsertedRecord,
       };
     } catch (error) {
       if (error instanceof RecordCrudException) {

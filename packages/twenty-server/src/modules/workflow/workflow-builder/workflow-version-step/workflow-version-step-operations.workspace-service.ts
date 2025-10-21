@@ -254,7 +254,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: 'Upsert Record',
+            name: 'Create or Update Record',
             type: WorkflowActionType.UPSERT_RECORD,
             settings: {
               ...BASE_STEP_DEFINITION,

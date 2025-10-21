@@ -48,17 +48,9 @@ export const shouldDisplayFormField = ({
         fieldMetadataItem.isActive
       );
     case 'UPDATE_RECORD':
-      isTypeAllowedForAction =
-        COMMON_DISPLAYABLE_FIELD_TYPES.includes(fieldMetadataItem.type) ||
-        fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE';
-      return (
-        isTypeAllowedForAction &&
-        !fieldMetadataItem.isSystem &&
-        fieldMetadataItem.isActive
-      );
     case 'UPSERT_RECORD':
       isTypeAllowedForAction =
-        fieldMetadataItem.type !== FieldMetadataType.RELATION ||
+        COMMON_DISPLAYABLE_FIELD_TYPES.includes(fieldMetadataItem.type) ||
         fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE';
       return (
         isTypeAllowedForAction &&

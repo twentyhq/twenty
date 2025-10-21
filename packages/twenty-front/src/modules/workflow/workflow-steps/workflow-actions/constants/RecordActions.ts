@@ -28,13 +28,13 @@ export const RECORD_ACTIONS: Array<{
     icon: 'IconTrash',
   },
   {
-    label: 'Upsert Record',
-    type: 'UPSERT_RECORD',
-    icon: 'IconPencilPlus',
-  },
-  {
     label: 'Search Records',
     type: 'FIND_RECORDS',
     icon: 'IconSearch',
+  },
+  {
+    label: 'Create or Update Record',
+    type: 'UPSERT_RECORD',
+    icon: 'IconPencilPlus',
   },
 ];

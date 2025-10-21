@@ -24,7 +24,6 @@ import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -130,30 +129,11 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
       return;
     }
 
-    const selectedObjectMetadata = objectMetadataItems.find(
-      (item) => item.nameSingular === value,
-    );
-
-    const outputSchema: BaseOutputSchemaV2 = {};
-    if (selectedObjectMetadata !== undefined) {
-      selectedObjectMetadata.fields.forEach((field) => {
-        if (field.isActive === true && field.isSystem === false) {
-          outputSchema[field.name] = {
-            isLeaf: true,
-            type: 'string',
-            label: field.label,
-            value: null,
-          };
-        }
-      });
-    }
-
     triggerOptions.onTriggerUpdate({
       ...trigger,
       settings: {
         ...trigger.settings,
         eventName: `${value}.${triggerEvent.event}`,
-        outputSchema,
       },
     });
     closeDropdown(dropdownId);
