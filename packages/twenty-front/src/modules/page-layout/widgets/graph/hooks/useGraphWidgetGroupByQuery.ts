@@ -33,12 +33,12 @@ export const useGraphWidgetGroupByQuery = ({
     [objectMetadataItem.readableFields],
   );
 
-  const aggregateOperationFieldName =
+  const aggregateOperation =
     availableAggregations[aggregateField.name]?.[
       configuration.aggregateOperation
     ];
 
-  if (!isDefined(aggregateOperationFieldName)) {
+  if (!isDefined(aggregateOperation)) {
     throw new Error('Aggregate operation not found');
   }
 
@@ -46,7 +46,7 @@ export const useGraphWidgetGroupByQuery = ({
     generateGroupByQueryVariablesFromBarChartConfiguration({
       objectMetadataItem,
       barChartConfiguration: configuration,
-      aggregateOperation: aggregateOperationFieldName,
+      aggregateOperation: aggregateOperation,
     });
 
   const variables = {
@@ -56,7 +56,7 @@ export const useGraphWidgetGroupByQuery = ({
 
   const query = generateGroupByQuery({
     objectMetadataItem,
-    aggregateOperations: [aggregateOperationFieldName],
+    aggregateOperations: [aggregateOperation],
   });
 
   const apolloCoreClient = useApolloCoreClient();
@@ -71,6 +71,6 @@ export const useGraphWidgetGroupByQuery = ({
     loading,
     error,
     refetch,
-    aggregateOperation: aggregateOperationFieldName,
+    aggregateOperation: aggregateOperation,
   };
 };
