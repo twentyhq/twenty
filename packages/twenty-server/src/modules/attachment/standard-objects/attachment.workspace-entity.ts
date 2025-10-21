@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { AttachmentFileCategory, FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -77,55 +77,55 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconList',
     options: [
       {
-        value: AttachmentFileCategory.ARCHIVE,
+        value: 'ARCHIVE',
         label: 'Archive',
         position: 0,
         color: 'gray',
       },
       {
-        value: AttachmentFileCategory.AUDIO,
+        value: 'AUDIO',
         label: 'Audio',
         position: 1,
         color: 'pink',
       },
       {
-        value: AttachmentFileCategory.IMAGE,
+        value: 'IMAGE',
         label: 'Image',
         position: 2,
         color: 'yellow',
       },
       {
-        value: AttachmentFileCategory.PRESENTATION,
+        value: 'PRESENTATION',
         label: 'Presentation',
         position: 3,
         color: 'orange',
       },
       {
-        value: AttachmentFileCategory.SPREADSHEET,
+        value: 'SPREADSHEET',
         label: 'Spreadsheet',
         position: 4,
         color: 'turquoise',
       },
       {
-        value: AttachmentFileCategory.TEXT_DOCUMENT,
+        value: 'TEXT_DOCUMENT',
         label: 'Text Document',
         position: 5,
         color: 'blue',
       },
       {
-        value: AttachmentFileCategory.VIDEO,
+        value: 'VIDEO',
         label: 'Video',
         position: 6,
         color: 'purple',
       },
       {
-        value: AttachmentFileCategory.OTHER,
+        value: 'OTHER',
         label: 'Other',
         position: 7,
         color: 'gray',
       },
     ],
-    defaultValue: `'${AttachmentFileCategory.OTHER}'`,
+    defaultValue: 'OTHER',
   })
   fileCategory: string;
 

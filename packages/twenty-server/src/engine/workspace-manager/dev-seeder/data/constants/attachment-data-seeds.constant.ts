@@ -11,6 +11,7 @@ type AttachmentDataSeed = {
   name: string;
   fullPath: string;
   type: string;
+  fileCategory?: string;
   // Deprecated: Use createdBy instead
   authorId: string | null;
   createdBySource: string;
@@ -28,6 +29,7 @@ export const ATTACHMENT_DATA_SEED_COLUMNS: (keyof AttachmentDataSeed)[] = [
   'name',
   'fullPath',
   'type',
+  'fileCategory',
   'authorId', // Deprecated: kept for backward compatibility during migration
   'createdBySource',
   'createdByWorkspaceMemberId',
@@ -174,6 +176,22 @@ const GENERATE_ATTACHMENT_SEEDS = (): AttachmentDataSeed[] => {
       name: NAME_VARIATION.name,
       fullPath: FILE_TEMPLATE.fullPath,
       type: NAME_VARIATION.type,
+      fileCategory:
+        NAME_VARIATION.type === 'Archive'
+          ? 'ARCHIVE'
+          : NAME_VARIATION.type === 'Audio'
+          ? 'AUDIO'
+          : NAME_VARIATION.type === 'Image'
+          ? 'IMAGE'
+          : NAME_VARIATION.type === 'Presentation'
+          ? 'PRESENTATION'
+          : NAME_VARIATION.type === 'Spreadsheet'
+          ? 'SPREADSHEET'
+          : NAME_VARIATION.type === 'TextDocument'
+          ? 'TEXT_DOCUMENT'
+          : NAME_VARIATION.type === 'Video'
+          ? 'VIDEO'
+          : 'OTHER',
       // Deprecated: Use createdBy fields instead
       authorId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       createdBySource: FieldActorSource.MANUAL,
