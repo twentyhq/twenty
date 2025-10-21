@@ -9,10 +9,10 @@ import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
 import { AIChatErrorMessageWithRecordsContext } from '@/ai/components/internal/AIChatErrorMessageWithRecordsContext';
-import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
@@ -146,7 +146,7 @@ export const AIChatMessage = ({
   isLastMessageStreaming,
   error,
 }: {
-  message: UIMessageWithMetadata;
+  message: ExtendedUIMessage;
   isLastMessageStreaming: boolean;
   error?: Error | null;
 }) => {

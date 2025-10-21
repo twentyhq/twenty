@@ -1,7 +1,6 @@
 import { AgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { useAgentChatData } from '@/ai/hooks/useAgentChatData';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -9,10 +8,11 @@ import { Chat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { Suspense } from 'react';
 import { useRecoilValue } from 'recoil';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 const createLoadingChat = () =>
-  new Chat<UIMessageWithMetadata>({
+  new Chat<ExtendedUIMessage>({
     transport: new DefaultChatTransport({
       api: `${REST_API_BASE_URL}/agent-chat/stream`,
       headers: () => ({}),
@@ -31,7 +31,7 @@ const AgentChatProviderContent = ({
 
   const chatConfig = isLoading
     ? createLoadingChat()
-    : new Chat<UIMessageWithMetadata>({
+    : new Chat<ExtendedUIMessage>({
         transport: new DefaultChatTransport({
           api: `${REST_API_BASE_URL}/agent-chat/stream`,
           headers: () => ({
