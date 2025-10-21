@@ -60,13 +60,11 @@ export const WorkflowEditActionAiAgent = ({
     SelectOption<string>[]
   >(
     (acc, agent) => {
-      if (agent.id !== currentWorkspace?.defaultAgent?.id) {
-        acc.push({
-          label: agent.label,
-          value: agent.id,
-          Icon: agent.icon ? getIcon(agent.icon) : undefined,
-        });
-      }
+      acc.push({
+        label: agent.label,
+        value: agent.id,
+        Icon: agent.icon ? getIcon(agent.icon) : undefined,
+      });
       return acc;
     },
     [

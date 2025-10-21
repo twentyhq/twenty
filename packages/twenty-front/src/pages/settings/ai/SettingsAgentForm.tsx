@@ -24,12 +24,11 @@ import {
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
+import { useState } from 'react';
 import { SettingsAgentDeleteConfirmationModal } from './components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
-import { SettingsAgentHandoffSection } from './components/SettingsAgentHandoffSection';
 import { SettingsAIAgentForm } from './forms/components/SettingsAIAgentForm';
 import { useSettingsAgentFormState } from './hooks/useSettingsAgentFormState';
-import { useState } from 'react';
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -102,8 +101,6 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const [updateAgent] = useUpdateOneAgentMutation();
 
   const agent = data?.findOneAgent;
-
-  const isAskAIAgent = agent?.id === currentWorkspace?.defaultAgent?.id;
 
   if (!isCreateMode && !loading && !agent) {
     return null;
@@ -213,45 +210,36 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       >
         <SettingsPageContainer>
           <Section>
-            {!isAskAIAgent && (
-              <H2Title title={pageTitle} description={pageDescription} />
-            )}
+            <H2Title title={pageTitle} description={pageDescription} />
             {isEditMode && loading ? (
               <SettingsAgentDetailSkeletonLoader />
             ) : (
               <StyledContentContainer>
-                {isAskAIAgent ? (
-                  <SettingsAgentHandoffSection agentId={agent?.id ?? ''} />
-                ) : (
-                  <>
-                    <SettingsAIAgentForm
-                      formValues={formValues}
-                      onFieldChange={handleFieldChange}
-                      disabled={
-                        isReadonlyMode ||
-                        (isEditMode ? !agent?.isCustom : false)
-                      }
-                    />
-                    {!isReadonlyMode &&
-                      isEditMode &&
-                      agent &&
-                      formValues.isCustom && (
-                        <Section>
-                          <H2Title
-                            title={t`Danger zone`}
-                            description={t`Delete this agent`}
-                          />
-                          <Button
-                            accent="danger"
-                            variant="secondary"
-                            title={t`Delete Agent`}
-                            Icon={IconTrash}
-                            onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
-                          />
-                        </Section>
-                      )}
-                  </>
-                )}
+                <SettingsAIAgentForm
+                  formValues={formValues}
+                  onFieldChange={handleFieldChange}
+                  disabled={
+                    isReadonlyMode || (isEditMode ? !agent?.isCustom : false)
+                  }
+                />
+                {!isReadonlyMode &&
+                  isEditMode &&
+                  agent &&
+                  formValues.isCustom && (
+                    <Section>
+                      <H2Title
+                        title={t`Danger zone`}
+                        description={t`Delete this agent`}
+                      />
+                      <Button
+                        accent="danger"
+                        variant="secondary"
+                        title={t`Delete Agent`}
+                        Icon={IconTrash}
+                        onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
+                      />
+                    </Section>
+                  )}
               </StyledContentContainer>
             )}
           </Section>
