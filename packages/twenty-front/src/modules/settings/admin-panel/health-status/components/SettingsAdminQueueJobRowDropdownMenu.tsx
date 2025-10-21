@@ -48,7 +48,7 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            {jobState === JobState.failed && onRetry && (
+            {jobState === JobState.FAILED && onRetry && (
               <MenuItem
                 text={t`Retry`}
                 LeftIcon={IconRefresh}

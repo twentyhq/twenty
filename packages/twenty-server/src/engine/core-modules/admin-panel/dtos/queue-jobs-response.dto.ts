@@ -1,12 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { QueueJob } from 'src/engine/core-modules/admin-panel/dtos/queue-job.dto';
-import { QueueRetentionConfig } from 'src/engine/core-modules/admin-panel/dtos/queue-retention-config.dto';
+import { QueueJobDTO } from 'src/engine/core-modules/admin-panel/dtos/queue-job.dto';
+import { QueueRetentionConfigDTO } from 'src/engine/core-modules/admin-panel/dtos/queue-retention-config.dto';
 
-@ObjectType()
-export class QueueJobsResponse {
-  @Field(() => [QueueJob])
-  jobs: QueueJob[];
+@ObjectType('QueueJobsResponse')
+export class QueueJobsResponseDTO {
+  @Field(() => [QueueJobDTO])
+  jobs: QueueJobDTO[];
 
   @Field(() => Number)
   count: number;
@@ -17,6 +17,6 @@ export class QueueJobsResponse {
   @Field(() => Boolean)
   hasMore: boolean;
 
-  @Field(() => QueueRetentionConfig)
-  retentionConfig: QueueRetentionConfig;
+  @Field(() => QueueRetentionConfigDTO)
+  retentionConfig: QueueRetentionConfigDTO;
 }

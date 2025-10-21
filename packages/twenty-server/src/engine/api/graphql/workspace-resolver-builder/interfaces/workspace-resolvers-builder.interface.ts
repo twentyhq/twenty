@@ -16,20 +16,20 @@ import { type workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql
 export type Resolver<Args = any> = GraphQLFieldResolver<any, any, Args>;
 
 export enum ResolverArgsType {
-  FindMany = 'FindMany',
-  FindOne = 'FindOne',
-  FindDuplicates = 'FindDuplicates',
-  CreateOne = 'CreateOne',
-  CreateMany = 'CreateMany',
-  UpdateOne = 'UpdateOne',
-  UpdateMany = 'UpdateMany',
-  DeleteOne = 'DeleteOne',
-  DeleteMany = 'DeleteMany',
-  RestoreMany = 'RestoreMany',
-  DestroyMany = 'DestroyMany',
-  DestroyOne = 'DestroyOne',
-  MergeMany = 'MergeMany',
-  GroupBy = 'GroupBy',
+  FIND_MANY = 'FIND_MANY',
+  FIND_ONE = 'FIND_ONE',
+  FIND_DUPLICATES = 'FIND_DUPLICATES',
+  CREATE_ONE = 'CREATE_ONE',
+  CREATE_MANY = 'CREATE_MANY',
+  UPDATE_ONE = 'UPDATE_ONE',
+  UPDATE_MANY = 'UPDATE_MANY',
+  DELETE_ONE = 'DELETE_ONE',
+  DELETE_MANY = 'DELETE_MANY',
+  RESTORE_MANY = 'RESTORE_MANY',
+  DESTROY_MANY = 'DESTROY_MANY',
+  DESTROY_ONE = 'DESTROY_ONE',
+  MERGE_MANY = 'MERGE_MANY',
+  GROUP_BY = 'GROUP_BY',
 }
 
 export interface FindManyResolverArgs<

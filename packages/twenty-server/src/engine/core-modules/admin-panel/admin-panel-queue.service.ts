@@ -1,21 +1,32 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { Queue } from 'bullmq';
+import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
 
-import { JobState } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
+import {
+  bullMQToJobStateEnum,
+  JobStateEnum,
+  jobStateEnumToBullMQ,
+} from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
+import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
+type JobOperationResult = {
+  jobId: string;
+  success: boolean;
+  error?: string;
+};
+
 @Injectable()
 export class AdminPanelQueueService {
-  private readonly logger = new Logger(AdminPanelQueueService.name);
-
   constructor(private readonly redisClient: RedisClientService) {}
 
   async getQueueJobs(
     queueName: MessageQueue,
-    state: JobState,
+    state: JobStateEnum,
     limit = 50,
     offset = 0,
   ) {
@@ -29,28 +40,33 @@ export class AdminPanelQueueService {
       const start = validOffset;
       const end = validOffset + validLimit - 1;
 
-      const jobs = await queue.getJobs([state], start, end, false);
+      // Convert GraphQL enum to BullMQ state
+      const bullMQState = jobStateEnumToBullMQ[state];
+      const jobs = await queue.getJobs([bullMQState], start, end, false);
 
       const transformedJobs = await Promise.all(
-        jobs.map(async (job) => ({
-          id: job.id!,
-          name: job.name,
-          data: job.data,
-          state: await job.getState(),
-          timestamp: job.timestamp,
-          failedReason: job.failedReason,
-          processedOn: job.processedOn,
-          finishedOn: job.finishedOn,
-          attemptsMade: job.attemptsMade,
-          returnValue: job.returnValue,
-          logs: undefined,
-          stackTrace: job.stackTrace,
-        })),
+        jobs.map(async (job) => {
+          const jobBullMQState = (await job.getState()) as BullMQJobState;
+
+          return {
+            id: job.id!,
+            name: job.name,
+            data: job.data,
+            state: bullMQToJobStateEnum[jobBullMQState],
+            timestamp: job.timestamp,
+            failedReason: job.failedReason,
+            processedOn: job.processedOn,
+            finishedOn: job.finishedOn,
+            attemptsMade: job.attemptsMade,
+            returnValue: job.returnValue,
+            logs: undefined,
+            stackTrace: job.stackTrace,
+          };
+        }),
       );
 
       const hasMore = jobs.length === validLimit;
 
-      // Compute total count for the selected state
       const jobCounts = await queue.getJobCounts(
         'completed',
         'failed',
@@ -63,19 +79,19 @@ export class AdminPanelQueueService {
 
       const totalCountForState = (() => {
         switch (state) {
-          case 'completed':
+          case JobStateEnum.COMPLETED:
             return jobCounts.completed ?? 0;
-          case 'failed':
+          case JobStateEnum.FAILED:
             return jobCounts.failed ?? 0;
-          case 'active':
+          case JobStateEnum.ACTIVE:
             return jobCounts.active ?? 0;
-          case 'waiting':
+          case JobStateEnum.WAITING:
             return jobCounts.waiting ?? 0;
-          case 'delayed':
+          case JobStateEnum.DELAYED:
             return jobCounts.delayed ?? 0;
-          case 'prioritized':
+          case JobStateEnum.PRIORITIZED:
             return jobCounts.prioritized ?? 0;
-          case 'waiting-children':
+          case JobStateEnum.WAITING_CHILDREN:
             return jobCounts['waiting-children'] ?? 0;
           default:
             return jobs.length;
@@ -90,99 +106,139 @@ export class AdminPanelQueueService {
         retentionConfig: { ...QUEUE_RETENTION },
       };
     } catch (error) {
-      this.logger.error(
-        `Error getting jobs for queue ${queueName}: ${error.message}`,
+      throw new InternalServerError(
+        `Failed to fetch jobs from queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
+        {
+          userFriendlyMessage: msg`Failed to load queue jobs. Please try again later.`,
+        },
       );
-      throw error;
     } finally {
       await queue.close();
     }
   }
 
-  async retryJobs(queueName: MessageQueue, jobIds: string[]): Promise<number> {
+  async retryJobs(
+    queueName: MessageQueue,
+    jobIds: string[],
+  ): Promise<{
+    retriedCount: number;
+    results: JobOperationResult[];
+  }> {
     const redis = this.redisClient.getQueueClient();
     const queue = new Queue(queueName, { connection: redis });
 
     try {
-      let retriedCount = 0;
-
       if (jobIds.length === 0) {
-        this.logger.log(`Retrying all failed jobs in queue ${queueName}`);
         await queue.retryJobs({ state: 'failed' });
 
-        return -1;
+        return { retriedCount: -1, results: [] };
       }
 
+      const results: JobOperationResult[] = [];
+      let retriedCount = 0;
+
       for (const jobId of jobIds) {
+        const job = await queue.getJob(jobId);
+
+        if (!job) {
+          results.push({
+            jobId,
+            success: false,
+            error: 'Job not found',
+          });
+          continue;
+        }
+
+        const state = await job.getState();
+
+        if (state !== 'failed') {
+          results.push({
+            jobId,
+            success: false,
+            error: `Job is not in failed state (current state: ${state})`,
+          });
+          continue;
+        }
+
         try {
-          const job = await queue.getJob(jobId);
-
-          if (job) {
-            const state = await job.getState();
-
-            if (state === 'failed') {
-              await job.retry();
-              retriedCount++;
-            } else {
-              this.logger.warn(
-                `Job ${jobId} in queue ${queueName} is not in failed state, skipping`,
-              );
-            }
-          } else {
-            this.logger.warn(
-              `Job ${jobId} not found in queue ${queueName}, skipping`,
-            );
-          }
+          await job.retry();
+          retriedCount++;
+          results.push({
+            jobId,
+            success: true,
+          });
         } catch (error) {
-          this.logger.error(
-            `Error retrying job ${jobId} in queue ${queueName}: ${error.message}`,
-          );
+          results.push({
+            jobId,
+            success: false,
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
       }
 
-      return retriedCount;
+      return { retriedCount, results };
     } catch (error) {
-      this.logger.error(
-        `Error retrying jobs in queue ${queueName}: ${error.message}`,
+      throw new InternalServerError(
+        `Failed to retry jobs in queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
+        {
+          userFriendlyMessage: msg`Failed to retry jobs. Please try again later.`,
+        },
       );
-      throw error;
     } finally {
       await queue.close();
     }
   }
 
-  async deleteJobs(queueName: MessageQueue, jobIds: string[]): Promise<number> {
+  async deleteJobs(
+    queueName: MessageQueue,
+    jobIds: string[],
+  ): Promise<{
+    deletedCount: number;
+    results: JobOperationResult[];
+  }> {
     const redis = this.redisClient.getQueueClient();
     const queue = new Queue(queueName, { connection: redis });
 
     try {
+      const results: JobOperationResult[] = [];
       let deletedCount = 0;
 
       for (const jobId of jobIds) {
-        try {
-          const job = await queue.getJob(jobId);
+        const job = await queue.getJob(jobId);
 
-          if (job) {
-            await job.remove();
-            deletedCount++;
-          } else {
-            this.logger.warn(
-              `Job ${jobId} not found in queue ${queueName}, skipping`,
-            );
-          }
+        if (!job) {
+          results.push({
+            jobId,
+            success: false,
+            error: 'Job not found',
+          });
+          continue;
+        }
+
+        try {
+          await job.remove();
+          deletedCount++;
+          results.push({
+            jobId,
+            success: true,
+          });
         } catch (error) {
-          this.logger.error(
-            `Error deleting job ${jobId} in queue ${queueName}: ${error.message}`,
-          );
+          results.push({
+            jobId,
+            success: false,
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
       }
 
-      return deletedCount;
+      return { deletedCount, results };
     } catch (error) {
-      this.logger.error(
-        `Error deleting jobs in queue ${queueName}: ${error.message}`,
+      throw new InternalServerError(
+        `Failed to delete jobs in queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
+        {
+          userFriendlyMessage: msg`Failed to delete jobs. Please try again later.`,
+        },
       );
-      throw error;
     } finally {
       await queue.close();
     }

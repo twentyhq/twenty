@@ -126,10 +126,10 @@ export const SettingsAdminJobDetailsExpandable = ({
           </StyledSection>
         )}
 
-        {hasLogs && job.logs && (
+        {hasLogs && (
           <StyledSection>
             <StyledSectionTitle>{t`Logs`}</StyledSectionTitle>
-            {job.logs.map((log, index) => (
+            {job.logs?.map((log, index) => (
               <StyledLogEntry key={index}>{log}</StyledLogEntry>
             ))}
           </StyledSection>

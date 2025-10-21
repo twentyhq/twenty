@@ -11,13 +11,13 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
-  IconSearch,
-  IconTrash,
-  OverflowingTextWithTooltip,
+    IconSearch,
+    IconTrash,
+    OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useRemoveAgentHandoffMutation } from '~/generated-metadata/graphql';
-import { type AgentHandoffDto } from '~/generated/graphql';
+import { type AgentHandoff } from '~/generated/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const AGENT_HANDOFF_DELETION_MODAL_ID = 'agent-handoff-deletion-modal';
@@ -51,7 +51,7 @@ const StyledTableCell = styled(TableCell)`
 
 type SettingsAgentHandoffTableProps = {
   agentId: string;
-  handoffTargets: AgentHandoffDto[];
+  handoffTargets: AgentHandoff[];
   onHandoffRemoved: () => void;
 };
 

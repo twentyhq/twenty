@@ -7,11 +7,11 @@ import semver from 'semver';
 import { Repository } from 'typeorm';
 import * as z from 'zod';
 
-import { type ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
-import { type ConfigVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
+import { type ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
+import { type ConfigVariablesGroupDataDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
 import { type ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
-import { type VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { type VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
@@ -114,14 +114,14 @@ export class AdminPanelService {
 
   getConfigVariablesGrouped(): ConfigVariablesOutput {
     const rawEnvVars = this.twentyConfigService.getAll();
-    const groupedData = new Map<ConfigVariablesGroup, ConfigVariable[]>();
+    const groupedData = new Map<ConfigVariablesGroup, ConfigVariableDTO[]>();
 
     for (const [varName, { value, metadata, source }] of Object.entries(
       rawEnvVars,
     )) {
       const { group, description } = metadata;
 
-      const envVar: ConfigVariable = {
+      const envVar: ConfigVariableDTO = {
         name: varName,
         description,
         value: value ?? null,
@@ -139,7 +139,9 @@ export class AdminPanelService {
       groupedData.get(group)?.push(envVar);
     }
 
-    const groups: ConfigVariablesGroupData[] = Array.from(groupedData.entries())
+    const groups: ConfigVariablesGroupDataDTO[] = Array.from(
+      groupedData.entries(),
+    )
       .sort((a, b) => {
         const positionA = CONFIG_VARIABLES_GROUP_METADATA[a[0]].position;
         const positionB = CONFIG_VARIABLES_GROUP_METADATA[b[0]].position;
@@ -156,7 +158,7 @@ export class AdminPanelService {
     return { groups };
   }
 
-  getConfigVariable(key: string): ConfigVariable {
+  getConfigVariable(key: string): ConfigVariableDTO {
     const variableWithMetadata =
       this.twentyConfigService.getVariableWithMetadata(
         key as keyof ConfigVariables,
@@ -180,7 +182,7 @@ export class AdminPanelService {
     };
   }
 
-  async getVersionInfo(): Promise<VersionInfo> {
+  async getVersionInfo(): Promise<VersionInfoDTO> {
     const currentVersion = this.twentyConfigService.get('APP_VERSION');
 
     try {

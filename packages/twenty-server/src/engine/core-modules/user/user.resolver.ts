@@ -36,8 +36,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modules/two-factor-authentication/utils/two-factor-authentication-method.presenter';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { DeletedWorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
+import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import {
   type ToWorkspaceMemberDtoArgs,
@@ -195,13 +195,13 @@ export class UserResolver {
     return Object.fromEntries(filteredMap);
   }
 
-  @ResolveField(() => WorkspaceMember, {
+  @ResolveField(() => WorkspaceMemberDTO, {
     nullable: true,
   })
   async workspaceMember(
     @Parent() user: User,
     @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
-  ): Promise<WorkspaceMember | null> {
+  ): Promise<WorkspaceMemberDTO | null> {
     if (!workspace) return null;
 
     const workspaceMemberEntity = await this.userService.loadWorkspaceMember(
@@ -239,13 +239,13 @@ export class UserResolver {
     });
   }
 
-  @ResolveField(() => [WorkspaceMember], {
+  @ResolveField(() => [WorkspaceMemberDTO], {
     nullable: true,
   })
   async workspaceMembers(
     @Parent() _user: User,
     @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
-  ): Promise<WorkspaceMember[]> {
+  ): Promise<WorkspaceMemberDTO[]> {
     if (!workspace) return [];
 
     const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
@@ -307,13 +307,13 @@ export class UserResolver {
     );
   }
 
-  @ResolveField(() => [DeletedWorkspaceMember], {
+  @ResolveField(() => [DeletedWorkspaceMemberDTO], {
     nullable: true,
   })
   async deletedWorkspaceMembers(
     @Parent() _user: User,
     @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
-  ): Promise<DeletedWorkspaceMember[]> {
+  ): Promise<DeletedWorkspaceMemberDTO[]> {
     if (!workspace) return [];
 
     const workspaceMemberEntities =

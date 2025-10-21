@@ -2,7 +2,7 @@
 
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
+@ObjectType('BillingPriceTier')
 export class BillingPriceTierDTO {
   @Field(() => Number, { nullable: true })
   upTo: number | null;

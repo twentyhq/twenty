@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class QueueRetentionConfig {
+@ObjectType('QueueRetentionConfig')
+export class QueueRetentionConfigDTO {
   @Field(() => Number)
   completedMaxAge: number;
 

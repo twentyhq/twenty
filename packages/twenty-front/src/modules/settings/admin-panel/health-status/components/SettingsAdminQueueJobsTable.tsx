@@ -18,9 +18,9 @@ import { useState } from 'react';
 import { IconRefresh, IconTrash } from 'twenty-ui/display';
 import { Button, Checkbox } from 'twenty-ui/input';
 import {
-  JobState,
-  type QueueJob,
-  useGetQueueJobsQuery,
+    JobState,
+    type QueueJob,
+    useGetQueueJobsQuery,
 } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -108,19 +108,19 @@ export const SettingsAdminQueueJobsTable = ({
   onRetentionConfigLoaded,
 }: SettingsAdminQueueJobsTableProps) => {
   const [page, setPage] = useState(0);
-  const [stateFilter, setStateFilter] = useState<JobState>(JobState.completed);
+  const [stateFilter, setStateFilter] = useState<JobState>(JobState.COMPLETED);
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [selectedJobIds, setSelectedJobIds] = useState<Set<string>>(new Set());
   const { openModal } = useModal();
 
   const jobStateOptions: { value: JobState; label: string }[] = [
-    { value: JobState.completed, label: t`Completed` },
-    { value: JobState.failed, label: t`Failed` },
-    { value: JobState.active, label: t`Active` },
-    { value: JobState.waiting, label: t`Waiting` },
-    { value: JobState.delayed, label: t`Delayed` },
-    { value: JobState.prioritized, label: t`Prioritized` },
-    { value: JobState.waitingChildren, label: t`Waiting Children` },
+    { value: JobState.COMPLETED, label: t`Completed` },
+    { value: JobState.FAILED, label: t`Failed` },
+    { value: JobState.ACTIVE, label: t`Active` },
+    { value: JobState.WAITING, label: t`Waiting` },
+    { value: JobState.DELAYED, label: t`Delayed` },
+    { value: JobState.PRIORITIZED, label: t`Prioritized` },
+    { value: JobState.WAITING_CHILDREN, label: t`Waiting Children` },
   ];
 
   const offset = page * LIMIT;
@@ -148,7 +148,7 @@ export const SettingsAdminQueueJobsTable = ({
   const jobs = data?.getQueueJobs?.jobs || [];
   const hasMore = data?.getQueueJobs?.hasMore || false;
   const totalCount = data?.getQueueJobs?.totalCount || 0;
-  const failedJobs = jobs.filter((job) => job.state === 'failed');
+  const failedJobs = jobs.filter((job) => job.state === JobState.FAILED);
 
   // Pass retention config to parent when data loads
   const shouldPassConfig =
@@ -169,7 +169,7 @@ export const SettingsAdminQueueJobsTable = ({
   const selectedJobs = jobs.filter((job) => selectedJobIds.has(job.id));
   const allSelectedAreFailed =
     selectedJobs.length > 0 &&
-    selectedJobs.every((job) => job.state === 'failed');
+    selectedJobs.every((job) => job.state === JobState.FAILED);
 
   const handleToggleAll = () => {
     const shouldClearSelection = allJobsSelected === true;
@@ -356,7 +356,7 @@ export const SettingsAdminQueueJobsTable = ({
                           jobId={job.id}
                           jobState={job.state}
                           onRetry={
-                            job.state === 'failed'
+                            job.state === JobState.FAILED
                               ? () => handleRetryOne(job.id)
                               : undefined
                           }

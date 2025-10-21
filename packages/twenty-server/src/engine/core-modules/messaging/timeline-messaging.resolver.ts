@@ -5,7 +5,7 @@ import { Max } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
-import { TimelineThreadsWithTotal } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
+import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -55,14 +55,14 @@ class GetTimelineThreadsFromOpportunityIdArgs {
 }
 
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-@Resolver(() => TimelineThreadsWithTotal)
+@Resolver(() => TimelineThreadsWithTotalDTO)
 export class TimelineMessagingResolver {
   constructor(
     private readonly getMessagesFromPersonIdsService: GetMessagesService,
     private readonly userService: UserService,
   ) {}
 
-  @Query(() => TimelineThreadsWithTotal)
+  @Query(() => TimelineThreadsWithTotalDTO)
   async getTimelineThreadsFromPersonId(
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
@@ -88,7 +88,7 @@ export class TimelineMessagingResolver {
     return timelineThreads;
   }
 
-  @Query(() => TimelineThreadsWithTotal)
+  @Query(() => TimelineThreadsWithTotalDTO)
   async getTimelineThreadsFromCompanyId(
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
@@ -114,7 +114,7 @@ export class TimelineMessagingResolver {
     return timelineThreads;
   }
 
-  @Query(() => TimelineThreadsWithTotal)
+  @Query(() => TimelineThreadsWithTotalDTO)
   async getTimelineThreadsFromOpportunityId(
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,

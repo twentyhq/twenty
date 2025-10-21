@@ -24,7 +24,7 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
 
     if (driver === EmailDriver.SMTP) {
       const emailConfigHash = this.getConfigGroupHash(
-        ConfigVariablesGroup.EmailSettings,
+        ConfigVariablesGroup.EMAIL_SETTINGS,
       );
 
       return `smtp|${emailConfigHash}`;

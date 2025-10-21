@@ -8,13 +8,13 @@ type SettingsAdminJobStateBadgeProps = {
 };
 
 const JOB_STATE_COLORS: Record<JobState, TagColor> = {
-  [JobState.completed]: 'green',
-  [JobState.failed]: 'red',
-  [JobState.active]: 'blue',
-  [JobState.waiting]: 'gray',
-  [JobState.delayed]: 'orange',
-  [JobState.prioritized]: 'blue',
-  [JobState.waitingChildren]: 'gray',
+  [JobState.COMPLETED]: 'green',
+  [JobState.FAILED]: 'red',
+  [JobState.ACTIVE]: 'blue',
+  [JobState.WAITING]: 'gray',
+  [JobState.DELAYED]: 'orange',
+  [JobState.PRIORITIZED]: 'blue',
+  [JobState.WAITING_CHILDREN]: 'gray',
 };
 
 const StyledContainer = styled.div`

@@ -2,13 +2,10 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
-import {
-  JobState,
-  JobStateEnum,
-} from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
+import { JobStateEnum } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
 
-@ObjectType()
-export class QueueJob {
+@ObjectType('QueueJob')
+export class QueueJobDTO {
   @Field(() => String)
   id: string;
 
@@ -19,7 +16,7 @@ export class QueueJob {
   data?: object;
 
   @Field(() => JobStateEnum)
-  state: JobState;
+  state: JobStateEnum;
 
   @Field(() => Number, { nullable: true })
   timestamp?: number;
