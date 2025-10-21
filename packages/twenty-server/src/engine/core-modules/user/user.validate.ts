@@ -19,7 +19,9 @@ const assertIsDefinedOrThrow = (
   }
 };
 
-const isUserDefined = (user: UserEntity | undefined | null): user is User => {
+const isUserDefined = (
+  user: UserEntity | undefined | null,
+): user is UserEntity => {
   return isDefined(user);
 };
 

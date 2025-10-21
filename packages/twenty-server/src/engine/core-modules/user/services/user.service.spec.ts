@@ -5,7 +5,6 @@ import { type Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -132,10 +131,7 @@ describe('UserService', () => {
     it('fetches members withDeleted flag', async () => {
       jest
         .spyOn(mockWorkspaceMemberRepo, 'find')
-        .mockResolvedValue([
-          { id: 'wm1' } as WorkspaceEntity,
-          WorkspaceMemberWorkspaceEntity,
-        ]);
+        .mockResolvedValue([{ id: 'wm1' } as WorkspaceMemberWorkspaceEntity]);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue(mockWorkspaceMemberRepo);
@@ -169,8 +165,7 @@ describe('UserService', () => {
       jest
         .spyOn(mockWorkspaceMemberRepo, 'find')
         .mockResolvedValue([
-          { id: 'wm-del' } as WorkspaceEntity,
-          WorkspaceMemberWorkspaceEntity,
+          { id: 'wm-del' } as WorkspaceMemberWorkspaceEntity,
         ]);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
@@ -278,8 +273,7 @@ describe('UserService', () => {
 
   describe('deleteUser', () => {
     const wmForUser = (userId: string) =>
-        ({ id: 'wm-1', userId }) as WorkspaceEntity,
-      WorkspaceMemberWorkspaceEntity;
+      ({ id: 'wm-1', userId }) as WorkspaceMemberWorkspaceEntity;
 
     it('throws mapped PermissionsException when cannot unassign last admin', async () => {
       (userRepository.findOne as jest.Mock).mockResolvedValue({
@@ -291,8 +285,7 @@ describe('UserService', () => {
         .spyOn(mockWorkspaceMemberRepo, 'find')
         .mockResolvedValue([
           wmForUser('u1'),
-          { id: 'wm-2', userId: 'uX' } as unknown as WorkspaceEntity,
-          WorkspaceMemberWorkspaceEntity,
+          { id: 'wm-2', userId: 'uX' } as WorkspaceMemberWorkspaceEntity,
         ]);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')

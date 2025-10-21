@@ -12,7 +12,7 @@ export const getAuthProvidersByWorkspace = ({
   systemEnabledProviders,
 }: {
   workspace: Pick<
-    | WorkspaceEntity
+    WorkspaceEntity,
     | 'isGoogleAuthEnabled'
     | 'isPasswordAuthEnabled'
     | 'isMicrosoftAuthEnabled'

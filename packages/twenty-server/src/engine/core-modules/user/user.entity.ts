@@ -124,6 +124,6 @@ export class UserEntity {
   @Field(() => WorkspaceEntity, { nullable: true })
   currentWorkspace?: Relation<WorkspaceEntity>;
 
-  @Field(() => UserEntity, WorkspaceEntity, { nullable: true })
+  @Field(() => UserWorkspaceEntity, { nullable: true })
   currentUserWorkspace?: Relation<UserWorkspaceEntity>;
 }
