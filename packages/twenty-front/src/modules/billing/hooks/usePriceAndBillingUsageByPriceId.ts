@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
-    type BillingPriceLicensed,
-    type BillingPriceMetered,
-    BillingUsageType,
+  type BillingPriceLicensed,
+  type BillingPriceMetered,
+  BillingUsageType,
 } from '~/generated/graphql';
 import { useAllBillingPrices } from './useAllBillingPrices';
 
