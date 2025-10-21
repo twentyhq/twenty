@@ -6,9 +6,7 @@ image: /images/user-guide/workflows/internal-automations.png
 sectionInfo: Automate processes and integrate with external tools.
 ---
 
-# Internal Automation Use Cases
-
-These workflow examples focus on automating repetitive tasks within Twenty to reduce manual work and keep your data accurate and up-to-date.
+Below are workflow examples you could roll out to automate repetitive tasks to reduce manual work and keep your data up-to-date.
 
 ## Data Management Automations
 
@@ -17,7 +15,8 @@ These workflow examples focus on automating repetitive tasks within Twenty to re
 
 **Solution**: Create a workflow that automatically updates an "is personal email" field whenever an email address is added or updated.
 
-**Trigger**: Record is Updated (People object, Email field)
+**Trigger**: Record is Updated (People object, Email field)  
+
 **Actions**: 
 - Code action to check if email domain matches common personal providers (gmail.com, yahoo.com, etc.)
 - Update Record to set the "is personal email" flag
@@ -27,7 +26,8 @@ These workflow examples focus on automating repetitive tasks within Twenty to re
 
 **Solution**: Automatically assign new leads to sales reps using a round-robin system.
 
-**Trigger**: Record is Created (People object)
+**Trigger**: Record is Created (People object)    
+
 **Actions**:
 - Search Records to find the last assigned rep
 - Code action to determine next rep in rotation
@@ -39,7 +39,8 @@ These workflow examples focus on automating repetitive tasks within Twenty to re
 
 **Solution**: Route leads to the appropriate sales rep based on location, company size, or industry.
 
-**Trigger**: Record is Created (People or Companies object)
+**Trigger**: Record is Created (People or Companies object)  
+
 **Actions**:
 - Code action to determine territory based on location/industry rules
 - Search Records to find the territory owner
@@ -53,7 +54,8 @@ These workflow examples focus on automating repetitive tasks within Twenty to re
 
 **Solution**: Automatically handle all post-win activities when an opportunity moves to "Closed Won".
 
-**Trigger**: Record is Updated (Opportunities object, Stage field = "Closed Won")
+**Trigger**: Record is Updated (Opportunities object, Stage field = "Closed Won")  
+
 **Actions**:
 - Update Record to change Company type from "Prospect" to "Customer"
 - Create Record for onboarding tasks assigned to account manager
@@ -65,7 +67,8 @@ These workflow examples focus on automating repetitive tasks within Twenty to re
 
 **Solution**: Automatically update customer status when renewal deals are lost.
 
-**Trigger**: Record is Updated (Opportunities object, Stage = "Closed Lost" AND Type = "Renewal")
+**Trigger**: Record is Updated (Opportunities object, Stage = "Closed Lost" AND Type = "Renewal")  
+
 **Actions**:
 - Update Record to change Company type from "Customer" to "Churn Customer"
 - Create Record for churn analysis task
@@ -77,7 +80,8 @@ These workflow examples focus on automating repetitive tasks within Twenty to re
 
 **Solution**: Send automatic alerts when opportunities haven't been updated recently.
 
-**Trigger**: On a Schedule (daily)
+**Trigger**: On a Schedule (daily)  
+
 **Actions**:
 - Search Records for opportunities not updated in X days
 - Code action to format alert message with opportunity details
@@ -91,7 +95,8 @@ These workflow examples focus on automating repetitive tasks within Twenty to re
 
 **Solution**: Send automated weekly email reminders with task summaries.
 
-**Trigger**: On a Schedule (every Monday at 8 AM)
+**Trigger**: On a Schedule (every Monday at 8 AM)  
+
 **Actions**:
 - Search Records for tasks due this week by assignee
 - Code action to format task list by person
@@ -103,7 +108,8 @@ These workflow examples focus on automating repetitive tasks within Twenty to re
 
 **Solution**: Automatically create follow-up tasks when meetings are scheduled or completed.
 
-**Trigger**: Record is Created (Activities object, Type = "Meeting")
+**Trigger**: Record is Created (Activities object, Type = "Meeting")  
+
 **Actions**:
 - Create Record for pre-meeting preparation task
 - Create Record for post-meeting follow-up task
@@ -115,7 +121,8 @@ These workflow examples focus on automating repetitive tasks within Twenty to re
 
 **Solution**: Automatically sync fields between related objects until nested fields are available.
 
-**Trigger**: Record is Updated (Opportunities object, Point of Contact field)
+**Trigger**: Record is Updated (Opportunities object, Point of Contact field)  
+
 **Actions**:
 - Search Records to find the linked person's details
 - Update Record to copy email address to opportunity
@@ -129,44 +136,13 @@ These workflow examples focus on automating repetitive tasks within Twenty to re
 
 **Solution**: Automatically format phone numbers to a standard format when they're entered.
 
-**Trigger**: Record is Updated (People object, Phone field)
+**Trigger**: Record is Updated (People object, Phone field)  
+
 **Actions**:
 - Code action to parse and format phone number
 - Update Record with standardized phone format
 - Update Record to add country code if missing
 
-### Duplicate Detection Alerts
-**Problem**: Duplicate records get created, leading to data quality issues and confused team members.
-
-**Solution**: Alert team members when potential duplicates are detected.
-
-**Trigger**: Record is Created (People or Companies object)
-**Actions**:
-- Search Records for similar names/emails/domains
-- Code action to calculate similarity score
-- Send Email alert if high similarity found
-- Create Record for data cleanup task
-
-## Implementation Tips
-
-### Start Simple
-Begin with one automation that addresses your biggest pain point. Perfect it before moving to more complex workflows.
-
-### Use Branches Effectively
-After a "Search Records" action, create branches to handle different scenarios:
-- If record found → Update existing record
-- If no record found → Create new record
-- Merge branches back together for common next steps
-
-### Name Your Steps Clearly
-Instead of "Code 1" or "Update Record 2", use descriptive names like "Calculate Territory Assignment" or "Update Customer Status". This makes maintenance much easier.
-
-### Test Thoroughly
-Use manual triggers to test your workflows before activating automatic triggers. This prevents unintended consequences in your live data.
-
-### Monitor and Iterate
-Check your workflow runs regularly to ensure they're working as expected. Adjust logic based on real-world usage patterns.
-
-For more complex automation needs, consider our [Implementation Services](https://twenty.com/implementation-services) or explore [External Integration Use Cases](/user-guide/section/workflows/external-tool-integration).
+For more complex automation needs, consider our [Professional Services](/user-guide/section/workflows/professional-services) or explore [External Tool Integration](/user-guide/section/workflows/external-tool-integration).
 
 <ArticleEditContent></ArticleEditContent>

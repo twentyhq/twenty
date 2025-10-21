@@ -6,10 +6,6 @@ image: /images/user-guide/workflows/robot.png
 sectionInfo: Automate processes and integrate with external tools.
 ---
 
-# Workflow Features and Components
-
-This technical reference covers all available triggers, actions, and workflow management features in Twenty.
-
 ## Workflow Triggers
 
 Workflows always start with a single trigger that defines when the automation should run.
@@ -19,8 +15,6 @@ Starts the workflow when a new record is created in a selected object (People, C
 
 **Configuration**: Select the object type to monitor for new records.
 
-**Use Cases**: Lead assignment, welcome sequences, data validation, automatic task creation.
-
 ### Record is Updated
 Starts the workflow when changes are made to an existing record.
 
@@ -28,23 +22,47 @@ Starts the workflow when changes are made to an existing record.
 - Select the object type
 - Optionally specify which fields to monitor for changes
 
-**Use Cases**: Stage-based automations, data synchronization, alert notifications, status updates.
+### Record is Updated or Created
+Starts the workflow when a record is either created or updated in a selected object.
+
+**Why This Matters**: This trigger is particularly helpful because records created via different methods behave differently:
+- **API/CSV imports**: Records are created with all fields populated immediately
+- **Manual creation**: Records are created first, then fields are added in subsequent updates
+
+**Configuration**:
+- Select the object type to monitor
+- Optionally specify which fields to monitor for changes
+- The workflow will trigger both on initial creation and any subsequent updates
 
 ### Record is Deleted
 Starts the workflow when a record is removed from an object.
 
 **Configuration**: Select the object type to monitor for deletions.
 
-**Use Cases**: Cleanup tasks, audit logging, cascade deletions, backup notifications.
-
 ### Launch Manually
-Starts the workflow only when manually triggered by a user.
+Starts the workflow when triggered by a user action. This trigger can be accessed through the Cmd+K menu or via a custom button in the top navbar.
 
-**Two Options**:
-- **When record is selected**: Select a record, open the command panel (⌘K), and choose the workflow. The workflow runs with access to the selected record's data.
-- **When no record is selected**: Open the command panel (⌘K) from anywhere and choose the workflow. The workflow runs without record context.
+**Availability Configuration**:
+Choose how the workflow should handle record selection:
 
-**Use Cases**: Data exports, bulk operations, one-time processes, testing workflows.
+- **Global**: No record is required to trigger this workflow. The workflow is triggered from anywhere (from any object) and does not use record(s) as input.
+
+- **Single**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run as many times as there are records selected.
+  
+  <ArticleWarning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </ArticleWarning>
+
+- **Bulk**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run once, providing the entire list of records as input. This means the workflow needs to contain an Iterator action. This is best for people who want to optimize/limit the number of workflow runs.
+
+**Additional Configuration**:
+- Select the target object (for Single and Bulk availability)
+- Choose a command icon for the workflow trigger
+- Configure navbar placement (Pinned or Not Pinned)
+
+**Access Methods**:
+- Cmd+K menu to find and launch manual workflows
+- Custom button in the top navbar (if configured)
 
 ### On a Schedule
 Starts the workflow on a recurring basis you define.
@@ -53,8 +71,6 @@ Starts the workflow on a recurring basis you define.
 - Select time unit (minutes, hours, days)
 - Enter a value or use custom cron expressions for advanced scheduling
 
-**Use Cases**: Data synchronization, report generation, cleanup tasks, reminder emails.
-
 ### Webhook
 Starts the workflow when a GET or POST request is received from an external service.
 
@@ -62,8 +78,6 @@ Starts the workflow when a GET or POST request is received from an external serv
 - Receive a unique webhook URL
 - For POST requests, define the expected body structure
 - Configure authentication if needed
-
-**Use Cases**: Form submissions, external system notifications, API integrations, real-time data updates.
 
 ## Workflow Actions
 
@@ -110,6 +124,28 @@ Finds records within a selected object using filter conditions.
 
 **Best Practice**: Use branches after Search Records to handle "found" vs "not found" scenarios.
 
+### Iterator
+Loops through an array of records returned from a previous step, allowing you to perform actions on each record individually.
+
+**Configuration**:
+- Select the array of records from a previous step (e.g., results from Search Records)
+- Define the actions to perform on each record in the loop
+- Configure the variable name to reference each record in the iteration
+
+**Example**: Search Records returns 5 people, then use Iterator to send an email to each person or update each record individually.
+
+**Note**: Iterator is currently in beta. Activate it under Settings > Releases > Lab.
+
+### Filter
+Filters an array of records based on specified conditions, allowing only records that meet the criteria to pass through.
+
+**Configuration**:
+- Select the array of records to filter
+- Define filter conditions and criteria
+- Configure which records should pass through to subsequent steps
+
+**Output**: Returns only the records that match the specified filter conditions.
+
 ### Send Email
 Sends an email from your workflow.
 
@@ -121,7 +157,7 @@ Sends an email from your workflow.
 - Compose message body
 - Reference variables from previous steps for personalization
 
-**Use Cases**: Notifications, alerts, follow-ups, automated communications.
+**Note**: Email attachments will be available in Q1 2026.
 
 ### Code
 Runs custom JavaScript within your workflow.
@@ -131,8 +167,6 @@ Runs custom JavaScript within your workflow.
 - Access variables from previous steps
 - Return variables for use in subsequent steps
 - Test code directly in the step
-
-**Use Cases**: Data transformation, calculations, complex logic, API integrations, custom validations.
 
 **Access**: Manage API keys in Settings → APIs & Webhooks
 
@@ -146,7 +180,9 @@ Prompts a form during workflow execution to collect user input.
 
 **Output**: Form responses are available for use in subsequent steps.
 
-**Use Cases**: Manual approvals, data collection, user confirmations, dynamic inputs.
+<ArticleWarning>
+Forms are currently designed for manual triggers only. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notifications center will be released in 2026 to properly support forms in automated workflows.
+</ArticleWarning>
 
 ### HTTP Request
 Sends a request to an external API as part of your workflow.
@@ -158,14 +194,17 @@ Sends a request to an external API as part of your workflow.
 - Include request body for POST/PUT/PATCH requests
 - Provide sample response for structure preview
 
-**Use Cases**: External system integration, data synchronization, third-party notifications, API calls.
-
 ## Workflow Management
 
 ### Creating Workflows
 1. Click "+ Add a Workflow" to begin
 2. Click "Untitled" to name your workflow
-3. For additional workflows, click "+ New record"
+3. Choose and configure your workflow trigger
+4. Add actions to your workflow
+5. Test and iterate
+6. Activate your workflow (currently in draft mode) once you're done editing it
+
+**Note**: If you don't see the Workflows section, this is due to a permissions issue. Contact your workspace administrator to grant you access to workflows.
 
 ### Workflow Statuses
 - **Draft**: Being edited, not yet published
@@ -193,6 +232,8 @@ A **Run** is a record of workflow execution containing:
 - Check the **Runs** panel in the workflow editor
 - Open **Workflow Runs** view for monitoring across all workflows
 
+**Performance Tip**: Hide workflow runs from the "All workflows" page and other workflow pages to improve loading performance, as large numbers of runs can slow down page loading.
+
 ### Version History
 - View all versions under the **Versions** field
 - Click any version to view details
@@ -206,6 +247,7 @@ A **Run** is a record of workflow execution containing:
 - **Step Naming**: Rename steps to describe their function
 - **Documentation**: Add comments in Code actions
 - **Categorization**: Group related workflows logically
+- **Custom Fields**: Add fields to the Workflow object in your data model (similar to other objects) to organize and categorize workflows with custom properties
 
 ### Performance Optimization
 - **Minimize API Calls**: Batch operations when possible
