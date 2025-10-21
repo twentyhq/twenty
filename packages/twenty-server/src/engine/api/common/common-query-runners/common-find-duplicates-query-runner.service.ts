@@ -130,6 +130,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           .take(QUERY_MAX_RECORDS)
           .getMany()) as ObjectRecord[];
 
+        const aggregateQueryBuilder = duplicateRecordsQueryBuilder.clone();
+        const totalCount = await aggregateQueryBuilder.getCount();
+
         const enrichedDuplicates = await this.enrichResultsWithGettersAndHooks({
           results: duplicates,
           operationName: CommonQueryNames.findDuplicates,
@@ -147,7 +150,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
 
         return {
           records: enrichedDuplicates,
-          totalCount: enrichedDuplicates.length,
+          totalCount,
           hasNextPage: false,
           hasPreviousPage: false,
           startCursor,
