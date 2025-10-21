@@ -5,25 +5,32 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
-import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 
 import { MicrosoftGetMessageListService } from './microsoft-get-message-list.service';
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
 
 // in case you have "Please provide a valid token" it may be because you need to pass the env varible to the .env.test file
+const accessToken = 'replace-with-your-access-token';
 const refreshToken = 'replace-with-your-refresh-token';
 const syncCursor = `replace-with-your-sync-cursor`;
 const mockConnectedAccount: Pick<
   ConnectedAccountWorkspaceEntity,
-  'provider' | 'refreshToken' | 'id' | 'handle' | 'connectionParameters'
+  | 'provider'
+  | 'accessToken'
+  | 'refreshToken'
+  | 'id'
+  | 'handle'
+  | 'connectionParameters'
 > = {
   id: 'connected-account-id',
   provider: ConnectedAccountProvider.MICROSOFT,
+  accessToken: accessToken,
   refreshToken: refreshToken,
   handle: 'test@gmail.com',
   connectionParameters: {},
@@ -45,7 +52,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
       imports: [TwentyConfigModule.forRoot()],
       providers: [
         MicrosoftGetMessageListService,
-        MicrosoftClientProvider,
+        OAuth2ClientManagerService,
         MicrosoftHandleErrorService,
         MicrosoftOAuth2ClientManagerService,
         ConfigService,
@@ -80,6 +87,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
     const mockConnectedAccountUnvalid = {
       id: 'connected-account-id',
       provider: ConnectedAccountProvider.MICROSOFT,
+      accessToken: 'invalid-token',
       refreshToken: 'invalid-token',
       handle: 'test@microsoft.com',
       connectionParameters: {},
@@ -195,7 +203,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
       imports: [TwentyConfigModule.forRoot()],
       providers: [
         MicrosoftGetMessageListService,
-        MicrosoftClientProvider,
+        OAuth2ClientManagerService,
         MicrosoftHandleErrorService,
         MicrosoftOAuth2ClientManagerService,
         ConfigService,
@@ -214,7 +222,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
     };
 
     jest
-      .spyOn(MicrosoftClientProvider.prototype, 'getMicrosoftClient')
+      .spyOn(OAuth2ClientManagerService.prototype, 'getMicrosoftOAuth2Client')
       .mockResolvedValue(mockMicrosoftClient as any);
   });
 

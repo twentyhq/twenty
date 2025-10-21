@@ -2,17 +2,14 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
-import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 
 describe('MessagingSendMessageService - Gmail HTML Support', () => {
   let service: MessagingSendMessageService;
-  let gmailClientProvider: jest.Mocked<GmailClientProvider>;
-  let oAuth2ClientProvider: jest.Mocked<OAuth2ClientProvider>;
+  let oAuth2ClientManagerService: OAuth2ClientManagerService;
 
   beforeEach(async () => {
     const mockGmailClient = {
@@ -24,6 +21,7 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
     };
 
     const mockOAuth2Client = {
+      gmail: jest.fn().mockReturnValue(mockGmailClient),
       userinfo: {
         get: jest.fn().mockResolvedValue({
           data: { email: 'test@example.com', name: 'Test User' },
@@ -35,20 +33,12 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
       providers: [
         MessagingSendMessageService,
         {
-          provide: GmailClientProvider,
+          provide: OAuth2ClientManagerService,
           useValue: {
-            getGmailClient: jest.fn().mockResolvedValue(mockGmailClient),
+            getGoogleOAuth2Client: jest
+              .fn()
+              .mockResolvedValue(mockOAuth2Client),
           },
-        },
-        {
-          provide: OAuth2ClientProvider,
-          useValue: {
-            getOAuth2Client: jest.fn().mockResolvedValue(mockOAuth2Client),
-          },
-        },
-        {
-          provide: MicrosoftClientProvider,
-          useValue: {},
         },
         {
           provide: SmtpClientProvider,
@@ -64,8 +54,9 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
     service = module.get<MessagingSendMessageService>(
       MessagingSendMessageService,
     );
-    gmailClientProvider = module.get(GmailClientProvider);
-    oAuth2ClientProvider = module.get(OAuth2ClientProvider);
+    oAuth2ClientManagerService = module.get<OAuth2ClientManagerService>(
+      OAuth2ClientManagerService,
+    );
   });
 
   it('should send multipart/alternative email with both text and HTML parts via Gmail', async () => {
@@ -84,8 +75,9 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
 
     await service.sendMessage(sendMessageInput, connectedAccount);
 
-    const gmailClient =
-      await gmailClientProvider.getGmailClient(connectedAccount);
+    const mockOAuth2Client =
+      await oAuth2ClientManagerService.getGoogleOAuth2Client(connectedAccount);
+    const gmailClient = mockOAuth2Client.gmail({ version: 'v1' });
     const sendCall = gmailClient.users.messages.send as jest.Mock;
 
     expect(sendCall).toHaveBeenCalledTimes(1);
@@ -111,7 +103,16 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
   });
 
   it('should handle missing fromName gracefully', async () => {
+    const mockGmailClient = {
+      users: {
+        messages: {
+          send: jest.fn().mockResolvedValue({ data: { id: 'message-id' } }),
+        },
+      },
+    };
+
     const mockOAuth2ClientNoName = {
+      gmail: jest.fn().mockReturnValue(mockGmailClient),
       userinfo: {
         get: jest.fn().mockResolvedValue({
           data: { email: 'test@example.com' }, // No name field
@@ -119,9 +120,9 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
       },
     };
 
-    (oAuth2ClientProvider.getOAuth2Client as jest.Mock).mockResolvedValueOnce(
-      mockOAuth2ClientNoName,
-    );
+    (
+      oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
+    ).mockResolvedValueOnce(mockOAuth2ClientNoName);
 
     const sendMessageInput = {
       to: 'recipient@example.com',
@@ -138,9 +139,10 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
 
     await service.sendMessage(sendMessageInput, connectedAccount);
 
-    const gmailClient =
-      await gmailClientProvider.getGmailClient(connectedAccount);
-    const sendCall = gmailClient.users.messages.send as jest.Mock;
+    const sendCall = mockGmailClient.users.messages.send as jest.Mock;
+
+    expect(sendCall).toHaveBeenCalledTimes(1);
+
     const rawMessage = Buffer.from(
       sendCall.mock.calls[0][0].requestBody.raw,
       'base64',

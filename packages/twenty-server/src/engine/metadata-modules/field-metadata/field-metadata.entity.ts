@@ -29,6 +29,7 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 @Entity('fieldMetadata')
 @Check(
@@ -200,4 +201,13 @@ export class FieldMetadataEntity<
 
   @OneToMany(() => ViewGroupEntity, (viewGroup) => viewGroup.fieldMetadata)
   viewGroups: Relation<ViewGroupEntity[]>;
+
+  @OneToMany(
+    () => ViewEntity,
+    (view) => view.kanbanAggregateOperationFieldMetadata,
+  )
+  kanbanAggregateOperationViews: Relation<ViewEntity[]>;
+
+  @OneToMany(() => ViewEntity, (view) => view.calendarFieldMetadata)
+  calendarViews: Relation<ViewEntity[]>;
 }

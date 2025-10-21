@@ -3,7 +3,7 @@ import { Mutation, Resolver } from '@nestjs/graphql';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { OnboardingStepSuccess } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-success.dto';
+import { OnboardingStepSuccessDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-success.dto';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -19,11 +19,11 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class OnboardingResolver {
   constructor(private readonly onboardingService: OnboardingService) {}
 
-  @Mutation(() => OnboardingStepSuccess)
+  @Mutation(() => OnboardingStepSuccessDTO)
   async skipSyncEmailOnboardingStep(
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<OnboardingStepSuccess> {
+  ): Promise<OnboardingStepSuccessDTO> {
     await this.onboardingService.setOnboardingConnectAccountPending({
       userId: user.id,
       workspaceId: workspace.id,
@@ -33,10 +33,10 @@ export class OnboardingResolver {
     return { success: true };
   }
 
-  @Mutation(() => OnboardingStepSuccess)
+  @Mutation(() => OnboardingStepSuccessDTO)
   async skipBookOnboardingStep(
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<OnboardingStepSuccess> {
+  ): Promise<OnboardingStepSuccessDTO> {
     await this.onboardingService.setOnboardingBookOnboardingPending({
       workspaceId: workspace.id,
       value: false,

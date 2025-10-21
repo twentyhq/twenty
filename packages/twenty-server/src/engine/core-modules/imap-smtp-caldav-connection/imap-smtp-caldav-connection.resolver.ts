@@ -15,8 +15,8 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedImapSmtpCaldavAccount } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
-import { ImapSmtpCaldavConnectionSuccess } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
+import { ConnectedImapSmtpCaldavAccountDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
+import { ImapSmtpCaldavConnectionSuccessDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
 import { EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
@@ -43,12 +43,12 @@ export class ImapSmtpCaldavResolver {
     private readonly mailConnectionValidatorService: ImapSmtpCaldavValidatorService,
   ) {}
 
-  @Query(() => ConnectedImapSmtpCaldavAccount)
+  @Query(() => ConnectedImapSmtpCaldavAccountDTO)
   @UseGuards(WorkspaceAuthGuard)
   async getConnectedImapSmtpCaldavAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ConnectedImapSmtpCaldavAccount> {
+  ): Promise<ConnectedImapSmtpCaldavAccountDTO> {
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspace.id,
@@ -74,7 +74,7 @@ export class ImapSmtpCaldavResolver {
     };
   }
 
-  @Mutation(() => ImapSmtpCaldavConnectionSuccess)
+  @Mutation(() => ImapSmtpCaldavConnectionSuccessDTO)
   @UseGuards(WorkspaceAuthGuard)
   async saveImapSmtpCaldavAccount(
     @Args('accountOwnerId', { type: () => UUIDScalarType })
@@ -84,7 +84,7 @@ export class ImapSmtpCaldavResolver {
     connectionParameters: EmailAccountConnectionParameters,
     @AuthWorkspace() workspace: Workspace,
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
-  ): Promise<ImapSmtpCaldavConnectionSuccess> {
+  ): Promise<ImapSmtpCaldavConnectionSuccessDTO> {
     const isImapSmtpCaldavFeatureFlagEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,

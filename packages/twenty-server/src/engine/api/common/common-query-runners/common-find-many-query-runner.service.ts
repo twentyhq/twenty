@@ -205,7 +205,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const enrichedRecords = await this.enrichResultsWithGettersAndHooks({
       results: objectRecords,
-      operationName: CommonQueryNames.findMany,
+      operationName: CommonQueryNames.FIND_MANY,
       authContext,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
@@ -272,7 +272,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       (await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
-        CommonQueryNames.findMany,
+        CommonQueryNames.FIND_MANY,
         args,
         //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
       )) as FindManyQueryArgs;
