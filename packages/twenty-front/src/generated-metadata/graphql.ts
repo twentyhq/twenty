@@ -4348,7 +4348,7 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
-  routerModel: Scalars['String'];
+  routerModel?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']>;
 };
