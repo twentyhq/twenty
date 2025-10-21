@@ -3,8 +3,8 @@ import { type FromTo } from 'twenty-shared/types';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
-import { FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { reduceFlatViewGroupsByViewId } from 'src/engine/metadata-modules/flat-view-group/utils/reduce-flat-view-groups-by-view-id.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
@@ -26,17 +26,9 @@ export type FieldMetadataDeactivationSideEffect = {
   flatViewFiltersToDelete: FlatViewFilter[];
 };
 
-const EMPTY_FIELD_METADATA_DEACTIVATION_SIDE_EFFECT: FieldMetadataDeactivationSideEffect =
-  {
-    flatViewsToDelete: [],
-    flatViewFieldsToDelete: [],
-    flatViewFiltersToDelete: [],
-  };
-
 export const handleFieldMetadataDeactivationSideEffects = ({
   flatViewMaps,
   fromFlatFieldMetadata,
-  toFlatFieldMetadata,
   flatViewFieldMaps,
   flatViewFilterMaps,
   flatViewGroupMaps,

@@ -68,7 +68,6 @@ export class FlatViewValidatorService {
   public validateFlatViewDeletion({
     flatEntityToValidate: { id: viewIdToDelete },
     optimisticFlatEntityMaps: optimisticFlatViewMaps,
-    dependencyOptimisticFlatEntityMaps: { flatFieldMetadataMaps },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<FlatView> {
@@ -88,6 +87,7 @@ export class FlatViewValidatorService {
         message: t`View not found`,
         userFriendlyMessage: msg`View not found`,
       });
+
       return validationResult;
     }
 

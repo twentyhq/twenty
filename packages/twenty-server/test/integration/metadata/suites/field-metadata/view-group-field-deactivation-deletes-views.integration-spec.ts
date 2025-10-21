@@ -248,8 +248,18 @@ describe('view-group-field-deactivation-deletes-views', () => {
         label: 'Another Group By Field',
         objectMetadataId: testSetup.objectMetadataId,
         options: [
-          { label: 'Status A', value: 'STATUS_A', color: 'purple', position: 0 },
-          { label: 'Status B', value: 'STATUS_B', color: 'orange', position: 1 },
+          {
+            label: 'Status A',
+            value: 'STATUS_A',
+            color: 'purple',
+            position: 0,
+          },
+          {
+            label: 'Status B',
+            value: 'STATUS_B',
+            color: 'orange',
+            position: 1,
+          },
         ],
       },
       gqlFields: 'id',
@@ -295,4 +305,3 @@ describe('view-group-field-deactivation-deletes-views', () => {
     await verifyViewExists(viewWithMultipleGroups.id, false);
   });
 });
-

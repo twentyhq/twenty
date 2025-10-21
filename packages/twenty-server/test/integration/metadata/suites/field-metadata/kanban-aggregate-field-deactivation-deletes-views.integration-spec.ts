@@ -175,6 +175,7 @@ describe('kanban-aggregate-field-deactivation-deletes-views', () => {
       testSetup.viewWithAggregateId,
       true,
     );
+
     await verifyViewExists(testSetup.viewWithoutAggregateId, true);
 
     expect(
@@ -272,4 +273,3 @@ describe('kanban-aggregate-field-deactivation-deletes-views', () => {
     await verifyViewExists(testSetup.viewWithoutAggregateId, true);
   });
 });
-
