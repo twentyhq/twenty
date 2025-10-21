@@ -43,7 +43,7 @@ export class RouterService {
       }
 
       if (availableAgents.length === 1) {
-        return availableAgents[0].id;
+        return availableAgents[0];
       }
 
       const conversationHistory = messages
@@ -90,7 +90,9 @@ export class RouterService {
 
       this.logger.log(`Routed to agent: ${decision.agentId}`);
 
-      return decision.agentId;
+      return availableAgents.find(
+        (agent) => agent.id === result.object.agentId,
+      );
     } catch (error) {
       this.logger.error('Router decision failed:', error);
 
@@ -98,7 +100,7 @@ export class RouterService {
         context.workspaceId,
       );
 
-      return availableAgents[0]?.id || null;
+      return availableAgents[0] || null;
     }
   }
 

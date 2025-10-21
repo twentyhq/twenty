@@ -70,24 +70,44 @@ export class AgentStreamingService {
 
       const stream = createUIMessageStream({
         execute: async ({ writer }) => {
-          const agentId = await this.routerService.routeMessage({
+          writer.write({
+            type: 'data-routing-status' as const,
+            id: 'routing-status',
+            data: {
+              text: 'Finding the best agent for your request...',
+              state: 'loading',
+            },
+          });
+
+          const agent = await this.routerService.routeMessage({
             messages,
             workspaceId: workspace.id,
             routerModel: workspace.routerModel,
           });
 
-          if (!agentId) {
+          if (!agent) {
             throw new AgentException(
               'No agents available for routing',
               AgentExceptionCode.AGENT_EXECUTION_FAILED,
             );
           }
 
-          this.logger.log(`Using agent ${agentId} for message routing`);
+          this.logger.log(`Using agent ${agent.id} for message routing`);
+
+          const routedStatusPart = {
+            type: 'data-routing-status' as const,
+            id: 'routing-status',
+            data: {
+              text: `Routed to ${agent.label} agent`,
+              status: 'routed',
+            },
+          };
+
+          writer.write(routedStatusPart);
 
           const result = await this.agentExecutionService.streamChatResponse({
             workspace,
-            agentId,
+            agentId: agent.id,
             userWorkspaceId,
             messages,
             recordIdsByObjectMetadataNameSingular,
@@ -98,6 +118,7 @@ export class AgentStreamingService {
               onError: (error) => {
                 return error instanceof Error ? error.message : String(error);
               },
+              sendStart: false,
               onFinish: async ({ responseMessage }) => {
                 if (responseMessage.parts.length === 0) {
                   return;
@@ -118,9 +139,16 @@ export class AgentStreamingService {
                     ],
                   },
                 });
+
                 await this.agentChatService.addMessage({
                   threadId,
-                  uiMessage: responseMessage,
+                  uiMessage: {
+                    ...responseMessage,
+                    parts: [
+                      routedStatusPart,
+                      ...responseMessage.parts,
+                    ] as typeof responseMessage.parts,
+                  },
                 });
               },
               sendReasoning: true,
