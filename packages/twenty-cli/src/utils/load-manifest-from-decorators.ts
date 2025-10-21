@@ -110,13 +110,15 @@ const collectObjects = (program: Program) => {
   const manifest: ObjectManifest[] = [];
 
   for (const sf of program.getSourceFiles()) {
-    if (sf.isDeclarationFile) continue;
+    if (sf.isDeclarationFile) {
+      continue;
+    }
 
     const visit = (node: Node) => {
       if (isClassDeclaration(node) && getDecorators(node)?.length) {
         const decorators = getDecorators(node);
         const objectDec = decorators?.find((d) =>
-          isDecoratorNamed(d, 'Object'),
+          isDecoratorNamed(d, 'ObjectMetadata'),
         );
         if (objectDec && isCallExpression(objectDec.expression)) {
           const [firstArg] = objectDec.expression.arguments;
