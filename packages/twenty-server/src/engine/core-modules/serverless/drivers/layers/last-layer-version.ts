@@ -1,1 +1,1 @@
-export const LAST_LAYER_VERSION = 2;
+export const LAST_LAYER_VERSION = 1;
