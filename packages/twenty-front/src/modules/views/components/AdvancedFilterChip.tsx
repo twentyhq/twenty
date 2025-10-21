@@ -13,7 +13,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
-import { plural } from 'pluralize';
+import { plural } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
@@ -68,8 +68,10 @@ export const AdvancedFilterChip = () => {
 
   const advancedFilterCount = childRecordFiltersAndRecordFilterGroups.length;
 
-  const labelText = 'advanced rule';
-  const chipLabel = `${advancedFilterCount} ${advancedFilterCount === 1 ? labelText : plural(labelText)}`;
+  const chipLabel = plural(advancedFilterCount, {
+    one: `${advancedFilterCount} advanced rule`,
+    other: `${advancedFilterCount} advanced rules`,
+  });
 
   const { objectMetadataItems } = useObjectMetadataItems();
 

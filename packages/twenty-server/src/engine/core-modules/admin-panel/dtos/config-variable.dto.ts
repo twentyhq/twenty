@@ -15,8 +15,8 @@ registerEnumType(ConfigVariableType, {
   name: 'ConfigVariableType',
 });
 
-@ObjectType()
-export class ConfigVariable {
+@ObjectType('ConfigVariable')
+export class ConfigVariableDTO {
   @Field()
   name: string;
 

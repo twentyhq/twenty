@@ -5,15 +5,13 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
-import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
@@ -28,9 +26,7 @@ interface SendMessageInput {
 @Injectable()
 export class MessagingSendMessageService {
   constructor(
-    private readonly gmailClientProvider: GmailClientProvider,
-    private readonly oAuth2ClientProvider: OAuth2ClientProvider,
-    private readonly microsoftClientProvider: MicrosoftClientProvider,
+    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
     private readonly smtpClientProvider: SmtpClientProvider,
     private readonly imapClientProvider: ImapClientProvider,
   ) {}
@@ -41,11 +37,14 @@ export class MessagingSendMessageService {
   ): Promise<void> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE: {
-        const gmailClient =
-          await this.gmailClientProvider.getGmailClient(connectedAccount);
-
         const oAuth2Client =
-          await this.oAuth2ClientProvider.getOAuth2Client(connectedAccount);
+          await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
+            connectedAccount,
+          );
+
+        const gmailClient = oAuth2Client.gmail({
+          version: 'v1',
+        });
 
         const { data } = await oAuth2Client.userinfo.get();
 
@@ -93,7 +92,7 @@ export class MessagingSendMessageService {
       }
       case ConnectedAccountProvider.MICROSOFT: {
         const microsoftClient =
-          await this.microsoftClientProvider.getMicrosoftClient(
+          await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
             connectedAccount,
           );
 

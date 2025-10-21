@@ -108,14 +108,8 @@ export class FlatViewGroupValidatorService {
         message: t`View group to delete not found`,
         userFriendlyMessage: msg`View group to delete not found`,
       });
-    } else {
-      if (!isDefined(existingFlatViewGroup.deletedAt)) {
-        validationResult.errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`View group to delete has not been soft deleted`,
-          userFriendlyMessage: msg`View group to delete has not been soft deleted`,
-        });
-      }
+
+      return validationResult;
     }
 
     return validationResult;

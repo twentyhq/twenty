@@ -6,6 +6,8 @@ export const getIsOutputTabDisabled = ({
   stepExecutionStatus: WorkflowRunStepStatus;
 }) => {
   return (
-    stepExecutionStatus === 'RUNNING' || stepExecutionStatus === 'NOT_STARTED'
+    stepExecutionStatus === 'RUNNING' ||
+    stepExecutionStatus === 'NOT_STARTED' ||
+    stepExecutionStatus === 'SKIPPED'
   );
 };

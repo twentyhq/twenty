@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { ImpersonationResolver } from 'src/engine/core-modules/impersonation/impersonation.resolver';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -23,7 +23,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     UserRoleModule,
     AuditModule,
     TypeOrmModule.forFeature([UserWorkspace, Workspace, User]),
-    DomainManagerModule,
+    WorkspaceDomainsModule,
     PermissionsModule,
   ],
   providers: [ImpersonationService, ImpersonationResolver],

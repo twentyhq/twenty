@@ -1,7 +1,5 @@
 import deepEqual from 'deep-equal';
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 

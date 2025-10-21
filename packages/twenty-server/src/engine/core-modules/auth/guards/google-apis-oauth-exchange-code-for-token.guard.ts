@@ -11,7 +11,7 @@ import {
 import { GoogleAPIsOauthExchangeCodeForTokenStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-exchange-code-for-token.auth.strategy';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -24,9 +24,9 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
     private readonly guardRedirectService: GuardRedirectService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly transientTokenService: TransientTokenService,
-    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super();
   }
@@ -66,7 +66,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         );
 
         const redirectErrorUrl =
-          this.domainManagerService.computeRedirectErrorUrl(
+          this.workspaceDomainsService.computeWorkspaceRedirectErrorUrl(
             'We cannot connect to your Google account, please try again with more permissions, or a valid account',
             {
               subdomain: workspace.subdomain,

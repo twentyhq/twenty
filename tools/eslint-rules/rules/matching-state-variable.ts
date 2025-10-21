@@ -1,7 +1,7 @@
 import {
   AST_NODE_TYPES,
   ESLintUtils,
-  TSESTree,
+  type TSESTree,
 } from '@typescript-eslint/utils';
 import { isIdentifier } from '@typescript-eslint/utils/ast-utils';
 

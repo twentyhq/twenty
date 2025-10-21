@@ -16,7 +16,7 @@ import {
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
 import { approvedAccessDomainValidator } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.validate';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -31,8 +31,8 @@ export class ApprovedAccessDomainService {
     private readonly approvedAccessDomainRepository: Repository<ApprovedAccessDomainEntity>,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
     private readonly fileService: FileService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
   async sendApprovedAccessDomainValidationEmail(
@@ -61,7 +61,7 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    const link = this.domainManagerService.buildWorkspaceURL({
+    const link = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
       pathname: getSettingsPath(SettingsPath.Domains),
       searchParams: {

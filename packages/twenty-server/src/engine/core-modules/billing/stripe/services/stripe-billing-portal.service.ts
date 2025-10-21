@@ -5,7 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import type Stripe from 'stripe';
 
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class StripeBillingPortalService {
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly domainServerConfigService: DomainServerConfigService,
     private readonly stripeSDKService: StripeSDKService,
   ) {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
@@ -33,7 +33,7 @@ export class StripeBillingPortalService {
     return await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
       return_url:
-        returnUrl ?? this.domainManagerService.getBaseUrl().toString(),
+        returnUrl ?? this.domainServerConfigService.getBaseUrl().toString(),
     });
   }
 }

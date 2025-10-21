@@ -20,7 +20,7 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
   objectFlatFieldMetadatas,
   flatIndex,
 }: GenerateFlatIndexArgs): FlatIndexMetadata => {
-  const orderedFlatFieldNames = flatIndex.flatIndexFieldMetadatas
+  const orderedFlatFields = flatIndex.flatIndexFieldMetadatas
     .sort((a, b) => a.order - b.order)
     .map((flatIndexField) => {
       const relatedFlatFieldMetadata = objectFlatFieldMetadatas.find(
@@ -42,17 +42,23 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
 
       return {
         name,
+        isUnique: relatedFlatFieldMetadata.isUnique,
       };
     });
 
+  const isUnique = orderedFlatFields.some((flatField) => flatField.isUnique);
+  const orderedFlatFieldNames = orderedFlatFields.map((flatField) => ({
+    name: flatField.name,
+  }));
   const name = generateDeterministicIndexNameV2({
     flatObjectMetadata,
-    isUnique: flatIndex.isUnique,
     relatedFieldNames: orderedFlatFieldNames,
+    isUnique,
   });
 
   return {
     ...flatIndex,
     name,
+    isUnique,
   };
 };

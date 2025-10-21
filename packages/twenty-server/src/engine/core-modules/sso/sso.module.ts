@@ -6,7 +6,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
@@ -24,7 +23,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       FeatureFlag,
     ]),
     BillingModule,
-    DomainManagerModule,
     GuardRedirectModule,
     PermissionsModule,
     FeatureFlagModule,

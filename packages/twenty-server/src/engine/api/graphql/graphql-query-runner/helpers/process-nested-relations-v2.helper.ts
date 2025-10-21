@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
@@ -21,6 +20,7 @@ import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/objec
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Injectable()
@@ -37,8 +37,7 @@ export class ProcessNestedRelationsV2Helper {
     limit,
     authContext,
     workspaceDataSource,
-    roleId,
-    shouldBypassPermissionChecks,
+    rolePermissionConfig,
     selectedFields,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
@@ -51,10 +50,9 @@ export class ProcessNestedRelationsV2Helper {
     limit: number;
     authContext: AuthContext;
     workspaceDataSource: WorkspaceDataSource;
-    shouldBypassPermissionChecks: boolean;
+    rolePermissionConfig?: RolePermissionConfig;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     selectedFields: Record<string, any>;
-    roleId?: string;
   }): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
       ([sourceFieldName, nestedRelations]) =>
@@ -69,8 +67,7 @@ export class ProcessNestedRelationsV2Helper {
           limit,
           authContext,
           workspaceDataSource,
-          shouldBypassPermissionChecks,
-          roleId,
+          rolePermissionConfig,
           selectedFields:
             selectedFields[sourceFieldName] instanceof Object
               ? selectedFields[sourceFieldName]
@@ -92,8 +89,7 @@ export class ProcessNestedRelationsV2Helper {
     limit,
     authContext,
     workspaceDataSource,
-    shouldBypassPermissionChecks,
-    roleId,
+    rolePermissionConfig,
     selectedFields,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
@@ -107,8 +103,7 @@ export class ProcessNestedRelationsV2Helper {
     limit: number;
     authContext: AuthContext;
     workspaceDataSource: WorkspaceDataSource;
-    shouldBypassPermissionChecks: boolean;
-    roleId?: string;
+    rolePermissionConfig?: RolePermissionConfig;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
     const sourceFieldMetadata = getFieldMetadataFromGraphQLField({
@@ -148,8 +143,7 @@ export class ProcessNestedRelationsV2Helper {
 
     const targetObjectRepository = workspaceDataSource.getRepository(
       targetObjectMetadata.nameSingular,
-      shouldBypassPermissionChecks,
-      roleId,
+      rolePermissionConfig,
     );
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
@@ -241,8 +235,7 @@ export class ProcessNestedRelationsV2Helper {
         limit,
         authContext,
         workspaceDataSource,
-        shouldBypassPermissionChecks,
-        roleId,
+        rolePermissionConfig,
         selectedFields,
       });
     }

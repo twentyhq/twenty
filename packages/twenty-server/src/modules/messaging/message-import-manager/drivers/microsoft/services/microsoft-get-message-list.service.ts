@@ -7,13 +7,13 @@ import {
 } from '@microsoft/microsoft-graph-client';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
@@ -29,7 +29,7 @@ const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
 export class MicrosoftGetMessageListService {
   private readonly logger = new Logger(MicrosoftGetMessageListService.name);
   constructor(
-    private readonly microsoftClientProvider: MicrosoftClientProvider,
+    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
     private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
   ) {}
 
@@ -62,7 +62,7 @@ export class MicrosoftGetMessageListService {
   public async getMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'accessToken' | 'id'
     >,
     messageFolder: Pick<
       MessageFolderWorkspaceEntity,
@@ -73,7 +73,9 @@ export class MicrosoftGetMessageListService {
     const messageExternalIdsToDelete: string[] = [];
 
     const microsoftClient =
-      await this.microsoftClientProvider.getMicrosoftClient(connectedAccount);
+      await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
+        connectedAccount,
+      );
 
     const folderId = messageFolder.externalId || messageFolder.name;
     const apiUrl = isNonEmptyString(messageFolder.syncCursor)

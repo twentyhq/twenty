@@ -392,6 +392,7 @@ const extractTargetRecordsFromRelation = (
 ): RecordGqlNode[] => {
   // TODO investigate on the root cause of array injection here, should never occurs
   // Cache might be corrupted somewhere due to ObjectRecord and RecordGqlNode inclusion
+
   if (!isDefined(value) || isArray(value)) {
     return [];
   }

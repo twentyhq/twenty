@@ -98,12 +98,8 @@ export class FlatViewFilterValidatorService {
         message: t`View filter not found`,
         userFriendlyMessage: msg`View filter not found`,
       });
-    } else if (!isDefined(existingViewFilter.deletedAt)) {
-      validationResult.errors.push({
-        code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-        message: t`View filter has to be soft deleted first`,
-        userFriendlyMessage: msg`View filter has to be soft deleted first`,
-      });
+
+      return validationResult;
     }
 
     return validationResult;

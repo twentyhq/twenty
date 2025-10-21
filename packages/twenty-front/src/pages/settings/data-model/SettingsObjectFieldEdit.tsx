@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
-import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -13,6 +12,7 @@ import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdate
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -68,6 +68,8 @@ export const SettingsObjectFieldEdit = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
+  const readonly = isObjectMetadataReadOnly({ objectMetadataItem });
+
   const { deactivateMetadataField, activateMetadataField } =
     useFieldMetadataItem();
 
@@ -118,6 +120,10 @@ export const SettingsObjectFieldEdit = () => {
   const handleSave = async (
     formValues: SettingsDataModelFieldEditFormValues,
   ) => {
+    if (readonly) {
+      return;
+    }
+
     const { dirtyFields } = formConfig.formState;
     setNewNameDuringSave(formValues.name);
 
@@ -144,9 +150,10 @@ export const SettingsObjectFieldEdit = () => {
       const otherDirtyFields = omit(dirtyFields, 'relation');
 
       if (Object.keys(otherDirtyFields).length > 0) {
-        const formattedInput = pick(
-          formatFieldMetadataItemInput(formValues),
-          Object.keys(otherDirtyFields),
+        const formattedInput = Object.fromEntries(
+          Object.entries(formatFieldMetadataItemInput(formValues)).filter(
+            ([key]) => Object.keys(otherDirtyFields).includes(key),
+          ),
         );
 
         await updateOneFieldMetadataItem({
@@ -187,6 +194,10 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const handleDeactivate = async () => {
+    if (readonly) {
+      return;
+    }
+
     await deactivateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigateSettings(SettingsPath.ObjectDetail, {
       objectNamePlural,
@@ -194,6 +205,10 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const handleActivate = async () => {
+    if (readonly) {
+      return;
+    }
+
     await activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigateSettings(SettingsPath.ObjectDetail, {
       objectNamePlural,
@@ -228,8 +243,8 @@ export const SettingsObjectFieldEdit = () => {
           actionButton={
             <SaveAndCancelButtons
               isLoading={isSubmitting}
-              isSaveDisabled={!canSave}
-              isCancelDisabled={isSubmitting}
+              isSaveDisabled={!canSave || readonly}
+              isCancelDisabled={isSubmitting || readonly}
               onCancel={handleCancel}
               onSave={formConfig.handleSubmit(handleSave)}
             />
@@ -245,6 +260,7 @@ export const SettingsObjectFieldEdit = () => {
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 isCreationMode={false}
+                readonly={readonly}
               />
             </Section>
             {
@@ -268,6 +284,7 @@ export const SettingsObjectFieldEdit = () => {
                         fieldType={fieldMetadataItem.type}
                         existingFieldMetadataId={fieldMetadataItem.id}
                         objectNameSingular={objectMetadataItem.nameSingular}
+                        disabled={readonly}
                       />
                     </Section>
                   </>
@@ -280,10 +297,11 @@ export const SettingsObjectFieldEdit = () => {
               />
               <SettingsDataModelFieldDescriptionForm
                 fieldMetadataItem={fieldMetadataItem}
+                disabled={readonly}
               />
             </Section>
 
-            {!isLabelIdentifier && (
+            {!isLabelIdentifier && !readonly && (
               <Section>
                 <H2Title
                   title={t`Danger zone`}

@@ -67,7 +67,6 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
           }
         }}
       />
-
       <ChartSettings widget={widgetInEditMode} />
     </>
   );

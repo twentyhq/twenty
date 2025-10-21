@@ -179,7 +179,7 @@ describe('ConfigStorageService', () => {
         [key]: {
           isSensitive: true,
           type: ConfigVariableType.STRING,
-          group: ConfigVariablesGroup.ServerConfig,
+          group: ConfigVariablesGroup.SERVER_CONFIG,
           description: 'Test sensitive config',
         },
       });
@@ -213,7 +213,7 @@ describe('ConfigStorageService', () => {
         [key]: {
           isSensitive: true,
           type: ConfigVariableType.STRING,
-          group: ConfigVariablesGroup.ServerConfig,
+          group: ConfigVariablesGroup.SERVER_CONFIG,
           description: 'Test sensitive config',
         },
       });
@@ -241,7 +241,7 @@ describe('ConfigStorageService', () => {
         [key]: {
           isSensitive: true,
           type: ConfigVariableType.STRING,
-          group: ConfigVariablesGroup.ServerConfig,
+          group: ConfigVariablesGroup.SERVER_CONFIG,
           description: 'Test sensitive config',
         },
       });
@@ -413,7 +413,7 @@ describe('ConfigStorageService', () => {
         [key]: {
           isSensitive: true,
           type: ConfigVariableType.STRING,
-          group: ConfigVariablesGroup.ServerConfig,
+          group: ConfigVariablesGroup.SERVER_CONFIG,
           description: 'Test sensitive config',
         },
       });
@@ -449,7 +449,7 @@ describe('ConfigStorageService', () => {
         [key]: {
           isSensitive: true,
           type: ConfigVariableType.STRING,
-          group: ConfigVariablesGroup.ServerConfig,
+          group: ConfigVariablesGroup.SERVER_CONFIG,
           description: 'Test sensitive config',
         },
       });
@@ -617,12 +617,12 @@ describe('ConfigStorageService', () => {
         SENSITIVE_CONFIG: {
           isSensitive: true,
           type: ConfigVariableType.STRING,
-          group: ConfigVariablesGroup.ServerConfig,
+          group: ConfigVariablesGroup.SERVER_CONFIG,
           description: 'Test sensitive config',
         },
         NORMAL_CONFIG: {
           type: ConfigVariableType.STRING,
-          group: ConfigVariablesGroup.ServerConfig,
+          group: ConfigVariablesGroup.SERVER_CONFIG,
           description: 'Test normal config',
         },
       });
