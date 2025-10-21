@@ -2,9 +2,9 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
+import { isAccessTokenExpiredOrInvalid } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/utils/is-access-token-expired-or-invalid.util';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
@@ -12,6 +12,10 @@ import {
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 import { ConnectedAccountRefreshTokensService } from './connected-account-refresh-tokens.service';
+
+jest.mock(
+  'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/utils/is-access-token-expired-or-invalid.util',
+);
 
 describe('ConnectedAccountRefreshTokensService', () => {
   let service: ConnectedAccountRefreshTokensService;
@@ -29,16 +33,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
       providers: [
         ConnectedAccountRefreshTokensService,
         {
-          provide: JwtWrapperService,
-          useValue: {
-            isTokenExpired: jest.fn(),
-          },
-        },
-        {
           provide: MicrosoftAPIRefreshAccessTokenService,
           useValue: {
             refreshTokens: jest.fn(),
-            isAccessTokenExpired: jest.fn(),
           },
         },
         {
@@ -65,6 +62,31 @@ describe('ConnectedAccountRefreshTokensService', () => {
   });
 
   describe('refreshAndSaveTokens', () => {
+    it('should reuse valid access token without refreshing', async () => {
+      const connectedAccount = {
+        id: mockConnectedAccountId,
+        provider: ConnectedAccountProvider.MICROSOFT,
+        accessToken: mockAccessToken,
+        refreshToken: mockRefreshToken,
+      } as ConnectedAccountWorkspaceEntity;
+
+      (isAccessTokenExpiredOrInvalid as jest.Mock).mockReturnValue(false);
+
+      const result = await service.refreshAndSaveTokens(
+        connectedAccount,
+        mockWorkspaceId,
+      );
+
+      expect(result).toEqual({
+        accessToken: mockAccessToken,
+        refreshToken: mockRefreshToken,
+      });
+      expect(
+        microsoftAPIRefreshAccessTokenService.refreshTokens,
+      ).not.toHaveBeenCalled();
+      expect(twentyORMManager.getRepository).not.toHaveBeenCalled();
+    });
+
     it('should refresh and save new Microsoft token when expired', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
@@ -74,14 +96,15 @@ describe('ConnectedAccountRefreshTokensService', () => {
       } as ConnectedAccountWorkspaceEntity;
 
       const mockRepository = { update: jest.fn() };
+      const newTokens = {
+        accessToken: mockNewAccessToken,
+        refreshToken: mockRefreshToken,
+      };
 
-      jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(false);
+      (isAccessTokenExpiredOrInvalid as jest.Mock).mockReturnValue(true);
       jest
         .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
-        .mockResolvedValue({
-          accessToken: mockNewAccessToken,
-          refreshToken: '',
-        });
+        .mockResolvedValue(newTokens);
       jest
         .spyOn(twentyORMManager, 'getRepository')
         .mockResolvedValue(mockRepository as any);
@@ -91,13 +114,13 @@ describe('ConnectedAccountRefreshTokensService', () => {
         mockWorkspaceId,
       );
 
-      expect(result).toEqual({ accessToken: mockNewAccessToken });
+      expect(result).toEqual(newTokens);
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).toHaveBeenCalledWith(mockRefreshToken);
       expect(mockRepository.update).toHaveBeenCalledWith(
         { id: mockConnectedAccountId },
-        { accessToken: mockNewAccessToken },
+        newTokens,
       );
     });
 
@@ -135,7 +158,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         },
       };
 
-      jest.spyOn(service, 'checkAccessTokenValidity').mockResolvedValue(false);
+      (isAccessTokenExpiredOrInvalid as jest.Mock).mockReturnValue(true);
       jest
         .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
         .mockRejectedValue(axiosError);
