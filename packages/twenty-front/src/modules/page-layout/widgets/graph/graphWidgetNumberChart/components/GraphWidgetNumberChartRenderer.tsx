@@ -1,6 +1,10 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { useGraphWidgetAggregateQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery';
 import { lazy, Suspense } from 'react';
-import { type PageLayoutWidget } from '~/generated/graphql';
+import {
+  type NumberChartConfiguration,
+  type PageLayoutWidget,
+} from '~/generated/graphql';
 
 const GraphWidgetNumberChart = lazy(() =>
   import(
@@ -15,9 +19,18 @@ export const GraphWidgetNumberChartRenderer = ({
 }: {
   widget: PageLayoutWidget;
 }) => {
+  const { value, loading } = useGraphWidgetAggregateQuery({
+    objectMetadataItemId: widget.objectMetadataId,
+    configuration: widget.configuration as NumberChartConfiguration,
+  });
+
+  if (loading) {
+    return <ChartSkeletonLoader />;
+  }
+
   return (
     <Suspense fallback={<ChartSkeletonLoader />}>
-      <GraphWidgetNumberChart value="0" />
+      <GraphWidgetNumberChart value={value} />
     </Suspense>
   );
 };
