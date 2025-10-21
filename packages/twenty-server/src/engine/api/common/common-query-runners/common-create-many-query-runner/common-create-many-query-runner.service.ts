@@ -20,7 +20,9 @@ import {
   CommonQueryNames,
   CreateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
@@ -37,7 +39,7 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
     args,
-    authContext: toValidateAuthContext,
+    authContext,
     objectMetadataMaps,
     objectMetadataItemWithFieldMaps,
   }: {
@@ -46,8 +48,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<ObjectRecord[]> {
-    const authContext = toValidateAuthContext;
-
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',
@@ -62,6 +62,18 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         assertIsValidUuid(record.id);
       }
     });
+
+    //TODO : Refacto-common - QueryParser should be common branded service
+    const commonQueryParser = new GraphqlQueryParser(
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+    );
+
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
+      objectMetadataItemWithFieldMaps,
+      args.selectedFields,
+      objectMetadataMaps,
+    );
 
     const { workspaceDataSource, repository, rolePermissionConfig } =
       await this.prepareQueryRunnerContext({
@@ -80,24 +92,25 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       args: processedArgs,
+      selectedFieldsResult,
     });
 
     const upsertedRecords = await this.fetchUpsertedRecords({
-      args: processedArgs,
       objectRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       repository,
+      selectedFieldsResult,
     });
 
     await this.processNestedRelationsIfNeeded({
-      args: processedArgs,
       records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       rolePermissionConfig,
       authContext,
       workspaceDataSource,
+      selectedFieldsResult,
     });
 
     return upsertedRecords;
@@ -136,16 +149,18 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
     args,
+    selectedFieldsResult,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
     args: CreateManyQueryArgs;
+    selectedFieldsResult: CommonSelectedFieldsResult;
   }): Promise<InsertResult> {
     if (!args.upsert) {
       const selectedColumns = buildColumnsToReturn({
-        select: args.selectedFieldsResult.select,
-        relations: args.selectedFieldsResult.relations,
+        select: selectedFieldsResult.select,
+        relations: selectedFieldsResult.relations,
         objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
       });
@@ -158,6 +173,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       args,
+      selectedFieldsResult,
     });
   }
 
@@ -166,11 +182,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
     args,
+    selectedFieldsResult,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
     args: CreateManyQueryArgs;
+    selectedFieldsResult: CommonSelectedFieldsResult;
   }): Promise<InsertResult> {
     const conflictingFields = getConflictingFields(
       objectMetadataItemWithFieldMaps,
@@ -195,8 +213,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     };
 
     const columnsToReturn = buildColumnsToReturn({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      select: selectedFieldsResult.select,
+      relations: selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     });
@@ -325,25 +343,25 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }
 
   private async fetchUpsertedRecords({
-    args,
     objectRecords,
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
     repository,
+    selectedFieldsResult,
   }: {
-    args: CreateManyQueryArgs;
     objectRecords: InsertResult;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
     repository: WorkspaceRepository<ObjectLiteral>;
+    selectedFieldsResult: CommonSelectedFieldsResult;
   }): Promise<ObjectRecord[]> {
     const queryBuilder = repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      select: selectedFieldsResult.select,
+      relations: selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     });
@@ -363,23 +381,23 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }
 
   private async processNestedRelationsIfNeeded({
-    args,
     records,
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
     rolePermissionConfig,
     authContext,
     workspaceDataSource,
+    selectedFieldsResult,
   }: {
-    args: CreateManyQueryArgs;
     records: ObjectRecord[];
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
-    rolePermissionConfig?: RolePermissionConfig;
     authContext: AuthContext;
     workspaceDataSource: WorkspaceDataSource;
+    rolePermissionConfig?: RolePermissionConfig;
+    selectedFieldsResult: CommonSelectedFieldsResult;
   }): Promise<void> {
-    if (!args.selectedFieldsResult.relations) {
+    if (!selectedFieldsResult.relations) {
       return;
     }
 
@@ -388,7 +406,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
       parentObjectRecords: records,
       //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
-      relations: args.selectedFieldsResult.relations as Record<
+      relations: selectedFieldsResult.relations as Record<
         string,
         FindOptionsRelations<ObjectLiteral>
       >,
@@ -396,7 +414,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       authContext,
       workspaceDataSource,
       rolePermissionConfig,
-      selectedFields: args.selectedFieldsResult.select,
+      selectedFields: selectedFieldsResult.select,
     });
   }
 

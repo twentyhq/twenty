@@ -15,7 +15,6 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -58,17 +57,6 @@ export class WorkspaceMemberDeleteOnePostQueryHook
         apiKey: authContext.apiKey,
       },
     );
-
-    const attachmentRepository =
-      await this.twentyORMManager.getRepository<AttachmentWorkspaceEntity>(
-        'attachment',
-      );
-
-    const authorId = targettedWorkspaceMemberId;
-
-    await attachmentRepository.delete({
-      authorId,
-    });
 
     const workspaceMemberRepository =
       await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
