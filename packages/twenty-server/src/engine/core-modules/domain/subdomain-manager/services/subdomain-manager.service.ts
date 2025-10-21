@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { generateRandomSubdomain } from 'src/engine/core-modules/domain/subdomain-manager/utils/generate-random-subdomain';
-import { getSubdomainFromEmail } from 'src/engine/core-modules/domain/subdomain-manager/utils/get-subdomain-from-email';
-import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain/subdomain-manager/utils/get-subdomain-name-from-display-name';
+import { generateRandomSubdomain } from 'src/engine/core-modules/domain/subdomain-manager/utils/generate-random-subdomain.util';
+import { getSubdomainFromEmail } from 'src/engine/core-modules/domain/subdomain-manager/utils/get-subdomain-from-email.util';
+import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain/subdomain-manager/utils/get-subdomain-name-from-display-name.util';
+import { isSubdomainValid } from 'src/engine/core-modules/domain/subdomain-manager/utils/is-subdomain-valid.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { RESERVED_SUBDOMAINS } from 'src/engine/core-modules/workspace/constants/reserved-subdomains.constant';
-import { VALID_SUBDOMAIN_PATTERN } from 'src/engine/core-modules/workspace/constants/valid-subdomain-pattern.constant';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -23,28 +23,27 @@ export class SubdomainManagerService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  private extractSubdomain(params?: { email?: string; displayName?: string }) {
-    if (params?.email) {
-      return getSubdomainFromEmail(params.email);
-    }
+  async generateSubdomain({
+    userEmail,
+    workspaceDisplayName,
+  }: {
+    userEmail?: string;
+    workspaceDisplayName?: string;
+  }) {
+    const subdomainFromUserEmail = getSubdomainFromEmail(userEmail);
+    const subdomainFromWorkspaceDisplayName =
+      getSubdomainNameFromDisplayName(workspaceDisplayName);
 
-    if (params?.displayName) {
-      return getSubdomainNameFromDisplayName(params.displayName);
-    }
-  }
+    const extractedSubdomain =
+      subdomainFromUserEmail || subdomainFromWorkspaceDisplayName;
 
-  async generateSubdomain(params?: { email?: string; displayName?: string }) {
-    let subdomain = this.extractSubdomain(params);
+    const isExtractedSubdomainValid = isDefined(extractedSubdomain)
+      ? isSubdomainValid(extractedSubdomain)
+      : false;
 
-    if (
-      subdomain &&
-      (!VALID_SUBDOMAIN_PATTERN.test(subdomain) ||
-        RESERVED_SUBDOMAINS.includes(subdomain))
-    ) {
-      subdomain = undefined;
-    }
-
-    subdomain = subdomain ?? generateRandomSubdomain();
+    const subdomain = isExtractedSubdomainValid
+      ? extractedSubdomain
+      : generateRandomSubdomain();
 
     const existingWorkspaceCount = await this.workspaceRepository.countBy({
       subdomain,
@@ -61,26 +60,21 @@ export class SubdomainManagerService {
     return !existingWorkspace;
   }
 
-  async validateSubdomainUpdate(newSubdomain: string) {
-    if (!VALID_SUBDOMAIN_PATTERN.test(newSubdomain)) {
+  async validateSubdomainOrThrow(subdomain: string) {
+    const isValid = isSubdomainValid(subdomain);
+
+    if (!isValid) {
       throw new WorkspaceException(
-        'Subdomain is reserved',
-        WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
+        'Subdomain is not valid',
+        WorkspaceExceptionCode.SUBDOMAIN_NOT_VALID,
       );
     }
 
-    if (RESERVED_SUBDOMAINS.includes(newSubdomain.toLowerCase())) {
-      throw new WorkspaceException(
-        'Subdomain is reserved',
-        WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
-      );
-    }
-
-    const subdomainAvailable = await this.isSubdomainAvailable(newSubdomain);
+    const isAvailable = await this.isSubdomainAvailable(subdomain);
 
     if (
-      !subdomainAvailable ||
-      this.twentyConfigService.get('DEFAULT_SUBDOMAIN') === newSubdomain
+      !isAvailable ||
+      this.twentyConfigService.get('DEFAULT_SUBDOMAIN') === subdomain
     ) {
       throw new WorkspaceException(
         'Subdomain already taken',
