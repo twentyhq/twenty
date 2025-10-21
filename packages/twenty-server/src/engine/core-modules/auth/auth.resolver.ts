@@ -49,7 +49,7 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -61,6 +61,7 @@ import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -74,7 +75,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginToken } from './dto/login-token.entity';
@@ -115,8 +115,7 @@ export class AuthResolver {
     private signInUpService: SignInUpService,
     private transientTokenService: TransientTokenService,
     private emailVerificationService: EmailVerificationService,
-    // private oauthService: OAuthService,
-    private domainManagerService: DomainManagerService,
+    private workspaceDomainsService: WorkspaceDomainsService,
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
     private sSOService: SSOService,
@@ -173,7 +172,7 @@ export class AuthResolver {
     @Args('origin') origin: string,
   ): Promise<LoginToken> {
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
@@ -252,7 +251,7 @@ export class AuthResolver {
       );
 
     const workspace =
-      (await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      (await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       )) ??
       (await this.userWorkspaceService.findFirstWorkspaceByUserId(
@@ -268,7 +267,8 @@ export class AuthResolver {
       authProvider,
     );
 
-    const workspaceUrls = this.domainManagerService.getWorkspaceUrls(workspace);
+    const workspaceUrls =
+      this.workspaceDomainsService.getWorkspaceUrls(workspace);
 
     return { loginToken, workspaceUrls };
   }
@@ -330,7 +330,7 @@ export class AuthResolver {
       );
 
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
@@ -475,7 +475,7 @@ export class AuthResolver {
       loginToken,
       workspace: {
         id: workspace.id,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       },
     };
   }
@@ -504,19 +504,10 @@ export class AuthResolver {
       loginToken,
       workspace: {
         id: workspace.id,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       },
     };
   }
-
-  // @Mutation(() => ExchangeAuthCode)
-  // async exchangeAuthorizationCode(
-  //   @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
-  // ) {
-  //   return await this.oauthService.verifyAuthorizationCode(
-  //     exchangeAuthCodeInput,
-  //   );
-  // }
 
   @Mutation(() => TransientToken)
   @UseGuards(UserAuthGuard)
@@ -606,7 +597,7 @@ export class AuthResolver {
     tokenWorkspaceId: string,
   ): Promise<Workspace> {
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 

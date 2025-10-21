@@ -16,8 +16,9 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
-import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
@@ -32,7 +33,8 @@ export class EmailVerificationService {
   constructor(
     @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly domainsServerConfigService: DomainServerConfigService,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly userService: UserService,
@@ -43,9 +45,7 @@ export class EmailVerificationService {
   async sendVerificationEmail(
     userId: string,
     email: string,
-    workspace:
-      | WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType
-      | undefined,
+    workspace: WorkspaceDomainConfig | undefined,
     locale: keyof typeof APP_LOCALES,
     verifyEmailRedirectPath?: string,
   ) {
@@ -67,11 +67,13 @@ export class EmailVerificationService {
       },
     };
     const verificationLink = workspace
-      ? this.domainManagerService.buildWorkspaceURL({
+      ? this.workspaceDomainsService.buildWorkspaceURL({
           workspace,
           ...linkPathnameAndSearchParams,
         })
-      : this.domainManagerService.buildBaseUrl(linkPathnameAndSearchParams);
+      : this.domainsServerConfigService.buildBaseUrl(
+          linkPathnameAndSearchParams,
+        );
 
     const emailData = {
       link: verificationLink.toString(),
@@ -104,9 +106,7 @@ export class EmailVerificationService {
 
   async resendEmailVerificationToken(
     email: string,
-    workspace:
-      | WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType
-      | undefined,
+    workspace: WorkspaceDomainConfig | undefined,
     locale: keyof typeof APP_LOCALES,
   ) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {

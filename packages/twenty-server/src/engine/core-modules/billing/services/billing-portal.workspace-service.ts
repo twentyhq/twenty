@@ -12,21 +12,21 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
+import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
-import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
-import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -34,7 +34,7 @@ export class BillingPortalWorkspaceService {
   constructor(
     private readonly stripeCheckoutService: StripeCheckoutService,
     private readonly stripeBillingPortalService: StripeBillingPortalService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
@@ -127,7 +127,7 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan: BillingGetPricesPerPlanResult;
     successUrlPath?: string;
   }) {
-    const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
+    const frontBaseUrl = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
     });
     const cancelUrl = frontBaseUrl.toString();
@@ -182,7 +182,7 @@ export class BillingPortalWorkspaceService {
       throw new Error('Error: missing stripeCustomerId');
     }
 
-    const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
+    const frontBaseUrl = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
     });
 

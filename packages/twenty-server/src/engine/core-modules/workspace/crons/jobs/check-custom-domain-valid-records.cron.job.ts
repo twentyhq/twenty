@@ -1,14 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Not, Repository, Raw } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { IsNull, Not, Raw, Repository } from 'typeorm';
 
+import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 export const CHECK_CUSTOM_DOMAIN_VALID_RECORDS_CRON_PATTERN = '0 * * * *';
 
@@ -17,7 +17,7 @@ export class CheckCustomDomainValidRecordsCronJob {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly workspaceService: WorkspaceService,
+    private readonly customDomainManagerService: CustomDomainManagerService,
   ) {}
 
   @Process(CheckCustomDomainValidRecordsCronJob.name)
@@ -39,7 +39,9 @@ export class CheckCustomDomainValidRecordsCronJob {
 
     for (const workspace of workspaces) {
       try {
-        await this.workspaceService.checkCustomDomainValidRecords(workspace);
+        await this.customDomainManagerService.checkCustomDomainValidRecords(
+          workspace,
+        );
       } catch (error) {
         throw new Error(
           `[${CheckCustomDomainValidRecordsCronJob.name}] Cannot check custom domain for workspaces: ${error.message}`,

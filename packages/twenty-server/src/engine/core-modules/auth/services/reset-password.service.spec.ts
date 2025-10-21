@@ -12,13 +12,14 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { type User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 import { ResetPasswordService } from './reset-password.service';
 
@@ -40,7 +41,7 @@ describe('ResetPasswordService', () => {
   let appTokenRepository: Repository<AppToken>;
   let emailService: EmailService;
   let twentyConfigService: TwentyConfigService;
-  let domainManagerService: DomainManagerService;
+  let workspaceDomainsService: WorkspaceDomainsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -72,11 +73,16 @@ describe('ResetPasswordService', () => {
           },
         },
         {
-          provide: DomainManagerService,
+          provide: DomainServerConfigService,
           useValue: {
             getBaseUrl: jest
               .fn()
               .mockResolvedValue(new URL('http://localhost:3001')),
+          },
+        },
+        {
+          provide: WorkspaceDomainsService,
+          useValue: {
             buildWorkspaceURL: jest.fn(),
           },
         },
@@ -107,8 +113,10 @@ describe('ResetPasswordService', () => {
     );
     emailService = module.get<EmailService>(EmailService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
+
+    workspaceDomainsService = module.get<WorkspaceDomainsService>(
+      WorkspaceDomainsService,
+    );
   });
 
   it('should be defined', () => {
@@ -197,7 +205,7 @@ describe('ResetPasswordService', () => {
         .spyOn(twentyConfigService, 'get')
         .mockReturnValue('http://localhost:3000');
       jest
-        .spyOn(domainManagerService, 'buildWorkspaceURL')
+        .spyOn(workspaceDomainsService, 'buildWorkspaceURL')
         .mockReturnValue(
           new URL(
             'https://subdomain.localhost.com:3000/reset-password/passwordResetToken',

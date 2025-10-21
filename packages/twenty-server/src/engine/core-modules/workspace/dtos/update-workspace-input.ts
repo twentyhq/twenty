@@ -3,7 +3,6 @@ import { Field, InputType } from '@nestjs/graphql';
 import {
   IsBoolean,
   IsInt,
-  IsNotIn,
   IsOptional,
   IsString,
   IsUUID,
