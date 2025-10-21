@@ -1,7 +1,6 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { lazy, Suspense } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type PageLayoutWidget,
@@ -30,7 +29,6 @@ export const GraphWidgetBarChartRenderer = ({
     showDataLabels,
     layout,
     loading,
-    error,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as BarChartConfiguration,
@@ -38,10 +36,6 @@ export const GraphWidgetBarChartRenderer = ({
 
   if (loading) {
     return <ChartSkeletonLoader />;
-  }
-
-  if (isDefined(error)) {
-    return <div>Error: {error.message}</div>;
   }
 
   const configuration = widget.configuration as BarChartConfiguration;
