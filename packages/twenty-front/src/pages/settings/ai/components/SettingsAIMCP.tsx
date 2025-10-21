@@ -55,7 +55,7 @@ const StyledEditorContainer = styled.div`
   }
 `;
 
-export const SettingsIntegrationMCP = () => {
+export const SettingsAIMCP = () => {
   const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();

@@ -5,7 +5,13 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconPlus, IconRobot, IconSettings } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconPlus,
+  IconRobot,
+  IconServer,
+  IconSettings,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
@@ -13,6 +19,7 @@ import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 
 import { t } from '@lingui/core/macro';
 import { SettingsAIAgentsTable } from './components/SettingsAIAgentsTable';
+import { SettingsAIMCP } from './components/SettingsAIMCP';
 import { SettingsAIRouterSettings } from './components/SettingsAIRouterSettings';
 
 const SETTINGS_AI_TABS_ID = 'settings-ai-tabs-id';
@@ -20,6 +27,7 @@ const SETTINGS_AI_TABS_ID = 'settings-ai-tabs-id';
 const SETTINGS_AI_TABS = {
   AGENTS: 'agents',
   SETTINGS: 'settings',
+  MCP: 'mcp',
 };
 
 export const SettingsAI = () => {
@@ -34,6 +42,11 @@ export const SettingsAI = () => {
       id: SETTINGS_AI_TABS.AGENTS,
       title: t`Agents`,
       Icon: IconRobot,
+    },
+    {
+      id: SETTINGS_AI_TABS.MCP,
+      title: t`MCP`,
+      Icon: IconServer,
     },
     {
       id: SETTINGS_AI_TABS.SETTINGS,
@@ -56,6 +69,16 @@ export const SettingsAI = () => {
         );
       case SETTINGS_AI_TABS.SETTINGS:
         return <SettingsAIRouterSettings />;
+      case SETTINGS_AI_TABS.MCP:
+        return (
+          <Section>
+            <H2Title
+              title={t`MCP Server`}
+              description={t`Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor.`}
+            />
+            <SettingsAIMCP />
+          </Section>
+        );
     }
   };
 
