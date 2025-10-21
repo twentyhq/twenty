@@ -67,7 +67,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
             dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         })
       : undefined;
-    const updatedFlatFiedlMetadataMaps = isDefined(flatFieldMetadata)
+    const updatedFlatFieldMetadataMaps = isDefined(flatFieldMetadata)
       ? replaceFlatEntityInFlatEntityMapsOrThrow({
           flatEntity: {
             ...flatFieldMetadata,
@@ -85,7 +85,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         view: flatViewToValidate,
       },
       dependencyOptimisticFlatEntityMaps: {
-        flatFieldMetadataMaps: updatedFlatFiedlMetadataMaps,
+        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
         flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
       },
     };
