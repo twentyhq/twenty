@@ -62,7 +62,6 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
-import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -226,30 +225,6 @@ export class WorkspaceResolver {
       workspace.defaultRoleId,
       workspace.id,
     );
-  }
-
-  @ResolveField(() => AgentDTO, { nullable: true })
-  async defaultAgent(@Parent() workspace: Workspace): Promise<AgentDTO | null> {
-    if (!workspace.defaultAgentId) {
-      return null;
-    }
-
-    try {
-      const agent = await this.agentService.findOneAgent(
-        workspace.defaultAgentId,
-        workspace.id,
-      );
-
-      // Convert roleId from null to undefined to match AgentDTO
-      return {
-        ...agent,
-        roleId: agent.roleId ?? undefined,
-        applicationId: agent.applicationId ?? undefined,
-      };
-    } catch {
-      // If agent is not found, return null instead of throwing
-      return null;
-    }
   }
 
   @ResolveField(() => String, { nullable: true })

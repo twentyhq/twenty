@@ -8,7 +8,6 @@ import { z } from 'zod';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 
 export interface RouterContext {
   conversationHistory: string;
@@ -24,7 +23,6 @@ export class RouterService {
   constructor(
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
-    private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
@@ -73,11 +71,8 @@ export class RouterService {
     } catch (error) {
       this.logger.error('Router decision failed:', error);
 
-      const defaultAgent = context.availableAgents.find(
-        (agent: AgentEntity) => agent.id === workspace.defaultAgentId,
-      );
-
-      return defaultAgent?.id || null;
+      // Fallback to first available agent
+      return context.availableAgents[0]?.id || null;
     }
   }
 

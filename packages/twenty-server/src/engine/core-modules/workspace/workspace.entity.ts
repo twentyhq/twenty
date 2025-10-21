@@ -30,7 +30,6 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-handoff.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -242,13 +241,6 @@ export class Workspace {
 
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
-
-  // TODO: set as non nullable
-  @Column({ nullable: true, type: 'uuid' })
-  defaultAgentId: string | null;
-
-  @Field(() => AgentDTO, { nullable: true })
-  defaultAgent: AgentDTO | null;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true })

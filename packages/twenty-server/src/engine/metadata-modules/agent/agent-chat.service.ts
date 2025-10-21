@@ -31,19 +31,17 @@ export class AgentChatService {
     private readonly titleGenerationService: AgentTitleGenerationService,
   ) {}
 
-  async createThread(agentId: string, userWorkspaceId: string) {
+  async createThread(userWorkspaceId: string) {
     const thread = this.threadRepository.create({
-      agentId,
       userWorkspaceId,
     });
 
     return this.threadRepository.save(thread);
   }
 
-  async getThreadsForAgent(agentId: string, userWorkspaceId: string) {
+  async getThreadsForUser(userWorkspaceId: string) {
     return this.threadRepository.find({
       where: {
-        agentId,
         userWorkspaceId,
       },
       order: { createdAt: 'DESC' },
