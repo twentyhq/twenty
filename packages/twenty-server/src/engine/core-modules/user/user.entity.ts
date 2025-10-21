@@ -113,9 +113,8 @@ export class UserEntity {
 
   @Field(() => [UserWorkspaceEntity])
   @OneToMany(
-    () => UserEntity,
-    WorkspaceEntity,
-    (userWorkspace) => userWorkspace.user,
+    () => UserWorkspaceEntity,
+    (userWorkspace: UserWorkspaceEntity) => userWorkspace.user,
   )
   userWorkspaces: Relation<UserWorkspaceEntity[]>;
 

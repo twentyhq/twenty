@@ -281,7 +281,7 @@ describe('SignInUpService', () => {
       .mockResolvedValue({ id: 'newUserId' } as UserEntity);
     jest
       .spyOn(userWorkspaceService, 'create')
-      .mockResolvedValue({} as UserEntity, WorkspaceEntity);
+      .mockResolvedValue({} as UserWorkspaceEntity);
 
     const result = await service.signInUp(params);
 
@@ -323,7 +323,7 @@ describe('SignInUpService', () => {
       .mockResolvedValue(undefined);
     jest
       .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
-      .mockResolvedValue({} as UserEntity, WorkspaceEntity);
+      .mockResolvedValue({} as UserWorkspaceEntity);
 
     const result = await service.signInUp(params);
 

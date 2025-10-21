@@ -164,12 +164,9 @@ describe('UserWorkspaceService', () => {
       jest
         .spyOn(userWorkspaceRepository, 'save')
         .mockResolvedValue(userWorkspace);
-      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue(
-        {
-          defaultAvatarUrl: 'path/to/file',
-        } as UserEntity,
-        WorkspaceEntity,
-      );
+      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue({
+        defaultAvatarUrl: 'path/to/file',
+      } as UserWorkspaceEntity);
       jest
         .spyOn(fileService, 'copyFileFromWorkspaceToWorkspace')
         .mockResolvedValue(['', 'path/to', 'copy']);
@@ -349,12 +346,9 @@ describe('UserWorkspaceService', () => {
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue(workspaceMemberRepository as any);
 
-      jest.spyOn(userWorkspaceRepository, 'findOneOrFail').mockResolvedValue(
-        {
-          defaultAvatarUrl: 'userWorkspace-avatar-url',
-        } as UserEntity,
-        WorkspaceEntity,
-      );
+      jest.spyOn(userWorkspaceRepository, 'findOneOrFail').mockResolvedValue({
+        defaultAvatarUrl: 'userWorkspace-avatar-url',
+      } as UserWorkspaceEntity);
 
       await service.createWorkspaceMember(workspaceId, user);
 
@@ -467,7 +461,7 @@ describe('UserWorkspaceService', () => {
       jest.spyOn(service, 'checkUserWorkspaceExists').mockResolvedValue(null);
       jest
         .spyOn(service, 'create')
-        .mockResolvedValue({} as UserEntity, WorkspaceEntity);
+        .mockResolvedValue({} as UserWorkspaceEntity);
       jest.spyOn(service, 'createWorkspaceMember').mockResolvedValue(undefined);
 
       await expect(

@@ -87,13 +87,10 @@ describe('UserService', () => {
     });
 
     it('fetches from workspace member repo when workspace active', async () => {
-      jest.spyOn(mockWorkspaceMemberRepo, 'findOne').mockResolvedValue(
-        {
-          id: 'wm1',
-          userId: 'u1',
-        } as WorkspaceEntity,
-        WorkspaceMemberWorkspaceEntity,
-      );
+      jest.spyOn(mockWorkspaceMemberRepo, 'findOne').mockResolvedValue({
+        id: 'wm1',
+        userId: 'u1',
+      } as WorkspaceMemberWorkspaceEntity);
 
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')

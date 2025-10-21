@@ -130,7 +130,7 @@ describe('AccessTokenService', () => {
         .mockResolvedValue(mockWorkspace as WorkspaceEntity);
       jest
         .spyOn(userWorkspaceRepository, 'findOne')
-        .mockResolvedValue(mockUserWorkspace as UserEntity, WorkspaceEntity);
+        .mockResolvedValue(mockUserWorkspace as UserWorkspaceEntity);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue({
@@ -183,21 +183,15 @@ describe('AccessTokenService', () => {
         .mockResolvedValue(mockWorkspace as WorkspaceEntity);
       jest
         .spyOn(userWorkspaceRepository, 'findOne')
-        .mockResolvedValueOnce(mockUserWorkspace as UserEntity, WorkspaceEntity)
-        .mockResolvedValueOnce(
-          {
-            id: impersonatorUserWorkspaceId,
-            workspaceId,
-          } as UserEntity,
-          WorkspaceEntity,
-        )
-        .mockResolvedValueOnce(
-          {
-            id: impersonatedUserWorkspaceId,
-            workspaceId,
-          } as UserEntity,
-          WorkspaceEntity,
-        );
+        .mockResolvedValueOnce(mockUserWorkspace as UserWorkspaceEntity)
+        .mockResolvedValueOnce({
+          id: impersonatorUserWorkspaceId,
+          workspaceId,
+        } as UserWorkspaceEntity)
+        .mockResolvedValueOnce({
+          id: impersonatedUserWorkspaceId,
+          workspaceId,
+        } as UserWorkspaceEntity);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue({

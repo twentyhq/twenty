@@ -16,7 +16,6 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
@@ -113,9 +112,8 @@ export class WorkspaceEntity {
   keyValuePairs: Relation<KeyValuePairEntity[]>;
 
   @OneToMany(
-    () => UserEntity,
-    WorkspaceEntity,
-    (userWorkspace) => userWorkspace.workspace,
+    () => UserWorkspaceEntity,
+    (userWorkspace: UserWorkspaceEntity) => userWorkspace.workspace,
     {
       onDelete: 'CASCADE',
     },
