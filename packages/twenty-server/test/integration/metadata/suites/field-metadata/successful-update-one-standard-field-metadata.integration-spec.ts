@@ -17,7 +17,6 @@ type UpdateOneStandardFieldMetadataTestingContext = EachTestingContext<
 const successfulUpdateTestsUseCase: UpdateOneStandardFieldMetadataTestingContext =
   [
     {
-      only: true,
       title: 'when updating description',
       context: {
         description: 'Updated test description for company name field',
