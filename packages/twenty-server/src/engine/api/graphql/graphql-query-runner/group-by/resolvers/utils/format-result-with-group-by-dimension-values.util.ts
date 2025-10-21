@@ -7,57 +7,60 @@ import {
 import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { type IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
 
-import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
+import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 
-export const formatResultWithGroupByDimensionValues = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  result: any[],
+export const formatResultWithGroupByDimensionValues = <
+  T extends
+    | IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>
+    | CommonGroupByOutputItem,
+>(
+  result: Record<string, string>[],
   groupByColumnsWithQuotes: {
     columnNameWithQuotes: string;
     alias: string;
     dateGranularity?: ObjectRecordGroupByDateGranularity;
   }[],
-): IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] => {
-  let formattedResult: IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] =
-    [];
+  aggregateFieldNames: string[],
+): T[] => {
+  let formattedResult: T[] = [];
 
   result.forEach((group) => {
-    let dimensionValues = [];
+    let dimensionValues: string[] = [];
 
     for (const groupByColumn of groupByColumnsWithQuotes) {
-      dimensionValues.push(group[groupByColumn.alias]);
+      dimensionValues.push(
+        getTranslatedValueIfApplicable(
+          group[groupByColumn.alias],
+          groupByColumn.dateGranularity,
+        ),
+      );
     }
-    const groupWithValueMappedToUnaliasedColumn = {
-      ...group,
-      ...groupByColumnsWithQuotes.reduce<Record<string, unknown>>(
-        (acc, groupByColumn) => {
-          const value = group[groupByColumn.alias];
 
-          acc[removeQuotes(groupByColumn.columnNameWithQuotes)] =
-            getTranslatedValueIfApplicable(
-              value,
-              groupByColumn.dateGranularity,
-            );
+    const aggregateValues = aggregateFieldNames.reduce(
+      (acc, fieldName) => {
+        if (fieldName in group) {
+          acc[fieldName] = group[fieldName];
+        }
 
-          return acc;
-        },
-        {},
-      ),
-    };
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
 
     formattedResult.push({
       groupByDimensionValues: dimensionValues,
-      ...groupWithValueMappedToUnaliasedColumn,
-    });
+      ...aggregateValues,
+      //TODO: Refacto-common - remove generic type
+    } as T);
   });
 
   return formattedResult;
 };
 
 const getTranslatedValueIfApplicable = (
-  value: unknown,
+  value: string,
   dateGranularity?: ObjectRecordGroupByDateGranularity,
-) => {
+): string => {
   switch (dateGranularity) {
     case ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK:
       switch (value) {
