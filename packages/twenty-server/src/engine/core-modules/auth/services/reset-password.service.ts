@@ -25,19 +25,19 @@ import { type EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/em
 import { type InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { type ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 
 @Injectable()
 export class ResetPasswordService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(AppToken)
@@ -127,7 +127,7 @@ export class ResetPasswordService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const link = this.domainManagerService.buildWorkspaceURL({
+    const link = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
       pathname: getAppPath(AppPath.ResetPassword, {
         passwordResetToken: resetToken.passwordResetToken,

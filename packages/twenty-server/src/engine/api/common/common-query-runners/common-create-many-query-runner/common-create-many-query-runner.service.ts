@@ -129,7 +129,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       (await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
-        CommonQueryNames.createMany,
+        CommonQueryNames.CREATE_MANY,
         args,
         //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
       )) as CreateManyQueryArgs;

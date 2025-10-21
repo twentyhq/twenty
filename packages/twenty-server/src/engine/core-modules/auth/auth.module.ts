@@ -33,7 +33,9 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
+import { SubdomainManagerModule } from 'src/engine/core-modules/domain/subdomain-manager/subdomain-manager.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -74,7 +76,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     JwtModule,
     FileUploadModule,
     DataSourceModule,
-    DomainManagerModule,
+    WorkspaceDomainsModule,
     TokenModule,
     UserModule,
     WorkspaceManagerModule,
@@ -109,6 +111,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     TwoFactorAuthenticationModule,
     ApiKeyModule,
     AuditModule,
+    SubdomainManagerModule,
+    DomainServerConfigModule,
   ],
   controllers: [
     GoogleAuthController,

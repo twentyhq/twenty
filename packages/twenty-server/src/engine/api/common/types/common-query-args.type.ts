@@ -12,10 +12,10 @@ import {
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 
 export enum CommonQueryNames {
-  findOne = 'findOne',
-  findMany = 'findMany',
-  createMany = 'createMany',
-  groupBy = 'groupBy',
+  FIND_ONE = 'findOne',
+  FIND_MANY = 'findMany',
+  CREATE_MANY = 'createMany',
+  GROUP_BY = 'groupBy',
 }
 
 export interface FindOneQueryArgs {

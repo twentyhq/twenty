@@ -8,6 +8,7 @@ import { type ObjectRecordProperties } from 'src/engine/core-modules/record-crud
 export type WorkflowCreateRecordActionInput = {
   objectName: string;
   objectRecord: ObjectRecordProperties;
+  upsert?: boolean;
 };
 
 export type WorkflowUpdateRecordActionInput = {
@@ -34,4 +35,10 @@ export type WorkflowFindRecordsActionInput = {
   };
   orderBy?: Partial<ObjectRecordOrderBy>;
   limit?: number;
+};
+
+export type WorkflowUpsertRecordActionInput = {
+  objectName: string;
+  objectRecord: ObjectRecordProperties;
+  fieldsToUpdate?: string[];
 };

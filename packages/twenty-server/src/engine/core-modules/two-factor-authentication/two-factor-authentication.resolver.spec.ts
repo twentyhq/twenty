@@ -6,7 +6,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { type User } from 'src/engine/core-modules/user/user.entity';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -37,7 +37,7 @@ const createMockUserService = () => ({
   findUserByEmailOrThrow: jest.fn(),
 });
 
-const createMockDomainManagerService = () => ({
+const createMockWorkspaceDomainsService = () => ({
   getWorkspaceByOriginOrDefaultWorkspace: jest.fn(),
 });
 
@@ -48,7 +48,9 @@ describe('TwoFactorAuthenticationResolver', () => {
   >;
   let loginTokenService: ReturnType<typeof createMockLoginTokenService>;
   let userService: ReturnType<typeof createMockUserService>;
-  let domainManagerService: ReturnType<typeof createMockDomainManagerService>;
+  let workspaceDomainsService: ReturnType<
+    typeof createMockWorkspaceDomainsService
+  >;
   let repository: ReturnType<typeof createMockRepository>;
 
   const mockUser: User = {
@@ -86,8 +88,8 @@ describe('TwoFactorAuthenticationResolver', () => {
           useFactory: createMockUserService,
         },
         {
-          provide: DomainManagerService,
-          useFactory: createMockDomainManagerService,
+          provide: WorkspaceDomainsService,
+          useFactory: createMockWorkspaceDomainsService,
         },
         {
           provide: getRepositoryToken(TwoFactorAuthenticationMethod),
@@ -102,7 +104,7 @@ describe('TwoFactorAuthenticationResolver', () => {
     twoFactorAuthenticationService = module.get(TwoFactorAuthenticationService);
     loginTokenService = module.get(LoginTokenService);
     userService = module.get(UserService);
-    domainManagerService = module.get(DomainManagerService);
+    workspaceDomainsService = module.get(WorkspaceDomainsService);
     repository = module.get(getRepositoryToken(TwoFactorAuthenticationMethod));
   });
 
@@ -125,7 +127,7 @@ describe('TwoFactorAuthenticationResolver', () => {
         sub: mockUser.email,
         workspaceId: mockWorkspace.id,
       });
-      domainManagerService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
+      workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
         mockWorkspace,
       );
       userService.findUserByEmailOrThrow.mockResolvedValue(mockUser);
@@ -144,7 +146,7 @@ describe('TwoFactorAuthenticationResolver', () => {
         mockInput.loginToken,
       );
       expect(
-        domainManagerService.getWorkspaceByOriginOrDefaultWorkspace,
+        workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace,
       ).toHaveBeenCalledWith(origin);
       expect(userService.findUserByEmailOrThrow).toHaveBeenCalledWith(
         mockUser.email,
@@ -160,7 +162,7 @@ describe('TwoFactorAuthenticationResolver', () => {
     });
 
     it('should throw WORKSPACE_NOT_FOUND when workspace is not found', async () => {
-      domainManagerService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
+      workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
         null,
       );
 

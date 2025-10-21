@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { SSOIdentityProviderStatus } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { type AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import { type AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export const getAuthProvidersByWorkspace = ({
@@ -15,7 +15,7 @@ export const getAuthProvidersByWorkspace = ({
     | 'isMicrosoftAuthEnabled'
     | 'workspaceSSOIdentityProviders'
   >;
-  systemEnabledProviders: AuthProviders;
+  systemEnabledProviders: AuthProvidersDTO;
 }) => {
   return {
     google: workspace.isGoogleAuthEnabled && systemEnabledProviders.google,

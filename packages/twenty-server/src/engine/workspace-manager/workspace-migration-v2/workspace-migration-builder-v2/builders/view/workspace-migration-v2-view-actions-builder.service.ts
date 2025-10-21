@@ -57,6 +57,53 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
           dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
       });
 
+    const kanbanFieldMetadata = isDefined(
+      flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
+    )
+      ? findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId:
+            flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : undefined;
+    const updatedFlatFieldMetadataMapsWithKanban = isDefined(
+      kanbanFieldMetadata,
+    )
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...kanbanFieldMetadata,
+            kanbanAggregateOperationViewIds: [
+              ...kanbanFieldMetadata.kanbanAggregateOperationViewIds,
+              flatViewToValidate.id,
+            ],
+          },
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps;
+
+    const calendarFieldMetadata = isDefined(
+      flatViewToValidate.calendarFieldMetadataId,
+    )
+      ? findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: flatViewToValidate.calendarFieldMetadataId,
+          flatEntityMaps: updatedFlatFieldMetadataMapsWithKanban,
+        })
+      : undefined;
+    const updatedFlatFieldMetadataMaps = isDefined(calendarFieldMetadata)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...calendarFieldMetadata,
+            calendarViewIds: [
+              ...calendarFieldMetadata.calendarViewIds,
+              flatViewToValidate.id,
+            ],
+          },
+          flatEntityMaps: updatedFlatFieldMetadataMapsWithKanban,
+        })
+      : updatedFlatFieldMetadataMapsWithKanban;
+
     return {
       status: 'success',
       action: {
@@ -64,6 +111,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         view: flatViewToValidate,
       },
       dependencyOptimisticFlatEntityMaps: {
+        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
         flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
       },
     };
@@ -107,6 +155,54 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         })
       : dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
 
+    const kanbanFieldMetadata = isDefined(
+      flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
+    )
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId:
+            flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : undefined;
+
+    const updatedFlatFieldMetadataMapsWithKanban = isDefined(
+      kanbanFieldMetadata,
+    )
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...kanbanFieldMetadata,
+            kanbanAggregateOperationViewIds:
+              kanbanFieldMetadata.kanbanAggregateOperationViewIds.filter(
+                (id) => id !== flatViewToValidate.id,
+              ),
+          },
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps;
+
+    const calendarFieldMetadata = isDefined(
+      flatViewToValidate.calendarFieldMetadataId,
+    )
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatViewToValidate.calendarFieldMetadataId,
+          flatEntityMaps: updatedFlatFieldMetadataMapsWithKanban,
+        })
+      : undefined;
+
+    const updatedFlatFieldMetadataMaps = isDefined(calendarFieldMetadata)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...calendarFieldMetadata,
+            calendarViewIds: calendarFieldMetadata.calendarViewIds.filter(
+              (id) => id !== flatViewToValidate.id,
+            ),
+          },
+          flatEntityMaps: updatedFlatFieldMetadataMapsWithKanban,
+        })
+      : updatedFlatFieldMetadataMapsWithKanban;
+
     return {
       status: 'success',
       action: {
@@ -114,6 +210,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         viewId: flatViewToValidate.id,
       },
       dependencyOptimisticFlatEntityMaps: {
+        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
         flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
       },
     };

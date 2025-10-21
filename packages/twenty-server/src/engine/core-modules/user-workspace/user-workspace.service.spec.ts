@@ -9,7 +9,7 @@ import { type ApprovedAccessDomain } from 'src/engine/core-modules/approved-acce
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
   FileUploadService,
@@ -81,7 +81,7 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
-          provide: DomainManagerService,
+          provide: WorkspaceDomainsService,
           useValue: {
             getWorkspaceUrls: jest.fn(),
           },
