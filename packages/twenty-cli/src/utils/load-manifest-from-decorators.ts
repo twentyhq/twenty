@@ -143,8 +143,28 @@ const collectObjects = (program: Program) => {
   return manifest;
 };
 
+const validateProgram = (program: Program) => {
+  const diagnostics = [
+    ...program.getSyntacticDiagnostics(),
+    ...program.getSemanticDiagnostics(),
+    ...program.getGlobalDiagnostics(),
+  ];
+
+  if (diagnostics.length > 0) {
+    const formatted = formatDiagnosticsWithColorAndContext(diagnostics, {
+      getCanonicalFileName: (f) => f,
+      getCurrentDirectory: sys.getCurrentDirectory,
+      getNewLine: () => sys.newLine,
+    });
+    throw new Error(`TypeScript validation failed:\n${formatted}`);
+  }
+};
+
 export const loadManifestFromDecorators = (): Pick<AppManifest, 'objects'> => {
   const program = getProgramFromTsconfig('tsconfig.json');
+
+  validateProgram(program);
+
   const objects = collectObjects(program);
 
   return { objects };

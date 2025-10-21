@@ -9,6 +9,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "strict": true,
     "target": "es2018",
     "module": "esnext",
     "lib": ["es2020", "dom"],
