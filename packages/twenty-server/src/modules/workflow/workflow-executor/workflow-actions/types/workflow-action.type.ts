@@ -6,6 +6,7 @@ import { type WorkflowHttpRequestActionSettings } from 'src/modules/workflow/wor
 import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { type WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-settings.type';
 import {
+  type WorkflowUpsertRecordActionSettings,
   type WorkflowCreateRecordActionSettings,
   type WorkflowDeleteRecordActionSettings,
   type WorkflowFindRecordsActionSettings,
@@ -20,6 +21,7 @@ export enum WorkflowActionType {
   CREATE_RECORD = 'CREATE_RECORD',
   UPDATE_RECORD = 'UPDATE_RECORD',
   DELETE_RECORD = 'DELETE_RECORD',
+  UPSERT_RECORD = 'UPSERT_RECORD',
   FIND_RECORDS = 'FIND_RECORDS',
   FORM = 'FORM',
   FILTER = 'FILTER',
@@ -68,6 +70,11 @@ export type WorkflowDeleteRecordAction = BaseWorkflowAction & {
   settings: WorkflowDeleteRecordActionSettings;
 };
 
+export type WorkflowUpsertRecordAction = BaseWorkflowAction & {
+  type: WorkflowActionType.UPSERT_RECORD;
+  settings: WorkflowUpsertRecordActionSettings;
+};
+
 export type WorkflowFindRecordsAction = BaseWorkflowAction & {
   type: WorkflowActionType.FIND_RECORDS;
   settings: WorkflowFindRecordsActionSettings;
@@ -113,6 +120,7 @@ export type WorkflowAction =
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction
+  | WorkflowUpsertRecordAction
   | WorkflowFindRecordsAction
   | WorkflowFormAction
   | WorkflowFilterAction

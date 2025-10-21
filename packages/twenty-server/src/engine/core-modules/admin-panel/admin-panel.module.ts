@@ -3,6 +3,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
+import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelResolver } from 'src/engine/core-modules/admin-panel/admin-panel.resolver';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
@@ -32,7 +33,12 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ImpersonationModule,
     PermissionsModule,
   ],
-  providers: [AdminPanelResolver, AdminPanelService, AdminPanelHealthService],
+  providers: [
+    AdminPanelResolver,
+    AdminPanelService,
+    AdminPanelHealthService,
+    AdminPanelQueueService,
+  ],
   exports: [AdminPanelService],
 })
 export class AdminPanelModule {}

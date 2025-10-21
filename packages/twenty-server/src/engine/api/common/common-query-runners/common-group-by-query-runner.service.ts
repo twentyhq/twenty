@@ -311,7 +311,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       (await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
-        CommonQueryNames.groupBy,
+        CommonQueryNames.GROUP_BY,
         args,
         //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
       )) as GroupByQueryArgs;

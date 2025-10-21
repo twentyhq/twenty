@@ -54,6 +54,7 @@ export enum SettingsPath {
   AdminPanel = 'admin-panel',
   AdminPanelHealthStatus = 'admin-panel#health-status',
   AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorId',
+  AdminPanelQueueDetail = 'admin-panel/health-status/queue/:queueName',
   AdminPanelConfigVariableDetails = 'admin-panel/config-variables/:variableName',
 
   Roles = 'roles',

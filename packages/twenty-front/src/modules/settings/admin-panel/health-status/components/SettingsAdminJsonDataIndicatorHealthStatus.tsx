@@ -22,7 +22,7 @@ const StyledErrorMessage = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const JsonDataIndicatorHealthStatus = () => {
+export const SettingsAdminJsonDataIndicatorHealthStatus = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
