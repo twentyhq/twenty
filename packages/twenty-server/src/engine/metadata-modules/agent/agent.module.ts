@@ -18,6 +18,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RouterModule } from 'src/engine/metadata-modules/router/router.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -65,6 +66,7 @@ import { AgentActorContextService } from './services/agent-actor-context.service
     FileModule,
     ObjectMetadataModule,
     PermissionsModule,
+    RouterModule,
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,

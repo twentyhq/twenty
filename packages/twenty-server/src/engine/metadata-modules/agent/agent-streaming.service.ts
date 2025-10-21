@@ -21,6 +21,7 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { RouterService } from 'src/engine/metadata-modules/router/router.service';
 
 export type StreamAgentChatOptions = {
   threadId: string;
@@ -40,6 +41,7 @@ export class AgentStreamingService {
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly agentExecutionService: AgentExecutionService,
+    private readonly routerService: RouterService,
   ) {}
 
   async streamAgentChat({
@@ -56,7 +58,7 @@ export class AgentStreamingService {
           id: threadId,
           userWorkspaceId,
         },
-        relations: ['messages', 'agent'],
+        relations: ['messages'],
       });
 
       if (!thread) {
@@ -68,9 +70,24 @@ export class AgentStreamingService {
 
       const stream = createUIMessageStream({
         execute: async ({ writer }) => {
+          const agentId = await this.routerService.routeMessage({
+            messages,
+            workspaceId: workspace.id,
+            routerModel: workspace.routerModel,
+          });
+
+          if (!agentId) {
+            throw new AgentException(
+              'No agents available for routing',
+              AgentExceptionCode.AGENT_EXECUTION_FAILED,
+            );
+          }
+
+          this.logger.log(`Using agent ${agentId} for message routing`);
+
           const result = await this.agentExecutionService.streamChatResponse({
             workspace,
-            agentId: thread.agent.id,
+            agentId,
             userWorkspaceId,
             messages,
             recordIdsByObjectMetadataNameSingular,

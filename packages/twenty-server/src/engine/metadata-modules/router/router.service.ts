@@ -1,19 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateObject } from 'ai';
+import {
+  generateObject,
+  type UIDataTypes,
+  type UIMessage,
+  type UITools,
+} from 'ai';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
+import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 
 export interface RouterContext {
-  conversationHistory: string;
-  currentMessage: string;
-  availableAgents: AgentEntity[];
+  messages: UIMessage<unknown, UIDataTypes, UITools>[];
   workspaceId: string;
+  routerModel: ModelId;
 }
 
 @Injectable()
@@ -26,9 +30,11 @@ export class RouterService {
     private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
-  async routeMessage(context: RouterContext, workspace: Workspace) {
+  async routeMessage(context: RouterContext) {
     try {
-      const { conversationHistory, currentMessage, availableAgents } = context;
+      const { messages, workspaceId, routerModel } = context;
+
+      const availableAgents = await this.getAvailableAgents(workspaceId);
 
       if (availableAgents.length === 0) {
         this.logger.warn('No agents available for routing');
@@ -40,7 +46,22 @@ export class RouterService {
         return availableAgents[0].id;
       }
 
-      const routerModel = this.getRouterModel(workspace);
+      const conversationHistory = messages
+        .slice(0, -1)
+        .map((msg) => {
+          const textContent =
+            msg.parts.find((part) => part.type === 'text')?.text || '';
+
+          return `${msg.role}: ${textContent}`;
+        })
+        .join('\n');
+
+      const currentMessage =
+        messages[messages.length - 1]?.parts.find(
+          (part) => part.type === 'text',
+        )?.text || '';
+
+      const model = this.getRouterModel(routerModel);
       const agentDescriptions = this.buildAgentDescriptions(availableAgents);
 
       const systemPrompt = this.buildRouterSystemPrompt(agentDescriptions);
@@ -51,12 +72,14 @@ export class RouterService {
 
       const routerDecisionSchema = z.object({
         agentId: z
-          .enum(availableAgents.map((agent) => agent.id))
+          .enum(
+            availableAgents.map((agent) => agent.id) as [string, ...string[]],
+          )
           .describe('The ID of the most suitable agent to handle this message'),
       });
 
       const result = await generateObject({
-        model: routerModel,
+        model,
         system: systemPrompt,
         prompt: userPrompt,
         schema: routerDecisionSchema,
@@ -71,21 +94,24 @@ export class RouterService {
     } catch (error) {
       this.logger.error('Router decision failed:', error);
 
-      // Fallback to first available agent
-      return context.availableAgents[0]?.id || null;
+      const availableAgents = await this.getAvailableAgents(
+        context.workspaceId,
+      );
+
+      return availableAgents[0]?.id || null;
     }
   }
 
-  async getAvailableAgents(workspaceId: string): Promise<AgentEntity[]> {
+  private async getAvailableAgents(
+    workspaceId: string,
+  ): Promise<AgentEntity[]> {
     return this.agentRepository.find({
       where: { workspaceId, deletedAt: undefined },
       order: { createdAt: 'ASC' },
     });
   }
 
-  private getRouterModel(workspace: Workspace) {
-    const modelId = workspace.routerModel || 'auto';
-
+  private getRouterModel(modelId: ModelId) {
     if (modelId === 'auto') {
       const registeredModel = this.aiModelRegistryService.getDefaultModel();
 
