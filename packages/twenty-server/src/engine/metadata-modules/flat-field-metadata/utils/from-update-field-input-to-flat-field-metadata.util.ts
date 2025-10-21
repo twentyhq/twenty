@@ -84,7 +84,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     ).filter(
       (property) =>
         property !== 'isActive' &&
-        FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.includes(
+        !FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.includes(
           property as FieldMetadataStandardOverridesProperties,
         ),
     );
