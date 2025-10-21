@@ -22,7 +22,6 @@ import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 const StyledSelectContainer = styled.div`
   justify-content: flex-end;
   margin-left: auto;
-  max-width: 120px;
 `;
 
 export const SettingsAIRouterSettings = () => {
