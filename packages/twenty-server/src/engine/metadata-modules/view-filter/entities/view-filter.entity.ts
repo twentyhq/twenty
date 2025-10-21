@@ -1,6 +1,5 @@
 import { ViewFilterOperand } from 'twenty-shared/types';
 import {
-  OneToMany,
   Column,
   CreateDateColumn,
   DeleteDateColumn,

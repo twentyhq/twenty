@@ -13,7 +13,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
@@ -29,7 +28,7 @@ export class TwoFactorAuthenticationMethodEntity {
   @Column({ nullable: false, type: 'uuid' })
   userWorkspaceId: string;
 
-  @Field(() => UserEntity, WorkspaceEntity)
+  @Field(() => UserWorkspaceEntity)
   @ManyToOne(
     () => UserWorkspaceEntity,
     (userWorkspace) => userWorkspace.twoFactorAuthenticationMethods,

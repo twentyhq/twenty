@@ -1,6 +1,5 @@
 import { ValidateBy } from 'class-validator';
 import {
-  OneToMany,
   Column,
   CreateDateColumn,
   Entity,
