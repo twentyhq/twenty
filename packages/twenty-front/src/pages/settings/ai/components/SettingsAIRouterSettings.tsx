@@ -31,15 +31,16 @@ export const SettingsAIRouterSettings = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const modelOptions = useAiModelOptions();
-  const routerModel = currentWorkspace?.routerModel || 'auto';
-  const [selectedModel, setSelectedModel] = useState<string>(routerModel);
+  const [selectedModel, setSelectedModel] = useState(
+    currentWorkspace?.routerModel || 'auto',
+  );
 
-  const handleModelChange = async (value: string | number | boolean | null) => {
+  const handleModelChange = async (value: string) => {
     if (!currentWorkspace?.id) {
       return;
     }
 
-    const newValue = value as string;
+    const newValue = value;
     const previousValue = currentWorkspace?.routerModel || 'auto';
     setSelectedModel(newValue);
 
