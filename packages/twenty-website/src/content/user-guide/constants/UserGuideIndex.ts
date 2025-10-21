@@ -5,7 +5,7 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'what-is-twenty' },
       { fileName: 'create-workspace' },
       { fileName: 'getting-around-twenty' },
-      { fileName: 'configure-workspace-in-three-steps' },
+      { fileName: 'configure-your-workspace' },
       { fileName: 'implementation-services' },
       { fileName: 'migrating-from-other-crms' },
       { fileName: 'import-export-data' },
@@ -21,7 +21,7 @@ export const USER_GUIDE_INDEX = {
     'CRM Essentials': [
       { fileName: 'crm-essentials' },
       { fileName: 'contact-and-account-management' },
-      { fileName: 'pipeline'},
+      { fileName: 'pipeline' },
       { fileName: 'view-management' },
       { fileName: 'sales-use-cases' },
     ],
