@@ -54,6 +54,7 @@ describe('Generate Column Definitions', () => {
         type: `"${mockSchemaName}"."_person_status_enum"`,
         isArray: false,
         isNullable: true,
+        isPrimary: false,
         isUnique: false,
         default: 'NULL',
       });
@@ -97,6 +98,7 @@ describe('Generate Column Definitions', () => {
         type: `"${mockSchemaName}"."_person_tags_enum"`,
         isArray: true,
         isNullable: true,
+        isPrimary: false,
         isUnique: false,
         default: 'NULL',
       });
@@ -147,6 +149,7 @@ describe('Generate Column Definitions', () => {
         name: 'companyId',
         type: 'uuid',
         isNullable: true,
+        isPrimary: false,
         isUnique: false,
         default: null,
         isArray: false,
@@ -187,6 +190,7 @@ describe('Generate Column Definitions', () => {
       // All composite columns must inherit parent nullable constraint
       columns.forEach((column) => {
         expect(column.isNullable).toBe(true);
+        expect(column.isPrimary).toBe(false);
         expect(column.isUnique).toBe(false);
         expect(column.default).toBe('NULL');
       });
@@ -219,6 +223,7 @@ describe('Generate Column Definitions', () => {
         name: 'priceAmountMicros',
         type: 'numeric',
         isNullable: true,
+        isPrimary: false,
         isUnique: false,
         default: "'100000000'::numeric",
       });
@@ -227,6 +232,7 @@ describe('Generate Column Definitions', () => {
         name: 'priceCurrencyCode',
         type: 'text',
         isNullable: true,
+        isPrimary: false,
         isUnique: false,
         default: "'USD'::text",
       });
@@ -253,6 +259,7 @@ describe('Generate Column Definitions', () => {
           name: 'description',
           type: 'text',
           isNullable: true,
+          isPrimary: false,
           isUnique: false,
           default: 'NULL',
           isArray: false,
@@ -279,6 +286,7 @@ describe('Generate Column Definitions', () => {
           name: 'isActive',
           type: 'boolean',
           isNullable: true,
+          isPrimary: false,
           isUnique: false,
           default: "'true'::boolean",
           isArray: false,
@@ -306,6 +314,7 @@ describe('Generate Column Definitions', () => {
           name: 'content',
           type: 'text',
           isNullable: true,
+          isPrimary: false,
           isUnique: false,
           default: 'NULL',
           isArray: false,
@@ -331,6 +340,7 @@ describe('Generate Column Definitions', () => {
           name: 'uuid',
           type: 'uuid',
           isNullable: true,
+          isPrimary: false,
           isUnique: false,
           default: 'NULL',
           isArray: false,

@@ -26,7 +26,7 @@ export const getDefaultWidgetData = (graphType: GraphType) => {
         ],
       };
 
-    case GraphType.BAR:
+    case GraphType.VERTICAL_BAR:
       return {
         items: [
           { category: 'Jan', value: 45 },
@@ -39,6 +39,21 @@ export const getDefaultWidgetData = (graphType: GraphType) => {
         keys: ['value'],
         seriesLabels: { value: 'Value' },
         layout: 'vertical' as const,
+      };
+
+    case GraphType.HORIZONTAL_BAR:
+      return {
+        items: [
+          { category: 'Jan', value: 45 },
+          { category: 'Feb', value: 52 },
+          { category: 'Mar', value: 48 },
+          { category: 'Apr', value: 61 },
+          { category: 'May', value: 55 },
+        ],
+        indexBy: 'category',
+        keys: ['value'],
+        seriesLabels: { value: 'Value' },
+        layout: 'horizontal' as const,
       };
 
     case GraphType.LINE:
@@ -111,34 +126,5 @@ export const getDefaultWidgetData = (graphType: GraphType) => {
 
     default:
       return {};
-  }
-};
-
-export const getWidgetTitle = (graphType: GraphType, index: number): string => {
-  const baseNames: Record<GraphType, string> = {
-    [GraphType.NUMBER]: 'Number',
-    [GraphType.GAUGE]: 'Gauge',
-    [GraphType.PIE]: 'Pie Chart',
-    [GraphType.BAR]: 'Bar Chart',
-    [GraphType.LINE]: 'Line Chart',
-  };
-
-  return `${baseNames[graphType] || 'Widget'} ${index + 1}`;
-};
-
-export const getWidgetSize = (graphType: GraphType) => {
-  switch (graphType) {
-    case GraphType.NUMBER:
-      return { w: 3, h: 2 };
-    case GraphType.GAUGE:
-      return { w: 3, h: 3 };
-    case GraphType.PIE:
-      return { w: 4, h: 4 };
-    case GraphType.BAR:
-      return { w: 6, h: 6 };
-    case GraphType.LINE:
-      return { w: 6, h: 10 };
-    default:
-      return { w: 4, h: 4 };
   }
 };

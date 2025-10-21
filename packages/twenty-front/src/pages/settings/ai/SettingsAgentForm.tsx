@@ -29,6 +29,7 @@ import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDet
 import { SettingsAgentHandoffSection } from './components/SettingsAgentHandoffSection';
 import { SettingsAIAgentForm } from './forms/components/SettingsAIAgentForm';
 import { useSettingsAgentFormState } from './hooks/useSettingsAgentFormState';
+import { useState } from 'react';
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -47,8 +48,11 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { openModal } = useModal();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const [isReadonlyMode, setIsReadonlyMode] = useState(false);
 
   const isEditMode = mode === 'edit';
+
+  const isCreateMode = mode === 'create';
 
   const {
     formValues,
@@ -61,10 +65,13 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
   const { data, loading } = useFindOneAgentQuery({
     variables: { id: agentId },
-    skip: !isEditMode || !agentId,
+    skip: isCreateMode || !agentId,
     onCompleted: (data) => {
       const agent = data?.findOneAgent;
       if (isDefined(agent)) {
+        if (isDefined(agent.applicationId)) {
+          setIsReadonlyMode(true);
+        }
         resetForm({
           name: agent.name,
           label: agent.label,
@@ -98,13 +105,17 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
   const isAskAIAgent = agent?.id === currentWorkspace?.defaultAgent?.id;
 
-  if (isEditMode && !loading && !agent) {
+  if (!isCreateMode && !loading && !agent) {
     return null;
   }
 
-  const canSave = validateForm() && !isSubmitting;
+  const canSave = !isReadonlyMode && validateForm() && !isSubmitting;
 
   const handleSave = async () => {
+    if (isReadonlyMode) {
+      return;
+    }
+
     if (!validateForm()) {
       return;
     }
@@ -112,7 +123,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     setIsSubmitting(true);
 
     try {
-      if (!isEditMode) {
+      if (isCreateMode) {
         const input: CreateAgentInput = {
           name: formValues.name,
           label: formValues.label,
@@ -161,12 +172,16 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     }
   };
 
-  const title = isEditMode ? (loading ? t`Agent` : agent?.label) : t`New Agent`;
-  const pageTitle = isEditMode ? t`Edit Agent` : t`New Agent`;
-  const pageDescription = isEditMode
+  const title = !isCreateMode
+    ? loading
+      ? t`Agent`
+      : agent?.label
+    : t`New Agent`;
+  const pageTitle = !isCreateMode ? t`Edit Agent` : t`New Agent`;
+  const pageDescription = !isCreateMode
     ? t`Update agent information`
     : t`Create a new AI agent`;
-  const breadcrumbText = isEditMode
+  const breadcrumbText = !isCreateMode
     ? loading
       ? t`Agent`
       : agent?.label
@@ -177,7 +192,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       <SubMenuTopBarContainer
         title={title}
         actionButton={
-          !isEditMode || agent?.isCustom ? (
+          isCreateMode || (isEditMode && agent?.isCustom) ? (
             <SaveAndCancelButtons
               onSave={handleSave}
               onCancel={() => navigate(SettingsPath.AI)}
@@ -212,23 +227,29 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                     <SettingsAIAgentForm
                       formValues={formValues}
                       onFieldChange={handleFieldChange}
-                      disabled={isEditMode ? !agent?.isCustom : false}
+                      disabled={
+                        isReadonlyMode ||
+                        (isEditMode ? !agent?.isCustom : false)
+                      }
                     />
-                    {isEditMode && agent && formValues.isCustom && (
-                      <Section>
-                        <H2Title
-                          title={t`Danger zone`}
-                          description={t`Delete this agent`}
-                        />
-                        <Button
-                          accent="danger"
-                          variant="secondary"
-                          title={t`Delete Agent`}
-                          Icon={IconTrash}
-                          onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
-                        />
-                      </Section>
-                    )}
+                    {!isReadonlyMode &&
+                      isEditMode &&
+                      agent &&
+                      formValues.isCustom && (
+                        <Section>
+                          <H2Title
+                            title={t`Danger zone`}
+                            description={t`Delete this agent`}
+                          />
+                          <Button
+                            accent="danger"
+                            variant="secondary"
+                            title={t`Delete Agent`}
+                            Icon={IconTrash}
+                            onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
+                          />
+                        </Section>
+                      )}
                   </>
                 )}
               </StyledContentContainer>

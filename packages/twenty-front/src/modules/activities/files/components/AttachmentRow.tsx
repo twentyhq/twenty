@@ -162,7 +162,7 @@ export const AttachmentRow = ({
     >
       <ActivityRow disabled>
         <StyledLeftContent>
-          <FileIcon fileType={attachment.type} />
+          <FileIcon fileCategory={attachment.fileCategory} />
           {isEditing ? (
             <SettingsTextInput
               instanceId={`attachment-${attachment.id}-name`}

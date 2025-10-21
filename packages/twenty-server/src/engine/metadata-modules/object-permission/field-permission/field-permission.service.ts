@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { type ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -183,7 +183,7 @@ export class FieldPermissionService {
     allFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
     objectMetadataMapsById: ObjectMetadataMaps['byId'];
-    rolesPermissions: ObjectsPermissionsByRoleIdDeprecated;
+    rolesPermissions: ObjectsPermissionsByRoleId;
     role: RoleEntity;
   }) {
     const duplicateFieldPermissions = allFieldPermissions.filter(

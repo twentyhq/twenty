@@ -1,5 +1,5 @@
 import {
-  TEST_BAR_CHART_CONFIG_MINIMAL,
+  TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
   TEST_IFRAME_CONFIG,
   TEST_IFRAME_CONFIG_ALTERNATIVE,
   TEST_NUMBER_CHART_CONFIG_MINIMAL,
@@ -215,7 +215,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 2,
                   columnSpan: 3,
                 },
-                configuration: TEST_BAR_CHART_CONFIG_MINIMAL,
+                configuration: TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
               },
               {
                 id: newWidgetId,

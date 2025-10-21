@@ -3,11 +3,10 @@ import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
-import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIcons } from 'twenty-ui/display';
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 
 export type SettingsObjectMetadataItemTableRowProps = {
   action: ReactNode;
@@ -46,7 +45,6 @@ export const SettingsObjectMetadataItemTableRow = ({
 
   const { getIcon } = useIcons();
   const Icon = getIcon(objectMetadataItem.icon);
-  const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
 
   return (
     <StyledObjectTableRow key={objectMetadataItem.namePlural} to={link}>
@@ -63,7 +61,7 @@ export const SettingsObjectMetadataItemTableRow = ({
         </StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>
-        <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
+        <SettingsItemTypeTag item={objectMetadataItem} />
       </TableCell>
       <TableCell align="right">
         {objectMetadataItem.fields.filter((field) => !field.isSystem).length}

@@ -74,6 +74,7 @@ export const SettingsDataModelRelationFieldPreview = ({
 
   const recordId = `${relationTargetObjectNameSingular}-${fieldName}-preview`;
 
+  const isRelation = fieldMetadataItem.type === FieldMetadataType.RELATION;
   const metadata = {
     fieldName,
     objectMetadataNameSingular: CoreObjectNameSingular.Company,
@@ -107,6 +108,11 @@ export const SettingsDataModelRelationFieldPreview = ({
             } satisfies FieldMetadataItemRelation,
           ]
         : [],
+    relationFieldMetadataId: isRelation ? '' : v4(),
+    relationObjectMetadataId: isRelation ? '' : v4(),
+    relationObjectMetadataNamePlural: isRelation
+      ? ''
+      : relationTargetObjectMetadataItem.namePlural,
   };
 
   return (

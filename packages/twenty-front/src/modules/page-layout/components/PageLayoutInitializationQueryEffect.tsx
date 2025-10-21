@@ -1,4 +1,6 @@
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
+import { DEFAULT_PAGE_LAYOUT } from '@/page-layout/constants/DefaultPageLayout';
+import { DEFAULT_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -24,15 +26,20 @@ export const PageLayoutInitializationQueryEffect = ({
 }: PageLayoutInitializationQueryEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
+  const isDefaultLayout = pageLayoutId === DEFAULT_PAGE_LAYOUT_ID;
+
   const { data } = useQuery(FIND_ONE_PAGE_LAYOUT, {
     variables: {
       id: pageLayoutId,
     },
+    skip: isDefaultLayout,
   });
 
-  const pageLayout: PageLayout | undefined = data?.getPageLayout
-    ? transformPageLayout(data.getPageLayout)
-    : undefined;
+  const pageLayout: PageLayout | undefined = isDefaultLayout
+    ? DEFAULT_PAGE_LAYOUT
+    : data?.getPageLayout
+      ? transformPageLayout(data.getPageLayout)
+      : undefined;
 
   const pageLayoutPersistedComponentCallbackState =
     useRecoilComponentCallbackState(pageLayoutPersistedComponentState);

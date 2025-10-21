@@ -1,0 +1,17 @@
+{
+  "name": "twenty-sdk",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-sdk/src",
+  "projectType": "library",
+  "tags": ["scope:sdk"],
+  "targets": {
+    "build": {
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "lint": {
+      "configurations": {
+        "fix": {}
+      }
+    }
+  }
+}

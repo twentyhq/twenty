@@ -1,41 +1,47 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { type BarChartConfiguration, GraphOrderBy } from '~/generated/graphql';
+import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
+import {
+  type AggregateOrderByWithGroupByField,
+  type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForScalarField,
+  type ObjectRecordOrderByWithGroupByDateField,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { type BarChartConfiguration } from '~/generated/graphql';
 import { buildGroupByFieldObject } from './buildGroupByFieldObject';
-
-const _mapOrderByToDirection = (orderByEnum: GraphOrderBy) => {
-  switch (orderByEnum) {
-    case GraphOrderBy.FIELD_ASC:
-      return 'AscNullsLast';
-    case GraphOrderBy.FIELD_DESC:
-      return 'DescNullsLast';
-    case GraphOrderBy.VALUE_ASC:
-      return 'AscNullsLast';
-    case GraphOrderBy.VALUE_DESC:
-      return 'DescNullsLast';
-    default:
-      assertUnreachable(orderByEnum);
-  }
-};
 
 export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
   objectMetadataItem,
   barChartConfiguration,
+  aggregateOperation,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   barChartConfiguration: BarChartConfiguration;
+  aggregateOperation?: string;
 }) => {
+  const groupByFieldXId =
+    barChartConfiguration.primaryAxisGroupByFieldMetadataId;
+
+  const groupByFieldYId =
+    barChartConfiguration.secondaryAxisGroupByFieldMetadataId;
+
+  const groupBySubFieldNameX =
+    barChartConfiguration.primaryAxisGroupBySubFieldName ?? undefined;
+
+  const groupBySubFieldNameY =
+    barChartConfiguration.secondaryAxisGroupBySubFieldName ?? undefined;
+
   const groupByFieldX = objectMetadataItem.fields.find(
-    (field) => field.id === barChartConfiguration.groupByFieldMetadataIdX,
+    (field) => field.id === groupByFieldXId,
   );
 
-  const groupByFieldY = objectMetadataItem.fields.find(
-    (field) => field.id === barChartConfiguration.groupByFieldMetadataIdY,
-  );
+  const groupByFieldY = isDefined(groupByFieldYId)
+    ? objectMetadataItem.fields.find((field) => field.id === groupByFieldYId)
+    : undefined;
 
-  if (!isDefined(groupByFieldX)) {
+  if (!isDefined(groupByFieldX) || !isDefined(groupByFieldXId)) {
     throw new Error(
-      `Field with id ${barChartConfiguration.groupByFieldMetadataIdX} not found in object metadata`,
+      `Field with id ${groupByFieldXId} not found in object metadata`,
     );
   }
 
@@ -46,7 +52,7 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
   groupBy.push(
     buildGroupByFieldObject({
       field: groupByFieldX,
-      subFieldName: barChartConfiguration.groupBySubFieldNameX,
+      subFieldName: groupBySubFieldNameX,
     }),
   );
 
@@ -54,33 +60,47 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
     groupBy.push(
       buildGroupByFieldObject({
         field: groupByFieldY,
-        subFieldName: barChartConfiguration.groupBySubFieldNameY,
+        subFieldName: groupBySubFieldNameY,
       }),
     );
   }
 
-  const orderBy: Array<Record<string, string>> = [];
+  const orderBy: Array<
+    | AggregateOrderByWithGroupByField
+    | ObjectRecordOrderByForScalarField
+    | ObjectRecordOrderByWithGroupByDateField
+    | ObjectRecordOrderByForCompositeField
+  > = [];
 
-  // TODO: Add orderBy back in when the backend is ready
-  // if (isDefined(barChartConfiguration.orderByX)) {
-  //   orderBy.push({
-  //     [groupByFieldX.name]: mapOrderByToDirection(
-  //       barChartConfiguration.orderByX,
-  //     ),
-  //   });
-  // }
-
-  // if (isDefined(groupByFieldY) && isDefined(barChartConfiguration.orderByY)) {
-  //   orderBy.push({
-  //     [groupByFieldY.name]: mapOrderByToDirection(
-  //       barChartConfiguration.orderByY,
-  //     ),
-  //   });
-  // }
+  if (isDefined(barChartConfiguration.primaryAxisOrderBy)) {
+    orderBy.push(
+      getGroupByOrderBy({
+        graphOrderBy: barChartConfiguration.primaryAxisOrderBy,
+        groupByField: groupByFieldX,
+        groupBySubFieldName:
+          barChartConfiguration.primaryAxisGroupBySubFieldName,
+        aggregateOperation,
+      }),
+    );
+  }
+  if (
+    isDefined(groupByFieldY) &&
+    isDefined(barChartConfiguration.secondaryAxisOrderBy)
+  ) {
+    orderBy.push(
+      getGroupByOrderBy({
+        graphOrderBy: barChartConfiguration.secondaryAxisOrderBy,
+        groupByField: groupByFieldY,
+        groupBySubFieldName:
+          barChartConfiguration.secondaryAxisGroupBySubFieldName,
+        aggregateOperation,
+      }),
+    );
+  }
 
   return {
     groupBy,
-    // TODO: Add filters
     ...(orderBy.length > 0 && { orderBy }),
+    ...(barChartConfiguration.omitNullValues ? { omitNullValues: true } : {}),
   };
 };

@@ -1,12 +1,15 @@
 import {
-  INVALID_BAR_CHART_CONFIG_MISSING_GROUP_BY,
+  INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
+  INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
   INVALID_IFRAME_CONFIG_BAD_URL,
   INVALID_IFRAME_CONFIG_EMPTY_URL,
   INVALID_IFRAME_CONFIG_MISSING_URL,
   INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
   INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
-  TEST_BAR_CHART_CONFIG,
-  TEST_BAR_CHART_CONFIG_MINIMAL,
+  TEST_VERTICAL_BAR_CHART_CONFIG,
+  TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
+  TEST_HORIZONTAL_BAR_CHART_CONFIG,
+  TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
   TEST_GAUGE_CHART_CONFIG,
   TEST_GAUGE_CHART_CONFIG_MINIMAL,
   TEST_IFRAME_CONFIG,
@@ -99,32 +102,61 @@ describe('validateAndTransformWidgetConfiguration', () => {
       });
     });
 
-    describe('BAR graph', () => {
-      it('should validate full bar graph configuration', () => {
+    describe('VERTICAL_BAR graph', () => {
+      it('should validate full vertical bar graph configuration', () => {
         const result = validateAndTransformWidgetConfiguration(
           WidgetType.GRAPH,
-          TEST_BAR_CHART_CONFIG,
+          TEST_VERTICAL_BAR_CHART_CONFIG,
         );
 
-        expect(result).toMatchObject(TEST_BAR_CHART_CONFIG);
+        expect(result).toMatchObject(TEST_VERTICAL_BAR_CHART_CONFIG);
       });
 
-      it('should validate minimal bar graph configuration', () => {
+      it('should validate minimal vertical bar graph configuration', () => {
         const result = validateAndTransformWidgetConfiguration(
           WidgetType.GRAPH,
-          TEST_BAR_CHART_CONFIG_MINIMAL,
+          TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
         );
 
-        expect(result).toMatchObject(TEST_BAR_CHART_CONFIG_MINIMAL);
+        expect(result).toMatchObject(TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL);
       });
 
-      it('should throw error for partial bar graph configuration with missing required fields', () => {
+      it('should throw error for partial vertical bar graph configuration with missing required fields', () => {
         expect(() =>
           validateAndTransformWidgetConfiguration(
             WidgetType.GRAPH,
-            INVALID_BAR_CHART_CONFIG_MISSING_GROUP_BY,
+            INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
           ),
-        ).toThrow(/groupByFieldMetadataIdX/);
+        ).toThrow(/primaryAxisGroupByFieldMetadataId/);
+      });
+    });
+
+    describe('HORIZONTAL_BAR graph', () => {
+      it('should validate full horizontal bar graph configuration', () => {
+        const result = validateAndTransformWidgetConfiguration(
+          WidgetType.GRAPH,
+          TEST_HORIZONTAL_BAR_CHART_CONFIG,
+        );
+
+        expect(result).toMatchObject(TEST_HORIZONTAL_BAR_CHART_CONFIG);
+      });
+
+      it('should validate minimal horizontal bar graph configuration', () => {
+        const result = validateAndTransformWidgetConfiguration(
+          WidgetType.GRAPH,
+          TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
+        );
+
+        expect(result).toMatchObject(TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL);
+      });
+
+      it('should throw error for partial horizontal bar graph configuration with missing required fields', () => {
+        expect(() =>
+          validateAndTransformWidgetConfiguration(
+            WidgetType.GRAPH,
+            INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
+          ),
+        ).toThrow(/primaryAxisGroupByFieldMetadataId/);
       });
     });
 

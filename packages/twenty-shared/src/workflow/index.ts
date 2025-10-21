@@ -43,6 +43,8 @@ export { workflowUpdateRecordActionSchema } from './schemas/update-record-action
 export { workflowUpdateRecordActionSettingsSchema } from './schemas/update-record-action-settings-schema';
 export { workflowWebhookTriggerSchema } from './schemas/webhook-trigger-schema';
 export { workflowActionSchema } from './schemas/workflow-action-schema';
+export { workflowDelayActionSchema } from './schemas/workflow-delay-action-schema';
+export { workflowDelayActionSettingsSchema } from './schemas/workflow-delay-action-settings-schema';
 export { workflowRunSchema } from './schemas/workflow-run-schema';
 export { workflowRunStateSchema } from './schemas/workflow-run-state-schema';
 export { workflowRunStateStepInfoSchema } from './schemas/workflow-run-state-step-info-schema';
@@ -60,6 +62,15 @@ export { canObjectBeManagedByWorkflow } from './utils/canObjectBeManagedByWorkfl
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
+export type {
+  LeafType,
+  NodeType,
+  Leaf,
+  Node,
+  BaseOutputSchemaV2,
+} from './workflow-schema/types/base-output-schema.type';
+export { buildOutputSchemaFromValue } from './workflow-schema/utils/buildOutputSchemaFromValue';
+export { navigateOutputSchemaProperty } from './workflow-schema/utils/navigateOutputSchemaProperty';
 export type {
   GlobalAvailability,
   SingleRecordAvailability,

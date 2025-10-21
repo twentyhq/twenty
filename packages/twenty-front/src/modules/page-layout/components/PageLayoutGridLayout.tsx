@@ -1,5 +1,6 @@
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
+import { PageLayoutGridResizeHandle } from '@/page-layout/components/PageLayoutGridResizeHandle';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
@@ -12,9 +13,9 @@ import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useRef } from 'react';
 import {
@@ -23,6 +24,7 @@ import {
   type ResponsiveProps,
 } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledGridContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -54,7 +56,21 @@ const ResponsiveGridLayout = WidthProvider(
   Responsive,
 ) as React.ComponentType<ExtendedResponsiveProps>;
 
-export const PageLayoutGridLayout = () => {
+const StyledVerticalListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+type PageLayoutGridLayoutProps = {
+  tabId: string;
+};
+
+export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
+  const isRecordPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
+  );
+
   const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
     pageLayoutCurrentBreakpointComponentState,
   );
@@ -71,24 +87,34 @@ export const PageLayoutGridLayout = () => {
     pageLayoutCurrentLayoutsComponentState,
   );
 
-  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
-
   const { currentPageLayout } = useCurrentPageLayout();
 
-  if (!isDefined(activeTabId) || !isDefined(currentPageLayout)) {
+  const activeTab = currentPageLayout?.tabs.find((tab) => tab.id === tabId);
+
+  if (!isDefined(currentPageLayout) || !isDefined(activeTab)) {
     return null;
   }
 
-  const activeTabWidgets = currentPageLayout.tabs.find(
-    (tab) => tab.id === activeTabId,
-  )?.widgets;
+  const activeTabWidgets = activeTab.widgets;
 
   const isLayoutEmpty =
     !isDefined(activeTabWidgets) || activeTabWidgets.length === 0;
 
   const layouts = isLayoutEmpty
     ? EMPTY_LAYOUT
-    : pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT;
+    : (pageLayoutCurrentLayouts[tabId] ?? EMPTY_LAYOUT);
+
+  const Widgets = isLayoutEmpty ? (
+    <div key="empty-placeholder" data-select-disable="true">
+      <WidgetPlaceholder />
+    </div>
+  ) : (
+    activeTabWidgets?.map((widget) => (
+      <div key={widget.id} data-select-disable="true">
+        <WidgetRenderer widget={widget} />
+      </div>
+    ))
+  );
 
   return (
     <>
@@ -101,39 +127,42 @@ export const PageLayoutGridLayout = () => {
             />
           </>
         )}
-        <ResponsiveGridLayout
-          className="layout"
-          layouts={layouts}
-          breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
-          cols={PAGE_LAYOUT_CONFIG.columns}
-          rowHeight={55}
-          maxCols={12}
-          containerPadding={[0, 0]}
-          margin={[8, 8]}
-          isDraggable={isPageLayoutInEditMode}
-          isResizable={isPageLayoutInEditMode}
-          draggableHandle=".drag-handle"
-          compactType="vertical"
-          preventCollision={false}
-          onLayoutChange={handleLayoutChange}
-          onBreakpointChange={(newBreakpoint) =>
-            setPageLayoutCurrentBreakpoint(
-              newBreakpoint as PageLayoutBreakpoint,
-            )
-          }
-        >
-          {isLayoutEmpty ? (
-            <div key="empty-placeholder" data-select-disable="true">
-              <WidgetPlaceholder />
-            </div>
-          ) : (
-            activeTabWidgets?.map((widget) => (
-              <div key={widget.id} data-select-disable="true">
-                <WidgetRenderer widget={widget} />
-              </div>
-            ))
-          )}
-        </ResponsiveGridLayout>
+
+        {isRecordPageEnabled &&
+        !isPageLayoutInEditMode &&
+        activeTab.layoutMode === 'vertical-list' ? (
+          <StyledVerticalListContainer>{Widgets}</StyledVerticalListContainer>
+        ) : (
+          <ResponsiveGridLayout
+            className="layout"
+            layouts={layouts}
+            breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
+            cols={PAGE_LAYOUT_CONFIG.columns}
+            rowHeight={55}
+            maxCols={12}
+            containerPadding={[0, 0]}
+            margin={[8, 8]}
+            isDraggable={isPageLayoutInEditMode}
+            isResizable={isPageLayoutInEditMode}
+            draggableHandle=".drag-handle"
+            compactType="vertical"
+            preventCollision={false}
+            resizeHandle={
+              isPageLayoutInEditMode ? (
+                <PageLayoutGridResizeHandle />
+              ) : undefined
+            }
+            resizeHandles={['se']}
+            onLayoutChange={handleLayoutChange}
+            onBreakpointChange={(newBreakpoint) =>
+              setPageLayoutCurrentBreakpoint(
+                newBreakpoint as PageLayoutBreakpoint,
+              )
+            }
+          >
+            {Widgets}
+          </ResponsiveGridLayout>
+        )}
       </StyledGridContainer>
     </>
   );

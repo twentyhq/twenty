@@ -21,7 +21,7 @@ export class AgentDTO {
   id: string;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  standardId?: string;
+  standardId: string | null;
 
   @IsString()
   @Field()
@@ -59,6 +59,9 @@ export class AgentDTO {
 
   @HideField()
   workspaceId: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId?: string;
 
   @IsDateString()
   @Field()

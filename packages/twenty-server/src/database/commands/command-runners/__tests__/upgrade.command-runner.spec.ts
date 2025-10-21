@@ -160,6 +160,11 @@ describe('UpgradeCommandRunner', () => {
     });
 
     upgradeCommandRunner = module.get(commandRunner);
+
+    jest.spyOn(upgradeCommandRunner['logger'], 'log').mockImplementation();
+    jest.spyOn(upgradeCommandRunner['logger'], 'error').mockImplementation();
+    jest.spyOn(upgradeCommandRunner['logger'], 'warn').mockImplementation();
+
     runBeforeSyncMetadataSpy = jest.spyOn(
       upgradeCommandRunner,
       'runBeforeSyncMetadata',

@@ -6,8 +6,7 @@ import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/c
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { INFORMATION_BANNER_HEIGHT } from '@/information-banner/constants/InformationBannerHeight';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
-import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
+import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutDispatcher';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -89,15 +88,12 @@ export const CommandMenuRecordPage = () => {
                 recordId: objectRecordId,
               }}
             >
-              <RecordShowEffect
-                objectNameSingular={objectNameSingular}
-                recordId={objectRecordId}
-              />
-              <RecordShowContainer
-                objectNameSingular={objectNameSingular}
-                objectRecordId={objectRecordId}
-                loading={false}
-                isInRightDrawer={true}
+              <PageLayoutDispatcher
+                targetRecordIdentifier={{
+                  id: objectRecordId,
+                  targetObjectNameSingular: objectNameSingular,
+                }}
+                isInRightDrawer
               />
             </TimelineActivityContext.Provider>
           </StyledRightDrawerRecord>

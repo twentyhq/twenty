@@ -17,10 +17,8 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
-import {
-  RunWorkflowJob,
-  RunWorkflowJobData,
-} from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -176,7 +174,7 @@ export class WorkflowRunnerWorkspaceService {
     });
   }
 
-  private async enqueueWorkflowRun(
+  async enqueueWorkflowRun(
     workspaceId: string,
     workflowRunId: string,
     lastExecutedStepId?: string,
