@@ -171,13 +171,15 @@ export class SSOService {
 
   private isOIDCIdentityProvider(
     identityProvider: WorkspaceSSOIdentityProviderEntity,
-  ): identityProvider is OIDCConfiguration & WorkspaceSSOIdentityProviderEntity {
+  ): identityProvider is OIDCConfiguration &
+    WorkspaceSSOIdentityProviderEntity {
     return identityProvider.type === IdentityProviderType.OIDC;
   }
 
   isSAMLIdentityProvider(
     identityProvider: WorkspaceSSOIdentityProviderEntity,
-  ): identityProvider is SAMLConfiguration & WorkspaceSSOIdentityProviderEntity {
+  ): identityProvider is SAMLConfiguration &
+    WorkspaceSSOIdentityProviderEntity {
     return identityProvider.type === IdentityProviderType.SAML;
   }
 

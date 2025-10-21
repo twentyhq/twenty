@@ -199,8 +199,7 @@ describe('WorkspaceService', () => {
       jest
         .spyOn(userWorkspaceRepository, 'find')
         .mockResolvedValue([
-          { id: 'remaining-user-workspace-id' } as UserEntity,
-          WorkspaceEntity,
+          { id: 'remaining-user-workspace-id' } as UserWorkspaceEntity,
         ]);
 
       await service.handleRemoveWorkspaceMember(

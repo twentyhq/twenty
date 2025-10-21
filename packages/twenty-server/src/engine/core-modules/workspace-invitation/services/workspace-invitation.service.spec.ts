@@ -17,7 +17,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { WorkspaceInvitationService } from './workspace-invitation.service';
 
@@ -200,8 +200,7 @@ describe('WorkspaceInvitationService', () => {
       const result = await service.sendInvitations(
         emails,
         workspace,
-        sender as WorkspaceEntity,
-        WorkspaceMemberWorkspaceEntity,
+        sender as WorkspaceMemberWorkspaceEntity,
       );
 
       expect(result.success).toBe(true);

@@ -170,7 +170,7 @@ describe('AccessTokenService', () => {
       } as WorkspaceEntity;
       const mockUserWorkspace = {
         id: impersonatedUserWorkspaceId,
-      } as UserEntity;
+      } as UserWorkspaceEntity;
       const mockWorkspaceMember = { id: randomUUID() };
       const mockToken = 'mock-token';
 

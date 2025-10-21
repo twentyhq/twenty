@@ -15,7 +15,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
 
@@ -142,8 +142,7 @@ describe('ApprovedAccessDomainService', () => {
           { id: 'workspace-id' } as WorkspaceEntity,
           {
             userEmail: 'user@gmail.com',
-          } as WorkspaceEntity,
-          WorkspaceMemberWorkspaceEntity,
+          } as WorkspaceMemberWorkspaceEntity,
           'user@gmail.com',
         ),
       ).rejects.toThrowError(
@@ -276,7 +275,7 @@ describe('ApprovedAccessDomainService', () => {
         userEmail: 'sender@example.com',
         name: { firstName: 'John', lastName: 'Doe' },
         locale: 'en',
-      } as WorkspaceEntity;
+      } as WorkspaceMemberWorkspaceEntity;
       const workspace = {
         displayName: 'Test Workspace',
         logo: '/logo.png',
