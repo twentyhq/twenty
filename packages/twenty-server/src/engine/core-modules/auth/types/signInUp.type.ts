@@ -1,9 +1,9 @@
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
-import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export type SocialSSOSignInUpActionType =
   | 'create-new-workspace'

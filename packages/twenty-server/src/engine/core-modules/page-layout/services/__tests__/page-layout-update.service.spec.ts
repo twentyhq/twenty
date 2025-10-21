@@ -13,7 +13,7 @@ import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/servic
 import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('PageLayoutUpdateService', () => {
   let pageLayoutUpdateService: PageLayoutUpdateService;

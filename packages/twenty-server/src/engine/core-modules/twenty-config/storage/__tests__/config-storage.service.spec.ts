@@ -19,8 +19,8 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 jest.mock('src/engine/core-modules/auth/auth.util', () => ({

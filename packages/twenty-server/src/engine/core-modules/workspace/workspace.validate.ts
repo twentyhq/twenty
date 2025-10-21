@@ -3,7 +3,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const isAuthEnabledOrThrow = (
   provider: AuthProviderEnum,

@@ -114,7 +114,7 @@ export class UserResolver {
   @Query(() => UserEntity)
   @UseGuards(UserAuthGuard)
   async currentUser(
-    @AuthUser() { id: userId }: User,
+    @AuthUser() { id: userId }: UserEntity,
     @AuthWorkspace({ allowUndefined: true }) workspace: WorkspaceEntity,
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
@@ -380,7 +380,7 @@ export class UserResolver {
 
   @Mutation(() => UserEntity)
   @UseGuards(UserAuthGuard)
-  async deleteUser(@AuthUser() { id: userId }: User) {
+  async deleteUser(@AuthUser() { id: userId }: UserEntity) {
     return this.userService.deleteUser(userId);
   }
 

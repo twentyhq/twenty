@@ -9,7 +9,7 @@ import {
   EmailingDomainStatus,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class EmailingDomainService {

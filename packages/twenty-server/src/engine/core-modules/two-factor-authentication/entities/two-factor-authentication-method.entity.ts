@@ -1,3 +1,4 @@
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';

@@ -15,7 +15,7 @@ import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-a
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import {
   TwoFactorAuthenticationException,
@@ -149,7 +149,7 @@ export class TwoFactorAuthenticationService {
   }
 
   async validateStrategy(
-    userId: User['id'],
+    userId: UserEntity['id'],
     token: string,
     workspaceId: WorkspaceEntity['id'],
     twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy,
@@ -207,7 +207,7 @@ export class TwoFactorAuthenticationService {
   }
 
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
-    userId: User['id'],
+    userId: UserEntity['id'],
     token: string,
     workspaceId: WorkspaceEntity['id'],
   ) {

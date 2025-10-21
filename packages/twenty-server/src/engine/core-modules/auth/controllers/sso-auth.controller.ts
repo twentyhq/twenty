@@ -38,7 +38,7 @@ import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/ser
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth')
