@@ -1,4 +1,4 @@
-type ObjectOptions = {
+type ObjectMetadataOptions = {
   universalIdentifier: string;
   nameSingular: string;
   namePlural: string;
@@ -8,6 +8,6 @@ type ObjectOptions = {
   icon?: string;
 };
 
-export const Object = (_: ObjectOptions): ClassDecorator => {
-  return (_) => {};
+export const ObjectMetadata = (_: ObjectMetadataOptions): ClassDecorator => {
+  return () => {};
 };

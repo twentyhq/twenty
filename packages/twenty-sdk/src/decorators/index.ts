@@ -1,1 +1,1 @@
-export { Object } from './object.decorator';
+export { ObjectMetadata } from './object-metadata.decorator';
