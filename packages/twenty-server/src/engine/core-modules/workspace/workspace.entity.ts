@@ -246,7 +246,7 @@ export class Workspace {
   @Column({ type: 'varchar', nullable: true })
   version: string | null;
 
-  @Field(() => String, { nullable: true })
-  @Column({ type: 'varchar', nullable: true, default: 'auto' })
+  @Field(() => String, { nullable: false })
+  @Column({ type: 'varchar', nullable: false, default: 'auto' })
   routerModel: ModelId;
 }
