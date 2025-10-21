@@ -6,12 +6,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { IconCopyPlus, IconPencil } from 'twenty-ui/display';
+import { IconCopyPlus, IconPencil, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
@@ -33,6 +34,7 @@ export const WorkflowStepFooter = ({
     openWorkflowEditStepTypeInCommandMenu,
     openWorkflowTriggerTypeInCommandMenu,
   } = useWorkflowCommandMenu();
+  const { deleteStep } = useDeleteStep();
 
   const OptionsDropdown = (
     <Dropdown
@@ -75,6 +77,14 @@ export const WorkflowStepFooter = ({
                   LeftIcon={IconCopyPlus}
                 />
               )}
+              <MenuItem
+                onClick={() => {
+                  closeDropdown(dropdownId);
+                  deleteStep(stepId);
+                }}
+                text={t`Delete node`}
+                LeftIcon={IconTrash}
+              />
             </SelectableList>
           </DropdownMenuItemsContainer>
         </DropdownContent>
