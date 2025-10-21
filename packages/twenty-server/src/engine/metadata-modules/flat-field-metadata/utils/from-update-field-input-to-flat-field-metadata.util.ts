@@ -19,6 +19,7 @@ import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import {
+  FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS,
   type FlatFieldMetadataUpdateSideEffects,
   handleFlatFieldMetadataUpdateSideEffect,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-flat-field-metadata-update-side-effect.util';
@@ -34,6 +35,8 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   | 'flatFieldMetadataMaps'
   | 'flatViewFilterMaps'
   | 'flatViewGroupMaps'
+  | 'flatViewMaps'
+  | 'flatViewFieldMaps'
 >;
 
 type FlatFieldMetadataAndIndexToUpdate = {
@@ -46,6 +49,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   updateFieldInput: rawUpdateFieldInput,
   flatViewFilterMaps,
   flatViewGroupMaps,
+  flatViewMaps,
+  flatViewFieldMaps,
 }: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadataAndIndexToUpdate> => {
   const updateFieldInputInformalProperties =
     extractAndSanitizeObjectStringFields(rawUpdateFieldInput, [
@@ -114,6 +119,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     return {
       status: 'success',
       result: {
+        flatViewsToUpdate: [],
+        flatViewsToDelete: [],
         flatViewGroupsToCreate: [],
         flatViewGroupsToDelete: [],
         flatViewGroupsToUpdate: [],
@@ -123,6 +130,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
         flatIndexMetadatasToCreate: [],
         flatViewFiltersToDelete: [],
         flatViewFiltersToUpdate: [],
+        flatViewFieldsToDelete: [],
       },
     };
   }
@@ -152,15 +160,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   ];
 
   const initialAccumulator: FlatFieldMetadataAndIndexToUpdate = {
+    ...structuredClone(FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS),
     flatFieldMetadatasToUpdate: [],
-    flatIndexMetadatasToUpdate: [],
-    flatViewFiltersToDelete: [],
-    flatViewFiltersToUpdate: [],
-    flatViewGroupsToCreate: [],
-    flatViewGroupsToDelete: [],
-    flatIndexMetadatasToCreate: [],
-    flatIndexMetadatasToDelete: [],
-    flatViewGroupsToUpdate: [],
   };
 
   updatedEditableFieldProperties.options = !isDefined(
@@ -190,6 +191,9 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           flatViewFiltersToUpdate,
           flatIndexMetadatasToCreate,
           flatIndexMetadatasToDelete,
+          flatViewsToDelete,
+          flatViewFieldsToDelete,
+          flatViewsToUpdate,
         } = handleFlatFieldMetadataUpdateSideEffect({
           flatViewFilterMaps,
           flatViewGroupMaps,
@@ -198,6 +202,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           flatFieldMetadataMaps,
           flatIndexMaps,
           toFlatFieldMetadata,
+          flatViewMaps,
+          flatViewFieldMaps,
         });
 
         return {
@@ -236,6 +242,18 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           flatIndexMetadatasToCreate: [
             ...accumulator.flatIndexMetadatasToCreate,
             ...flatIndexMetadatasToCreate,
+          ],
+          flatViewsToDelete: [
+            ...accumulator.flatViewsToDelete,
+            ...flatViewsToDelete,
+          ],
+          flatViewFieldsToDelete: [
+            ...accumulator.flatViewFieldsToDelete,
+            ...flatViewFieldsToDelete,
+          ],
+          flatViewsToUpdate: [
+            ...accumulator.flatViewsToUpdate,
+            ...flatViewsToUpdate,
           ],
         };
       },

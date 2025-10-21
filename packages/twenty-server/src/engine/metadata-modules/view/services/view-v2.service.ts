@@ -31,13 +31,20 @@ export class ViewV2Service {
     createViewInput: CreateViewInput;
     workspaceId: string;
   }): Promise<ViewDTO> {
-    const { flatObjectMetadataMaps, flatViewMaps: existingFlatViewMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatViewMaps'],
-        },
-      );
+    const {
+      flatObjectMetadataMaps,
+      flatViewMaps: existingFlatViewMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatObjectMetadataMaps',
+          'flatViewMaps',
+          'flatFieldMetadataMaps',
+        ],
+      },
+    );
 
     const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
       createViewInput,
@@ -57,6 +64,7 @@ export class ViewV2Service {
           },
           dependencyAllFlatEntityMaps: {
             flatObjectMetadataMaps: flatObjectMetadataMaps,
+            flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -93,11 +101,14 @@ export class ViewV2Service {
     updateViewInput: UpdateViewInput;
     workspaceId: string;
   }): Promise<ViewDTO> {
-    const { flatViewMaps: existingFlatViewMaps } =
+    const {
+      flatViewMaps: existingFlatViewMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewMaps'],
+          flatMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
         },
       );
 
@@ -117,6 +128,9 @@ export class ViewV2Service {
               flatEntityToDelete: [],
               flatEntityToUpdate: [flatViewFromUpdateInput],
             }),
+          },
+          dependencyAllFlatEntityMaps: {
+            flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -153,11 +167,14 @@ export class ViewV2Service {
     deleteViewInput: DeleteViewInput;
     workspaceId: string;
   }): Promise<ViewDTO> {
-    const { flatViewMaps: existingFlatViewMaps } =
+    const {
+      flatViewMaps: existingFlatViewMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewMaps'],
+          flatMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
         },
       );
 
@@ -177,6 +194,9 @@ export class ViewV2Service {
               flatEntityToDelete: [],
               flatEntityToUpdate: [optimisticallyUpdatedFlatViewWithDeletedAt],
             }),
+          },
+          dependencyAllFlatEntityMaps: {
+            flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -213,11 +233,14 @@ export class ViewV2Service {
     destroyViewInput: DestroyViewInput;
     workspaceId: string;
   }): Promise<ViewDTO> {
-    const { flatViewMaps: existingFlatViewMaps } =
+    const {
+      flatViewMaps: existingFlatViewMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewMaps'],
+          flatMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
         },
       );
 
@@ -242,6 +265,9 @@ export class ViewV2Service {
             inferDeletionFromMissingEntities: {
               view: true,
             },
+          },
+          dependencyAllFlatEntityMaps: {
+            flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
           },
           workspaceId,
         },

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -13,13 +13,13 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
-import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.util';
 import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.util';
 
 @Module({
   imports: [
     UserWorkspaceModule,
-    DomainManagerModule,
+    WorkspaceDomainsModule,
     MetricsModule,
     TokenModule,
     JwtModule,

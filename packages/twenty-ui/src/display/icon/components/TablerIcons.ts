@@ -194,6 +194,7 @@ export {
   IconHistory,
   IconHistoryToggle,
   IconHome,
+  IconHourglassHigh,
   IconHours24,
   IconHttpGet,
   IconHttpPost,

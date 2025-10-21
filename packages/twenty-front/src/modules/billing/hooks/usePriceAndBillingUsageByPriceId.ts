@@ -1,9 +1,9 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
-  type BillingPriceLicensedDto,
-  type BillingPriceMeteredDto,
+  type BillingPriceLicensed,
+  type BillingPriceMetered,
   BillingUsageType,
 } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 import { useAllBillingPrices } from './useAllBillingPrices';
 
 export const usePriceAndBillingUsageByPriceId = () => {
@@ -13,18 +13,18 @@ export const usePriceAndBillingUsageByPriceId = () => {
     priceId: string,
   ):
     | {
-        price: BillingPriceLicensedDto;
+        price: BillingPriceLicensed;
         billingUsage: BillingUsageType.LICENSED;
       }
     | {
-        price: BillingPriceMeteredDto;
+        price: BillingPriceMetered;
         billingUsage: BillingUsageType.METERED;
       } => {
     const licensed = allBillingPrices.find(
       (p) =>
         p.priceUsageType === BillingUsageType.LICENSED &&
         p.stripePriceId === priceId,
-    ) as BillingPriceLicensedDto | undefined;
+    ) as BillingPriceLicensed | undefined;
 
     if (isDefined(licensed))
       return { price: licensed, billingUsage: BillingUsageType.LICENSED };
@@ -33,7 +33,7 @@ export const usePriceAndBillingUsageByPriceId = () => {
       (p) =>
         p.priceUsageType === BillingUsageType.METERED &&
         p.stripePriceId === priceId,
-    ) as BillingPriceMeteredDto | undefined;
+    ) as BillingPriceMetered | undefined;
     if (isDefined(metered))
       return { price: metered, billingUsage: BillingUsageType.METERED };
 

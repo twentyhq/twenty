@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
@@ -68,7 +68,7 @@ import { AgentActorContextService } from './services/agent-actor-context.service
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
-    DomainManagerModule,
+    WorkspaceDomainsModule,
     WorkflowToolsModule,
     UserWorkspaceModule,
     UserRoleModule,

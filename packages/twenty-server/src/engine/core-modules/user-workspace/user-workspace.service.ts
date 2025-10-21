@@ -16,7 +16,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -43,7 +43,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -384,7 +384,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return {
       id: workspace.id,
       displayName: workspace.displayName,
-      workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+      workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       logo: workspace.logo
         ? this.fileService.signFileUrl({
             url: workspace.logo,

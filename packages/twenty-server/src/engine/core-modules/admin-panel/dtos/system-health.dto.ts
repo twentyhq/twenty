@@ -3,8 +3,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 
-@ObjectType()
-export class SystemHealthService {
+@ObjectType('SystemHealthService')
+export class SystemHealthServiceDTO {
   @Field(() => HealthIndicatorId)
   id: HealthIndicatorId;
 
@@ -15,8 +15,8 @@ export class SystemHealthService {
   status: AdminPanelHealthServiceStatus;
 }
 
-@ObjectType()
-export class SystemHealth {
-  @Field(() => [SystemHealthService])
-  services: SystemHealthService[];
+@ObjectType('SystemHealth')
+export class SystemHealthDTO {
+  @Field(() => [SystemHealthServiceDTO])
+  services: SystemHealthServiceDTO[];
 }

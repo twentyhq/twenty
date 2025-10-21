@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
@@ -14,7 +14,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super({
       prompt: 'select_account',
@@ -41,7 +41,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+        this.workspaceDomainsService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
           workspace,
         ),
       );

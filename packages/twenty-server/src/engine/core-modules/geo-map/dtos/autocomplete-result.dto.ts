@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class AutocompleteResultDto {
+@ObjectType('AutocompleteResult')
+export class AutocompleteResultDTO {
   @Field()
   text: string;
 

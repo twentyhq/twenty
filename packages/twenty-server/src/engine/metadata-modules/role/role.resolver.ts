@@ -16,7 +16,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -79,7 +79,7 @@ export class RoleResolver {
     return this.roleService.getWorkspaceRoles(workspace.id);
   }
 
-  @Mutation(() => WorkspaceMember)
+  @Mutation(() => WorkspaceMemberDTO)
   @UseGuards(UserAuthGuard)
   async updateWorkspaceMemberRole(
     @AuthWorkspace() workspace: Workspace,
@@ -88,7 +88,7 @@ export class RoleResolver {
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
     @AuthWorkspaceMemberId()
     updatorWorkspaceMemberId: string,
-  ): Promise<WorkspaceMember> {
+  ): Promise<WorkspaceMemberDTO> {
     if (updatorWorkspaceMemberId === workspaceMemberId) {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
@@ -131,7 +131,7 @@ export class RoleResolver {
       ...workspaceMember,
       userWorkspaceId: userWorkspace.id,
       roles,
-    } as WorkspaceMember;
+    } as WorkspaceMemberDTO;
   }
 
   @Mutation(() => RoleDTO)
@@ -237,7 +237,7 @@ export class RoleResolver {
     return true;
   }
 
-  @ResolveField('workspaceMembers', () => [WorkspaceMember])
+  @ResolveField('workspaceMembers', () => [WorkspaceMemberDTO])
   async getWorkspaceMembersAssignedToRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: Workspace,

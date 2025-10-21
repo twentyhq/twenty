@@ -84,6 +84,7 @@ export class WorkflowSchemaWorkspaceService {
       case WorkflowActionType.CREATE_RECORD:
       case WorkflowActionType.UPDATE_RECORD:
       case WorkflowActionType.DELETE_RECORD:
+      case WorkflowActionType.UPSERT_RECORD:
         return this.computeRecordOutputSchema({
           objectType: step.settings.input.objectName,
           workspaceId,

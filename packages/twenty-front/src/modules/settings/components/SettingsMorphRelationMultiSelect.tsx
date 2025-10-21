@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { plural } from '@lingui/core/macro';
 import { useMemo, useRef, useState, type MouseEvent } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -166,7 +167,14 @@ export const SettingsMorphRelationMultiSelect = ({
         <MultiSelectControl
           selectedOptions={selectedOptions}
           fixedIcon={selectedOptions.length < 2 ? undefined : IconBox}
-          fixedText={selectedOptions.length < 2 ? undefined : 'Object'}
+          fixedText={
+            selectedOptions.length < 2
+              ? undefined
+              : plural(selectedOptions.length, {
+                  one: `# Object`,
+                  other: `# Objects`,
+                })
+          }
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
           hasRightElement={hasRightElement}
@@ -181,7 +189,14 @@ export const SettingsMorphRelationMultiSelect = ({
             <MultiSelectControl
               selectedOptions={selectedOptions}
               fixedIcon={selectedOptions.length < 2 ? undefined : IconBox}
-              fixedText={selectedOptions.length < 2 ? undefined : 'Object'}
+              fixedText={
+                selectedOptions.length < 2
+                  ? undefined
+                  : plural(selectedOptions.length, {
+                      one: `# Object`,
+                      other: `# Objects`,
+                    })
+              }
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}

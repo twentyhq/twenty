@@ -3,6 +3,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import graphqlTypeJson from 'graphql-type-json';
 import Stripe from 'stripe';
 import {
   Column,
@@ -16,16 +17,15 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import graphqlTypeJson from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
 import { BillingSubscriptionItemDTO } from 'src/engine/core-modules/billing/dtos/outputs/billing-subscription-item.output';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingSubscriptionSchedulePhase } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
 
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
@@ -122,9 +122,9 @@ export class BillingSubscription {
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: Stripe.Metadata;
 
-  @Field(() => [BillingSubscriptionSchedulePhase])
+  @Field(() => [BillingSubscriptionSchedulePhaseDTO])
   @Column({ nullable: false, type: 'jsonb', default: [] })
-  phases: Array<BillingSubscriptionSchedulePhase>;
+  phases: Array<BillingSubscriptionSchedulePhaseDTO>;
 
   @Column({ nullable: true, type: 'timestamptz' })
   cancelAt: Date | null;

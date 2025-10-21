@@ -105,6 +105,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
     "flatFieldMetadatas": [
       {
         "applicationId": null,
+        "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
         "description": "new field description",
@@ -117,6 +118,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isSystem": false,
         "isUIReadOnly": false,
         "isUnique": null,
+        "kanbanAggregateOperationViewIds": [],
         "label": "newFieldLabel",
         "morphId": Any<String>,
         "name": "newFieldPets",
@@ -139,6 +141,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationId": null,
+        "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
         "description": null,
@@ -151,6 +154,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isSystem": false,
         "isUIReadOnly": false,
         "isUnique": null,
+        "kanbanAggregateOperationViewIds": [],
         "label": "Pet",
         "morphId": null,
         "name": "pet",
@@ -175,6 +179,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationId": null,
+        "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
         "description": "new field description",
@@ -187,6 +192,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isSystem": false,
         "isUIReadOnly": false,
         "isUnique": null,
+        "kanbanAggregateOperationViewIds": [],
         "label": "newFieldLabel",
         "morphId": Any<String>,
         "name": "newFieldCompanies",
@@ -209,6 +215,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationId": null,
+        "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
         "description": null,
@@ -221,6 +228,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isSystem": false,
         "isUIReadOnly": false,
         "isUnique": null,
+        "kanbanAggregateOperationViewIds": [],
         "label": "Company",
         "morphId": null,
         "name": "company",
