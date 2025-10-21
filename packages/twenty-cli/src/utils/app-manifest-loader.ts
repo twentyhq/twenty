@@ -9,6 +9,7 @@ import {
 } from '../types/config.types';
 import { validateSchema } from '../utils/schema-validator';
 import { parseJsoncFile } from './jsonc-parser';
+import { loadManifestFromDecorators } from '../utils/load-manifest-from-decorators';
 
 type Sources = { [key: string]: string | Sources };
 
@@ -166,13 +167,15 @@ export const loadManifest = async (
     (manifest, path) => validateSchema('serverlessFunction', manifest, path),
   );
 
+  const { objects: objectsFromDecorators } = loadManifestFromDecorators();
+
   return {
     packageJson,
     yarnLock: rawYarnLock,
     manifest: {
       ...packageJson,
       agents,
-      objects,
+      objects: [...objects, ...objectsFromDecorators],
       serverlessFunctions,
     },
   };

@@ -17,17 +17,10 @@ export class AppSyncCommand {
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
 
-      const { objects: objectsFromDecorators } = loadManifestFromDecorators();
-
       const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
 
-      const mergedManifest = {
-        ...manifest,
-        objects: [...manifest.objects, ...objectsFromDecorators],
-      };
-
       const result = await this.apiService.syncApplication({
-        manifest: mergedManifest,
+        manifest,
         packageJson,
         yarnLock,
       });
