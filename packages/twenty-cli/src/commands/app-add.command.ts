@@ -7,6 +7,7 @@ import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-dire
 import { HTTPMethod } from '../types/config.types';
 import { parseJsoncFile, writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
+import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
 
 export enum SyncableEntity {
   AGENT = 'agent',
@@ -156,9 +157,7 @@ export class AppAddCommand {
       entityToCreateData.standardId = uuid;
     }
 
-    const schemasDir = path.join(__dirname, '../../schemas');
-
-    const schemaPath = path.join(schemasDir, `${entity}.schema.json`);
+    const schemaPath = path.join(BASE_SCHEMAS_PATH, `${entity}.schema.json`);
 
     const schema = await fs.readJson(schemaPath);
 

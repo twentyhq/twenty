@@ -7,7 +7,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ChannelSyncSuccess } from 'src/modules/connected-account/channel-sync/dtos/channel-sync-success.dto';
+import { ChannelSyncSuccessDTO } from 'src/modules/connected-account/channel-sync/dtos/channel-sync-success.dto';
 import { ChannelSyncService } from 'src/modules/connected-account/channel-sync/services/channel-sync.service';
 
 @Resolver()
@@ -17,12 +17,12 @@ import { ChannelSyncService } from 'src/modules/connected-account/channel-sync/s
 export class ChannelSyncResolver {
   constructor(private readonly channelSyncService: ChannelSyncService) {}
 
-  @Mutation(() => ChannelSyncSuccess)
+  @Mutation(() => ChannelSyncSuccessDTO)
   async startChannelSync(
     @Args('connectedAccountId', { type: () => UUIDScalarType })
     connectedAccountId: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ChannelSyncSuccess> {
+  ): Promise<ChannelSyncSuccessDTO> {
     await this.channelSyncService.startChannelSync({
       connectedAccountId,
       workspaceId: workspace.id,

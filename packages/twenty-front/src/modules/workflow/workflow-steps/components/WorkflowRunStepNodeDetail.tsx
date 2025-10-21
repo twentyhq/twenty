@@ -11,6 +11,8 @@ import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workfl
 import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
+import { WorkflowEditActionUpsertRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord';
+import { WorkflowEditActionDelay } from '@/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay';
 import { WorkflowEditActionFilter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionFormFiller } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFiller';
@@ -171,6 +173,18 @@ export const WorkflowRunStepNodeDetail = ({
           );
         }
 
+        case 'UPSERT_RECORD': {
+          return (
+            <WorkflowEditActionUpsertRecord
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+
         case 'FORM': {
           return (
             <WorkflowEditActionFormFiller
@@ -231,6 +245,17 @@ export const WorkflowRunStepNodeDetail = ({
           return (
             <WorkflowEditActionEmpty
               key={stepId}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+        case 'DELAY': {
+          return (
+            <WorkflowEditActionDelay
+              key={stepId}
+              action={stepDefinition.definition}
               actionOptions={{
                 readonly: true,
               }}

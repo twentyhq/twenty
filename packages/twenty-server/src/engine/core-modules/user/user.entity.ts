@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -14,14 +15,13 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(OnboardingStatus, {
@@ -108,8 +108,8 @@ export class User {
   })
   keyValuePairs: Relation<KeyValuePair[]>;
 
-  @Field(() => WorkspaceMember, { nullable: true })
-  workspaceMember: Relation<WorkspaceMember>;
+  @Field(() => WorkspaceMemberDTO, { nullable: true })
+  workspaceMember: Relation<WorkspaceMemberDTO>;
 
   @Field(() => [UserWorkspace])
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)

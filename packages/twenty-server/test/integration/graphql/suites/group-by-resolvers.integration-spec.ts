@@ -105,6 +105,72 @@ describe('group-by resolvers (integration)', () => {
       expect(groupWithCityB.groupByDimensionValues).toEqual([cityB]);
       expect(groupWithCityB.totalCount).toEqual(2);
     });
+
+    it('computes aggregated metrics on date time field', async () => {
+      const cityA = 'City A';
+      const cityB = 'City B';
+
+      const person1 = (
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            data: { id: testPersonId, city: cityA },
+          }),
+        )
+      ).body.data.createPerson;
+
+      const person2 = (
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            data: { id: testPerson2Id, city: cityB },
+          }),
+        )
+      ).body.data.createPerson;
+
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPerson3Id, city: cityB },
+        }),
+      );
+
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ city: true }],
+          gqlFields: 'minCreatedAt',
+        }),
+      );
+
+      const groups = response.body.data.peopleGroupBy;
+
+      expect(groups).toBeDefined();
+      expect(groups).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ groupByDimensionValues: [cityA] }),
+          expect.objectContaining({ groupByDimensionValues: [cityB] }),
+        ]),
+      );
+
+      const groupWithCityA = groups.find(
+        (group: any) => group.groupByDimensionValues[0] === cityA,
+      );
+
+      expect(groupWithCityA.groupByDimensionValues).toEqual([cityA]);
+      expect(groupWithCityA.minCreatedAt).toEqual(person1.createdAt);
+
+      const groupWithCityB = groups.find(
+        (group: any) => group.groupByDimensionValues[0] === cityB,
+      );
+
+      expect(groupWithCityB.groupByDimensionValues).toEqual([cityB]);
+      expect(groupWithCityB.minCreatedAt).toEqual(person2.createdAt);
+    });
   });
 
   describe('date range', () => {

@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
@@ -89,7 +88,6 @@ export class FlatViewGroupValidatorService {
   public validateFlatViewGroupDeletion({
     flatEntityToValidate: { id: viewGroupIdToDelete },
     optimisticFlatEntityMaps: optimisticFlatViewGroupMaps,
-    dependencyOptimisticFlatEntityMaps: { flatFieldMetadataMaps },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
   >): FailedFlatEntityValidation<FlatViewGroup> {
@@ -112,26 +110,6 @@ export class FlatViewGroupValidatorService {
       });
 
       return validationResult;
-    }
-
-    const relatedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: existingFlatViewGroup.fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    if (
-      isDefined(relatedFlatFieldMetadata) &&
-      isEnumFlatFieldMetadata(relatedFlatFieldMetadata) &&
-      relatedFlatFieldMetadata.options.some(
-        (option) => option.value === existingFlatViewGroup.fieldValue,
-      ) &&
-      !isDefined(existingFlatViewGroup.deletedAt)
-    ) {
-      validationResult.errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View group to delete has not been soft deleted`,
-        userFriendlyMessage: msg`View group to delete has not been soft deleted`,
-      });
     }
 
     return validationResult;

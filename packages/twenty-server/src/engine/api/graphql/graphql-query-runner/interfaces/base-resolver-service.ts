@@ -2,11 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
 import { type ObjectRecord } from 'twenty-shared/types';
-import {
-  assertIsDefinedOrThrow,
-  capitalize,
-  isDefined,
-} from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
@@ -14,7 +10,6 @@ import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interf
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
   type ResolverArgs,
-  ResolverArgsType,
   type WorkspaceResolverBuilderMethodNames,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -115,8 +110,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const computedArgs = (await this.queryRunnerArgsFactory.create(
         hookedArgs,
         options,
-        // @ts-expect-error legacy noImplicitAny
-        ResolverArgsType[capitalize(operationName)],
+        operationName,
       )) as Input;
 
       let roleId: string | undefined;

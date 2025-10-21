@@ -1,7 +1,7 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class LocationDto {
+@ObjectType('Location')
+export class LocationDTO {
   @Field(() => Float, { nullable: true })
   lat?: number;
 
@@ -9,8 +9,8 @@ export class LocationDto {
   lng?: number;
 }
 
-@ObjectType()
-export class PlaceDetailsResultDto {
+@ObjectType('PlaceDetailsResult')
+export class PlaceDetailsResultDTO {
   @Field({ nullable: true })
   state?: string;
 
@@ -23,6 +23,6 @@ export class PlaceDetailsResultDto {
   @Field({ nullable: true })
   country?: string;
 
-  @Field(() => LocationDto, { nullable: true })
-  location?: LocationDto;
+  @Field(() => LocationDTO, { nullable: true })
+  location?: LocationDTO;
 }

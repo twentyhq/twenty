@@ -5,6 +5,10 @@ import { type FieldValue } from 'src/engine/api/rest/core/types/field-value.type
 import { formatFieldValue } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/format-field-values.util';
 import { parseBaseFilter } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-base-filter.util';
 import { parseFilterContent } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-content.util';
+import {
+  RestInputRequestParserException,
+  RestInputRequestParserExceptionCode,
+} from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 
 //TODO : Refacto-common - Rename after deleting parseFilter
 export const parseFilterWithoutMetadataValidation = (
@@ -29,8 +33,9 @@ export const parseFilterWithoutMetadataValidation = (
 
     if (conjunction === Conjunctions.not) {
       if (subResult.length > 1) {
-        throw new BadRequestException(
+        throw new RestInputRequestParserException(
           `'filter' invalid. 'not' conjunction should contain only 1 condition. eg: not(field[eq]:1)`,
+          RestInputRequestParserExceptionCode.INVALID_FILTER_QUERY_PARAM,
         );
       }
       // @ts-expect-error legacy noImplicitAny

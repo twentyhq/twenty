@@ -35,6 +35,7 @@ describe('WorkerHealthIndicator', () => {
 
     const mockRedisService = {
       getClient: () => mockRedis,
+      getQueueClient: () => mockRedis,
     } as unknown as RedisClientService;
 
     healthIndicatorService = {
