@@ -22,9 +22,10 @@ const StyledRoutingContainer = styled.div`
   width: fit-content;
 `;
 
-const StyledIconContainer = styled.div`
+const StyledIconContainer = styled.div<{ isLoading: boolean }>`
   align-items: center;
-  animation: ${pulseAnimation} 2s ease-in-out infinite;
+  animation: ${({ isLoading }) =>
+    isLoading ? `${pulseAnimation} 2s ease-in-out infinite` : 'none'};
   color: ${({ theme }) => theme.color.blue};
   display: flex;
 `;
@@ -42,7 +43,7 @@ export const RoutingStatusDisplay = ({
 
   return (
     <StyledRoutingContainer>
-      <StyledIconContainer>
+      <StyledIconContainer isLoading={isLoading}>
         {isLoading ? <IconSparkles size={16} /> : <IconCpu size={16} />}
       </StyledIconContainer>
       {isLoading ? (
