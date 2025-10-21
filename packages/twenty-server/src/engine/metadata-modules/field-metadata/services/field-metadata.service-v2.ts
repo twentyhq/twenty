@@ -144,6 +144,7 @@ export class FieldMetadataServiceV2 {
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -154,6 +155,7 @@ export class FieldMetadataServiceV2 {
           'flatViewFilterMaps',
           'flatViewGroupMaps',
           'flatViewMaps',
+          'flatViewFieldMaps',
         ],
       },
     );
@@ -166,6 +168,7 @@ export class FieldMetadataServiceV2 {
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
     });
 
     if (inputTranspilationResult.status === 'fail') {
