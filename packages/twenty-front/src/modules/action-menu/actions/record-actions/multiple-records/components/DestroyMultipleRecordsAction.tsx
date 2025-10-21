@@ -1,4 +1,6 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
+import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { useActionWithProgress } from '@/action-menu/hooks/useActionWithProgress';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -28,7 +30,7 @@ export const DestroyMultipleRecordsAction = () => {
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 
-  const { destroyManyRecords } = useDestroyManyRecords({
+  const { destroyManyRecords, progress } = useDestroyManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
@@ -72,21 +74,32 @@ export const DestroyMultipleRecordsAction = () => {
     recordGqlFields: { id: true },
   });
 
+  const { actionConfigWithProgress } = useActionWithProgress(progress);
+
+  if (!actionConfigWithProgress) {
+    return null;
+  }
+
   const handleDestroyClick = async () => {
     const recordsToDestroy = await fetchAllRecordIds();
     const recordIdsToDestroy = recordsToDestroy.map((record) => record.id);
 
     resetTableRowSelection();
 
-    await destroyManyRecords({ recordIdsToDestroy });
+    await destroyManyRecords({
+      recordIdsToDestroy,
+      delayInMsBetweenRequests: 50,
+    });
   };
 
   return (
-    <ActionModal
-      title="Permanently Destroy Records"
-      subtitle="Are you sure you want to destroy these records? They won't be recoverable anymore."
-      onConfirmClick={handleDestroyClick}
-      confirmButtonText="Destroy Records"
-    />
+    <ActionConfigContext.Provider value={actionConfigWithProgress}>
+      <ActionModal
+        title="Permanently Destroy Records"
+        subtitle="Are you sure you want to destroy these records? They won't be recoverable anymore."
+        onConfirmClick={handleDestroyClick}
+        confirmButtonText="Destroy Records"
+      />
+    </ActionConfigContext.Provider>
   );
 };

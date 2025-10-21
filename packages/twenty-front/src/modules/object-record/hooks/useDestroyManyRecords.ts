@@ -12,7 +12,9 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type QueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
@@ -39,6 +41,10 @@ export const useDestroyManyRecords = ({
     apiConfig?.mutationMaximumAffectedRecords ?? DEFAULT_MUTATION_BATCH_SIZE;
 
   const apolloCoreClient = useApolloCoreClient();
+
+  const [progress, setProgress] = useState<QueryProgress>({
+    displayType: 'number',
+  });
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -70,6 +76,11 @@ export const useDestroyManyRecords = ({
     );
 
     const destroyedRecords = [];
+
+    setProgress({
+      processedRecordCount: 0,
+      totalRecordCount: recordIdsToDestroy.length,
+    });
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
       const batchedIdToDestroy = recordIdsToDestroy.slice(
@@ -138,10 +149,17 @@ export const useDestroyManyRecords = ({
 
       destroyedRecords.push(...destroyedRecordsForThisBatch);
 
+      setProgress({
+        processedRecordCount: destroyedRecords.length,
+        totalRecordCount: recordIdsToDestroy.length,
+      });
+
       if (isDefined(delayInMsBetweenRequests)) {
         await sleep(delayInMsBetweenRequests);
       }
     }
+
+    setProgress({});
 
     await refetchAggregateQueries();
 
@@ -152,5 +170,5 @@ export const useDestroyManyRecords = ({
     return destroyedRecords;
   };
 
-  return { destroyManyRecords };
+  return { destroyManyRecords, progress };
 };

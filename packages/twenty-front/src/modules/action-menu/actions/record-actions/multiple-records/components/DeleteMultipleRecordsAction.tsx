@@ -1,4 +1,6 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
+import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { useActionWithProgress } from '@/action-menu/hooks/useActionWithProgress';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -28,7 +30,7 @@ export const DeleteMultipleRecordsAction = () => {
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 
-  const { deleteManyRecords } = useDeleteManyRecords({
+  const { deleteManyRecords, progress } = useDeleteManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
@@ -66,6 +68,12 @@ export const DeleteMultipleRecordsAction = () => {
     recordGqlFields: { id: true },
   });
 
+  const { actionConfigWithProgress } = useActionWithProgress(progress);
+
+  if (!actionConfigWithProgress) {
+    return null;
+  }
+
   const handleDeleteClick = async () => {
     const recordsToDelete = await fetchAllRecordIds();
     const recordIdsToDelete = recordsToDelete.map((record) => record.id);
@@ -74,15 +82,18 @@ export const DeleteMultipleRecordsAction = () => {
 
     await deleteManyRecords({
       recordIdsToDelete,
+      delayInMsBetweenRequests: 50,
     });
   };
 
   return (
-    <ActionModal
-      title="Delete Records"
-      subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
-      onConfirmClick={handleDeleteClick}
-      confirmButtonText="Delete Records"
-    />
+    <ActionConfigContext.Provider value={actionConfigWithProgress}>
+      <ActionModal
+        title="Delete Records"
+        subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
+        onConfirmClick={handleDeleteClick}
+        confirmButtonText="Delete Records"
+      />
+    </ActionConfigContext.Provider>
   );
 };
