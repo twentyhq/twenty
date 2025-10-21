@@ -32,29 +32,27 @@ type TestSetup = {
   viewWithoutAggregateId: string;
 };
 
-describe('update-one-field-metadata-view-deletion-on-deactivation-v2', () => {
+describe('kanban-aggregate-field-deactivation-deletes-views', () => {
   let testSetup: TestSetup;
 
-  // Helper function to verify view exists
   const verifyViewExists = async (viewId: string, shouldExist: boolean) => {
-    const { data, errors } = await findOneCoreView({
+    const {
+      data: { getCoreView },
+    } = await findOneCoreView({
       viewId,
       gqlFields: VIEW_WITH_KANBAN_FIELDS,
-      expectToFail: !shouldExist,
+      expectToFail: false,
     });
 
     if (shouldExist) {
-      expect(errors).toBeUndefined();
-      expect(isDefined(data.getCoreView)).toBe(true);
+      expect(isDefined(getCoreView)).toBe(true);
     } else {
-      expect(errors).toBeDefined();
-      expect(data.getCoreView).toBeNull();
+      expect(getCoreView).toBeNull();
     }
 
-    return data.getCoreView;
+    return getCoreView;
   };
 
-  // Helper function to deactivate field and verify result
   const deactivateFieldAndVerify = async (fieldId: string) => {
     const { data, errors } = await updateOneFieldMetadata({
       expectToFail: false,
@@ -74,7 +72,6 @@ describe('update-one-field-metadata-view-deletion-on-deactivation-v2', () => {
   };
 
   beforeEach(async () => {
-    // Create object
     const {
       data: {
         createOneObject: { id: objectMetadataId },
@@ -174,42 +171,34 @@ describe('update-one-field-metadata-view-deletion-on-deactivation-v2', () => {
   });
 
   it('should delete view when field used as kanbanAggregateOperationFieldMetadataId is deactivated', async () => {
-    // Verify initial state
     const initialViewWithAggregate = await verifyViewExists(
       testSetup.viewWithAggregateId,
       true,
     );
     await verifyViewExists(testSetup.viewWithoutAggregateId, true);
 
-    // Verify aggregate field is correctly configured
     expect(
       initialViewWithAggregate.kanbanAggregateOperationFieldMetadataId,
     ).toBe(testSetup.aggregateFieldMetadataId);
     expect(initialViewWithAggregate.kanbanAggregateOperation).toBe('SUM');
 
-    // Deactivate the aggregate field
     await deactivateFieldAndVerify(testSetup.aggregateFieldMetadataId);
 
-    // Verify views after deactivation
-    await verifyViewExists(testSetup.viewWithAggregateId, false); // Should be deleted
-    await verifyViewExists(testSetup.viewWithoutAggregateId, true); // Should still exist
+    await verifyViewExists(testSetup.viewWithAggregateId, false);
+    await verifyViewExists(testSetup.viewWithoutAggregateId, true);
   });
 
   it('should not delete view when field not used as kanbanAggregateOperationFieldMetadataId is deactivated', async () => {
-    // Verify initial state
     await verifyViewExists(testSetup.viewWithAggregateId, true);
     await verifyViewExists(testSetup.viewWithoutAggregateId, true);
 
-    // Deactivate the non-aggregate field
     await deactivateFieldAndVerify(testSetup.nonAggregateFieldMetadataId);
 
-    // Verify views after deactivation
-    await verifyViewExists(testSetup.viewWithAggregateId, true); // Should still exist
-    await verifyViewExists(testSetup.viewWithoutAggregateId, true); // Should still exist
+    await verifyViewExists(testSetup.viewWithAggregateId, true);
+    await verifyViewExists(testSetup.viewWithoutAggregateId, true);
   });
 
   it('should delete multiple views when they all use the same field as kanbanAggregateOperationFieldMetadataId', async () => {
-    // Create a second view with the same aggregate field
     const {
       data: { createCoreView: secondViewWithAggregate },
     } = await createOneCoreView({
@@ -226,23 +215,18 @@ describe('update-one-field-metadata-view-deletion-on-deactivation-v2', () => {
       expectToFail: false,
     });
 
-    // Verify initial state
     await verifyViewExists(testSetup.viewWithAggregateId, true);
     await verifyViewExists(secondViewWithAggregate.id, true);
     await verifyViewExists(testSetup.viewWithoutAggregateId, true);
 
-    // Deactivate the aggregate field
     await deactivateFieldAndVerify(testSetup.aggregateFieldMetadataId);
 
-    // Verify all views using the aggregate field are deleted
     await verifyViewExists(testSetup.viewWithAggregateId, false);
     await verifyViewExists(secondViewWithAggregate.id, false);
-    // But the view without aggregate should still exist
     await verifyViewExists(testSetup.viewWithoutAggregateId, true);
   });
 
   it('should handle deactivation when view has different aggregate operations on same field', async () => {
-    // Create views with different aggregate operations on the same field
     const {
       data: { createCoreView: viewWithMin },
     } = await createOneCoreView({
@@ -275,20 +259,17 @@ describe('update-one-field-metadata-view-deletion-on-deactivation-v2', () => {
       expectToFail: false,
     });
 
-    // Verify initial state
     await verifyViewExists(testSetup.viewWithAggregateId, true);
     await verifyViewExists(viewWithMin.id, true);
     await verifyViewExists(viewWithAvg.id, true);
     await verifyViewExists(testSetup.viewWithoutAggregateId, true);
 
-    // Deactivate the aggregate field
     await deactivateFieldAndVerify(testSetup.aggregateFieldMetadataId);
 
-    // Verify all views using the aggregate field are deleted regardless of operation type
     await verifyViewExists(testSetup.viewWithAggregateId, false);
     await verifyViewExists(viewWithMin.id, false);
     await verifyViewExists(viewWithAvg.id, false);
-    // But the view without aggregate should still exist
     await verifyViewExists(testSetup.viewWithoutAggregateId, true);
   });
 });
+

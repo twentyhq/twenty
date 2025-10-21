@@ -41,17 +41,6 @@ export const handleFieldMetadataDeactivationSideEffects = ({
   flatViewFilterMaps,
   flatViewGroupMaps,
 }: HandleFlatFieldMetadataDeactivationSideEffectsArgs): FieldMetadataDeactivationSideEffect => {
-  const sideEffectResult = structuredClone(
-    EMPTY_FIELD_METADATA_DEACTIVATION_SIDE_EFFECT,
-  );
-
-  if (
-    fromFlatFieldMetadata.isActive !== true &&
-    toFlatFieldMetadata.isActive !== false
-  ) {
-    return sideEffectResult;
-  }
-
   const flatViewFiltersToDelete = findManyFlatEntityByIdInFlatEntityMapsOrThrow(
     {
       flatEntityIds: fromFlatFieldMetadata.viewFilterIds,

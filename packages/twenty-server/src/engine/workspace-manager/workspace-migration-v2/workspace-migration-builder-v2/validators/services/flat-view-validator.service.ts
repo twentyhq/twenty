@@ -91,25 +91,6 @@ export class FlatViewValidatorService {
       return validationResult;
     }
 
-    const shouldValidateSoftDeletion = isDefined(
-      existingFlatView.kanbanAggregateOperationFieldMetadataId,
-    )
-      ? !isDefined(
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId:
-              existingFlatView.kanbanAggregateOperationFieldMetadataId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          }),
-        )
-      : true;
-    if (shouldValidateSoftDeletion && !isDefined(existingFlatView.deletedAt)) {
-      validationResult.errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View to delete has not been soft deleted`,
-        userFriendlyMessage: msg`View to delete has not been soft deleted`,
-      });
-    }
-
     return validationResult;
   }
 
