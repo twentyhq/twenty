@@ -90,6 +90,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
         updatedEditableObjectProperties,
       ).filter(
         (property) =>
+          property !== 'isActive' &&
           !OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES.includes(
             property as ObjectMetadataStandardOverridesProperties,
           ),
@@ -122,7 +123,12 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
         );
 
       return {
-        flatObjectMetadata: updatedStandardFlatObjectMetadata,
+        flatObjectMetadata: {
+          ...updatedStandardFlatObjectMetadata,
+          isActive:
+            updatedEditableObjectProperties.isActive ??
+            updatedStandardFlatObjectMetadata.isActive,
+        },
         otherObjectFlatFieldMetadataToUpdate: [],
         flatIndexMetadataToUpdate: [],
         flatViewFieldToUpdate: [],

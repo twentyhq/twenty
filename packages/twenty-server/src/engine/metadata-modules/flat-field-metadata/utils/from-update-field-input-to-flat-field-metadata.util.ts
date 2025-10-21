@@ -81,10 +81,12 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   if (isStandardMetadata(existingFlatFieldMetadataToUpdate)) {
     const invalidUpdatedProperties = Object.keys(
       updatedEditableFieldProperties,
-    ).filter((property) =>
-      FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.includes(
-        property as FieldMetadataStandardOverridesProperties,
-      ),
+    ).filter(
+      (property) =>
+        property !== 'isActive' &&
+        FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.includes(
+          property as FieldMetadataStandardOverridesProperties,
+        ),
     );
 
     if (invalidUpdatedProperties.length > 0) {
@@ -124,7 +126,14 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
         flatViewGroupsToCreate: [],
         flatViewGroupsToDelete: [],
         flatViewGroupsToUpdate: [],
-        flatFieldMetadatasToUpdate: [updatedStandardFlatFieldMetadata],
+        flatFieldMetadatasToUpdate: [
+          {
+            ...updatedStandardFlatFieldMetadata,
+            isActive:
+              updatedEditableFieldProperties.isActive ??
+              updatedStandardFlatFieldMetadata.isActive,
+          },
+        ],
         flatIndexMetadatasToUpdate: [],
         flatIndexMetadatasToDelete: [],
         flatIndexMetadatasToCreate: [],
