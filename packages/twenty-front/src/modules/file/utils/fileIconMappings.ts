@@ -1,4 +1,4 @@
-import { type AttachmentFileCategory } from '@/activities/files/types/Attachment';
+import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import {
   type IconComponent,
   IconFile,

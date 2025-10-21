@@ -1,4 +1,4 @@
-import { type AttachmentFileCategory } from '@/activities/files/types/Attachment';
+import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useTheme } from '@emotion/react';

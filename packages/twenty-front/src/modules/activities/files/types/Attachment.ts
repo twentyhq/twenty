@@ -1,3 +1,5 @@
+import { type AttachmentFileCategory } from './AttachmentFileCategory';
+
 export type Attachment = {
   id: string;
   name: string;
@@ -15,13 +17,3 @@ export type Attachment = {
   createdAt: string;
   __typename: string;
 };
-
-export type AttachmentFileCategory =
-  | 'ARCHIVE'
-  | 'AUDIO'
-  | 'IMAGE'
-  | 'PRESENTATION'
-  | 'SPREADSHEET'
-  | 'TEXT_DOCUMENT'
-  | 'VIDEO'
-  | 'OTHER';

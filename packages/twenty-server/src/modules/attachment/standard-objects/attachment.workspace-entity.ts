@@ -125,7 +125,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'gray',
       },
     ],
-    defaultValue: 'OTHER',
+    defaultValue: "'OTHER'",
   })
   fileCategory: string;
 
