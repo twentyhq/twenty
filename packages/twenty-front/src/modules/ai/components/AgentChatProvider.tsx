@@ -4,7 +4,6 @@ import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Chat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
@@ -23,13 +22,11 @@ const createLoadingChat = () =>
   });
 
 const AgentChatProviderContent = ({
-  agentId,
   children,
 }: {
-  agentId: string;
   children: React.ReactNode;
 }) => {
-  const { uiMessages, isLoading } = useAgentChatData(agentId);
+  const { uiMessages, isLoading } = useAgentChatData();
   const currentAIChatThread = useRecoilValue(currentAIChatThreadState);
 
   const chatConfig = isLoading
@@ -59,11 +56,9 @@ export const AgentChatProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const agentId = currentWorkspace?.defaultAgent?.id;
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  if (!isAiEnabled || !agentId) {
+  if (!isAiEnabled) {
     return (
       <AgentChatContext.Provider
         value={{
@@ -89,9 +84,7 @@ export const AgentChatProvider = ({
         </AgentChatContext.Provider>
       }
     >
-      <AgentChatProviderContent agentId={agentId}>
-        {children}
-      </AgentChatProviderContent>
+      <AgentChatProviderContent>{children}</AgentChatProviderContent>
     </Suspense>
   );
 };

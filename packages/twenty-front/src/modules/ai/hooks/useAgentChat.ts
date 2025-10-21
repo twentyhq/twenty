@@ -6,7 +6,7 @@ import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { useChat } from '@ai-sdk/react';
 import { agentChatInputState } from '../states/agentChatInputState';
 
-export const useAgentChat = (agentId: string) => {
+export const useAgentChat = () => {
   const { chat, isLoadingData } = useAgentChatContextOrThrow();
 
   const agentChatSelectedFiles = useRecoilValue(agentChatSelectedFilesState);
@@ -16,7 +16,7 @@ export const useAgentChat = (agentId: string) => {
   const [agentChatInput, setAgentChatInput] =
     useRecoilState(agentChatInputState);
 
-  const scrollWrapperId = `scroll-wrapper-ai-chat-${agentId}`;
+  const scrollWrapperId = `scroll-wrapper-ai-chat-${currentAIChatThread}`;
 
   const { messages, status, error } = useChat({
     chat,
