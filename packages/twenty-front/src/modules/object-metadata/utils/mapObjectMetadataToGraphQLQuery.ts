@@ -5,7 +5,7 @@ import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueri
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
@@ -71,14 +71,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
       }
 
       return fieldMetadata.morphRelations.map((morphRelation) => ({
-        gqlField: `${computeMorphRelationFieldName({
-          fieldName: fieldMetadata.name,
-          relationType: morphRelation.type,
-          targetObjectMetadataNameSingular:
-            morphRelation.targetObjectMetadata.nameSingular,
-          targetObjectMetadataNamePlural:
-            morphRelation.targetObjectMetadata.namePlural,
-        })}Id`,
+        gqlField: `${morphRelation.sourceFieldMetadata.name}Id`,
         fieldMetadata: fieldMetadata,
       }));
     });
@@ -106,14 +99,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
     }
 
     return fieldMetadata.morphRelations.map((morphRelation) => ({
-      gqlField: computeMorphRelationFieldName({
-        fieldName: fieldMetadata.name,
-        relationType: morphRelation.type,
-        targetObjectMetadataNameSingular:
-          morphRelation.targetObjectMetadata.nameSingular,
-        targetObjectMetadataNamePlural:
-          morphRelation.targetObjectMetadata.namePlural,
-      }),
+      gqlField: morphRelation.sourceFieldMetadata.name,
       fieldMetadata,
     }));
   });
