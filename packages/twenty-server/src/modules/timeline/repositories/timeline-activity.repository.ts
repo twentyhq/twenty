@@ -9,7 +9,9 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 
 type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
-  payloads: TimelineActivityPayload[];
+  payloads: (Omit<TimelineActivityPayload, 'properties'> & {
+    properties: Pick<TimelineActivityPayload['properties'], 'diff'>;
+  })[];
   workspaceId: string;
   objectSingularName: string;
 };
@@ -31,16 +33,22 @@ export class TimelineActivityRepository {
       payloads,
     });
 
-    const payloadsWithDiff = payloads.filter(({ properties }) => {
-      const isDiffEmpty =
-        properties.diff !== null &&
-        properties.diff &&
-        Object.keys(properties.diff).length === 0;
+    const payloadsWithDiff = payloads
+      .filter(({ properties }) => {
+        const isDiffEmpty =
+          properties.diff !== null &&
+          properties.diff &&
+          Object.keys(properties.diff).length === 0;
 
-      return !isDiffEmpty;
-    });
+        return !isDiffEmpty;
+      })
+      .map(({ properties, ...rest }) => ({
+        ...rest,
+        properties: isDefined(properties.diff) ? { diff: properties.diff } : {},
+      }));
 
-    const payloadsToInsert: TimelineActivityPayload[] = [];
+    const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
+      [];
 
     for (const payload of payloadsWithDiff) {
       const recentTimelineActivity = recentTimelineActivities.find(
