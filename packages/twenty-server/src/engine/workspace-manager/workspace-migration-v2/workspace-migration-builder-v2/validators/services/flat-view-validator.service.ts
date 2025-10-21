@@ -87,8 +87,6 @@ export class FlatViewValidatorService {
         message: t`View not found`,
         userFriendlyMessage: msg`View not found`,
       });
-
-      return validationResult;
     }
 
     return validationResult;

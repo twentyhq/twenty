@@ -138,14 +138,6 @@ export class FlatViewFieldValidatorService {
         message: t`View field to delete not found`,
         userFriendlyMessage: msg`View field to delete not found`,
       });
-    } else {
-      if (!isDefined(existingFlatViewField.deletedAt)) {
-        validationResult.errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`View field to delete has not been soft deleted`,
-          userFriendlyMessage: msg`View field to delete has not been soft deleted`,
-        });
-      }
     }
 
     return validationResult;
