@@ -111,7 +111,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
 
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
-      await this.subdomainManagerService.validateSubdomainUpdate(
+      await this.subdomainManagerService.validateSubdomainOrThrow(
         payload.subdomain,
       );
     }

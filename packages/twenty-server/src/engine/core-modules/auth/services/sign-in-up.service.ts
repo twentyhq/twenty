@@ -424,7 +424,7 @@ export class SignInUpService {
 
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.subdomainManagerService.generateSubdomain(
-        isWorkEmailFound ? { email } : {},
+        isWorkEmailFound ? { userEmail: email } : {},
       ),
       displayName: '',
       inviteHash: v4(),
