@@ -35,7 +35,7 @@ import {
 } from '@/utils/filter';
 
 import { resolveDateViewFilterValue } from '@/utils/filter/utils/resolveDateViewFilterValue';
-import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
+import { endOfDay, format, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
 import {
@@ -166,7 +166,103 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
           );
       }
-    case 'DATE':
+    case 'DATE': {
+      const resolvedFilterValue = resolveDateViewFilterValue(recordFilter);
+      const now = roundToNearestMinutes(new Date());
+      const date =
+        resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
+
+      const dayFormat = 'dd-MM-yyyy';
+
+      const dateAsDayString = format(date, dayFormat);
+
+      const nowAsDayString = format(now, dayFormat);
+
+      switch (recordFilter.operand) {
+        case RecordFilterOperand.IS_AFTER: {
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              gt: dateAsDayString,
+            } as DateFilter,
+          };
+        }
+        case RecordFilterOperand.IS_BEFORE: {
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              lt: dateAsDayString,
+            } as DateFilter,
+          };
+        }
+        case RecordFilterOperand.IS_RELATIVE: {
+          const dateRange = z
+            .object({ start: z.date(), end: z.date() })
+            .safeParse(resolvedFilterValue).data;
+
+          const defaultDateRange = resolveDateViewFilterValue({
+            value: 'PAST_1_DAY',
+            operand: RecordFilterOperand.IS_RELATIVE,
+          });
+
+          if (!defaultDateRange) {
+            throw new Error('Failed to resolve default date range');
+          }
+
+          const { start, end } = dateRange ?? defaultDateRange;
+
+          const startAsDayString = format(start, dayFormat);
+          const endAsDayString = format(end, dayFormat);
+
+          return {
+            and: [
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  gte: startAsDayString,
+                } as DateFilter,
+              },
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  lte: endAsDayString,
+                } as DateFilter,
+              },
+            ],
+          };
+        }
+        case RecordFilterOperand.IS: {
+          const isValid = resolvedFilterValue instanceof Date;
+          const date = isValid ? resolvedFilterValue : now;
+          const dateAsDayString = format(date, dayFormat);
+
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              eq: dateAsDayString,
+            } as DateFilter,
+          };
+        }
+        case RecordFilterOperand.IS_IN_PAST:
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              lte: nowAsDayString,
+            } as DateFilter,
+          };
+        case RecordFilterOperand.IS_IN_FUTURE:
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              gte: nowAsDayString,
+            } as DateFilter,
+          };
+        case RecordFilterOperand.IS_TODAY: {
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              eq: nowAsDayString,
+            } as DateFilter,
+          };
+        }
+        default:
+          throw new Error(
+            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+          );
+      }
+    }
     case 'DATE_TIME': {
       const resolvedFilterValue = resolveDateViewFilterValue(recordFilter);
       const now = roundToNearestMinutes(new Date());
@@ -223,28 +319,20 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           const isValid = resolvedFilterValue instanceof Date;
           const date = isValid ? resolvedFilterValue : now;
 
-          if (filterType === 'DATE') {
-            return {
-              [correspondingFieldMetadataItem.name]: {
-                eq: date.toISOString(),
-              } as DateFilter,
-            };
-          } else {
-            return {
-              and: [
-                {
-                  [correspondingFieldMetadataItem.name]: {
-                    lte: endOfDay(date).toISOString(),
-                  } as DateFilter,
-                },
-                {
-                  [correspondingFieldMetadataItem.name]: {
-                    gte: startOfDay(date).toISOString(),
-                  } as DateFilter,
-                },
-              ],
-            };
-          }
+          return {
+            and: [
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  lte: endOfDay(date).toISOString(),
+                } as DateFilter,
+              },
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  gte: startOfDay(date).toISOString(),
+                } as DateFilter,
+              },
+            ],
+          };
         }
         case RecordFilterOperand.IS_IN_PAST:
           return {
@@ -259,32 +347,24 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             } as DateFilter,
           };
         case RecordFilterOperand.IS_TODAY: {
-          if (filterType === 'DATE') {
-            return {
-              [correspondingFieldMetadataItem.name]: {
-                eq: now.toISOString(),
-              } as DateFilter,
-            };
-          } else {
-            return {
-              and: [
-                {
-                  [correspondingFieldMetadataItem.name]: {
-                    lte: endOfDay(now).toISOString(),
-                  } as DateFilter,
-                },
-                {
-                  [correspondingFieldMetadataItem.name]: {
-                    gte: startOfDay(now).toISOString(),
-                  } as DateFilter,
-                },
-              ],
-            };
-          }
+          return {
+            and: [
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  lte: endOfDay(now).toISOString(),
+                } as DateFilter,
+              },
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  gte: startOfDay(now).toISOString(),
+                } as DateFilter,
+              },
+            ],
+          };
         }
         default:
           throw new Error(
-            `Unknown operand ${recordFilter.operand} for ${filterType} filter`, //
+            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
           );
       }
     }
