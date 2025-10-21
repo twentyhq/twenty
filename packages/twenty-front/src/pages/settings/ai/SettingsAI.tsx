@@ -20,7 +20,7 @@ const SETTINGS_AI_TABS_ID = 'settings-ai-tabs-id';
 const SETTINGS_AI_TABS = {
   AGENTS: 'agents',
   SETTINGS: 'settings',
-} as const;
+};
 
 export const SettingsAI = () => {
   const { data } = useFindManyAgentsQuery();
