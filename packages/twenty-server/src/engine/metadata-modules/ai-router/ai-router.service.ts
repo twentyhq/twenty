@@ -14,15 +14,15 @@ import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 
-export interface RouterContext {
+export interface AiRouterContext {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   workspaceId: string;
   routerModel: ModelId;
 }
 
 @Injectable()
-export class RouterService {
-  private readonly logger = new Logger(RouterService.name);
+export class AiRouterService {
+  private readonly logger = new Logger(AiRouterService.name);
 
   constructor(
     @InjectRepository(AgentEntity)
@@ -30,7 +30,7 @@ export class RouterService {
     private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
-  async routeMessage(context: RouterContext) {
+  async routeMessage(context: AiRouterContext) {
     try {
       const { messages, workspaceId, routerModel } = context;
 

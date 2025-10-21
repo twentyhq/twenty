@@ -5,11 +5,11 @@ import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 
-import { RouterService } from './router.service';
+import { AiRouterService } from './ai-router.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AgentEntity, Workspace]), AiModule],
-  providers: [RouterService],
-  exports: [RouterService],
+  providers: [AiRouterService],
+  exports: [AiRouterService],
 })
-export class RouterModule {}
+export class AiRouterModule {}

@@ -22,7 +22,7 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
-import { RouterService } from 'src/engine/metadata-modules/router/router.service';
+import { AiRouterService } from 'src/engine/metadata-modules/ai-router/ai-router.service';
 
 export type StreamAgentChatOptions = {
   threadId: string;
@@ -42,7 +42,7 @@ export class AgentStreamingService {
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly agentExecutionService: AgentExecutionService,
-    private readonly routerService: RouterService,
+    private readonly aiRouterService: AiRouterService,
   ) {}
 
   async streamAgentChat({
@@ -80,7 +80,7 @@ export class AgentStreamingService {
             },
           });
 
-          const agent = await this.routerService.routeMessage({
+          const agent = await this.aiRouterService.routeMessage({
             messages,
             workspaceId: workspace.id,
             routerModel: workspace.routerModel,
