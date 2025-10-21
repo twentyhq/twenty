@@ -5,7 +5,7 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { type QueueJob } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
-type JobDetailsExpandableProps = {
+type SettingsAdminJobDetailsExpandableProps = {
   job: QueueJob;
   isExpanded: boolean;
 };
@@ -56,10 +56,10 @@ const StyledLogEntry = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const JobDetailsExpandable = ({
+export const SettingsAdminJobDetailsExpandable = ({
   job,
   isExpanded,
-}: JobDetailsExpandableProps) => {
+}: SettingsAdminJobDetailsExpandableProps) => {
   const { copyToClipboard } = useCopyToClipboard();
 
   const hasData = job.data && Object.keys(job.data).length > 0;

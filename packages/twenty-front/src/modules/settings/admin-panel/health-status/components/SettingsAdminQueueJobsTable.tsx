@@ -1,8 +1,8 @@
-import { DeleteJobsConfirmationModal } from '@/settings/admin-panel/health-status/components/DeleteJobsConfirmationModal';
-import { JobDetailsExpandable } from '@/settings/admin-panel/health-status/components/JobDetailsExpandable';
-import { JobStateBadge } from '@/settings/admin-panel/health-status/components/JobStateBadge';
-import { QueueJobRowDropdownMenu } from '@/settings/admin-panel/health-status/components/QueueJobRowDropdownMenu';
-import { RetryJobsConfirmationModal } from '@/settings/admin-panel/health-status/components/RetryJobsConfirmationModal';
+import { SettingsAdminDeleteJobsConfirmationModal } from '@/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal';
+import { SettingsAdminJobDetailsExpandable } from '@/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable';
+import { SettingsAdminJobStateBadge } from '@/settings/admin-panel/health-status/components/SettingsAdminJobStateBadge';
+import { SettingsAdminQueueJobRowDropdownMenu } from '@/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu';
+import { SettingsAdminRetryJobsConfirmationModal } from '@/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal';
 import { useDeleteJobs } from '@/settings/admin-panel/health-status/hooks/useDeleteJobs';
 import { useRetryJobs } from '@/settings/admin-panel/health-status/hooks/useRetryJobs';
 import { Select } from '@/ui/input/components/Select';
@@ -24,7 +24,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
-type QueueJobsTableProps = {
+type SettingsAdminQueueJobsTableProps = {
   queueName: string;
   onRetentionConfigLoaded?: (config: {
     completedMaxAge: number;
@@ -103,10 +103,10 @@ const RETRY_MODAL_ID = 'retry-jobs-modal';
 const DELETE_MODAL_ID = 'delete-jobs-modal';
 const LIMIT = 50;
 
-export const QueueJobsTable = ({
+export const SettingsAdminQueueJobsTable = ({
   queueName,
   onRetentionConfigLoaded,
-}: QueueJobsTableProps) => {
+}: SettingsAdminQueueJobsTableProps) => {
   const [page, setPage] = useState(0);
   const [stateFilter, setStateFilter] = useState<JobState>(JobState.completed);
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
@@ -336,7 +336,7 @@ export const QueueJobsTable = ({
                         {job.name}
                       </StyledTableCell>
                       <TableCell>
-                        <JobStateBadge
+                        <SettingsAdminJobStateBadge
                           state={job.state}
                           attemptsMade={job.attemptsMade}
                         />
@@ -352,7 +352,7 @@ export const QueueJobsTable = ({
                         )}
                       </TableCell>
                       <TableCell onClick={(e) => e.stopPropagation()}>
-                        <QueueJobRowDropdownMenu
+                        <SettingsAdminQueueJobRowDropdownMenu
                           jobId={job.id}
                           jobState={job.state}
                           onRetry={
@@ -364,7 +364,10 @@ export const QueueJobsTable = ({
                         />
                       </TableCell>
                     </StyledExpandableTableRow>
-                    <JobDetailsExpandable job={job} isExpanded={isExpanded} />
+                    <SettingsAdminJobDetailsExpandable
+                      job={job}
+                      isExpanded={isExpanded}
+                    />
                   </StyledJobRowWrapper>
                 );
               })}
@@ -394,12 +397,12 @@ export const QueueJobsTable = ({
         </>
       )}
 
-      <RetryJobsConfirmationModal
+      <SettingsAdminRetryJobsConfirmationModal
         modalId={RETRY_MODAL_ID}
         jobCount={selectedCount > 0 ? selectedCount : failedJobs.length}
         onConfirm={confirmRetrySelected}
       />
-      <DeleteJobsConfirmationModal
+      <SettingsAdminDeleteJobsConfirmationModal
         modalId={DELETE_MODAL_ID}
         jobCount={selectedCount}
         onConfirm={confirmDeleteSelected}

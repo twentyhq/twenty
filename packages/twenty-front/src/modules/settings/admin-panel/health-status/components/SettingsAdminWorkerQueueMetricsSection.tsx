@@ -14,13 +14,13 @@ import {
   QueueMetricsTimeRange,
 } from '~/generated-metadata/graphql';
 
-const WorkerMetricsGraph = lazy(() =>
-  import('./WorkerMetricsGraph').then((module) => ({
-    default: module.WorkerMetricsGraph,
+const SettingsAdminWorkerMetricsGraph = lazy(() =>
+  import('./SettingsAdminWorkerMetricsGraph').then((module) => ({
+    default: module.SettingsAdminWorkerMetricsGraph,
   })),
 );
 
-type WorkerQueueMetricsSectionProps = {
+type SettingsAdminWorkerQueueMetricsSectionProps = {
   queue: AdminPanelWorkerQueueHealth;
 };
 
@@ -42,9 +42,9 @@ const StyledContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
-export const WorkerQueueMetricsSection = ({
+export const SettingsAdminWorkerQueueMetricsSection = ({
   queue,
-}: WorkerQueueMetricsSectionProps) => {
+}: SettingsAdminWorkerQueueMetricsSectionProps) => {
   const [timeRange, setTimeRange] = useState(QueueMetricsTimeRange.OneHour);
 
   return (
@@ -77,7 +77,7 @@ export const WorkerQueueMetricsSection = ({
         </StyledControlsContainer>
       </Section>
       <Suspense fallback={<ChartSkeletonLoader />}>
-        <WorkerMetricsGraph
+        <SettingsAdminWorkerMetricsGraph
           queueName={queue.queueName}
           timeRange={timeRange}
           onTimeRangeChange={setTimeRange}

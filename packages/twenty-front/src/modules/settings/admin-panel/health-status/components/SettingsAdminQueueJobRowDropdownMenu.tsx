@@ -8,19 +8,19 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { JobState } from '~/generated-metadata/graphql';
 
-type QueueJobRowDropdownMenuProps = {
+type SettingsAdminQueueJobRowDropdownMenuProps = {
   jobId: string;
   jobState: JobState;
   onRetry?: () => void;
   onDelete: () => void;
 };
 
-export const QueueJobRowDropdownMenu = ({
+export const SettingsAdminQueueJobRowDropdownMenu = ({
   jobId,
   jobState,
   onRetry,
   onDelete,
-}: QueueJobRowDropdownMenuProps) => {
+}: SettingsAdminQueueJobRowDropdownMenuProps) => {
   const dropdownId = `queue-job-row-${jobId}`;
   const { closeDropdown } = useCloseDropdown();
 

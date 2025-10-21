@@ -1,6 +1,6 @@
-import { ConnectedAccountHealthStatus } from '@/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus';
-import { JsonDataIndicatorHealthStatus } from '@/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus';
-import { WorkerHealthStatus } from '@/settings/admin-panel/health-status/components/WorkerHealthStatus';
+import { SettingsAdminConnectedAccountHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminConnectedAccountHealthStatus';
+import { SettingsAdminJsonDataIndicatorHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus';
+import { SettingsAdminWorkerHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus';
 import { useParams } from 'react-router-dom';
 import { HealthIndicatorId } from '~/generated/graphql';
 
@@ -11,11 +11,11 @@ export const SettingsAdminIndicatorHealthStatusContent = () => {
     case HealthIndicatorId.database:
     case HealthIndicatorId.redis:
     case HealthIndicatorId.app:
-      return <JsonDataIndicatorHealthStatus />;
+      return <SettingsAdminJsonDataIndicatorHealthStatus />;
     case HealthIndicatorId.worker:
-      return <WorkerHealthStatus />;
+      return <SettingsAdminWorkerHealthStatus />;
     case HealthIndicatorId.connectedAccount:
-      return <ConnectedAccountHealthStatus />;
+      return <SettingsAdminConnectedAccountHealthStatus />;
 
     default:
       return null;

@@ -1,4 +1,4 @@
-import { QueueJobsTable } from '@/settings/admin-panel/health-status/components/QueueJobsTable';
+import { SettingsAdminQueueJobsTable } from '@/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { plural, t } from '@lingui/core/macro';
@@ -77,7 +77,7 @@ export const SettingsAdminQueueDetail = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title title={t`Jobs`} description={queueDescription} />
-          <QueueJobsTable
+          <SettingsAdminQueueJobsTable
             queueName={queueName}
             onRetentionConfigLoaded={setRetentionConfig}
           />

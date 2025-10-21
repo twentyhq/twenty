@@ -1,19 +1,19 @@
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { plural, t } from '@lingui/core/macro';
 
-type DeleteJobsConfirmationModalProps = {
+type SettingsAdminDeleteJobsConfirmationModalProps = {
   modalId: string;
   jobCount: number;
   onConfirm: () => void;
   onClose?: () => void;
 };
 
-export const DeleteJobsConfirmationModal = ({
+export const SettingsAdminDeleteJobsConfirmationModal = ({
   modalId,
   jobCount,
   onConfirm,
   onClose,
-}: DeleteJobsConfirmationModalProps) => {
+}: SettingsAdminDeleteJobsConfirmationModalProps) => {
   const title = plural(jobCount, {
     one: `Delete ${jobCount} Job`,
     other: `Delete ${jobCount} Jobs`,

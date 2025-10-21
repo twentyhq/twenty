@@ -1,4 +1,4 @@
-import { WorkerQueueMetricsSection } from '@/settings/admin-panel/health-status/components/WorkerQueueMetricsSection';
+import { SettingsAdminWorkerQueueMetricsSection } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
@@ -10,7 +10,7 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const WorkerHealthStatus = () => {
+export const SettingsAdminWorkerHealthStatus = () => {
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
 
   const isWorkerDown =
@@ -25,7 +25,10 @@ export const WorkerHealthStatus = () => {
         </StyledErrorMessage>
       ) : (
         (indicatorHealth.queues ?? []).map((queue) => (
-          <WorkerQueueMetricsSection key={queue.queueName} queue={queue} />
+          <SettingsAdminWorkerQueueMetricsSection
+            key={queue.queueName}
+            queue={queue}
+          />
         ))
       )}
     </>

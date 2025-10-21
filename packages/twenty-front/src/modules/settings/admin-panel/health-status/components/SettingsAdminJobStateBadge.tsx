@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { JobState } from '~/generated-metadata/graphql';
 
-type JobStateBadgeProps = {
+type SettingsAdminJobStateBadgeProps = {
   state: JobState;
   attemptsMade?: number;
 };
@@ -34,10 +34,10 @@ const StyledAttemptBadge = styled.span`
   white-space: nowrap;
 `;
 
-export const JobStateBadge = ({
+export const SettingsAdminJobStateBadge = ({
   state,
   attemptsMade = 1,
-}: JobStateBadgeProps) => {
+}: SettingsAdminJobStateBadgeProps) => {
   const color = JOB_STATE_COLORS[state] || 'gray';
   const showAttempts = attemptsMade > 1;
 

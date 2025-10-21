@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(8)};
 `;
 
-export const ConnectedAccountHealthStatus = () => {
+export const SettingsAdminConnectedAccountHealthStatus = () => {
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
   const details = indicatorHealth.details;
   if (!details) {
