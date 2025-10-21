@@ -3,6 +3,7 @@ import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-dire
 import { ApiService } from '../services/api.service';
 import { ApiResponse } from '../types/config.types';
 import { loadManifest } from '../utils/app-manifest-loader';
+import { loadManifestFromDecorators } from '../utils/load-manifest-from-decorators';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
@@ -16,10 +17,17 @@ export class AppSyncCommand {
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
 
+      const { objects: objectsFromDecorators } = loadManifestFromDecorators();
+
       const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
 
+      const mergedManifest = {
+        ...manifest,
+        objects: [...manifest.objects, ...objectsFromDecorators],
+      };
+
       const result = await this.apiService.syncApplication({
-        manifest,
+        manifest: mergedManifest,
         packageJson,
         yarnLock,
       });
