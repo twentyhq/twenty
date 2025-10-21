@@ -14,7 +14,6 @@ import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Section } from '@react-email/components';
-import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -75,11 +74,17 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
       formConfig.formState.dirtyFields,
     ) as (keyof SettingsIntegrationEditConnectionFormValues)[];
 
+    const dirtyFormValues = Object.fromEntries(
+      Object.entries(formValues).filter(([key]) =>
+        dirtyFieldKeys.includes(key as keyof typeof formValues),
+      ),
+    );
+
     try {
       await updateOneDatabaseConnection({
         ...formatValuesForUpdate({
           databaseKey,
-          formValues: pick(formValues, dirtyFieldKeys),
+          formValues: dirtyFormValues,
         }),
         id: connection?.id ?? '',
       });
