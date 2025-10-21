@@ -102,7 +102,7 @@ describe('ApprovedAccessDomainService', () => {
       } as WorkspaceEntity;
       const fromUser = {
         userEmail: 'user@custom-domain.com',
-      } as WorkspaceEntity;
+      } as WorkspaceMemberWorkspaceEntity;
 
       const expectedApprovedAccessDomain = {
         workspaceId: 'workspace-id',
@@ -213,7 +213,7 @@ describe('ApprovedAccessDomainService', () => {
   describe('sendApprovedAccessDomainValidationEmail', () => {
     it('should throw an exception if the approved access domain is already validated', async () => {
       const approvedAccessDomainId = 'approved-access-domain-id';
-      const sender = {} as WorkspaceEntity;
+      const sender = {} as WorkspaceMemberWorkspaceEntity;
       const workspace = {} as WorkspaceEntity;
       const email = 'validator@example.com';
 
@@ -243,7 +243,7 @@ describe('ApprovedAccessDomainService', () => {
 
     it('should throw an exception if the email does not match the approved access domain', async () => {
       const approvedAccessDomainId = 'approved-access-domain-id';
-      const sender = {} as WorkspaceEntity;
+      const sender = {} as WorkspaceMemberWorkspaceEntity;
       const workspace = {} as WorkspaceEntity;
       const email = 'validator@different.com';
       const approvedAccessDomain = {
