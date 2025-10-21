@@ -395,7 +395,7 @@ describe('UserWorkspaceService', () => {
         id: 'user-workspace-id',
         userId: user.id,
         workspaceId: workspace.id,
-      } as UserEntity;
+      } as UserWorkspaceEntity;
 
       jest.spyOn(service, 'checkUserWorkspaceExists').mockResolvedValue(null);
       jest.spyOn(service, 'create').mockResolvedValue(userWorkspace);
@@ -445,7 +445,7 @@ describe('UserWorkspaceService', () => {
         id: 'user-workspace-id',
         userId: user.id,
         workspaceId: workspace.id,
-      } as UserEntity;
+      } as UserWorkspaceEntity;
 
       jest
         .spyOn(service, 'checkUserWorkspaceExists')
@@ -786,7 +786,7 @@ describe('UserWorkspaceService', () => {
       const user = {
         id: userId,
         userWorkspaces: [{ workspace: workspace1 }, { workspace: workspace2 }],
-      } as unknown as UserWorkspaceEntity;
+      } as unknown as UserEntity;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
 
@@ -813,7 +813,7 @@ describe('UserWorkspaceService', () => {
       const user = {
         id: userId,
         workspaces: [],
-      } as unknown as UserWorkspaceEntity;
+      } as unknown as UserEntity;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
 
