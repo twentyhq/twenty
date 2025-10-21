@@ -71,7 +71,10 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
       ? replaceFlatEntityInFlatEntityMapsOrThrow({
           flatEntity: {
             ...flatFieldMetadata,
-            viewIds: [...flatFieldMetadata.viewIds, flatViewToValidate.id],
+            kanbanAggregateOperationViewIds: [
+              ...flatFieldMetadata.kanbanAggregateOperationViewIds,
+              flatViewToValidate.id,
+            ],
           },
           flatEntityMaps:
             dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
@@ -144,9 +147,10 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
       ? replaceFlatEntityInFlatEntityMapsOrThrow({
           flatEntity: {
             ...flatFieldMetadata,
-            viewIds: flatFieldMetadata.viewIds.filter(
-              (id) => id !== flatViewToValidate.id,
-            ),
+            kanbanAggregateOperationViewIds:
+              flatFieldMetadata.kanbanAggregateOperationViewIds.filter(
+                (id) => id !== flatViewToValidate.id,
+              ),
           },
           flatEntityMaps:
             dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,

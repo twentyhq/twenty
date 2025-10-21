@@ -10,21 +10,21 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
+    ObjectMetadataException,
+    ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import {
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-  STANDARD_OBJECT_FIELD_IDS,
+    CUSTOM_OBJECT_STANDARD_FIELD_IDS,
+    STANDARD_OBJECT_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { type STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  createDeterministicUuid,
-  createRelationDeterministicUuid,
+    createDeterministicUuid,
+    createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 const generateSourceFlatFieldMetadata = ({
@@ -63,7 +63,7 @@ const generateSourceFlatFieldMetadata = ({
   }
 
   return {
-    viewIds: [],
+    kanbanAggregateOperationViewIds: [],
     viewFilterIds: [],
     viewFieldIds: [],
     viewGroupIds: [],
@@ -133,7 +133,7 @@ const generateTargetFlatFieldMetadata = ({
   return {
     morphId: null,
     viewFieldIds: [],
-    viewIds: [],
+    kanbanAggregateOperationViewIds: [],
     viewFilterIds: [],
     viewGroupIds: [],
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,

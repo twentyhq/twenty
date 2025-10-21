@@ -21,7 +21,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   return {
     viewFilterIds: [],
     viewGroupIds: [],
-    viewIds: [],
+    kanbanAggregateOperationViewIds: [],
     viewFieldIds: [],
     createdAt,
     updatedAt: createdAt,

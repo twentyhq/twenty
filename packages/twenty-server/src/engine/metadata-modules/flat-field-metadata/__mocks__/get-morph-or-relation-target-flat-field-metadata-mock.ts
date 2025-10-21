@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import {
-  type FieldMetadataType,
-  type NonNullableRequired,
+    type FieldMetadataType,
+    type NonNullableRequired,
 } from 'twenty-shared/types';
 
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -35,7 +35,7 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     viewFilterIds: [],
     viewGroupIds: [],
     viewFieldIds: [],
-    viewIds: [],
+    kanbanAggregateOperationViewIds: [],
     createdAt,
     updatedAt: createdAt,
     description: 'default flat field metadata description',

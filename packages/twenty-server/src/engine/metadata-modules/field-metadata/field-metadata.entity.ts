@@ -206,5 +206,5 @@ export class FieldMetadataEntity<
     () => ViewEntity,
     (view) => view.kanbanAggregateOperationFieldMetadata,
   )
-  views: Relation<ViewEntity[]>;
+  kanbanAggregateOperationViews: Relation<ViewEntity[]>;
 }

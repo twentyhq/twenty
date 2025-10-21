@@ -57,6 +57,6 @@ export const getDefaultFlatFieldMetadata = ({
     applicationId: null,
     viewFilterIds: [],
     viewGroupIds: [],
-    viewIds: [],
+    kanbanAggregateOperationViewIds: [],
   } as const satisfies FlatFieldMetadata;
 };

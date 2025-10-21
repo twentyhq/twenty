@@ -104,7 +104,7 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
 
   @ManyToOne(
     () => FieldMetadataEntity,
-    (FieldMetadataEntity) => FieldMetadataEntity.views,
+    (FieldMetadataEntity) => FieldMetadataEntity.kanbanAggregateOperationViews,
     {
       onDelete: 'CASCADE',
       nullable: true,
