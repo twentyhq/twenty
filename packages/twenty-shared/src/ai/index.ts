@@ -6,3 +6,6 @@
  *  |_|   \_/\_/ \___|_| |_|\__|\__, |
  *                              |___/
  */
+
+export type { DataMessagePart } from './types/DataMessagePart';
+export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
