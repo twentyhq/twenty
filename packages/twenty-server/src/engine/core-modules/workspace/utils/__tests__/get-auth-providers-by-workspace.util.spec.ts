@@ -1,9 +1,8 @@
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   IdentityProviderType,
   SSOIdentityProviderStatus,
-  type WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 describe('getAuthProvidersByWorkspace', () => {
@@ -21,7 +20,7 @@ describe('getAuthProvidersByWorkspace', () => {
         issuer: 'sso1.example.com',
       },
     ],
-  } as unknown as Workspace;
+  } as unknown as WorkspaceEntity;
 
   it('should return correct auth providers for given workspace', () => {
     const result = getAuthProvidersByWorkspace({
@@ -84,7 +83,7 @@ describe('getAuthProvidersByWorkspace', () => {
             type: IdentityProviderType.SAML,
             status: SSOIdentityProviderStatus.Inactive,
             issuer: 'sso1.example.com',
-          } as WorkspaceSSOIdentityProvider,
+          } as WorkspaceEntitySSOIdentityProvider,
         ],
       },
       systemEnabledProviders: {

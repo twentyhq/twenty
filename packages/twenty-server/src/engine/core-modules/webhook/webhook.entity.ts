@@ -15,12 +15,12 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Index('IDX_WEBHOOK_WORKSPACE_ID', ['workspaceId'])
 @Entity({ name: 'webhook', schema: 'core' })
 @ObjectType('Webhook')
-export class Webhook {
+export class WebhookEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -57,10 +57,10 @@ export class Webhook {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date;
 
-  @Field(() => Workspace)
-  @ManyToOne(() => Workspace, (workspace) => workspace.webhooks, {
+  @Field(() => WorkspaceEntity)
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.webhooks, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 }

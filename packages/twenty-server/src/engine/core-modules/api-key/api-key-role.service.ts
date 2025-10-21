@@ -10,7 +10,7 @@ import {
   Repository,
 } from 'typeorm';
 
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
@@ -29,8 +29,8 @@ export class ApiKeyRoleService {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
 
-    @InjectRepository(ApiKey)
-    private readonly apiKeyRepository: Repository<ApiKey>,
+    @InjectRepository(ApiKeyEntity)
+    private readonly apiKeyRepository: Repository<ApiKeyEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -208,7 +208,7 @@ export class ApiKeyRoleService {
   public async getApiKeysAssignedToRole(
     roleId: string,
     workspaceId: string,
-  ): Promise<ApiKey[]> {
+  ): Promise<ApiKeyEntity[]> {
     const roleTargets = await this.roleTargetsRepository.find({
       where: {
         roleId,

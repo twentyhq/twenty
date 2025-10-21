@@ -5,22 +5,21 @@ import { type Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import type { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import type { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('UserService', () => {
   let service: UserService;
-  let userRepository: Repository<User>;
+  let userRepository: Repository<UserEntity>;
   let workspaceService: WorkspaceService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
   let userRoleService: UserRoleService;
@@ -29,14 +28,14 @@ describe('UserService', () => {
     findOne: jest.fn(),
     find: jest.fn(),
     delete: jest.fn(),
-  } as unknown as WorkspaceRepository<WorkspaceMemberWorkspaceEntity>;
+  } as unknown as WorkspaceEntityRepository<WorkspaceMemberWorkspaceEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -62,7 +61,9 @@ describe('UserService', () => {
     }).compile();
 
     service = module.get<UserService>(UserService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<UserEntity>>(
+      getRepositoryToken(UserEntity),
+    );
     userRoleService = module.get<UserRoleService>(UserRoleService);
     twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
@@ -75,8 +76,8 @@ describe('UserService', () => {
       // isWorkspaceActiveOrSuspendedSpy.mockReturnValue(false);
 
       const res = await service.loadWorkspaceMember(
-        { id: 'u1' } as User,
-        { id: 'w1' } as Workspace,
+        { id: 'u1' } as UserEntity,
+        { id: 'w1' } as WorkspaceEntity,
       );
 
       expect(res).toBeNull();
@@ -86,21 +87,24 @@ describe('UserService', () => {
     });
 
     it('fetches from workspace member repo when workspace active', async () => {
-      jest.spyOn(mockWorkspaceMemberRepo, 'findOne').mockResolvedValue({
-        id: 'wm1',
-        userId: 'u1',
-      } as WorkspaceMemberWorkspaceEntity);
+      jest.spyOn(mockWorkspaceMemberRepo, 'findOne').mockResolvedValue(
+        {
+          id: 'wm1',
+          userId: 'u1',
+        } as WorkspaceEntity,
+        WorkspaceMemberWorkspaceEntity,
+      );
 
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue(mockWorkspaceMemberRepo);
 
       const res = await service.loadWorkspaceMember(
-        { id: 'u1' } as User,
+        { id: 'u1' } as UserEntity,
         {
           id: 'w1',
           activationStatus: WorkspaceActivationStatus.ACTIVE,
-        } as Workspace,
+        } as WorkspaceEntity,
       );
 
       expect(
@@ -118,7 +122,7 @@ describe('UserService', () => {
       const res = await service.loadWorkspaceMembers({
         id: 'w1',
         activationStatus: WorkspaceActivationStatus.INACTIVE,
-      } as Workspace);
+      } as WorkspaceEntity);
 
       expect(res).toEqual([]);
       expect(
@@ -129,7 +133,10 @@ describe('UserService', () => {
     it('fetches members withDeleted flag', async () => {
       jest
         .spyOn(mockWorkspaceMemberRepo, 'find')
-        .mockResolvedValue([{ id: 'wm1' } as WorkspaceMemberWorkspaceEntity]);
+        .mockResolvedValue([
+          { id: 'wm1' } as WorkspaceEntity,
+          WorkspaceMemberWorkspaceEntity,
+        ]);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue(mockWorkspaceMemberRepo);
@@ -138,7 +145,7 @@ describe('UserService', () => {
         {
           id: 'w2',
           activationStatus: WorkspaceActivationStatus.ACTIVE,
-        } as Workspace,
+        } as WorkspaceEntity,
         true,
       );
 
@@ -154,7 +161,7 @@ describe('UserService', () => {
       const res = await service.loadDeletedWorkspaceMembersOnly({
         id: 'w1',
         activationStatus: WorkspaceActivationStatus.INACTIVE,
-      } as Workspace);
+      } as WorkspaceEntity);
 
       expect(res).toEqual([]);
     });
@@ -163,7 +170,8 @@ describe('UserService', () => {
       jest
         .spyOn(mockWorkspaceMemberRepo, 'find')
         .mockResolvedValue([
-          { id: 'wm-del' } as WorkspaceMemberWorkspaceEntity,
+          { id: 'wm-del' } as WorkspaceEntity,
+          WorkspaceMemberWorkspaceEntity,
         ]);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
@@ -172,7 +180,7 @@ describe('UserService', () => {
       await service.loadDeletedWorkspaceMembersOnly({
         id: 'w3',
         activationStatus: WorkspaceActivationStatus.ACTIVE,
-      } as Workspace);
+      } as WorkspaceEntity);
 
       expect(mockWorkspaceMemberRepo.find).toHaveBeenCalledWith({
         where: { deletedAt: expect.any(Object) },
@@ -183,7 +191,7 @@ describe('UserService', () => {
 
   describe('findUserByEmailOrThrow', () => {
     it('returns user when found', async () => {
-      const user = { id: 'u1', email: 'a@b.com' } as User;
+      const user = { id: 'u1', email: 'a@b.com' } as UserEntity;
 
       (userRepository.findOne as jest.Mock).mockResolvedValue(user);
 
@@ -202,7 +210,7 @@ describe('UserService', () => {
 
   describe('findUserByEmail', () => {
     it('returns the user when found', async () => {
-      const user: Partial<User> = { id: 'u1', email: 'john@doe.com' };
+      const user: Partial<UserEntity> = { id: 'u1', email: 'john@doe.com' };
 
       (userRepository.findOne as jest.Mock).mockResolvedValue(user);
 
@@ -244,11 +252,11 @@ describe('UserService', () => {
 
   describe('markEmailAsVerified', () => {
     it('sets isEmailVerified and saves', async () => {
-      const user = { id: 'u1', isEmailVerified: false } as User;
+      const user = { id: 'u1', isEmailVerified: false } as UserEntity;
 
       (userRepository.findOne as jest.Mock).mockResolvedValue(user);
       (userRepository.save as jest.Mock).mockImplementation(
-        async (u: User) => u,
+        async (u: UserEntity) => u,
       );
 
       const res = await service.markEmailAsVerified('u1');
@@ -271,7 +279,8 @@ describe('UserService', () => {
 
   describe('deleteUser', () => {
     const wmForUser = (userId: string) =>
-      ({ id: 'wm-1', userId }) as WorkspaceMemberWorkspaceEntity;
+        ({ id: 'wm-1', userId }) as WorkspaceEntity,
+      WorkspaceMemberWorkspaceEntity;
 
     it('throws mapped PermissionsException when cannot unassign last admin', async () => {
       (userRepository.findOne as jest.Mock).mockResolvedValue({
@@ -283,12 +292,13 @@ describe('UserService', () => {
         .spyOn(mockWorkspaceMemberRepo, 'find')
         .mockResolvedValue([
           wmForUser('u1'),
-          { id: 'wm-2', userId: 'uX' } as WorkspaceMemberWorkspaceEntity,
+          { id: 'wm-2', userId: 'uX' } as WorkspaceEntity,
+          WorkspaceMemberWorkspaceEntity,
         ]);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue(
-          mockWorkspaceMemberRepo as unknown as WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
+          mockWorkspaceMemberRepo as unknown as WorkspaceEntityRepository<WorkspaceMemberWorkspaceEntity>,
         );
 
       jest
@@ -338,7 +348,7 @@ describe('UserService', () => {
 
   describe('findUserById', () => {
     it('returns the user when found', async () => {
-      const user = { id: 'u42' } as User;
+      const user = { id: 'u42' } as UserEntity;
 
       (userRepository.findOne as jest.Mock).mockResolvedValue(user);
 
@@ -361,7 +371,7 @@ describe('UserService', () => {
 
   describe('findUserByIdOrThrow', () => {
     it('returns user when found', async () => {
-      const user = { id: 'u99' } as User;
+      const user = { id: 'u99' } as UserEntity;
 
       (userRepository.findOne as jest.Mock).mockResolvedValue(user);
 

@@ -8,7 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -34,7 +34,7 @@ export class McpController {
   )
   async handleMcpCore(
     @Body() body: JsonRpc,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthApiKey() apiKey: string | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ) {

@@ -8,36 +8,38 @@ import { DeleteWebhookDTO } from 'src/engine/core-modules/webhook/dtos/delete-we
 import { GetWebhookDTO } from 'src/engine/core-modules/webhook/dtos/get-webhook.dto';
 import { UpdateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/update-webhook.dto';
 import { webhookGraphqlApiExceptionHandler } from 'src/engine/core-modules/webhook/utils/webhook-graphql-api-exception-handler.util';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-import { Webhook } from './webhook.entity';
+import { WebhookEntity } from './webhook.entity';
 import { WebhookService } from './webhook.service';
 
-@Resolver(() => Webhook)
+@Resolver(() => WebhookEntity)
 @UseGuards(WorkspaceAuthGuard)
 export class WebhookResolver {
   constructor(private readonly webhookService: WebhookService) {}
 
-  @Query(() => [Webhook])
-  async webhooks(@AuthWorkspace() workspace: Workspace): Promise<Webhook[]> {
+  @Query(() => [WebhookEntity])
+  async webhooks(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<WebhookEntity[]> {
     return this.webhookService.findByWorkspaceId(workspace.id);
   }
 
-  @Query(() => Webhook, { nullable: true })
+  @Query(() => WebhookEntity, { nullable: true })
   async webhook(
     @Args('input') input: GetWebhookDTO,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<Webhook | null> {
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<WebhookEntity | null> {
     return this.webhookService.findById(input.id, workspace.id);
   }
 
-  @Mutation(() => Webhook)
+  @Mutation(() => WebhookEntity)
   async createWebhook(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input') input: CreateWebhookDTO,
-  ): Promise<Webhook> {
+  ): Promise<WebhookEntity> {
     try {
       return await this.webhookService.create({
         targetUrl: input.targetUrl,
@@ -52,13 +54,13 @@ export class WebhookResolver {
     }
   }
 
-  @Mutation(() => Webhook, { nullable: true })
+  @Mutation(() => WebhookEntity, { nullable: true })
   async updateWebhook(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input') input: UpdateWebhookDTO,
-  ): Promise<Webhook | null> {
+  ): Promise<WebhookEntity | null> {
     try {
-      const updateData: QueryDeepPartialEntity<Webhook> = {};
+      const updateData: QueryDeepPartialEntity<WebhookEntity> = {};
 
       if (input.targetUrl !== undefined) updateData.targetUrl = input.targetUrl;
       if (input.operations !== undefined)
@@ -81,7 +83,7 @@ export class WebhookResolver {
   @Mutation(() => Boolean)
   async deleteWebhook(
     @Args('input') input: DeleteWebhookDTO,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const result = await this.webhookService.delete(input.id, workspace.id);
 

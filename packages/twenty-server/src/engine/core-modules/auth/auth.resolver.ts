@@ -22,7 +22,7 @@ import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dt
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
@@ -59,12 +59,12 @@ import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -99,10 +99,10 @@ import { AuthService } from './services/auth.service';
 )
 export class AuthResolver {
   constructor(
-    @InjectRepository(UserWorkspace)
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
-    @InjectRepository(AppToken)
-    private readonly appTokenRepository: Repository<AppToken>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
@@ -154,11 +154,11 @@ export class AuthResolver {
     );
   }
 
-  @Query(() => Workspace)
+  @Query(() => WorkspaceEntity)
   @UseGuards(PublicEndpointGuard)
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ): Promise<Workspace> {
+  ): Promise<WorkspaceEntity> {
     return await this.authService.findWorkspaceFromInviteHashOrFail(
       workspaceInviteHashValidInput.inviteHash,
     );
@@ -483,7 +483,7 @@ export class AuthResolver {
   @Mutation(() => SignUpOutput)
   @UseGuards(UserAuthGuard)
   async signUpInNewWorkspace(
-    @AuthUser() currentUser: User,
+    @AuthUser() currentUser: UserEntity,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpOutput> {
     await this.signInUpService.checkWorkspaceCreationIsAllowedOrThrow(
@@ -512,8 +512,8 @@ export class AuthResolver {
   @Mutation(() => TransientToken)
   @UseGuards(UserAuthGuard)
   async generateTransientToken(
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TransientToken | void> {
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
@@ -595,7 +595,7 @@ export class AuthResolver {
   private async validateWorkspaceAccess(
     origin: string,
     tokenWorkspaceId: string,
-  ): Promise<Workspace> {
+  ): Promise<WorkspaceEntity> {
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
@@ -622,7 +622,7 @@ export class AuthResolver {
   private async validateUserAccess(
     email: string,
     workspaceId: string,
-  ): Promise<{ user: User; userWorkspace: UserWorkspace }> {
+  ): Promise<{ user: UserEntity; userWorkspace: UserWorkspaceEntity }> {
     const user = await this.userService.findUserByEmailOrThrow(email);
 
     await this.authService.checkIsEmailVerified(user.isEmailVerified);
@@ -637,8 +637,8 @@ export class AuthResolver {
   }
 
   private async validateRegularAuthentication(
-    workspace: Workspace,
-    userWorkspace: UserWorkspace,
+    workspace: WorkspaceEntity,
+    userWorkspace: UserWorkspaceEntity,
   ): Promise<void> {
     await this.twoFactorAuthenticationService.validateTwoFactorAuthenticationRequirement(
       workspace,
@@ -648,7 +648,7 @@ export class AuthResolver {
 
   private async validateAndLogImpersonation(
     tokenPayload: LoginTokenJwtPayload,
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     targetUserEmail: string,
   ) {
     const { impersonatorUserWorkspaceId } = tokenPayload;
@@ -759,8 +759,8 @@ export class AuthResolver {
   @UseGuards(UserAuthGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AuthorizeApp> {
     return await this.authService.generateAuthorizationCode(
       authorizeAppInput,
@@ -786,7 +786,7 @@ export class AuthResolver {
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
     @Args() args: ApiKeyTokenInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApiKeyToken | undefined> {
     return await this.apiKeyService.generateApiKeyToken(
       workspaceId,

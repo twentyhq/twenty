@@ -1,6 +1,5 @@
-import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
-import type { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
+import type { WebhookEntity } from 'src/engine/core-modules/webhook/webhook.entity';
 import { transformEventBatchToWebhookEvents } from 'src/engine/core-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
@@ -48,7 +47,7 @@ describe('transformEventBatchToWebhookEvents', () => {
           },
         },
       ],
-    } as WorkspaceEventBatch<ObjectRecordEvent>;
+    } as WorkspaceEntityEventBatch<ObjectRecordEvent>;
 
     const webhooks = [
       {
@@ -61,7 +60,7 @@ describe('transformEventBatchToWebhookEvents', () => {
         targetUrl: 'targetUrl-2',
         secret: 'secret-2',
       },
-    ] as Webhook[];
+    ] as WebhookEntity[];
 
     const result = transformEventBatchToWebhookEvents({
       workspaceEventBatch,
@@ -190,7 +189,7 @@ describe('transformEventBatchToWebhookEvents', () => {
           },
         },
       ],
-    } as WorkspaceEventBatch<ObjectRecordEvent>;
+    } as WorkspaceEntityEventBatch<ObjectRecordEvent>;
 
     const webhooks = [
       {
@@ -198,7 +197,7 @@ describe('transformEventBatchToWebhookEvents', () => {
         targetUrl: 'targetUrl',
         secret: 'secret',
       },
-    ] as Webhook[];
+    ] as WebhookEntity[];
 
     const result = transformEventBatchToWebhookEvents({
       workspaceEventBatch,

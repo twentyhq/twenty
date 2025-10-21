@@ -1,10 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('SubdomainManagerService', () => {
   let domainServerConfigService: DomainServerConfigService;
@@ -15,14 +15,14 @@ describe('SubdomainManagerService', () => {
       providers: [
         DomainServerConfigService,
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(PublicDomain),
+          provide: getRepositoryToken(ApprovedAccessDomainEntity),
           useValue: {
             findOne: jest.fn(),
           },

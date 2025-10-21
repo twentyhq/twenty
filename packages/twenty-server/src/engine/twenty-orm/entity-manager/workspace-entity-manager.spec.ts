@@ -150,7 +150,7 @@ describe('WorkspaceEntityManager', () => {
         emitDatabaseBatchEvent: jest.fn(),
         emitCustomBatchEvent: jest.fn(),
       } as any,
-    } as WorkspaceInternalContext;
+    } as WorkspaceEntityInternalContext;
 
     mockDataSource = {
       featureFlagMap: {
@@ -178,7 +178,7 @@ describe('WorkspaceEntityManager', () => {
         IS_COMMON_API_ENABLED: false,
       },
       permissionsPerRoleId: {},
-    } as WorkspaceDataSource;
+    } as WorkspaceEntityDataSource;
 
     mockPermissionOptions = {
       shouldBypassPermissionChecks: false,

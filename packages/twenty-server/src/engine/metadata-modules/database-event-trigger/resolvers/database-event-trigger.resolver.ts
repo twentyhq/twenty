@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateDatabaseEventTriggerInput } from 'src/engine/metadata-modules/database-event-trigger/dtos/create-database-event-trigger.input';
@@ -31,7 +31,7 @@ export class DatabaseEventTriggerResolver {
   @Query(() => DatabaseEventTriggerDTO)
   async findOneDatabaseEventTrigger(
     @Args('input') { id }: DatabaseEventTriggerIdInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.databaseEventTriggerRepository.findOneOrFail({
@@ -47,7 +47,7 @@ export class DatabaseEventTriggerResolver {
 
   @Query(() => [DatabaseEventTriggerDTO])
   async findManyDatabaseEventTriggers(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.databaseEventTriggerRepository.find({
@@ -61,7 +61,7 @@ export class DatabaseEventTriggerResolver {
   @Mutation(() => DatabaseEventTriggerDTO)
   async deleteOneDatabaseEventTrigger(
     @Args('input') input: DatabaseEventTriggerIdInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.databaseEventTriggerV2Service.destroyOne({
@@ -77,7 +77,7 @@ export class DatabaseEventTriggerResolver {
   async updateOneDatabaseEventTrigger(
     @Args('input')
     input: UpdateDatabaseEventTriggerInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.databaseEventTriggerV2Service.updateOne(
@@ -93,7 +93,7 @@ export class DatabaseEventTriggerResolver {
   async createOneDatabaseEventTrigger(
     @Args('input')
     input: CreateDatabaseEventTriggerInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.databaseEventTriggerV2Service.createOne(

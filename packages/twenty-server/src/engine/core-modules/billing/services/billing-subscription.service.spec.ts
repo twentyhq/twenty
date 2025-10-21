@@ -25,7 +25,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { type BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { type MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
@@ -783,7 +783,7 @@ describe('BillingSubscriptionService', () => {
         const spyUpdateSubscription =
           arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
 
-        await service.changePlan({ id: 'ws_1' } as Workspace);
+        await service.changePlan({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -937,7 +937,7 @@ describe('BillingSubscriptionService', () => {
           arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
         const spySyncDB2 = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changePlan({ id: 'ws_1' } as Workspace);
+        await service.changePlan({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -1140,7 +1140,7 @@ describe('BillingSubscriptionService', () => {
 
         const spySyncDBD1 = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changePlan({ id: 'ws_1' } as Workspace);
+        await service.changePlan({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionScheduleService.replaceEditablePhases,
@@ -1328,7 +1328,7 @@ describe('BillingSubscriptionService', () => {
 
         const spySyncDBD2 = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changePlan({ id: 'ws_1' } as Workspace);
+        await service.changePlan({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -1428,7 +1428,7 @@ describe('BillingSubscriptionService', () => {
           });
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changeInterval({ id: 'ws_1' } as Workspace);
+        await service.changeInterval({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -1597,7 +1597,7 @@ describe('BillingSubscriptionService', () => {
             quantity: 7,
           });
 
-        await service.changeInterval({ id: 'ws_1' } as Workspace);
+        await service.changeInterval({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(stripeSubscriptionService.updateSubscription).toHaveBeenCalled();
         expect(
@@ -1751,7 +1751,7 @@ describe('BillingSubscriptionService', () => {
 
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changeInterval({ id: 'ws_1' } as Workspace);
+        await service.changeInterval({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -1917,7 +1917,7 @@ describe('BillingSubscriptionService', () => {
 
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changeInterval({ id: 'ws_1' } as Workspace);
+        await service.changeInterval({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -2091,7 +2091,7 @@ describe('BillingSubscriptionService', () => {
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
-          { id: 'ws_1' } as Workspace,
+          { id: 'ws_1' } as WorkspaceEntity,
           METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
         );
 
@@ -2331,7 +2331,7 @@ describe('BillingSubscriptionService', () => {
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
-          { id: 'ws_1' } as Workspace,
+          { id: 'ws_1' } as WorkspaceEntity,
           METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
         );
 
@@ -2511,7 +2511,7 @@ describe('BillingSubscriptionService', () => {
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
-          { id: 'ws_1' } as Workspace,
+          { id: 'ws_1' } as WorkspaceEntity,
           METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
         );
 
@@ -2747,7 +2747,7 @@ describe('BillingSubscriptionService', () => {
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
-          { id: 'ws_1' } as Workspace,
+          { id: 'ws_1' } as WorkspaceEntity,
           METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
         );
 

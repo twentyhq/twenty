@@ -3,11 +3,12 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DeleteResult, IsNull, type Repository } from 'typeorm';
 
-import * as authUtils from 'src/engine/core-modules/auth/auth.util';
+import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import {
-  KeyValuePair,
+  type KeyValuePairEntity,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import * as authUtils from 'src/engine/core-modules/auth/auth.util';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
@@ -18,8 +19,8 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 jest.mock('src/engine/core-modules/auth/auth.util', () => ({
@@ -29,22 +30,22 @@ jest.mock('src/engine/core-modules/auth/auth.util', () => ({
 
 describe('ConfigStorageService', () => {
   let service: ConfigStorageService;
-  let keyValuePairRepository: Repository<KeyValuePair>;
+  let keyValuePairRepository: Repository<KeyValuePairEntity>;
   let configValueConverter: ConfigValueConverterService;
   let environmentConfigDriver: EnvironmentConfigDriver;
 
   const createMockKeyValuePair = (
     key: string,
     value: string,
-  ): KeyValuePair => ({
+  ): KeyValuePairEntity => ({
     id: '1',
     key,
     value: value as unknown as JSON,
     type: KeyValuePairType.CONFIG_VARIABLE,
     userId: null,
     workspaceId: null,
-    user: null as unknown as User,
-    workspace: null as unknown as Workspace,
+    user: null as unknown as UserEntity,
+    workspace: null as unknown as WorkspaceEntity,
     createdAt: new Date(),
     updatedAt: new Date(),
     textValueDeprecated: null,
@@ -70,7 +71,7 @@ describe('ConfigStorageService', () => {
         },
         ConfigVariables,
         {
-          provide: getRepositoryToken(KeyValuePair),
+          provide: getRepositoryToken(ApprovedAccessDomainEntity),
           useValue: {
             findOne: jest.fn(),
             find: jest.fn(),
@@ -83,8 +84,8 @@ describe('ConfigStorageService', () => {
     }).compile();
 
     service = module.get<ConfigStorageService>(ConfigStorageService);
-    keyValuePairRepository = module.get<Repository<KeyValuePair>>(
-      getRepositoryToken(KeyValuePair),
+    keyValuePairRepository = module.get<Repository<KeyValuePairEntity>>(
+      getRepositoryToken(ApprovedAccessDomainEntity),
     );
     configValueConverter = module.get<ConfigValueConverterService>(
       ConfigValueConverterService,
@@ -509,7 +510,7 @@ describe('ConfigStorageService', () => {
 
   describe('loadAll', () => {
     it('should load and convert all config variables', async () => {
-      const configVars: KeyValuePair[] = [
+      const configVars: KeyValuePairEntity[] = [
         createMockKeyValuePair('AUTH_PASSWORD_ENABLED', 'true'),
         createMockKeyValuePair('EMAIL_FROM_ADDRESS', 'test@example.com'),
       ];
@@ -537,7 +538,7 @@ describe('ConfigStorageService', () => {
     });
 
     it('should skip invalid values but continue processing', async () => {
-      const configVars: KeyValuePair[] = [
+      const configVars: KeyValuePairEntity[] = [
         createMockKeyValuePair('AUTH_PASSWORD_ENABLED', 'invalid'),
         createMockKeyValuePair('EMAIL_FROM_ADDRESS', 'test@example.com'),
       ];
@@ -574,7 +575,7 @@ describe('ConfigStorageService', () => {
 
     describe('Null Value Handling', () => {
       it('should handle null values in loadAll', async () => {
-        const configVars: KeyValuePair[] = [
+        const configVars: KeyValuePairEntity[] = [
           {
             ...createMockKeyValuePair('AUTH_PASSWORD_ENABLED', 'true'),
             value: null as unknown as JSON,
@@ -607,7 +608,7 @@ describe('ConfigStorageService', () => {
     });
 
     it('should decrypt sensitive string values in loadAll', async () => {
-      const configVars: KeyValuePair[] = [
+      const configVars: KeyValuePairEntity[] = [
         createMockKeyValuePair('SENSITIVE_CONFIG', 'encrypted:sensitive-value'),
         createMockKeyValuePair('NORMAL_CONFIG', 'normal-value'),
       ];

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
-import { UserWorkspaceService as UserService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
   AgentException,
   AgentExceptionCode,

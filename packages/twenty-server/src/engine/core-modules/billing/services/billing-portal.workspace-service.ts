@@ -24,8 +24,8 @@ import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/bill
 import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
 
 @Injectable()
@@ -40,8 +40,8 @@ export class BillingPortalWorkspaceService {
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
-    @InjectRepository(UserWorkspace)
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async computeCheckoutSessionURL({
@@ -123,7 +123,7 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan,
     successUrlPath,
   }: {
-    workspace: Workspace;
+    workspace: WorkspaceEntity;
     billingPricesPerPlan: BillingGetPricesPerPlanResult;
     successUrlPath?: string;
   }) {
@@ -161,7 +161,7 @@ export class BillingPortalWorkspaceService {
   }
 
   async computeBillingPortalSessionURLOrThrow(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     returnUrlPath?: string,
   ) {
     const lastSubscription = await this.billingSubscriptionRepository.findOne({

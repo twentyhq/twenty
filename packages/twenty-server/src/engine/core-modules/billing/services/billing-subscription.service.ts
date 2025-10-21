@@ -52,7 +52,7 @@ import { getOppositeInterval } from 'src/engine/core-modules/billing/utils/get-o
 import { getOppositePlan } from 'src/engine/core-modules/billing/utils/get-opposite-plan';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingSubscriptionService {
@@ -209,7 +209,7 @@ export class BillingSubscriptionService {
   }
 
   async changeMeteredPrice(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     meteredPriceId: string,
   ): Promise<void> {
     const {
@@ -277,7 +277,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  async cancelSwitchMeteredPrice(workspace: Workspace): Promise<void> {
+  async cancelSwitchMeteredPrice(workspace: WorkspaceEntity): Promise<void> {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -296,7 +296,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  async changeInterval(workspace: Workspace) {
+  async changeInterval(workspace: WorkspaceEntity) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -306,7 +306,7 @@ export class BillingSubscriptionService {
     return this.setTargetInterval(billingSubscription, nextInterval);
   }
 
-  async changePlan(workspace: Workspace) {
+  async changePlan(workspace: WorkspaceEntity) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -323,7 +323,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  async endTrialPeriod(workspace: Workspace) {
+  async endTrialPeriod(workspace: WorkspaceEntity) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -422,7 +422,7 @@ export class BillingSubscriptionService {
     return currentMeteredBillingPrice;
   }
 
-  async cancelSwitchPlan(workspace: Workspace) {
+  async cancelSwitchPlan(workspace: WorkspaceEntity) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -433,7 +433,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  async cancelSwitchInterval(workspace: Workspace) {
+  async cancelSwitchInterval(workspace: WorkspaceEntity) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -599,7 +599,7 @@ export class BillingSubscriptionService {
   }
 
   private async loadInitialState(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     meteredPriceId: string,
   ): Promise<{
     billingSubscription: BillingSubscription;

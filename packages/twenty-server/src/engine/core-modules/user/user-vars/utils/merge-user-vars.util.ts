@@ -1,7 +1,10 @@
-import { type KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { type KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 export const mergeUserVars = <T>(
-  userVars: Pick<KeyValuePair, 'key' | 'value' | 'userId' | 'workspaceId'>[],
+  userVars: Pick<
+    KeyValuePairEntity,
+    'key' | 'value' | 'userId' | 'workspaceId'
+  >[],
 ): Map<T, JSON> => {
   const workspaceUserVarMap = new Map<T, JSON>();
   const userUserVarMap = new Map<T, JSON>();

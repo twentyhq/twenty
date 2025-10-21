@@ -15,7 +15,7 @@ import { Repository } from 'typeorm';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import {
-  AppToken,
+  AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
@@ -59,10 +59,10 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
@@ -81,21 +81,21 @@ export class AuthService {
     private readonly authSsoService: AuthSsoService,
     private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
-    @InjectRepository(AppToken)
-    private readonly appTokenRepository: Repository<AppToken>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
     private readonly auditService: AuditService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
-    workspace: Workspace,
-    user: User,
+    workspace: WorkspaceEntity,
+    user: UserEntity,
   ) {
     if (
       await this.userWorkspaceService.checkUserWorkspaceExists(
@@ -133,7 +133,7 @@ export class AuthService {
 
   async validateLoginWithPassword(
     input: UserCredentialsInput,
-    targetWorkspace?: Workspace,
+    targetWorkspace?: WorkspaceEntity,
   ) {
     if (targetWorkspace && !targetWorkspace.isPasswordAuthEnabled) {
       throw new AuthException(
@@ -223,7 +223,7 @@ export class AuthService {
   private async isAuthProviderEnabledOrThrow(
     userData: ExistingUserOrNewUser['userData'],
     authParams: AuthProviderWithPasswordType['authParams'],
-    workspace: Workspace | undefined | null,
+    workspace: WorkspaceEntity | undefined | null,
   ) {
     if (authParams.provider === AuthProviderEnum.Password) {
       await this.validatePassword(userData, authParams);
@@ -402,8 +402,8 @@ export class AuthService {
 
   async generateAuthorizationCode(
     authorizeAppInput: AuthorizeAppInput,
-    user: User,
-    workspace: Workspace,
+    user: UserEntity,
+    workspace: WorkspaceEntity,
   ): Promise<AuthorizeApp> {
     // TODO: replace with db call to - third party app table
     const apps = [
@@ -563,7 +563,7 @@ export class AuthService {
 
   async findWorkspaceFromInviteHashOrFail(
     inviteHash: string,
-  ): Promise<Workspace> {
+  ): Promise<WorkspaceEntity> {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash,
     });
@@ -601,7 +601,7 @@ export class AuthService {
 
   async findInvitationForSignInUp(
     params: {
-      currentWorkspace: Workspace;
+      currentWorkspace: WorkspaceEntity;
     } & ({ workspacePersonalInviteToken: string } | { email: string }),
   ) {
     const qr = this.appTokenRepository
@@ -675,7 +675,7 @@ export class AuthService {
 
   formatUserDataPayload(
     newUserPayload: SignInUpNewUserPayload,
-    existingUser?: User | null,
+    existingUser?: UserEntity | null,
   ): ExistingUserOrNewUser {
     return {
       userData: existingUser
