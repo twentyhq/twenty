@@ -17,6 +17,7 @@ import {
   ResolverArgsType,
   type UpdateManyResolverArgs,
   type UpdateOneResolverArgs,
+  type WorkspaceResolverBuilderMethodNames,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -36,7 +37,7 @@ export class QueryRunnerArgsFactory {
   async create(
     args: ResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-    resolverArgsType: ResolverArgsType,
+    resolverArgsType: WorkspaceResolverBuilderMethodNames,
   ) {
     const fieldMetadataMapByNameByName =
       options.objectMetadataItemWithFieldMaps.fieldsById;
