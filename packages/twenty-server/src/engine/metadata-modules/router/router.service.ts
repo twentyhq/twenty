@@ -72,9 +72,7 @@ export class RouterService {
 
       const routerDecisionSchema = z.object({
         agentId: z
-          .enum(
-            availableAgents.map((agent) => agent.id) as [string, ...string[]],
-          )
+          .enum(availableAgents.map((agent) => agent.id))
           .describe('The ID of the most suitable agent to handle this message'),
       });
 
@@ -86,15 +84,11 @@ export class RouterService {
         temperature: 0.1,
       });
 
-      const decision = result.object;
-
-      this.logger.log(`Routed to agent: ${decision.agentId}`);
-
       return availableAgents.find(
         (agent) => agent.id === result.object.agentId,
       );
     } catch (error) {
-      this.logger.error('Router decision failed:', error);
+      this.logger.error('Routing to agent failed:', error);
 
       const availableAgents = await this.getAvailableAgents(
         context.workspaceId,
