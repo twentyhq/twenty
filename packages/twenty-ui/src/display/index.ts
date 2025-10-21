@@ -27,6 +27,7 @@ export type {
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
 export { IconAddressBook } from './icon/components/IconAddressBook';
+export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
 export { IconGoogle } from './icon/components/IconGoogle';
 export { IconGoogleCalendar } from './icon/components/IconGoogleCalendar';
@@ -106,6 +107,7 @@ export {
   IconBrandLinkedin,
   IconBrandX,
   IconBriefcase,
+  IconBroadcast,
   IconBrowserMaximize,
   IconBuildingSkyscraper,
   IconCalendar,
@@ -255,6 +257,7 @@ export {
   IconHistory,
   IconHistoryToggle,
   IconHome,
+  IconHourglassHigh,
   IconHours24,
   IconHttpGet,
   IconHttpPost,
@@ -333,7 +336,9 @@ export {
   IconPrinter,
   IconProgressCheck,
   IconPuzzle,
+  IconPuzzle2,
   IconQuestionMark,
+  IconRadiusBottomRight,
   IconRefresh,
   IconRefreshAlert,
   IconRefreshDot,
@@ -377,6 +382,7 @@ export {
   IconSquareNumber9,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
+  IconStack2,
   IconStatusChange,
   IconStepInto,
   IconStrikethrough,

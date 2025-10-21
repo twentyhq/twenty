@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecord } from 'twenty-shared/types';
+
 import {
   PageInfo,
   RestApiBaseHandler,
@@ -101,7 +102,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
-      const selectedFieldsResult = await this.computeSelectedFields({
+      const selectedFields = await this.computeSelectedFields({
         depth: parsedArgs.depth,
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
@@ -110,7 +111,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
 
       const { records, aggregatedValues, pageInfo } =
         await this.commonFindManyQueryRunnerService.run({
-          args: { ...parsedArgs, selectedFieldsResult },
+          args: { ...parsedArgs, selectedFields },
           authContext,
           objectMetadataMaps,
           objectMetadataItemWithFieldMaps,

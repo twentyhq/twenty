@@ -33,6 +33,8 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   name: '20202020-87a5-48f8-bbf7-ade388825a57',
   fullPath: '20202020-0d19-453d-8e8d-fbcda8ca3747',
   type: '20202020-a417-49b8-a40b-f6a7874caa0d',
+  fileCategory: '20202020-8c3f-4d9e-9a1b-2e5f7a8c9d0e',
+  createdBy: '395be3bd-a5c9-463d-aafe-9bc3bbec3f15',
   author: '20202020-6501-4ac5-a4ef-b2f8522ef6cd',
   activity: '20202020-b569-481b-a13f-9b94e47e54fe',
   task: '20202020-51e5-4621-9cf8-215487951c4b',

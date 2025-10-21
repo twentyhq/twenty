@@ -1,4 +1,4 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/utils';
+import { ESLintUtils, type TSESTree } from '@typescript-eslint/utils';
 
 // NOTE: The rule will be available in ESLint configs as "@nx/workspace-max-consts-per-file"
 export const RULE_NAME = 'max-consts-per-file';

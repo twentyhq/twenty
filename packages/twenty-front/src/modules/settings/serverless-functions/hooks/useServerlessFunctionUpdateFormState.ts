@@ -7,6 +7,8 @@ import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { type FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
+import { type ServerlessFunction } from '~/generated/graphql';
+import { type Sources } from '@/serverless-functions/types/sources.type';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -14,12 +16,7 @@ export type ServerlessFunctionNewFormValues = {
 };
 
 export type ServerlessFunctionFormValues = ServerlessFunctionNewFormValues & {
-  code: {
-    src: {
-      'index.ts': string;
-    } & { [key: string]: string };
-    '.env'?: string;
-  };
+  code: Sources;
 };
 
 type SetServerlessFunctionFormValues = Dispatch<
@@ -34,6 +31,7 @@ export const useServerlessFunctionUpdateFormState = ({
   serverlessFunctionVersion?: string;
 }): {
   formValues: ServerlessFunctionFormValues;
+  serverlessFunction: ServerlessFunction | null;
   setFormValues: SetServerlessFunctionFormValues;
   loading: boolean;
 } => {
@@ -46,41 +44,51 @@ export const useServerlessFunctionUpdateFormState = ({
   const [serverlessFunctionTestData, setServerlessFunctionTestData] =
     useRecoilState(serverlessFunctionTestDataFamilyState(serverlessFunctionId));
 
-  const { serverlessFunction } = useGetOneServerlessFunction({
-    id: serverlessFunctionId,
-  });
+  const { serverlessFunction, loading: serverlessFunctionLoading } =
+    useGetOneServerlessFunction({
+      id: serverlessFunctionId,
+    });
 
-  const { loading } = useGetOneServerlessFunctionSourceCode({
-    id: serverlessFunctionId,
-    version: serverlessFunctionVersion,
-    onCompleted: async (data: FindOneServerlessFunctionSourceCodeQuery) => {
-      const newState = {
-        code: data?.getServerlessFunctionSourceCode || undefined,
-        name: serverlessFunction?.name || '',
-        description: serverlessFunction?.description || '',
-      };
+  const { loading: serverlessFunctionSourceCodeLoading } =
+    useGetOneServerlessFunctionSourceCode({
+      id: serverlessFunctionId,
+      version: serverlessFunctionVersion,
+      onCompleted: async (data: FindOneServerlessFunctionSourceCodeQuery) => {
+        const code = data?.getServerlessFunctionSourceCode;
 
-      setFormValues((prevState) => ({
-        ...prevState,
-        ...newState,
-      }));
+        const newState = {
+          code: code || undefined,
+          name: serverlessFunction?.name || '',
+          description: serverlessFunction?.description || '',
+        };
 
-      if (serverlessFunctionTestData.shouldInitInput) {
-        const sourceCode =
-          data?.getServerlessFunctionSourceCode?.[SOURCE_FOLDER_NAME]?.[
-            INDEX_FILE_NAME
-          ];
-
-        const functionInput = await getFunctionInputFromSourceCode(sourceCode);
-
-        setServerlessFunctionTestData((prev) => ({
-          ...prev,
-          input: functionInput,
-          shouldInitInput: false,
+        setFormValues((prevState) => ({
+          ...prevState,
+          ...newState,
         }));
-      }
-    },
-  });
 
-  return { formValues, setFormValues, loading };
+        if (serverlessFunctionTestData.shouldInitInput) {
+          const sourceCode =
+            data?.getServerlessFunctionSourceCode?.[SOURCE_FOLDER_NAME]?.[
+              INDEX_FILE_NAME
+            ];
+
+          const functionInput =
+            await getFunctionInputFromSourceCode(sourceCode);
+
+          setServerlessFunctionTestData((prev) => ({
+            ...prev,
+            input: functionInput,
+            shouldInitInput: false,
+          }));
+        }
+      },
+    });
+
+  return {
+    formValues,
+    setFormValues,
+    serverlessFunction,
+    loading: serverlessFunctionSourceCodeLoading || serverlessFunctionLoading,
+  };
 };

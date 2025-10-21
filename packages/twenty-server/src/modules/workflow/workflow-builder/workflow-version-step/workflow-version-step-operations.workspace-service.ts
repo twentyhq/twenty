@@ -353,6 +353,27 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           additionalCreatedSteps: [emptyNodeStep],
         };
       }
+      case WorkflowActionType.DELAY: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Delay',
+            type: WorkflowActionType.DELAY,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                delayType: 'DURATION',
+                duration: {
+                  days: 0,
+                  hours: 0,
+                  minutes: 0,
+                  seconds: 0,
+                },
+              },
+            },
+          },
+        };
+      }
       default:
         throw new WorkflowVersionStepException(
           `WorkflowActionType '${type}' unknown`,
@@ -515,7 +536,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     const emptyNodeStep: WorkflowEmptyAction = {
       id: v4(),
-      name: 'Empty Node',
+      name: 'Add an Action',
       type: WorkflowActionType.EMPTY,
       valid: true,
       nextStepIds: [iteratorStepId],

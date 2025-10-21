@@ -43,4 +43,8 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     view: true,
     fieldMetadata: true,
   },
+  viewGroup: {
+    fieldMetadata: true,
+    view: true,
+  },
 } as const satisfies MetadataRequiredForValidation;

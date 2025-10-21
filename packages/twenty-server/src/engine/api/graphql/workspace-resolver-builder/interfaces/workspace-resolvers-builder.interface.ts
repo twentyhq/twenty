@@ -1,11 +1,13 @@
 import { type GraphQLFieldResolver } from 'graphql';
-
 import {
   type ObjectRecord,
+  type OrderByWithGroupBy,
+} from 'twenty-shared/types';
+
+import {
   type ObjectRecordFilter,
   type ObjectRecordGroupBy,
   type ObjectRecordOrderBy,
-  type OrderByWithGroupBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
@@ -27,6 +29,7 @@ export enum ResolverArgsType {
   DestroyMany = 'DestroyMany',
   DestroyOne = 'DestroyOne',
   MergeMany = 'MergeMany',
+  GroupBy = 'GroupBy',
 }
 
 export interface FindManyResolverArgs<
@@ -72,6 +75,7 @@ export interface GroupByResolverArgs<Filter = ObjectRecordFilter> {
   groupBy: ObjectRecordGroupBy;
   viewId?: string;
   orderBy?: OrderByWithGroupBy;
+  omitNullValues?: boolean;
 }
 
 export interface UpdateOneResolverArgs<

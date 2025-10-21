@@ -9,6 +9,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import {
   SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES,
   ServerlessFunctionEntity,
@@ -43,29 +44,23 @@ export class WorkspaceFlatServerlessFunctionMapCacheService extends WorkspaceFla
       withDeleted: true,
     });
 
-    const flatServerlessFunctionMaps = serverlessFunctions.reduce<
-      FlatEntityMaps<FlatServerlessFunction>
-    >((flatEntityMaps, serverlessFunction) => {
-      const flatServerlessFunction = {
-        ...removePropertiesFromRecord(serverlessFunction, [
-          ...SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES,
-        ]),
-        universalIdentifier: serverlessFunction.universalIdentifier ?? '',
-      } satisfies FlatServerlessFunction;
+    return serverlessFunctions.reduce(
+      (flatServerlessFunctionMaps, serverlessFunctionEntity) => {
+        const flatServerlessFunction = {
+          ...removePropertiesFromRecord(serverlessFunctionEntity, [
+            ...SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES,
+          ]),
+          universalIdentifier:
+            serverlessFunctionEntity.universalIdentifier ??
+            serverlessFunctionEntity.id,
+        } satisfies FlatServerlessFunction;
 
-      return {
-        byId: {
-          ...flatEntityMaps.byId,
-          [flatServerlessFunction.id]: flatServerlessFunction,
-        },
-        idByUniversalIdentifier: {
-          ...flatEntityMaps.idByUniversalIdentifier,
-          [flatServerlessFunction.universalIdentifier]:
-            flatServerlessFunction.id,
-        },
-      };
-    }, EMPTY_FLAT_ENTITY_MAPS);
-
-    return flatServerlessFunctionMaps;
+        return addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatServerlessFunction,
+          flatEntityMaps: flatServerlessFunctionMaps,
+        });
+      },
+      EMPTY_FLAT_ENTITY_MAPS,
+    );
   }
 }

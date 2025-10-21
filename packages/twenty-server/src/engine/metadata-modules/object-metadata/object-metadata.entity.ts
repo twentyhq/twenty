@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -11,8 +10,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -30,15 +30,15 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
   'namePlural',
   'workspaceId',
 ])
-export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
+export class ObjectMetadataEntity
+  extends SyncableEntity
+  implements Required<ObjectMetadataEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: true, type: 'uuid' })
   standardId: string | null;
-
-  @Column({ nullable: true, type: 'uuid' })
-  applicationId: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   dataSourceId: string;
@@ -136,13 +136,6 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @ManyToOne(() => ApplicationEntity, (application) => application.objects, {
-    onDelete: 'CASCADE',
-    nullable: true,
-  })
-  @JoinColumn({ name: 'applicationId' })
-  application: Relation<ApplicationEntity> | null;
 
   @OneToMany(
     () => ObjectPermissionEntity,

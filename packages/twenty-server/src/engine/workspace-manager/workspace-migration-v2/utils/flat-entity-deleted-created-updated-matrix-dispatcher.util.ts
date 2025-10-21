@@ -1,7 +1,7 @@
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-and-stringify.constant';
+import { ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-and-stringify.constant';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { type FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
@@ -33,11 +33,8 @@ export type UniversalIdentifierItem = {
 type FlatEntityDeletedCreatedUpdatedMatrixDispatcherArgs<
   T extends AllMetadataName,
 > = FromTo<MetadataFlatEntity<T>[]> & {
+  metadataName: T;
   buildOptions: WorkspaceMigrationBuilderOptions;
-  comparisonOptions: Pick<
-    (typeof ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY)[T],
-    'propertiesToCompare' | 'propertiesToStringify'
-  >;
 };
 
 export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
@@ -45,8 +42,8 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
 >({
   from,
   to,
+  metadataName,
   buildOptions,
-  comparisonOptions: { propertiesToCompare, propertiesToStringify },
 }: FlatEntityDeletedCreatedUpdatedMatrixDispatcherArgs<T>): DeletedCreatedUpdatedMatrix<T> => {
   const initialDispatcher: DeletedCreatedUpdatedMatrix<T> = {
     createdFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
@@ -57,7 +54,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
   const fromMap = new Map(from.map((obj) => [obj.universalIdentifier, obj]));
   const toMap = new Map(to.map((obj) => [obj.universalIdentifier, obj]));
 
-  if (buildOptions.inferDeletionFromMissingEntities) {
+  if (buildOptions.inferDeletionFromMissingEntities?.[metadataName]) {
     for (const [universalIdentifier, fromEntity] of fromMap) {
       if (toMap.has(universalIdentifier)) {
         continue;
@@ -80,6 +77,9 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
         flatEntityMaps: initialDispatcher.createdFlatEntityMaps,
       });
   }
+
+  const { propertiesToCompare, propertiesToStringify } =
+    ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[metadataName];
 
   for (const [universalIdentifier, fromFlatEntity] of fromMap) {
     const toFlatEntity = toMap.get(universalIdentifier);
