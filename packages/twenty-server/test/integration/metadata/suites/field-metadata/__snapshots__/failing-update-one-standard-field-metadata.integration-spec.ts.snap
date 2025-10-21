@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Standard field metadata update should fail when trying to update name on standard field 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_FIELD_INPUT",
+    "userFriendlyMessage": "Cannot update standard field properties: name",
+  },
+  "message": "Cannot update standard field metadata properties: name",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Standard field metadata update should fail when trying to update several forbidden properties 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_FIELD_INPUT",
+    "userFriendlyMessage": "Cannot update standard field properties: name",
+  },
+  "message": "Cannot update standard field metadata properties: name",
+  "name": "UserInputError",
+}
+`;
