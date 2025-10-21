@@ -4,6 +4,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { type Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -28,7 +30,7 @@ describe('UserService', () => {
     findOne: jest.fn(),
     find: jest.fn(),
     delete: jest.fn(),
-  } as unknown as Repository<WorkspaceMemberWorkspaceEntity>;
+  } as unknown as WorkspaceRepository<WorkspaceMemberWorkspaceEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
