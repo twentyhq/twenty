@@ -79,9 +79,7 @@ export class FieldPermissionEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @OneToMany(() => WorkspaceEntity, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
 

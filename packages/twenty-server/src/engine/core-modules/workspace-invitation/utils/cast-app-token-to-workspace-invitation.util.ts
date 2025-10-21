@@ -1,5 +1,7 @@
-import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
-import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
+import {
+  type AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   WorkspaceInvitationException,
   WorkspaceInvitationExceptionCode,

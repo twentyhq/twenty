@@ -55,7 +55,7 @@ export class RoleTargetsEntity {
   @Column({ nullable: true, type: 'uuid' })
   apiKeyId: string;
 
-  @OneToMany(() => ApiKeyEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ApiKeyEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'apiKeyId' })
   apiKey: Relation<ApiKeyEntity>;
 

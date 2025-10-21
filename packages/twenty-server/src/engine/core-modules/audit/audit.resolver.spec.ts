@@ -4,8 +4,8 @@ import {
   AuditException,
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AuditResolver } from './audit.resolver';
 

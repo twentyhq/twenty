@@ -1,10 +1,10 @@
-import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
+  type WorkspaceSSOIdentityProviderEntity,
   IdentityProviderType,
   SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('getAuthProvidersByWorkspace', () => {
   const mockWorkspace = {

@@ -1,4 +1,3 @@
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
@@ -14,6 +13,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 

@@ -63,9 +63,7 @@ export class ViewGroupEntity
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date | null;
 
-  @OneToMany(() => WorkspaceEntity, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
 

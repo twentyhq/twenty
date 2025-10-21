@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
   UserException,
   UserExceptionCode,
