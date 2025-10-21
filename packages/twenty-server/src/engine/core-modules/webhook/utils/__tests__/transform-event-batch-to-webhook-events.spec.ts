@@ -47,7 +47,7 @@ describe('transformEventBatchToWebhookEvents', () => {
           },
         },
       ],
-    } as WorkspaceEntityEventBatch<ObjectRecordEvent>;
+    } as WorkspaceEventBatch<ObjectRecordEvent>;
 
     const webhooks = [
       {
@@ -189,7 +189,7 @@ describe('transformEventBatchToWebhookEvents', () => {
           },
         },
       ],
-    } as WorkspaceEntityEventBatch<ObjectRecordEvent>;
+    } as WorkspaceEventBatch<ObjectRecordEvent>;
 
     const webhooks = [
       {

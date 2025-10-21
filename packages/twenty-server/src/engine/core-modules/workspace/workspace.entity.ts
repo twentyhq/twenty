@@ -143,7 +143,7 @@ export class WorkspaceEntity {
   @Field({ nullable: true })
   workspaceMembersCount: number;
 
-  @Field(() => WorkspaceEntityActivationStatus)
+  @Field(() => WorkspaceActivationStatus)
   @Column({
     type: 'enum',
     enumName: 'workspace_activationStatus_enum',

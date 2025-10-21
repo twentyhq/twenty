@@ -266,7 +266,7 @@ export class UserResolver {
       },
     });
 
-    const userWorkspacesByUserIdMap = new Map<string, UserWorkspace>(
+    const userWorkspacesByUserIdMap = new Map<string, UserWorkspaceEntity>(
       userWorkspaces.map((userWorkspace) => [
         userWorkspace.userId,
         userWorkspace,
@@ -407,7 +407,7 @@ export class UserResolver {
     return workspace;
   }
 
-  @ResolveField(() => [UserWorkspace], {
+  @ResolveField(() => [UserWorkspaceEntity], {
     nullable: false,
   })
   async workspaces(@Parent() user: UserEntity) {

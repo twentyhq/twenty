@@ -142,7 +142,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     if (!payload.userWorkspaceId) {
       throw new AuthException(
-        'UserWorkspace not found',
+        'UserWorkspaceEntity not found',
         AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       );
     }
@@ -155,7 +155,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     assertIsDefinedOrThrow(
       userWorkspace,
       new AuthException(
-        'UserWorkspace not found',
+        'UserWorkspaceEntity not found',
         AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
         {
           userFriendlyMessage: msg`User does not have access to this workspace`,

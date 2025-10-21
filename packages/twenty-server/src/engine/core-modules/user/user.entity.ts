@@ -108,7 +108,7 @@ export class UserEntity {
   })
   keyValuePairs: Relation<KeyValuePairEntity[]>;
 
-  @Field(() => WorkspaceEntityMemberDTO, { nullable: true })
+  @Field(() => WorkspaceMemberDTO, { nullable: true })
   workspaceMember: Relation<WorkspaceMemberDTO>;
 
   @Field(() => [UserWorkspaceEntity])

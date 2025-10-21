@@ -1,3 +1,4 @@
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';

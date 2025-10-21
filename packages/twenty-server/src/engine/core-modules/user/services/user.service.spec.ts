@@ -28,7 +28,7 @@ describe('UserService', () => {
     findOne: jest.fn(),
     find: jest.fn(),
     delete: jest.fn(),
-  } as unknown as WorkspaceEntityRepository<WorkspaceMemberWorkspaceEntity>;
+  } as unknown as WorkspaceRepository<WorkspaceMemberWorkspaceEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -292,13 +292,13 @@ describe('UserService', () => {
         .spyOn(mockWorkspaceMemberRepo, 'find')
         .mockResolvedValue([
           wmForUser('u1'),
-          { id: 'wm-2', userId: 'uX' } as WorkspaceEntity,
+          { id: 'wm-2', userId: 'uX' } as unknown as WorkspaceEntity,
           WorkspaceMemberWorkspaceEntity,
         ]);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue(
-          mockWorkspaceMemberRepo as unknown as WorkspaceEntityRepository<WorkspaceMemberWorkspaceEntity>,
+          mockWorkspaceMemberRepo as unknown as WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
         );
 
       jest

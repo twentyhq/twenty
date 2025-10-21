@@ -156,7 +156,7 @@ describe('UserWorkspaceService', () => {
     it("should create a user workspace with a default avatar url if it's an existing user with a user workspace having a default avatar url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserEntity;
+      const userWorkspace = { userId, workspaceId } as unknown as UserEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -192,7 +192,7 @@ describe('UserWorkspaceService', () => {
     it("should create a user workspace without a default avatar url if it's an existing user without any user workspace having a default avatar url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserEntity;
+      const userWorkspace = { userId, workspaceId } as unknown as UserEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -220,7 +220,7 @@ describe('UserWorkspaceService', () => {
     it("should create a user workspace with a default avatar url if it's a new user with a picture url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserEntity;
+      const userWorkspace = { userId, workspaceId } as unknown as UserEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -256,7 +256,7 @@ describe('UserWorkspaceService', () => {
     it("should create a user workspace without a default avatar url if it's a new user without a picture url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserEntity;
+      const userWorkspace = { userId, workspaceId } as unknown as UserEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -279,7 +279,7 @@ describe('UserWorkspaceService', () => {
     it("should create a user workspace without a default avatar url if it's a new user with an empty picture url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserEntity;
+      const userWorkspace = { userId, workspaceId } as unknown as UserEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -496,7 +496,7 @@ describe('UserWorkspaceService', () => {
     it('should check if a user workspace exists', async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserEntity;
+      const userWorkspace = { userId, workspaceId } as unknown as UserEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'findOneBy')
@@ -815,7 +815,7 @@ describe('UserWorkspaceService', () => {
     it('should get a user workspace or throw', async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserEntity;
+      const userWorkspace = { userId, workspaceId } as unknown as UserEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'findOne')

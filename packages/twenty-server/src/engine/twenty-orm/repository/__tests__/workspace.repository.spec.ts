@@ -63,7 +63,7 @@ describe('WorkspaceRepository', () => {
         idByNameSingular: {},
       },
       featureFlagsMap: {},
-    } as WorkspaceEntityInternalContext;
+    } as WorkspaceInternalContext;
 
     mockFeatureFlagMap = Object.values(FeatureFlagKey).reduce(
       (acc, key) => ({ ...acc, [key]: false }),

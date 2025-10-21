@@ -34,7 +34,7 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 });
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
-@ObjectType('UserWorkspace')
+@ObjectType('UserWorkspaceEntity')
 @Index(
   'IDX_USER_WORKSPACE_USER_ID_WORKSPACE_ID_UNIQUE',
   ['userId', 'workspaceId'],

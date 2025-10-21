@@ -163,7 +163,7 @@ describe('AccessTokenService', () => {
       const workspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
       const impersonatedUserWorkspaceId = randomUUID();
-      const mockUser = { id: userId } as UserEntity;
+      const mockUser = { id: userId } as unknown as UserEntity;
       const mockWorkspace = {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
         id: workspaceId,

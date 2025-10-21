@@ -204,7 +204,7 @@ describe('RefreshTokenService', () => {
 
     jest.spyOn(appTokenRepository, 'findOneBy').mockResolvedValue(token);
 
-    const user = { id: userId } as UserEntity;
+    const user = { id: userId } as unknown as UserEntity;
 
     jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
 
