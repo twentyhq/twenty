@@ -7,8 +7,6 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
-const agentTableName = 'agent';
-const workspaceTableName = 'workspace';
 const agentChatThreadTableName = 'agentChatThread';
 const agentChatMessageTableName = 'agentChatMessage';
 const agentChatMessagePartTableName = 'agentChatMessagePart';
