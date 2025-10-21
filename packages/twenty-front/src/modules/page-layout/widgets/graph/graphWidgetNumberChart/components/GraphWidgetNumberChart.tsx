@@ -10,7 +10,7 @@ import {
 } from 'twenty-ui/display';
 
 type GraphWidgetNumberChartProps = {
-  value: string;
+  value: string | number;
   trendPercentage?: number;
 };
 
