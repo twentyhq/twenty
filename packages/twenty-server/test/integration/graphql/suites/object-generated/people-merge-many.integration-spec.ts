@@ -418,5 +418,146 @@ describe('people merge resolvers (integration)', () => {
       );
       expect(mergedPerson.whatsapp.additionalPhones).toHaveLength(2);
     });
+
+    it('should merge when record1 has null primaryEmail and record2 has primaryEmail', async () => {
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          {
+            name: {
+              firstName: 'NoEmail',
+              lastName: 'Person',
+            },
+            emails: {
+              additionalEmails: [
+                `noemail.alt1@example.com`,
+                `noemail.alt2@example.com`,
+              ],
+            },
+          },
+          {
+            name: {
+              firstName: 'WithEmail',
+              lastName: 'Person',
+            },
+            emails: {
+              primaryEmail: `withemail@example.com`,
+              additionalEmails: [
+                `withemail.alt1@example.com`,
+                `withemail.alt2@example.com`,
+              ],
+            },
+          },
+        ],
+      });
+
+      const createResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+
+      expect(createResponse.body.data.createPeople).toHaveLength(2);
+
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
+
+      const mergeOperation = mergeManyOperationFactory({
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        ids: createdPersonIds,
+        conflictPriorityIndex: 0,
+      });
+
+      const mergeResponse = await makeGraphqlAPIRequest(mergeOperation);
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+
+      const mergedPerson = mergeResponse.body.data.mergePeople;
+
+      expect(mergedPerson.emails.primaryEmail).toBe(`withemail@example.com`);
+      expect(mergedPerson.emails.additionalEmails).toEqual(
+        expect.arrayContaining([
+          `noemail.alt1@example.com`,
+          `noemail.alt2@example.com`,
+          `withemail.alt1@example.com`,
+          `withemail.alt2@example.com`,
+        ]),
+      );
+      expect(mergedPerson.emails.additionalEmails).toHaveLength(4);
+    });
+
+    it('should merge when both records have null primaryEmail', async () => {
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          {
+            name: {
+              firstName: 'NoPrimary1',
+              lastName: 'Person',
+            },
+            emails: {
+              additionalEmails: [
+                'noprimary1.alt1@example.com',
+                'noprimary1.alt2@example.com',
+              ],
+            },
+          },
+          {
+            name: {
+              firstName: 'NoPrimary2',
+              lastName: 'Person',
+            },
+            emails: {
+              additionalEmails: [
+                'noprimary2.alt1@example.com',
+                'noprimary2.alt2@example.com',
+              ],
+            },
+          },
+        ],
+      });
+
+      const createResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+
+      expect(createResponse.body.data.createPeople).toHaveLength(2);
+
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
+
+      const mergeOperation = mergeManyOperationFactory({
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        ids: createdPersonIds,
+        conflictPriorityIndex: 0,
+      });
+
+      const mergeResponse = await makeGraphqlAPIRequest(mergeOperation);
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+
+      const mergedPerson = mergeResponse.body.data.mergePeople;
+
+      expect(mergedPerson.emails.primaryEmail).toBe('');
+      expect(mergedPerson.emails.additionalEmails).toEqual(
+        expect.arrayContaining([
+          'noprimary1.alt1@example.com',
+          'noprimary1.alt2@example.com',
+          'noprimary2.alt1@example.com',
+          'noprimary2.alt2@example.com',
+        ]),
+      );
+      expect(mergedPerson.emails.additionalEmails).toHaveLength(4);
+    });
   });
 });
