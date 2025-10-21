@@ -13,7 +13,6 @@ import {
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
-import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { H2Title, IconCpu } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
@@ -61,14 +60,14 @@ export const SettingsAIRouterSettings = () => {
       enqueueSuccessSnackBar({
         message: t`Router model updated successfully`,
       });
-    } catch (err) {
+    } catch {
       setCurrentWorkspace({
         ...currentWorkspace,
         routerModel: previousValue,
       });
 
       enqueueErrorSnackBar({
-        apolloError: err instanceof ApolloError ? err : undefined,
+        message: t`Failed to update router model`,
       });
     }
   };
