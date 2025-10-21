@@ -1,6 +1,6 @@
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowUpdateRecordBody } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowUpdateRecordBody';
 
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
@@ -81,7 +81,7 @@ export const WorkflowEditActionUpdateRecord = ({
         onUpdate={handleUpdate}
         shouldPickRecord={true}
       />
-      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

@@ -10,12 +10,13 @@ import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateSt
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { IconCopyPlus, IconPencil } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
-export const WorkflowActionFooter = ({
+export const WorkflowStepFooter = ({
   stepId,
   additionalActions,
 }: {
@@ -28,7 +29,10 @@ export const WorkflowActionFooter = ({
   const { duplicateStep } = useDuplicateStep();
   const { closeDropdown } = useCloseDropdown();
   const workflowId = useCommandMenuWorkflowIdOrThrow();
-  const { openWorkflowEditStepTypeInCommandMenu } = useWorkflowCommandMenu();
+  const {
+    openWorkflowEditStepTypeInCommandMenu,
+    openWorkflowTriggerTypeInCommandMenu,
+  } = useWorkflowCommandMenu();
 
   const OptionsDropdown = (
     <Dropdown
@@ -54,19 +58,23 @@ export const WorkflowActionFooter = ({
               <MenuItem
                 onClick={() => {
                   closeDropdown(dropdownId);
-                  openWorkflowEditStepTypeInCommandMenu(workflowId);
+                  stepId === TRIGGER_STEP_ID
+                    ? openWorkflowTriggerTypeInCommandMenu(workflowId)
+                    : openWorkflowEditStepTypeInCommandMenu(workflowId);
                 }}
                 text={t`Change node type`}
                 LeftIcon={IconPencil}
               />
-              <MenuItem
-                onClick={() => {
-                  closeDropdown(dropdownId);
-                  duplicateStep({ stepId });
-                }}
-                text={t`Duplicate node`}
-                LeftIcon={IconCopyPlus}
-              />
+              {stepId !== TRIGGER_STEP_ID && (
+                <MenuItem
+                  onClick={() => {
+                    closeDropdown(dropdownId);
+                    duplicateStep({ stepId });
+                  }}
+                  text={t`Duplicate node`}
+                  LeftIcon={IconCopyPlus}
+                />
+              )}
             </SelectableList>
           </DropdownMenuItemsContainer>
         </DropdownContent>
