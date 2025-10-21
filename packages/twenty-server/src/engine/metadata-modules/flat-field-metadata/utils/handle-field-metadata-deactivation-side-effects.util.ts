@@ -59,6 +59,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     ...new Set([
       ...Object.keys(flatViewGroupRecordByViewId),
       ...fromFlatFieldMetadata.kanbanAggregateOperationViewIds,
+      ...fromFlatFieldMetadata.calendarViewIds,
     ]),
   ];
 

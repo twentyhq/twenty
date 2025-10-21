@@ -22,6 +22,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
     ...fieldMetadataWithoutRelations,
     kanbanAggregateOperationViewIds:
       fieldMetadataEntity.kanbanAggregateOperationViews.map(({ id }) => id),
+    calendarViewIds: fieldMetadataEntity.calendarViews.map(({ id }) => id),
     viewGroupIds: fieldMetadataEntity.viewGroups.map(({ id }) => id),
     viewFieldIds: fieldMetadataEntity.viewFields.map(({ id }) => id),
     viewFilterIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),

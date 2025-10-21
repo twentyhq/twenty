@@ -51,6 +51,9 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
         kanbanAggregateOperationViews: {
           id: true,
         },
+        calendarViews: {
+          id: true,
+        },
       },
       withDeleted: true,
       relations: [
@@ -58,6 +61,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
         'viewFilters',
         'viewGroups',
         'kanbanAggregateOperationViews',
+        'calendarViews',
       ],
     });
 
