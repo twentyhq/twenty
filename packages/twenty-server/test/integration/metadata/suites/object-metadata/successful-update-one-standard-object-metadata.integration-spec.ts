@@ -1,5 +1,6 @@
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
@@ -7,7 +8,6 @@ import {
 } from 'twenty-shared/testing';
 
 import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 
 type TestingRuntimeContext = {
   objectMetadataId: string;
@@ -131,8 +131,6 @@ describe('Standard object metadata update should succeed', () => {
       expect(updateOneObject).toBeDefined();
       expect(updateOneObject.id).toBe(companyObjectMetadataId);
 
-      console.log(updateOneObject);
-      console.log(updatePayload);
       expect(updateOneObject).toMatchObject({
         ...updatePayload,
       });
