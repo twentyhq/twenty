@@ -1,4 +1,4 @@
-import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
+import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain/subdomain-manager/utils/get-subdomain-name-from-display-name.util';
 
 describe('getSubdomainNameFromDisplayName', () => {
   it('should return a hyphen-separated, lowercase subdomain name without spaces for a valid display name', () => {

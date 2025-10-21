@@ -1,4 +1,4 @@
-import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
+import { getSubdomainFromEmail } from 'src/engine/core-modules/domain/subdomain-manager/utils/get-subdomain-from-email.util';
 
 describe('getSubdomainFromEmail', () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
+import { generateRandomSubdomain } from 'src/engine/core-modules/domain/subdomain-manager/utils/generate-random-subdomain.util';
 
 describe('generateRandomSubdomain', () => {
   it('should return a string in the format "prefix-color-suffix"', () => {

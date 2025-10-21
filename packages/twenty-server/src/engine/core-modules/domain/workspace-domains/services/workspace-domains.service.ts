@@ -4,127 +4,48 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
-import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
-import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
-import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
+import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
-export class DomainManagerService {
+export class WorkspaceDomainsService {
   constructor(
+    private readonly domainServerConfigService: DomainServerConfigService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(PublicDomain)
     private readonly publicDomainRepository: Repository<PublicDomain>,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
-
-  getFrontUrl() {
-    return new URL(
-      this.twentyConfigService.get('FRONTEND_URL') ??
-        this.twentyConfigService.get('SERVER_URL'),
-    );
-  }
-
-  getBaseUrl(): URL {
-    const baseUrl = this.getFrontUrl();
-
-    if (
-      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      this.twentyConfigService.get('DEFAULT_SUBDOMAIN')
-    ) {
-      baseUrl.hostname = `${this.twentyConfigService.get('DEFAULT_SUBDOMAIN')}.${baseUrl.hostname}`;
-    }
-
-    return baseUrl;
-  }
-
-  getPublicDomainUrl(): URL {
-    return new URL(this.twentyConfigService.get('PUBLIC_DOMAIN_URL'));
-  }
-
-  private appendSearchParams(
-    url: URL,
-    searchParams: Record<string, string | number | boolean>,
-  ) {
-    Object.entries(searchParams).forEach(([key, value]) => {
-      url.searchParams.set(key, value.toString());
-    });
-  }
-
-  buildBaseUrl({
-    pathname,
-    searchParams,
-  }: {
-    pathname?: string;
-    searchParams?: Record<string, string | number>;
-  }) {
-    const url = this.getBaseUrl();
-
-    if (pathname) {
-      url.pathname = pathname;
-    }
-
-    if (searchParams) {
-      this.appendSearchParams(url, searchParams);
-    }
-
-    return url;
-  }
 
   buildWorkspaceURL({
     workspace,
     pathname,
     searchParams,
   }: {
-    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
+    workspace: WorkspaceDomainConfig;
     pathname?: string;
     searchParams?: Record<string, string | number | boolean>;
   }) {
     const workspaceUrls = this.getWorkspaceUrls(workspace);
 
-    const url = new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl);
-
-    if (pathname) {
-      url.pathname = pathname;
-    }
-
-    if (searchParams) {
-      this.appendSearchParams(url, searchParams);
-    }
+    const url = buildUrlWithPathnameAndSearchParams({
+      baseUrl: new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl),
+      pathname,
+      searchParams,
+    });
 
     return url;
   }
 
-  getSubdomainAndDomainFromUrl = (url: string) => {
-    const { hostname: originHostname } = new URL(url);
-
-    const frontDomain = this.getFrontUrl().hostname;
-
-    const isFrontdomain = originHostname.endsWith(`.${frontDomain}`);
-
-    const subdomain = originHostname.replace(`.${frontDomain}`, '');
-
-    return {
-      subdomain:
-        isFrontdomain && !this.isDefaultSubdomain(subdomain)
-          ? subdomain
-          : undefined,
-      domain: isFrontdomain ? null : originHostname,
-    };
-  };
-
-  isDefaultSubdomain(subdomain: string) {
-    return subdomain === this.twentyConfigService.get('DEFAULT_SUBDOMAIN');
-  }
-
-  computeRedirectErrorUrl(
+  computeWorkspaceRedirectErrorUrl(
     errorMessage: string,
-    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType,
+    workspace: WorkspaceDomainConfig,
     pathname: string,
   ) {
     const url = this.buildWorkspaceURL({
@@ -168,7 +89,8 @@ export class DomainManagerService {
       return this.getDefaultWorkspace();
     }
 
-    const { subdomain, domain } = this.getSubdomainAndDomainFromUrl(origin);
+    const { subdomain, domain } =
+      this.domainServerConfigService.getSubdomainAndDomainFromUrl(origin);
 
     if (!domain && !subdomain) return;
 
@@ -195,29 +117,8 @@ export class DomainManagerService {
     return publicDomainFromCustomDomain?.workspace;
   }
 
-  private extractSubdomain(params?: { email?: string; displayName?: string }) {
-    if (params?.email) {
-      return getSubdomainFromEmail(params.email);
-    }
-
-    if (params?.displayName) {
-      return getSubdomainNameFromDisplayName(params.displayName);
-    }
-  }
-
-  async generateSubdomain(params?: { email?: string; displayName?: string }) {
-    const subdomain =
-      this.extractSubdomain(params) ?? generateRandomSubdomain();
-
-    const existingWorkspaceCount = await this.workspaceRepository.countBy({
-      subdomain,
-    });
-
-    return `${subdomain}${existingWorkspaceCount > 0 ? `-${Math.random().toString(36).substring(2, 10)}` : ''}`;
-  }
-
   private getCustomWorkspaceUrl(customDomain: string) {
-    const url = this.getFrontUrl();
+    const url = this.domainServerConfigService.getFrontUrl();
 
     url.hostname = customDomain;
 
@@ -225,7 +126,7 @@ export class DomainManagerService {
   }
 
   private getTwentyWorkspaceUrl(subdomain: string) {
-    const url = this.getFrontUrl();
+    const url = this.domainServerConfigService.getFrontUrl();
 
     url.hostname = this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')
       ? `${subdomain}.${url.hostname}`
@@ -235,7 +136,7 @@ export class DomainManagerService {
   }
 
   getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-    workspace?: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType | null,
+    workspace?: WorkspaceDomainConfig | null,
   ) {
     if (!workspace) {
       return {
@@ -258,7 +159,7 @@ export class DomainManagerService {
     subdomain,
     customDomain,
     isCustomDomainEnabled,
-  }: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType) {
+  }: WorkspaceDomainConfig) {
     return {
       customUrl:
         isCustomDomainEnabled && customDomain
@@ -266,5 +167,9 @@ export class DomainManagerService {
           : undefined,
       subdomainUrl: this.getTwentyWorkspaceUrl(subdomain),
     };
+  }
+
+  async findByCustomDomain(customDomain: string) {
+    return this.workspaceRepository.findOne({ where: { customDomain } });
   }
 }

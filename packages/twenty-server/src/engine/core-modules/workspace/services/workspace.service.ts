@@ -9,14 +9,12 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
-import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
+import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
@@ -26,7 +24,6 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -60,8 +57,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(PublicDomain)
-    private readonly publicDomainRepository: Repository<PublicDomain>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(UserWorkspace)
@@ -77,82 +72,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly auditService: AuditService,
+    private readonly subdomainManagerService: SubdomainManagerService,
+    private readonly customDomainManagerService: CustomDomainManagerService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
     super(workspaceRepository);
-  }
-
-  private async isCustomDomainEnabled(workspaceId: string) {
-    const isCustomDomainBillingEnabled =
-      await this.billingService.hasEntitlement(
-        workspaceId,
-        this.featureLookUpKey,
-      );
-
-    if (!isCustomDomainBillingEnabled) {
-      throw new WorkspaceException(
-        `No entitlement found for this workspace`,
-        WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED,
-      );
-    }
-  }
-
-  private async validateSubdomainUpdate(newSubdomain: string) {
-    const subdomainAvailable = await this.isSubdomainAvailable(newSubdomain);
-
-    if (
-      !subdomainAvailable ||
-      this.twentyConfigService.get('DEFAULT_SUBDOMAIN') === newSubdomain
-    ) {
-      throw new WorkspaceException(
-        'Subdomain already taken',
-        WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
-      );
-    }
-  }
-
-  private async setCustomDomain(workspace: Workspace, customDomain: string) {
-    await this.isCustomDomainEnabled(workspace.id);
-
-    const existingWorkspace = await this.workspaceRepository.findOne({
-      where: { customDomain },
-    });
-
-    if (existingWorkspace && existingWorkspace.id !== workspace.id) {
-      throw new WorkspaceException(
-        'Domain already taken',
-        WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
-      );
-    }
-
-    if (
-      await this.publicDomainRepository.findOneBy({
-        domain: customDomain,
-      })
-    ) {
-      throw new WorkspaceException(
-        'Domain is already registered as public domain',
-        WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
-        {
-          userFriendlyMessage: msg`Domain is already registered as public domain`,
-        },
-      );
-    }
-
-    if (!isDefined(customDomain) || workspace.customDomain === customDomain) {
-      return;
-    }
-
-    if (isDefined(workspace.customDomain)) {
-      await this.dnsManagerService.updateHostname(
-        workspace.customDomain,
-        customDomain,
-      );
-    } else {
-      await this.dnsManagerService.registerHostname(customDomain);
-    }
   }
 
   async updateWorkspaceById({
@@ -186,7 +111,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
 
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
-      await this.validateSubdomainUpdate(payload.subdomain);
+      await this.subdomainManagerService.validateSubdomainOrThrow(
+        payload.subdomain,
+      );
     }
 
     let customDomainRegistered = false;
@@ -202,7 +129,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       payload.customDomain &&
       workspace.customDomain !== payload.customDomain
     ) {
-      await this.setCustomDomain(workspace, payload.customDomain);
+      await this.customDomainManagerService.setCustomDomain(
+        workspace,
+        payload.customDomain,
+      );
       customDomainRegistered = true;
     }
 
@@ -410,14 +340,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  async isSubdomainAvailable(subdomain: string) {
-    const existingWorkspace = await this.workspaceRepository.findOne({
-      where: { subdomain: subdomain },
-    });
-
-    return !existingWorkspace;
-  }
-
   private async validateSecurityPermissions({
     payload,
     userWorkspaceId,
@@ -507,46 +429,5 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         );
       }
     }
-  }
-
-  async checkCustomDomainValidRecords(
-    workspace: Workspace,
-    domainValidRecord?: DomainValidRecords,
-  ) {
-    assertIsDefinedOrThrow(workspace.customDomain);
-
-    const customDomainWithRecords =
-      domainValidRecord ??
-      (await this.dnsManagerService.getHostnameWithRecords(
-        workspace.customDomain,
-      ));
-
-    assertIsDefinedOrThrow(customDomainWithRecords);
-
-    const isCustomDomainWorking =
-      await this.dnsManagerService.isHostnameWorking(workspace.customDomain);
-
-    if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
-      workspace.isCustomDomainEnabled = isCustomDomainWorking;
-
-      await this.workspaceRepository.save(workspace);
-
-      const analytics = this.auditService.createContext({
-        workspaceId: workspace.id,
-      });
-
-      analytics.insertWorkspaceEvent(
-        workspace.isCustomDomainEnabled
-          ? CUSTOM_DOMAIN_ACTIVATED_EVENT
-          : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
-        {},
-      );
-    }
-
-    return customDomainWithRecords;
-  }
-
-  async findByCustomDomain(customDomain: string) {
-    return this.workspaceRepository.findOne({ where: { customDomain } });
   }
 }

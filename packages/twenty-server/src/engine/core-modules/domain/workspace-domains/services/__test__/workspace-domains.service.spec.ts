@@ -3,64 +3,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
-import { DomainManagerService } from './domain-manager.service';
-
-describe('DomainManagerService', () => {
-  describe('getWorkspaceUrls', () => {
-    it('should return a URL containing the correct customDomain if customDomain is provided', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          const env = {
-            FRONTEND_URL: 'https://example.com',
-          };
-
-          // @ts-expect-error legacy noImplicitAny
-          return env[key];
-        });
-
-      const result = domainManagerService.getWorkspaceUrls({
-        subdomain: 'subdomain',
-        customDomain: 'custom-host.com',
-        isCustomDomainEnabled: true,
-      });
-
-      expect(result).toEqual({
-        customUrl: 'https://custom-host.com/',
-        subdomainUrl: 'https://example.com/',
-      });
-    });
-
-    it('should return a URL containing the correct subdomain if customDomain is not provided but subdomain is', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          const env = {
-            FRONTEND_URL: 'https://example.com',
-            IS_MULTIWORKSPACE_ENABLED: true,
-          };
-
-          // @ts-expect-error legacy noImplicitAny
-          return env[key];
-        });
-
-      const result = domainManagerService.getWorkspaceUrls({
-        subdomain: 'subdomain',
-        customDomain: null,
-        isCustomDomainEnabled: false,
-      });
-
-      expect(result).toEqual({
-        customUrl: undefined,
-        subdomainUrl: 'https://subdomain.example.com/',
-      });
-    });
-  });
-  let domainManagerService: DomainManagerService;
+describe('WorkspaceDomainsService', () => {
+  let workspaceDomainsService: WorkspaceDomainsService;
   let twentyConfigService: TwentyConfigService;
   let workspaceRepository: Repository<Workspace>;
   let publicDomainRepository: Repository<PublicDomain>;
@@ -68,7 +18,8 @@ describe('DomainManagerService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        DomainManagerService,
+        DomainServerConfigService,
+        WorkspaceDomainsService,
         {
           provide: getRepositoryToken(Workspace),
           useValue: {
@@ -97,13 +48,15 @@ describe('DomainManagerService', () => {
     publicDomainRepository = module.get<Repository<PublicDomain>>(
       getRepositoryToken(PublicDomain),
     );
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
+    workspaceDomainsService = module.get<WorkspaceDomainsService>(
+      WorkspaceDomainsService,
+    );
+
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 
-  describe('buildBaseUrl', () => {
-    it('should build the base URL from environment variables', () => {
+  describe('getWorkspaceUrls', () => {
+    it('should return a URL containing the correct customDomain if customDomain is provided', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
@@ -115,28 +68,41 @@ describe('DomainManagerService', () => {
           return env[key];
         });
 
-      const result = domainManagerService.getBaseUrl();
+      const result = workspaceDomainsService.getWorkspaceUrls({
+        subdomain: 'subdomain',
+        customDomain: 'custom-host.com',
+        isCustomDomainEnabled: true,
+      });
 
-      expect(result.toString()).toBe('https://example.com/');
+      expect(result).toEqual({
+        customUrl: 'https://custom-host.com/',
+        subdomainUrl: 'https://example.com/',
+      });
     });
 
-    it('should append default subdomain if multiworkspace is enabled', () => {
+    it('should return a URL containing the correct subdomain if customDomain is not provided but subdomain is', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
             IS_MULTIWORKSPACE_ENABLED: true,
-            DEFAULT_SUBDOMAIN: 'test',
           };
 
           // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
-      const result = domainManagerService.getBaseUrl();
+      const result = workspaceDomainsService.getWorkspaceUrls({
+        subdomain: 'subdomain',
+        customDomain: null,
+        isCustomDomainEnabled: false,
+      });
 
-      expect(result.toString()).toBe('https://test.example.com/');
+      expect(result).toEqual({
+        customUrl: undefined,
+        subdomainUrl: 'https://subdomain.example.com/',
+      });
     });
   });
 
@@ -155,7 +121,7 @@ describe('DomainManagerService', () => {
           return env[key];
         });
 
-      const result = domainManagerService.buildWorkspaceURL({
+      const result = workspaceDomainsService.buildWorkspaceURL({
         workspace: {
           subdomain: 'test',
           customDomain: null,
@@ -178,7 +144,7 @@ describe('DomainManagerService', () => {
           return env[key];
         });
 
-      const result = domainManagerService.buildWorkspaceURL({
+      const result = workspaceDomainsService.buildWorkspaceURL({
         workspace: {
           subdomain: 'test',
           customDomain: null,
@@ -202,7 +168,7 @@ describe('DomainManagerService', () => {
           return env[key];
         });
 
-      const result = domainManagerService.buildWorkspaceURL({
+      const result = workspaceDomainsService.buildWorkspaceURL({
         workspace: {
           subdomain: 'test',
           customDomain: null,
@@ -240,7 +206,7 @@ describe('DomainManagerService', () => {
       ] as unknown as Workspace[]);
 
       const result =
-        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
           'https://example.com',
         );
 
@@ -270,7 +236,7 @@ describe('DomainManagerService', () => {
       ] as unknown as Workspace[]);
 
       const result =
-        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
           'https://example.com',
         );
 
@@ -296,7 +262,7 @@ describe('DomainManagerService', () => {
       } as unknown as Promise<Workspace>);
 
       const result =
-        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
           'https://123.example.com',
         );
 
@@ -322,7 +288,7 @@ describe('DomainManagerService', () => {
       } as unknown as Promise<Workspace>);
 
       const result =
-        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
           'https://123.custom.com',
         );
 
@@ -352,7 +318,7 @@ describe('DomainManagerService', () => {
       } as unknown as Promise<PublicDomain>);
 
       const result =
-        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
           'https://123.custom.com',
         );
 
@@ -377,7 +343,7 @@ describe('DomainManagerService', () => {
       jest.spyOn(publicDomainRepository, 'findOne').mockResolvedValueOnce(null);
 
       const result =
-        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
           'https://123.custom.com',
         );
 

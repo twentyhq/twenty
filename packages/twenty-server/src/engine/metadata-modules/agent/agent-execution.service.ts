@@ -17,7 +17,7 @@ import { In } from 'typeorm';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
@@ -47,7 +47,7 @@ export class AgentExecutionService implements AgentExecutionContext {
 
   constructor(
     private readonly agentHandoffToolService: AgentHandoffToolService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
@@ -218,7 +218,7 @@ export class AgentExecutionService implements AgentExecutionContext {
             ).map((record) => {
               return {
                 ...record,
-                resourceUrl: this.domainManagerService.buildWorkspaceURL({
+                resourceUrl: this.workspaceDomainsService.buildWorkspaceURL({
                   workspace,
                   pathname: getAppPath(AppPath.RecordShowPage, {
                     objectNameSingular:

@@ -1,29 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
-import {
-  HTTPMethod,
-  RouteTrigger,
-} from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
 } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
+import {
+  HTTPMethod,
+  RouteTrigger,
+} from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
 @Injectable()
 export class RouteTriggerService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     @InjectRepository(RouteTrigger)
     private readonly routeTriggerRepository: Repository<RouteTrigger>,
   ) {}
@@ -41,7 +41,7 @@ export class RouteTriggerService {
     const host = `${request.protocol}://${request.get('host')}`;
 
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         host,
       );
 

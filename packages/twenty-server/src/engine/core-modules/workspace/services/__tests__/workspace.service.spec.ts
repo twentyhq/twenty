@@ -7,7 +7,8 @@ import { AuditService } from 'src/engine/core-modules/audit/services/audit.servi
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
+import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -93,8 +94,9 @@ describe('WorkspaceService', () => {
           WorkspaceManagerService,
           UserWorkspaceService,
           UserService,
-          DomainManagerService,
           DnsManagerService,
+          CustomDomainManagerService,
+          SubdomainManagerService,
           TwentyConfigService,
           EmailService,
           OnboardingService,

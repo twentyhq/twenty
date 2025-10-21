@@ -10,7 +10,9 @@ import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { CustomDomainManagerModule } from 'src/engine/core-modules/domain/custom-domain-manager/custom-domain-manager.module';
+import { SubdomainManagerModule } from 'src/engine/core-modules/domain/subdomain-manager/subdomain-manager.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -65,7 +67,9 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         RoleModule,
         AgentModule,
         DnsManagerModule,
-        DomainManagerModule,
+        WorkspaceDomainsModule,
+        SubdomainManagerModule,
+        CustomDomainManagerModule,
         ViewModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],

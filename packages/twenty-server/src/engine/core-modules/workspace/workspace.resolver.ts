@@ -25,7 +25,8 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -89,7 +90,7 @@ const OriginHeader = createParamDecorator(
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
@@ -100,6 +101,7 @@ export class WorkspaceResolver {
     private readonly agentService: AgentService,
     private readonly viewService: ViewService,
     private readonly dnsManagerService: DnsManagerService,
+    private readonly customDomainManagerService: CustomDomainManagerService,
   ) {}
 
   @Query(() => Workspace)
@@ -295,7 +297,7 @@ export class WorkspaceResolver {
 
   @ResolveField(() => WorkspaceUrlsDTO)
   workspaceUrls(@Parent() workspace: Workspace) {
-    return this.domainManagerService.getWorkspaceUrls(workspace);
+    return this.workspaceDomainsService.getWorkspaceUrls(workspace);
   }
 
   @ResolveField(() => Boolean)
@@ -356,7 +358,7 @@ export class WorkspaceResolver {
       }
 
       const workspace =
-        await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
           origin,
         );
 
@@ -379,7 +381,7 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,
@@ -407,7 +409,7 @@ export class WorkspaceResolver {
       workspace.customDomain,
     );
 
-    return this.workspaceService.checkCustomDomainValidRecords(
+    return this.customDomainManagerService.checkCustomDomainValidRecords(
       workspace,
       domainValidRecords,
     );

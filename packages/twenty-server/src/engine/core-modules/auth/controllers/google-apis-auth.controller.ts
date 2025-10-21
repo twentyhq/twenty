@@ -23,12 +23,12 @@ import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/gu
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 
 @Controller('auth/google-apis')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -38,7 +38,7 @@ export class GoogleAPIsAuthController {
     private readonly transientTokenService: TransientTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly onboardingService: OnboardingService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
@@ -120,7 +120,7 @@ export class GoogleAPIsAuthController {
           connectedAccountId,
         });
 
-      const url = this.domainManagerService.buildWorkspaceURL({
+      const url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
         pathname,
       });
