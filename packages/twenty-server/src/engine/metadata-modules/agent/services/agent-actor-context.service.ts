@@ -45,7 +45,7 @@ export class AgentActorContextService {
 
     const workspaceMember = await workspaceMemberRepository.findOne({
       where: {
-        userId: userWorkspace.userId,
+        userId: userWorkspace.id,
       },
     });
 

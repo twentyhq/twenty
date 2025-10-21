@@ -10,7 +10,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import {
   PermissionsException,
@@ -289,9 +289,7 @@ describe('UserService', () => {
         ]);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
-        .mockResolvedValue(
-          mockWorkspaceMemberRepo as unknown as Repository<WorkspaceMemberWorkspaceEntity>,
-        );
+        .mockResolvedValue(mockWorkspaceMemberRepo);
 
       jest
         .spyOn(userRoleService, 'validateUserWorkspaceIsNotUniqueAdminOrThrow')
