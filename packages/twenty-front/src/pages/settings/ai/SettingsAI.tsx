@@ -56,16 +56,6 @@ export const SettingsAI = () => {
         );
       case SETTINGS_AI_TABS.SETTINGS:
         return <SettingsAIRouterSettings />;
-      default:
-        return (
-          <Section>
-            <H2Title
-              title={t`Agents`}
-              description={t`Agents used to route queries to specialized agents`}
-            />
-            <SettingsAIAgentsTable agents={data?.findManyAgents || []} />
-          </Section>
-        );
     }
   };
 
