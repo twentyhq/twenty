@@ -9,6 +9,7 @@ import {
   UITools,
 } from 'ai';
 import { type Response } from 'express';
+import { ExtendedUIMessage } from 'twenty-shared/ai';
 import { Repository } from 'typeorm';
 
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -68,7 +69,7 @@ export class AgentStreamingService {
         );
       }
 
-      const stream = createUIMessageStream({
+      const stream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
           writer.write({
             type: 'data-routing-status' as const,
@@ -99,7 +100,7 @@ export class AgentStreamingService {
             id: 'routing-status',
             data: {
               text: `Routed to ${agent.label} agent`,
-              status: 'routed',
+              state: 'routed',
             },
           };
 

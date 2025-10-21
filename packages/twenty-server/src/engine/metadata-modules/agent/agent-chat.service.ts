@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ExtendedUIMessage } from 'twenty-shared/ai';
 import { Repository } from 'typeorm';
 
-import type { UIDataTypes, UIMessage, UIMessagePart, UITools } from 'ai';
+import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
 import { AgentChatMessagePartEntity } from 'src/engine/metadata-modules/agent/agent-chat-message-part.entity';
 import {
@@ -71,7 +72,7 @@ export class AgentChatService {
     uiMessage,
   }: {
     threadId: string;
-    uiMessage: Omit<UIMessage<unknown, UIDataTypes, UITools>, 'id'>;
+    uiMessage: Omit<ExtendedUIMessage, 'id'>;
     uiMessageParts?: UIMessagePart<UIDataTypes, UITools>[];
   }) {
     const message = this.messageRepository.create({
