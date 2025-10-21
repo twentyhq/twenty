@@ -4336,9 +4336,26 @@ export type WorkflowAction = {
   nextStepIds?: Maybe<Array<Scalars['UUID']>>;
   position?: Maybe<WorkflowStepPosition>;
   settings: Scalars['JSON'];
-  type: Scalars['String'];
+  type: WorkflowActionType;
   valid: Scalars['Boolean'];
 };
+
+export enum WorkflowActionType {
+  AI_AGENT = 'AI_AGENT',
+  CODE = 'CODE',
+  CREATE_RECORD = 'CREATE_RECORD',
+  DELAY = 'DELAY',
+  DELETE_RECORD = 'DELETE_RECORD',
+  EMPTY = 'EMPTY',
+  FILTER = 'FILTER',
+  FIND_RECORDS = 'FIND_RECORDS',
+  FORM = 'FORM',
+  HTTP_REQUEST = 'HTTP_REQUEST',
+  ITERATOR = 'ITERATOR',
+  SEND_EMAIL = 'SEND_EMAIL',
+  UPDATE_RECORD = 'UPDATE_RECORD',
+  UPSERT_RECORD = 'UPSERT_RECORD'
+}
 
 export type WorkflowRun = {
   __typename?: 'WorkflowRun';

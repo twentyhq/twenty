@@ -1,5 +1,5 @@
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
-import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
+import { type WorkflowUpsertRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowUpdateRecordBody } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowUpdateRecordBody';
 
@@ -7,26 +7,26 @@ import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-acti
 import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/update-record-form-data.type';
 import { useIcons } from 'twenty-ui/display';
 
-type WorkflowEditActionUpdateRecordProps = {
-  action: WorkflowUpdateRecordAction;
+type WorkflowEditActionUpsertRecordProps = {
+  action: WorkflowUpsertRecordAction;
   actionOptions:
     | {
         readonly: true;
       }
     | {
         readonly?: false;
-        onActionUpdate: (action: WorkflowUpdateRecordAction) => void;
+        onActionUpdate: (action: WorkflowUpsertRecordAction) => void;
       };
 };
 
-export const WorkflowEditActionUpdateRecord = ({
+export const WorkflowEditActionUpsertRecord = ({
   action,
   actionOptions,
-}: WorkflowEditActionUpdateRecordProps) => {
+}: WorkflowEditActionUpsertRecordProps) => {
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Update Record',
+      defaultTitle: 'Create or Update Record',
     });
 
   const { getIcon } = useIcons();
@@ -45,7 +45,6 @@ export const WorkflowEditActionUpdateRecord = ({
         input: {
           objectName: formData.objectNameSingular,
           objectRecord: formData,
-          objectRecordId: formData.objectRecordId ?? '',
           fieldsToUpdate: formData.fieldsToUpdate,
         },
       },
@@ -73,13 +72,12 @@ export const WorkflowEditActionUpdateRecord = ({
       />
       <WorkflowUpdateRecordBody
         defaultObjectNameSingular={action.settings.input.objectName}
-        defaultObjectRecordId={action.settings.input.objectRecordId}
         defaultFieldsToUpdate={action.settings.input.fieldsToUpdate}
         defaultObjectRecord={action.settings.input.objectRecord}
         readonly={isFormDisabled}
-        actionType="UPDATE_RECORD"
+        actionType="UPSERT_RECORD"
         onUpdate={handleUpdate}
-        shouldPickRecord={true}
+        shouldPickRecord={false}
       />
       {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
     </>
