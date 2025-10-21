@@ -36,13 +36,13 @@ export const SettingsAIRouterSettings = () => {
   const [selectedModel, setSelectedModel] = useState<string>(routerModel);
 
   const handleModelChange = async (value: string | number | boolean | null) => {
-    const newValue = value as string;
-    const previousValue = currentWorkspace?.routerModel || 'auto';
-    setSelectedModel(newValue);
-
     if (!currentWorkspace?.id) {
       return;
     }
+
+    const newValue = value as string;
+    const previousValue = currentWorkspace?.routerModel || 'auto';
+    setSelectedModel(newValue);
 
     try {
       setCurrentWorkspace({
