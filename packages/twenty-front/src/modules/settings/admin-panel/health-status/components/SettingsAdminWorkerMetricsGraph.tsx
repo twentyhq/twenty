@@ -1,5 +1,5 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
-import { WorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/WorkerMetricsTooltip';
+import { SettingsAdminWorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsTooltip';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -33,16 +33,16 @@ const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-type WorkerMetricsGraphProps = {
+type SettingsAdminWorkerMetricsGraphProps = {
   queueName: string;
   timeRange: QueueMetricsTimeRange;
   onTimeRangeChange: (range: QueueMetricsTimeRange) => void;
 };
 
-export const WorkerMetricsGraph = ({
+export const SettingsAdminWorkerMetricsGraph = ({
   queueName,
   timeRange,
-}: WorkerMetricsGraphProps) => {
+}: SettingsAdminWorkerMetricsGraphProps) => {
   const theme = useTheme();
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -172,7 +172,9 @@ export const WorkerMetricsGraph = ({
             gridYValues={4}
             pointSize={0}
             enableSlices="x"
-            sliceTooltip={({ slice }) => <WorkerMetricsTooltip slice={slice} />}
+            sliceTooltip={({ slice }) => (
+              <SettingsAdminWorkerMetricsTooltip slice={slice} />
+            )}
             useMesh={true}
             legends={[
               {

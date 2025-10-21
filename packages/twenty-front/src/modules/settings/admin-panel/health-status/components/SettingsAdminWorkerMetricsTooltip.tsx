@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import type { Point, LineSeries } from '@nivo/line';
+import type { LineSeries, Point } from '@nivo/line';
 import { type ReactElement } from 'react';
 
 const StyledTooltipContainer = styled.div`
@@ -43,15 +43,15 @@ const StyledTooltipValue = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-type WorkerMetricsTooltipProps = {
+type SettingsAdminWorkerMetricsTooltipProps = {
   slice: {
     points: readonly Point<LineSeries>[];
   };
 };
 
-export const WorkerMetricsTooltip = ({
+export const SettingsAdminWorkerMetricsTooltip = ({
   slice,
-}: WorkerMetricsTooltipProps): ReactElement => {
+}: SettingsAdminWorkerMetricsTooltipProps): ReactElement => {
   return (
     <StyledTooltipContainer>
       {slice.points.map((point) => (

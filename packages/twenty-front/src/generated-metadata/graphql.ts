@@ -115,8 +115,8 @@ export type AgentChatThread = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type AgentHandoffDto = {
-  __typename?: 'AgentHandoffDTO';
+export type AgentHandoff = {
+  __typename?: 'AgentHandoff';
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   toAgent: Agent;
@@ -261,8 +261,8 @@ export type AuthorizeApp = {
   redirectUrl: Scalars['String'];
 };
 
-export type AutocompleteResultDto = {
-  __typename?: 'AutocompleteResultDto';
+export type AutocompleteResult = {
+  __typename?: 'AutocompleteResult';
   placeId: Scalars['String'];
   text: Scalars['String'];
 };
@@ -331,7 +331,7 @@ export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']>;
   isBillingEnabled: Scalars['Boolean'];
-  trialPeriods: Array<BillingTrialPeriodDto>;
+  trialPeriods: Array<BillingTrialPeriod>;
 };
 
 export type BillingEndTrialPeriodOutput = {
@@ -348,7 +348,7 @@ export type BillingLicensedProduct = BillingProductDto & {
   images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String'];
-  prices?: Maybe<Array<BillingPriceLicensedDto>>;
+  prices?: Maybe<Array<BillingPriceLicensed>>;
 };
 
 export type BillingMeteredProduct = BillingProductDto & {
@@ -357,7 +357,7 @@ export type BillingMeteredProduct = BillingProductDto & {
   images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String'];
-  prices?: Maybe<Array<BillingPriceMeteredDto>>;
+  prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
 export type BillingMeteredProductUsageOutput = {
@@ -383,24 +383,24 @@ export type BillingPlanOutput = {
   planKey: BillingPlanKey;
 };
 
-export type BillingPriceLicensedDto = {
-  __typename?: 'BillingPriceLicensedDTO';
+export type BillingPriceLicensed = {
+  __typename?: 'BillingPriceLicensed';
   priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
   unitAmount: Scalars['Float'];
 };
 
-export type BillingPriceMeteredDto = {
-  __typename?: 'BillingPriceMeteredDTO';
+export type BillingPriceMetered = {
+  __typename?: 'BillingPriceMetered';
   priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
-  tiers: Array<BillingPriceTierDto>;
+  tiers: Array<BillingPriceTier>;
 };
 
-export type BillingPriceTierDto = {
-  __typename?: 'BillingPriceTierDTO';
+export type BillingPriceTier = {
+  __typename?: 'BillingPriceTier';
   flatAmount?: Maybe<Scalars['Float']>;
   unitAmount?: Maybe<Scalars['Float']>;
   upTo?: Maybe<Scalars['Float']>;
@@ -472,8 +472,8 @@ export type BillingSubscriptionSchedulePhaseItem = {
   quantity?: Maybe<Scalars['Float']>;
 };
 
-export type BillingTrialPeriodDto = {
-  __typename?: 'BillingTrialPeriodDTO';
+export type BillingTrialPeriod = {
+  __typename?: 'BillingTrialPeriod';
   duration: Scalars['Float'];
   isCreditCardRequired: Scalars['Boolean'];
 };
@@ -568,27 +568,27 @@ export enum ConfigVariableType {
 }
 
 export enum ConfigVariablesGroup {
-  AnalyticsConfig = 'AnalyticsConfig',
-  AwsSesSettings = 'AwsSesSettings',
-  BillingConfig = 'BillingConfig',
-  CaptchaConfig = 'CaptchaConfig',
-  CloudflareConfig = 'CloudflareConfig',
-  EmailSettings = 'EmailSettings',
-  ExceptionHandler = 'ExceptionHandler',
-  GoogleAuth = 'GoogleAuth',
+  ANALYTICS_CONFIG = 'ANALYTICS_CONFIG',
+  AWS_SES_SETTINGS = 'AWS_SES_SETTINGS',
+  BILLING_CONFIG = 'BILLING_CONFIG',
+  CAPTCHA_CONFIG = 'CAPTCHA_CONFIG',
+  CLOUDFLARE_CONFIG = 'CLOUDFLARE_CONFIG',
+  EMAIL_SETTINGS = 'EMAIL_SETTINGS',
+  EXCEPTION_HANDLER = 'EXCEPTION_HANDLER',
+  GOOGLE_AUTH = 'GOOGLE_AUTH',
   LLM = 'LLM',
-  Logging = 'Logging',
-  Metering = 'Metering',
-  MicrosoftAuth = 'MicrosoftAuth',
-  Other = 'Other',
-  RateLimiting = 'RateLimiting',
+  LOGGING = 'LOGGING',
+  METERING = 'METERING',
+  MICROSOFT_AUTH = 'MICROSOFT_AUTH',
+  OTHER = 'OTHER',
+  RATE_LIMITING = 'RATE_LIMITING',
+  SERVERLESS_CONFIG = 'SERVERLESS_CONFIG',
+  SERVER_CONFIG = 'SERVER_CONFIG',
   SSL = 'SSL',
-  ServerConfig = 'ServerConfig',
-  ServerlessConfig = 'ServerlessConfig',
-  StorageConfig = 'StorageConfig',
-  SupportChatConfig = 'SupportChatConfig',
-  TokensDuration = 'TokensDuration',
-  TwoFactorAuthentication = 'TwoFactorAuthentication'
+  STORAGE_CONFIG = 'STORAGE_CONFIG',
+  SUPPORT_CHAT_CONFIG = 'SUPPORT_CHAT_CONFIG',
+  TOKENS_DURATION = 'TOKENS_DURATION',
+  TWO_FACTOR_AUTHENTICATION = 'TWO_FACTOR_AUTHENTICATION'
 }
 
 export type ConfigVariablesGroupData = {
@@ -1048,6 +1048,12 @@ export type DateFilter = {
 
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['UUID'];
+};
+
+export type DeleteJobsResponse = {
+  __typename?: 'DeleteJobsResponse';
+  deletedCount: Scalars['Int'];
+  results: Array<JobOperationResult>;
 };
 
 export type DeleteOneFieldInput = {
@@ -1644,6 +1650,24 @@ export type InvalidatePassword = {
   success: Scalars['Boolean'];
 };
 
+export type JobOperationResult = {
+  __typename?: 'JobOperationResult';
+  error?: Maybe<Scalars['String']>;
+  jobId: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
+/** Job state in the queue */
+export enum JobState {
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
+  DELAYED = 'DELAYED',
+  FAILED = 'FAILED',
+  PRIORITIZED = 'PRIORITIZED',
+  WAITING = 'WAITING',
+  WAITING_CHILDREN = 'WAITING_CHILDREN'
+}
+
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
@@ -1678,8 +1702,8 @@ export type LinksMetadata = {
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
-export type LocationDto = {
-  __typename?: 'LocationDto';
+export type Location = {
+  __typename?: 'Location';
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
 };
@@ -1765,6 +1789,7 @@ export type Mutation = {
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
+  deleteJobs: DeleteJobsResponse;
   deleteOneAgent: Agent;
   deleteOneCronTrigger: CronTrigger;
   deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
@@ -1821,6 +1846,7 @@ export type Mutation = {
   restorePageLayout: PageLayout;
   restorePageLayoutTab: PageLayoutTab;
   restorePageLayoutWidget: PageLayoutWidget;
+  retryJobs: RetryJobsResponse;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -1872,10 +1898,10 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
-  uploadFile: SignedFileDto;
-  uploadImage: SignedFileDto;
-  uploadProfilePicture: SignedFileDto;
-  uploadWorkspaceLogo: SignedFileDto;
+  uploadFile: SignedFile;
+  uploadImage: SignedFile;
+  uploadProfilePicture: SignedFile;
+  uploadWorkspaceLogo: SignedFile;
   upsertFieldPermissions: Array<FieldPermission>;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<PermissionFlag>;
@@ -2174,6 +2200,12 @@ export type MutationDeleteFileArgs = {
 };
 
 
+export type MutationDeleteJobsArgs = {
+  jobIds: Array<Scalars['String']>;
+  queueName: Scalars['String'];
+};
+
+
 export type MutationDeleteOneAgentArgs = {
   input: AgentIdInput;
 };
@@ -2440,6 +2472,12 @@ export type MutationRestorePageLayoutTabArgs = {
 
 export type MutationRestorePageLayoutWidgetArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationRetryJobsArgs = {
+  jobIds: Array<Scalars['String']>;
+  queueName: Scalars['String'];
 };
 
 
@@ -2907,8 +2945,8 @@ export type ObjectStandardOverrides = {
   translations?: Maybe<Scalars['JSON']>;
 };
 
-export type OnDbEventDto = {
-  __typename?: 'OnDbEventDTO';
+export type OnDbEvent = {
+  __typename?: 'OnDbEvent';
   action: DatabaseEventAction;
   eventDate: Scalars['DateTime'];
   objectNameSingular: Scalars['String'];
@@ -3031,11 +3069,11 @@ export type PieChartConfiguration = {
   orderBy?: Maybe<GraphOrderBy>;
 };
 
-export type PlaceDetailsResultDto = {
-  __typename?: 'PlaceDetailsResultDto';
+export type PlaceDetailsResult = {
+  __typename?: 'PlaceDetailsResult';
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
-  location?: Maybe<LocationDto>;
+  location?: Maybe<Location>;
   postcode?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
 };
@@ -3098,7 +3136,7 @@ export type Query = {
   field: Field;
   fields: FieldConnection;
   findAgentHandoffTargets: Array<Agent>;
-  findAgentHandoffs: Array<AgentHandoffDto>;
+  findAgentHandoffs: Array<AgentHandoff>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
@@ -3117,9 +3155,9 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
-  getAddressDetails: PlaceDetailsResultDto;
+  getAddressDetails: PlaceDetailsResult;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
-  getAutoCompleteAddress: Array<AutocompleteResultDto>;
+  getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
@@ -3147,6 +3185,7 @@ export type Query = {
   getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
+  getQueueJobs: QueueJobsResponse;
   getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
@@ -3407,6 +3446,14 @@ export type QueryGetPublicWorkspaceDataByDomainArgs = {
 };
 
 
+export type QueryGetQueueJobsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  queueName: Scalars['String'];
+  state: JobState;
+};
+
+
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
@@ -3501,6 +3548,31 @@ export type QueryWebhookArgs = {
   input: GetWebhookDto;
 };
 
+export type QueueJob = {
+  __typename?: 'QueueJob';
+  attemptsMade: Scalars['Float'];
+  data?: Maybe<Scalars['JSON']>;
+  failedReason?: Maybe<Scalars['String']>;
+  finishedOn?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  logs?: Maybe<Array<Scalars['String']>>;
+  name: Scalars['String'];
+  processedOn?: Maybe<Scalars['Float']>;
+  returnValue?: Maybe<Scalars['JSON']>;
+  stackTrace?: Maybe<Array<Scalars['String']>>;
+  state: JobState;
+  timestamp?: Maybe<Scalars['Float']>;
+};
+
+export type QueueJobsResponse = {
+  __typename?: 'QueueJobsResponse';
+  count: Scalars['Float'];
+  hasMore: Scalars['Boolean'];
+  jobs: Array<QueueJob>;
+  retentionConfig: QueueRetentionConfig;
+  totalCount: Scalars['Float'];
+};
+
 export type QueueMetricsData = {
   __typename?: 'QueueMetricsData';
   data: Array<QueueMetricsSeries>;
@@ -3529,6 +3601,14 @@ export enum QueueMetricsTimeRange {
   SevenDays = 'SevenDays',
   TwelveHours = 'TwelveHours'
 }
+
+export type QueueRetentionConfig = {
+  __typename?: 'QueueRetentionConfig';
+  completedMaxAge: Scalars['Float'];
+  completedMaxCount: Scalars['Float'];
+  failedMaxAge: Scalars['Float'];
+  failedMaxCount: Scalars['Float'];
+};
 
 export type Relation = {
   __typename?: 'Relation';
@@ -3595,6 +3675,12 @@ export type RemoveAgentHandoffInput = {
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean'];
+};
+
+export type RetryJobsResponse = {
+  __typename?: 'RetryJobsResponse';
+  results: Array<JobOperationResult>;
+  retriedCount: Scalars['Int'];
 };
 
 export type RevokeApiKeyDto = {
@@ -3797,8 +3883,8 @@ export type SignUpOutput = {
   workspace: WorkspaceUrlsAndId;
 };
 
-export type SignedFileDto = {
-  __typename?: 'SignedFileDTO';
+export type SignedFile = {
+  __typename?: 'SignedFile';
   path: Scalars['String'];
   token: Scalars['String'];
 };
@@ -3822,7 +3908,7 @@ export type SubmitFormStepInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  onDbEvent: OnDbEventDto;
+  onDbEvent: OnDbEvent;
 };
 
 
@@ -4780,7 +4866,7 @@ export type FindAgentHandoffsQueryVariables = Exact<{
 }>;
 
 
-export type FindAgentHandoffsQuery = { __typename?: 'Query', findAgentHandoffs: Array<{ __typename?: 'AgentHandoffDTO', id: string, description?: string | null, toAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, modelId: string, prompt: string, isCustom: boolean, createdAt: string, updatedAt: string } }> };
+export type FindAgentHandoffsQuery = { __typename?: 'Query', findAgentHandoffs: Array<{ __typename?: 'AgentHandoff', id: string, description?: string | null, toAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, modelId: string, prompt: string, isCustom: boolean, createdAt: string, updatedAt: string } }> };
 
 export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4847,7 +4933,7 @@ export type UploadFileMutationVariables = Exact<{
 }>;
 
 
-export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: { __typename?: 'SignedFileDTO', path: string, token: string } };
+export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: { __typename?: 'SignedFile', path: string, token: string } };
 
 export type UploadImageMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -4855,7 +4941,7 @@ export type UploadImageMutationVariables = Exact<{
 }>;
 
 
-export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: { __typename?: 'SignedFileDTO', path: string, token: string } };
+export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: { __typename?: 'SignedFile', path: string, token: string } };
 
 export type AuthTokenFragmentFragment = { __typename?: 'AuthToken', token: string, expiresAt: string };
 
@@ -5063,9 +5149,9 @@ export type ValidatePasswordResetTokenQueryVariables = Exact<{
 
 export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string } };
 
-export type BillingPriceLicensedFragmentFragment = { __typename?: 'BillingPriceLicensedDTO', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType };
+export type BillingPriceLicensedFragmentFragment = { __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType };
 
-export type BillingPriceMeteredFragmentFragment = { __typename?: 'BillingPriceMeteredDTO', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTierDTO', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> };
+export type BillingPriceMeteredFragmentFragment = { __typename?: 'BillingPriceMetered', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTier', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> };
 
 export type BillingSubscriptionSchedulePhaseFragmentFragment = { __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> };
 
@@ -5133,7 +5219,7 @@ export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredPro
 export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, licensedProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensedDTO', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }>, meteredProducts: Array<{ __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceMeteredDTO', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTierDTO', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }> }> };
+export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, licensedProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }>, meteredProducts: Array<{ __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceMetered', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTier', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }> }> };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
 
@@ -5357,12 +5443,38 @@ export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetVersionInfoQuery = { __typename?: 'Query', versionInfo: { __typename?: 'VersionInfo', currentVersion?: string | null, latestVersion: string } };
 
+export type DeleteJobsMutationVariables = Exact<{
+  queueName: Scalars['String'];
+  jobIds: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type DeleteJobsMutation = { __typename?: 'Mutation', deleteJobs: { __typename?: 'DeleteJobsResponse', deletedCount: number, results: Array<{ __typename?: 'JobOperationResult', jobId: string, success: boolean, error?: string | null }> } };
+
+export type RetryJobsMutationVariables = Exact<{
+  queueName: Scalars['String'];
+  jobIds: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type RetryJobsMutation = { __typename?: 'Mutation', retryJobs: { __typename?: 'RetryJobsResponse', retriedCount: number, results: Array<{ __typename?: 'JobOperationResult', jobId: string, success: boolean, error?: string | null }> } };
+
 export type GetIndicatorHealthStatusQueryVariables = Exact<{
   indicatorId: HealthIndicatorId;
 }>;
 
 
 export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', id: HealthIndicatorId, label: string, description: string, status: AdminPanelHealthServiceStatus, errorMessage?: string | null, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', id: string, queueName: string, status: AdminPanelHealthServiceStatus }> | null } };
+
+export type GetQueueJobsQueryVariables = Exact<{
+  queueName: Scalars['String'];
+  state: JobState;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetQueueJobsQuery = { __typename?: 'Query', getQueueJobs: { __typename?: 'QueueJobsResponse', count: number, totalCount: number, hasMore: boolean, jobs: Array<{ __typename?: 'QueueJob', id: string, name: string, data?: any | null, state: JobState, timestamp?: number | null, failedReason?: string | null, processedOn?: number | null, finishedOn?: number | null, attemptsMade: number, returnValue?: any | null, logs?: Array<string> | null, stackTrace?: Array<string> | null }>, retentionConfig: { __typename?: 'QueueRetentionConfig', completedMaxAge: number, completedMaxCount: number, failedMaxAge: number, failedMaxCount: number } } };
 
 export type GetQueueMetricsQueryVariables = Exact<{
   queueName: Scalars['String'];
@@ -5727,7 +5839,7 @@ export type UploadProfilePictureMutationVariables = Exact<{
 }>;
 
 
-export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProfilePicture: { __typename?: 'SignedFileDTO', path: string, token: string } };
+export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProfilePicture: { __typename?: 'SignedFile', path: string, token: string } };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -6162,7 +6274,7 @@ export type UploadWorkspaceLogoMutationVariables = Exact<{
 }>;
 
 
-export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: { __typename?: 'SignedFileDTO', path: string, token: string } };
+export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: { __typename?: 'SignedFile', path: string, token: string } };
 
 export type CheckCustomDomainValidRecordsMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -6386,7 +6498,7 @@ export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
 }
     `;
 export const BillingPriceLicensedFragmentFragmentDoc = gql`
-    fragment BillingPriceLicensedFragment on BillingPriceLicensedDTO {
+    fragment BillingPriceLicensedFragment on BillingPriceLicensed {
   stripePriceId
   unitAmount
   recurringInterval
@@ -6394,7 +6506,7 @@ export const BillingPriceLicensedFragmentFragmentDoc = gql`
 }
     `;
 export const BillingPriceMeteredFragmentFragmentDoc = gql`
-    fragment BillingPriceMeteredFragment on BillingPriceMeteredDTO {
+    fragment BillingPriceMeteredFragment on BillingPriceMetered {
   priceUsageType
   recurringInterval
   stripePriceId
@@ -10183,6 +10295,84 @@ export function useGetVersionInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetVersionInfoQueryHookResult = ReturnType<typeof useGetVersionInfoQuery>;
 export type GetVersionInfoLazyQueryHookResult = ReturnType<typeof useGetVersionInfoLazyQuery>;
 export type GetVersionInfoQueryResult = Apollo.QueryResult<GetVersionInfoQuery, GetVersionInfoQueryVariables>;
+export const DeleteJobsDocument = gql`
+    mutation DeleteJobs($queueName: String!, $jobIds: [String!]!) {
+  deleteJobs(queueName: $queueName, jobIds: $jobIds) {
+    deletedCount
+    results {
+      jobId
+      success
+      error
+    }
+  }
+}
+    `;
+export type DeleteJobsMutationFn = Apollo.MutationFunction<DeleteJobsMutation, DeleteJobsMutationVariables>;
+
+/**
+ * __useDeleteJobsMutation__
+ *
+ * To run a mutation, you first call `useDeleteJobsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteJobsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteJobsMutation, { data, loading, error }] = useDeleteJobsMutation({
+ *   variables: {
+ *      queueName: // value for 'queueName'
+ *      jobIds: // value for 'jobIds'
+ *   },
+ * });
+ */
+export function useDeleteJobsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteJobsMutation, DeleteJobsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteJobsMutation, DeleteJobsMutationVariables>(DeleteJobsDocument, options);
+      }
+export type DeleteJobsMutationHookResult = ReturnType<typeof useDeleteJobsMutation>;
+export type DeleteJobsMutationResult = Apollo.MutationResult<DeleteJobsMutation>;
+export type DeleteJobsMutationOptions = Apollo.BaseMutationOptions<DeleteJobsMutation, DeleteJobsMutationVariables>;
+export const RetryJobsDocument = gql`
+    mutation RetryJobs($queueName: String!, $jobIds: [String!]!) {
+  retryJobs(queueName: $queueName, jobIds: $jobIds) {
+    retriedCount
+    results {
+      jobId
+      success
+      error
+    }
+  }
+}
+    `;
+export type RetryJobsMutationFn = Apollo.MutationFunction<RetryJobsMutation, RetryJobsMutationVariables>;
+
+/**
+ * __useRetryJobsMutation__
+ *
+ * To run a mutation, you first call `useRetryJobsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRetryJobsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [retryJobsMutation, { data, loading, error }] = useRetryJobsMutation({
+ *   variables: {
+ *      queueName: // value for 'queueName'
+ *      jobIds: // value for 'jobIds'
+ *   },
+ * });
+ */
+export function useRetryJobsMutation(baseOptions?: Apollo.MutationHookOptions<RetryJobsMutation, RetryJobsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RetryJobsMutation, RetryJobsMutationVariables>(RetryJobsDocument, options);
+      }
+export type RetryJobsMutationHookResult = ReturnType<typeof useRetryJobsMutation>;
+export type RetryJobsMutationResult = Apollo.MutationResult<RetryJobsMutation>;
+export type RetryJobsMutationOptions = Apollo.BaseMutationOptions<RetryJobsMutation, RetryJobsMutationVariables>;
 export const GetIndicatorHealthStatusDocument = gql`
     query GetIndicatorHealthStatus($indicatorId: HealthIndicatorId!) {
   getIndicatorHealthStatus(indicatorId: $indicatorId) {
@@ -10228,6 +10418,71 @@ export function useGetIndicatorHealthStatusLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetIndicatorHealthStatusQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusQuery>;
 export type GetIndicatorHealthStatusLazyQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusLazyQuery>;
 export type GetIndicatorHealthStatusQueryResult = Apollo.QueryResult<GetIndicatorHealthStatusQuery, GetIndicatorHealthStatusQueryVariables>;
+export const GetQueueJobsDocument = gql`
+    query GetQueueJobs($queueName: String!, $state: JobState!, $limit: Int, $offset: Int) {
+  getQueueJobs(
+    queueName: $queueName
+    state: $state
+    limit: $limit
+    offset: $offset
+  ) {
+    jobs {
+      id
+      name
+      data
+      state
+      timestamp
+      failedReason
+      processedOn
+      finishedOn
+      attemptsMade
+      returnValue
+      logs
+      stackTrace
+    }
+    count
+    totalCount
+    hasMore
+    retentionConfig {
+      completedMaxAge
+      completedMaxCount
+      failedMaxAge
+      failedMaxCount
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetQueueJobsQuery__
+ *
+ * To run a query within a React component, call `useGetQueueJobsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetQueueJobsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetQueueJobsQuery({
+ *   variables: {
+ *      queueName: // value for 'queueName'
+ *      state: // value for 'state'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetQueueJobsQuery(baseOptions: Apollo.QueryHookOptions<GetQueueJobsQuery, GetQueueJobsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetQueueJobsQuery, GetQueueJobsQueryVariables>(GetQueueJobsDocument, options);
+      }
+export function useGetQueueJobsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQueueJobsQuery, GetQueueJobsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetQueueJobsQuery, GetQueueJobsQueryVariables>(GetQueueJobsDocument, options);
+        }
+export type GetQueueJobsQueryHookResult = ReturnType<typeof useGetQueueJobsQuery>;
+export type GetQueueJobsLazyQueryHookResult = ReturnType<typeof useGetQueueJobsLazyQuery>;
+export type GetQueueJobsQueryResult = Apollo.QueryResult<GetQueueJobsQuery, GetQueueJobsQueryVariables>;
 export const GetQueueMetricsDocument = gql`
     query GetQueueMetrics($queueName: String!, $timeRange: QueueMetricsTimeRange) {
   getQueueMetrics(queueName: $queueName, timeRange: $timeRange) {

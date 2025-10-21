@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(8)};
 `;
 
-export const ConnectedAccountHealthStatus = () => {
+export const SettingsAdminConnectedAccountHealthStatus = () => {
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
   const details = indicatorHealth.details;
   if (!details) {
@@ -32,21 +32,24 @@ export const ConnectedAccountHealthStatus = () => {
     serviceDetails.calendarSync?.status ===
     AdminPanelHealthServiceStatus.OUTAGE;
 
-  const errorMessages = [];
-  if (isMessageSyncDown) {
-    errorMessages.push('Message Sync');
-  }
-  if (isCalendarSyncDown) {
-    errorMessages.push('Calendar Sync');
-  }
+  const getErrorMessage = () => {
+    if (isMessageSyncDown && isCalendarSyncDown) {
+      return t`Message Sync and Calendar Sync are not available because the service is down`;
+    }
+    if (isMessageSyncDown) {
+      return t`Message Sync is not available because the service is down`;
+    }
+    if (isCalendarSyncDown) {
+      return t`Calendar Sync is not available because the service is down`;
+    }
+    return null;
+  };
+
+  const errorMessage = getErrorMessage();
 
   return (
     <StyledContainer>
-      {errorMessages.length > 0 && (
-        <StyledErrorMessage>
-          {`${errorMessages.join(' and ')} ${errorMessages.length > 1 ? 'are' : 'is'} not available because the service is down`}
-        </StyledErrorMessage>
-      )}
+      {errorMessage && <StyledErrorMessage>{errorMessage}</StyledErrorMessage>}
 
       {!isMessageSyncDown && serviceDetails.messageSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable

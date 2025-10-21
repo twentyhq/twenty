@@ -17,6 +17,7 @@ import {
   ResolverArgsType,
   type UpdateManyResolverArgs,
   type UpdateOneResolverArgs,
+  type WorkspaceResolverBuilderMethodNames,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -36,7 +37,7 @@ export class QueryRunnerArgsFactory {
   async create(
     args: ResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-    resolverArgsType: ResolverArgsType,
+    resolverArgsType: WorkspaceResolverBuilderMethodNames,
   ) {
     const fieldMetadataMapByNameByName =
       options.objectMetadataItemWithFieldMaps.fieldsById;
@@ -44,7 +45,7 @@ export class QueryRunnerArgsFactory {
     const { objectMetadataItemWithFieldMaps, authContext } = options;
 
     switch (resolverArgsType) {
-      case ResolverArgsType.CreateOne:
+      case ResolverArgsType.CREATE_ONE:
         return {
           ...args,
           data: (
@@ -55,7 +56,7 @@ export class QueryRunnerArgsFactory {
             })
           )[0],
         } satisfies CreateOneResolverArgs;
-      case ResolverArgsType.CreateMany:
+      case ResolverArgsType.CREATE_MANY:
         return {
           ...args,
           data: await this.overrideDataByFieldMetadata({
@@ -64,7 +65,7 @@ export class QueryRunnerArgsFactory {
             objectMetadataItemWithFieldMaps,
           }),
         } satisfies CreateManyResolverArgs;
-      case ResolverArgsType.UpdateOne:
+      case ResolverArgsType.UPDATE_ONE:
         return {
           ...args,
           id: (args as UpdateOneResolverArgs).id,
@@ -77,7 +78,7 @@ export class QueryRunnerArgsFactory {
             })
           )[0],
         } satisfies UpdateOneResolverArgs;
-      case ResolverArgsType.UpdateMany:
+      case ResolverArgsType.UPDATE_MANY:
         return {
           ...args,
           filter: this.overrideFilterByFieldMetadata(
@@ -93,7 +94,7 @@ export class QueryRunnerArgsFactory {
             })
           )[0],
         } satisfies UpdateManyResolverArgs;
-      case ResolverArgsType.FindOne:
+      case ResolverArgsType.FIND_ONE:
         return {
           ...args,
           filter: this.overrideFilterByFieldMetadata(
@@ -101,7 +102,7 @@ export class QueryRunnerArgsFactory {
             options.objectMetadataItemWithFieldMaps,
           ),
         };
-      case ResolverArgsType.FindMany:
+      case ResolverArgsType.FIND_MANY:
         return {
           ...args,
           filter: this.overrideFilterByFieldMetadata(
@@ -109,7 +110,7 @@ export class QueryRunnerArgsFactory {
             options.objectMetadataItemWithFieldMaps,
           ),
         };
-      case ResolverArgsType.FindDuplicates:
+      case ResolverArgsType.FIND_DUPLICATES:
         return {
           ...args,
           ids: (await Promise.all(
@@ -129,7 +130,7 @@ export class QueryRunnerArgsFactory {
             shouldBackfillPositionIfUndefined: false,
           }),
         } satisfies FindDuplicatesResolverArgs;
-      case ResolverArgsType.MergeMany:
+      case ResolverArgsType.MERGE_MANY:
         return {
           ...args,
           ids: (await Promise.all(
@@ -146,7 +147,7 @@ export class QueryRunnerArgsFactory {
             .conflictPriorityIndex,
           dryRun: (args as MergeManyResolverArgs).dryRun,
         } satisfies MergeManyResolverArgs;
-      case ResolverArgsType.GroupBy:
+      case ResolverArgsType.GROUP_BY:
         return {
           ...args,
           filter: this.overrideFilterByFieldMetadata(

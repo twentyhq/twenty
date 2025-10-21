@@ -25,7 +25,7 @@ const HealthStatusIcons: { [k in HealthIndicatorId]: IconComponent } = {
   [HealthIndicatorId.app]: IconAppWindow,
 };
 
-export const SettingsHealthStatusListCard = ({
+export const SettingsAdminHealthStatusListCard = ({
   services,
   loading,
 }: {
