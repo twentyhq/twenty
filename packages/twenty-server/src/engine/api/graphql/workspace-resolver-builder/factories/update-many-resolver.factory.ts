@@ -71,7 +71,7 @@ export class UpdateManyResolverFactory
             }),
           );
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

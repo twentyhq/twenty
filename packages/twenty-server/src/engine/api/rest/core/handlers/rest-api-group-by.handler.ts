@@ -51,7 +51,7 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
         objectMetadataItemWithFieldMaps,
       });
     } catch (error) {
-      throw workspaceQueryRunnerRestApiExceptionHandler(error);
+      return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 

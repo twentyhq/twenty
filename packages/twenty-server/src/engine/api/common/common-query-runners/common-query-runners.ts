@@ -8,12 +8,12 @@ import { CommonUpdateManyQueryRunnerService } from 'src/engine/api/common/common
 import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
 
 export const CommonQueryRunners = [
-  CommonFindOneQueryRunnerService,
-  CommonFindManyQueryRunnerService,
   CommonCreateOneQueryRunnerService,
   CommonCreateManyQueryRunnerService,
+  CommonFindDuplicatesQueryRunnerService,
+  CommonFindManyQueryRunnerService,
+  CommonFindOneQueryRunnerService,
   CommonGroupByQueryRunnerService,
   CommonUpdateOneQueryRunnerService,
   CommonUpdateManyQueryRunnerService,
-  CommonFindDuplicatesQueryRunnerService,
 ];

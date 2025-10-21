@@ -52,7 +52,7 @@ export class GroupByResolverFactory
               internalContext.objectMetadataItemWithFieldMaps,
           });
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

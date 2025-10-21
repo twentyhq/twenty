@@ -190,7 +190,10 @@ export const getUpdateManyResponse200 = (
               type: 'object',
               properties: {
                 [`update${capitalize(item.namePlural)}`]: {
-                  $ref: schemaRef,
+                  type: 'array',
+                  items: {
+                    $ref: schemaRef,
+                  },
                 },
               },
             },

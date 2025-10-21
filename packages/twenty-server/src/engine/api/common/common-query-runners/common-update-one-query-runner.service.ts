@@ -9,6 +9,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { UpdateOneQueryArgs } from 'src/engine/api/common/types/common-query-args.type';
+import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -60,12 +61,6 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ) {
     assertMutationNotOnRemoteObject(objectMetadataItemWithFieldMaps);
-
-    if (!args.id) {
-      throw new CommonQueryRunnerException(
-        'Missing id',
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      );
-    }
+    assertIsValidUuid(args.id);
   }
 }

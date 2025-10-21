@@ -57,11 +57,6 @@ export interface GroupByQueryArgs {
   viewId?: string;
 }
 
-export type CommonQueryArgs =
-  | FindOneQueryArgs
-  | FindManyQueryArgs
-  | GroupByQueryArgs;
-
 export interface UpdateOneQueryArgs {
   selectedFields: CommonSelectedFields;
   id: string;

@@ -12,6 +12,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonPaginatedDuplicates } from 'src/engine/api/common/types/common-paginated-duplicates.type';
 import {
   CommonQueryNames,
   FindDuplicatesQueryArgs,
@@ -25,15 +26,6 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
-export interface PaginatedDuplicates {
-  records: ObjectRecord[];
-  totalCount: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor: string | null;
-  endCursor: string | null;
-}
-
 @Injectable()
 export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunnerService {
   async run({
@@ -46,7 +38,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     authContext: AuthContext;
     objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-  }): Promise<PaginatedDuplicates[]> {
+  }): Promise<CommonPaginatedDuplicates[]> {
     this.validate(args);
 
     if (!isWorkspaceAuthContext(authContext)) {
@@ -102,7 +94,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       objectRecords = processedArgs.data;
     }
 
-    const duplicateConnections: PaginatedDuplicates[] = await Promise.all(
+    const duplicateConnections: CommonPaginatedDuplicates[] = await Promise.all(
       objectRecords.map(async (record) => {
         const duplicateConditions = buildDuplicateConditions(
           objectMetadataItemWithFieldMaps,

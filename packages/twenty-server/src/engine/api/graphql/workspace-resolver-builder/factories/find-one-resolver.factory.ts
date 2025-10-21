@@ -65,7 +65,7 @@ export class FindOneResolverFactory
             totalCount: 1,
           });
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

@@ -83,7 +83,7 @@ export const computeManyResultPath = (
     patch: {
       tags: [item.namePlural],
       summary: `Update Many ${item.namePlural}`,
-      operationId: `UpdateMany${capitalize(item.namePlural)}`,
+      operationId: `updateMany${capitalize(item.namePlural)}`,
       parameters: [
         { $ref: '#/components/parameters/depth' },
         { $ref: '#/components/parameters/filter' },
