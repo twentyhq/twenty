@@ -1,3 +1,4 @@
+import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-fields.constants';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
@@ -423,6 +424,84 @@ describe('people merge resolvers (integration)', () => {
         ]),
       );
       expect(mergedPerson.whatsapp.additionalPhones).toHaveLength(3);
+    });
+
+    it('should respect priority index for Company field', async () => {
+      // Create two companies first
+      const createCompaniesOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: COMPANY_GQL_FIELDS,
+        data: [
+          {
+            name: 'Company 1',
+          },
+          {
+            name: 'Company 2',
+          },
+        ],
+      });
+
+      const createCompaniesResponse = await makeGraphqlAPIRequest(
+        createCompaniesOperation,
+      );
+
+      const company1Id = createCompaniesResponse.body.data.createCompanies[0].id;
+      const company2Id = createCompaniesResponse.body.data.createCompanies[1].id;
+
+      // Create two people with different companies
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          {
+            name: {
+              firstName: 'John',
+              lastName: 'Doe',
+            },
+            emails: {
+              primaryEmail: 'john@example.com',
+            },
+            companyId: company1Id, // First person has Company 1
+          },
+          {
+            name: {
+              firstName: 'Jane',
+              lastName: 'Doe',
+            },
+            emails: {
+              primaryEmail: 'jane@example.com',
+            },
+            companyId: company2Id, // Second person has Company 2
+          },
+        ],
+      });
+
+      const createResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
+
+      // Merge with first person as priority (conflictPriorityIndex: 0)
+      const mergeOperation = mergeManyOperationFactory({
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        ids: createdPersonIds,
+        conflictPriorityIndex: 0, // First person should be priority
+      });
+
+      const mergeResponse = await makeGraphqlAPIRequest(mergeOperation);
+      const mergedPerson = mergeResponse.body.data.mergePeople;
+
+      // The merged person should have Company 1 (from the first person)
+      expect(mergedPerson.company.id).toBe(company1Id);
+      expect(mergedPerson.company.name).toBe('Company 1');
     });
   });
 });

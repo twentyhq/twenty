@@ -8,6 +8,7 @@ export const mergeRecordRelationshipData = (
   records: ObjectRecord[],
   fieldMetadataItems: FieldMetadataItem[],
   isLoading: boolean,
+  priorityIndex?: number,
 ): Record<string, ObjectRecord[] | ObjectRecord | null> => {
   if (isLoading || records.length === 0) {
     return {};
@@ -26,7 +27,7 @@ export const mergeRecordRelationshipData = (
     if (relationType === RelationType.ONE_TO_MANY) {
       mergedData[fieldName] = mergeOneToManyRelationships(records, fieldName);
     } else if (relationType === RelationType.MANY_TO_ONE) {
-      mergedData[fieldName] = mergeManyToOneRelationship(records, fieldName);
+      mergedData[fieldName] = mergeManyToOneRelationship(records, fieldName, priorityIndex);
     }
   });
 

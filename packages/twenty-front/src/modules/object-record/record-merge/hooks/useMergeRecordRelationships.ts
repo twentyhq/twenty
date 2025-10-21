@@ -12,6 +12,7 @@ import { mergeRecordRelationshipData } from '@/object-record/record-merge/utils/
 import { buildFindOneRecordForShowPageOperationSignature } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useMergeRecordsSettings } from './useMergeRecordsSettings';
 
 type UseMergeRecordRelationshipsProps = {
   objectNameSingular: string;
@@ -39,6 +40,7 @@ export const useMergeRecordRelationships = ({
     objectNameSingular,
   });
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { mergeSettings } = useMergeRecordsSettings();
   const [completeRecords, setCompleteRecords] = useState<ObjectRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | undefined>();
@@ -98,7 +100,12 @@ export const useMergeRecordRelationships = ({
           },
         });
 
-        setCompleteRecords(records || []);
+        // Ensure records are ordered according to selectedRecords order
+        const orderedRecords = selectedRecords.map(selectedRecord =>
+          records.find(record => record.id === selectedRecord.id)
+        ).filter((record): record is ObjectRecord => Boolean(record));
+
+        setCompleteRecords(orderedRecords);
       } catch (fetchError) {
         const errorMessage =
           fetchError instanceof Error
@@ -125,8 +132,9 @@ export const useMergeRecordRelationships = ({
       completeRecords,
       objectMetadataItem.fields,
       isLoading,
+      mergeSettings.conflictPriorityIndex,
     );
-  }, [completeRecords, objectMetadataItem.fields, isLoading]);
+  }, [completeRecords, objectMetadataItem.fields, isLoading, mergeSettings.conflictPriorityIndex]);
 
   const updatePreviewRecordStore = useRecoilCallback(
     ({ set }) =>

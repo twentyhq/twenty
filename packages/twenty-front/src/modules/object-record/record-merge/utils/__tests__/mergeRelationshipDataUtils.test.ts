@@ -166,6 +166,122 @@ describe('mergeManyToOneRelationship', () => {
 
     expect(result).toBeNull();
   });
+
+  it('should respect priority index when specified', () => {
+    const records: ObjectRecord[] = [
+      {
+        __typename: 'Person',
+        id: 'record1',
+        company: { __typename: 'Company', id: 'company1', name: 'Company 1' },
+      },
+      {
+        __typename: 'Person',
+        id: 'record2',
+        company: { __typename: 'Company', id: 'company2', name: 'Company 2' },
+      },
+      {
+        __typename: 'Person',
+        id: 'record3',
+        company: { __typename: 'Company', id: 'company3', name: 'Company 3' },
+      },
+    ];
+
+    // Test with priority index 1 (second record)
+    const result = mergeManyToOneRelationship(records, 'company', 1);
+
+    expect(result).toEqual({
+      __typename: 'Company',
+      id: 'company2',
+      name: 'Company 2',
+    });
+  });
+
+  it('should fallback to first non-null value when priority record has null value', () => {
+    const records: ObjectRecord[] = [
+      {
+        __typename: 'Person',
+        id: 'record1',
+        company: null,
+      },
+      {
+        __typename: 'Person',
+        id: 'record2',
+        company: { __typename: 'Company', id: 'company2', name: 'Company 2' },
+      },
+      {
+        __typename: 'Person',
+        id: 'record3',
+        company: { __typename: 'Company', id: 'company3', name: 'Company 3' },
+      },
+    ];
+
+    // Test with priority index 0 (first record has null company)
+    const result = mergeManyToOneRelationship(records, 'company', 0);
+
+    expect(result).toEqual({
+      __typename: 'Company',
+      id: 'company2',
+      name: 'Company 2',
+    });
+  });
+
+  it('should work correctly with 3 records and priority index 2', () => {
+    const records: ObjectRecord[] = [
+      {
+        __typename: 'Person',
+        id: 'record1',
+        company: { __typename: 'Company', id: 'company1', name: 'Company 1' },
+      },
+      {
+        __typename: 'Person',
+        id: 'record2',
+        company: { __typename: 'Company', id: 'company2', name: 'Company 2' },
+      },
+      {
+        __typename: 'Person',
+        id: 'record3',
+        company: { __typename: 'Company', id: 'company3', name: 'Company 3' },
+      },
+    ];
+
+    // Test with priority index 2 (third record)
+    const result = mergeManyToOneRelationship(records, 'company', 2);
+
+    expect(result).toEqual({
+      __typename: 'Company',
+      id: 'company3',
+      name: 'Company 3',
+    });
+  });
+
+  it('should work correctly with 3 records and priority index 1', () => {
+    const records: ObjectRecord[] = [
+      {
+        __typename: 'Person',
+        id: 'record1',
+        company: { __typename: 'Company', id: 'company1', name: 'Company 1' },
+      },
+      {
+        __typename: 'Person',
+        id: 'record2',
+        company: { __typename: 'Company', id: 'company2', name: 'Company 2' },
+      },
+      {
+        __typename: 'Person',
+        id: 'record3',
+        company: { __typename: 'Company', id: 'company3', name: 'Company 3' },
+      },
+    ];
+
+    // Test with priority index 1 (second record)
+    const result = mergeManyToOneRelationship(records, 'company', 1);
+
+    expect(result).toEqual({
+      __typename: 'Company',
+      id: 'company2',
+      name: 'Company 2',
+    });
+  });
 });
 
 describe('mergeRecordRelationshipData', () => {
