@@ -68,12 +68,12 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     flatEntityMaps: flatViewMaps,
   });
 
-  const viewIdsToUdpate =
+  const viewIdsToUpdate =
     fromFlatFieldMetadata.kanbanAggregateOperationViewIds.filter(
       (viewId) => !viewIdsToDelete.includes(viewId),
     );
   const flatViewsToUpdate = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityIds: viewIdsToUdpate,
+    flatEntityIds: viewIdsToUpdate,
     flatEntityMaps: flatViewMaps,
   }).map((flatView) => ({
     ...flatView,

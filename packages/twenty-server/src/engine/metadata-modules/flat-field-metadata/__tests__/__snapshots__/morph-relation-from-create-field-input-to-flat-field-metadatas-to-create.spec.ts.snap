@@ -105,6 +105,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
     "flatFieldMetadatas": [
       {
         "applicationId": null,
+        "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
         "description": "new field description",
@@ -140,6 +141,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationId": null,
+        "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
         "description": null,
@@ -177,6 +179,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationId": null,
+        "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
         "description": "new field description",
@@ -212,6 +215,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationId": null,
+        "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
         "description": null,
