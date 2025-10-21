@@ -1,5 +1,7 @@
 import { type AttachmentFileCategory } from './AttachmentFileCategory';
 
+export type { AttachmentFileCategory };
+
 export type Attachment = {
   id: string;
   name: string;

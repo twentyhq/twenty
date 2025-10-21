@@ -4,11 +4,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useRef } from 'react';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
+import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
+import { getFileType } from '@/activities/files/utils/getFileType';
 import { FileIcon } from '@/file/components/FileIcon';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
-import { type AttachmentFileCategory } from '../../files/types/Attachment';
-import { getFileType } from '../../files/utils/getFileType';
 
 const StyledFileInput = styled.input`
   display: none;
