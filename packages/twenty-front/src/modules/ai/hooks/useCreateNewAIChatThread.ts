@@ -7,12 +7,12 @@ export const useCreateNewAIChatThread = () => {
   const [, setCurrentAIChatThread] = useRecoilState(currentAIChatThreadState);
 
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
-  const [createAgentChatThread] = useCreateChatThreadMutation({
+  const [createChatThread] = useCreateChatThreadMutation({
     onCompleted: (data) => {
       setCurrentAIChatThread(data.createChatThread.id);
       openAskAIPage();
     },
   });
 
-  return { createAgentChatThread };
+  return { createChatThread };
 };

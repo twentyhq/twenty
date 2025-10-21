@@ -77,9 +77,8 @@ export const AIChatAssistantMessageRenderer = ({
         );
       case 'text':
         return <LazyMarkdownRenderer key={index} text={part.text} />;
-      case 'data-routing-status': {
+      case 'data-routing-status':
         return <RoutingStatusDisplay data={part.data} key={index} />;
-      }
       default:
         {
           if (isToolUIPart(part)) {

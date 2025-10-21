@@ -77,7 +77,7 @@ export const AIChatTab = () => {
   );
 
   const { uploadFiles } = useAIChatFileUpload();
-  const { createAgentChatThread } = useCreateNewAIChatThread();
+  const { createChatThread } = useCreateNewAIChatThread();
   const { navigateCommandMenu } = useCommandMenu();
 
   return (
@@ -141,7 +141,7 @@ export const AIChatTab = () => {
                 variant="secondary"
                 size="small"
                 Icon={IconMessageCirclePlus}
-                onClick={() => createAgentChatThread()}
+                onClick={() => createChatThread()}
               />
               <AgentChatFileUploadButton />
               {contextStoreCurrentObjectMetadataItemId ? (
