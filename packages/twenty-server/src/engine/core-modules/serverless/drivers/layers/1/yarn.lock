@@ -303,15 +303,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.debounce@npm:^4.0.9":
-  version: 4.0.9
-  resolution: "@types/lodash.debounce@npm:4.0.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10c0/9fbb24e5e52616faf60ba5c82d8c6517f4b86fc6e9ab353b4c56c0760f63d9bf53af3f2d8f6c37efa48090359fb96dba1087d497758511f6c40677002191d042
-  languageName: node
-  linkType: hard
-
 "@types/lodash.groupby@npm:^4.6.9":
   version: 4.6.9
   resolution: "@types/lodash.groupby@npm:4.6.9"
@@ -1796,13 +1787,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.debounce@npm:^4.0.8":
-  version: 4.0.8
-  resolution: "lodash.debounce@npm:4.0.8"
-  checksum: 10c0/762998a63e095412b6099b8290903e0a8ddcb353ac6e2e0f2d7e7d03abd4275fe3c689d88960eb90b0dde4f177554d51a690f22a343932ecbc50a5d111849987
-  languageName: node
-  linkType: hard
-
 "lodash.groupby@npm:^4.6.0":
   version: 4.6.0
   resolution: "lodash.groupby@npm:4.6.0"
@@ -1912,13 +1896,6 @@ __metadata:
   version: 4.1.1
   resolution: "lodash.once@npm:4.1.1"
   checksum: 10c0/46a9a0a66c45dd812fcc016e46605d85ad599fe87d71a02f6736220554b52ffbe82e79a483ad40f52a8a95755b0d1077fba259da8bfb6694a7abbf4a48f1fc04
-  languageName: node
-  linkType: hard
-
-"lodash.pick@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "lodash.pick@npm:4.4.0"
-  checksum: 10c0/a04c460b95d1aaa44e9513d1dacf72ea74d838da843e45831de9de64c303f13cdde1859702a6f4dcef417816898ffd47c6ae0614c957ac70245bed2809b8d2e2
   languageName: node
   linkType: hard
 
@@ -2531,7 +2508,6 @@ __metadata:
     "@types/deep-equal": "npm:^1.0.4"
     "@types/lodash.camelcase": "npm:^4.3.9"
     "@types/lodash.compact": "npm:^3.0.9"
-    "@types/lodash.debounce": "npm:^4.0.9"
     "@types/lodash.groupby": "npm:^4.6.9"
     "@types/lodash.identity": "npm:^3.0.9"
     "@types/lodash.isempty": "npm:^4.4.9"
@@ -2553,7 +2529,6 @@ __metadata:
     lodash.camelcase: "npm:^4.3.0"
     lodash.chunk: "npm:^4.2.0"
     lodash.compact: "npm:^3.0.1"
-    lodash.debounce: "npm:^4.0.8"
     lodash.groupby: "npm:^4.6.0"
     lodash.identity: "npm:^3.0.0"
     lodash.isempty: "npm:^4.4.0"
@@ -2563,7 +2538,6 @@ __metadata:
     lodash.mapvalues: "npm:^4.6.0"
     lodash.merge: "npm:^4.6.2"
     lodash.omit: "npm:^4.5.0"
-    lodash.pick: "npm:^4.4.0"
     lodash.pickby: "npm:^4.6.0"
     lodash.snakecase: "npm:^4.1.1"
     lodash.upperfirst: "npm:^4.3.1"

@@ -16,16 +16,16 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
-  type JwtPayload,
-  JwtTokenTypeEnum,
-  type TransientTokenJwtPayload,
-  type RefreshTokenJwtPayload,
-  type WorkspaceAgnosticTokenJwtPayload,
   type AccessTokenJwtPayload,
   type FileTokenJwtPayload,
+  type JwtPayload,
+  JwtTokenTypeEnum,
+  type RefreshTokenJwtPayload,
+  type TransientTokenJwtPayload,
+  type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class JwtWrapperService {
