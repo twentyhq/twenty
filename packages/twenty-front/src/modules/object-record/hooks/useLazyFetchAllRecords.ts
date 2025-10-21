@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
-import { type QueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
+import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
@@ -26,7 +26,7 @@ export const useLazyFetchAllRecords = <T>({
   recordGqlFields,
 }: UseLazyFetchAllRecordIdsParams<T>) => {
   const [isDownloading, setIsDownloading] = useState(false);
-  const [progress, setProgress] = useState<QueryProgress>({
+  const [progress, setProgress] = useState<ObjectRecordQueryProgress>({
     displayType: 'number',
   });
   const { fetchMoreRecordsLazy, findManyRecordsLazy } = useLazyFindManyRecords({

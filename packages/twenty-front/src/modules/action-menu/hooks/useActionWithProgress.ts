@@ -1,9 +1,9 @@
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { computeProgressText } from '@/action-menu/utils/computeProgressText';
-import { type QueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
+import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 import { useContext, useMemo } from 'react';
 
-export const useActionWithProgress = (progress?: QueryProgress) => {
+export const useActionWithProgress = (progress?: ObjectRecordQueryProgress) => {
   const actionConfig = useContext(ActionConfigContext);
 
   const actionConfigWithProgress = useMemo(() => {

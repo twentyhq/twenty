@@ -1,8 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type QueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
+import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 
-export const computeProgressText = (progress?: QueryProgress): string => {
+export const computeProgressText = (
+  progress?: ObjectRecordQueryProgress,
+): string => {
   if (
     !isDefined(progress) ||
     !isDefined(progress.processedRecordCount) ||

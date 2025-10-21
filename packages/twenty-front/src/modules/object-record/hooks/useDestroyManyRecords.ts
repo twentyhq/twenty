@@ -12,7 +12,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type QueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
+import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -42,9 +42,7 @@ export const useDestroyManyRecords = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const [progress, setProgress] = useState<QueryProgress>({
-    displayType: 'number',
-  });
+  const [progress, setProgress] = useState<ObjectRecordQueryProgress>({});
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,

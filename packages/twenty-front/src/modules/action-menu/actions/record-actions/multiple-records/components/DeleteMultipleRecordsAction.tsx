@@ -8,8 +8,7 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
-import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
-import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { useIncrementalDeleteManyRecords } from '@/object-record/hooks/useIncrementalDeleteManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -29,10 +28,6 @@ export const DeleteMultipleRecordsAction = () => {
   }
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
-
-  const { deleteManyRecords, progress } = useDeleteManyRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -61,12 +56,14 @@ export const DeleteMultipleRecordsAction = () => {
     contextStoreAnyFieldFilterValue,
   });
 
-  const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    filter: graphqlFilter,
-    limit: DEFAULT_QUERY_PAGE_SIZE,
-    recordGqlFields: { id: true },
-  });
+  const { incrementalDeleteManyRecords, progress } =
+    useIncrementalDeleteManyRecords({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      filter: graphqlFilter,
+      pageSize: DEFAULT_QUERY_PAGE_SIZE,
+      delayInMsBetweenMutations: 50,
+      skipOptimisticEffect: true,
+    });
 
   const { actionConfigWithProgress } = useActionWithProgress(progress);
 
@@ -75,15 +72,8 @@ export const DeleteMultipleRecordsAction = () => {
   }
 
   const handleDeleteClick = async () => {
-    const recordsToDelete = await fetchAllRecordIds();
-    const recordIdsToDelete = recordsToDelete.map((record) => record.id);
-
     resetTableRowSelection();
-
-    await deleteManyRecords({
-      recordIdsToDelete,
-      delayInMsBetweenRequests: 50,
-    });
+    await incrementalDeleteManyRecords();
   };
 
   return (
