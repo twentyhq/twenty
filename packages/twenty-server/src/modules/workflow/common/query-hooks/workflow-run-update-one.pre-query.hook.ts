@@ -18,7 +18,10 @@ export class WorkflowRunUpdateOnePreQueryHook
     _objectName: string,
     payload: UpdateOneResolverArgs<WorkflowRunWorkspaceEntity>,
   ): Promise<UpdateOneResolverArgs<WorkflowRunWorkspaceEntity>> {
-    if (Object.keys(payload.data).length === 1 && payload.data.name) {
+    const allowedFields = ['name'];
+    const payloadKeys = Object.keys(payload.data);
+
+    if (payloadKeys.every((key) => allowedFields.includes(key))) {
       return payload;
     }
 

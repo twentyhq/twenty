@@ -142,6 +142,13 @@ export class WorkflowTriggerWorkspaceService {
     return true;
   }
 
+  async stopWorkflowRun(workspaceId: string, workflowRunId: string) {
+    return this.workflowRunnerWorkspaceService.stopWorkflowRun(
+      workspaceId,
+      workflowRunId,
+    );
+  }
+
   private async performActivationSteps(
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
