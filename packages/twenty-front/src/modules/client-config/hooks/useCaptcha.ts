@@ -1,14 +1,14 @@
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { isDefined } from 'twenty-shared/utils';
 import { useRecoilValue } from 'recoil';
 import { captchaState } from '@/client-config/states/captchaState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 
 export const useCaptcha = () => {
-  const { readCaptchaToken } = useReadCaptchaToken();
   const captcha = useRecoilValue(captchaState);
+  const captchaToken = useRecoilValue(captchaTokenState);
   const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
   const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
 
@@ -21,7 +21,7 @@ export const useCaptcha = () => {
     return !!(
       clientConfigApiStatus.isLoadedOnce &&
       isDefined(captcha?.siteKey) &&
-      isDefined(readCaptchaToken())
+      isDefined(captchaToken)
     );
   };
 
