@@ -8,7 +8,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -21,8 +21,8 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 })
 export class UpdateTimestampColumnTypeInWorkspaceSchemaCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace)
-    protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,

@@ -5,11 +5,11 @@ import { type ObjectLiteral, type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -25,9 +25,9 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
-import { type BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { type BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { type MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
@@ -63,8 +63,8 @@ const METER_PRICE_PRO_MONTH_TIER_HIGH_ID = 'METER_PRICE_PRO_MONTH_TIER_HIGH_ID';
 describe('BillingSubscriptionService', () => {
   let module: TestingModule;
   let service: BillingSubscriptionService;
-  let billingSubscriptionRepository: Repository<BillingSubscription>;
-  let billingPriceRepository: Repository<BillingPrice>;
+  let billingSubscriptionRepository: Repository<BillingSubscriptionEntity>;
+  let billingPriceRepository: Repository<BillingPriceEntity>;
   let billingProductService: BillingProductService;
   let stripeSubscriptionScheduleService: StripeSubscriptionScheduleService;
   let stripeSubscriptionService: StripeSubscriptionService;
@@ -102,7 +102,7 @@ describe('BillingSubscriptionService', () => {
         },
       },
     ],
-  } as BillingSubscription;
+  } as BillingSubscriptionEntity;
 
   const arrangeBillingPriceRepositoryFindOneOrFail = () => {
     const resolvePrice = (criteria: any) => {
@@ -114,7 +114,7 @@ describe('BillingSubscriptionService', () => {
         ? SubscriptionInterval.Year
         : SubscriptionInterval.Month;
 
-      const base: Partial<BillingPrice> = {
+      const base: Partial<BillingPriceEntity> = {
         stripePriceId: priceId,
         interval,
         billingProduct: {
@@ -127,7 +127,7 @@ describe('BillingSubscriptionService', () => {
               ? BillingUsageType.METERED
               : BillingUsageType.LICENSED,
           },
-        } as BillingProduct,
+        } as BillingProductEntity,
       };
 
       if (isMetered) {
@@ -152,7 +152,7 @@ describe('BillingSubscriptionService', () => {
         } as BillingMeterPrice;
       }
 
-      return base as BillingPrice;
+      return base as BillingPriceEntity;
     };
 
     return jest
@@ -171,7 +171,7 @@ describe('BillingSubscriptionService', () => {
       stripeSubscriptionId?: string;
     } = {},
   ) => {
-    const sub: BillingSubscription = {
+    const sub: BillingSubscriptionEntity = {
       ...currentSubscription,
       workspaceId: overrides.workspaceId ?? currentSubscription.workspaceId,
       stripeSubscriptionId:
@@ -222,7 +222,7 @@ describe('BillingSubscriptionService', () => {
           },
         },
       ],
-    } as BillingSubscription;
+    } as BillingSubscriptionEntity;
 
     return jest
       .spyOn(billingSubscriptionRepository, 'find')
@@ -277,7 +277,7 @@ describe('BillingSubscriptionService', () => {
         licensedPrice: {
           stripePriceId: licensedPriceId,
           quantity,
-        } as unknown as BillingPrice,
+        } as unknown as BillingPriceEntity,
         meteredPrice: {
           stripePriceId: meteredPriceId,
           tiers: meteredTiers,
@@ -335,7 +335,7 @@ describe('BillingSubscriptionService', () => {
         licensedPrice: {
           stripePriceId: licensedPriceId,
           quantity,
-        } as unknown as BillingPrice,
+        } as unknown as BillingPriceEntity,
         meteredPrice: {
           stripePriceId: meteredPriceId,
           tiers: meteredTiers,
@@ -368,7 +368,7 @@ describe('BillingSubscriptionService', () => {
   };
 
   const arrangeBillingProductServiceGetProductPrices = (
-    prices: Array<Partial<BillingPrice>> = [
+    prices: Array<Partial<BillingPriceEntity>> = [
       {
         stripePriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
         interval: SubscriptionInterval.Year,
@@ -379,7 +379,7 @@ describe('BillingSubscriptionService', () => {
             priceUsageBased: BillingUsageType.LICENSED,
           },
         },
-      } as Partial<BillingPrice>,
+      } as Partial<BillingPriceEntity>,
       {
         stripePriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
         interval: SubscriptionInterval.Year,
@@ -406,12 +406,12 @@ describe('BillingSubscriptionService', () => {
             priceUsageBased: BillingUsageType.METERED,
           },
         },
-      } as Partial<BillingPrice>,
+      } as Partial<BillingPriceEntity>,
     ],
   ) =>
     jest
       .spyOn(billingProductService, 'getProductPrices')
-      .mockResolvedValue(prices as BillingPrice[]);
+      .mockResolvedValue(prices as BillingPriceEntity[]);
 
   const arrangeBillingSubscriptionRepositoryFindOneOrFail = ({
     planKey = BillingPlanKey.PRO,
@@ -465,7 +465,7 @@ describe('BillingSubscriptionService', () => {
             },
           },
         ],
-      } as BillingSubscription);
+      } as BillingSubscriptionEntity);
 
   const arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync = () => {
     const spy = jest
@@ -474,7 +474,7 @@ describe('BillingSubscriptionService', () => {
 
     jest
       .spyOn(service, 'syncSubscriptionToDatabase')
-      .mockResolvedValueOnce({} as BillingSubscription);
+      .mockResolvedValueOnce({} as BillingSubscriptionEntity);
 
     return spy;
   };
@@ -554,13 +554,13 @@ describe('BillingSubscriptionService', () => {
   };
 
   const arrangeBillingProductServiceGetProductPricesSequence = (
-    first: Array<Partial<BillingPrice>>,
-    second: Array<Partial<BillingPrice>>,
+    first: Array<Partial<BillingPriceEntity>>,
+    second: Array<Partial<BillingPriceEntity>>,
   ) => {
     const spy = jest.spyOn(billingProductService, 'getProductPrices');
 
-    spy.mockResolvedValueOnce(first as BillingPrice[]);
-    spy.mockResolvedValueOnce(second as BillingPrice[]);
+    spy.mockResolvedValueOnce(first as BillingPriceEntity[]);
+    spy.mockResolvedValueOnce(second as BillingPriceEntity[]);
 
     return spy;
   };
@@ -568,7 +568,7 @@ describe('BillingSubscriptionService', () => {
   const arrangeServiceSyncSubscriptionToDatabase = () =>
     jest
       .spyOn(service, 'syncSubscriptionToDatabase')
-      .mockResolvedValue({} as BillingSubscription);
+      .mockResolvedValue({} as BillingSubscriptionEntity);
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
@@ -648,34 +648,34 @@ describe('BillingSubscriptionService', () => {
           },
         },
         {
-          provide: getRepositoryToken(BillingEntitlement),
-          useValue: repoMock<BillingEntitlement>(),
+          provide: getRepositoryToken(BillingEntitlementEntity),
+          useValue: repoMock<BillingEntitlementEntity>(),
         },
         {
-          provide: getRepositoryToken(BillingSubscription),
-          useValue: repoMock<BillingSubscription>(),
+          provide: getRepositoryToken(BillingSubscriptionEntity),
+          useValue: repoMock<BillingSubscriptionEntity>(),
         },
         {
-          provide: getRepositoryToken(BillingPrice),
-          useValue: repoMock<BillingPrice>(),
+          provide: getRepositoryToken(BillingPriceEntity),
+          useValue: repoMock<BillingPriceEntity>(),
         },
         {
-          provide: getRepositoryToken(BillingSubscriptionItem),
-          useValue: repoMock<BillingSubscriptionItem>(),
+          provide: getRepositoryToken(BillingSubscriptionItemEntity),
+          useValue: repoMock<BillingSubscriptionItemEntity>(),
         },
         {
-          provide: getRepositoryToken(BillingCustomer),
-          useValue: repoMock<BillingCustomer>(),
+          provide: getRepositoryToken(BillingCustomerEntity),
+          useValue: repoMock<BillingCustomerEntity>(),
         },
       ],
     }).compile();
 
     service = module.get(BillingSubscriptionService);
-    billingSubscriptionRepository = module.get<Repository<BillingSubscription>>(
-      getRepositoryToken(BillingSubscription),
-    );
-    billingPriceRepository = module.get<Repository<BillingPrice>>(
-      getRepositoryToken(BillingPrice),
+    billingSubscriptionRepository = module.get<
+      Repository<BillingSubscriptionEntity>
+    >(getRepositoryToken(BillingSubscriptionEntity));
+    billingPriceRepository = module.get<Repository<BillingPriceEntity>>(
+      getRepositoryToken(BillingPriceEntity),
     );
     billingProductService = module.get<BillingProductService>(
       BillingProductService,
@@ -746,7 +746,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
               interval: SubscriptionInterval.Month,
@@ -773,7 +773,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
 
         const spyBillingPriceFindOneOrFail =
@@ -783,7 +783,7 @@ describe('BillingSubscriptionService', () => {
         const spyUpdateSubscription =
           arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
 
-        await service.changePlan({ id: 'ws_1' } as Workspace);
+        await service.changePlan({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -882,7 +882,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
               interval: SubscriptionInterval.Year,
@@ -909,7 +909,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
         const spyToSnapshot2 = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_YEAR_ID,
@@ -937,7 +937,7 @@ describe('BillingSubscriptionService', () => {
           arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
         const spySyncDB2 = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changePlan({ id: 'ws_1' } as Workspace);
+        await service.changePlan({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -1045,7 +1045,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.LICENSED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
               {
                 stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
                 interval: SubscriptionInterval.Month,
@@ -1072,7 +1072,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.METERED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
             ],
             [
               {
@@ -1085,7 +1085,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.LICENSED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
               {
                 stripePriceId: METER_PRICE_PRO_MONTH_ID,
                 interval: SubscriptionInterval.Month,
@@ -1112,7 +1112,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.METERED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
             ],
           );
         const spyToSnapshotD1 =
@@ -1140,7 +1140,7 @@ describe('BillingSubscriptionService', () => {
 
         const spySyncDBD1 = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changePlan({ id: 'ws_1' } as Workspace);
+        await service.changePlan({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionScheduleService.replaceEditablePhases,
@@ -1233,7 +1233,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.LICENSED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
               {
                 stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
                 interval: SubscriptionInterval.Month,
@@ -1260,7 +1260,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.METERED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
             ],
             [
               {
@@ -1273,7 +1273,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.LICENSED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
               {
                 stripePriceId: METER_PRICE_PRO_MONTH_ID,
                 interval: SubscriptionInterval.Month,
@@ -1300,7 +1300,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.METERED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
             ],
           );
 
@@ -1328,7 +1328,7 @@ describe('BillingSubscriptionService', () => {
 
         const spySyncDBD2 = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changePlan({ id: 'ws_1' } as Workspace);
+        await service.changePlan({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -1428,7 +1428,7 @@ describe('BillingSubscriptionService', () => {
           });
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changeInterval({ id: 'ws_1' } as Workspace);
+        await service.changeInterval({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -1530,7 +1530,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
               interval: SubscriptionInterval.Year,
@@ -1557,7 +1557,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
 
         const spyPriceFindByOrFail =
@@ -1597,7 +1597,7 @@ describe('BillingSubscriptionService', () => {
             quantity: 7,
           });
 
-        await service.changeInterval({ id: 'ws_1' } as Workspace);
+        await service.changeInterval({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(stripeSubscriptionService.updateSubscription).toHaveBeenCalled();
         expect(
@@ -1695,7 +1695,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
               interval: SubscriptionInterval.Month,
@@ -1722,7 +1722,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
 
         const spyPriceFindByOrFail =
@@ -1751,7 +1751,7 @@ describe('BillingSubscriptionService', () => {
 
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changeInterval({ id: 'ws_1' } as Workspace);
+        await service.changeInterval({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -1861,7 +1861,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
               interval: SubscriptionInterval.Month,
@@ -1888,7 +1888,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
 
         const spyPriceFindByOrFail =
@@ -1917,7 +1917,7 @@ describe('BillingSubscriptionService', () => {
 
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
-        await service.changeInterval({ id: 'ws_1' } as Workspace);
+        await service.changeInterval({ id: 'ws_1' } as WorkspaceEntity);
 
         expect(
           stripeSubscriptionService.updateSubscription,
@@ -2020,7 +2020,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
               interval: SubscriptionInterval.Month,
@@ -2047,7 +2047,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
               interval: SubscriptionInterval.Month,
@@ -2074,7 +2074,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
         const spyPriceFindByOrFail =
           arrangeBillingPriceRepositoryFindOneOrFail();
@@ -2091,7 +2091,7 @@ describe('BillingSubscriptionService', () => {
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
-          { id: 'ws_1' } as Workspace,
+          { id: 'ws_1' } as WorkspaceEntity,
           METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
         );
 
@@ -2231,7 +2231,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
               interval: SubscriptionInterval.Month,
@@ -2258,7 +2258,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
               interval: SubscriptionInterval.Month,
@@ -2285,7 +2285,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
         const spyPriceFindByOrFail =
           arrangeBillingPriceRepositoryFindOneOrFail();
@@ -2331,7 +2331,7 @@ describe('BillingSubscriptionService', () => {
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
-          { id: 'ws_1' } as Workspace,
+          { id: 'ws_1' } as WorkspaceEntity,
           METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
         );
 
@@ -2441,7 +2441,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
               interval: SubscriptionInterval.Month,
@@ -2468,7 +2468,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
               interval: SubscriptionInterval.Month,
@@ -2495,7 +2495,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
         const spyPriceFindByOrFail =
           arrangeBillingPriceRepositoryFindOneOrFail();
@@ -2511,7 +2511,7 @@ describe('BillingSubscriptionService', () => {
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
-          { id: 'ws_1' } as Workspace,
+          { id: 'ws_1' } as WorkspaceEntity,
           METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
         );
 
@@ -2647,7 +2647,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
               interval: SubscriptionInterval.Month,
@@ -2674,7 +2674,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
               interval: SubscriptionInterval.Month,
@@ -2701,7 +2701,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
         const spyPriceFindByOrFail =
           arrangeBillingPriceRepositoryFindOneOrFail();
@@ -2747,7 +2747,7 @@ describe('BillingSubscriptionService', () => {
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
-          { id: 'ws_1' } as Workspace,
+          { id: 'ws_1' } as WorkspaceEntity,
           METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
         );
 

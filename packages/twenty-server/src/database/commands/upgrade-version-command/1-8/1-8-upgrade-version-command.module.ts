@@ -6,7 +6,7 @@ import { FillNullServerlessFunctionLayerIdCommand } from 'src/database/commands/
 import { MigrateChannelSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-channel-sync-stages.command';
 import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-workflow-step-filter-operand-value';
 import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-regenerate-person-search-vector-with-phones.command';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
@@ -20,7 +20,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Workspace,
+      WorkspaceEntity,
       FieldMetadataEntity,
       ObjectMetadataEntity,
       IndexMetadataEntity,

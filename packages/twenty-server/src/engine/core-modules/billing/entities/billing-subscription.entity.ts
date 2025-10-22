@@ -19,10 +19,10 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
 import { BillingSubscriptionItemDTO } from 'src/engine/core-modules/billing/dtos/outputs/billing-subscription-item.output';
-import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -35,8 +35,8 @@ registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
   unique: true,
   where: `status IN ('trialing', 'active', 'past_due')`,
 })
-@ObjectType()
-export class BillingSubscription {
+@ObjectType('BillingSubscription')
+export class BillingSubscriptionEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -77,13 +77,13 @@ export class BillingSubscription {
 
   @Field(() => [BillingSubscriptionItemDTO], { nullable: true })
   @OneToMany(
-    () => BillingSubscriptionItem,
+    () => BillingSubscriptionItemEntity,
     (billingSubscriptionItem) => billingSubscriptionItem.billingSubscription,
   )
-  billingSubscriptionItems: Relation<BillingSubscriptionItem[]>;
+  billingSubscriptionItems: Relation<BillingSubscriptionItemEntity[]>;
 
   @ManyToOne(
-    () => BillingCustomer,
+    () => BillingCustomerEntity,
     (billingCustomer) => billingCustomer.billingSubscriptions,
     {
       nullable: false,
@@ -95,7 +95,7 @@ export class BillingSubscription {
     referencedColumnName: 'stripeCustomerId',
     name: 'stripeCustomerId',
   })
-  billingCustomer: Relation<BillingCustomer>;
+  billingCustomer: Relation<BillingCustomerEntity>;
 
   @Column({ nullable: false, default: false })
   cancelAtPeriodEnd: boolean;

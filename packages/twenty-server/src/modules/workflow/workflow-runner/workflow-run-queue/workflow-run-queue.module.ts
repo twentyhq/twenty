@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkflowHandleStaledRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/command/workflow-handle-staled-runs.command';
 import { WorkflowRunEnqueueCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/command/workflow-run-enqueue.command';
@@ -21,7 +21,7 @@ import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-
 @Module({
   imports: [
     CacheStorageModule,
-    TypeOrmModule.forFeature([Workspace]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     MessageQueueModule,
     WorkspaceDataSourceModule,
     MetricsModule,

@@ -16,17 +16,17 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
-import { EmailingDomain } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
-import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { PostgresCredentialsEntity } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WebhookEntity } from 'src/engine/core-modules/webhook/webhook.entity';
 import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-handoff.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
@@ -53,8 +53,8 @@ registerEnumType(WorkspaceActivationStatus, {
   `"activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "defaultRoleId" IS NOT NULL`,
 )
 @Entity({ name: 'workspace', schema: 'core' })
-@ObjectType()
-export class Workspace {
+@ObjectType('Workspace')
+export class WorkspaceEntity {
   // Fields
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -97,35 +97,46 @@ export class Workspace {
   trashRetentionDays: number;
 
   // Relations
-  @OneToMany(() => AppToken, (appToken) => appToken.workspace, {
+  @OneToMany(() => AppTokenEntity, (appToken) => appToken.workspace, {
     cascade: true,
   })
-  appTokens: Relation<AppToken[]>;
-
-  @OneToMany(() => KeyValuePair, (keyValuePair) => keyValuePair.workspace, {
-    cascade: true,
-  })
-  keyValuePairs: Relation<KeyValuePair[]>;
-
-  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.workspace, {
-    onDelete: 'CASCADE',
-  })
-  workspaceUsers: Relation<UserWorkspace[]>;
-
-  @OneToMany(() => FeatureFlag, (featureFlag) => featureFlag.workspace)
-  featureFlags: Relation<FeatureFlag[]>;
+  appTokens: Relation<AppTokenEntity[]>;
 
   @OneToMany(
-    () => ApprovedAccessDomain,
+    () => KeyValuePairEntity,
+    (keyValuePair) => keyValuePair.workspace,
+    {
+      cascade: true,
+    },
+  )
+  keyValuePairs: Relation<KeyValuePairEntity[]>;
+
+  @OneToMany(
+    () => UserWorkspaceEntity,
+    (userWorkspace: UserWorkspaceEntity) => userWorkspace.workspace,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  workspaceUsers: Relation<UserWorkspaceEntity[]>;
+
+  @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
+  featureFlags: Relation<FeatureFlagEntity[]>;
+
+  @OneToMany(
+    () => ApprovedAccessDomainEntity,
     (approvedAccessDomain) => approvedAccessDomain.workspace,
   )
-  approvedAccessDomains: Relation<ApprovedAccessDomain[]>;
+  approvedAccessDomains: Relation<ApprovedAccessDomainEntity[]>;
 
-  @OneToMany(() => EmailingDomain, (emailingDomain) => emailingDomain.workspace)
-  emailingDomains: Relation<EmailingDomain[]>;
+  @OneToMany(
+    () => EmailingDomainEntity,
+    (emailingDomain) => emailingDomain.workspace,
+  )
+  emailingDomains: Relation<EmailingDomainEntity[]>;
 
-  @OneToMany(() => PublicDomain, (publicDomain) => publicDomain.workspace)
-  publicDomains: Relation<PublicDomain[]>;
+  @OneToMany(() => PublicDomainEntity, (publicDomain) => publicDomain.workspace)
+  publicDomains: Relation<PublicDomainEntity[]>;
 
   @Field({ nullable: true })
   workspaceMembersCount: number;
@@ -141,16 +152,16 @@ export class Workspace {
   activationStatus: WorkspaceActivationStatus;
 
   @OneToMany(
-    () => PostgresCredentials,
+    () => PostgresCredentialsEntity,
     (postgresCredentials) => postgresCredentials.workspace,
   )
-  allPostgresCredentials: Relation<PostgresCredentials[]>;
+  allPostgresCredentials: Relation<PostgresCredentialsEntity[]>;
 
   @OneToMany(
-    () => WorkspaceSSOIdentityProvider,
+    () => WorkspaceSSOIdentityProviderEntity,
     (workspaceSSOIdentityProviders) => workspaceSSOIdentityProviders.workspace,
   )
-  workspaceSSOIdentityProviders: Relation<WorkspaceSSOIdentityProvider[]>;
+  workspaceSSOIdentityProviders: Relation<WorkspaceSSOIdentityProviderEntity[]>;
 
   @OneToMany(() => AgentEntity, (agent) => agent.workspace, {
     onDelete: 'CASCADE',
@@ -162,11 +173,11 @@ export class Workspace {
   })
   agentHandoffs: Relation<AgentHandoffEntity[]>;
 
-  @OneToMany(() => Webhook, (webhook) => webhook.workspace)
-  webhooks: Relation<Webhook[]>;
+  @OneToMany(() => WebhookEntity, (webhook) => webhook.workspace)
+  webhooks: Relation<WebhookEntity[]>;
 
-  @OneToMany(() => ApiKey, (apiKey) => apiKey.workspace)
-  apiKeys: Relation<ApiKey[]>;
+  @OneToMany(() => ApiKeyEntity, (apiKey) => apiKey.workspace)
+  apiKeys: Relation<ApiKeyEntity[]>;
 
   @Field(() => [ViewDTO], { nullable: true })
   @OneToMany(() => ViewEntity, (view) => view.workspace)

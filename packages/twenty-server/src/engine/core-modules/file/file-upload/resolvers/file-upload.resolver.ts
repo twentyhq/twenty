@@ -9,7 +9,7 @@ import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/sig
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -23,7 +23,7 @@ export class FileUploadResolver {
 
   @Mutation(() => SignedFileDTO)
   async uploadFile(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
     @Args('fileFolder', { type: () => FileFolder, nullable: true })
@@ -49,7 +49,7 @@ export class FileUploadResolver {
 
   @Mutation(() => SignedFileDTO)
   async uploadImage(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
     @Args('fileFolder', { type: () => FileFolder, nullable: true })

@@ -1,6 +1,6 @@
 import { type DataSource } from 'typeorm';
 
-import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { generateRandomUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-random-users.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import {
@@ -33,8 +33,10 @@ export const seedUserWorkspaces = async (
   schemaName: string,
   workspaceId: string,
 ) => {
-  let userWorkspaces: Pick<UserWorkspace, 'id' | 'userId' | 'workspaceId'>[] =
-    [];
+  let userWorkspaces: Pick<
+    UserWorkspaceEntity,
+    'id' | 'userId' | 'workspaceId'
+  >[] = [];
 
   if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
     const originalUserWorkspaces = [

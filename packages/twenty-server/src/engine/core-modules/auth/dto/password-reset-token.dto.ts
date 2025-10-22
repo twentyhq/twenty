@@ -3,10 +3,13 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType()
-export class ValidatePasswordResetToken {
-  @Field(() => UUIDScalarType)
-  id: string;
-
+export class PasswordResetToken {
   @Field(() => String)
-  email: string;
+  passwordResetToken: string;
+
+  @Field(() => Date)
+  passwordResetTokenExpiresAt: Date;
+
+  @Field(() => UUIDScalarType)
+  workspaceId: string;
 }

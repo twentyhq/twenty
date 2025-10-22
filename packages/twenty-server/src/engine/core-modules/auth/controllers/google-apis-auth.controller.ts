@@ -26,7 +26,7 @@ import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 
@@ -40,8 +40,8 @@ export class GoogleAPIsAuthController {
     private readonly onboardingService: OnboardingService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   @Get()
@@ -57,7 +57,7 @@ export class GoogleAPIsAuthController {
     @Req() req: GoogleAPIsRequest,
     @Res() res: Response,
   ) {
-    let workspace: Workspace | null = null;
+    let workspace: WorkspaceEntity | null = null;
 
     try {
       const { user } = req;

@@ -10,7 +10,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ApprovedAccessDomain as ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { ApprovedAccessDomainEntity as ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
@@ -20,8 +20,8 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkDomain } from 'src/utils/is-work-email';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class ApprovedAccessDomainService {
   async sendApprovedAccessDomainValidationEmail(
     sender: WorkspaceMemberWorkspaceEntity,
     to: string,
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     approvedAccessDomain: ApprovedAccessDomainEntity,
   ) {
     if (approvedAccessDomain.isValidated) {
@@ -104,7 +104,9 @@ export class ApprovedAccessDomainService {
     });
   }
 
-  private generateUniqueHash(approvedAccessDomain: ApprovedAccessDomainEntity) {
+  private generateUniqueHash(
+    approvedAccessDomain: ApprovedAccessDomainEntity,
+  ): string {
     return crypto
       .createHash('sha256')
       .update(
@@ -159,7 +161,7 @@ export class ApprovedAccessDomainService {
 
   async createApprovedAccessDomain(
     domain: string,
-    inWorkspace: Workspace,
+    inWorkspace: WorkspaceEntity,
     fromWorkspaceMember: WorkspaceMemberWorkspaceEntity,
     emailToValidateDomain: string,
   ): Promise<ApprovedAccessDomainEntity> {
@@ -203,7 +205,7 @@ export class ApprovedAccessDomainService {
   }
 
   async deleteApprovedAccessDomain(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     approvedAccessDomainId: string,
   ) {
     const approvedAccessDomain =
@@ -219,7 +221,7 @@ export class ApprovedAccessDomainService {
     });
   }
 
-  async getApprovedAccessDomains(workspace: Workspace) {
+  async getApprovedAccessDomains(workspace: WorkspaceEntity) {
     return await this.approvedAccessDomainRepository.find({
       where: {
         workspaceId: workspace.id,

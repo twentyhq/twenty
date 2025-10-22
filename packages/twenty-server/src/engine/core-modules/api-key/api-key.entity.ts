@@ -14,12 +14,12 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Index('IDX_API_KEY_WORKSPACE_ID', ['workspaceId'])
 @Entity({ name: 'apiKey', schema: 'core' })
 @ObjectType('ApiKey')
-export class ApiKey {
+export class ApiKeyEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -48,10 +48,10 @@ export class ApiKey {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @Field(() => Workspace)
-  @ManyToOne(() => Workspace, (workspace) => workspace.apiKeys, {
+  @Field(() => WorkspaceEntity)
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.apiKeys, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 }

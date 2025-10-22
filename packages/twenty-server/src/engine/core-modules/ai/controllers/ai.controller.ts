@@ -16,7 +16,7 @@ import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-m
 import { AiService } from 'src/engine/core-modules/ai/services/ai.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -39,7 +39,7 @@ export class AiController {
   @Post()
   async chat(
     @Body() request: ChatRequest,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Res() res: Response,
   ) {
     const isAiEnabled = await this.featureFlagService.isFeatureEnabled(

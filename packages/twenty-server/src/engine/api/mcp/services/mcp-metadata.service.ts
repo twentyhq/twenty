@@ -13,7 +13,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class MCPMetadataService {
@@ -128,7 +128,11 @@ export class MCPMetadataService {
     request: Request,
     {
       workspace,
-    }: { workspace: Workspace; userWorkspaceId?: string; apiKey?: string },
+    }: {
+      workspace: WorkspaceEntity;
+      userWorkspaceId?: string;
+      apiKey?: string;
+    },
   ): Promise<Record<string, unknown>> {
     try {
       await this.checkAiEnabled(workspace.id);

@@ -9,7 +9,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
 
 export type CleanWorkspaceDeletionWarningUserVarsJobData = {
@@ -28,8 +28,8 @@ export class CleanWorkspaceDeletionWarningUserVarsJob {
   constructor(
     private readonly userService: UserService,
     private readonly userVarsService: UserVarsService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   @Process(CleanWorkspaceDeletionWarningUserVarsJob.name)

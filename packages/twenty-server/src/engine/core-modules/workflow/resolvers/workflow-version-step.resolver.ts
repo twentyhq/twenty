@@ -14,7 +14,7 @@ import { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
 import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -48,7 +48,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async createWorkflowVersionStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     input: CreateWorkflowVersionStepInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
@@ -73,7 +73,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowActionDTO)
   async updateWorkflowVersionStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { step, workflowVersionId }: UpdateWorkflowVersionStepInput,
   ): Promise<WorkflowActionDTO> {
@@ -86,7 +86,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async deleteWorkflowVersionStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { stepId, workflowVersionId }: DeleteWorkflowVersionStepInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
@@ -99,7 +99,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => Boolean)
   async submitFormStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { stepId, workflowRunId, response }: SubmitFormStepInput,
   ) {
@@ -115,7 +115,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowActionDTO)
   async updateWorkflowRunStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { workflowRunId, step }: UpdateWorkflowRunStepInput,
   ): Promise<WorkflowActionDTO> {
@@ -130,7 +130,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async duplicateWorkflowVersionStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { stepId, workflowVersionId }: DuplicateWorkflowVersionStepInput,
   ): Promise<WorkflowVersionStepChangesDTO> {

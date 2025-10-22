@@ -9,7 +9,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 const UserFindOneMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
@@ -47,7 +47,7 @@ describe('AdminPanelService', () => {
       providers: [
         AdminPanelService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: UserFindOneMock,
           },
