@@ -83,9 +83,7 @@ export const isFieldValueEmpty = ({
 
   if (isFieldMorphRelation(fieldDefinition)) {
     if (!isArray(fieldValue)) {
-      return isArray(fieldValue)
-        ? !isNonEmptyArray(fieldValue)
-        : isValueEmpty(fieldValue);
+      return isValueEmpty(fieldValue);
     }
 
     const areValuesEmpty = fieldValue

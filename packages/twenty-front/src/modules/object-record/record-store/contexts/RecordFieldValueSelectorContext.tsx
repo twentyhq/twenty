@@ -28,27 +28,19 @@ export const useRecordFieldValue = <T,>(
           isFieldMorphRelation,
           fieldDefinition,
         );
-        const morphManyToOneValue = snapshot
+
+        const selector = isFieldMorphRelationOneToMany(fieldDefinition)
+          ? recordStoreMorphOneToManyValueWithObjectNameFamilySelector
+          : recordStoreMorphManyToOneValueWithObjectNameFamilySelector;
+
+        return snapshot
           .getLoadable(
-            recordStoreMorphManyToOneValueWithObjectNameFamilySelector({
+            selector({
               recordId,
               morphRelations: fieldDefinition.metadata.morphRelations,
-            }),
+            }) as any,
           )
           .getValue();
-
-        const morphOneToManyValue = snapshot
-          .getLoadable(
-            recordStoreMorphOneToManyValueWithObjectNameFamilySelector({
-              recordId,
-              morphRelations: fieldDefinition.metadata.morphRelations,
-            }),
-          )
-          .getValue();
-
-        return isFieldMorphRelationOneToMany(fieldDefinition)
-          ? morphOneToManyValue
-          : morphManyToOneValue;
       },
     [recordId, fieldName, fieldDefinition],
   )();
