@@ -69,7 +69,7 @@ const successfulUpdateTestsUseCase: UpdateOneStandardFieldMetadataTestingContext
       },
     },
     {
-    title: 'when updating defaultValue',
+      title: 'when updating defaultValue',
       context: {
         defaultValue: "'SCREENING'",
       },
@@ -123,6 +123,7 @@ describe('Standard field metadata update should succeed', () => {
     jestExpectToBeDefined(opportunityStageField);
     originalStageFieldMetadata = opportunityStageField;
   });
+
   afterEach(async () => {
     await updateOneFieldMetadata({
       expectToFail: false,
@@ -133,6 +134,8 @@ describe('Standard field metadata update should succeed', () => {
           description: originalStageFieldMetadata.description,
           icon: originalStageFieldMetadata.icon,
           isActive: originalStageFieldMetadata.isActive,
+          options: originalStageFieldMetadata.options,
+          defaultValue: originalStageFieldMetadata.defaultValue
         },
       },
     });
@@ -143,7 +146,7 @@ describe('Standard field metadata update should succeed', () => {
     async ({ context }) => {
       const updatePayload = context;
 
-      const { data, errors } = await updateOneFieldMetadata({
+      const { data } = await updateOneFieldMetadata({
         input: {
           idToUpdate: originalStageFieldMetadata.id,
           updatePayload,
@@ -157,6 +160,8 @@ describe('Standard field metadata update should succeed', () => {
           icon
           isActive
           isCustom
+          options
+          defaultValue
           standardOverrides {
             label
             description
