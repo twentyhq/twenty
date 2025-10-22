@@ -10,6 +10,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
@@ -70,6 +71,7 @@ import { AgentActorContextService } from './services/agent-actor-context.service
     TokenModule,
     WorkspaceDomainsModule,
     WorkflowToolsModule,
+    UserModule,
     UserWorkspaceModule,
     UserRoleModule,
   ],
