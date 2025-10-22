@@ -75,7 +75,9 @@ const exprToValue = (expr: Expression): JSONValue => {
   if (expr.kind === SyntaxKind.NullKeyword) return null;
 
   if (isArrayLiteralExpression(expr)) {
-    return expr.elements.map((e) => exprToValue(e as Expression));
+    return expr.elements.map((e) =>
+      e.kind === SyntaxKind.SpreadElement ? [] : exprToValue(e),
+    );
   }
 
   if (isObjectLiteralExpression(expr)) {
