@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
@@ -21,6 +20,7 @@ import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 const StyledSelectContainer = styled.div`
   justify-content: flex-end;
   margin-left: auto;
+  max-width: 120px;
 `;
 
 export const SettingsAIRouterSettings = () => {
@@ -31,9 +31,6 @@ export const SettingsAIRouterSettings = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const modelOptions = useAiModelOptions();
-  const [selectedModel, setSelectedModel] = useState(
-    currentWorkspace?.routerModel || 'auto',
-  );
 
   const handleModelChange = async (value: string) => {
     if (!currentWorkspace?.id) {
@@ -42,7 +39,6 @@ export const SettingsAIRouterSettings = () => {
 
     const newValue = value;
     const previousValue = currentWorkspace?.routerModel || 'auto';
-    setSelectedModel(newValue);
 
     try {
       setCurrentWorkspace({
@@ -96,7 +92,7 @@ export const SettingsAIRouterSettings = () => {
           <StyledSelectContainer>
             <Select
               dropdownId="router-model-select"
-              value={selectedModel}
+              value={currentWorkspace?.routerModel || 'auto'}
               onChange={handleModelChange}
               options={modelOptions}
               selectSizeVariant="small"
