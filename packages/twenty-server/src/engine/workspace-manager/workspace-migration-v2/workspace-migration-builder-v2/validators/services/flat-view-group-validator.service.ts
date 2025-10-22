@@ -108,8 +108,6 @@ export class FlatViewGroupValidatorService {
         message: t`View group to delete not found`,
         userFriendlyMessage: msg`View group to delete not found`,
       });
-
-      return validationResult;
     }
 
     return validationResult;
