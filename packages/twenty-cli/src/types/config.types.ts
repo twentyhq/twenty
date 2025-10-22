@@ -78,6 +78,7 @@ export type ServerlessFunctionCodeManifest = {
 export type ObjectManifest = {
   $schema?: string;
   standardId: string;
+  universalIdentifier: string;
   nameSingular: string;
   namePlural: string;
   labelSingular: string;
@@ -89,6 +90,7 @@ export type ObjectManifest = {
 export type AgentManifest = {
   $schema?: string;
   standardId: string;
+  universalIdentifier: string;
   name: string;
   label: string;
   description?: string;

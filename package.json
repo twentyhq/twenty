@@ -160,7 +160,7 @@
     "chromatic": "^6.18.0",
     "concurrently": "^8.2.2",
     "cross-var": "^1.1.0",
-    "danger": "^11.3.0",
+    "danger": "^13.0.4",
     "dotenv-cli": "^7.4.4",
     "esbuild": "^0.25.10",
     "eslint": "^9.32.0",
@@ -217,7 +217,7 @@
   "name": "twenty",
   "packageManager": "yarn@4.9.2",
   "resolutions": {
-    "graphql": "16.8.0",
+    "graphql": "16.8.1",
     "type-fest": "4.10.1",
     "typescript": "5.9.2",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",

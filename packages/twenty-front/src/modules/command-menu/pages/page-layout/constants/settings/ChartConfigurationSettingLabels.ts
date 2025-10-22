@@ -16,4 +16,6 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   AXIS_NAME: msg`Axis name`,
   STACKED_BARS: msg`Stacked bars`,
   OMIT_NULL_VALUES: msg`Omit zero values`,
+  MIN_RANGE: msg`Min range`,
+  MAX_RANGE: msg`Max range`,
 };

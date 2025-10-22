@@ -43,7 +43,7 @@ export class CommonResultGettersService {
     ]);
   }
 
-  private async processRecordArray(
+  public async processRecordArray(
     recordArray: ObjectRecord[],
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
@@ -62,7 +62,7 @@ export class CommonResultGettersService {
     );
   }
 
-  private async processRecord(
+  public async processRecord(
     record: ObjectRecord,
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
@@ -131,20 +131,6 @@ export class CommonResultGettersService {
     };
 
     return processedRecord;
-  }
-
-  async processQueryResult(
-    queryResultField: ObjectRecord[],
-    objectMetadataItemId: string,
-    objectMetadataMaps: ObjectMetadataMaps,
-    workspaceId: string,
-  ): Promise<ObjectRecord[]> {
-    return await this.processRecordArray(
-      queryResultField,
-      objectMetadataItemId,
-      objectMetadataMaps,
-      workspaceId,
-    );
   }
 
   private getHandler(objectType: string): QueryResultGetterHandlerInterface {

@@ -12,13 +12,11 @@ import { Key } from 'ts-key-enum';
 import { Button } from 'twenty-ui/input';
 
 export const SendMessageButton = ({
-  agentId,
   records,
 }: {
-  agentId: string;
   records?: ObjectRecord[];
 }) => {
-  const { input, isLoading, handleInputChange } = useAgentChat(agentId);
+  const { input, isLoading, handleInputChange } = useAgentChat();
   const { chat } = useAgentChatContextOrThrow();
   const { buildRequestBody } = useAgentChatRequestBody();
   const { sendMessage } = useChat({ chat });

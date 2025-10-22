@@ -1,11 +1,11 @@
 import { danger } from 'danger';
 
-const ordinalSuffix = (number) => {
+const ordinalSuffix = (number: number) => {
   const v = number % 100;
   if (v === 11 || v === 12 || v === 13) {
     return number + 'th';
   }
-  const suffixes = { 1: 'st', 2: 'nd', 3: 'rd' };
+  const suffixes: Record<number, string> = { 1: 'st', 2: 'nd', 3: 'rd' };
   return number + (suffixes[v % 10] || 'th');
 };
 

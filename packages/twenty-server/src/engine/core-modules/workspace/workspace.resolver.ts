@@ -62,8 +62,6 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
-import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -72,7 +70,6 @@ import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-
 const OriginHeader = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
@@ -98,7 +95,6 @@ export class WorkspaceResolver {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly roleService: RoleService,
-    private readonly agentService: AgentService,
     private readonly viewService: ViewService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly customDomainManagerService: CustomDomainManagerService,
@@ -232,30 +228,11 @@ export class WorkspaceResolver {
     );
   }
 
-  @ResolveField(() => AgentDTO, { nullable: true })
-  async defaultAgent(
+  @ResolveField(() => String, { nullable: true })
+  async routerModel(
     @Parent() workspace: WorkspaceEntity,
-  ): Promise<AgentDTO | null> {
-    if (!workspace.defaultAgentId) {
-      return null;
-    }
-
-    try {
-      const agent = await this.agentService.findOneAgent(
-        workspace.defaultAgentId,
-        workspace.id,
-      );
-
-      // Convert roleId from null to undefined to match AgentDTO
-      return {
-        ...agent,
-        roleId: agent.roleId ?? undefined,
-        applicationId: agent.applicationId ?? undefined,
-      };
-    } catch {
-      // If agent is not found, return null instead of throwing
-      return null;
-    }
+  ): Promise<string | null> {
+    return workspace.routerModel;
   }
 
   @ResolveField(() => BillingSubscriptionEntity, { nullable: true })

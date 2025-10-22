@@ -4,10 +4,7 @@ import {
   GraphType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import {
-  ExtendedAggregateOperations,
-  PageLayoutType,
-} from '~/generated/graphql';
+import { AggregateOperations, PageLayoutType } from '~/generated/graphql';
 import { usePageLayoutDraftState } from '../usePageLayoutDraftState';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -104,7 +101,7 @@ describe('usePageLayoutDraftState', () => {
                 gridPosition: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
                 configuration: {
                   graphType: GraphType.VERTICAL_BAR,
-                  aggregateOperation: ExtendedAggregateOperations.COUNT,
+                  aggregateOperation: AggregateOperations.COUNT,
                   aggregateFieldMetadataId: 'id',
                   primaryAxisGroupByFieldMetadataId: 'createdAt',
                   primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,

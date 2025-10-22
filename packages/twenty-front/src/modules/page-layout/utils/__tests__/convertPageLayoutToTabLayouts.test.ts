@@ -1,12 +1,12 @@
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import {
-  ExtendedAggregateOperations,
+  AggregateOperations,
   GraphOrderBy,
   GraphType,
   PageLayoutType,
   WidgetType,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 describe('convertPageLayoutToTabLayouts', () => {
   it('should convert page layout to tab layouts', () => {
@@ -30,7 +30,7 @@ describe('convertPageLayoutToTabLayouts', () => {
               type: WidgetType.GRAPH,
               configuration: {
                 graphType: GraphType.NUMBER,
-                aggregateOperation: ExtendedAggregateOperations.COUNT,
+                aggregateOperation: AggregateOperations.COUNT,
                 aggregateFieldMetadataId: 'id',
                 displayDataLabel: false,
               },
@@ -48,7 +48,7 @@ describe('convertPageLayoutToTabLayouts', () => {
               type: WidgetType.GRAPH,
               configuration: {
                 graphType: GraphType.PIE,
-                aggregateOperation: ExtendedAggregateOperations.COUNT,
+                aggregateOperation: AggregateOperations.COUNT,
                 aggregateFieldMetadataId: 'id',
                 groupByFieldMetadataId: 'status',
                 orderBy: GraphOrderBy.VALUE_DESC,

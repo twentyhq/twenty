@@ -118,8 +118,6 @@ export const UserAndViewsProviderEffect = () => {
         ...userQueryData.currentUser.currentWorkspace,
         defaultRole:
           userQueryData.currentUser.currentWorkspace.defaultRole ?? null,
-        defaultAgent:
-          userQueryData.currentUser.currentWorkspace.defaultAgent ?? null,
       });
     }
 

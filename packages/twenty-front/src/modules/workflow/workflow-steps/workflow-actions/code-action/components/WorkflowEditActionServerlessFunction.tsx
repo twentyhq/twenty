@@ -40,6 +40,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
@@ -326,7 +327,7 @@ export const WorkflowEditActionServerlessFunction = ({
 
   const headerTitle = isDefined(action.name)
     ? action.name
-    : 'Code - Serverless Function';
+    : CODE_ACTION.defaultLabel;
   const headerIcon = getActionIcon(action.type);
   const headerIconColor = useActionIconColorOrThrow(action.type);
   const headerType = useActionHeaderTypeOrThrow(action.type);
@@ -431,6 +432,7 @@ export const WorkflowEditActionServerlessFunction = ({
           initialTitle={headerTitle}
           headerType={headerType}
           disabled={actionOptions.readonly}
+          iconTooltip={CODE_ACTION.defaultLabel}
         />
         <WorkflowStepBody>
           {activeTabId === WorkflowServerlessFunctionTabId.CODE && (
