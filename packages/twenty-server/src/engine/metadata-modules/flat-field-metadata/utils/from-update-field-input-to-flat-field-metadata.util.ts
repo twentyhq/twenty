@@ -72,9 +72,13 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       },
     };
   }
+
+  const isStandardField = isStandardMetadata(existingFlatFieldMetadataToUpdate);
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateFieldInput,
-    FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
+    FLAT_FIELD_METADATA_EDITABLE_PROPERTIES[
+      isStandardField ? 'standard' : 'custom'
+    ],
   );
 
   const standardOverrides = isStandardMetadata(
@@ -87,10 +91,12 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
         if (!isPropertyUpdated) {
           return acc;
         }
+        const propertyValue = updatedEditableFieldProperties[property];
+
         delete updatedEditableFieldProperties[property];
         return {
           ...acc,
-          [property]: updatedEditableFieldProperties[property],
+          [property]: propertyValue,
         };
       }, existingFlatFieldMetadataToUpdate.standardOverrides)
     : null;
@@ -139,7 +145,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
         const toFlatFieldMetadata = {
           ...mergeUpdateInExistingRecord({
             existing: fromFlatFieldMetadata,
-            properties: FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
+            properties: FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.custom,
             update: updatedEditableFieldProperties,
           }),
           standardOverrides,

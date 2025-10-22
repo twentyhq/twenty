@@ -17,7 +17,7 @@ type OneFlatEntityConfiguration<T extends AllMetadataName> = {
 export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
   fieldMetadata: {
     propertiesToCompare: [
-      ...FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
+      ...FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.custom,
       'standardOverrides',
     ],
     propertiesToStringify: [
