@@ -47,7 +47,7 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
         CommonQueryNames.GROUP_BY,
       );
     } catch (error) {
-      throw workspaceQueryRunnerRestApiExceptionHandler(error);
+      return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 

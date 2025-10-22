@@ -51,7 +51,7 @@ export class GroupByResolverFactory
             CommonQueryNames.GROUP_BY,
           );
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 
