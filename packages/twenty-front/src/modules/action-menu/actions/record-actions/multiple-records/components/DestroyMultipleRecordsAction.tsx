@@ -72,7 +72,6 @@ export const DestroyMultipleRecordsAction = () => {
       filter: graphqlFilter,
       pageSize: DEFAULT_QUERY_PAGE_SIZE,
       delayInMsBetweenMutations: 50,
-      skipOptimisticEffect: true,
     });
 
   const actionConfig = useContext(ActionConfigContext);
