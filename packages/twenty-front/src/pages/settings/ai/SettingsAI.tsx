@@ -6,16 +6,13 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  H2Title,
   IconPlus,
   IconRobot,
   IconServer,
   IconSettings,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 
 import { t } from '@lingui/core/macro';
 import { SettingsAIAgentsTable } from './components/SettingsAIAgentsTable';
@@ -31,7 +28,6 @@ const SETTINGS_AI_TABS = {
 };
 
 export const SettingsAI = () => {
-  const { data } = useFindManyAgentsQuery();
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
     SETTINGS_AI_TABS_ID,
@@ -58,27 +54,11 @@ export const SettingsAI = () => {
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case SETTINGS_AI_TABS.AGENTS:
-        return (
-          <Section>
-            <H2Title
-              title={t`Agents`}
-              description={t`Agents used to route queries to specialized agents`}
-            />
-            <SettingsAIAgentsTable agents={data?.findManyAgents || []} />
-          </Section>
-        );
+        return <SettingsAIAgentsTable />;
       case SETTINGS_AI_TABS.SETTINGS:
         return <SettingsAIRouterSettings />;
       case SETTINGS_AI_TABS.MCP:
-        return (
-          <Section>
-            <H2Title
-              title={t`MCP Server`}
-              description={t`Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor.`}
-            />
-            <SettingsAIMCP />
-          </Section>
-        );
+        return <SettingsAIMCP />;
     }
   };
 
