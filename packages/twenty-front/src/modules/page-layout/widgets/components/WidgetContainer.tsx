@@ -6,7 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{
   onClick?: () => void;
-  showHover?: boolean;
+  isWidgetRestricted?: boolean;
+  isPageLayoutInEditMode?: boolean;
 }>`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -19,8 +20,8 @@ const StyledContainer = styled.div<{
   position: relative;
   padding: ${({ theme }) => theme.spacing(4)};
 
-  ${({ showHover, onClick, theme }) =>
-    showHover &&
+  ${({ onClick, theme, isPageLayoutInEditMode }) =>
+    isPageLayoutInEditMode &&
     `
     &:hover {
       cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
@@ -33,21 +34,21 @@ const StyledContainer = styled.div<{
 type WidgetContainerProps = {
   children?: ReactNode;
   onClick?: () => void;
-  isRestricted?: boolean;
 };
 
 export const WidgetContainer = ({
   children,
   onClick,
-  isRestricted = false,
 }: WidgetContainerProps) => {
-  const isPageLayoutInEditModeComponent = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
-  const showHover = !isRestricted || isPageLayoutInEditModeComponent;
 
   return (
-    <StyledContainer onClick={onClick} showHover={showHover}>
+    <StyledContainer
+      onClick={onClick}
+      isPageLayoutInEditMode={isPageLayoutInEditMode}
+    >
       {children}
     </StyledContainer>
   );
