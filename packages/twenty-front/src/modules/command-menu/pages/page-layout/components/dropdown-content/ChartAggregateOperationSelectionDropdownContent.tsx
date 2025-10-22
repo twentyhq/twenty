@@ -147,7 +147,12 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
             >
               <MenuItemSelect
                 text={item.label}
-                selected={currentAggregateOperation === item.operation}
+                selected={
+                  currentAggregateOperation ===
+                  convertExtendedAggregateOperationToAggregateOperation(
+                    item.operation,
+                  )
+                }
                 focused={selectedItemId === item.operation}
                 onClick={() => {
                   handleSelectAggregateOperation(
