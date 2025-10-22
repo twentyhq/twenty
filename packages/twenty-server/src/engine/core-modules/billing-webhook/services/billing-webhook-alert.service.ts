@@ -21,10 +21,10 @@ export class BillingWebhookAlertService {
   protected readonly logger = new Logger(BillingWebhookAlertService.name);
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    @InjectRepository(BillingProduct)
-    private readonly billingProductRepository: Repository<BillingProduct>,
-    @InjectRepository(BillingSubscriptionItem)
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(BillingProductEntity)
+    private readonly billingProductRepository: Repository<BillingProductEntity>,
+    @InjectRepository(BillingSubscriptionItemEntity)
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
   ) {}
 
   async processStripeEvent(data: Stripe.BillingAlertTriggeredEvent.Data) {

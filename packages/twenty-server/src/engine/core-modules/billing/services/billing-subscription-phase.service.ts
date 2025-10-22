@@ -22,8 +22,8 @@ import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normali
 @Injectable()
 export class BillingSubscriptionPhaseService {
   constructor(
-    @InjectRepository(BillingPrice)
-    private readonly billingPriceRepository: Repository<BillingPrice>,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingPriceService: BillingPriceService,
   ) {}

@@ -29,12 +29,12 @@ import { transformStripeProductToDatabaseProduct } from 'src/engine/core-modules
 export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
   private readonly batchSize = 5;
   constructor(
-    @InjectRepository(BillingPrice)
-    private readonly billingPriceRepository: Repository<BillingPrice>,
-    @InjectRepository(BillingProduct)
-    private readonly billingProductRepository: Repository<BillingProduct>,
-    @InjectRepository(BillingMeter)
-    private readonly billingMeterRepository: Repository<BillingMeter>,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
+    @InjectRepository(BillingProductEntity)
+    private readonly billingProductRepository: Repository<BillingProductEntity>,
+    @InjectRepository(BillingMeterEntity)
+    private readonly billingMeterRepository: Repository<BillingMeterEntity>,
     private readonly stripeBillingMeterService: StripeBillingMeterService,
     private readonly stripeProductService: StripeProductService,
     private readonly stripePriceService: StripePriceService,

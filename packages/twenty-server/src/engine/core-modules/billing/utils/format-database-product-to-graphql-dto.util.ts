@@ -37,7 +37,7 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
 };
 
 const formatBillingDatabasePriceToMeteredPriceDTO = (
-  billingPrice: BillingPrice,
+  billingPrice: BillingPriceEntity,
 ): BillingPriceMeteredDTO => {
   return {
     tiers:
@@ -53,7 +53,7 @@ const formatBillingDatabasePriceToMeteredPriceDTO = (
 };
 
 const formatBillingDatabasePriceToLicensedPriceDTO = (
-  billingPrice: BillingPrice,
+  billingPrice: BillingPriceEntity,
 ): BillingPriceLicensedDTO => {
   return {
     recurringInterval: billingPrice?.interval ?? SubscriptionInterval.Month,

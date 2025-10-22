@@ -18,8 +18,8 @@ export class StripeCustomerService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeSDKService: StripeSDKService,
-    @InjectRepository(BillingCustomer)
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
   ) {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;

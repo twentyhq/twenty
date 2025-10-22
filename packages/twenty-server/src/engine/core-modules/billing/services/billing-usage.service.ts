@@ -23,8 +23,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 export class BillingUsageService {
   protected readonly logger = new Logger(BillingUsageService.name);
   constructor(
-    @InjectRepository(BillingCustomer)
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
     private readonly twentyConfigService: TwentyConfigService,

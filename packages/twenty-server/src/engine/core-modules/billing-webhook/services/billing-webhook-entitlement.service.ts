@@ -17,10 +17,10 @@ import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/bil
 @Injectable()
 export class BillingWebhookEntitlementService {
   constructor(
-    @InjectRepository(BillingCustomer)
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
-    @InjectRepository(BillingEntitlement)
-    private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
+    @InjectRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    @InjectRepository(BillingEntitlementEntity)
+    private readonly billingEntitlementRepository: Repository<BillingEntitlementEntity>,
   ) {}
 
   async processStripeEvent(

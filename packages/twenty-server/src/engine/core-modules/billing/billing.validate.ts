@@ -18,7 +18,7 @@ import {
 import { type BillingSubscriptionWithSubscriptionItems } from 'src/engine/core-modules/billing/types/billing-subscription-with-subscription-items';
 
 const assertIsMeteredTiersSchemaOrThrow = (
-  tiers: BillingPrice['tiers'] | undefined | null,
+  tiers: BillingPriceEntity['tiers'] | undefined | null,
 ): asserts tiers is MeterBillingPriceTiers => {
   const error = new BillingException(
     'Metered price must have exactly two tiers and only one must have a defined limitation (up_to)',
@@ -33,7 +33,7 @@ const assertIsMeteredTiersSchemaOrThrow = (
 };
 
 const isMeteredTiersSchema = (
-  tiers: BillingPrice['tiers'] | undefined | null,
+  tiers: BillingPriceEntity['tiers'] | undefined | null,
 ): tiers is MeterBillingPriceTiers => {
   if (!isDefined(tiers)) {
     return false;
@@ -51,7 +51,7 @@ const isMeteredTiersSchema = (
 };
 
 const assertIsLicensedSubscriptionItem = (
-  subscriptionItem: BillingSubscriptionItem,
+  subscriptionItem: BillingSubscriptionItemEntity,
 ): asserts subscriptionItem is LicensedBillingSubscriptionItem => {
   if (
     subscriptionItem.quantity !== null &&
@@ -67,7 +67,7 @@ const assertIsLicensedSubscriptionItem = (
 };
 
 const assertIsMeteredSubscriptionItem = (
-  subscriptionItem: BillingSubscriptionItem,
+  subscriptionItem: BillingSubscriptionItemEntity,
 ): asserts subscriptionItem is MeteredBillingSubscriptionItem => {
   if (
     subscriptionItem.quantity === null &&
@@ -83,7 +83,7 @@ const assertIsMeteredSubscriptionItem = (
 };
 
 const assertIsMeteredPrice = (
-  price: BillingPrice,
+  price: BillingPriceEntity,
 ): asserts price is BillingMeterPrice => {
   if (
     price.billingProduct?.metadata.priceUsageBased !== BillingUsageType.METERED
@@ -104,7 +104,7 @@ const assertIsMeteredPrice = (
   return;
 };
 
-const isMeteredPrice = (price: BillingPrice): price is BillingMeterPrice => {
+const isMeteredPrice = (price: BillingPriceEntity): price is BillingMeterPrice => {
   if (
     price.billingProduct?.metadata.priceUsageBased !==
       BillingUsageType.METERED ||
@@ -117,7 +117,7 @@ const isMeteredPrice = (price: BillingPrice): price is BillingMeterPrice => {
 };
 
 const assertIsSubscription = (
-  subscription: BillingSubscription | undefined,
+  subscription: BillingSubscriptionEntity | undefined,
 ): asserts subscription is BillingSubscription &
   BillingSubscriptionWithSubscriptionItems => {
   if (!isDefined(subscription)) {

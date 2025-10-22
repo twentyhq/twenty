@@ -41,14 +41,14 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeCustomerService: StripeCustomerService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(BillingSubscription)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingSubscriptionItem)
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    @InjectRepository(BillingSubscriptionItemEntity)
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(BillingCustomer)
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceService: WorkspaceService,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,

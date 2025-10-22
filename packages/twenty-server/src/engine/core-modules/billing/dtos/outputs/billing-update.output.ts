@@ -9,10 +9,10 @@ export class BillingUpdateOutput {
   @Field(() => BillingSubscription, {
     description: 'Current billing subscription',
   })
-  currentBillingSubscription: BillingSubscription;
+  currentBillingSubscription: BillingSubscriptionEntity;
 
   @Field(() => [BillingSubscription], {
     description: 'All billing subscriptions',
   })
-  billingSubscriptions: BillingSubscription[];
+  billingSubscriptions: BillingSubscriptionEntity[];
 }

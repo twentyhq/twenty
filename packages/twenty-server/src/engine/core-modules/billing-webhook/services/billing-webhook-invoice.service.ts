@@ -14,8 +14,8 @@ const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
 export class BillingWebhookInvoiceService {
   protected readonly logger = new Logger(BillingWebhookInvoiceService.name);
   constructor(
-    @InjectRepository(BillingSubscriptionItem)
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(BillingSubscriptionItemEntity)
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
   ) {}
 
   async processStripeEvent(data: Stripe.InvoiceFinalizedEvent.Data) {

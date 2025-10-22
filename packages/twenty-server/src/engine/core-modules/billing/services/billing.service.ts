@@ -22,8 +22,8 @@ export class BillingService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingProductService: BillingProductService,
-    @InjectRepository(BillingSubscription)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
   ) {}
 
   isBillingEnabled() {

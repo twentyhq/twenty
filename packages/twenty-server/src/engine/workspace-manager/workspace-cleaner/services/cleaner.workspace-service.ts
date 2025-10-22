@@ -45,8 +45,8 @@ export class CleanerWorkspaceService {
     private readonly emailService: EmailService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(BillingSubscription)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,

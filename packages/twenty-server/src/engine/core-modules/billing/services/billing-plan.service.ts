@@ -22,8 +22,8 @@ import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/bill
 export class BillingPlanService {
   protected readonly logger = new Logger(BillingPlanService.name);
   constructor(
-    @InjectRepository(BillingProduct)
-    private readonly billingProductRepository: Repository<BillingProduct>,
+    @InjectRepository(BillingProductEntity)
+    private readonly billingProductRepository: Repository<BillingProductEntity>,
   ) {}
 
   async getProductsByProductMetadata({
@@ -48,7 +48,7 @@ export class BillingPlanService {
     });
   }
 
-  async getPlanBaseProduct(planKey: BillingPlanKey): Promise<BillingProduct> {
+  async getPlanBaseProduct(planKey: BillingPlanKey): Promise<BillingProductEntity> {
     const [baseProduct] = await this.getProductsByProductMetadata({
       planKey,
       priceUsageBased: BillingUsageType.LICENSED,
@@ -130,7 +130,7 @@ export class BillingPlanService {
     }
     const { meteredProducts, licensedProducts } = plan;
 
-    const filterPricesByInterval = (product: BillingProduct) =>
+    const filterPricesByInterval = (product: BillingProductEntity) =>
       product.billingPrices.filter((price) => price.interval === interval);
 
     const meteredProductsPrices = meteredProducts.flatMap(

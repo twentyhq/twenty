@@ -29,8 +29,8 @@ export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWork
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(BillingSubscription)
-    protected readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingSubscriptionEntity)
+    protected readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
   ) {

@@ -25,12 +25,12 @@ export class BillingWebhookPriceService {
   constructor(
     private readonly stripeBillingMeterService: StripeBillingMeterService,
     private readonly stripePriceService: StripePriceService,
-    @InjectRepository(BillingPrice)
-    private readonly billingPriceRepository: Repository<BillingPrice>,
-    @InjectRepository(BillingMeter)
-    private readonly billingMeterRepository: Repository<BillingMeter>,
-    @InjectRepository(BillingProduct)
-    private readonly billingProductRepository: Repository<BillingProduct>,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
+    @InjectRepository(BillingMeterEntity)
+    private readonly billingMeterRepository: Repository<BillingMeterEntity>,
+    @InjectRepository(BillingProductEntity)
+    private readonly billingProductRepository: Repository<BillingProductEntity>,
   ) {}
 
   async processStripeEvent(

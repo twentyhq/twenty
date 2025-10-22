@@ -35,10 +35,10 @@ export class BillingPortalWorkspaceService {
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    @InjectRepository(BillingSubscription)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingCustomer)
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    @InjectRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}

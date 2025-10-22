@@ -37,8 +37,8 @@ export class BillingProductService {
     billingProductsByPlan,
   }: {
     interval: SubscriptionInterval;
-    billingProductsByPlan: BillingProduct[];
-  }): BillingPrice[] {
+    billingProductsByPlan: BillingProductEntity[];
+  }): BillingPriceEntity[] {
     return billingProductsByPlan.flatMap((product) =>
       product.billingPrices.filter(
         (price) => price.interval === interval && price.active,

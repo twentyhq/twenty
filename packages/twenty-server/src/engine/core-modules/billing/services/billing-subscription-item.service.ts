@@ -16,8 +16,8 @@ import { billingValidator } from 'src/engine/core-modules/billing/billing.valida
 @Injectable()
 export class BillingSubscriptionItemService {
   constructor(
-    @InjectRepository(BillingSubscriptionItem)
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(BillingSubscriptionItemEntity)
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -58,7 +58,7 @@ export class BillingSubscriptionItemService {
     );
   }
 
-  private findMatchingPrice(item: BillingSubscriptionItem): BillingPrice {
+  private findMatchingPrice(item: BillingSubscriptionItemEntity): BillingPriceEntity {
     const matchingPrice = item.billingProduct.billingPrices.find(
       (price) => price.stripePriceId === item.stripePriceId,
     );
@@ -73,13 +73,13 @@ export class BillingSubscriptionItemService {
     return matchingPrice;
   }
 
-  private getTierQuantity(price: BillingPrice): number {
+  private getTierQuantity(price: BillingPriceEntity): number {
     billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
 
     return price.tiers[0].up_to;
   }
 
-  private getFreeTrialQuantity(item: BillingSubscriptionItem): number {
+  private getFreeTrialQuantity(item: BillingSubscriptionItemEntity): number {
     switch (item.billingProduct.metadata.productKey) {
       case BillingProductKey.WORKFLOW_NODE_EXECUTION:
         return this.twentyConfigService.get(
@@ -90,7 +90,7 @@ export class BillingSubscriptionItemService {
     }
   }
 
-  private getUnitPrice(price: BillingPrice): number {
+  private getUnitPrice(price: BillingPriceEntity): number {
     billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
 
     return Number(price.tiers[1].unit_amount_decimal);

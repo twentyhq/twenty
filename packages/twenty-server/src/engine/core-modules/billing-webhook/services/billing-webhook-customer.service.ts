@@ -16,8 +16,8 @@ import {
 export class BillingWebhookCustomerService {
   protected readonly logger = new Logger(BillingWebhookCustomerService.name);
   constructor(
-    @InjectRepository(BillingCustomer)
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
   ) {}
 
   async processStripeEvent(data: Stripe.CustomerCreatedEvent.Data) {

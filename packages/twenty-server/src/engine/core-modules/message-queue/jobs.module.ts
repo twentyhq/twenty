@@ -39,7 +39,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity, BillingSubscription]),
+    TypeOrmModule.forFeature([WorkspaceEntity, BillingSubscriptionEntity]),
     DataSourceModule,
     ObjectMetadataModule,
     TypeORMModule,

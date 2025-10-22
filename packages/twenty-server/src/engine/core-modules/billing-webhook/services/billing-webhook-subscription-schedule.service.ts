@@ -18,8 +18,8 @@ export class BillingWebhookSubscriptionScheduleService {
   );
 
   constructor(
-    @InjectRepository(BillingSubscription)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
   ) {}
 

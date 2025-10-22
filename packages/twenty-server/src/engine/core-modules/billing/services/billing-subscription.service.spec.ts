@@ -62,8 +62,8 @@ const METER_PRICE_PRO_MONTH_TIER_HIGH_ID = 'METER_PRICE_PRO_MONTH_TIER_HIGH_ID';
 describe('BillingSubscriptionService', () => {
   let module: TestingModule;
   let service: BillingSubscriptionService;
-  let billingSubscriptionRepository: Repository<BillingSubscription>;
-  let billingPriceRepository: Repository<BillingPrice>;
+  let billingSubscriptionRepository: Repository<BillingSubscriptionEntity>;
+  let billingPriceRepository: Repository<BillingPriceEntity>;
   let billingProductService: BillingProductService;
   let stripeSubscriptionScheduleService: StripeSubscriptionScheduleService;
   let stripeSubscriptionService: StripeSubscriptionService;
@@ -113,7 +113,7 @@ describe('BillingSubscriptionService', () => {
         ? SubscriptionInterval.Year
         : SubscriptionInterval.Month;
 
-      const base: Partial<BillingPrice> = {
+      const base: Partial<BillingPriceEntity> = {
         stripePriceId: priceId,
         interval,
         billingProduct: {
@@ -170,7 +170,7 @@ describe('BillingSubscriptionService', () => {
       stripeSubscriptionId?: string;
     } = {},
   ) => {
-    const sub: BillingSubscription = {
+    const sub: BillingSubscriptionEntity = {
       ...currentSubscription,
       workspaceId: overrides.workspaceId ?? currentSubscription.workspaceId,
       stripeSubscriptionId:
@@ -367,7 +367,7 @@ describe('BillingSubscriptionService', () => {
   };
 
   const arrangeBillingProductServiceGetProductPrices = (
-    prices: Array<Partial<BillingPrice>> = [
+    prices: Array<Partial<BillingPriceEntity>> = [
       {
         stripePriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
         interval: SubscriptionInterval.Year,
@@ -378,7 +378,7 @@ describe('BillingSubscriptionService', () => {
             priceUsageBased: BillingUsageType.LICENSED,
           },
         },
-      } as Partial<BillingPrice>,
+      } as Partial<BillingPriceEntity>,
       {
         stripePriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
         interval: SubscriptionInterval.Year,
@@ -405,7 +405,7 @@ describe('BillingSubscriptionService', () => {
             priceUsageBased: BillingUsageType.METERED,
           },
         },
-      } as Partial<BillingPrice>,
+      } as Partial<BillingPriceEntity>,
     ],
   ) =>
     jest
@@ -553,8 +553,8 @@ describe('BillingSubscriptionService', () => {
   };
 
   const arrangeBillingProductServiceGetProductPricesSequence = (
-    first: Array<Partial<BillingPrice>>,
-    second: Array<Partial<BillingPrice>>,
+    first: Array<Partial<BillingPriceEntity>>,
+    second: Array<Partial<BillingPriceEntity>>,
   ) => {
     const spy = jest.spyOn(billingProductService, 'getProductPrices');
 
@@ -647,34 +647,34 @@ describe('BillingSubscriptionService', () => {
           },
         },
         {
-          provide: getRepositoryToken(BillingEntitlement),
-          useValue: repoMock<BillingEntitlement>(),
+          provide: getRepositoryToken(BillingEntitlementEntity),
+          useValue: repoMock<BillingEntitlementEntity>(),
         },
         {
-          provide: getRepositoryToken(BillingSubscription),
-          useValue: repoMock<BillingSubscription>(),
+          provide: getRepositoryToken(BillingSubscriptionEntity),
+          useValue: repoMock<BillingSubscriptionEntity>(),
         },
         {
-          provide: getRepositoryToken(BillingPrice),
-          useValue: repoMock<BillingPrice>(),
+          provide: getRepositoryToken(BillingPriceEntity),
+          useValue: repoMock<BillingPriceEntity>(),
         },
         {
-          provide: getRepositoryToken(BillingSubscriptionItem),
-          useValue: repoMock<BillingSubscriptionItem>(),
+          provide: getRepositoryToken(BillingSubscriptionItemEntity),
+          useValue: repoMock<BillingSubscriptionItemEntity>(),
         },
         {
-          provide: getRepositoryToken(BillingCustomer),
-          useValue: repoMock<BillingCustomer>(),
+          provide: getRepositoryToken(BillingCustomerEntity),
+          useValue: repoMock<BillingCustomerEntity>(),
         },
       ],
     }).compile();
 
     service = module.get(BillingSubscriptionService);
-    billingSubscriptionRepository = module.get<Repository<BillingSubscription>>(
-      getRepositoryToken(BillingSubscription),
+    billingSubscriptionRepository = module.get<Repository<BillingSubscriptionEntity>>(
+      getRepositoryToken(BillingSubscriptionEntity),
     );
-    billingPriceRepository = module.get<Repository<BillingPrice>>(
-      getRepositoryToken(BillingPrice),
+    billingPriceRepository = module.get<Repository<BillingPriceEntity>>(
+      getRepositoryToken(BillingPriceEntity),
     );
     billingProductService = module.get<BillingProductService>(
       BillingProductService,
@@ -745,7 +745,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
               interval: SubscriptionInterval.Month,
@@ -772,7 +772,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
 
         const spyBillingPriceFindOneOrFail =
@@ -881,7 +881,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
               interval: SubscriptionInterval.Year,
@@ -908,7 +908,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
         const spyToSnapshot2 = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_YEAR_ID,
@@ -1044,7 +1044,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.LICENSED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
               {
                 stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
                 interval: SubscriptionInterval.Month,
@@ -1071,7 +1071,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.METERED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
             ],
             [
               {
@@ -1084,7 +1084,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.LICENSED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
               {
                 stripePriceId: METER_PRICE_PRO_MONTH_ID,
                 interval: SubscriptionInterval.Month,
@@ -1111,7 +1111,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.METERED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
             ],
           );
         const spyToSnapshotD1 =
@@ -1232,7 +1232,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.LICENSED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
               {
                 stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
                 interval: SubscriptionInterval.Month,
@@ -1259,7 +1259,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.METERED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
             ],
             [
               {
@@ -1272,7 +1272,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.LICENSED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
               {
                 stripePriceId: METER_PRICE_PRO_MONTH_ID,
                 interval: SubscriptionInterval.Month,
@@ -1299,7 +1299,7 @@ describe('BillingSubscriptionService', () => {
                     priceUsageBased: BillingUsageType.METERED,
                   },
                 },
-              } as Partial<BillingPrice>,
+              } as Partial<BillingPriceEntity>,
             ],
           );
 
@@ -1529,7 +1529,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
               interval: SubscriptionInterval.Year,
@@ -1556,7 +1556,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
 
         const spyPriceFindByOrFail =
@@ -1694,7 +1694,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
               interval: SubscriptionInterval.Month,
@@ -1721,7 +1721,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
 
         const spyPriceFindByOrFail =
@@ -1860,7 +1860,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
               interval: SubscriptionInterval.Month,
@@ -1887,7 +1887,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
 
         const spyPriceFindByOrFail =
@@ -2019,7 +2019,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
               interval: SubscriptionInterval.Month,
@@ -2046,7 +2046,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
               interval: SubscriptionInterval.Month,
@@ -2073,7 +2073,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
         const spyPriceFindByOrFail =
           arrangeBillingPriceRepositoryFindOneOrFail();
@@ -2230,7 +2230,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
               interval: SubscriptionInterval.Month,
@@ -2257,7 +2257,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
               interval: SubscriptionInterval.Month,
@@ -2284,7 +2284,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
         const spyPriceFindByOrFail =
           arrangeBillingPriceRepositoryFindOneOrFail();
@@ -2440,7 +2440,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
               interval: SubscriptionInterval.Month,
@@ -2467,7 +2467,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
               interval: SubscriptionInterval.Month,
@@ -2494,7 +2494,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
         const spyPriceFindByOrFail =
           arrangeBillingPriceRepositoryFindOneOrFail();
@@ -2646,7 +2646,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.LICENSED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
               interval: SubscriptionInterval.Month,
@@ -2673,7 +2673,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
             {
               stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
               interval: SubscriptionInterval.Month,
@@ -2700,7 +2700,7 @@ describe('BillingSubscriptionService', () => {
                   priceUsageBased: BillingUsageType.METERED,
                 },
               },
-            } as Partial<BillingPrice>,
+            } as Partial<BillingPriceEntity>,
           ]);
         const spyPriceFindByOrFail =
           arrangeBillingPriceRepositoryFindOneOrFail();

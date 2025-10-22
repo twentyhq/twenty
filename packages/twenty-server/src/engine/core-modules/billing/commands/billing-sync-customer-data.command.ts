@@ -23,8 +23,8 @@ export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspacesM
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
-    @InjectRepository(BillingCustomer)
-    protected readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(BillingCustomerEntity)
+    protected readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);

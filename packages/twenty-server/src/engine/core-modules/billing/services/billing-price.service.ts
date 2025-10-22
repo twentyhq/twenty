@@ -14,8 +14,8 @@ export class BillingPriceService {
   protected readonly logger = new Logger(BillingPriceService.name);
   constructor(
     private readonly stripeSubscriptionService: StripeSubscriptionService,
-    @InjectRepository(BillingPrice)
-    private readonly billingPriceRepository: Repository<BillingPrice>,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
   ) {}
 
   async getBillingThresholdsByMeterPriceId(meterPriceId: string) {
