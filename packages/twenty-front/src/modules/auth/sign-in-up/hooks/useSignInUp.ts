@@ -84,8 +84,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         },
       });
 
-      await requestFreshCaptchaToken();
-
       if (isDefined(error)) {
         return enqueueErrorSnackBar({ apolloError: error });
       }
