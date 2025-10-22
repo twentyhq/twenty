@@ -1,6 +1,24 @@
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
+import { DEFAULT_COMPANY_PAGE_LAYOUT } from '@/page-layout/constants/DefaultCompanyPageLayout';
+import { DEFAULT_NOTE_PAGE_LAYOUT } from '@/page-layout/constants/DefaultNotePageLayout';
+import { DEFAULT_OPPORTUNITY_PAGE_LAYOUT } from '@/page-layout/constants/DefaultOpportunityPageLayout';
 import { DEFAULT_PAGE_LAYOUT } from '@/page-layout/constants/DefaultPageLayout';
-import { DEFAULT_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
+import {
+  DEFAULT_COMPANY_PAGE_LAYOUT_ID,
+  DEFAULT_NOTE_PAGE_LAYOUT_ID,
+  DEFAULT_OPPORTUNITY_PAGE_LAYOUT_ID,
+  DEFAULT_PAGE_LAYOUT_ID,
+  DEFAULT_PERSON_PAGE_LAYOUT_ID,
+  DEFAULT_TASK_PAGE_LAYOUT_ID,
+  DEFAULT_WORKFLOW_PAGE_LAYOUT_ID,
+  DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID,
+  DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID,
+} from '@/page-layout/constants/DefaultPageLayoutId';
+import { DEFAULT_PERSON_PAGE_LAYOUT } from '@/page-layout/constants/DefaultPersonPageLayout';
+import { DEFAULT_TASK_PAGE_LAYOUT } from '@/page-layout/constants/DefaultTaskPageLayout';
+import { DEFAULT_WORKFLOW_PAGE_LAYOUT } from '@/page-layout/constants/DefaultWorkflowPageLayout';
+import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT } from '@/page-layout/constants/DefaultWorkflowRunPageLayout';
+import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT } from '@/page-layout/constants/DefaultWorkflowVersionPageLayout';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -26,7 +44,40 @@ export const PageLayoutInitializationQueryEffect = ({
 }: PageLayoutInitializationQueryEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const isDefaultLayout = pageLayoutId === DEFAULT_PAGE_LAYOUT_ID;
+  const getDefaultLayoutById = (layoutId: string): PageLayout => {
+    switch (layoutId) {
+      case DEFAULT_COMPANY_PAGE_LAYOUT_ID:
+        return DEFAULT_COMPANY_PAGE_LAYOUT;
+      case DEFAULT_PERSON_PAGE_LAYOUT_ID:
+        return DEFAULT_PERSON_PAGE_LAYOUT;
+      case DEFAULT_OPPORTUNITY_PAGE_LAYOUT_ID:
+        return DEFAULT_OPPORTUNITY_PAGE_LAYOUT;
+      case DEFAULT_NOTE_PAGE_LAYOUT_ID:
+        return DEFAULT_NOTE_PAGE_LAYOUT;
+      case DEFAULT_TASK_PAGE_LAYOUT_ID:
+        return DEFAULT_TASK_PAGE_LAYOUT;
+      case DEFAULT_WORKFLOW_PAGE_LAYOUT_ID:
+        return DEFAULT_WORKFLOW_PAGE_LAYOUT;
+      case DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID:
+        return DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT;
+      case DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID:
+        return DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT;
+      case DEFAULT_PAGE_LAYOUT_ID:
+      default:
+        return DEFAULT_PAGE_LAYOUT;
+    }
+  };
+
+  const isDefaultLayout =
+    pageLayoutId === DEFAULT_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_COMPANY_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_PERSON_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_OPPORTUNITY_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_NOTE_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_TASK_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_WORKFLOW_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID;
 
   const { data } = useQuery(FIND_ONE_PAGE_LAYOUT, {
     variables: {
@@ -36,7 +87,7 @@ export const PageLayoutInitializationQueryEffect = ({
   });
 
   const pageLayout: PageLayout | undefined = isDefaultLayout
-    ? DEFAULT_PAGE_LAYOUT
+    ? getDefaultLayoutById(pageLayoutId)
     : data?.getPageLayout
       ? transformPageLayout(data.getPageLayout)
       : undefined;

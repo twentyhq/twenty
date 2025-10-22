@@ -7,7 +7,13 @@ import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidg
 import { NoteWidget } from '@/page-layout/widgets/notes/components/NoteWidget';
 import { TaskWidget } from '@/page-layout/widgets/tasks/components/TaskWidget';
 import { TimelineWidget } from '@/page-layout/widgets/timeline/components/TimelineWidget';
-import { type PageLayoutWidget, WidgetType } from '~/generated/graphql';
+import { WorkflowRunWidget } from '@/page-layout/widgets/workflow/components/WorkflowRunWidget';
+import { WorkflowVersionWidget } from '@/page-layout/widgets/workflow/components/WorkflowVersionWidget';
+import { WorkflowWidget } from '@/page-layout/widgets/workflow/components/WorkflowWidget';
+import {
+  type PageLayoutWidget,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 type WidgetContentRendererProps = {
   widget: PageLayoutWidget;
@@ -43,6 +49,15 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.CALENDAR:
       return <CalendarWidget widget={widget} />;
+
+    case WidgetType.WORKFLOW:
+      return <WorkflowWidget widget={widget} />;
+
+    case WidgetType.WORKFLOW_VERSION:
+      return <WorkflowVersionWidget widget={widget} />;
+
+    case WidgetType.WORKFLOW_RUN:
+      return <WorkflowRunWidget widget={widget} />;
 
     default:
       return null;

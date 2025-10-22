@@ -1,19 +1,15 @@
-import { DEFAULT_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
+import { DEFAULT_PERSON_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
 /**
- * Default PageLayout used for custom objects when pageLayoutId equals DEFAULT_PAGE_LAYOUT_ID.
- * This is a generic fallback layout that includes all possible tabs:
- * Fields, Timeline, Tasks, Notes, Files, Emails, Calendar.
- *
- * Note: Standard objects (Company, Person, Opportunity, Note, Task) have their own
- * specific default layouts defined in separate files.
+ * Default Person PageLayout.
+ * Includes: Fields, Timeline, Tasks, Notes, Files, Emails, Calendar
  */
-export const DEFAULT_PAGE_LAYOUT: PageLayout = {
+export const DEFAULT_PERSON_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
-  id: DEFAULT_PAGE_LAYOUT_ID,
-  name: 'Default Record Layout',
+  id: DEFAULT_PERSON_PAGE_LAYOUT_ID,
+  name: 'Default Person Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
   createdAt: new Date().toISOString(),
@@ -23,20 +19,20 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
     // Fields tab (position 100)
     {
       __typename: 'PageLayoutTab',
-      id: 'default-tab-fields',
+      id: 'person-tab-fields',
       title: 'Fields',
       position: 100,
       layoutMode: 'vertical-list',
       selfDisplayMode: 'pinned-left',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'default-widget-fields',
-          pageLayoutTabId: 'default-tab-fields',
+          id: 'person-widget-fields',
+          pageLayoutTabId: 'person-tab-fields',
           title: 'Fields',
           type: WidgetType.FIELDS,
           objectMetadataId: null,
@@ -57,19 +53,19 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
     // Timeline tab (position 200)
     {
       __typename: 'PageLayoutTab',
-      id: 'default-tab-timeline',
+      id: 'person-tab-timeline',
       title: 'Timeline',
       position: 200,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'default-widget-timeline',
-          pageLayoutTabId: 'default-tab-timeline',
+          id: 'person-widget-timeline',
+          pageLayoutTabId: 'person-tab-timeline',
           title: 'Timeline',
           type: WidgetType.TIMELINE,
           objectMetadataId: null,
@@ -90,19 +86,19 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
     // Tasks tab (position 300)
     {
       __typename: 'PageLayoutTab',
-      id: 'default-tab-tasks',
+      id: 'person-tab-tasks',
       title: 'Tasks',
       position: 300,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'default-widget-tasks',
-          pageLayoutTabId: 'default-tab-tasks',
+          id: 'person-widget-tasks',
+          pageLayoutTabId: 'person-tab-tasks',
           title: 'Tasks',
           type: WidgetType.TASKS,
           objectMetadataId: null,
@@ -120,8 +116,8 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
         },
         {
           __typename: 'PageLayoutWidget',
-          id: 'default-widget-tasks-2',
-          pageLayoutTabId: 'default-tab-tasks',
+          id: 'person-widget-tasks-2',
+          pageLayoutTabId: 'person-tab-tasks',
           title: 'Tasks',
           type: WidgetType.TASKS,
           objectMetadataId: null,
@@ -142,19 +138,19 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
     // Notes tab (position 400)
     {
       __typename: 'PageLayoutTab',
-      id: 'default-tab-notes',
+      id: 'person-tab-notes',
       title: 'Notes',
       position: 400,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'default-widget-notes',
-          pageLayoutTabId: 'default-tab-notes',
+          id: 'person-widget-notes',
+          pageLayoutTabId: 'person-tab-notes',
           title: 'Notes',
           type: WidgetType.NOTES,
           objectMetadataId: null,
@@ -175,19 +171,19 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
     // Files tab (position 500)
     {
       __typename: 'PageLayoutTab',
-      id: 'default-tab-files',
+      id: 'person-tab-files',
       title: 'Files',
       position: 500,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'default-widget-files',
-          pageLayoutTabId: 'default-tab-files',
+          id: 'person-widget-files',
+          pageLayoutTabId: 'person-tab-files',
           title: 'Files',
           type: WidgetType.FILES,
           objectMetadataId: null,
@@ -208,19 +204,19 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
     // Emails tab (position 600)
     {
       __typename: 'PageLayoutTab',
-      id: 'default-tab-emails',
+      id: 'person-tab-emails',
       title: 'Emails',
       position: 600,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'default-widget-emails',
-          pageLayoutTabId: 'default-tab-emails',
+          id: 'person-widget-emails',
+          pageLayoutTabId: 'person-tab-emails',
           title: 'Emails',
           type: WidgetType.EMAILS,
           objectMetadataId: null,
@@ -241,19 +237,19 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
     // Calendar tab (position 700)
     {
       __typename: 'PageLayoutTab',
-      id: 'default-tab-calendar',
+      id: 'person-tab-calendar',
       title: 'Calendar',
       position: 700,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'default-widget-calendar',
-          pageLayoutTabId: 'default-tab-calendar',
+          id: 'person-widget-calendar',
+          pageLayoutTabId: 'person-tab-calendar',
           title: 'Calendar',
           type: WidgetType.CALENDAR,
           objectMetadataId: null,
