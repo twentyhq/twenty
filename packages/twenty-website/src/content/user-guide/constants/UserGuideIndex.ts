@@ -1,6 +1,7 @@
 export const USER_GUIDE_INDEX = {
   'User Guide': {
     'Getting Started': [
+      { fileName: 'user-guide' },
       { fileName: 'getting-started' },
       { fileName: 'what-is-twenty' },
       { fileName: 'create-workspace' },
