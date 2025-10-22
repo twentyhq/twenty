@@ -256,8 +256,8 @@ export type AuthTokens = {
   tokens: AuthTokenPair;
 };
 
-export type AuthorizeApp = {
-  __typename?: 'AuthorizeApp';
+export type AuthorizeAppOutput = {
+  __typename?: 'AuthorizeAppOutput';
   redirectUrl: Scalars['String'];
 };
 
@@ -750,7 +750,7 @@ export type CreateAgentInput = {
   roleId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type CreateApiKeyDto = {
+export type CreateApiKeyInput = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
@@ -955,7 +955,7 @@ export type CreateViewSortInput = {
   viewId: Scalars['UUID'];
 };
 
-export type CreateWebhookDto = {
+export type CreateWebhookInput = {
   description?: InputMaybe<Scalars['String']>;
   operations: Array<Scalars['String']>;
   secret?: InputMaybe<Scalars['String']>;
@@ -1096,7 +1096,7 @@ export type DeleteViewGroupInput = {
   id: Scalars['UUID'];
 };
 
-export type DeleteWebhookDto = {
+export type DeleteWebhookInput = {
   id: Scalars['UUID'];
 };
 
@@ -1180,8 +1180,8 @@ export type EmailAccountConnectionParameters = {
   SMTP?: InputMaybe<ConnectionParameters>;
 };
 
-export type EmailPasswordResetLink = {
-  __typename?: 'EmailPasswordResetLink';
+export type EmailPasswordResetLinkOutput = {
+  __typename?: 'EmailPasswordResetLinkOutput';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
@@ -1432,7 +1432,7 @@ export type GaugeChartConfiguration = {
   graphType: GraphType;
 };
 
-export type GetApiKeyDto = {
+export type GetApiKeyInput = {
   id: Scalars['UUID'];
 };
 
@@ -1461,7 +1461,7 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String'];
 };
 
-export type GetWebhookDto = {
+export type GetWebhookInput = {
   id: Scalars['UUID'];
 };
 
@@ -1644,8 +1644,8 @@ export type InitiateTwoFactorAuthenticationProvisioningOutput = {
   uri: Scalars['String'];
 };
 
-export type InvalidatePassword = {
-  __typename?: 'InvalidatePassword';
+export type InvalidatePasswordOutput = {
+  __typename?: 'InvalidatePasswordOutput';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
@@ -1708,8 +1708,8 @@ export type Location = {
   lng?: Maybe<Scalars['Float']>;
 };
 
-export type LoginToken = {
-  __typename?: 'LoginToken';
+export type LoginTokenOutput = {
+  __typename?: 'LoginTokenOutput';
   loginToken: AuthToken;
 };
 
@@ -1733,7 +1733,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
-  authorizeApp: AuthorizeApp;
+  authorizeApp: AuthorizeAppOutput;
   cancelSwitchBillingInterval: BillingUpdateOutput;
   cancelSwitchBillingPlan: BillingUpdateOutput;
   cancelSwitchMeteredPrice: BillingUpdateOutput;
@@ -1822,16 +1822,16 @@ export type Mutation = {
   disablePostgresProxy: PostgresCredentials;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   editSSOIdentityProvider: EditSsoOutput;
-  emailPasswordResetLink: EmailPasswordResetLink;
+  emailPasswordResetLink: EmailPasswordResetLinkOutput;
   enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
-  generateTransientToken: TransientToken;
+  generateTransientToken: TransientTokenOutput;
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
-  getLoginTokenFromCredentials: LoginToken;
+  getLoginTokenFromCredentials: LoginTokenOutput;
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
@@ -1890,7 +1890,7 @@ export type Mutation = {
   updatePageLayoutTab: PageLayoutTab;
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
-  updatePasswordViaResetToken: InvalidatePassword;
+  updatePasswordViaResetToken: InvalidatePasswordOutput;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
@@ -1970,7 +1970,7 @@ export type MutationCreateAgentHandoffArgs = {
 
 
 export type MutationCreateApiKeyArgs = {
-  input: CreateApiKeyDto;
+  input: CreateApiKeyInput;
 };
 
 
@@ -2126,7 +2126,7 @@ export type MutationCreateSamlIdentityProviderArgs = {
 
 
 export type MutationCreateWebhookArgs = {
-  input: CreateWebhookDto;
+  input: CreateWebhookInput;
 };
 
 
@@ -2282,7 +2282,7 @@ export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
 
 
 export type MutationDeleteWebhookArgs = {
-  input: DeleteWebhookDto;
+  input: DeleteWebhookInput;
 };
 
 
@@ -2482,7 +2482,7 @@ export type MutationRetryJobsArgs = {
 
 
 export type MutationRevokeApiKeyArgs = {
-  input: RevokeApiKeyDto;
+  input: RevokeApiKeyInput;
 };
 
 
@@ -2580,7 +2580,7 @@ export type MutationUnsyncRemoteTableArgs = {
 
 
 export type MutationUpdateApiKeyArgs = {
-  input: UpdateApiKeyDto;
+  input: UpdateApiKeyInput;
 };
 
 
@@ -2711,7 +2711,7 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 
 
 export type MutationUpdateWebhookArgs = {
-  input: UpdateWebhookDto;
+  input: UpdateWebhookInput;
 };
 
 
@@ -3130,7 +3130,7 @@ export type Query = {
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
   checkUserExists: CheckUserExistOutput;
-  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
+  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   currentUser: User;
   currentWorkspace: Workspace;
   field: Field;
@@ -3203,7 +3203,7 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   search: SearchResultConnection;
-  validatePasswordResetToken: ValidatePasswordResetToken;
+  validatePasswordResetToken: ValidatePasswordResetTokenOutput;
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
@@ -3226,7 +3226,7 @@ export type QueryAgentChatThreadsArgs = {
 
 
 export type QueryApiKeyArgs = {
-  input: GetApiKeyDto;
+  input: GetApiKeyInput;
 };
 
 
@@ -3545,7 +3545,7 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 
 export type QueryWebhookArgs = {
-  input: GetWebhookDto;
+  input: GetWebhookInput;
 };
 
 export type QueueJob = {
@@ -3683,7 +3683,7 @@ export type RetryJobsResponse = {
   retriedCount: Scalars['Int'];
 };
 
-export type RevokeApiKeyDto = {
+export type RevokeApiKeyInput = {
   id: Scalars['UUID'];
 };
 
@@ -4019,8 +4019,8 @@ export type TimelineThreadsWithTotal = {
   totalNumberOfThreads: Scalars['Int'];
 };
 
-export type TransientToken = {
-  __typename?: 'TransientToken';
+export type TransientTokenOutput = {
+  __typename?: 'TransientTokenOutput';
   transientToken: AuthToken;
 };
 
@@ -4072,7 +4072,7 @@ export type UpdateAgentInput = {
   roleId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type UpdateApiKeyDto = {
+export type UpdateApiKeyInput = {
   expiresAt?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
@@ -4322,7 +4322,7 @@ export type UpdateViewSortInput = {
   viewId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type UpdateWebhookDto = {
+export type UpdateWebhookInput = {
   description?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   operations?: InputMaybe<Array<Scalars['String']>>;
@@ -4470,8 +4470,8 @@ export type ValidateApprovedAccessDomainInput = {
   validationToken: Scalars['String'];
 };
 
-export type ValidatePasswordResetToken = {
-  __typename?: 'ValidatePasswordResetToken';
+export type ValidatePasswordResetTokenOutput = {
+  __typename?: 'ValidatePasswordResetTokenOutput';
   email: Scalars['String'];
   id: Scalars['UUID'];
 };
@@ -4731,8 +4731,8 @@ export type WorkspaceInvitation = {
   id: Scalars['UUID'];
 };
 
-export type WorkspaceInviteHashValid = {
-  __typename?: 'WorkspaceInviteHashValid';
+export type WorkspaceInviteHashValidOutput = {
+  __typename?: 'WorkspaceInviteHashValidOutput';
   isValid: Scalars['Boolean'];
 };
 
@@ -4960,7 +4960,7 @@ export type AuthorizeAppMutationVariables = Exact<{
 }>;
 
 
-export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __typename?: 'AuthorizeApp', redirectUrl: string } };
+export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __typename?: 'AuthorizeAppOutput', redirectUrl: string } };
 
 export type EmailPasswordResetLinkMutationVariables = Exact<{
   email: Scalars['String'];
@@ -4968,7 +4968,7 @@ export type EmailPasswordResetLinkMutationVariables = Exact<{
 }>;
 
 
-export type EmailPasswordResetLinkMutation = { __typename?: 'Mutation', emailPasswordResetLink: { __typename?: 'EmailPasswordResetLink', success: boolean } };
+export type EmailPasswordResetLinkMutation = { __typename?: 'Mutation', emailPasswordResetLink: { __typename?: 'EmailPasswordResetLinkOutput', success: boolean } };
 
 export type GenerateApiKeyTokenMutationVariables = Exact<{
   apiKeyId: Scalars['UUID'];
@@ -4981,7 +4981,7 @@ export type GenerateApiKeyTokenMutation = { __typename?: 'Mutation', generateApi
 export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientToken', transientToken: { __typename?: 'AuthToken', token: string } } };
+export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientTokenOutput', transientToken: { __typename?: 'AuthToken', token: string } } };
 
 export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
   loginToken: Scalars['String'];
@@ -5016,7 +5016,7 @@ export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
 }>;
 
 
-export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', getLoginTokenFromCredentials: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', getLoginTokenFromCredentials: { __typename?: 'LoginTokenOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type GetLoginTokenFromEmailVerificationTokenMutationVariables = Exact<{
   emailVerificationToken: Scalars['String'];
@@ -5125,7 +5125,7 @@ export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePassword', success: boolean } };
+export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePasswordOutput', success: boolean } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -5147,7 +5147,7 @@ export type ValidatePasswordResetTokenQueryVariables = Exact<{
 }>;
 
 
-export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string } };
+export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetTokenOutput', id: string, email: string } };
 
 export type BillingPriceLicensedFragmentFragment = { __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType };
 
@@ -5502,49 +5502,49 @@ export type AssignRoleToApiKeyMutationVariables = Exact<{
 export type AssignRoleToApiKeyMutation = { __typename?: 'Mutation', assignRoleToApiKey: boolean };
 
 export type CreateApiKeyMutationVariables = Exact<{
-  input: CreateApiKeyDto;
+  input: CreateApiKeyInput;
 }>;
 
 
 export type CreateApiKeyMutation = { __typename?: 'Mutation', createApiKey: { __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } } };
 
 export type CreateWebhookMutationVariables = Exact<{
-  input: CreateWebhookDto;
+  input: CreateWebhookInput;
 }>;
 
 
 export type CreateWebhookMutation = { __typename?: 'Mutation', createWebhook: { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string } };
 
 export type DeleteWebhookMutationVariables = Exact<{
-  input: DeleteWebhookDto;
+  input: DeleteWebhookInput;
 }>;
 
 
 export type DeleteWebhookMutation = { __typename?: 'Mutation', deleteWebhook: boolean };
 
 export type RevokeApiKeyMutationVariables = Exact<{
-  input: RevokeApiKeyDto;
+  input: RevokeApiKeyInput;
 }>;
 
 
 export type RevokeApiKeyMutation = { __typename?: 'Mutation', revokeApiKey?: { __typename?: 'ApiKey', id: string } | null };
 
 export type UpdateApiKeyMutationVariables = Exact<{
-  input: UpdateApiKeyDto;
+  input: UpdateApiKeyInput;
 }>;
 
 
 export type UpdateApiKeyMutation = { __typename?: 'Mutation', updateApiKey?: { __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } } | null };
 
 export type UpdateWebhookMutationVariables = Exact<{
-  input: UpdateWebhookDto;
+  input: UpdateWebhookInput;
 }>;
 
 
 export type UpdateWebhookMutation = { __typename?: 'Mutation', updateWebhook?: { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string } | null };
 
 export type GetApiKeyQueryVariables = Exact<{
-  input: GetApiKeyDto;
+  input: GetApiKeyInput;
 }>;
 
 
@@ -5556,7 +5556,7 @@ export type GetApiKeysQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetApiKeysQuery = { __typename?: 'Query', apiKeys: Array<{ __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } }> };
 
 export type GetWebhookQueryVariables = Exact<{
-  input: GetWebhookDto;
+  input: GetWebhookInput;
 }>;
 
 
@@ -10607,7 +10607,7 @@ export type AssignRoleToApiKeyMutationHookResult = ReturnType<typeof useAssignRo
 export type AssignRoleToApiKeyMutationResult = Apollo.MutationResult<AssignRoleToApiKeyMutation>;
 export type AssignRoleToApiKeyMutationOptions = Apollo.BaseMutationOptions<AssignRoleToApiKeyMutation, AssignRoleToApiKeyMutationVariables>;
 export const CreateApiKeyDocument = gql`
-    mutation CreateApiKey($input: CreateApiKeyDTO!) {
+    mutation CreateApiKey($input: CreateApiKeyInput!) {
   createApiKey(input: $input) {
     ...ApiKeyFragment
   }
@@ -10640,7 +10640,7 @@ export type CreateApiKeyMutationHookResult = ReturnType<typeof useCreateApiKeyMu
 export type CreateApiKeyMutationResult = Apollo.MutationResult<CreateApiKeyMutation>;
 export type CreateApiKeyMutationOptions = Apollo.BaseMutationOptions<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
 export const CreateWebhookDocument = gql`
-    mutation CreateWebhook($input: CreateWebhookDTO!) {
+    mutation CreateWebhook($input: CreateWebhookInput!) {
   createWebhook(input: $input) {
     ...WebhookFragment
   }
@@ -10673,7 +10673,7 @@ export type CreateWebhookMutationHookResult = ReturnType<typeof useCreateWebhook
 export type CreateWebhookMutationResult = Apollo.MutationResult<CreateWebhookMutation>;
 export type CreateWebhookMutationOptions = Apollo.BaseMutationOptions<CreateWebhookMutation, CreateWebhookMutationVariables>;
 export const DeleteWebhookDocument = gql`
-    mutation DeleteWebhook($input: DeleteWebhookDTO!) {
+    mutation DeleteWebhook($input: DeleteWebhookInput!) {
   deleteWebhook(input: $input)
 }
     `;
@@ -10704,7 +10704,7 @@ export type DeleteWebhookMutationHookResult = ReturnType<typeof useDeleteWebhook
 export type DeleteWebhookMutationResult = Apollo.MutationResult<DeleteWebhookMutation>;
 export type DeleteWebhookMutationOptions = Apollo.BaseMutationOptions<DeleteWebhookMutation, DeleteWebhookMutationVariables>;
 export const RevokeApiKeyDocument = gql`
-    mutation RevokeApiKey($input: RevokeApiKeyDTO!) {
+    mutation RevokeApiKey($input: RevokeApiKeyInput!) {
   revokeApiKey(input: $input) {
     id
   }
@@ -10737,7 +10737,7 @@ export type RevokeApiKeyMutationHookResult = ReturnType<typeof useRevokeApiKeyMu
 export type RevokeApiKeyMutationResult = Apollo.MutationResult<RevokeApiKeyMutation>;
 export type RevokeApiKeyMutationOptions = Apollo.BaseMutationOptions<RevokeApiKeyMutation, RevokeApiKeyMutationVariables>;
 export const UpdateApiKeyDocument = gql`
-    mutation UpdateApiKey($input: UpdateApiKeyDTO!) {
+    mutation UpdateApiKey($input: UpdateApiKeyInput!) {
   updateApiKey(input: $input) {
     ...ApiKeyFragment
   }
@@ -10770,7 +10770,7 @@ export type UpdateApiKeyMutationHookResult = ReturnType<typeof useUpdateApiKeyMu
 export type UpdateApiKeyMutationResult = Apollo.MutationResult<UpdateApiKeyMutation>;
 export type UpdateApiKeyMutationOptions = Apollo.BaseMutationOptions<UpdateApiKeyMutation, UpdateApiKeyMutationVariables>;
 export const UpdateWebhookDocument = gql`
-    mutation UpdateWebhook($input: UpdateWebhookDTO!) {
+    mutation UpdateWebhook($input: UpdateWebhookInput!) {
   updateWebhook(input: $input) {
     ...WebhookFragment
   }
@@ -10803,7 +10803,7 @@ export type UpdateWebhookMutationHookResult = ReturnType<typeof useUpdateWebhook
 export type UpdateWebhookMutationResult = Apollo.MutationResult<UpdateWebhookMutation>;
 export type UpdateWebhookMutationOptions = Apollo.BaseMutationOptions<UpdateWebhookMutation, UpdateWebhookMutationVariables>;
 export const GetApiKeyDocument = gql`
-    query GetApiKey($input: GetApiKeyDTO!) {
+    query GetApiKey($input: GetApiKeyInput!) {
   apiKey(input: $input) {
     ...ApiKeyFragment
     createdAt
@@ -10873,7 +10873,7 @@ export type GetApiKeysQueryHookResult = ReturnType<typeof useGetApiKeysQuery>;
 export type GetApiKeysLazyQueryHookResult = ReturnType<typeof useGetApiKeysLazyQuery>;
 export type GetApiKeysQueryResult = Apollo.QueryResult<GetApiKeysQuery, GetApiKeysQueryVariables>;
 export const GetWebhookDocument = gql`
-    query GetWebhook($input: GetWebhookDTO!) {
+    query GetWebhook($input: GetWebhookInput!) {
   webhook(input: $input) {
     ...WebhookFragment
   }

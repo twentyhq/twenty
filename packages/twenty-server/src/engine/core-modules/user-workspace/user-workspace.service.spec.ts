@@ -5,7 +5,7 @@ import { type DataSource, type Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { type ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { type ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -16,22 +16,21 @@ import {
   type SignedFilesResult,
 } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
-  let userWorkspaceRepository: Repository<UserWorkspace>;
-  let userRepository: Repository<User>;
+  let userWorkspaceRepository: Repository<UserWorkspaceEntity>;
+  let userRepository: Repository<UserEntity>;
   let workspaceInvitationService: WorkspaceInvitationService;
   let approvedAccessDomainService: ApprovedAccessDomainService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -44,7 +43,7 @@ describe('UserWorkspaceService', () => {
       providers: [
         UserWorkspaceService,
         {
-          provide: getRepositoryToken(UserWorkspace),
+          provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: {
             create: jest.fn(),
             save: jest.fn(),
@@ -56,7 +55,7 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -132,8 +131,10 @@ describe('UserWorkspaceService', () => {
 
     service = module.get<UserWorkspaceService>(UserWorkspaceService);
     fileService = module.get<FileService>(FileService);
-    userWorkspaceRepository = module.get(getRepositoryToken(UserWorkspace));
-    userRepository = module.get(getRepositoryToken(User));
+    userWorkspaceRepository = module.get(
+      getRepositoryToken(UserWorkspaceEntity),
+    );
+    userRepository = module.get(getRepositoryToken(UserEntity));
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
     );
@@ -155,7 +156,10 @@ describe('UserWorkspaceService', () => {
     it("should create a user workspace with a default avatar url if it's an existing user with a user workspace having a default avatar url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+      const userWorkspace = {
+        userId,
+        workspaceId,
+      } as UserWorkspaceEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -165,7 +169,7 @@ describe('UserWorkspaceService', () => {
         .mockResolvedValue(userWorkspace);
       jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue({
         defaultAvatarUrl: 'path/to/file',
-      } as UserWorkspace);
+      } as UserWorkspaceEntity);
       jest
         .spyOn(fileService, 'copyFileFromWorkspaceToWorkspace')
         .mockResolvedValue(['', 'path/to', 'copy']);
@@ -188,7 +192,10 @@ describe('UserWorkspaceService', () => {
     it("should create a user workspace without a default avatar url if it's an existing user without any user workspace having a default avatar url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+      const userWorkspace = {
+        userId,
+        workspaceId,
+      } as UserWorkspaceEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -216,7 +223,10 @@ describe('UserWorkspaceService', () => {
     it("should create a user workspace with a default avatar url if it's a new user with a picture url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+      const userWorkspace = {
+        userId,
+        workspaceId,
+      } as UserWorkspaceEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -252,7 +262,10 @@ describe('UserWorkspaceService', () => {
     it("should create a user workspace without a default avatar url if it's a new user without a picture url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+      const userWorkspace = {
+        userId,
+        workspaceId,
+      } as unknown as UserWorkspaceEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -275,7 +288,10 @@ describe('UserWorkspaceService', () => {
     it("should create a user workspace without a default avatar url if it's a new user with an empty picture url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+      const userWorkspace = {
+        userId,
+        workspaceId,
+      } as unknown as UserWorkspaceEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -319,7 +335,7 @@ describe('UserWorkspaceService', () => {
         lastName: 'Doe',
         defaultAvatarUrl: 'avatar-url',
         locale: 'en',
-      } as User;
+      } as UserEntity;
       const mainDataSource = {
         query: jest.fn(),
       } as unknown as DataSource;
@@ -347,7 +363,7 @@ describe('UserWorkspaceService', () => {
 
       jest.spyOn(userWorkspaceRepository, 'findOneOrFail').mockResolvedValue({
         defaultAvatarUrl: 'userWorkspace-avatar-url',
-      } as UserWorkspace);
+      } as UserWorkspaceEntity);
 
       await service.createWorkspaceMember(workspaceId, user);
 
@@ -370,16 +386,16 @@ describe('UserWorkspaceService', () => {
       const user = {
         id: 'user-id',
         email: 'test@example.com',
-      } as User;
+      } as UserEntity;
       const workspace = {
         id: 'workspace-id',
         defaultRoleId: 'default-role-id',
-      } as Workspace;
+      } as WorkspaceEntity;
       const userWorkspace = {
         id: 'user-workspace-id',
         userId: user.id,
         workspaceId: workspace.id,
-      } as UserWorkspace;
+      } as UserWorkspaceEntity;
 
       jest.spyOn(service, 'checkUserWorkspaceExists').mockResolvedValue(null);
       jest.spyOn(service, 'create').mockResolvedValue(userWorkspace);
@@ -420,16 +436,16 @@ describe('UserWorkspaceService', () => {
       const user = {
         id: 'user-id',
         email: 'test@example.com',
-      } as User;
+      } as UserEntity;
       const workspace = {
         id: 'workspace-id',
         defaultRoleId: 'default-role-id',
-      } as Workspace;
+      } as WorkspaceEntity;
       const userWorkspace = {
         id: 'user-workspace-id',
         userId: user.id,
         workspaceId: workspace.id,
-      } as UserWorkspace;
+      } as UserWorkspaceEntity;
 
       jest
         .spyOn(service, 'checkUserWorkspaceExists')
@@ -451,14 +467,16 @@ describe('UserWorkspaceService', () => {
       const user = {
         id: 'user-id',
         email: 'test@example.com',
-      } as User;
+      } as UserEntity;
       const workspace = {
         id: 'workspace-id',
         defaultRoleId: undefined,
-      } as unknown as Workspace;
+      } as unknown as WorkspaceEntity;
 
       jest.spyOn(service, 'checkUserWorkspaceExists').mockResolvedValue(null);
-      jest.spyOn(service, 'create').mockResolvedValue({} as UserWorkspace);
+      jest
+        .spyOn(service, 'create')
+        .mockResolvedValue({} as UserWorkspaceEntity);
       jest.spyOn(service, 'createWorkspaceMember').mockResolvedValue(undefined);
 
       await expect(
@@ -487,7 +505,10 @@ describe('UserWorkspaceService', () => {
     it('should check if a user workspace exists', async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+      const userWorkspace = {
+        userId,
+        workspaceId,
+      } as unknown as UserWorkspaceEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'findOneBy')
@@ -574,13 +595,13 @@ describe('UserWorkspaceService', () => {
             status: 'Inactive',
           },
         ],
-      } as unknown as Workspace;
+      } as unknown as WorkspaceEntity;
       const workspace2 = {
         id: 'workspace-id-2',
         displayName: 'Workspace 2',
         logo: 'logo2.png',
         workspaceSSOIdentityProviders: [],
-      } as unknown as Workspace;
+      } as unknown as WorkspaceEntity;
       const user = {
         email,
         userWorkspaces: [
@@ -593,7 +614,7 @@ describe('UserWorkspaceService', () => {
             workspace: workspace2,
           },
         ],
-      } as User;
+      } as UserEntity;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
       jest
@@ -654,13 +675,13 @@ describe('UserWorkspaceService', () => {
             status: 'Inactive',
           },
         ],
-      } as unknown as Workspace;
+      } as unknown as WorkspaceEntity;
       const workspace2 = {
         id: 'workspace-id-2',
         displayName: 'Workspace 2',
         logo: 'logo2.png',
         workspaceSSOIdentityProviders: [],
-      } as unknown as Workspace;
+      } as unknown as WorkspaceEntity;
 
       const user = {
         email,
@@ -670,7 +691,7 @@ describe('UserWorkspaceService', () => {
             workspace: workspace1,
           },
         ],
-      } as User;
+      } as UserEntity;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
       jest
@@ -684,7 +705,7 @@ describe('UserWorkspaceService', () => {
             workspaceId: workspace2.id,
             workspace: workspace2,
             isValidated: true,
-          } as unknown as ApprovedAccessDomain,
+          } as unknown as ApprovedAccessDomainEntity,
         ]);
 
       jest
@@ -720,7 +741,7 @@ describe('UserWorkspaceService', () => {
         displayName: 'Workspace 1',
         logo: 'logo1.png',
         workspaceSSOIdentityProviders: [],
-      } as unknown as Workspace;
+      } as unknown as WorkspaceEntity;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
@@ -735,7 +756,7 @@ describe('UserWorkspaceService', () => {
             workspaceId: workspace1.id,
             workspace: workspace1,
             isValidated: true,
-          } as unknown as ApprovedAccessDomain,
+          } as unknown as ApprovedAccessDomainEntity,
         ]);
 
       jest
@@ -757,15 +778,15 @@ describe('UserWorkspaceService', () => {
       const workspace1 = {
         id: 'workspace-id',
         createdAt: '2025-01-02T00:00:00.000Z',
-      } as unknown as Workspace;
+      } as unknown as WorkspaceEntity;
       const workspace2 = {
         id: 'workspace-id-2',
         createdAt: '2025-01-01T00:00:00.000Z',
-      } as unknown as Workspace;
+      } as unknown as WorkspaceEntity;
       const user = {
         id: userId,
         userWorkspaces: [{ workspace: workspace1 }, { workspace: workspace2 }],
-      } as unknown as User;
+      } as unknown as UserEntity;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
 
@@ -792,7 +813,7 @@ describe('UserWorkspaceService', () => {
       const user = {
         id: userId,
         workspaces: [],
-      } as unknown as User;
+      } as unknown as UserEntity;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
 
@@ -806,7 +827,10 @@ describe('UserWorkspaceService', () => {
     it('should get a user workspace or throw', async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
-      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+      const userWorkspace = {
+        userId,
+        workspaceId,
+      } as unknown as UserWorkspaceEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'findOne')
@@ -845,7 +869,7 @@ describe('UserWorkspaceService', () => {
       const workspaceId = 'workspace-id';
       const workspaceMember = {
         id: workspaceMemberId,
-      } as WorkspaceMemberWorkspaceEntity;
+      } as WorkspaceEntity;
       const workspaceMemberRepository = {
         findOne: jest.fn().mockResolvedValue(workspaceMember),
       };

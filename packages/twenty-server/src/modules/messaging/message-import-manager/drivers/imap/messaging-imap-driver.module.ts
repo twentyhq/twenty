@@ -2,7 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -26,7 +26,7 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     HttpModule,
     ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     MessagingCommonModule,
-    TypeOrmModule.forFeature([FeatureFlag]),
+    TypeOrmModule.forFeature([FeatureFlagEntity]),
     EmailAliasManagerModule,
     FeatureFlagModule,
     WorkspaceDataSourceModule,

@@ -17,7 +17,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
@@ -50,7 +50,7 @@ import {
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
 @UsePipes(ResolverValidationPipe)
@@ -75,14 +75,16 @@ export class RoleResolver {
   ) {}
 
   @Query(() => [RoleDTO])
-  async getRoles(@AuthWorkspace() workspace: Workspace): Promise<RoleDTO[]> {
+  async getRoles(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<RoleDTO[]> {
     return this.roleService.getWorkspaceRoles(workspace.id);
   }
 
   @Mutation(() => WorkspaceMemberDTO)
   @UseGuards(UserAuthGuard)
   async updateWorkspaceMemberRole(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workspaceMemberId', { type: () => UUIDScalarType })
     workspaceMemberId: string,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
@@ -136,7 +138,7 @@ export class RoleResolver {
 
   @Mutation(() => RoleDTO)
   async createOneRole(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('createRoleInput') createRoleInput: CreateRoleInput,
   ): Promise<RoleDTO> {
     return await this.roleService.createRole({
@@ -147,7 +149,7 @@ export class RoleResolver {
 
   @Mutation(() => RoleDTO)
   async updateOneRole(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
   ): Promise<RoleDTO> {
     const role = await this.roleService.updateRole({
@@ -160,7 +162,7 @@ export class RoleResolver {
 
   @Mutation(() => String)
   async deleteOneRole(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
   ): Promise<string> {
     const deletedRoleId = await this.roleService.deleteRole(
@@ -173,7 +175,7 @@ export class RoleResolver {
 
   @Mutation(() => [ObjectPermissionDTO])
   async upsertObjectPermissions(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('upsertObjectPermissionsInput')
     upsertObjectPermissionsInput: UpsertObjectPermissionsInput,
   ): Promise<ObjectPermissionDTO[]> {
@@ -185,7 +187,7 @@ export class RoleResolver {
 
   @Mutation(() => [PermissionFlagDTO])
   async upsertPermissionFlags(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('upsertPermissionFlagsInput')
     upsertPermissionFlagsInput: UpsertPermissionFlagsInput,
   ): Promise<PermissionFlagDTO[]> {
@@ -197,7 +199,7 @@ export class RoleResolver {
 
   @Mutation(() => [FieldPermissionDTO])
   async upsertFieldPermissions(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('upsertFieldPermissionsInput')
     upsertFieldPermissionsInput: UpsertFieldPermissionsInput,
   ): Promise<FieldPermissionDTO[]> {
@@ -212,7 +214,7 @@ export class RoleResolver {
   async assignRoleToAgent(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     await this.agentRoleService.assignRoleToAgent({
       agentId,
@@ -227,7 +229,7 @@ export class RoleResolver {
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async removeRoleFromAgent(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     await this.agentRoleService.removeRoleFromAgent({
       agentId,
@@ -240,7 +242,7 @@ export class RoleResolver {
   @ResolveField('workspaceMembers', () => [WorkspaceMemberDTO])
   async getWorkspaceMembersAssignedToRole(
     @Parent() role: RoleDTO,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WorkspaceMemberWorkspaceEntity[]> {
     const workspaceMembers =
       await this.userRoleService.getWorkspaceMembersAssignedToRole(
@@ -254,7 +256,7 @@ export class RoleResolver {
   @ResolveField('agents', () => [AgentDTO])
   async getAgentsAssignedToRole(
     @Parent() role: RoleDTO,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO[]> {
     const agents = await this.agentRoleService.getAgentsAssignedToRole(
       role.id,
@@ -270,7 +272,7 @@ export class RoleResolver {
   @ResolveField('apiKeys', () => [ApiKeyForRoleDTO])
   async getApiKeysAssignedToRole(
     @Parent() role: RoleDTO,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ApiKeyForRoleDTO[]> {
     const apiKeys = await this.apiKeyRoleService.getApiKeysAssignedToRole(
       role.id,

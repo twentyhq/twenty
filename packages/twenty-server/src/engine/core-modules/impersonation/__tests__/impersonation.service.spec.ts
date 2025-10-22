@@ -13,8 +13,8 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 const UserWorkspaceFindOneMock = jest.fn();
@@ -37,13 +37,13 @@ describe('ImpersonationService', () => {
       providers: [
         ImpersonationService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: jest.fn(), // Not used but required by constructor
           },
         },
         {
-          provide: getRepositoryToken(UserWorkspace),
+          provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: {
             findOne: UserWorkspaceFindOneMock,
           },

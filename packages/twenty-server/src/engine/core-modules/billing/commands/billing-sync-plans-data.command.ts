@@ -11,9 +11,9 @@ import {
   type MigrationCommandOptions,
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
-import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
@@ -29,12 +29,12 @@ import { transformStripeProductToDatabaseProduct } from 'src/engine/core-modules
 export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
   private readonly batchSize = 5;
   constructor(
-    @InjectRepository(BillingPrice)
-    private readonly billingPriceRepository: Repository<BillingPrice>,
-    @InjectRepository(BillingProduct)
-    private readonly billingProductRepository: Repository<BillingProduct>,
-    @InjectRepository(BillingMeter)
-    private readonly billingMeterRepository: Repository<BillingMeter>,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
+    @InjectRepository(BillingProductEntity)
+    private readonly billingProductRepository: Repository<BillingProductEntity>,
+    @InjectRepository(BillingMeterEntity)
+    private readonly billingMeterRepository: Repository<BillingMeterEntity>,
     private readonly stripeBillingMeterService: StripeBillingMeterService,
     private readonly stripeProductService: StripeProductService,
     private readonly stripePriceService: StripePriceService,

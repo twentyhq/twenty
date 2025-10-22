@@ -12,13 +12,13 @@ import {
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { type PostgresCredentialsDTO } from 'src/engine/core-modules/postgres-credentials/dtos/postgres-credentials.dto';
-import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
+import { PostgresCredentialsEntity } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 export class PostgresCredentialsService {
   constructor(
-    @InjectRepository(PostgresCredentials)
-    private readonly postgresCredentialsRepository: Repository<PostgresCredentials>,
+    @InjectRepository(PostgresCredentialsEntity)
+    private readonly postgresCredentialsRepository: Repository<PostgresCredentialsEntity>,
     private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 

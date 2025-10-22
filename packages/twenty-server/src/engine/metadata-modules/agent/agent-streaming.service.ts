@@ -11,7 +11,7 @@ import {
 import { type Response } from 'express';
 import { Repository } from 'typeorm';
 
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatMessageRole } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
@@ -25,7 +25,7 @@ import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metad
 export type StreamAgentChatOptions = {
   threadId: string;
   userWorkspaceId: string;
-  workspace: Workspace;
+  workspace: WorkspaceEntity;
   recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
   response: Response;
   messages: UIMessage<unknown, UIDataTypes, UITools>[];

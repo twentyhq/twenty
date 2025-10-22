@@ -5,7 +5,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -39,7 +39,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     FeatureFlagModule,
     FileStorageModule,
     WorkspaceSyncMetadataModule,
-    TypeOrmModule.forFeature([Workspace, ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity, ObjectMetadataEntity]),
     ObjectPermissionModule,
     WorkspacePermissionsCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

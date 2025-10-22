@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 
 describe('AppTokenService', () => {
   let service: AppTokenService;
@@ -12,7 +12,7 @@ describe('AppTokenService', () => {
       providers: [
         AppTokenService,
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppTokenEntity),
           useValue: {},
         },
       ],

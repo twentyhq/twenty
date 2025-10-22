@@ -17,12 +17,12 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(OnboardingStatus, {
   name: 'OnboardingStatus',
@@ -30,12 +30,12 @@ registerEnumType(OnboardingStatus, {
 });
 
 @Entity({ name: 'user', schema: 'core' })
-@ObjectType()
+@ObjectType('User')
 @Index('UQ_USER_EMAIL', ['email'], {
   unique: true,
   where: '"deletedAt" IS NULL',
 })
-export class User {
+export class UserEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -98,29 +98,32 @@ export class User {
   @Column({ nullable: false, default: SOURCE_LOCALE })
   locale: string;
 
-  @OneToMany(() => AppToken, (appToken) => appToken.user, {
+  @OneToMany(() => AppTokenEntity, (appToken) => appToken.user, {
     cascade: true,
   })
-  appTokens: Relation<AppToken[]>;
+  appTokens: Relation<AppTokenEntity[]>;
 
-  @OneToMany(() => KeyValuePair, (keyValuePair) => keyValuePair.user, {
+  @OneToMany(() => KeyValuePairEntity, (keyValuePair) => keyValuePair.user, {
     cascade: true,
   })
-  keyValuePairs: Relation<KeyValuePair[]>;
+  keyValuePairs: Relation<KeyValuePairEntity[]>;
 
   @Field(() => WorkspaceMemberDTO, { nullable: true })
   workspaceMember: Relation<WorkspaceMemberDTO>;
 
-  @Field(() => [UserWorkspace])
-  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
-  userWorkspaces: Relation<UserWorkspace[]>;
+  @Field(() => [UserWorkspaceEntity])
+  @OneToMany(
+    () => UserWorkspaceEntity,
+    (userWorkspace: UserWorkspaceEntity) => userWorkspace.user,
+  )
+  userWorkspaces: Relation<UserWorkspaceEntity[]>;
 
   @Field(() => OnboardingStatus, { nullable: true })
   onboardingStatus: OnboardingStatus;
 
-  @Field(() => Workspace, { nullable: true })
-  currentWorkspace?: Relation<Workspace>;
+  @Field(() => WorkspaceEntity, { nullable: true })
+  currentWorkspace?: Relation<WorkspaceEntity>;
 
-  @Field(() => UserWorkspace, { nullable: true })
-  currentUserWorkspace?: Relation<UserWorkspace>;
+  @Field(() => UserWorkspaceEntity, { nullable: true })
+  currentUserWorkspace?: Relation<UserWorkspaceEntity>;
 }

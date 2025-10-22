@@ -19,7 +19,7 @@ import { type PageLayoutDTO } from 'src/engine/core-modules/page-layout/dtos/pag
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutRestApiExceptionFilter } from 'src/engine/core-modules/page-layout/filters/page-layout-rest-api-exception.filter';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -31,7 +31,7 @@ export class PageLayoutController {
 
   @Get()
   async findMany(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<PageLayoutDTO[]> {
     if (isDefined(objectMetadataId)) {
@@ -47,7 +47,7 @@ export class PageLayoutController {
   @Get(':id')
   async findOne(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO | null> {
     return this.pageLayoutService.findByIdOrThrow(id, workspace.id);
   }
@@ -55,7 +55,7 @@ export class PageLayoutController {
   @Post()
   async create(
     @Body() input: CreatePageLayoutInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
     return this.pageLayoutService.create(input, workspace.id);
   }
@@ -64,7 +64,7 @@ export class PageLayoutController {
   async update(
     @Param('id') id: string,
     @Body() input: UpdatePageLayoutInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
     const updatedPageLayout = await this.pageLayoutService.update(
       id,
@@ -78,7 +78,7 @@ export class PageLayoutController {
   @Delete(':id')
   async delete(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutEntity> {
     const deletedPageLayout = await this.pageLayoutService.delete(
       id,

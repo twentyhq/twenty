@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
@@ -10,7 +10,8 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
 import { AgentChatController } from 'src/engine/metadata-modules/agent/agent-chat.controller';
@@ -54,7 +55,7 @@ import { AgentActorContextService } from './services/agent-actor-context.service
       AgentChatMessagePartEntity,
       AgentChatThreadEntity,
       FileEntity,
-      UserWorkspace,
+      UserWorkspaceEntity,
     ]),
     AiModule,
     AgentRoleModule,
@@ -70,6 +71,7 @@ import { AgentActorContextService } from './services/agent-actor-context.service
     TokenModule,
     WorkspaceDomainsModule,
     WorkflowToolsModule,
+    forwardRef(() => UserModule),
     UserWorkspaceModule,
     UserRoleModule,
   ],

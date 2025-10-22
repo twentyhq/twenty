@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -23,7 +23,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
   imports: [
     FileUploadModule,
     NestjsQueryTypeOrmModule.forFeature([ServerlessFunctionEntity]),
-    TypeOrmModule.forFeature([FeatureFlag]),
+    TypeOrmModule.forFeature([FeatureFlagEntity]),
     FileModule,
     ThrottlerModule,
     AuditModule,

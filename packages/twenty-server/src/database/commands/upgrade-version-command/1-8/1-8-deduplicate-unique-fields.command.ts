@@ -8,7 +8,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
@@ -35,8 +35,8 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   protected readonly logger = new Logger(DeduplicateUniqueFieldsCommand.name);
   constructor(
-    @InjectRepository(Workspace)
-    protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly indexMetadataService: IndexMetadataService,
     protected readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,

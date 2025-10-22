@@ -3,7 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/create-remote-server.input';
@@ -27,7 +27,7 @@ export class RemoteServerResolver {
   @Mutation(() => RemoteServerDTO)
   async createOneRemoteServer(
     @Args('input') input: CreateRemoteServerInput<RemoteServerType>,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.remoteServerService.createOneRemoteServer(
@@ -42,7 +42,7 @@ export class RemoteServerResolver {
   @Mutation(() => RemoteServerDTO)
   async updateOneRemoteServer(
     @Args('input') input: UpdateRemoteServerInput<RemoteServerType>,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.remoteServerService.updateOneRemoteServer(
@@ -57,7 +57,7 @@ export class RemoteServerResolver {
   @Mutation(() => RemoteServerDTO)
   async deleteOneRemoteServer(
     @Args('input') { id }: RemoteServerIdInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.remoteServerService.deleteOneRemoteServer(
@@ -72,7 +72,7 @@ export class RemoteServerResolver {
   @Query(() => RemoteServerDTO)
   async findOneRemoteServerById(
     @Args('input') { id }: RemoteServerIdInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.remoteServerService.findOneByIdWithinWorkspace(
@@ -88,7 +88,7 @@ export class RemoteServerResolver {
   async findManyRemoteServersByType(
     @Args('input')
     { foreignDataWrapperType }: RemoteServerTypeInput<RemoteServerType>,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.remoteServerService.findManyByTypeWithinWorkspace(

@@ -14,7 +14,7 @@ import {
 } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
 import {
   HTTPMethod,
-  RouteTrigger,
+  RouteTriggerEntity,
 } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
@@ -24,8 +24,8 @@ export class RouteTriggerService {
     private readonly accessTokenService: AccessTokenService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    @InjectRepository(RouteTrigger)
-    private readonly routeTriggerRepository: Repository<RouteTrigger>,
+    @InjectRepository(RouteTriggerEntity)
+    private readonly routeTriggerRepository: Repository<RouteTriggerEntity>,
   ) {}
 
   private async getOneRouteTriggerWithPathParamsOrFail({
@@ -35,7 +35,7 @@ export class RouteTriggerService {
     request: Request;
     httpMethod: HTTPMethod;
   }): Promise<{
-    routeTrigger: RouteTrigger;
+    routeTrigger: RouteTriggerEntity;
     pathParams: Partial<Record<string, string | string[]>>;
   }> {
     const host = `${request.protocol}://${request.get('host')}`;

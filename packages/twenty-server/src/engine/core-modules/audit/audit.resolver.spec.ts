@@ -4,8 +4,8 @@ import {
   AuditException,
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AuditResolver } from './audit.resolver';
 
@@ -55,8 +55,8 @@ describe('AuditResolver', () => {
     };
     const result = await resolver.trackAnalytics(
       input,
-      { id: 'workspace-1' } as Workspace,
-      { id: 'user-1' } as User,
+      { id: 'workspace-1' } as WorkspaceEntity,
+      { id: 'user-1' } as UserEntity,
     );
 
     expect(auditService.createContext).toHaveBeenCalledWith({
@@ -85,8 +85,8 @@ describe('AuditResolver', () => {
     };
     const result = await resolver.trackAnalytics(
       input,
-      { id: 'workspace-2' } as Workspace,
-      { id: 'user-2' } as User,
+      { id: 'workspace-2' } as WorkspaceEntity,
+      { id: 'user-2' } as UserEntity,
     );
 
     expect(auditService.createContext).toHaveBeenCalledWith({
@@ -120,8 +120,8 @@ describe('AuditResolver', () => {
 
     const result = await resolver.createObjectEvent(
       input,
-      { id: 'workspace-3' } as Workspace,
-      { id: 'user-3' } as User,
+      { id: 'workspace-3' } as WorkspaceEntity,
+      { id: 'user-3' } as UserEntity,
     );
 
     expect(auditService.createContext).toHaveBeenCalledWith({

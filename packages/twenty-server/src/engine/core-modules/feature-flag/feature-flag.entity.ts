@@ -14,12 +14,12 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'featureFlag', schema: 'core' })
-@ObjectType()
+@ObjectType('FeatureFlag')
 @Unique('IDX_FEATURE_FLAG_KEY_WORKSPACE_ID_UNIQUE', ['key', 'workspaceId'])
-export class FeatureFlag {
+export class FeatureFlagEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -32,10 +32,10 @@ export class FeatureFlag {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.featureFlags, {
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.featureFlags, {
     onDelete: 'CASCADE',
   })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 
   @Field()
   @Column({ nullable: false })

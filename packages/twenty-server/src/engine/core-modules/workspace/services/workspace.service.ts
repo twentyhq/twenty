@@ -25,11 +25,11 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
@@ -50,17 +50,17 @@ import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
-export class WorkspaceService extends TypeOrmQueryService<Workspace> {
+export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   private readonly featureLookUpKey = BillingEntitlementKey.CUSTOM_DOMAIN;
   protected readonly logger = new Logger(WorkspaceService.name);
 
   constructor(
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(UserWorkspace)
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -85,7 +85,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     userWorkspaceId,
     apiKey,
   }: {
-    payload: Partial<Workspace> & { id: string };
+    payload: Partial<WorkspaceEntity> & { id: string };
     userWorkspaceId?: string;
     apiKey?: string;
   }) {
@@ -180,8 +180,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   }
 
   async activateWorkspace(
-    user: User,
-    workspace: Workspace,
+    user: UserEntity,
+    workspace: WorkspaceEntity,
     data: ActivateWorkspaceInput,
   ) {
     if (!data.displayName || !data.displayName.length) {
@@ -228,7 +228,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
   }
 
-  async deleteMetadataSchemaCacheAndUserWorkspace(workspace: Workspace) {
+  async deleteMetadataSchemaCacheAndUserWorkspace(workspace: WorkspaceEntity) {
     await this.userWorkspaceRepository.delete({ workspaceId: workspace.id });
 
     if (this.billingService.isBillingEnabled()) {
@@ -346,7 +346,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     workspaceId,
     apiKey,
   }: {
-    payload: Partial<Workspace>;
+    payload: Partial<WorkspaceEntity>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey?: string;
@@ -388,7 +388,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     apiKey,
     workspaceActivationStatus,
   }: {
-    payload: Partial<Workspace>;
+    payload: Partial<WorkspaceEntity>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey?: string;

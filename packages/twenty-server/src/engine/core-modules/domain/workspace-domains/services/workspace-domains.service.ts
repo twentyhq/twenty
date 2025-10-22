@@ -7,9 +7,9 @@ import { Repository } from 'typeorm';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
@@ -17,10 +17,10 @@ export class WorkspaceDomainsService {
   constructor(
     private readonly domainServerConfigService: DomainServerConfigService,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(PublicDomain)
-    private readonly publicDomainRepository: Repository<PublicDomain>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(PublicDomainEntity)
+    private readonly publicDomainRepository: Repository<PublicDomainEntity>,
   ) {}
 
   buildWorkspaceURL({
