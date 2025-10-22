@@ -6,6 +6,7 @@ import { Select } from '@/ui/input/components/Select';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { type AiAgentOutputSchema } from '@/workflow/workflow-variables/types/AiAgentOutputSchema';
@@ -44,7 +45,7 @@ export const WorkflowEditActionAiAgent = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'AI Agent',
+      defaultTitle: AI_AGENT_ACTION.defaultLabel,
     });
 
   const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
@@ -111,6 +112,7 @@ export const WorkflowEditActionAiAgent = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={actionOptions.readonly}
+        iconTooltip={AI_AGENT_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         <div>

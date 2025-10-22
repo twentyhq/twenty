@@ -3,6 +3,7 @@ import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowUpdateRecordBody } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowUpdateRecordBody';
 
+import { UPDATE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/UpdateRecordAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/update-record-form-data.type';
 import { useIcons } from 'twenty-ui/display';
@@ -26,7 +27,7 @@ export const WorkflowEditActionUpdateRecord = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Update Record',
+      defaultTitle: UPDATE_RECORD_ACTION.defaultLabel,
     });
 
   const { getIcon } = useIcons();
@@ -70,6 +71,7 @@ export const WorkflowEditActionUpdateRecord = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={isFormDisabled}
+        iconTooltip={UPDATE_RECORD_ACTION.defaultLabel}
       />
       <WorkflowUpdateRecordBody
         defaultObjectNameSingular={action.settings.input.objectName}
