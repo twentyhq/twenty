@@ -6,18 +6,18 @@ import { type CustomHostnameCreateResponse } from 'cloudflare/resources/custom-h
 import { AuditContextMock } from 'test/utils/audit-context.mock';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DnsManagerException } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
-import { DnsManagerException } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
 
 jest.mock('cloudflare');
 
 describe('DnsManagerService', () => {
   let dnsManagerService: DnsManagerService;
   let twentyConfigService: TwentyConfigService;
-  let domainManagerService: DomainManagerService;
+  let domainServerConfigService: DomainServerConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,7 +36,7 @@ describe('DnsManagerService', () => {
           },
         },
         {
-          provide: DomainManagerService,
+          provide: DomainServerConfigService,
           useValue: {
             getBaseUrl: jest.fn(),
             getPublicDomainUrl: jest.fn(),
@@ -53,8 +53,9 @@ describe('DnsManagerService', () => {
 
     dnsManagerService = module.get<DnsManagerService>(DnsManagerService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
+    domainServerConfigService = module.get<DomainServerConfigService>(
+      DomainServerConfigService,
+    );
 
     (dnsManagerService as any).cloudflareClient = {
       customHostnames: {
@@ -165,7 +166,7 @@ describe('DnsManagerService', () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
 
       jest
-        .spyOn(domainManagerService, 'getBaseUrl')
+        .spyOn(domainServerConfigService, 'getBaseUrl')
         .mockReturnValue(new URL('https://front.domain'));
       (dnsManagerService as any).cloudflareClient = cloudflareMock;
 
@@ -204,7 +205,7 @@ describe('DnsManagerService', () => {
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
       jest
-        .spyOn(domainManagerService, 'getBaseUrl')
+        .spyOn(domainServerConfigService, 'getBaseUrl')
         .mockReturnValue(new URL('https://front.domain'));
       (dnsManagerService as any).cloudflareClient = cloudflareMock;
 
@@ -245,11 +246,11 @@ describe('DnsManagerService', () => {
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
       jest
-        .spyOn(domainManagerService, 'getBaseUrl')
+        .spyOn(domainServerConfigService, 'getBaseUrl')
         .mockReturnValue(new URL('https://front.domain'));
 
       jest
-        .spyOn(domainManagerService, 'getPublicDomainUrl')
+        .spyOn(domainServerConfigService, 'getPublicDomainUrl')
         .mockReturnValue(new URL('https://front.public-domain'));
 
       (dnsManagerService as any).cloudflareClient = cloudflareMock;

@@ -13,7 +13,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -25,7 +25,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 export class ImpersonationService {
   constructor(
     private readonly auditService: AuditService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(UserWorkspace)
@@ -172,7 +172,7 @@ export class ImpersonationService {
       return {
         workspace: {
           id: toImpersonateUserWorkspace.workspace.id,
-          workspaceUrls: this.domainManagerService.getWorkspaceUrls(
+          workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(
             toImpersonateUserWorkspace.workspace,
           ),
         },

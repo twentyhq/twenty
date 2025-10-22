@@ -17,7 +17,7 @@ import {
   type ExistingUserOrPartialUserWithPicture,
   type SignInUpBaseParams,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -45,7 +45,7 @@ describe('SignInUpService', () => {
   let workspaceInvitationService: WorkspaceInvitationService;
   let userWorkspaceService: UserWorkspaceService;
   let twentyConfigService: TwentyConfigService;
-  let domainManagerService: DomainManagerService;
+  let subdomainManagerService: SubdomainManagerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -120,7 +120,7 @@ describe('SignInUpService', () => {
           },
         },
         {
-          provide: DomainManagerService,
+          provide: SubdomainManagerService,
           useValue: {
             generateSubdomain: jest.fn(),
           },
@@ -155,8 +155,9 @@ describe('SignInUpService', () => {
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
+    subdomainManagerService = module.get<SubdomainManagerService>(
+      SubdomainManagerService,
+    );
   });
 
   it('should handle signInUp with valid personal invitation', async () => {
@@ -271,7 +272,7 @@ describe('SignInUpService', () => {
     } as Workspace);
     jest.spyOn(UserRepository, 'create').mockReturnValue({} as User);
     jest
-      .spyOn(domainManagerService, 'generateSubdomain')
+      .spyOn(subdomainManagerService, 'generateSubdomain')
       .mockResolvedValue('a-subdomain');
     jest
       .spyOn(UserRepository, 'save')

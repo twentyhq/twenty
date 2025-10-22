@@ -12,13 +12,11 @@ import { type ConfigVariablesGroupDataDTO } from 'src/engine/core-modules/admin-
 import { type ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { type VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -32,10 +30,8 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 @Injectable()
 export class AdminPanelService {
   constructor(
-    private readonly loginTokenService: LoginTokenService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
-    private readonly auditService: AuditService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly fileService: FileService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -90,7 +86,7 @@ export class AdminPanelService {
             })
           : userWorkspace.workspace.logo,
         allowImpersonation: userWorkspace.workspace.allowImpersonation,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls({
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
           subdomain: userWorkspace.workspace.subdomain,
           customDomain: userWorkspace.workspace.customDomain,
           isCustomDomainEnabled: userWorkspace.workspace.isCustomDomainEnabled,

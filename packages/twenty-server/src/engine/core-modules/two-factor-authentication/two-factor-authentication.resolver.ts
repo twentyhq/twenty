@@ -11,7 +11,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -39,7 +39,7 @@ export class TwoFactorAuthenticationResolver {
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     @InjectRepository(TwoFactorAuthenticationMethod)
     private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
   ) {}
@@ -57,7 +57,7 @@ export class TwoFactorAuthenticationResolver {
       );
 
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
