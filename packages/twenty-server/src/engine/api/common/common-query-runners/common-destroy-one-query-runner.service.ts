@@ -9,41 +9,36 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { DestroyOneQueryArgs } from 'src/engine/api/common/types/common-query-args.type';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
+import {
+  CommonExtendedInput,
+  CommonInput,
+  DestroyOneQueryArgs,
+} from 'src/engine/api/common/types/common-query-args.type';
 
 @Injectable()
-export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerService {
+export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerService<
+  DestroyOneQueryArgs,
+  ObjectRecord
+> {
   constructor(
     private readonly commonDestroyManyQueryRunnerService: CommonDestroyManyQueryRunnerService,
   ) {
     super();
   }
 
-  async run({
-    args,
-    authContext,
-    objectMetadataMaps,
-    objectMetadataItemWithFieldMaps,
-  }: {
-    args: DestroyOneQueryArgs;
-    authContext: AuthContext;
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-  }): Promise<ObjectRecord> {
-    this.validate(args);
-
-    const result = await this.commonDestroyManyQueryRunnerService.run({
-      args: {
+  async run(
+    args: CommonExtendedInput<DestroyOneQueryArgs>,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): Promise<ObjectRecord> {
+    const result = await this.commonDestroyManyQueryRunnerService.run(
+      {
         ...args,
         filter: { id: { eq: args.id } },
       },
-      authContext,
-      objectMetadataMaps,
-      objectMetadataItemWithFieldMaps,
-    });
+      queryRunnerContext,
+    );
 
     if (!isDefined(result) || result.length === 0) {
       throw new CommonQueryRunnerException(
@@ -55,7 +50,17 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
     return result[0];
   }
 
-  validate(args: DestroyOneQueryArgs) {
+  async computeArgs(
+    args: CommonInput<DestroyOneQueryArgs>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<CommonInput<DestroyOneQueryArgs>> {
+    return args;
+  }
+
+  async validate(
+    args: CommonInput<DestroyOneQueryArgs>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<void> {
     if (!isDefined(args.id)) {
       throw new CommonQueryRunnerException(
         'Missing id',

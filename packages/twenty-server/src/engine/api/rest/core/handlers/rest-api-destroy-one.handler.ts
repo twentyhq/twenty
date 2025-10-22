@@ -6,6 +6,7 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonDestroyOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
@@ -35,12 +36,15 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const record = await this.commonDestroyOneQueryRunnerService.run({
-        args: { id, selectedFields },
-        authContext,
-        objectMetadataMaps,
-        objectMetadataItemWithFieldMaps,
-      });
+      const record = await this.commonDestroyOneQueryRunnerService.execute(
+        { id, selectedFields },
+        {
+          authContext,
+          objectMetadataMaps,
+          objectMetadataItemWithFieldMaps,
+        },
+        CommonQueryNames.destroyOne,
+      );
 
       return this.formatRestResponse(
         record,

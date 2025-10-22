@@ -11,6 +11,7 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { parseUpsertRestRequest } from 'src/engine/api/rest/input-request-parsers/upsert-parser-utils/parse-upsert-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
@@ -42,12 +43,15 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const record = await this.commonCreateOneQueryRunnerService.run({
-        args: { data, selectedFields, upsert },
-        authContext,
-        objectMetadataMaps,
-        objectMetadataItemWithFieldMaps,
-      });
+      const record = await this.commonCreateOneQueryRunnerService.execute(
+        { data, selectedFields, upsert },
+        {
+          authContext,
+          objectMetadataMaps,
+          objectMetadataItemWithFieldMaps,
+        },
+        CommonQueryNames.createOne,
+      );
 
       return this.formatRestResponse(
         record,

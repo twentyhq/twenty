@@ -2,73 +2,41 @@ import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
-
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
-  CommonQueryNames,
+  CommonExtendedInput,
+  CommonInput,
   DestroyManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
-export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerService {
-  async run({
-    args,
-    authContext,
-    objectMetadataMaps,
-    objectMetadataItemWithFieldMaps,
-  }: {
-    args: DestroyManyQueryArgs;
-    authContext: AuthContext;
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-  }): Promise<ObjectRecord[]> {
-    this.validate(args);
-
-    if (!isWorkspaceAuthContext(authContext)) {
-      throw new CommonQueryRunnerException(
-        'Invalid auth context',
-        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-      );
-    }
-
-    const { workspaceDataSource, repository, rolePermissionConfig } =
-      await this.prepareQueryRunnerContext({
-        authContext,
-        objectMetadataItemWithFieldMaps,
-      });
-
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
-      objectMetadataItemWithFieldMaps,
-      args.selectedFields,
-      objectMetadataMaps,
-    );
-
-    const processedArgs = await this.processQueryArgs({
+export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerService<
+  DestroyManyQueryArgs,
+  ObjectRecord[]
+> {
+  async run(
+    args: CommonExtendedInput<DestroyManyQueryArgs>,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): Promise<ObjectRecord[]> {
+    const {
+      repository,
       authContext,
+      rolePermissionConfig,
+      workspaceDataSource,
+      objectMetadataMaps,
       objectMetadataItemWithFieldMaps,
-      args,
-    });
+      commonQueryParser,
+    } = queryRunnerContext;
 
     const queryBuilder = repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -77,12 +45,12 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataItemWithFieldMaps.nameSingular,
-      processedArgs.filter,
+      args.filter,
     );
 
     const columnsToReturn = buildColumnsToReturn({
-      select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
+      select: args.selectedFieldsResult.select,
+      relations: args.selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     });
@@ -94,89 +62,51 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
 
     const deletedRecords = deletedObjectRecords.generatedMaps as ObjectRecord[];
 
-    await this.processNestedRelationsIfNeeded({
-      records: deletedRecords,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-      rolePermissionConfig,
-      authContext,
-      workspaceDataSource,
-      selectedFieldsResult,
-    });
-
-    const enrichedRecords = await this.enrichResultsWithGettersAndHooks({
-      results: deletedRecords,
-      operationName: CommonQueryNames.DESTROY_MANY,
-      authContext,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    });
-
-    return enrichedRecords;
-  }
-
-  private async processNestedRelationsIfNeeded({
-    records,
-    objectMetadataItemWithFieldMaps,
-    objectMetadataMaps,
-    rolePermissionConfig,
-    authContext,
-    workspaceDataSource,
-    selectedFieldsResult,
-  }: {
-    records: ObjectRecord[];
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
-    authContext: AuthContext;
-    rolePermissionConfig?: RolePermissionConfig;
-    workspaceDataSource: WorkspaceDataSource;
-    selectedFieldsResult: CommonSelectedFieldsResult;
-  }): Promise<void> {
-    if (!selectedFieldsResult.relations) {
-      return;
+    if (!isDefined(args.selectedFieldsResult.relations)) {
+      await this.processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: deletedRecords,
+        //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
+        relations: args.selectedFieldsResult.relations as Record<
+          string,
+          FindOptionsRelations<ObjectLiteral>
+        >,
+        limit: QUERY_MAX_RECORDS,
+        authContext,
+        workspaceDataSource,
+        rolePermissionConfig,
+        selectedFields: args.selectedFieldsResult.select,
+      });
     }
 
-    await this.processNestedRelationsHelper.processNestedRelations({
-      objectMetadataMaps,
-      parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-      parentObjectRecords: records,
-      //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
-      relations: selectedFieldsResult.relations as Record<
-        string,
-        FindOptionsRelations<ObjectLiteral>
-      >,
-      limit: QUERY_MAX_RECORDS,
-      authContext,
-      workspaceDataSource,
-      rolePermissionConfig,
-      selectedFields: selectedFieldsResult.select,
-    });
+    return deletedRecords;
   }
 
-  private validate(args: DestroyManyQueryArgs) {
-    if (!args.filter) {
+  async computeArgs(
+    args: CommonInput<DestroyManyQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<CommonInput<DestroyManyQueryArgs>> {
+    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+
+    return {
+      ...args,
+      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
+        args.filter,
+        objectMetadataItemWithFieldMaps,
+      ),
+    };
+  }
+
+  async validate(
+    args: CommonInput<DestroyManyQueryArgs>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<void> {
+    if (!isDefined(args.filter)) {
       throw new CommonQueryRunnerException(
         'Filter is required',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
-  }
-
-  async processQueryArgs({
-    authContext,
-    objectMetadataItemWithFieldMaps,
-    args,
-  }: {
-    authContext: WorkspaceAuthContext;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    args: DestroyManyQueryArgs;
-  }): Promise<DestroyManyQueryArgs> {
-    return (await this.workspaceQueryHookService.executePreQueryHooks(
-      authContext,
-      objectMetadataItemWithFieldMaps.nameSingular,
-      CommonQueryNames.destroyMany,
-      args,
-      //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
-    )) as DestroyManyQueryArgs;
   }
 }

@@ -9,7 +9,10 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import {
+  type CommonSelectedFields,
+  type CommonSelectedFieldsResult,
+} from 'src/engine/api/common/types/common-selected-fields-result.type';
 
 export enum CommonQueryNames {
   FIND_ONE = 'findOne',
@@ -23,13 +26,18 @@ export enum CommonQueryNames {
   DELETE_ONE = 'deleteOne',
 }
 
-export interface FindOneQueryArgs {
+interface BaseQueryArgs {
   selectedFields: CommonSelectedFields;
+}
+
+interface ExtendedBaseQueryArgs {
+  selectedFieldsResult: CommonSelectedFieldsResult;
+}
+export interface FindOneQueryArgs extends BaseQueryArgs {
   filter?: ObjectRecordFilter;
 }
 
 export interface FindManyQueryArgs {
-  selectedFields: CommonSelectedFields;
   filter?: ObjectRecordFilter;
   orderBy?: ObjectRecordOrderBy;
   first?: number;
@@ -39,45 +47,48 @@ export interface FindManyQueryArgs {
 }
 
 export interface CreateManyQueryArgs {
-  selectedFields: CommonSelectedFields;
   data: Partial<ObjectRecord>[];
   upsert?: boolean;
 }
 
 export interface CreateOneQueryArgs {
-  selectedFields: CommonSelectedFields;
   data: Partial<ObjectRecord>;
   upsert?: boolean;
 }
 export interface GroupByQueryArgs {
-  selectedFields: CommonSelectedFields;
   filter?: ObjectRecordFilter;
   orderBy?: OrderByWithGroupBy;
   groupBy: ObjectRecordGroupBy;
   viewId?: string;
 }
-
-export type CommonQueryArgs =
-  | FindOneQueryArgs
-  | FindManyQueryArgs
-  | GroupByQueryArgs;
-
 export interface DestroyOneQueryArgs {
-  selectedFields: CommonSelectedFields;
   id: string;
 }
 
 export interface DestroyManyQueryArgs {
-  selectedFields: CommonSelectedFields;
   filter: ObjectRecordFilter;
 }
 
 export interface DeleteOneQueryArgs {
-  selectedFields: CommonSelectedFields;
   id: string;
 }
 
 export interface DeleteManyQueryArgs {
-  selectedFields: CommonSelectedFields;
   filter: ObjectRecordFilter;
 }
+
+export type CommonQueryArgs =
+  | FindOneQueryArgs
+  | FindManyQueryArgs
+  | CreateManyQueryArgs
+  | CreateOneQueryArgs
+  | GroupByQueryArgs
+  | DestroyOneQueryArgs
+  | DestroyManyQueryArgs
+  | DeleteOneQueryArgs
+  | DeleteManyQueryArgs;
+
+export type CommonInput<T extends CommonQueryArgs> = T & BaseQueryArgs;
+
+export type CommonExtendedInput<T extends CommonQueryArgs> = T &
+  ExtendedBaseQueryArgs;
