@@ -13,7 +13,8 @@ import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-module
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 const GROUPS_LIMIT = 50;
-const RECORDS_PER_GROUP_LIMIT = 5;
+const RECORDS_PER_GROUP_LIMIT = 10;
+const SUB_QUERY_PREFIX = 'sub_query_';
 
 export class GroupByWithRecordService {
   constructor() {}
@@ -96,21 +97,25 @@ export class GroupByWithRecordService {
       groupByDefinitions,
     );
 
-    const selectWithAliases = groupByDefinitions
+    const recordSelectWithAlias = Object.keys(columnsToSelect)
+      .map((col) => `"${col}" as "${SUB_QUERY_PREFIX}${col}"`)
+      .join(', ');
+
+    const groupBySelectWithAlias = groupByDefinitions
       .map((def) => `${def.expression} as "${def.alias}"`)
       .join(', ');
 
-    let subQueryQueryBuilder = queryBuilderForSubQuery.clone();
-    let mainQueryQueryBuilder = executionArgs.repository.createQueryBuilder();
-
-    const subQuery = subQueryQueryBuilder
-      .select(Object.keys(columnsToSelect).map((col) => `"${col}"`))
-      .addSelect(selectWithAliases)
+    const subQuery = queryBuilderForSubQuery
+      .select(recordSelectWithAlias)
+      .addSelect(groupBySelectWithAlias)
       .addSelect(`ROW_NUMBER() OVER (PARTITION BY ${groupByExpressions})`, 'rn')
       .andWhere(groupConditions);
 
+    let mainQueryQueryBuilder = executionArgs.repository.createQueryBuilder();
+
     const mainQuery = mainQueryQueryBuilder
       .from(`(${subQuery.getQuery()})`, 'ranked_records')
+      .setParameters(queryBuilderForSubQuery.expressionMap.parameters)
       .select(groupByAliases)
       .addSelect(
         `JSON_AGG(
@@ -118,7 +123,7 @@ export class GroupByWithRecordService {
           JSON_BUILD_OBJECT(
             ${[
               ...Object.keys(columnsToSelect).map(
-                (col) => `'${col}', "${col}"`,
+                (col) => `'${col}', "${SUB_QUERY_PREFIX}${col}"`,
               ),
               ...groupByDefinitions.map(
                 (def) => `'${def.alias}', "${def.alias}"`,
@@ -147,7 +152,6 @@ export class GroupByWithRecordService {
       return '';
     }
 
-    // Construire les conditions OR pour chaque groupe
     const groupConditions = groupsResult.map((group) => {
       const conditions = groupByDefinitions
         .map((def) => {
@@ -168,24 +172,17 @@ export class GroupByWithRecordService {
     recordsResult: Array<Record<string, unknown>>,
     groupByDefinitions: GroupByDefinition[],
   ): IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] {
-    // Build a map of records arrays per group key using the groupBy dimension values
     const recordsByGroupKey = new Map<string, Array<Record<string, unknown>>>();
 
-    // The actual records from the backend may be found under different keys.
-    // Try to support both `sample_records` and `records` for compatibility
     recordsResult.forEach((entry) => {
       const groupKey = this.createGroupKey(entry, groupByDefinitions);
 
-      // Find the records array property ('records' or 'sample_records')
       const sampleRecords =
-        (entry.records as Array<Record<string, unknown>>) ??
-        (entry.sample_records as Array<Record<string, unknown>>) ??
-        [];
+        (entry.records as Array<Record<string, unknown>>) ?? [];
 
       recordsByGroupKey.set(groupKey, sampleRecords);
     });
 
-    // For each group, gather the corresponding records and construct the connection object
     return groupsResult.map((group) => {
       const groupKey = this.createGroupKey(group, groupByDefinitions);
       const records = recordsByGroupKey.get(groupKey) || [];
@@ -201,7 +198,7 @@ export class GroupByWithRecordService {
         groupByDimensionValues: groupByDefinitions.map((def) =>
           String(group[def.alias]),
         ),
-        ...group, // Spread all aggregation/result fields
+        ...group,
         edges,
         pageInfo: {
           hasNextPage: false,

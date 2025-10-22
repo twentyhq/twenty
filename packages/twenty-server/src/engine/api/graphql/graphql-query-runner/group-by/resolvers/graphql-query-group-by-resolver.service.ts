@@ -73,6 +73,9 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       objectMetadataNameSingular,
     );
 
+    let queryBuilderWithFiltersAndWithoutGroupBy =
+      executionArgs.repository.createQueryBuilder(objectMetadataNameSingular);
+
     let appliedFilters =
       executionArgs.args.filter ?? ({} as ObjectRecordFilter);
 
@@ -82,6 +85,12 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
         objectMetadataItemWithFieldMaps,
         appliedFilters,
       });
+
+      executionArgs.graphqlQueryParser.applyFilterToBuilder(
+        queryBuilderWithFiltersAndWithoutGroupBy,
+        objectMetadataNameSingular,
+        appliedFilters,
+      );
     }
 
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
@@ -90,8 +99,19 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       appliedFilters,
     );
 
+    executionArgs.graphqlQueryParser.applyFilterToBuilder(
+      queryBuilderWithFiltersAndWithoutGroupBy,
+      objectMetadataNameSingular,
+      appliedFilters,
+    );
+
     executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
       queryBuilder,
+      appliedFilters,
+    );
+
+    executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
+      queryBuilderWithFiltersAndWithoutGroupBy,
       appliedFilters,
     );
 
@@ -133,14 +153,12 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       };
     });
 
-    let queryBuilderWithFiltersAndWithoutGroupBy:
-      | WorkspaceSelectQueryBuilder<ObjectLiteral>
-      | undefined;
     const shouldIncludeRecords = this.shouldIncludeRecords(executionArgs);
 
-    if (shouldIncludeRecords) {
-      queryBuilderWithFiltersAndWithoutGroupBy = queryBuilder.clone();
-    }
+    // if (shouldIncludeRecords) {
+    //   queryBuilderWithFiltersAndWithoutGroupBy =
+    //     queryBuilder.cloneWithParameters();
+    // }
 
     groupByDefinitions.forEach((groupByColumn, index) => {
       queryBuilder.addSelect(groupByColumn.expression, groupByColumn.alias);
