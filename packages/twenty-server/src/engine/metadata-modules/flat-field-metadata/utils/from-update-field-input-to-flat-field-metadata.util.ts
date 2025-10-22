@@ -109,6 +109,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           return acc;
         }
         const propertyValue = updatedEditableFieldProperties[property];
+
         delete updatedEditableFieldProperties[property];
 
         return {

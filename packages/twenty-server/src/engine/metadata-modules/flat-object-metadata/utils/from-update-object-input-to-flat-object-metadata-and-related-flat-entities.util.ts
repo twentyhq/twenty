@@ -49,11 +49,6 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
         rawUpdateObjectInput,
         ['id'],
       );
-    const updatedEditableObjectProperties =
-      extractAndSanitizeObjectStringFields(
-        rawUpdateObjectInput.update,
-        FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES.custom,
-      );
 
     const existingFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityMaps: existingFlatObjectMetadataMaps,
@@ -68,6 +63,13 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     }
 
     const isStandardObject = isStandardMetadata(existingFlatObjectMetadata);
+    const updatedEditableObjectProperties =
+      extractAndSanitizeObjectStringFields(
+        rawUpdateObjectInput.update,
+        FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES[
+          isStandardObject ? 'standard' : 'custom'
+        ],
+      );
 
     if (isStandardObject) {
       const invalidUpdatedProperties = Object.keys(
@@ -98,6 +100,8 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
               return acc;
             }
             const propertyValue = updatedEditableObjectProperties[property];
+
+            delete updatedEditableObjectProperties[property];
 
             return {
               ...acc,

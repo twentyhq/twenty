@@ -7,6 +7,7 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 
+import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 
 type TestingRuntimeContext = {
@@ -51,7 +52,7 @@ const allTestsUseCases = [...successfulUpdateTestsUseCase];
 
 describe('Standard object metadata update should succeed', () => {
   let companyObjectMetadataId: string;
-  let originalCompanyMetadata: any;
+  let originalCompanyMetadata: ObjectMetadataDTO;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({

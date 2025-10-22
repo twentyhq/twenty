@@ -1,3 +1,4 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
@@ -5,7 +6,6 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 
 import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 
@@ -51,8 +51,6 @@ const failingUpdateTestsUseCase: UpdateOneStandardObjectMetadataTestingContext =
     },
   ];
 
-const allTestsUseCases = [...failingUpdateTestsUseCase];
-
 describe('Standard object metadata update should fail', () => {
   let companyObjectMetadataId: string;
   let companyNameFieldMetadataId: string;
@@ -92,7 +90,7 @@ describe('Standard object metadata update should fail', () => {
     companyNameFieldMetadataId = nameField!.id;
   });
 
-  it.each(eachTestingContextFilter(allTestsUseCases))(
+  it.each(eachTestingContextFilter(failingUpdateTestsUseCase))(
     '$title',
     async ({ context }) => {
       const updatePayload =

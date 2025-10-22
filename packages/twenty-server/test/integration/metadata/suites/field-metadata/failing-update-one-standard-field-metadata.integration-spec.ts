@@ -69,7 +69,7 @@ describe('Standard field metadata update should be ignored', () => {
     jestExpectToBeDefined(companyObject);
 
     const companyNameField = companyObject.fieldsList?.find(
-      (field: any) => field.name === 'name' && !field.isCustom,
+      (field) => field.name === 'name' && !field.isCustom,
     );
 
     jestExpectToBeDefined(companyNameField);
@@ -79,12 +79,10 @@ describe('Standard field metadata update should be ignored', () => {
   it.each(eachTestingContextFilter(allTestsUseCases))(
     '$title',
     async ({ context }) => {
-      const updatePayload = context;
-
       const { errors } = await updateOneFieldMetadata({
         input: {
           idToUpdate: companyNameFieldMetadataId,
-          updatePayload,
+          updatePayload: context,
         },
         expectToFail: true,
         gqlFields: `

@@ -44,7 +44,7 @@ const successfulUpdateTestsUseCase: UpdateOneStandardFieldMetadataTestingContext
 
 describe('Standard field metadata update should succeed', () => {
   let companyNameFieldMetadataId: string;
-  let originalFieldMetadata: any;
+  let originalFieldMetadata: FieldMetadataDTO;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -82,7 +82,6 @@ describe('Standard field metadata update should succeed', () => {
   });
 
   afterEach(async () => {
-    // Restore original field metadata after all tests
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -177,7 +176,7 @@ describe('Standard field metadata update with standard overrides', () => {
     jestExpectToBeDefined(opportunityObject);
 
     const opportunityStageField = opportunityObject.fieldsList?.find(
-      (field: any) => field.name === 'stage' && !field.isCustom,
+      (field) => field.name === 'stage' && !field.isCustom,
     );
 
     jestExpectToBeDefined(opportunityStageField);
@@ -186,7 +185,6 @@ describe('Standard field metadata update with standard overrides', () => {
   });
 
   afterEach(async () => {
-    // Restore original field metadata after all tests
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -243,7 +241,7 @@ describe('Standard field metadata update with standard overrides', () => {
 
     jestExpectToBeDefined(data.updateOneField.options);
     expect(data.updateOneField.options).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(data.updateOneField.options as any), // TODO improve
+      extractRecordIdsAndDatesAsExpectAny(data.updateOneField.options as any),
     );
   });
 
