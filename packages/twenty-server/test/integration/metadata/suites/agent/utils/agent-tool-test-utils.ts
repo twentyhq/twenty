@@ -226,7 +226,6 @@ export const createAgentToolTestModule =
       roleId: testRoleId,
       createdAt: new Date(),
       updatedAt: new Date(),
-      chatThreads: [],
       incomingHandoffs: [],
       outgoingHandoffs: [],
       modelConfiguration: {},

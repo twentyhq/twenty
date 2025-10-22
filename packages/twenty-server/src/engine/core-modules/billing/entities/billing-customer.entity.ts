@@ -14,12 +14,12 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 @Entity({ name: 'billingCustomer', schema: 'core' })
-@ObjectType()
-export class BillingCustomer {
+@ObjectType('BillingCustomer')
+export class BillingCustomerEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -40,14 +40,14 @@ export class BillingCustomer {
   stripeCustomerId: string;
 
   @OneToMany(
-    () => BillingSubscription,
+    () => BillingSubscriptionEntity,
     (billingSubscription) => billingSubscription.billingCustomer,
   )
-  billingSubscriptions: Relation<BillingSubscription[]>;
+  billingSubscriptions: Relation<BillingSubscriptionEntity[]>;
 
   @OneToMany(
-    () => BillingEntitlement,
+    () => BillingEntitlementEntity,
     (billingEntitlement) => billingEntitlement.billingCustomer,
   )
-  billingEntitlements: Relation<BillingEntitlement[]>;
+  billingEntitlements: Relation<BillingEntitlementEntity[]>;
 }

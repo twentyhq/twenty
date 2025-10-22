@@ -8,7 +8,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
+import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import {
   ServerlessFunctionTriggerJob,
   ServerlessFunctionTriggerJobData,
@@ -20,8 +20,8 @@ export class CallDatabaseEventTriggerJobsJob {
   constructor(
     @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(DatabaseEventTrigger)
-    private readonly databaseEventTriggerRepository: Repository<DatabaseEventTrigger>,
+    @InjectRepository(DatabaseEventTriggerEntity)
+    private readonly databaseEventTriggerRepository: Repository<DatabaseEventTriggerEntity>,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)

@@ -5,12 +5,12 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { type Repository } from 'typeorm';
 
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 
 describe('AppHealthIndicator', () => {
   let service: AppHealthIndicator;
-  let workspaceRepository: jest.Mocked<Repository<Workspace>>;
+  let workspaceRepository: jest.Mocked<Repository<WorkspaceEntity>>;
   let workspaceMigrationService: jest.Mocked<WorkspaceMigrationService>;
   let healthIndicatorService: jest.Mocked<HealthIndicatorService>;
 
@@ -39,7 +39,7 @@ describe('AppHealthIndicator', () => {
       providers: [
         AppHealthIndicator,
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: workspaceRepository,
         },
         {

@@ -13,15 +13,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItemMetadata } from 'src/engine/core-modules/billing/types/billing-subscription-item-metadata.type';
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
 @Unique(
   'IDX_BILLING_SUBSCRIPTION_ITEM_BILLING_SUBSCRIPTION_ID_STRIPE_PRODUCT_ID_UNIQUE',
   ['billingSubscriptionId', 'stripeProductId'],
 )
-export class BillingSubscriptionItem {
+export class BillingSubscriptionItemEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -47,20 +47,20 @@ export class BillingSubscriptionItem {
   billingThresholds: Stripe.SubscriptionItem.BillingThresholds;
 
   @ManyToOne(
-    () => BillingSubscription,
+    () => BillingSubscriptionEntity,
     (billingSubscription) => billingSubscription.billingSubscriptionItems,
     {
       onDelete: 'CASCADE',
     },
   )
-  billingSubscription: Relation<BillingSubscription>;
+  billingSubscription: Relation<BillingSubscriptionEntity>;
 
-  @ManyToOne(() => BillingProduct)
+  @ManyToOne(() => BillingProductEntity)
   @JoinColumn({
     name: 'stripeProductId',
     referencedColumnName: 'stripeProductId',
   })
-  billingProduct: Relation<BillingProduct>;
+  billingProduct: Relation<BillingProductEntity>;
 
   @Column({ nullable: false })
   stripeProductId: string;

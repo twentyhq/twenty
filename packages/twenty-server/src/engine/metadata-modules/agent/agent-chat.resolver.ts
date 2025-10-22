@@ -13,7 +13,6 @@ import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.s
 
 import { AgentChatMessageDTO } from './dtos/agent-chat-message.dto';
 import { AgentChatThreadDTO } from './dtos/agent-chat-thread.dto';
-import { CreateAgentChatThreadInput } from './dtos/create-agent-chat-thread.input';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
 @Resolver()
@@ -22,16 +21,13 @@ export class AgentChatResolver {
 
   @Query(() => [AgentChatThreadDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async agentChatThreads(
-    @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-  ) {
-    return this.agentChatService.getThreadsForAgent(agentId, userWorkspaceId);
+  async chatThreads(@AuthUserWorkspaceId() userWorkspaceId: string) {
+    return this.agentChatService.getThreadsForUser(userWorkspaceId);
   }
 
   @Query(() => AgentChatThreadDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async agentChatThread(
+  async chatThread(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
@@ -40,7 +36,7 @@ export class AgentChatResolver {
 
   @Query(() => [AgentChatMessageDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async agentChatMessages(
+  async chatMessages(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
@@ -52,10 +48,7 @@ export class AgentChatResolver {
 
   @Mutation(() => AgentChatThreadDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async createAgentChatThread(
-    @Args('input') input: CreateAgentChatThreadInput,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-  ) {
-    return this.agentChatService.createThread(input.agentId, userWorkspaceId);
+  async createChatThread(@AuthUserWorkspaceId() userWorkspaceId: string) {
+    return this.agentChatService.createThread(userWorkspaceId);
   }
 }

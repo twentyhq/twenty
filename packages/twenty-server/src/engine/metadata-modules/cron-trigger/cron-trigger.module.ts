@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CronTriggerCronCommand } from 'src/engine/metadata-modules/cron-trigger/crons/commands/cron-trigger.cron.command';
 import { CronTriggerCronJob } from 'src/engine/metadata-modules/cron-trigger/crons/jobs/cron-trigger.cron.job';
-import { CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { CronTriggerResolver } from 'src/engine/metadata-modules/cron-trigger/resolvers/cron-trigger.resolver';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { WorkspaceFlatCronTriggerMapCacheService } from 'src/engine/metadata-modules/cron-trigger/services/workspace-flat-cron-trigger-map-cache.service';
@@ -13,7 +13,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace, CronTrigger]),
+    TypeOrmModule.forFeature([WorkspaceEntity, CronTriggerEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationV2Module,
   ],

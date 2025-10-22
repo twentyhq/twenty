@@ -10,35 +10,31 @@ import * as z from 'zod';
 import { type ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { type ConfigVariablesGroupDataDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
 import { type ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
-import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
+import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { type VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { type FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { type FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
 import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 
 @Injectable()
 export class AdminPanelService {
   constructor(
-    private readonly loginTokenService: LoginTokenService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
-    private readonly auditService: AuditService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly fileService: FileService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async userLookup(userIdentifier: string): Promise<UserLookup> {
@@ -90,7 +86,7 @@ export class AdminPanelService {
             })
           : userWorkspace.workspace.logo,
         allowImpersonation: userWorkspace.workspace.allowImpersonation,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls({
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
           subdomain: userWorkspace.workspace.subdomain,
           customDomain: userWorkspace.workspace.customDomain,
           isCustomDomainEnabled: userWorkspace.workspace.isCustomDomainEnabled,
@@ -107,7 +103,7 @@ export class AdminPanelService {
             userWorkspace.workspace.featureFlags?.find(
               (flag) => flag.key === key,
             )?.value ?? false,
-        })) as FeatureFlag[],
+        })) as FeatureFlagEntity[],
       })),
     };
   }

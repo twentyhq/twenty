@@ -1,11 +1,10 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { mapToGraphQLExtendedAggregateOperation } from '@/command-menu/pages/page-layout/utils/mapToGraphQLExtendedAggregateOperation';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
-import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -23,6 +22,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { type AggregateOperations } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartAggregateOperationSelectionDropdownContent = ({
@@ -94,13 +94,12 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   }
 
   const handleSelectAggregateOperation = (
-    aggregateOperation: ExtendedAggregateOperations,
+    aggregateOperation: AggregateOperations,
   ) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
         aggregateFieldMetadataId: currentFieldMetadataId,
-        aggregateOperation:
-          mapToGraphQLExtendedAggregateOperation(aggregateOperation),
+        aggregateOperation,
       },
     });
     closeDropdown();
@@ -139,18 +138,28 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
               key={item.operation}
               itemId={item.operation}
               onEnter={() => {
-                handleSelectAggregateOperation(item.operation);
+                handleSelectAggregateOperation(
+                  convertExtendedAggregateOperationToAggregateOperation(
+                    item.operation,
+                  ),
+                );
               }}
             >
               <MenuItemSelect
                 text={item.label}
                 selected={
                   currentAggregateOperation ===
-                  mapToGraphQLExtendedAggregateOperation(item.operation)
+                  convertExtendedAggregateOperationToAggregateOperation(
+                    item.operation,
+                  )
                 }
                 focused={selectedItemId === item.operation}
                 onClick={() => {
-                  handleSelectAggregateOperation(item.operation);
+                  handleSelectAggregateOperation(
+                    convertExtendedAggregateOperationToAggregateOperation(
+                      item.operation,
+                    ),
+                  );
                 }}
               />
             </SelectableListItem>

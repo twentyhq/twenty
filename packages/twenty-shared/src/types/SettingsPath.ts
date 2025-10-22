@@ -43,7 +43,6 @@ export enum SettingsPath {
   NewWebhook = 'api-webhooks/webhooks/new',
   WebhookDetail = 'api-webhooks/webhooks/:webhookId',
   Integrations = 'integrations',
-  IntegrationMCP = 'integrations/mcp',
   IntegrationDatabase = 'integrations/:databaseKey',
   IntegrationDatabaseConnection = 'integrations/:databaseKey/:connectionId',
   IntegrationEditDatabaseConnection = 'integrations/:databaseKey/:connectionId/edit',
