@@ -1,4 +1,7 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
+import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { computeProgressText } from '@/action-menu/utils/computeProgressText';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -6,13 +9,15 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
-import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
-import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { useIncrementalDestroyManyRecords } from '@/object-record/hooks/useIncrementalDestroyManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const DestroyMultipleRecordsAction = () => {
   const { recordIndexId, objectMetadataItem } =
@@ -27,10 +32,6 @@ export const DestroyMultipleRecordsAction = () => {
   }
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
-
-  const { destroyManyRecords } = useDestroyManyRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -65,28 +66,45 @@ export const DestroyMultipleRecordsAction = () => {
     ...deletedAtFilter,
   };
 
-  const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    filter: graphqlFilter,
-    limit: DEFAULT_QUERY_PAGE_SIZE,
-    recordGqlFields: { id: true },
-  });
+  const { incrementalDestroyManyRecords, progress } =
+    useIncrementalDestroyManyRecords({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      filter: graphqlFilter,
+      pageSize: DEFAULT_QUERY_PAGE_SIZE,
+      delayInMsBetweenMutations: 50,
+    });
+
+  const actionConfig = useContext(ActionConfigContext);
+
+  if (!isDefined(actionConfig)) {
+    return null;
+  }
+
+  const originalLabel = getActionLabel(actionConfig.label);
+
+  const originalShortLabel = getActionLabel(actionConfig.shortLabel ?? '');
+
+  const progressText = computeProgressText(progress);
+
+  const actionConfigWithProgress = {
+    ...actionConfig,
+    label: `${originalLabel}${progressText}`,
+    shortLabel: `${originalShortLabel}${progressText}`,
+  };
 
   const handleDestroyClick = async () => {
-    const recordsToDestroy = await fetchAllRecordIds();
-    const recordIdsToDestroy = recordsToDestroy.map((record) => record.id);
-
     resetTableRowSelection();
-
-    await destroyManyRecords({ recordIdsToDestroy });
+    await incrementalDestroyManyRecords();
   };
 
   return (
-    <ActionModal
-      title="Permanently Destroy Records"
-      subtitle="Are you sure you want to destroy these records? They won't be recoverable anymore."
-      onConfirmClick={handleDestroyClick}
-      confirmButtonText="Destroy Records"
-    />
+    <ActionConfigContext.Provider value={actionConfigWithProgress}>
+      <ActionModal
+        title={t`Permanently Destroy Records`}
+        subtitle={t`Are you sure you want to destroy these records? They won't be recoverable anymore.`}
+        onConfirmClick={handleDestroyClick}
+        confirmButtonText={t`Destroy Records`}
+      />
+    </ActionConfigContext.Provider>
   );
 };
