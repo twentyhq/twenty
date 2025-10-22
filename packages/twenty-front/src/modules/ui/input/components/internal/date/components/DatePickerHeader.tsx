@@ -15,6 +15,7 @@ import {
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { parse } from 'date-fns';
 import { useRecoilValue } from 'recoil';
+import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 const StyledCustomDatePickerHeader = styled.div`
@@ -34,7 +35,7 @@ const years = Array.from(
 ).map((year) => ({ label: year.toString(), value: year }));
 
 type DatePickerHeaderProps = {
-  date: string;
+  date: string | null;
   onChange?: (date: string | null) => void;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;
@@ -59,7 +60,7 @@ export const DatePickerHeader = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const dateParsed = parse(date, 'yyyy-MM-dd', new Date());
+  const dateParsed = date ? parse(date, DATE_TYPE_FORMAT, new Date()) : null;
 
   return (
     <>
@@ -76,7 +77,7 @@ export const DatePickerHeader = ({
             dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
             options={getMonthSelectOptions(userLocale)}
             onChange={onChangeMonth}
-            value={dateParsed.getUTCMonth() + 1}
+            value={dateParsed?.getUTCMonth()}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>
@@ -88,7 +89,7 @@ export const DatePickerHeader = ({
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
             onChange={onChangeYear}
-            value={dateParsed.getUTCFullYear() + 1}
+            value={dateParsed?.getUTCFullYear()}
             options={years}
             fullWidth
           />

@@ -16,8 +16,10 @@ import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/g
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { addMonths, format, parse, setYear, subMonths } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRecoilValue } from 'recoil';
+import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
 import {
   type VariableDateViewFilterValueDirection,
   type VariableDateViewFilterValueUnit,
@@ -353,7 +355,9 @@ export const DatePicker = ({
   const { parseDateToString } = useParseDateToString();
   const { parseStringToDate } = useParseStringToDate();
 
-  const internalDate =
+  const localDate = date
+    ? parse(date, DATE_TYPE_FORMAT, new Date())
+    : new Date();
 
   const theme = useTheme();
 
@@ -376,51 +380,58 @@ export const DatePicker = ({
   };
 
   const handleChangeMonth = (month: number) => {
-    const newDate = new Date(internalDate);
-    newDate.setMonth(month);
-    onChange?.(internalDate);
+    localDate.setMonth(month);
+
+    const plainDate = format(localDate, DATE_TYPE_FORMAT);
+
+    onChange?.(plainDate);
   };
 
   const handleAddMonth = () => {
-    // const dateParsed = addMonths(internalDate, 1);
-    onChange?.(internalDate);
+    const dateParsed = addMonths(localDate, 1);
+
+    const plainDate = format(dateParsed, DATE_TYPE_FORMAT);
+
+    onChange?.(plainDate);
   };
 
   const handleSubtractMonth = () => {
-    // const dateParsed = subMonths(internalDate, 1);
-    onChange?.(internalDate);
+    const dateParsed = subMonths(localDate, 1);
+
+    const plainDate = format(dateParsed, DATE_TYPE_FORMAT);
+
+    onChange?.(plainDate);
   };
 
   const handleChangeYear = (year: number) => {
-    // const dateParsed = setYear(internalDate, year);
-    onChange?.(internalDate);
+    const dateParsed = setYear(localDate, year);
+
+    const plainDate = format(dateParsed, DATE_TYPE_FORMAT);
+
+    onChange?.(plainDate);
   };
 
-  const handleDateChange = (date: string) => {
-    // let dateParsed = setYear(internalDate, date.getFullYear());
-    // dateParsed = setMonth(dateParsed, date.getMonth());
-    // dateParsed = setDate(dateParsed, date.getDate());
+  const handleDateChange = (date: Date) => {
+    const plainDate = format(date, DATE_TYPE_FORMAT);
 
-    onChange?.(internalDate);
+    onChange?.(plainDate);
   };
 
   const handleDateSelect = (date: Date) => {
-    // let dateParsed = setYear(internalDate, date.getFullYear());
-    // dateParsed = setMonth(dateParsed, date.getMonth());
-    // dateParsed = setDate(dateParsed, date.getDate());
+    const plainDate = format(date, DATE_TYPE_FORMAT);
 
-    handleClose?.(internalDate);
+    handleClose?.(plainDate);
   };
 
   const highlightedDates = getHighlightedDates();
 
-  const hasDate = date != null;
+  console.log({
+    localDate,
+  });
 
-  const selectedDates = isRelative
-    ? highlightedDates
-    : hasDate
-      ? [internalDate]
-      : [];
+  const hasDate = date !== null;
+
+  const selectedDates = isRelative ? highlightedDates : hasDate ? [] : [];
 
   const calendarStartDay =
     currentWorkspaceMember?.calendarStartDay === CalendarStartDay.SYSTEM
@@ -460,17 +471,14 @@ export const DatePicker = ({
         >
           <ReactDatePicker
             open={true}
-            selected={new Date()}
+            selected={localDate}
             selectedDates={[]}
-            openToDate={new Date()}
+            openToDate={localDate}
             disabledKeyboardNavigation
-            onChange={handleDateChange as any}
+            onChange={handleDateChange}
             calendarStartDay={calendarStartDay}
             customInput={
-              <DatePickerInput
-                valueFromProps={internalDate}
-                onChange={onChange}
-              />
+              <DatePickerInput valueFromProps={date} onChange={onChange} />
             }
             renderCustomHeader={({
               prevMonthButtonDisabled,
@@ -485,7 +493,7 @@ export const DatePicker = ({
                 />
               ) : (
                 <DatePickerHeader
-                  date={internalDate}
+                  date={date}
                   onChange={onChange}
                   onChangeMonth={handleChangeMonth}
                   onChangeYear={handleChangeYear}
