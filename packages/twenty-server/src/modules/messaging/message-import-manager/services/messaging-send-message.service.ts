@@ -50,11 +50,22 @@ export class MessagingSendMessageService {
         const gmailClient = oAuth2Client.gmail({
           version: 'v1',
         });
+        const peopleClient = oAuth2Client.people({
+          version: 'v1',
+        });
 
-        const { data } = await oAuth2Client.userinfo.get();
+        const { data: gmailData } = await gmailClient.users.getProfile({
+          userId: 'me',
+        });
 
-        const fromEmail = data.email;
-        const fromName = data.name;
+        const fromEmail = gmailData.emailAddress;
+
+        const { data: peopleData } = await peopleClient.people.get({
+          resourceName: 'people/me',
+          personFields: 'names',
+        });
+
+        const fromName = peopleData?.names?.[0]?.displayName;
 
         const mail = new MailComposer({
           from: isDefined(fromName)
