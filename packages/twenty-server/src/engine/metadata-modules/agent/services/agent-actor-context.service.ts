@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import {
   AgentException,
@@ -16,9 +15,10 @@ export type AgentActorContext = {
 };
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class AgentActorContextService {
   constructor(
-    private readonly userService: UserService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userRoleService: UserRoleService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
@@ -27,7 +27,8 @@ export class AgentActorContextService {
     userWorkspaceId: string,
     workspaceId: string,
   ): Promise<AgentActorContext> {
-    const userWorkspace = await this.userService.findById(userWorkspaceId);
+    const userWorkspace =
+      await this.userWorkspaceService.findById(userWorkspaceId);
 
     if (!userWorkspace) {
       throw new AgentException(
