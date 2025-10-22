@@ -63,7 +63,6 @@ export interface GroupByResolverArgs<Filter = ObjectRecordFilter> {
   groupBy: ObjectRecordGroupBy;
   viewId?: string;
   orderBy?: OrderByWithGroupBy;
-  omitNullValues?: boolean;
 }
 
 export interface UpdateOneResolverArgs<
