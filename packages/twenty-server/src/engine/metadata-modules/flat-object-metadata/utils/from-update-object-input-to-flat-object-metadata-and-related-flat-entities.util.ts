@@ -4,17 +4,14 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
-import { ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-and-stringify.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { recomputeIndexAfterFlatObjectMetadataSingularNameUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/recompute-index-after-flat-object-metadata-singular-name-update.util';
-import { recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/recompute-view-field-identifier-after-flat-object-identifier-update.util';
-import { renameRelatedMorphFieldOnObjectNamesUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/rename-related-morph-field-on-object-names-update.util';
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-editable-properties.constant';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  FlatObjectMetadataUpdateSideEffects,
+  handleFlatObjectMetadataUpdateSideEffect,
+} from 'src/engine/metadata-modules/flat-object-metadata/utils/handle-flat-object-metadata-update-side-effect.util';
 import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
 import { type UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -23,6 +20,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { type ObjectMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-standard-overrides-properties.types';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 type FromUpdateObjectInputToFlatObjectMetadataArgs = {
   updateObjectInput: UpdateOneObjectInput;
@@ -35,24 +33,6 @@ type FromUpdateObjectInputToFlatObjectMetadataArgs = {
   | 'flatViewMaps'
 >;
 
-const objectMetadataEditableProperties =
-  ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY.objectMetadata.propertiesToCompare.filter(
-    (
-      property,
-    ): property is Exclude<
-      FlatEntityPropertiesToCompare<'objectMetadata'>,
-      'standardOverrides'
-    > => property !== 'standardOverrides',
-  );
-
-type UpdatedFlatObjectAndRelatedFlatEntities = {
-  flatObjectMetadata: FlatObjectMetadata;
-  otherObjectFlatFieldMetadataToUpdate: FlatFieldMetadata[];
-  flatIndexMetadataToUpdate: FlatIndexMetadata[];
-  flatViewFieldToUpdate: FlatViewField[];
-  flatViewFieldToCreate: FlatViewField[];
-};
-
 export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
   ({
     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -61,7 +41,9 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     flatFieldMetadataMaps,
     flatViewFieldMaps,
     flatViewMaps,
-  }: FromUpdateObjectInputToFlatObjectMetadataArgs): UpdatedFlatObjectAndRelatedFlatEntities => {
+  }: FromUpdateObjectInputToFlatObjectMetadataArgs): FlatObjectMetadataUpdateSideEffects & {
+    flatObjectMetadataToUpdate: FlatObjectMetadata;
+  } => {
     const { id: objectMetadataIdToUpdate } =
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
         rawUpdateObjectInput,
@@ -70,22 +52,24 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     const updatedEditableObjectProperties =
       extractAndSanitizeObjectStringFields(
         rawUpdateObjectInput.update,
-        objectMetadataEditableProperties,
+        FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES.custom,
       );
 
-    const flatObjectMetadataToUpdate = findFlatEntityByIdInFlatEntityMaps({
+    const existingFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityMaps: existingFlatObjectMetadataMaps,
       flatEntityId: objectMetadataIdToUpdate,
     });
 
-    if (!isDefined(flatObjectMetadataToUpdate)) {
+    if (!isDefined(existingFlatObjectMetadata)) {
       throw new ObjectMetadataException(
         'Object to update not found',
         ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
 
-    if (isStandardMetadata(flatObjectMetadataToUpdate)) {
+    const isStandardObject = isStandardMetadata(existingFlatObjectMetadata);
+
+    if (isStandardObject) {
       const invalidUpdatedProperties = Object.keys(
         updatedEditableObjectProperties,
       ).filter(
@@ -102,136 +86,59 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
           ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         );
       }
+    }
 
-      const updatedStandardFlatObjectMetadata =
-        OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
+    const standardOverrides = isStandardObject
+      ? OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
           (acc, property) => {
             const isPropertyUpdated =
               updatedEditableObjectProperties[property] !== undefined;
 
+            if (!isPropertyUpdated) {
+              return acc;
+            }
+            const propertyValue = updatedEditableObjectProperties[property];
+
             return {
               ...acc,
-              standardOverrides: {
-                ...acc.standardOverrides,
-                ...(isPropertyUpdated
-                  ? { [property]: updatedEditableObjectProperties[property] }
-                  : {}),
-              },
+              [property]: propertyValue,
             };
           },
-          flatObjectMetadataToUpdate,
-        );
+          existingFlatObjectMetadata.standardOverrides,
+        )
+      : null;
 
-      return {
-        flatObjectMetadata: {
-          ...updatedStandardFlatObjectMetadata,
-          isActive:
-            updatedEditableObjectProperties.isActive ??
-            updatedStandardFlatObjectMetadata.isActive,
-        },
-        otherObjectFlatFieldMetadataToUpdate: [],
-        flatIndexMetadataToUpdate: [],
-        flatViewFieldToUpdate: [],
-        flatViewFieldToCreate: [],
-      };
-    }
-
-    const initialAccumulator: UpdatedFlatObjectAndRelatedFlatEntities = {
-      flatObjectMetadata: flatObjectMetadataToUpdate,
-      otherObjectFlatFieldMetadataToUpdate: [],
-      flatIndexMetadataToUpdate: [],
-      flatViewFieldToUpdate: [],
-      flatViewFieldToCreate: [],
+    const toFlatObjectMetadata = {
+      ...mergeUpdateInExistingRecord({
+        existing: existingFlatObjectMetadata,
+        properties:
+          FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES[
+            isStandardObject ? 'standard' : 'custom'
+          ],
+        update: updatedEditableObjectProperties,
+      }),
+      standardOverrides,
     };
 
-    return objectMetadataEditableProperties.reduce<UpdatedFlatObjectAndRelatedFlatEntities>(
-      (
-        {
-          flatObjectMetadata,
-          otherObjectFlatFieldMetadataToUpdate,
-          flatIndexMetadataToUpdate,
-          flatViewFieldToUpdate,
-          flatViewFieldToCreate,
-        },
-        property,
-      ) => {
-        const updatedPropertyValue = updatedEditableObjectProperties[property];
-        const isPropertyUpdated =
-          updatedPropertyValue !== undefined &&
-          flatObjectMetadata[property] !== updatedPropertyValue;
+    const {
+      flatIndexMetadatasToUpdate,
+      flatViewFieldsToCreate,
+      flatViewFieldsToUpdate,
+      otherObjectFlatFieldMetadatasToUpdate,
+    } = handleFlatObjectMetadataUpdateSideEffect({
+      fromFlatObjectMetadata: existingFlatObjectMetadata,
+      toFlatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+      flatViewFieldMaps,
+      flatViewMaps,
+    });
 
-        if (!isPropertyUpdated) {
-          return {
-            flatObjectMetadata,
-            otherObjectFlatFieldMetadataToUpdate,
-            flatIndexMetadataToUpdate,
-            flatViewFieldToUpdate,
-            flatViewFieldToCreate,
-          };
-        }
-
-        const updatedFlatObjectMetadata = {
-          ...flatObjectMetadata,
-          [property]: updatedPropertyValue,
-        };
-
-        const newUpdatedOtherObjectFlatFieldMetadatas =
-          property === 'nameSingular' || property === 'namePlural'
-            ? renameRelatedMorphFieldOnObjectNamesUpdate({
-                flatFieldMetadataMaps,
-                fromFlatObjectMetadata: updatedFlatObjectMetadata,
-                toFlatObjectMetadata: updatedFlatObjectMetadata,
-              })
-            : [];
-
-        const newUpdatedFlatIndexMetadatas =
-          property === 'nameSingular'
-            ? recomputeIndexAfterFlatObjectMetadataSingularNameUpdate({
-                flatFieldMetadataMaps,
-                existingFlatObjectMetadata: flatObjectMetadataToUpdate,
-                flatIndexMaps,
-                updatedSingularName: updatedFlatObjectMetadata.nameSingular,
-              })
-            : [];
-
-        const {
-          flatViewFieldToCreate: newFlatViewFieldToCreate,
-          flatViewFieldToUpdate: newFlatViewFieldToUpdate,
-        } =
-          property === 'labelIdentifierFieldMetadataId' &&
-          isDefined(updatedFlatObjectMetadata.labelIdentifierFieldMetadataId)
-            ? recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate({
-                existingFlatObjectMetadata: flatObjectMetadataToUpdate,
-                flatViewFieldMaps,
-                flatViewMaps,
-                updatedLabelIdentifierFieldMetadataId:
-                  updatedFlatObjectMetadata.labelIdentifierFieldMetadataId,
-              })
-            : {
-                flatViewFieldToCreate: [],
-                flatViewFieldToUpdate: [],
-              };
-
-        return {
-          flatObjectMetadata: updatedFlatObjectMetadata,
-          otherObjectFlatFieldMetadataToUpdate: [
-            ...otherObjectFlatFieldMetadataToUpdate,
-            ...newUpdatedOtherObjectFlatFieldMetadatas,
-          ],
-          flatViewFieldToUpdate: [
-            ...flatViewFieldToUpdate,
-            ...newFlatViewFieldToUpdate,
-          ],
-          flatViewFieldToCreate: [
-            ...flatViewFieldToCreate,
-            ...newFlatViewFieldToCreate,
-          ],
-          flatIndexMetadataToUpdate: [
-            ...flatIndexMetadataToUpdate,
-            ...newUpdatedFlatIndexMetadatas,
-          ],
-        };
-      },
-      initialAccumulator,
-    );
+    return {
+      flatIndexMetadatasToUpdate,
+      flatObjectMetadataToUpdate: toFlatObjectMetadata,
+      flatViewFieldsToCreate,
+      flatViewFieldsToUpdate,
+      otherObjectFlatFieldMetadatasToUpdate,
+    };
   };

@@ -108,8 +108,6 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
         }
         const propertyValue = updatedEditableFieldProperties[property];
 
-        delete updatedEditableFieldProperties[property];
-
         return {
           ...acc,
           [property]: propertyValue,
@@ -161,7 +159,10 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
         const toFlatFieldMetadata = {
           ...mergeUpdateInExistingRecord({
             existing: fromFlatFieldMetadata,
-            properties: FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.custom,
+            properties:
+              FLAT_FIELD_METADATA_EDITABLE_PROPERTIES[
+                isStandardField ? 'standard' : 'custom'
+              ],
             update: updatedEditableFieldProperties,
           }),
           standardOverrides,
