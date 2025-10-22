@@ -40,7 +40,7 @@ export const useIncrementalDestroyManyRecords = <T>({
   const { registerObjectOperation } = useRegisterObjectOperation();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const mutationPageSize = pageSize ?? DEFAULT_QUERY_PAGE_SIZE;
+  const mutationPageSize = pageSize;
 
   const apolloCoreClient = useApolloCoreClient();
 

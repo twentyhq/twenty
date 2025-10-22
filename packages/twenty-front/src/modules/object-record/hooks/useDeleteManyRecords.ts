@@ -15,9 +15,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
-import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
@@ -44,8 +42,6 @@ export const useDeleteManyRecords = ({
     apiConfig?.mutationMaximumAffectedRecords ?? DEFAULT_MUTATION_BATCH_SIZE;
 
   const apolloCoreClient = useApolloCoreClient();
-
-  const [progress, setProgress] = useState<ObjectRecordQueryProgress>();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -78,11 +74,6 @@ export const useDeleteManyRecords = ({
       recordIdsToDelete.length / mutationPageSize,
     );
     const deletedRecords = [];
-
-    setProgress({
-      processedRecordCount: 0,
-      totalRecordCount: recordIdsToDelete.length,
-    });
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
       const batchedIdsToDelete = recordIdsToDelete.slice(
@@ -227,18 +218,10 @@ export const useDeleteManyRecords = ({
         deletedRecordsResponse.data?.[mutationResponseField] ?? [];
       deletedRecords.push(...deletedRecordsForThisBatch);
 
-      setProgress({
-        processedRecordCount: deletedRecords.length,
-        totalRecordCount: recordIdsToDelete.length,
-      });
-
       if (isDefined(delayInMsBetweenRequests)) {
         await sleep(delayInMsBetweenRequests);
       }
     }
-
-    setProgress({});
-
     await refetchAggregateQueries();
 
     registerObjectOperation(objectNameSingular, {
@@ -248,5 +231,5 @@ export const useDeleteManyRecords = ({
     return deletedRecords;
   };
 
-  return { deleteManyRecords, progress };
+  return { deleteManyRecords };
 };

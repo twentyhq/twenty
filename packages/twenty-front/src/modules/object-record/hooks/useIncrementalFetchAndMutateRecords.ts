@@ -9,9 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 type UseIncrementalFetchAndMutateRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
   'skip'
-> & {
-  pageSize?: number;
-};
+>;
 
 type MutateRecordsBatchParams = {
   recordIds: string[];

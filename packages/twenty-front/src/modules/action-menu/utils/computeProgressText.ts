@@ -14,9 +14,12 @@ export const computeProgressText = (
   }
 
   if (isDefined(progress.totalRecordCount)) {
-    const percentage = Math.round(
-      (progress.processedRecordCount / progress.totalRecordCount) * 100,
-    );
+    const percentage =
+      progress.totalRecordCount > 0
+        ? Math.round(
+            (progress.processedRecordCount / progress.totalRecordCount) * 100,
+          )
+        : 0;
 
     return ` (${percentage}%)`;
   }

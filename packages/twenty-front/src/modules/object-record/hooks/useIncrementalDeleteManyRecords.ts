@@ -6,7 +6,6 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
@@ -44,7 +43,7 @@ export const useIncrementalDeleteManyRecords = <T>({
   const { registerObjectOperation } = useRegisterObjectOperation();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const mutationPageSize = pageSize ?? DEFAULT_MUTATION_BATCH_SIZE;
+  const mutationPageSize = pageSize;
 
   const apolloCoreClient = useApolloCoreClient();
 
