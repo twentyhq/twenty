@@ -302,7 +302,7 @@ export enum AxisNameDisplay {
 export type BarChartConfiguration = {
   __typename?: 'BarChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -1218,23 +1218,6 @@ export type ExecuteServerlessFunctionInput = {
   version?: Scalars['String'];
 };
 
-export enum ExtendedAggregateOperations {
-  AVG = 'AVG',
-  COUNT = 'COUNT',
-  COUNT_EMPTY = 'COUNT_EMPTY',
-  COUNT_FALSE = 'COUNT_FALSE',
-  COUNT_NOT_EMPTY = 'COUNT_NOT_EMPTY',
-  COUNT_TRUE = 'COUNT_TRUE',
-  COUNT_UNIQUE_VALUES = 'COUNT_UNIQUE_VALUES',
-  EARLIEST = 'EARLIEST',
-  LATEST = 'LATEST',
-  MAX = 'MAX',
-  MIN = 'MIN',
-  PERCENTAGE_EMPTY = 'PERCENTAGE_EMPTY',
-  PERCENTAGE_NOT_EMPTY = 'PERCENTAGE_NOT_EMPTY',
-  SUM = 'SUM'
-}
-
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   id: Scalars['UUID'];
@@ -1424,7 +1407,7 @@ export type FullName = {
 export type GaugeChartConfiguration = {
   __typename?: 'GaugeChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
@@ -1671,7 +1654,7 @@ export enum JobState {
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -2813,7 +2796,7 @@ export type NativeModelCapabilities = {
 export type NumberChartConfiguration = {
   __typename?: 'NumberChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
@@ -3058,7 +3041,7 @@ export enum PermissionFlagType {
 export type PieChartConfiguration = {
   __typename?: 'PieChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
