@@ -1,7 +1,44 @@
-// Re-export service types for workflow actions
-// Workflow executors add workspaceId and rolePermissionConfig at runtime
-export type { CreateRecordParams as WorkflowCreateRecordActionInput } from 'src/engine/core-modules/record-crud/types/create-record-params.type';
-export type { UpdateRecordParams as WorkflowUpdateRecordActionInput } from 'src/engine/core-modules/record-crud/types/update-record-params.type';
-export type { DeleteRecordParams as WorkflowDeleteRecordActionInput } from 'src/engine/core-modules/record-crud/types/delete-record-params.type';
-export type { FindRecordsParams as WorkflowFindRecordsActionInput } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
-export type { UpsertRecordParams as WorkflowUpsertRecordActionInput } from 'src/engine/core-modules/record-crud/types/upsert-record-params.type';
+import {
+  type ObjectRecordFilter,
+  type ObjectRecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
+import { type ObjectRecordProperties } from 'src/engine/core-modules/record-crud/types/object-record-properties.type';
+
+export type WorkflowCreateRecordActionInput = {
+  objectName: string;
+  objectRecord: ObjectRecordProperties;
+  upsert?: boolean;
+};
+
+export type WorkflowUpdateRecordActionInput = {
+  objectName: string;
+  objectRecord: ObjectRecordProperties;
+  objectRecordId: string;
+  fieldsToUpdate: string[];
+};
+
+export type WorkflowDeleteRecordActionInput = {
+  objectName: string;
+  objectRecordId: string;
+};
+
+export type WorkflowFindRecordsActionInput = {
+  objectName: string;
+  // TODO: migrate gql computation and record filter groups to twenty-shared
+  filter?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recordFilterGroups?: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recordFilters?: any;
+    gqlOperationFilter?: Partial<ObjectRecordFilter>[];
+  };
+  orderBy?: Partial<ObjectRecordOrderBy>;
+  limit?: number;
+};
+
+export type WorkflowUpsertRecordActionInput = {
+  objectName: string;
+  objectRecord: ObjectRecordProperties;
+  fieldsToUpdate?: string[];
+};
