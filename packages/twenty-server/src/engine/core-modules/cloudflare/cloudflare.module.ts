@@ -6,13 +6,13 @@ import { DnsCloudflareController } from 'src/engine/core-modules/cloudflare/cont
 import { DnsCloudflareService } from 'src/engine/core-modules/cloudflare/services/dns-cloudflare.service';
 import { CustomDomainManagerModule } from 'src/engine/core-modules/domain/custom-domain-manager/custom-domain-manager.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([PublicDomain, Workspace]),
+    NestjsQueryTypeOrmModule.forFeature([PublicDomainEntity, WorkspaceEntity]),
     WorkspaceDomainsModule,
     CustomDomainManagerModule,
     PublicDomainModule,

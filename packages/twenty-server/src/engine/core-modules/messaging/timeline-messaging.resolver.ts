@@ -8,8 +8,8 @@ import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/messagin
 import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -64,8 +64,8 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadsWithTotalDTO)
   async getTimelineThreadsFromPersonId(
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { personId, page, pageSize }: GetTimelineThreadsFromPersonIdArgs,
   ) {
     const workspaceMember = await this.userService.loadWorkspaceMember(
@@ -90,8 +90,8 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadsWithTotalDTO)
   async getTimelineThreadsFromCompanyId(
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { companyId, page, pageSize }: GetTimelineThreadsFromCompanyIdArgs,
   ) {
     const workspaceMember = await this.userService.loadWorkspaceMember(
@@ -116,8 +116,8 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadsWithTotalDTO)
   async getTimelineThreadsFromOpportunityId(
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args()
     { opportunityId, page, pageSize }: GetTimelineThreadsFromOpportunityIdArgs,
   ) {

@@ -12,8 +12,8 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
@@ -22,10 +22,10 @@ import {
 @Injectable()
 export class CustomDomainManagerService {
   constructor(
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(PublicDomain)
-    private readonly publicDomainRepository: Repository<PublicDomain>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(PublicDomainEntity)
+    private readonly publicDomainRepository: Repository<PublicDomainEntity>,
     private readonly billingService: BillingService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly auditService: AuditService,
@@ -46,7 +46,7 @@ export class CustomDomainManagerService {
     }
   }
 
-  async setCustomDomain(workspace: Workspace, customDomain: string) {
+  async setCustomDomain(workspace: WorkspaceEntity, customDomain: string) {
     await this.isCustomDomainEnabled(workspace.id);
 
     const existingWorkspace = await this.workspaceRepository.findOne({
@@ -89,7 +89,7 @@ export class CustomDomainManagerService {
   }
 
   async checkCustomDomainValidRecords(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     domainValidRecord?: DomainValidRecords,
   ) {
     assertIsDefinedOrThrow(workspace.customDomain);

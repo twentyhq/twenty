@@ -10,8 +10,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   ServerlessFunctionTriggerJob,
   ServerlessFunctionTriggerJobData,
@@ -25,10 +25,10 @@ export class CronTriggerCronJob {
   constructor(
     @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(CronTrigger)
-    private readonly cronTriggerRepository: Repository<CronTrigger>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(CronTriggerEntity)
+    private readonly cronTriggerRepository: Repository<CronTriggerEntity>,
   ) {}
 
   @Process(CronTriggerCronJob.name)

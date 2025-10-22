@@ -11,12 +11,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingMeterEventTimeWindow } from 'src/engine/core-modules/billing/enums/billing-meter-event-time-window.enum';
 import { BillingMeterStatus } from 'src/engine/core-modules/billing/enums/billing-meter-status.enum';
 
 @Entity({ name: 'billingMeter', schema: 'core' })
-export class BillingMeter {
+export class BillingMeterEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -55,8 +55,11 @@ export class BillingMeter {
   })
   eventTimeWindow: BillingMeterEventTimeWindow | null;
 
-  @OneToMany(() => BillingPrice, (billingPrice) => billingPrice.billingMeter)
-  billingPrices: Relation<BillingPrice[]>;
+  @OneToMany(
+    () => BillingPriceEntity,
+    (billingPrice) => billingPrice.billingMeter,
+  )
+  billingPrices: Relation<BillingPriceEntity[]>;
 
   @Column({ nullable: false, type: 'jsonb' })
   valueSettings: Stripe.Billing.Meter.ValueSettings;

@@ -6,14 +6,14 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super({
@@ -23,7 +23,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    let workspace: Workspace | null = null;
+    let workspace: WorkspaceEntity | null = null;
 
     try {
       if (

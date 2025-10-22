@@ -25,11 +25,11 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
-import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
@@ -52,7 +52,7 @@ import { getOppositeInterval } from 'src/engine/core-modules/billing/utils/get-o
 import { getOppositePlan } from 'src/engine/core-modules/billing/utils/get-opposite-plan';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingSubscriptionService {
@@ -62,20 +62,20 @@ export class BillingSubscriptionService {
     private readonly billingPriceService: BillingPriceService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingProductService: BillingProductService,
-    @InjectRepository(BillingEntitlement)
-    private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
-    @InjectRepository(BillingSubscription)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingEntitlementEntity)
+    private readonly billingEntitlementRepository: Repository<BillingEntitlementEntity>,
+    @InjectRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     private readonly stripeCustomerService: StripeCustomerService,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(BillingPrice)
-    private readonly billingPriceRepository: Repository<BillingPrice>,
-    @InjectRepository(BillingSubscriptionItem)
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
+    @InjectRepository(BillingSubscriptionItemEntity)
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingSubscriptionPhaseService: BillingSubscriptionPhaseService,
-    @InjectRepository(BillingCustomer)
-    private readonly billingCustomerRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: Repository<BillingSubscriptionEntity>,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
@@ -87,7 +87,7 @@ export class BillingSubscriptionService {
   async getCurrentBillingSubscription(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
-  }): Promise<BillingSubscription | undefined> {
+  }): Promise<BillingSubscriptionEntity | undefined> {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
         where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
@@ -110,7 +110,7 @@ export class BillingSubscriptionService {
   async getCurrentBillingSubscriptionOrThrow(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
-  }): Promise<BillingSubscription> {
+  }): Promise<BillingSubscriptionEntity> {
     const notCanceledSubscription =
       await this.getCurrentBillingSubscription(criteria);
 
@@ -209,7 +209,7 @@ export class BillingSubscriptionService {
   }
 
   async changeMeteredPrice(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     meteredPriceId: string,
   ): Promise<void> {
     const {
@@ -277,7 +277,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  async cancelSwitchMeteredPrice(workspace: Workspace): Promise<void> {
+  async cancelSwitchMeteredPrice(workspace: WorkspaceEntity): Promise<void> {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -296,7 +296,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  async changeInterval(workspace: Workspace) {
+  async changeInterval(workspace: WorkspaceEntity) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -306,7 +306,7 @@ export class BillingSubscriptionService {
     return this.setTargetInterval(billingSubscription, nextInterval);
   }
 
-  async changePlan(workspace: Workspace) {
+  async changePlan(workspace: WorkspaceEntity) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -323,7 +323,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  async endTrialPeriod(workspace: Workspace) {
+  async endTrialPeriod(workspace: WorkspaceEntity) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -422,7 +422,7 @@ export class BillingSubscriptionService {
     return currentMeteredBillingPrice;
   }
 
-  async cancelSwitchPlan(workspace: Workspace) {
+  async cancelSwitchPlan(workspace: WorkspaceEntity) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -433,7 +433,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  async cancelSwitchInterval(workspace: Workspace) {
+  async cancelSwitchInterval(workspace: WorkspaceEntity) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
@@ -570,7 +570,7 @@ export class BillingSubscriptionService {
   }
 
   private async replaceCurrentMeteredItem(
-    billingSubscription: BillingSubscription,
+    billingSubscription: BillingSubscriptionEntity,
     newMeteredPriceId: string,
     licensedPriceIdForThresholds: string,
   ): Promise<void> {
@@ -599,10 +599,10 @@ export class BillingSubscriptionService {
   }
 
   private async loadInitialState(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     meteredPriceId: string,
   ): Promise<{
-    billingSubscription: BillingSubscription;
+    billingSubscription: BillingSubscriptionEntity;
     subscription: SubscriptionWithSchedule;
     schedule: Stripe.SubscriptionSchedule;
     currentEditable: Stripe.SubscriptionSchedule.Phase | undefined;
@@ -674,7 +674,7 @@ export class BillingSubscriptionService {
   }
 
   private async maybeUpgradeNowIfHigherTier(
-    billingSubscription: BillingSubscription,
+    billingSubscription: BillingSubscriptionEntity,
     currentPhaseDetails: Awaited<
       ReturnType<BillingSubscriptionPhaseService['getDetailsFromPhase']>
     >,
@@ -813,7 +813,7 @@ export class BillingSubscriptionService {
   }
 
   private getCurrentMeteredBillingSubscriptionItemOrThrow(
-    billingSubscription: BillingSubscription,
+    billingSubscription: BillingSubscriptionEntity,
   ) {
     return findOrThrow(
       billingSubscription.billingSubscriptionItems,
@@ -823,7 +823,7 @@ export class BillingSubscriptionService {
   }
 
   private getCurrentLicensedBillingSubscriptionItemOrThrow(
-    billingSubscription: BillingSubscription,
+    billingSubscription: BillingSubscriptionEntity,
   ) {
     return findOrThrow(
       billingSubscription.billingSubscriptionItems,
@@ -832,7 +832,9 @@ export class BillingSubscriptionService {
     ) as LicensedBillingSubscriptionItem;
   }
 
-  getTrialPeriodFreeWorkflowCredits(billingSubscription: BillingSubscription) {
+  getTrialPeriodFreeWorkflowCredits(
+    billingSubscription: BillingSubscriptionEntity,
+  ) {
     const trialDuration =
       isDefined(billingSubscription.trialEnd) &&
       isDefined(billingSubscription.trialStart)
@@ -897,7 +899,7 @@ export class BillingSubscriptionService {
   }
 
   private async setTargetInterval(
-    billingSubscription: BillingSubscription,
+    billingSubscription: BillingSubscriptionEntity,
     targetInterval: SubscriptionInterval,
   ): Promise<void> {
     const { currentEditable } = await this.loadScheduleEditable(
@@ -1502,7 +1504,7 @@ export class BillingSubscriptionService {
   }
 
   private filterMeteredCandidates(
-    catalog: BillingPrice[],
+    catalog: BillingPriceEntity[],
     interval?: SubscriptionInterval,
   ) {
     const pool = interval
@@ -1517,7 +1519,7 @@ export class BillingSubscriptionService {
   }
 
   private async findMeteredMatchFloor(
-    catalog: BillingPrice[],
+    catalog: BillingPriceEntity[],
     referencePriceId: string,
     targetInterval?: SubscriptionInterval,
   ): Promise<BillingMeterPrice> {
@@ -1552,10 +1554,12 @@ export class BillingSubscriptionService {
     meteredPriceId,
     targetInterval,
   }: {
-    billingPricesPerPlanAndIntervalArray: BillingPrice[];
+    billingPricesPerPlanAndIntervalArray: BillingPriceEntity[];
     meteredPriceId: string;
     targetInterval: SubscriptionInterval;
-  }): Promise<Omit<BillingPrice, 'tiers'> & { tiers: MeterBillingPriceTiers }> {
+  }): Promise<
+    Omit<BillingPriceEntity, 'tiers'> & { tiers: MeterBillingPriceTiers }
+  > {
     const mapped = await this.findMeteredMatchFloor(
       billingPricesPerPlanAndIntervalArray,
       meteredPriceId,
@@ -1569,7 +1573,7 @@ export class BillingSubscriptionService {
     billingPricesPerPlanAndIntervalArray,
     meteredPriceId,
   }: {
-    billingPricesPerPlanAndIntervalArray: BillingPrice[];
+    billingPricesPerPlanAndIntervalArray: BillingPriceEntity[];
     meteredPriceId: string;
   }): Promise<BillingMeterPrice> {
     return (await this.findMeteredMatchFloor(
@@ -1583,7 +1587,7 @@ export class BillingSubscriptionService {
     targetMeteredPriceId,
     interval,
   }: {
-    billingPricesPerPlanAndIntervalArray: BillingPrice[];
+    billingPricesPerPlanAndIntervalArray: BillingPriceEntity[];
     targetMeteredPriceId: string;
     interval: SubscriptionInterval;
   }): Promise<BillingMeterPrice> {

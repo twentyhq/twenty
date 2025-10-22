@@ -1,4 +1,4 @@
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -19,7 +19,7 @@ export type ViewEntityRelationProperties =
     | ViewFilterEntity
     | ViewGroupEntity
     | ViewFilterGroupEntity
-    | Workspace
+    | WorkspaceEntity
     | FieldMetadataEntity
   >;
 

@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
+import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -16,15 +17,14 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -32,9 +32,9 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
-  let userWorkspaceRepository: Repository<UserWorkspace>;
-  let userRepository: Repository<User>;
-  let workspaceRepository: Repository<Workspace>;
+  let userWorkspaceRepository: Repository<UserWorkspaceEntity>;
+  let userRepository: Repository<UserEntity>;
+  let workspaceRepository: Repository<WorkspaceEntity>;
   let workspaceCacheStorageService: WorkspaceCacheStorageService;
   let messageQueueService: MessageQueueService;
   let dnsManagerService: DnsManagerService;
@@ -45,7 +45,7 @@ describe('WorkspaceService', () => {
       providers: [
         WorkspaceService,
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: {
             findOne: jest.fn(),
             softDelete: jest.fn(),
@@ -53,13 +53,13 @@ describe('WorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(PublicDomain),
+          provide: getRepositoryToken(ApprovedAccessDomainEntity),
           useValue: {
             findOneBy: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(UserWorkspace),
+          provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: {
             find: jest.fn(),
             softDelete: jest.fn(),
@@ -67,7 +67,7 @@ describe('WorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             softDelete: jest.fn(),
           },
@@ -131,12 +131,14 @@ describe('WorkspaceService', () => {
     }).compile();
 
     service = module.get<WorkspaceService>(WorkspaceService);
-    userWorkspaceRepository = module.get<Repository<UserWorkspace>>(
-      getRepositoryToken(UserWorkspace),
+    userWorkspaceRepository = module.get<Repository<UserWorkspaceEntity>>(
+      getRepositoryToken(UserWorkspaceEntity),
     );
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-    workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+    userRepository = module.get<Repository<UserEntity>>(
+      getRepositoryToken(UserEntity),
+    );
+    workspaceRepository = module.get<Repository<WorkspaceEntity>>(
+      getRepositoryToken(WorkspaceEntity),
     );
     workspaceCacheStorageService = module.get<WorkspaceCacheStorageService>(
       WorkspaceCacheStorageService,
@@ -197,7 +199,7 @@ describe('WorkspaceService', () => {
       jest
         .spyOn(userWorkspaceRepository, 'find')
         .mockResolvedValue([
-          { id: 'remaining-user-workspace-id' } as UserWorkspace,
+          { id: 'remaining-user-workspace-id' } as UserWorkspaceEntity,
         ]);
 
       await service.handleRemoveWorkspaceMember(
@@ -220,7 +222,7 @@ describe('WorkspaceService', () => {
       const mockWorkspace = {
         id: 'workspace-id',
         metadataVersion: 0,
-      } as Workspace;
+      } as WorkspaceEntity;
 
       jest
         .spyOn(workspaceRepository, 'findOne')
@@ -228,7 +230,7 @@ describe('WorkspaceService', () => {
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
       jest
         .spyOn(service, 'deleteMetadataSchemaCacheAndUserWorkspace')
-        .mockResolvedValue({} as Workspace);
+        .mockResolvedValue({} as WorkspaceEntity);
 
       await service.deleteWorkspace(mockWorkspace.id, false);
 
@@ -248,7 +250,7 @@ describe('WorkspaceService', () => {
       const mockWorkspace = {
         id: 'workspace-id',
         metadataVersion: 0,
-      } as Workspace;
+      } as WorkspaceEntity;
 
       jest
         .spyOn(workspaceRepository, 'findOne')
@@ -271,7 +273,7 @@ describe('WorkspaceService', () => {
         id: 'workspace-id',
         metadataVersion: 0,
         customDomain,
-      } as Workspace;
+      } as WorkspaceEntity;
 
       jest
         .spyOn(workspaceRepository, 'findOne')
@@ -279,7 +281,7 @@ describe('WorkspaceService', () => {
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
       jest
         .spyOn(service, 'deleteMetadataSchemaCacheAndUserWorkspace')
-        .mockResolvedValue({} as Workspace);
+        .mockResolvedValue({} as WorkspaceEntity);
 
       await service.deleteWorkspace(mockWorkspace.id, false);
 
@@ -295,7 +297,7 @@ describe('WorkspaceService', () => {
         id: 'workspace-id',
         metadataVersion: 0,
         customDomain,
-      } as Workspace;
+      } as WorkspaceEntity;
 
       jest
         .spyOn(workspaceRepository, 'findOne')

@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmpty, IsUrl } from 'class-validator';
 
 @InputType()
-export class CreateWebhookDTO {
+export class CreateWebhookInput {
   @Field()
   @IsNotEmpty()
   @IsUrl()

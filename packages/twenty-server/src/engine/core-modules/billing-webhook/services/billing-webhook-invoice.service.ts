@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 
 const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
 
@@ -14,8 +14,8 @@ const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
 export class BillingWebhookInvoiceService {
   protected readonly logger = new Logger(BillingWebhookInvoiceService.name);
   constructor(
-    @InjectRepository(BillingSubscriptionItem)
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(BillingSubscriptionItemEntity)
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
   ) {}
 
   async processStripeEvent(data: Stripe.InvoiceFinalizedEvent.Data) {

@@ -8,7 +8,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -22,8 +22,8 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 })
 export class FixCreatedByDefaultValueCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace)
-    protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,

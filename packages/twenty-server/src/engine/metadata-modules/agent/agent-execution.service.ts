@@ -18,7 +18,7 @@ import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
@@ -140,7 +140,7 @@ export class AgentExecutionService implements AgentExecutionContext {
   }
 
   private async getContextForSystemPrompt(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
     userWorkspaceId: string,
   ) {
@@ -243,7 +243,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     messages,
     recordIdsByObjectMetadataNameSingular,
   }: {
-    workspace: Workspace;
+    workspace: WorkspaceEntity;
     userWorkspaceId: string;
     agentId: string;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];

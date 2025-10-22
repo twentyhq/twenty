@@ -12,7 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
-  AppToken,
+  AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
@@ -31,8 +31,8 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 @Injectable()
 export class EmailVerificationService {
   constructor(
-    @InjectRepository(AppToken)
-    private readonly appTokenRepository: Repository<AppToken>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly domainsServerConfigService: DomainServerConfigService,
     private readonly emailService: EmailService,

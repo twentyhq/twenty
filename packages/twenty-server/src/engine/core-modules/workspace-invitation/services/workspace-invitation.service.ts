@@ -13,7 +13,7 @@ import { getAppPath } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import {
-  AppToken,
+  AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
@@ -26,23 +26,23 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 import {
   WorkspaceInvitationException,
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class WorkspaceInvitationService {
   constructor(
-    @InjectRepository(AppToken)
-    private readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(UserWorkspace)
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
@@ -135,7 +135,7 @@ export class WorkspaceInvitationService {
     return appToken;
   }
 
-  async loadWorkspaceInvitations(workspace: Workspace) {
+  async loadWorkspaceInvitations(workspace: WorkspaceEntity) {
     const appTokens = await this.appTokenRepository.find({
       where: {
         workspaceId: workspace.id,
@@ -150,7 +150,7 @@ export class WorkspaceInvitationService {
     return appTokens.map(castAppTokenToWorkspaceInvitationUtil);
   }
 
-  async createWorkspaceInvitation(email: string, workspace: Workspace) {
+  async createWorkspaceInvitation(email: string, workspace: WorkspaceEntity) {
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
       email.toLowerCase(),
@@ -213,7 +213,7 @@ export class WorkspaceInvitationService {
 
   async resendWorkspaceInvitation(
     appTokenId: string,
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     sender: WorkspaceMemberWorkspaceEntity,
   ) {
     const appToken = await this.appTokenRepository.findOne({
@@ -238,7 +238,7 @@ export class WorkspaceInvitationService {
 
   async sendInvitations(
     emails: string[],
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     sender: WorkspaceMemberWorkspaceEntity,
     usePersonalInvitation = true,
   ): Promise<SendInvitationsOutput> {
