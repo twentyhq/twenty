@@ -1,13 +1,15 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": ".",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "strict": true,
     "target": "es2018",
     "module": "esnext",
     "lib": ["es2020", "dom"],
@@ -15,5 +17,6 @@
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "dist"],
+  "include": ["**/*.ts"]
 }
