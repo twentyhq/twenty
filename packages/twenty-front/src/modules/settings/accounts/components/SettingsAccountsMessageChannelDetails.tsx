@@ -101,16 +101,33 @@ export const SettingsAccountsMessageChannelDetails = ({
   return (
     <StyledDetailsContainer>
       {isFolderControlEnabled && messageChannel.messageFolders && (
-        <Section>
-          <H2Title
-            title={t`Import`}
-            description={t`Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page.`}
-          />
-          <SettingsAccountsMessageFolderCard
-            onChange={handleMessageFolderImportPolicyChange}
-            value={messageChannel.messageFolderImportPolicy}
-          />
-        </Section>
+        <>
+          <Section>
+            <H2Title
+              title={t`Import`}
+              description={t`Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page.`}
+            />
+            <SettingsAccountsMessageFolderCard
+              onChange={handleMessageFolderImportPolicyChange}
+              value={messageChannel.messageFolderImportPolicy}
+            />
+          </Section>
+          <Section>
+            <Card rounded>
+              <SettingsOptionCardContentToggle
+                Icon={IconUsers}
+                title={t`Exclude group emails`}
+                description={t`Don't sync emails from team@ support@ noreply@...`}
+                checked={messageChannel.excludeGroupEmails}
+                onChange={() =>
+                  handleIsGroupEmailExcludedToggle(
+                    !messageChannel.excludeGroupEmails,
+                  )
+                }
+              />
+            </Card>
+          </Section>
+        </>
       )}
       <Section>
         <H2Title
@@ -137,25 +154,13 @@ export const SettingsAccountsMessageChannelDetails = ({
           <SettingsOptionCardContentToggle
             Icon={IconBriefcase}
             title={t`Exclude non-professional emails`}
-            description={t`Don’t create contacts from/to Gmail, Outlook emails`}
-            divider
+            description={t`Don't create contacts from/to Gmail, Outlook emails`}
             checked={messageChannel.excludeNonProfessionalEmails}
             onChange={() => {
               handleIsNonProfessionalEmailExcludedToggle(
                 !messageChannel.excludeNonProfessionalEmails,
               );
             }}
-          />
-          <SettingsOptionCardContentToggle
-            Icon={IconUsers}
-            title={t`Exclude group emails`}
-            description={t`Don’t sync emails from team@ support@ noreply@...`}
-            checked={messageChannel.excludeGroupEmails}
-            onChange={() =>
-              handleIsGroupEmailExcludedToggle(
-                !messageChannel.excludeGroupEmails,
-              )
-            }
           />
         </Card>
       </Section>
