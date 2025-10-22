@@ -45,6 +45,8 @@ services:
       # EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
       # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
 
+      # SELF_SIGNED_CERTIFICATE_URL: ${SELF_SIGNED_CERTIFICATE_URL}
+
     depends_on:
       db:
         condition: service_healthy
@@ -96,6 +98,8 @@ services:
       # EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-465}
       # EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
       # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
+
+      # SELF_SIGNED_CERTIFICATE_URL: ${SELF_SIGNED_CERTIFICATE_URL}
 
     depends_on:
       db:

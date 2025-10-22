@@ -28,7 +28,7 @@ setup_and_migrate_db() {
         NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
         yarn database:migrate:prod
     fi
-    
+
     yarn command:prod upgrade
     echo "Successfully migrated DB!"
 }
@@ -38,7 +38,7 @@ register_background_jobs() {
         echo "Cron job registration is disabled, skipping..."
         return
     fi
-  
+
     echo "Registering background sync jobs..."
     if yarn command:prod cron:register:all; then
         echo "Successfully registered all background sync jobs!"
@@ -47,6 +47,19 @@ register_background_jobs() {
     fi
 }
 
+download_self_signed_certificate() {
+    if [ -z "${SELF_SIGNED_CERTIFICATE_URL}" ]; then
+        echo "Self-signed certificate URL is not set, skipping..."
+        return
+    fi
+
+    echo "Downloading self-signed certificate from ${SELF_SIGNED_CERTIFICATE_URL}..."
+    curl -o /app/self-signed.pem ${SELF_SIGNED_CERTIFICATE_URL} -s
+    export NODE_EXTRA_CA_CERTS=/app/self-signed.pem
+    echo "Successfully downloaded self-signed certificate!"
+}
+
+download_self_signed_certificate
 setup_and_migrate_db
 register_background_jobs
 
