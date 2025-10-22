@@ -75,7 +75,7 @@ describe('apiKeysResolver (e2e)', () => {
 
       const response = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateApiKey($input: CreateApiKeyDTO!) {
+          mutation CreateApiKey($input: CreateApiKeyInput!) {
             createApiKey(input: $input) {
               id
               name
