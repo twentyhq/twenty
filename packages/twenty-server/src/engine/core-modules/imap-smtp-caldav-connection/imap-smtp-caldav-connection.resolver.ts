@@ -20,7 +20,7 @@ import { ImapSmtpCaldavConnectionSuccessDTO } from 'src/engine/core-modules/imap
 import { EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -47,7 +47,7 @@ export class ImapSmtpCaldavResolver {
   @UseGuards(WorkspaceAuthGuard)
   async getConnectedImapSmtpCaldavAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ConnectedImapSmtpCaldavAccountDTO> {
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
@@ -82,7 +82,7 @@ export class ImapSmtpCaldavResolver {
     @Args('handle') handle: string,
     @Args('connectionParameters')
     connectionParameters: EmailAccountConnectionParameters,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
   ): Promise<ImapSmtpCaldavConnectionSuccessDTO> {
     const isImapSmtpCaldavFeatureFlagEnabled =

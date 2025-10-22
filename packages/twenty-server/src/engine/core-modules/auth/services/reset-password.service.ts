@@ -14,22 +14,22 @@ import { assertIsDefinedOrThrow, getAppPath } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
-  AppToken,
+  AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
-import { type InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
-import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import { type ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
+import { type EmailPasswordResetLinkOutput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
+import { type InvalidatePasswordOutput } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
+import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/password-reset-token.dto';
+import { type ValidatePasswordResetTokenOutput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 
@@ -38,10 +38,10 @@ export class ResetPasswordService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(AppToken)
-    private readonly appTokenRepository: Repository<AppToken>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
     private readonly userService: UserService,
@@ -115,7 +115,7 @@ export class ResetPasswordService {
     resetToken: PasswordResetToken,
     email: string,
     locale: keyof typeof APP_LOCALES,
-  ): Promise<EmailPasswordResetLink> {
+  ): Promise<EmailPasswordResetLinkOutput> {
     const user = await this.userService.findUserByEmailOrThrow(
       email,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
@@ -172,7 +172,7 @@ export class ResetPasswordService {
 
   async validatePasswordResetToken(
     resetToken: string,
-  ): Promise<ValidatePasswordResetToken> {
+  ): Promise<ValidatePasswordResetTokenOutput> {
     const hashedResetToken = crypto
       .createHash('sha256')
       .update(resetToken)
@@ -207,7 +207,7 @@ export class ResetPasswordService {
 
   async invalidatePasswordResetToken(
     userId: string,
-  ): Promise<InvalidatePassword> {
+  ): Promise<InvalidatePasswordOutput> {
     const user = await this.userService.findUserByIdOrThrow(
       userId,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),

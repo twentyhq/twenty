@@ -17,8 +17,9 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { SEND_EMAIL_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/SendEmailAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -246,7 +247,7 @@ export const WorkflowEditActionSendEmail = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Send Email',
+      defaultTitle: SEND_EMAIL_ACTION.defaultLabel,
     });
 
   const navigate = useNavigateSettings();
@@ -272,6 +273,7 @@ export const WorkflowEditActionSendEmail = ({
           initialTitle={headerTitle}
           headerType={headerType}
           disabled={actionOptions.readonly}
+          iconTooltip={SEND_EMAIL_ACTION.defaultLabel}
         />
         <WorkflowStepBody>
           <Select
@@ -345,7 +347,7 @@ export const WorkflowEditActionSendEmail = ({
             maxWidth={EMAIL_EDITOR_MAX_WIDTH}
           />
         </WorkflowStepBody>
-        {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
+        {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
       </>
     )
   );

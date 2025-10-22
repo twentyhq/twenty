@@ -5,8 +5,8 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { OnboardingStepSuccessDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-success.dto';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -21,8 +21,8 @@ export class OnboardingResolver {
 
   @Mutation(() => OnboardingStepSuccessDTO)
   async skipSyncEmailOnboardingStep(
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<OnboardingStepSuccessDTO> {
     await this.onboardingService.setOnboardingConnectAccountPending({
       userId: user.id,
@@ -35,7 +35,7 @@ export class OnboardingResolver {
 
   @Mutation(() => OnboardingStepSuccessDTO)
   async skipBookOnboardingStep(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<OnboardingStepSuccessDTO> {
     await this.onboardingService.setOnboardingBookOnboardingPending({
       workspaceId: workspace.id,

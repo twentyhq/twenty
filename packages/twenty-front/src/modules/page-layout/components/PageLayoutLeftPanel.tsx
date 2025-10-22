@@ -1,5 +1,5 @@
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
-import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
+import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -29,7 +29,7 @@ export const PageLayoutLeftPanel = ({
         isInRightDrawer={isInRightDrawer}
       />
 
-      <PageLayoutGridLayout tabId={pinnedLeftTabId} />
+      <PageLayoutContent tabId={pinnedLeftTabId} />
     </ShowPageLeftContainer>
   );
 };

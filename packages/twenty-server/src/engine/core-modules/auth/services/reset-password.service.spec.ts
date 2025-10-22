@@ -5,7 +5,7 @@ import { addMilliseconds } from 'date-fns';
 import { Repository } from 'typeorm';
 
 import {
-  AppToken,
+  AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
@@ -18,8 +18,8 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { ResetPasswordService } from './reset-password.service';
 
@@ -37,8 +37,8 @@ jest.mock('@react-email/render', () => ({
 describe('ResetPasswordService', () => {
   let service: ResetPasswordService;
   let userService: UserService;
-  let workspaceRepository: Repository<Workspace>;
-  let appTokenRepository: Repository<AppToken>;
+  let workspaceRepository: Repository<WorkspaceEntity>;
+  let appTokenRepository: Repository<AppTokenEntity>;
   let emailService: EmailService;
   let twentyConfigService: TwentyConfigService;
   let workspaceDomainsService: WorkspaceDomainsService;
@@ -55,15 +55,15 @@ describe('ResetPasswordService', () => {
           },
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppTokenEntity),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useClass: Repository,
         },
         {
@@ -105,11 +105,11 @@ describe('ResetPasswordService', () => {
 
     service = module.get<ResetPasswordService>(ResetPasswordService);
     userService = module.get<UserService>(UserService);
-    workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+    workspaceRepository = module.get<Repository<WorkspaceEntity>>(
+      getRepositoryToken(WorkspaceEntity),
     );
-    appTokenRepository = module.get<Repository<AppToken>>(
-      getRepositoryToken(AppToken),
+    appTokenRepository = module.get<Repository<AppTokenEntity>>(
+      getRepositoryToken(AppTokenEntity),
     );
     emailService = module.get<EmailService>(EmailService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
@@ -129,9 +129,11 @@ describe('ResetPasswordService', () => {
 
       jest
         .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockResolvedValue(mockUser as User);
+        .mockResolvedValue(mockUser as UserEntity);
       jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(appTokenRepository, 'save').mockResolvedValue({} as AppToken);
+      jest
+        .spyOn(appTokenRepository, 'save')
+        .mockResolvedValue({} as AppTokenEntity);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       const result = await service.generatePasswordResetToken(
@@ -175,10 +177,10 @@ describe('ResetPasswordService', () => {
 
       jest
         .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockResolvedValue(mockUser as User);
+        .mockResolvedValue(mockUser as UserEntity);
       jest
         .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(mockExistingToken as AppToken);
+        .mockResolvedValue(mockExistingToken as AppTokenEntity);
 
       await expect(
         service.generatePasswordResetToken('test@example.com', 'workspace-id'),
@@ -197,10 +199,10 @@ describe('ResetPasswordService', () => {
 
       jest
         .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockResolvedValue(mockUser as User);
+        .mockResolvedValue(mockUser as UserEntity);
       jest
         .spyOn(workspaceRepository, 'findOneBy')
-        .mockResolvedValue({ id: 'workspace-id' } as Workspace);
+        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
       jest
         .spyOn(twentyConfigService, 'get')
         .mockReturnValue('http://localhost:3000');
@@ -250,10 +252,10 @@ describe('ResetPasswordService', () => {
 
       jest
         .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(mockToken as AppToken);
+        .mockResolvedValue(mockToken as AppTokenEntity);
       jest
         .spyOn(userService, 'findUserByIdOrThrow')
-        .mockResolvedValue(mockUser as User);
+        .mockResolvedValue(mockUser as UserEntity);
 
       const result = await service.validatePasswordResetToken('validToken');
 
@@ -275,7 +277,7 @@ describe('ResetPasswordService', () => {
 
       jest
         .spyOn(userService, 'findUserByIdOrThrow')
-        .mockResolvedValue(mockUser as User);
+        .mockResolvedValue(mockUser as UserEntity);
       jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
 
       const result = await service.invalidatePasswordResetToken('1');

@@ -4,6 +4,8 @@ import { type FieldArrayValue } from '@/object-record/record-field/ui/types/Fiel
 import { type WorkflowIteratorAction } from '@/workflow/types/Workflow';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { ITERATOR_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/IteratorAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useLingui } from '@lingui/react/macro';
@@ -45,7 +47,7 @@ export const WorkflowEditActionIterator = ({
   const { headerTitle, headerIcon, headerIconColor, headerType, getIcon } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Iterator',
+      defaultTitle: ITERATOR_ACTION.defaultLabel,
     });
 
   const { t } = useLingui();
@@ -118,6 +120,7 @@ export const WorkflowEditActionIterator = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={actionOptions.readonly}
+        iconTooltip={ITERATOR_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         <FormArrayFieldInput
@@ -131,6 +134,7 @@ export const WorkflowEditActionIterator = ({
           VariablePicker={WorkflowVariablePicker}
         />
       </WorkflowStepBody>
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

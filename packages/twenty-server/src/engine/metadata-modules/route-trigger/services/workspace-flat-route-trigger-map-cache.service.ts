@@ -12,7 +12,7 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import {
   ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES,
-  RouteTrigger,
+  RouteTriggerEntity,
 } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
@@ -26,8 +26,8 @@ export class WorkspaceFlatRouteTriggerMapCacheService extends WorkspaceFlatMapCa
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     cacheStorageService: CacheStorageService,
-    @InjectRepository(RouteTrigger)
-    private readonly routeTriggerRepository: Repository<RouteTrigger>,
+    @InjectRepository(RouteTriggerEntity)
+    private readonly routeTriggerRepository: Repository<RouteTriggerEntity>,
   ) {
     super(cacheStorageService);
   }

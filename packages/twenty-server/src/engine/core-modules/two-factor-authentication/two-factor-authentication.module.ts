@@ -5,15 +5,15 @@ import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
-import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.util';
 
 @Module({
@@ -24,9 +24,9 @@ import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.uti
     TokenModule,
     JwtModule,
     TypeOrmModule.forFeature([
-      User,
-      TwoFactorAuthenticationMethod,
-      UserWorkspace,
+      UserEntity,
+      TwoFactorAuthenticationMethodEntity,
+      UserWorkspaceEntity,
     ]),
     UserModule,
   ],

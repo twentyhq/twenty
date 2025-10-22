@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class EmailPasswordResetLink {
+export class EmailPasswordResetLinkOutput {
   @Field(() => Boolean, {
     description: 'Boolean that confirms query was dispatched',
   })

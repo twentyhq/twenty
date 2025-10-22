@@ -2,17 +2,18 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { UserWorkspaceService as UserService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkflowExecutionContextService {
   constructor(
     private readonly workflowRunService: WorkflowRunService,
-    private readonly userService: UserService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userRoleService: UserRoleService,
   ) {}
 
@@ -32,13 +33,14 @@ export class WorkflowExecutionContextService {
     let roleId: string | undefined;
 
     if (isActingOnBehalfOfUser) {
-      const workspaceMember = await this.userService.getWorkspaceMemberOrThrow({
-        workspaceMemberId: workflowRun.createdBy.workspaceMemberId!,
-        workspaceId: runInfo.workspaceId,
-      });
+      const workspaceMember =
+        await this.userWorkspaceService.getWorkspaceMemberOrThrow({
+          workspaceMemberId: workflowRun.createdBy.workspaceMemberId!,
+          workspaceId: runInfo.workspaceId,
+        });
 
       const userWorkspace =
-        await this.userService.getUserWorkspaceForUserOrThrow({
+        await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
           userId: workspaceMember.userId,
           workspaceId: runInfo.workspaceId,
         });

@@ -7,16 +7,16 @@ import { type Request } from 'express';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 import { AccessTokenService } from './access-token.service';
@@ -25,10 +25,10 @@ describe('AccessTokenService', () => {
   let service: AccessTokenService;
   let jwtWrapperService: JwtWrapperService;
   let twentyConfigService: TwentyConfigService;
-  let userRepository: Repository<User>;
-  let workspaceRepository: Repository<Workspace>;
+  let userRepository: Repository<UserEntity>;
+  let workspaceRepository: Repository<WorkspaceEntity>;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
-  let userWorkspaceRepository: Repository<UserWorkspace>;
+  let userWorkspaceRepository: Repository<UserWorkspaceEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -57,19 +57,19 @@ describe('AccessTokenService', () => {
           },
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppTokenEntity),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(UserWorkspace),
+          provide: getRepositoryToken(UserWorkspaceEntity),
           useClass: Repository,
         },
         {
@@ -88,15 +88,17 @@ describe('AccessTokenService', () => {
     service = module.get<AccessTokenService>(AccessTokenService);
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-    workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+    userRepository = module.get<Repository<UserEntity>>(
+      getRepositoryToken(UserEntity),
+    );
+    workspaceRepository = module.get<Repository<WorkspaceEntity>>(
+      getRepositoryToken(WorkspaceEntity),
     );
     twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
     );
-    userWorkspaceRepository = module.get<Repository<UserWorkspace>>(
-      getRepositoryToken(UserWorkspace),
+    userWorkspaceRepository = module.get<Repository<UserWorkspaceEntity>>(
+      getRepositoryToken(UserWorkspaceEntity),
     );
   });
 
@@ -120,13 +122,15 @@ describe('AccessTokenService', () => {
       const mockToken = 'mock-token';
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser as UserEntity);
       jest
         .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue(mockWorkspace as Workspace);
+        .mockResolvedValue(mockWorkspace as WorkspaceEntity);
       jest
         .spyOn(userWorkspaceRepository, 'findOne')
-        .mockResolvedValue(mockUserWorkspace as UserWorkspace);
+        .mockResolvedValue(mockUserWorkspace as UserWorkspaceEntity);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue({
@@ -159,33 +163,35 @@ describe('AccessTokenService', () => {
       const workspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
       const impersonatedUserWorkspaceId = randomUUID();
-      const mockUser = { id: userId } as User;
+      const mockUser = { id: userId } as UserEntity;
       const mockWorkspace = {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
         id: workspaceId,
-      } as Workspace;
+      } as WorkspaceEntity;
       const mockUserWorkspace = {
         id: impersonatedUserWorkspaceId,
-      } as UserWorkspace;
+      } as UserWorkspaceEntity;
       const mockWorkspaceMember = { id: randomUUID() };
       const mockToken = 'mock-token';
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser as UserEntity);
       jest
         .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue(mockWorkspace as Workspace);
+        .mockResolvedValue(mockWorkspace as WorkspaceEntity);
       jest
         .spyOn(userWorkspaceRepository, 'findOne')
-        .mockResolvedValueOnce(mockUserWorkspace as UserWorkspace)
+        .mockResolvedValueOnce(mockUserWorkspace as UserWorkspaceEntity)
         .mockResolvedValueOnce({
           id: impersonatorUserWorkspaceId,
           workspaceId,
-        } as UserWorkspace)
+        } as UserWorkspaceEntity)
         .mockResolvedValueOnce({
           id: impersonatedUserWorkspaceId,
           workspaceId,
-        } as UserWorkspace);
+        } as UserWorkspaceEntity);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue({

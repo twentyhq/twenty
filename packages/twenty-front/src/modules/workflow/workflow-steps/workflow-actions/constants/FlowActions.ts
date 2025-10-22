@@ -1,23 +1,10 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { DELAY_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/DelayAction';
+import { FILTER_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FilterAction';
+import { ITERATOR_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/IteratorAction';
 
 export const FLOW_ACTIONS: Array<{
-  label: string;
+  defaultLabel: string;
   type: Extract<WorkflowActionType, 'ITERATOR' | 'FILTER' | 'DELAY'>;
   icon: string;
-}> = [
-  {
-    label: 'Iterator',
-    type: 'ITERATOR',
-    icon: 'IconRepeat',
-  },
-  {
-    label: 'Filter',
-    type: 'FILTER',
-    icon: 'IconFilter',
-  },
-  {
-    label: 'Delay',
-    type: 'DELAY',
-    icon: 'IconPlayerPause',
-  },
-];
+}> = [ITERATOR_ACTION, FILTER_ACTION, DELAY_ACTION];

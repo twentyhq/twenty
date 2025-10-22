@@ -15,9 +15,9 @@ import {
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
-import { CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
-import { DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
-import { RouteTrigger } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
+import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 import { ServerlessFunctionEntityRelationProperties } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
@@ -81,31 +81,31 @@ export class ServerlessFunctionEntity
   serverlessFunctionLayer: Relation<ServerlessFunctionLayerEntity>;
 
   @OneToMany(
-    () => CronTrigger,
+    () => CronTriggerEntity,
     (cronTrigger) => cronTrigger.serverlessFunction,
     {
       cascade: true,
     },
   )
-  cronTriggers: CronTrigger[];
+  cronTriggers: CronTriggerEntity[];
 
   @OneToMany(
-    () => DatabaseEventTrigger,
+    () => DatabaseEventTriggerEntity,
     (databaseEventTrigger) => databaseEventTrigger.serverlessFunction,
     {
       cascade: true,
     },
   )
-  databaseEventTriggers: DatabaseEventTrigger[];
+  databaseEventTriggers: DatabaseEventTriggerEntity[];
 
   @OneToMany(
-    () => RouteTrigger,
+    () => RouteTriggerEntity,
     (routeTrigger) => routeTrigger.serverlessFunction,
     {
       cascade: true,
     },
   )
-  routeTriggers: RouteTrigger[];
+  routeTriggers: RouteTriggerEntity[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

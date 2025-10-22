@@ -1,8 +1,8 @@
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
-import { type DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
-import { type RouteTrigger } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { type RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { type ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
@@ -11,10 +11,10 @@ import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspac
 export type ServerlessFunctionEntityRelationProperties =
   ExtractRecordTypeOrmRelationProperties<
     ServerlessFunctionEntity,
-    | CronTrigger
-    | DatabaseEventTrigger
-    | RouteTrigger
-    | Workspace
+    | CronTriggerEntity
+    | DatabaseEventTriggerEntity
+    | RouteTriggerEntity
+    | WorkspaceEntity
     | ServerlessFunctionLayerEntity
   >;
 

@@ -16,7 +16,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -58,7 +58,7 @@ export class ViewResolver {
   async name(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
     if (view.name.includes('{objectLabelPlural}')) {
       const objectMetadata = await context.loaders.objectMetadataLoader.load({
@@ -101,7 +101,7 @@ export class ViewResolver {
 
   @Query(() => [ViewDTO])
   async getCoreViews(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
   ): Promise<ViewDTO[]> {
@@ -118,7 +118,7 @@ export class ViewResolver {
   @Query(() => ViewDTO, { nullable: true })
   async getCoreView(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO | null> {
     return this.viewService.findById(id, workspace.id);
   }
@@ -126,7 +126,7 @@ export class ViewResolver {
   @Mutation(() => ViewDTO)
   async createCoreView(
     @Args('input') input: CreateViewInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -151,7 +151,7 @@ export class ViewResolver {
   async updateCoreView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -172,7 +172,7 @@ export class ViewResolver {
   @Mutation(() => Boolean)
   async deleteCoreView(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -197,7 +197,7 @@ export class ViewResolver {
   @Mutation(() => Boolean)
   async destroyCoreView(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -222,7 +222,7 @@ export class ViewResolver {
   @ResolveField(() => [ViewFieldDTO])
   async viewFields(
     @Parent() view: ViewDTO,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     if (isArray(view.viewFields)) {
       return view.viewFields;
@@ -234,7 +234,7 @@ export class ViewResolver {
   @ResolveField(() => [ViewFilterDTO])
   async viewFilters(
     @Parent() view: ViewDTO,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     if (isArray(view.viewFilters)) {
       return view.viewFilters;
@@ -246,7 +246,7 @@ export class ViewResolver {
   @ResolveField(() => [ViewFilterGroupDTO])
   async viewFilterGroups(
     @Parent() view: ViewDTO,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     if (isArray(view.viewFilterGroups)) {
       return view.viewFilterGroups;
@@ -258,7 +258,7 @@ export class ViewResolver {
   @ResolveField(() => [ViewSortDTO])
   async viewSorts(
     @Parent() view: ViewDTO,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     if (isArray(view.viewSorts)) {
       return view.viewSorts;
@@ -270,7 +270,7 @@ export class ViewResolver {
   @ResolveField(() => [ViewGroupDTO])
   async viewGroups(
     @Parent() view: ViewDTO,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     if (isArray(view.viewGroups)) {
       return view.viewGroups;

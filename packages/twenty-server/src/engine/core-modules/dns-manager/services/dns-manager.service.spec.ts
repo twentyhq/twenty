@@ -10,7 +10,7 @@ import { DnsManagerException } from 'src/engine/core-modules/dns-manager/excepti
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 jest.mock('cloudflare');
 
@@ -43,7 +43,7 @@ describe('DnsManagerService', () => {
           },
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: {
             save: jest.fn(),
           },

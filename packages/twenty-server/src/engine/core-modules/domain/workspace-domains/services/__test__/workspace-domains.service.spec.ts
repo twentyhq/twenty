@@ -5,15 +5,15 @@ import { type Repository } from 'typeorm';
 
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('WorkspaceDomainsService', () => {
   let workspaceDomainsService: WorkspaceDomainsService;
   let twentyConfigService: TwentyConfigService;
-  let workspaceRepository: Repository<Workspace>;
-  let publicDomainRepository: Repository<PublicDomain>;
+  let workspaceRepository: Repository<WorkspaceEntity>;
+  let publicDomainRepository: Repository<PublicDomainEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,14 +21,14 @@ describe('WorkspaceDomainsService', () => {
         DomainServerConfigService,
         WorkspaceDomainsService,
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(PublicDomain),
+          provide: getRepositoryToken(PublicDomainEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -42,11 +42,11 @@ describe('WorkspaceDomainsService', () => {
       ],
     }).compile();
 
-    workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+    workspaceRepository = module.get<Repository<WorkspaceEntity>>(
+      getRepositoryToken(WorkspaceEntity),
     );
-    publicDomainRepository = module.get<Repository<PublicDomain>>(
-      getRepositoryToken(PublicDomain),
+    publicDomainRepository = module.get<Repository<PublicDomainEntity>>(
+      getRepositoryToken(PublicDomainEntity),
     );
     workspaceDomainsService = module.get<WorkspaceDomainsService>(
       WorkspaceDomainsService,
@@ -203,7 +203,7 @@ describe('WorkspaceDomainsService', () => {
         {
           id: 'workspace-id',
         },
-      ] as unknown as Workspace[]);
+      ] as unknown as WorkspaceEntity[]);
 
       const result =
         await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -233,7 +233,7 @@ describe('WorkspaceDomainsService', () => {
         {
           id: 'workspace-id2',
         },
-      ] as unknown as Workspace[]);
+      ] as unknown as WorkspaceEntity[]);
 
       const result =
         await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -259,7 +259,7 @@ describe('WorkspaceDomainsService', () => {
       jest.spyOn(workspaceRepository, 'findOne').mockResolvedValueOnce({
         id: 'workspace-id1',
         subdomain: '123',
-      } as unknown as Promise<Workspace>);
+      } as unknown as Promise<WorkspaceEntity>);
 
       const result =
         await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -285,7 +285,7 @@ describe('WorkspaceDomainsService', () => {
       jest.spyOn(workspaceRepository, 'findOne').mockResolvedValueOnce({
         id: 'workspace-id1',
         customDomain: '123.custom.com',
-      } as unknown as Promise<Workspace>);
+      } as unknown as Promise<WorkspaceEntity>);
 
       const result =
         await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -310,12 +310,12 @@ describe('WorkspaceDomainsService', () => {
 
       jest.spyOn(workspaceRepository, 'findOne').mockResolvedValueOnce({
         id: 'workspace-id1',
-      } as unknown as Promise<Workspace>);
+      } as unknown as Promise<WorkspaceEntity>);
 
       jest.spyOn(publicDomainRepository, 'findOne').mockResolvedValueOnce({
         domain: '123.custom.com',
         workspaceId: 'workspace-id1',
-      } as unknown as Promise<PublicDomain>);
+      } as unknown as Promise<PublicDomainEntity>);
 
       const result =
         await workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
