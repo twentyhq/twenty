@@ -74,6 +74,24 @@ const parseSpacingValueAsNumber = (value: string) => {
   return Number(value.replace('px', ''));
 };
 
+const getDefaultArrayValue = (
+  defaultValue: FieldArrayValue | string | undefined,
+): FieldArrayValue => {
+  if (!isDefined(defaultValue)) {
+    return [];
+  }
+
+  if (Array.isArray(defaultValue)) {
+    return defaultValue;
+  }
+
+  try {
+    return JSON.parse(defaultValue);
+  } catch {
+    return [];
+  }
+};
+
 export const FormArrayFieldInput = ({
   label,
   defaultValue,
@@ -111,7 +129,7 @@ export const FormArrayFieldInput = ({
         }
       : {
           type: 'static',
-          value: isDefined(defaultValue) ? defaultValue : [],
+          value: getDefaultArrayValue(defaultValue),
         },
   );
 
