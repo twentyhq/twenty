@@ -25,7 +25,7 @@ export enum KeyValuePairType {
 }
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
-@ObjectType('KeyValuePairEntity')
+@ObjectType('KeyValuePair')
 @Unique('IDX_KEY_VALUE_PAIR_KEY_USER_ID_WORKSPACE_ID_UNIQUE', [
   'key',
   'userId',

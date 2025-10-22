@@ -5,7 +5,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType('ApplicationVariableEntity')
+@ObjectType('ApplicationVariable')
 export class ApplicationVariableEntityDTO {
   @IDField(() => UUIDScalarType)
   id: string;
