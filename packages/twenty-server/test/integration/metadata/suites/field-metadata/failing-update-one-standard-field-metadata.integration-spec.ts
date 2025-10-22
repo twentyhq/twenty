@@ -7,14 +7,14 @@ import {
 } from 'twenty-shared/testing';
 
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 
 type TestingRuntimeContext = {
   fieldMetadataId: string;
 };
 
 type UpdateOneStandardFieldMetadataTestingContext = EachTestingContext<
-  | ((args: TestingRuntimeContext) => Partial<UpdateFieldInput>)
-  | Partial<UpdateFieldInput>
+  Partial<UpdateFieldInput>
 >[];
 
 const failingUpdateTestsUseCase: UpdateOneStandardFieldMetadataTestingContext =
@@ -85,17 +85,14 @@ describe('Standard field metadata update should be ignored', () => {
   it.each(eachTestingContextFilter(allTestsUseCases))(
     '$title',
     async ({ context }) => {
-      const updatePayload =
-        typeof context === 'function'
-          ? context({ fieldMetadataId: companyNameFieldMetadataId })
-          : context;
+      const updatePayload = context;
 
-      const { data } = await updateOneFieldMetadata({
+      const { errors } = await updateOneFieldMetadata({
         input: {
           idToUpdate: companyNameFieldMetadataId,
           updatePayload,
         },
-        expectToFail: false,
+        expectToFail: true,
         gqlFields: `
           id
           name
@@ -108,10 +105,9 @@ describe('Standard field metadata update should be ignored', () => {
         `,
       });
 
-      const updatedField = data.updateOneField;
-
-      jestExpectToBeDefined(updatedField);
-      expect(updatedField).toEqual(originalFieldMetadata);
+      expectOneNotInternalServerErrorSnapshot({
+        errors,
+      });
     },
   );
 });

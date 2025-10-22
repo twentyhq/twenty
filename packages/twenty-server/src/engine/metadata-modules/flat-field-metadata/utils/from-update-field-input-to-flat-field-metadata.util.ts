@@ -15,6 +15,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
+import { FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import {
@@ -76,14 +77,28 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   const isStandardField = isStandardMetadata(existingFlatFieldMetadataToUpdate);
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateFieldInput,
-    FLAT_FIELD_METADATA_EDITABLE_PROPERTIES[
-      isStandardField ? 'standard' : 'custom'
-    ],
+    FLAT_FIELD_METADATA_EDITABLE_PROPERTIES['custom'],
   );
 
-  const standardOverrides = isStandardMetadata(
-    existingFlatFieldMetadataToUpdate,
-  )
+  if (isStandardField) {
+    const invalidUpdatedProperties = Object.keys(
+      updatedEditableFieldProperties,
+    ).filter(
+      (property: FlatFieldMetadataEditableProperties) =>
+        !FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.standard.includes(
+          property as (typeof FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.standard)[number],
+        ),
+    );
+
+    if (invalidUpdatedProperties.length > 0) {
+      throw new FieldMetadataException(
+        `Cannot edit standard field metadata properties: ${invalidUpdatedProperties.join(', ')}`,
+        FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+      );
+    }
+  }
+
+  const standardOverrides = isStandardField
     ? FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce((acc, property) => {
         const isPropertyUpdated =
           updatedEditableFieldProperties[property] !== undefined;
