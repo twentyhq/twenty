@@ -2,7 +2,7 @@ import { type DynamicModule, Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
@@ -17,7 +17,7 @@ export class DatabaseConfigModule {
     return {
       module: DatabaseConfigModule,
       imports: [
-        TypeOrmModule.forFeature([KeyValuePair]),
+        TypeOrmModule.forFeature([KeyValuePairEntity]),
         ScheduleModule.forRoot(),
       ],
       providers: [

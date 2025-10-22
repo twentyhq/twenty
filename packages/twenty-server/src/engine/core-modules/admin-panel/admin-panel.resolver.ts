@@ -1,17 +1,22 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
+import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
-import { ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
+import { ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
-import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
+import { DeleteJobsResponseDTO } from 'src/engine/core-modules/admin-panel/dtos/delete-jobs-response.dto';
+import { QueueJobsResponseDTO } from 'src/engine/core-modules/admin-panel/dtos/queue-jobs-response.dto';
+import { RetryJobsResponseDTO } from 'src/engine/core-modules/admin-panel/dtos/retry-jobs-response.dto';
+import { SystemHealthDTO } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
-import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
+import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
-import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { JobStateEnum } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
@@ -29,8 +34,8 @@ import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impe
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-import { AdminPanelHealthServiceData } from './dtos/admin-panel-health-service-data.dto';
-import { QueueMetricsData } from './dtos/queue-metrics-data.dto';
+import { AdminPanelHealthServiceDataDTO } from './dtos/admin-panel-health-service-data.dto';
+import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 
 @UsePipes(ResolverValidationPipe)
 @Resolver()
@@ -43,6 +48,7 @@ export class AdminPanelResolver {
   constructor(
     private adminService: AdminPanelService,
     private adminPanelHealthService: AdminPanelHealthService,
+    private adminPanelQueueService: AdminPanelQueueService,
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -84,34 +90,34 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
-  @Query(() => SystemHealth)
-  async getSystemHealthStatus(): Promise<SystemHealth> {
+  @Query(() => SystemHealthDTO)
+  async getSystemHealthStatus(): Promise<SystemHealthDTO> {
     return this.adminPanelHealthService.getSystemHealthStatus();
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
-  @Query(() => AdminPanelHealthServiceData)
+  @Query(() => AdminPanelHealthServiceDataDTO)
   async getIndicatorHealthStatus(
     @Args('indicatorId', {
       type: () => HealthIndicatorId,
     })
     indicatorId: HealthIndicatorId,
-  ): Promise<AdminPanelHealthServiceData> {
+  ): Promise<AdminPanelHealthServiceDataDTO> {
     return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorId);
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
-  @Query(() => QueueMetricsData)
+  @Query(() => QueueMetricsDataDTO)
   async getQueueMetrics(
     @Args('queueName', { type: () => String })
     queueName: string,
     @Args('timeRange', {
       nullable: true,
-      defaultValue: QueueMetricsTimeRange.OneDay,
+      defaultValue: QueueMetricsTimeRange.OneHour,
       type: () => QueueMetricsTimeRange,
     })
     timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneHour,
-  ): Promise<QueueMetricsData> {
+  ): Promise<QueueMetricsDataDTO> {
     return await this.adminPanelHealthService.getQueueMetrics(
       queueName as MessageQueue,
       timeRange,
@@ -119,16 +125,16 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
-  @Query(() => VersionInfo)
-  async versionInfo(): Promise<VersionInfo> {
+  @Query(() => VersionInfoDTO)
+  async versionInfo(): Promise<VersionInfoDTO> {
     return this.adminService.getVersionInfo();
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
-  @Query(() => ConfigVariable)
+  @Query(() => ConfigVariableDTO)
   async getDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
-  ): Promise<ConfigVariable> {
+  ): Promise<ConfigVariableDTO> {
     this.twentyConfigService.validateConfigVariableExists(key as string);
 
     return this.adminService.getConfigVariable(key);
@@ -166,5 +172,53 @@ export class AdminPanelResolver {
     await this.twentyConfigService.delete(key);
 
     return true;
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Query(() => QueueJobsResponseDTO)
+  async getQueueJobs(
+    @Args('queueName', { type: () => String })
+    queueName: string,
+    @Args('state', { type: () => JobStateEnum })
+    state: JobStateEnum,
+    @Args('limit', { type: () => Int, nullable: true, defaultValue: 50 })
+    limit?: number,
+    @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
+    offset?: number,
+  ): Promise<QueueJobsResponseDTO> {
+    return await this.adminPanelQueueService.getQueueJobs(
+      queueName as MessageQueue,
+      state,
+      limit,
+      offset,
+    );
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => RetryJobsResponseDTO)
+  async retryJobs(
+    @Args('queueName', { type: () => String })
+    queueName: string,
+    @Args('jobIds', { type: () => [String] })
+    jobIds: string[],
+  ): Promise<RetryJobsResponseDTO> {
+    return await this.adminPanelQueueService.retryJobs(
+      queueName as MessageQueue,
+      jobIds,
+    );
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => DeleteJobsResponseDTO)
+  async deleteJobs(
+    @Args('queueName', { type: () => String })
+    queueName: string,
+    @Args('jobIds', { type: () => [String] })
+    jobIds: string[],
+  ): Promise<DeleteJobsResponseDTO> {
+    return await this.adminPanelQueueService.deleteJobs(
+      queueName as MessageQueue,
+      jobIds,
+    );
   }
 }

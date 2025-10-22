@@ -12,7 +12,7 @@ import {
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AgentEntity } from './agent.entity';
 
@@ -54,11 +54,11 @@ export class AgentHandoffEntity {
   @JoinColumn({ name: 'toAgentId' })
   toAgent: Relation<AgentEntity>;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.agentHandoffs, {
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.agentHandoffs, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

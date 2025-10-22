@@ -1,13 +1,16 @@
+import dotenv from 'dotenv';
 import assert from 'assert';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
   AppManifest,
   CoreEntityManifest,
+  ObjectManifest,
   PackageJson,
 } from '../types/config.types';
-import { parseJsoncFile } from './jsonc-parser';
 import { validateSchema } from '../utils/schema-validator';
+import { parseJsoncFile } from './jsonc-parser';
+import { loadManifestFromDecorators } from '../utils/load-manifest-from-decorators';
 
 type Sources = { [key: string]: string | Sources };
 
@@ -111,19 +114,51 @@ export const loadManifest = async (
   manifest: AppManifest;
 }> => {
   const packageJsonPath = await findPathFile(appPath, 'package.json');
+
   const rawPackageJson = await parseJsoncFile(packageJsonPath);
 
   const yarnLockPath = await findPathFile(appPath, 'yarn.lock');
+
   const rawYarnLock = await fs.readFile(yarnLockPath, 'utf8');
 
-  await validateSchema('appManifest', rawPackageJson, packageJsonPath);
+  let envFile = '';
+
+  try {
+    const envFilePath = await findPathFile(appPath, '.env');
+
+    envFile = await fs.readFile(envFilePath, 'utf8');
+  } catch {
+    // Allow missing .env
+  }
+
+  const envVariables = dotenv.parse(envFile);
+
+  const packageJsonEnv = rawPackageJson.env || {};
+
+  for (const key of Object.keys(envVariables)) {
+    if (packageJsonEnv[key]) {
+      packageJsonEnv[key] = {
+        isSecret: false,
+        ...packageJsonEnv[key],
+        value: envVariables[key],
+      };
+    } else {
+      throw new Error(
+        `Environment variable "${key}" is defined in .env but missing from package.json. Please add it to the "env" section in package.json.`,
+      );
+    }
+  }
+
+  const packageJson = { ...rawPackageJson, env: packageJsonEnv };
+
+  await validateSchema('appManifest', packageJson, packageJsonPath);
 
   const agents = await loadCoreEntity(
     path.join(appPath, 'agents'),
     (manifest, path) => validateSchema('agent', manifest, path),
   );
 
-  const objects = await loadCoreEntity(
+  const objectFromManifests = await loadCoreEntity(
     path.join(appPath, 'objects'),
     (manifest, path) => validateSchema('object', manifest, path),
   );
@@ -133,11 +168,20 @@ export const loadManifest = async (
     (manifest, path) => validateSchema('serverlessFunction', manifest, path),
   );
 
+  const { objects: objectsFromDecorators } = loadManifestFromDecorators();
+
+  const objects = (
+    [...objectFromManifests, ...objectsFromDecorators] as ObjectManifest[]
+  ).map((object) => {
+    object.standardId = object.universalIdentifier;
+    return object;
+  });
+
   return {
-    packageJson: rawPackageJson,
+    packageJson,
     yarnLock: rawYarnLock,
     manifest: {
-      ...rawPackageJson,
+      ...packageJson,
       agents,
       objects,
       serverlessFunctions,

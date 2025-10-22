@@ -177,6 +177,7 @@ export const getResolverArgs = (
           isNullable: true,
           isArray: true,
         },
+
         viewId: {
           type: UUIDScalarType,
           isNullable: true,

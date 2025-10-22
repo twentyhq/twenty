@@ -3,7 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
@@ -29,7 +29,7 @@ export class ViewFieldResolver {
   @Query(() => [ViewFieldDTO])
   async getCoreViewFields(
     @Args('viewId', { type: () => String }) viewId: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldEntity[]> {
     return this.viewFieldService.findByViewId(workspace.id, viewId);
   }
@@ -37,7 +37,7 @@ export class ViewFieldResolver {
   @Query(() => ViewFieldDTO, { nullable: true })
   async getCoreViewField(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldEntity | null> {
     return this.viewFieldService.findById(id, workspace.id);
   }
@@ -45,7 +45,7 @@ export class ViewFieldResolver {
   @Mutation(() => ViewFieldDTO)
   async updateCoreViewField(
     @Args('input') updateViewFieldInput: UpdateViewFieldInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -70,7 +70,7 @@ export class ViewFieldResolver {
   @Mutation(() => ViewFieldDTO)
   async createCoreViewField(
     @Args('input') createViewFieldInput: CreateViewFieldInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -94,7 +94,7 @@ export class ViewFieldResolver {
   @Mutation(() => ViewFieldDTO)
   async deleteCoreViewField(
     @Args('input') deleteViewFieldInput: DeleteViewFieldInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -119,7 +119,7 @@ export class ViewFieldResolver {
   @Mutation(() => ViewFieldDTO)
   async destroyCoreViewField(
     @Args('input') destroyViewFieldInput: DestroyViewFieldInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -34,12 +34,12 @@ export class WorkspacePermissionsCacheStorageService {
 
   async setRolesPermissions(
     workspaceId: string,
-    permissions: ObjectsPermissionsByRoleIdDeprecated,
+    permissions: ObjectsPermissionsByRoleId,
   ): Promise<{
     newRolesPermissionsVersion: string;
   }> {
     const [, newRolesPermissionsVersion] = await Promise.all([
-      this.cacheStorageService.set<ObjectsPermissionsByRoleIdDeprecated>(
+      this.cacheStorageService.set<ObjectsPermissionsByRoleId>(
         `${WORKSPACE_CACHE_KEYS.MetadataPermissionsRolesPermissions}:${workspaceId}`,
         permissions,
         TTL_INFINITE,
@@ -52,8 +52,8 @@ export class WorkspacePermissionsCacheStorageService {
 
   getRolesPermissions(
     workspaceId: string,
-  ): Promise<ObjectsPermissionsByRoleIdDeprecated | undefined> {
-    return this.cacheStorageService.get<ObjectsPermissionsByRoleIdDeprecated>(
+  ): Promise<ObjectsPermissionsByRoleId | undefined> {
+    return this.cacheStorageService.get<ObjectsPermissionsByRoleId>(
       `${WORKSPACE_CACHE_KEYS.MetadataPermissionsRolesPermissions}:${workspaceId}`,
     );
   }

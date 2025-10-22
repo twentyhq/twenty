@@ -5,7 +5,7 @@ import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/
 import { Any } from 'typeorm';
 
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
-import { type TimelineCalendarEventsWithTotal } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
+import { type TimelineCalendarEventsWithTotalDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
@@ -27,7 +27,7 @@ export class TimelineCalendarEventService {
     personIds: string[];
     page: number;
     pageSize: number;
-  }): Promise<TimelineCalendarEventsWithTotal> {
+  }): Promise<TimelineCalendarEventsWithTotalDTO> {
     const offset = (page - 1) * pageSize;
 
     const calendarEventRepository =
@@ -167,7 +167,7 @@ export class TimelineCalendarEventService {
     companyId: string;
     page: number;
     pageSize: number;
-  }): Promise<TimelineCalendarEventsWithTotal> {
+  }): Promise<TimelineCalendarEventsWithTotalDTO> {
     const personRepository =
       await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
         'person',
@@ -211,7 +211,7 @@ export class TimelineCalendarEventService {
     opportunityId: string;
     page: number;
     pageSize: number;
-  }): Promise<TimelineCalendarEventsWithTotal> {
+  }): Promise<TimelineCalendarEventsWithTotalDTO> {
     const opportunityRepository =
       await this.twentyORMManager.getRepository<OpportunityWorkspaceEntity>(
         'opportunity',

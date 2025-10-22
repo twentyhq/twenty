@@ -31,7 +31,7 @@ npx nx storybook:build twenty-front         # Build Storybook
 npx nx storybook:serve-and-test:static twenty-front     # Run Storybook tests
 
 
-When testing the UI end to end, click on "Continue with Email" and use the prefilled credentials. 
+When testing the UI end to end, click on "Continue with Email" and use the prefilled credentials.
 ```
 
 ### Code Quality
@@ -68,7 +68,7 @@ npx nx run twenty-server:database:migrate:prod # Run migrations
 npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/[name] -d src/database/typeorm/core/core.datasource.ts
 
 # Sync metadata
-npx nx run twenty-server:command workspace:sync-metadata -f
+npx nx run twenty-server:command workspace:sync-metadata
 ```
 
 ### GraphQL

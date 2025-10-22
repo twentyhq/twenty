@@ -63,7 +63,11 @@ const generateSourceFlatFieldMetadata = ({
   }
 
   return {
+    calendarViewIds: [],
+    kanbanAggregateOperationViewIds: [],
+    viewFilterIds: [],
     viewFieldIds: [],
+    viewGroupIds: [],
     createdAt,
     updatedAt: createdAt,
     defaultValue: null,
@@ -95,6 +99,7 @@ const generateSourceFlatFieldMetadata = ({
     ]),
     workspaceId,
     morphId: null,
+    applicationId: sourceFlatObjectMetadata.applicationId ?? null,
   };
 };
 
@@ -128,7 +133,11 @@ const generateTargetFlatFieldMetadata = ({
 
   return {
     morphId: null,
+    calendarViewIds: [],
     viewFieldIds: [],
+    kanbanAggregateOperationViewIds: [],
+    viewFilterIds: [],
+    viewGroupIds: [],
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
     name: sourceFlatObjectMetadata.nameSingular,
     label: sourceFlatObjectMetadata.labelSingular,
@@ -161,6 +170,7 @@ const generateTargetFlatFieldMetadata = ({
       targetFlatObjectMetadata.id,
       standardId,
     ]),
+    applicationId: sourceFlatObjectMetadata.applicationId ?? null,
   };
 };
 

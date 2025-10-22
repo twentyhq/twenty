@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class VersionInfo {
+@ObjectType('VersionInfo')
+export class VersionInfoDTO {
   @Field(() => String, { nullable: true })
   currentVersion?: string;
 

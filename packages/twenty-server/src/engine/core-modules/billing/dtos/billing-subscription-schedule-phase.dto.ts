@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class BillingSubscriptionSchedulePhaseItem {
+@ObjectType('BillingSubscriptionSchedulePhaseItem')
+export class BillingSubscriptionSchedulePhaseItemDTO {
   @Field(() => String)
   price: string;
 
@@ -9,14 +9,14 @@ export class BillingSubscriptionSchedulePhaseItem {
   quantity?: number;
 }
 
-@ObjectType()
-export class BillingSubscriptionSchedulePhase {
+@ObjectType('BillingSubscriptionSchedulePhase')
+export class BillingSubscriptionSchedulePhaseDTO {
   @Field(() => Number)
   start_date: number;
 
   @Field(() => Number)
   end_date: number;
 
-  @Field(() => [BillingSubscriptionSchedulePhaseItem])
-  items: Array<BillingSubscriptionSchedulePhaseItem>;
+  @Field(() => [BillingSubscriptionSchedulePhaseItemDTO])
+  items: Array<BillingSubscriptionSchedulePhaseItemDTO>;
 }

@@ -1,4 +1,6 @@
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
@@ -17,11 +19,14 @@ export type ViewEntityRelationProperties =
     | ViewFilterEntity
     | ViewGroupEntity
     | ViewFilterGroupEntity
-    | Workspace
+    | WorkspaceEntity
+    | FieldMetadataEntity
   >;
 
-export type FlatView = Omit<ViewEntity, ViewEntityRelationProperties> & {
-  universalIdentifier: string;
+export type FlatView = FlatEntityFrom<
+  ViewEntity,
+  ViewEntityRelationProperties
+> & {
   viewFieldIds: string[];
   viewFilterIds: string[];
   viewGroupIds: string[];

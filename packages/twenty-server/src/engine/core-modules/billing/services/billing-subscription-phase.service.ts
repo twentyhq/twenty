@@ -3,32 +3,32 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import Stripe from 'stripe';
 import {
   assertIsDefinedOrThrow,
   findOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import Stripe from 'stripe';
 
-import { BillingSubscriptionSchedulePhase } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
-import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
+import { BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
+import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 
 @Injectable()
 export class BillingSubscriptionPhaseService {
   constructor(
-    @InjectRepository(BillingPrice)
-    private readonly billingPriceRepository: Repository<BillingPrice>,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingPriceService: BillingPriceService,
   ) {}
 
-  async getDetailsFromPhase(phase: BillingSubscriptionSchedulePhase) {
+  async getDetailsFromPhase(phase: BillingSubscriptionSchedulePhaseDTO) {
     const meteredPrice = await this.billingPriceRepository.findOneOrFail({
       where: {
         stripePriceId: findOrThrow(

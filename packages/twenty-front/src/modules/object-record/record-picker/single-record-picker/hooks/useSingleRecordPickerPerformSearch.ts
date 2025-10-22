@@ -48,10 +48,12 @@ export const useSingleRecordPickerPerformSearch = ({
           singleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
             { instanceId: singleRecordPickerInstanceId },
           ),
-          objectMetadataItems,
+          objectMetadataItems.filter((objectMetadataItem) =>
+            objectNameSingulars.includes(objectMetadataItem.nameSingular),
+          ),
         );
       },
-    [objectMetadataItems, singleRecordPickerInstanceId],
+    [objectMetadataItems, objectNameSingulars, singleRecordPickerInstanceId],
   );
 
   const selectedIdsFilter = { id: { in: selectedIds } };

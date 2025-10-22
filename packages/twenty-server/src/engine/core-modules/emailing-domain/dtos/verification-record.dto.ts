@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class VerificationRecord {
+@ObjectType('VerificationRecord')
+export class VerificationRecordDTO {
   @Field(() => String)
   type: 'TXT' | 'CNAME' | 'MX';
 

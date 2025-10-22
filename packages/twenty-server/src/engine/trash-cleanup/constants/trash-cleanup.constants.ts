@@ -1,5 +1,0 @@
-// Daily at 00:10 UTC
-export const TRASH_CLEANUP_CRON_PATTERN = '10 0 * * *';
-
-export const TRASH_CLEANUP_MAX_RECORDS_PER_WORKSPACE = 1_000_000;
-export const TRASH_CLEANUP_BATCH_SIZE = 1_000;

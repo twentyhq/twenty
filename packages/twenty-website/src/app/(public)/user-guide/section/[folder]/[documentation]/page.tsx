@@ -6,7 +6,7 @@ import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
 import { formatSlug } from '@/shared-utils/formatSlug';
 
 export async function generateMetadata(
-  props: PageProps<'/user-guide/section/[folder]/[documentation]'>,
+  props: { params: Promise<{ folder: string; documentation: string }> },
 ): Promise<Metadata> {
   const { folder, documentation } = await props.params;
   const basePath = `/src/content/user-guide/${folder}`;
@@ -19,7 +19,7 @@ export async function generateMetadata(
 }
 
 export default async function UserGuideSlug(
-  props: PageProps<'/user-guide/section/[folder]/[documentation]'>,
+  props: { params: Promise<{ folder: string; documentation: string }> },
 ) {
   const { folder, documentation } = await props.params;
   const basePath = `/src/content/user-guide/${folder}`;

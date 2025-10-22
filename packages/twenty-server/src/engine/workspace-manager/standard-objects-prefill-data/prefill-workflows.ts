@@ -87,7 +87,11 @@ export const prefillWorkflows = async (
         trigger: JSON.stringify({
           name: 'Launch manually',
           type: 'MANUAL',
-          settings: { outputSchema: {}, icon: 'IconUserPlus' },
+          settings: {
+            outputSchema: {},
+            icon: 'IconUserPlus',
+            availability: { type: 'GLOBAL', locations: undefined },
+          },
           nextStepIds: ['6e089bc9-aabd-435f-865f-f31c01c8f4a7'],
         }),
         steps: JSON.stringify([

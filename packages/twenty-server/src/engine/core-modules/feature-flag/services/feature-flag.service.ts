@@ -7,7 +7,7 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 
 import { type FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
   FeatureFlagException,
   FeatureFlagExceptionCode,
@@ -20,8 +20,8 @@ import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/wo
 @Injectable()
 export class FeatureFlagService {
   constructor(
-    @InjectRepository(FeatureFlag)
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(FeatureFlagEntity)
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
@@ -89,7 +89,7 @@ export class FeatureFlagService {
     featureFlag: FeatureFlagKey;
     value: boolean;
     shouldBePublic?: boolean;
-  }): Promise<FeatureFlag> {
+  }): Promise<FeatureFlagEntity> {
     featureFlagValidator.assertIsFeatureFlagKey(
       featureFlag,
       new FeatureFlagException(

@@ -41,8 +41,12 @@ export { workflowSendEmailActionSchema } from './schemas/send-email-action-schem
 export { workflowSendEmailActionSettingsSchema } from './schemas/send-email-action-settings-schema';
 export { workflowUpdateRecordActionSchema } from './schemas/update-record-action-schema';
 export { workflowUpdateRecordActionSettingsSchema } from './schemas/update-record-action-settings-schema';
+export { workflowUpsertRecordActionSchema } from './schemas/upsert-record-action-schema';
+export { workflowUpsertRecordActionSettingsSchema } from './schemas/upsert-record-action-settings-schema';
 export { workflowWebhookTriggerSchema } from './schemas/webhook-trigger-schema';
 export { workflowActionSchema } from './schemas/workflow-action-schema';
+export { workflowDelayActionSchema } from './schemas/workflow-delay-action-schema';
+export { workflowDelayActionSettingsSchema } from './schemas/workflow-delay-action-settings-schema';
 export { workflowFileSchema } from './schemas/workflow-file-action-schema';
 export { workflowRunSchema } from './schemas/workflow-run-schema';
 export { workflowRunStateSchema } from './schemas/workflow-run-state-schema';
