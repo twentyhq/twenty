@@ -3,6 +3,7 @@ import { type WorkflowUpsertRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowUpdateRecordBody } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowUpdateRecordBody';
 
+import { UPSERT_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/UpsertRecordAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/update-record-form-data.type';
 import { useIcons } from 'twenty-ui/display';
@@ -26,7 +27,7 @@ export const WorkflowEditActionUpsertRecord = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Create or Update Record',
+      defaultTitle: UPSERT_RECORD_ACTION.defaultLabel,
     });
 
   const { getIcon } = useIcons();
@@ -69,6 +70,7 @@ export const WorkflowEditActionUpsertRecord = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={isFormDisabled}
+        iconTooltip={UPSERT_RECORD_ACTION.defaultLabel}
       />
       <WorkflowUpdateRecordBody
         defaultObjectNameSingular={action.settings.input.objectName}

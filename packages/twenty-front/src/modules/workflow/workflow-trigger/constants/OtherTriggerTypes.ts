@@ -1,23 +1,10 @@
 import { type WorkflowTriggerType } from '@/workflow/types/Workflow';
+import { CRON_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/CronTrigger';
+import { MANUAL_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/ManualTrigger';
+import { WEBHOOK_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/WebhookTrigger';
 
 export const OTHER_TRIGGER_TYPES: Array<{
   defaultLabel: string;
   type: WorkflowTriggerType;
   icon: string;
-}> = [
-  {
-    defaultLabel: 'Launch manually',
-    type: 'MANUAL',
-    icon: 'IconHandMove',
-  },
-  {
-    defaultLabel: 'On a schedule',
-    type: 'CRON',
-    icon: 'IconClock',
-  },
-  {
-    defaultLabel: 'Webhook',
-    type: 'WEBHOOK',
-    icon: 'IconWebhook',
-  },
-];
+}> = [MANUAL_TRIGGER, CRON_TRIGGER, WEBHOOK_TRIGGER];

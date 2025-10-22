@@ -15,6 +15,7 @@ import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { FIND_RECORDS_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FindRecordsAction';
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
@@ -130,7 +131,7 @@ export const WorkflowEditActionFindRecords = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Search Records',
+      defaultTitle: FIND_RECORDS_ACTION.defaultLabel,
     });
 
   return (
@@ -151,6 +152,7 @@ export const WorkflowEditActionFindRecords = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={isFormDisabled}
+        iconTooltip={FIND_RECORDS_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         <Select

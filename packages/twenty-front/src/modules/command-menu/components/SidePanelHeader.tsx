@@ -52,6 +52,7 @@ type SidePanelHeaderProps = {
   iconColor: string;
   initialTitle: string;
   headerType: string;
+  iconTooltip?: string;
 } & (
   | {
       disabled: true;
@@ -70,6 +71,7 @@ export const SidePanelHeader = ({
   headerType,
   disabled,
   onTitleChange,
+  iconTooltip,
 }: SidePanelHeaderProps) => {
   const theme = useTheme();
 
@@ -89,7 +91,6 @@ export const SidePanelHeader = ({
     });
   };
 
-  // Create a unique ID for the tooltip anchor
   const tooltipId = `side-panel-icon-tooltip-${headerType.replace(/\s+/g, '-')}`;
 
   return (
@@ -101,11 +102,13 @@ export const SidePanelHeader = ({
           size={theme.icon.size.lg}
         />
       </StyledHeaderIconContainer>
-      <AppTooltip
-        anchorSelect={`#${tooltipId}`}
-        content={headerType}
-        place="top"
-      />
+      {iconTooltip && (
+        <AppTooltip
+          anchorSelect={`#${tooltipId}`}
+          content={iconTooltip}
+          place="top"
+        />
+      )}
       <StyledHeaderInfo>
         <StyledHeaderTitle>
           <TitleInput
