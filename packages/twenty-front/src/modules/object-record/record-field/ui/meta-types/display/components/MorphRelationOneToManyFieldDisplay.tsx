@@ -13,7 +13,15 @@ export const MorphRelationOneToManyFieldDisplay = () => {
   const { isFocused } = useFieldFocus();
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
-  if (!morphValuesWithObjectNameSingular) {
+  const areMorphValuesWithObjectNameSingularEmpty =
+    morphValuesWithObjectNameSingular.every(
+      (morphValueWithObjectNameSingular) =>
+        morphValueWithObjectNameSingular.value.length === 0,
+    );
+  if (
+    !morphValuesWithObjectNameSingular ||
+    areMorphValuesWithObjectNameSingularEmpty
+  ) {
     return null;
   }
 

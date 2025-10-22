@@ -13,6 +13,7 @@ export const useIsFieldEmpty = () => {
   const fieldValue = useRecordFieldValue(
     recordId,
     fieldDefinition?.metadata?.fieldName ?? '',
+    fieldDefinition,
   );
 
   if (isDefined(overridenIsFieldEmpty)) {
