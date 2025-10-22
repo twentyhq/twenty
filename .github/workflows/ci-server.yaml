@@ -116,7 +116,7 @@ jobs:
             echo "$CORE_MIGRATION_OUTPUT"
 
             rm -f packages/twenty-server/*core-migration-check.ts
-            
+
             exit 1
           fi
       - name: GraphQL / Check for Pending Generation
@@ -170,7 +170,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5]
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -199,16 +199,16 @@ jobs:
           - 8123:8123
           - 9000:9000
         options: >-
-          --health-cmd "clickhouse-client --host=localhost --port=9000 --user=default --password=clickhousePassword --query='SELECT 1'" 
-          --health-interval 10s 
-          --health-timeout 5s 
+          --health-cmd "clickhouse-client --host=localhost --port=9000 --user=default --password=clickhousePassword --query='SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
           --health-retries 5
     env:
       NODE_ENV: test
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
-      SHARD_COUNTER: 4
+      SHARD_COUNTER: 5
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -254,6 +254,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [changed-files-check, server-setup, server-test, server-integration-test]
     steps:
-      - name: Fail job if any needs failed 
+      - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
         run: exit 1

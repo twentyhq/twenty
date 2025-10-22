@@ -1,6 +1,6 @@
-import { type CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
-import { type DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
+import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -12,7 +12,7 @@ import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RouteTrigger } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { type RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
@@ -146,7 +146,7 @@ export type AllFlatEntityTypesByMetadataName = {
       deleted: DeleteCronTriggerAction;
     };
     flatEntity: FlatCronTrigger;
-    entity: CronTrigger;
+    entity: CronTriggerEntity;
   };
   databaseEventTrigger: {
     actions: {
@@ -155,7 +155,7 @@ export type AllFlatEntityTypesByMetadataName = {
       deleted: DeleteDatabaseEventTriggerAction;
     };
     flatEntity: FlatDatabaseEventTrigger;
-    entity: DatabaseEventTrigger;
+    entity: DatabaseEventTriggerEntity;
   };
   routeTrigger: {
     actions: {
@@ -164,7 +164,7 @@ export type AllFlatEntityTypesByMetadataName = {
       deleted: DeleteRouteTriggerAction;
     };
     flatEntity: FlatRouteTrigger;
-    entity: RouteTrigger;
+    entity: RouteTriggerEntity;
   };
   viewFilter: {
     actions: {

@@ -41,7 +41,7 @@ import {
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'Enable or disable password authentication for users',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -49,7 +49,7 @@ export class ConfigVariables {
   AUTH_PASSWORD_ENABLED = true;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description:
       'Prefills tim@apple.dev in the login form, used in local development for quicker sign-in',
     type: ConfigVariableType.BOOLEAN,
@@ -59,7 +59,7 @@ export class ConfigVariables {
   SIGN_IN_PREFILLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'Require email verification for user accounts',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -67,7 +67,7 @@ export class ConfigVariables {
   IS_EMAIL_VERIFICATION_REQUIRED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the email verification token is valid',
     type: ConfigVariableType.STRING,
   })
@@ -76,7 +76,7 @@ export class ConfigVariables {
   EMAIL_VERIFICATION_TOKEN_EXPIRES_IN = '1h';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the password reset token is valid',
     type: ConfigVariableType.STRING,
   })
@@ -85,14 +85,14 @@ export class ConfigVariables {
   PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.GoogleAuth,
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
     description: 'Enable or disable the Google Calendar integration',
     type: ConfigVariableType.BOOLEAN,
   })
   CALENDAR_PROVIDER_GOOGLE_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.GoogleAuth,
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
     description: 'Callback URL for Google Auth APIs',
     type: ConfigVariableType.STRING,
     isSensitive: false,
@@ -100,7 +100,7 @@ export class ConfigVariables {
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.GoogleAuth,
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
     description: 'Enable or disable Google Single Sign-On (SSO)',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -108,7 +108,7 @@ export class ConfigVariables {
   AUTH_GOOGLE_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.GoogleAuth,
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
     isSensitive: false,
     description: 'Client ID for Google authentication',
     type: ConfigVariableType.STRING,
@@ -117,7 +117,7 @@ export class ConfigVariables {
   AUTH_GOOGLE_CLIENT_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.GoogleAuth,
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
     isSensitive: true,
     description: 'Client secret for Google authentication',
     type: ConfigVariableType.STRING,
@@ -126,7 +126,7 @@ export class ConfigVariables {
   AUTH_GOOGLE_CLIENT_SECRET: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.GoogleAuth,
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
     isSensitive: false,
     description: 'Callback URL for Google authentication',
     type: ConfigVariableType.STRING,
@@ -136,21 +136,21 @@ export class ConfigVariables {
   AUTH_GOOGLE_CALLBACK_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.GoogleAuth,
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
     description: 'Enable or disable the Gmail messaging integration',
     type: ConfigVariableType.BOOLEAN,
   })
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'Enable or disable the IMAP messaging integration',
     type: ConfigVariableType.BOOLEAN,
   })
   IS_IMAP_SMTP_CALDAV_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.MicrosoftAuth,
+    group: ConfigVariablesGroup.MICROSOFT_AUTH,
     description: 'Enable or disable Microsoft authentication',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -158,7 +158,7 @@ export class ConfigVariables {
   AUTH_MICROSOFT_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.MicrosoftAuth,
+    group: ConfigVariablesGroup.MICROSOFT_AUTH,
     isSensitive: false,
     description: 'Client ID for Microsoft authentication',
     type: ConfigVariableType.STRING,
@@ -167,7 +167,7 @@ export class ConfigVariables {
   AUTH_MICROSOFT_CLIENT_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.MicrosoftAuth,
+    group: ConfigVariablesGroup.MICROSOFT_AUTH,
     isSensitive: true,
     description: 'Client secret for Microsoft authentication',
     type: ConfigVariableType.STRING,
@@ -176,7 +176,7 @@ export class ConfigVariables {
   AUTH_MICROSOFT_CLIENT_SECRET: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.MicrosoftAuth,
+    group: ConfigVariablesGroup.MICROSOFT_AUTH,
     isSensitive: false,
     description: 'Callback URL for Microsoft authentication',
     type: ConfigVariableType.STRING,
@@ -186,7 +186,7 @@ export class ConfigVariables {
   AUTH_MICROSOFT_CALLBACK_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.MicrosoftAuth,
+    group: ConfigVariablesGroup.MICROSOFT_AUTH,
     isSensitive: false,
     description: 'Callback URL for Microsoft APIs',
     type: ConfigVariableType.STRING,
@@ -196,21 +196,21 @@ export class ConfigVariables {
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.MicrosoftAuth,
+    group: ConfigVariablesGroup.MICROSOFT_AUTH,
     description: 'Enable or disable the Microsoft messaging integration',
     type: ConfigVariableType.BOOLEAN,
   })
   MESSAGING_PROVIDER_MICROSOFT_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.MicrosoftAuth,
+    group: ConfigVariablesGroup.MICROSOFT_AUTH,
     description: 'Enable or disable the Microsoft Calendar integration',
     type: ConfigVariableType.BOOLEAN,
   })
   CALENDAR_PROVIDER_MICROSOFT_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     isSensitive: true,
     description:
       'Legacy variable to be deprecated when all API Keys expire. Replaced by APP_KEY',
@@ -221,7 +221,7 @@ export class ConfigVariables {
   ACCESS_TOKEN_SECRET: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the access token is valid',
     type: ConfigVariableType.STRING,
   })
@@ -230,7 +230,7 @@ export class ConfigVariables {
   ACCESS_TOKEN_EXPIRES_IN = '30m';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the workspace agnostic token is valid',
     type: ConfigVariableType.STRING,
   })
@@ -239,7 +239,7 @@ export class ConfigVariables {
   WORKSPACE_AGNOSTIC_TOKEN_EXPIRES_IN = '30m';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the refresh token is valid',
     type: ConfigVariableType.STRING,
   })
@@ -247,7 +247,7 @@ export class ConfigVariables {
   REFRESH_TOKEN_EXPIRES_IN = '60d';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Cooldown period for refreshing tokens',
     type: ConfigVariableType.STRING,
   })
@@ -256,7 +256,7 @@ export class ConfigVariables {
   REFRESH_TOKEN_COOL_DOWN = '1m';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the login token is valid',
     type: ConfigVariableType.STRING,
   })
@@ -265,7 +265,7 @@ export class ConfigVariables {
   LOGIN_TOKEN_EXPIRES_IN = '15m';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the file token is valid',
     type: ConfigVariableType.STRING,
   })
@@ -274,7 +274,7 @@ export class ConfigVariables {
   FILE_TOKEN_EXPIRES_IN = '1d';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the invitation token is valid',
     type: ConfigVariableType.STRING,
   })
@@ -283,35 +283,35 @@ export class ConfigVariables {
   INVITATION_TOKEN_EXPIRES_IN = '30d';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the short-term token is valid',
     type: ConfigVariableType.STRING,
   })
   SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EmailSettings,
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'Email address used as the sender for outgoing emails',
     type: ConfigVariableType.STRING,
   })
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EmailSettings,
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'Email address used for system notifications',
     type: ConfigVariableType.STRING,
   })
   EMAIL_SYSTEM_ADDRESS = 'system@yourdomain.com';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EmailSettings,
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'Name used in the From header for outgoing emails',
     type: ConfigVariableType.STRING,
   })
   EMAIL_FROM_NAME = 'Felix from Twenty';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EmailSettings,
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'Email driver to use for sending emails',
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailDriver),
@@ -320,14 +320,14 @@ export class ConfigVariables {
   EMAIL_DRIVER: EmailDriver = EmailDriver.LOGGER;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EmailSettings,
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'SMTP host for sending emails',
     type: ConfigVariableType.STRING,
   })
   EMAIL_SMTP_HOST: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EmailSettings,
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'Use unsecure connection for SMTP',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -335,7 +335,7 @@ export class ConfigVariables {
   EMAIL_SMTP_NO_TLS = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EmailSettings,
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'SMTP port for sending emails',
     type: ConfigVariableType.NUMBER,
   })
@@ -343,7 +343,7 @@ export class ConfigVariables {
   EMAIL_SMTP_PORT = 587;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EmailSettings,
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'SMTP user for authentication',
     type: ConfigVariableType.STRING,
     isSensitive: true,
@@ -351,7 +351,7 @@ export class ConfigVariables {
   EMAIL_SMTP_USER: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EmailSettings,
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     isSensitive: true,
     description: 'SMTP password for authentication',
     type: ConfigVariableType.STRING,
@@ -359,7 +359,7 @@ export class ConfigVariables {
   EMAIL_SMTP_PASSWORD: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description:
       'When enabled, only server admins can create new workspaces. Ignored during initial setup when no workspace exists.',
     type: ConfigVariableType.BOOLEAN,
@@ -368,7 +368,7 @@ export class ConfigVariables {
   IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.StorageConfig,
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
     description: 'Type of storage to use (local or S3)',
     type: ConfigVariableType.ENUM,
     options: Object.values(StorageDriverType),
@@ -378,7 +378,7 @@ export class ConfigVariables {
   STORAGE_TYPE: StorageDriverType = StorageDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.StorageConfig,
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
     description: 'Local path for storage when using local storage type',
     type: ConfigVariableType.STRING,
   })
@@ -386,7 +386,7 @@ export class ConfigVariables {
   STORAGE_LOCAL_PATH = '.local-storage';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.StorageConfig,
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
     description: 'S3 region for storage when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
@@ -395,7 +395,7 @@ export class ConfigVariables {
   STORAGE_S3_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.StorageConfig,
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
     description: 'S3 bucket name for storage when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
@@ -403,7 +403,7 @@ export class ConfigVariables {
   STORAGE_S3_NAME: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.StorageConfig,
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
     description: 'S3 endpoint for storage when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
@@ -412,7 +412,7 @@ export class ConfigVariables {
   STORAGE_S3_ENDPOINT: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.StorageConfig,
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
     isSensitive: true,
     description:
       'S3 access key ID for authentication when using S3 storage type',
@@ -423,7 +423,7 @@ export class ConfigVariables {
   STORAGE_S3_ACCESS_KEY_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.StorageConfig,
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
     isSensitive: true,
     description:
       'S3 secret access key for authentication when using S3 storage type',
@@ -434,7 +434,7 @@ export class ConfigVariables {
   STORAGE_S3_SECRET_ACCESS_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerlessConfig,
+    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
     description: 'Type of serverless execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
     options: Object.values(ServerlessDriverType),
@@ -445,7 +445,7 @@ export class ConfigVariables {
   SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerlessConfig,
+    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
     description:
       'Configure whether console logs from serverless functions are displayed in the terminal',
     type: ConfigVariableType.BOOLEAN,
@@ -454,7 +454,7 @@ export class ConfigVariables {
   SERVERLESS_LOGS_ENABLED: false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerlessConfig,
+    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
     description: 'Throttle limit for serverless function execution',
     type: ConfigVariableType.NUMBER,
   })
@@ -463,7 +463,7 @@ export class ConfigVariables {
 
   // milliseconds
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerlessConfig,
+    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
     description: 'Time-to-live for serverless function execution throttle',
     type: ConfigVariableType.NUMBER,
   })
@@ -471,7 +471,7 @@ export class ConfigVariables {
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerlessConfig,
+    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
     description: 'Region for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
@@ -480,7 +480,7 @@ export class ConfigVariables {
   SERVERLESS_LAMBDA_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerlessConfig,
+    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
     description: 'IAM role for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
@@ -488,7 +488,7 @@ export class ConfigVariables {
   SERVERLESS_LAMBDA_ROLE: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerlessConfig,
+    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
     description: 'Role to assume when hosting lambdas in dedicated AWS account',
     type: ConfigVariableType.STRING,
   })
@@ -497,7 +497,7 @@ export class ConfigVariables {
   SERVERLESS_LAMBDA_SUBHOSTING_ROLE?: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerlessConfig,
+    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
     isSensitive: true,
     description: 'Access key ID for AWS Lambda functions',
     type: ConfigVariableType.STRING,
@@ -507,7 +507,7 @@ export class ConfigVariables {
   SERVERLESS_LAMBDA_ACCESS_KEY_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerlessConfig,
+    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
     isSensitive: true,
     description: 'Secret access key for AWS Lambda functions',
     type: ConfigVariableType.STRING,
@@ -517,7 +517,7 @@ export class ConfigVariables {
   SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AnalyticsConfig,
+    group: ConfigVariablesGroup.ANALYTICS_CONFIG,
     description: 'Enable or disable analytics for telemetry',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -525,7 +525,7 @@ export class ConfigVariables {
   ANALYTICS_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AnalyticsConfig,
+    group: ConfigVariablesGroup.ANALYTICS_CONFIG,
     description: 'Clickhouse host for analytics',
     type: ConfigVariableType.STRING,
     isSensitive: true,
@@ -539,7 +539,7 @@ export class ConfigVariables {
   CLICKHOUSE_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Logging,
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Enable or disable telemetry logging',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -547,7 +547,7 @@ export class ConfigVariables {
   TELEMETRY_ENABLED = true;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
+    group: ConfigVariablesGroup.BILLING_CONFIG,
     description: 'Enable or disable billing features',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -555,7 +555,7 @@ export class ConfigVariables {
   IS_BILLING_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
+    group: ConfigVariablesGroup.BILLING_CONFIG,
     description: 'Link required for billing plan',
     type: ConfigVariableType.STRING,
   })
@@ -563,7 +563,7 @@ export class ConfigVariables {
   BILLING_PLAN_REQUIRED_LINK: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
+    group: ConfigVariablesGroup.BILLING_CONFIG,
     description: 'Duration of free trial with credit card in days',
     type: ConfigVariableType.NUMBER,
   })
@@ -573,7 +573,7 @@ export class ConfigVariables {
   BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS = 30;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
+    group: ConfigVariablesGroup.BILLING_CONFIG,
     description: 'Duration of free trial without credit card in days',
     type: ConfigVariableType.NUMBER,
   })
@@ -583,7 +583,7 @@ export class ConfigVariables {
   BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
+    group: ConfigVariablesGroup.BILLING_CONFIG,
     description: 'Amount of credits for the free trial without credit card',
     type: ConfigVariableType.NUMBER,
   })
@@ -592,7 +592,7 @@ export class ConfigVariables {
   BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD = 500_000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
+    group: ConfigVariablesGroup.BILLING_CONFIG,
     description: 'Amount of credits for the free trial with credit card',
     type: ConfigVariableType.NUMBER,
   })
@@ -601,7 +601,7 @@ export class ConfigVariables {
   BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD = 5_000_000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
+    group: ConfigVariablesGroup.BILLING_CONFIG,
     isSensitive: true,
     description: 'Stripe API key for billing',
     type: ConfigVariableType.STRING,
@@ -610,7 +610,7 @@ export class ConfigVariables {
   BILLING_STRIPE_API_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
+    group: ConfigVariablesGroup.BILLING_CONFIG,
     isSensitive: true,
     description: 'Stripe webhook secret for billing',
     type: ConfigVariableType.STRING,
@@ -619,7 +619,7 @@ export class ConfigVariables {
   BILLING_STRIPE_WEBHOOK_SECRET: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Url for the frontend application',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
@@ -629,7 +629,7 @@ export class ConfigVariables {
   FRONTEND_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
       'Default subdomain for the frontend when multi-workspace is enabled',
     type: ConfigVariableType.STRING,
@@ -638,7 +638,7 @@ export class ConfigVariables {
   DEFAULT_SUBDOMAIN = 'app';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'ID for the Chrome extension',
     type: ConfigVariableType.STRING,
   })
@@ -646,7 +646,7 @@ export class ConfigVariables {
   CHROME_EXTENSION_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'Page ID for Cal.com booking integration',
     type: ConfigVariableType.STRING,
   })
@@ -654,7 +654,7 @@ export class ConfigVariables {
   CALENDAR_BOOKING_PAGE_ID?: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Logging,
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Enable or disable buffering for logs before sending',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -662,7 +662,7 @@ export class ConfigVariables {
   LOGGER_IS_BUFFER_ENABLED = true;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Logging,
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Driver used for handling exceptions (Console or Sentry)',
     type: ConfigVariableType.ENUM,
     options: Object.values(ExceptionHandlerDriver),
@@ -674,7 +674,7 @@ export class ConfigVariables {
     ExceptionHandlerDriver.CONSOLE;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Logging,
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Levels of logging to be captured',
     type: ConfigVariableType.ARRAY,
     options: ['log', 'error', 'warn', 'debug'],
@@ -685,7 +685,7 @@ export class ConfigVariables {
   LOG_LEVELS: LogLevel[] = ['log', 'error', 'warn'];
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Metering,
+    group: ConfigVariablesGroup.METERING,
     description: 'Driver used for collect metrics (OpenTelemetry or Console)',
     type: ConfigVariableType.ARRAY,
     options: ['OpenTelemetry', 'Console'],
@@ -696,7 +696,7 @@ export class ConfigVariables {
   METER_DRIVER: MeterDriver[] = [];
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Metering,
+    group: ConfigVariablesGroup.METERING,
     description: 'Endpoint URL for the OpenTelemetry collector',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
@@ -705,7 +705,7 @@ export class ConfigVariables {
   OTLP_COLLECTOR_ENDPOINT_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ExceptionHandler,
+    group: ConfigVariablesGroup.EXCEPTION_HANDLER,
     description: 'Driver used for logging (only console for now)',
     type: ConfigVariableType.ENUM,
     options: Object.values(LoggerDriverType),
@@ -716,7 +716,7 @@ export class ConfigVariables {
   LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.CONSOLE;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ExceptionHandler,
+    group: ConfigVariablesGroup.EXCEPTION_HANDLER,
     description: 'Data Source Name (DSN) for Sentry logging',
     type: ConfigVariableType.STRING,
     isSensitive: true,
@@ -727,7 +727,7 @@ export class ConfigVariables {
   SENTRY_DSN: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ExceptionHandler,
+    group: ConfigVariablesGroup.EXCEPTION_HANDLER,
     description: 'Front-end DSN for Sentry logging',
     type: ConfigVariableType.STRING,
     isSensitive: true,
@@ -737,7 +737,7 @@ export class ConfigVariables {
   )
   SENTRY_FRONT_DSN: string;
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ExceptionHandler,
+    group: ConfigVariablesGroup.EXCEPTION_HANDLER,
     description: 'Environment name for Sentry logging',
     type: ConfigVariableType.STRING,
   })
@@ -748,7 +748,7 @@ export class ConfigVariables {
   SENTRY_ENVIRONMENT: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SupportChatConfig,
+    group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
     description: 'Driver used for support chat integration',
     type: ConfigVariableType.ENUM,
     options: Object.values(SupportDriver),
@@ -758,7 +758,7 @@ export class ConfigVariables {
   SUPPORT_DRIVER: SupportDriver = SupportDriver.NONE;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SupportChatConfig,
+    group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
     isSensitive: true,
     description: 'Chat ID for the support front integration',
     type: ConfigVariableType.STRING,
@@ -767,7 +767,7 @@ export class ConfigVariables {
   SUPPORT_FRONT_CHAT_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SupportChatConfig,
+    group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
     isSensitive: true,
     description: 'HMAC key for the support front integration',
     type: ConfigVariableType.STRING,
@@ -776,7 +776,7 @@ export class ConfigVariables {
   SUPPORT_FRONT_HMAC_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
     description: 'Database connection URL',
     type: ConfigVariableType.STRING,
@@ -792,7 +792,7 @@ export class ConfigVariables {
   PG_DATABASE_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
       'Allow connections to a database with self-signed certificates',
     isEnvOnly: true,
@@ -802,7 +802,7 @@ export class ConfigVariables {
   PG_SSL_ALLOW_SELF_SIGNED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Enable pg connection pool sharing across tenants',
     isEnvOnly: true,
     type: ConfigVariableType.BOOLEAN,
@@ -811,7 +811,7 @@ export class ConfigVariables {
   PG_ENABLE_POOL_SHARING = true;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Maximum number of clients in pg connection pool',
     isEnvOnly: true,
     type: ConfigVariableType.NUMBER,
@@ -821,7 +821,7 @@ export class ConfigVariables {
   PG_POOL_MAX_CONNECTIONS = 10;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Idle timeout in milliseconds for pg connection pool clients',
     isEnvOnly: true,
     type: ConfigVariableType.NUMBER,
@@ -831,7 +831,7 @@ export class ConfigVariables {
   PG_POOL_IDLE_TIMEOUT_MS = 600000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Allow idle pg connection pool clients to exit',
     isEnvOnly: true,
     type: ConfigVariableType.BOOLEAN,
@@ -840,7 +840,7 @@ export class ConfigVariables {
   PG_POOL_ALLOW_EXIT_ON_IDLE = true;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Enable configuration variables to be stored in the database',
     isEnvOnly: true,
     type: ConfigVariableType.BOOLEAN,
@@ -849,7 +849,7 @@ export class ConfigVariables {
   IS_CONFIG_VARIABLES_IN_DB_ENABLED = true;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TokensDuration,
+    group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Time-to-live for cache storage in seconds',
     type: ConfigVariableType.NUMBER,
   })
@@ -857,7 +857,7 @@ export class ConfigVariables {
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
     description: 'Redis connection URL used for cache and queues by default',
     isEnvOnly: true,
@@ -871,7 +871,7 @@ export class ConfigVariables {
   REDIS_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
     description:
       'Optional separate Redis connection for queues with a different eviction policy (advanced production use case, most self-hosters do not need this)',
@@ -887,7 +887,7 @@ export class ConfigVariables {
   REDIS_QUEUE_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,
     options: Object.values(NodeEnvironment),
@@ -897,7 +897,7 @@ export class ConfigVariables {
   NODE_ENV: NodeEnvironment = NodeEnvironment.PRODUCTION;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Port for the node server',
     type: ConfigVariableType.NUMBER,
     isEnvOnly: true,
@@ -907,7 +907,7 @@ export class ConfigVariables {
   NODE_PORT = 3000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Base URL for the server',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
@@ -917,7 +917,7 @@ export class ConfigVariables {
   SERVER_URL = 'http://localhost:3000';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Base URL for public domains',
     type: ConfigVariableType.STRING,
   })
@@ -926,7 +926,7 @@ export class ConfigVariables {
   PUBLIC_DOMAIN_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
     description: 'Secret key for the application',
     isEnvOnly: true,
@@ -935,7 +935,7 @@ export class ConfigVariables {
   APP_SECRET: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RateLimiting,
+    group: ConfigVariablesGroup.RATE_LIMITING,
     description: 'Maximum number of records affected by mutations',
     type: ConfigVariableType.NUMBER,
   })
@@ -944,7 +944,7 @@ export class ConfigVariables {
   MUTATION_MAXIMUM_AFFECTED_RECORDS = 100;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RateLimiting,
+    group: ConfigVariablesGroup.RATE_LIMITING,
     description: 'Time-to-live for API rate limiting in milliseconds',
     type: ConfigVariableType.NUMBER,
   })
@@ -952,7 +952,7 @@ export class ConfigVariables {
   API_RATE_LIMITING_TTL = 100;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RateLimiting,
+    group: ConfigVariablesGroup.RATE_LIMITING,
     description:
       'Maximum number of requests allowed in the rate limiting window',
     type: ConfigVariableType.NUMBER,
@@ -980,7 +980,7 @@ export class ConfigVariables {
   SSL_CERT_PATH: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.CloudflareConfig,
+    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
     isSensitive: true,
     description: 'API key for Cloudflare integration',
     type: ConfigVariableType.STRING,
@@ -989,7 +989,7 @@ export class ConfigVariables {
   CLOUDFLARE_API_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.CloudflareConfig,
+    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
     description: 'Zone ID for Cloudflare integration',
     type: ConfigVariableType.STRING,
   })
@@ -997,7 +997,7 @@ export class ConfigVariables {
   CLOUDFLARE_ZONE_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.CloudflareConfig,
+    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
     description: 'Zone ID for public domain Cloudflare integration',
     type: ConfigVariableType.STRING,
   })
@@ -1005,7 +1005,7 @@ export class ConfigVariables {
   CLOUDFLARE_PUBLIC_DOMAIN_ZONE_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'Random string to validate queries from Cloudflare',
     type: ConfigVariableType.STRING,
     isSensitive: true,
@@ -1014,7 +1014,7 @@ export class ConfigVariables {
   CLOUDFLARE_WEBHOOK_SECRET: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description:
       'Id to generate value for CNAME record to validate ownership and manage ssl for custom hostname with Cloudflare',
     type: ConfigVariableType.STRING,
@@ -1087,7 +1087,7 @@ export class ConfigVariables {
   XAI_API_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,
     isEnvOnly: true,
@@ -1096,7 +1096,7 @@ export class ConfigVariables {
   IS_MULTIWORKSPACE_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description:
       'Number of inactive days before sending a deletion warning for workspaces. Used in the workspace deletion cron job to determine when to send warning emails.',
     type: ConfigVariableType.NUMBER,
@@ -1109,7 +1109,7 @@ export class ConfigVariables {
   WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 7;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'Number of inactive days before soft deleting workspaces',
     type: ConfigVariableType.NUMBER,
   })
@@ -1121,7 +1121,7 @@ export class ConfigVariables {
   WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION = 14;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'Number of inactive days before deleting workspaces',
     type: ConfigVariableType.NUMBER,
   })
@@ -1129,7 +1129,7 @@ export class ConfigVariables {
   WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 21;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description:
       'Maximum number of workspaces that can be deleted in a single execution',
     type: ConfigVariableType.NUMBER,
@@ -1139,7 +1139,7 @@ export class ConfigVariables {
   MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION = 5;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RateLimiting,
+    group: ConfigVariablesGroup.RATE_LIMITING,
     description: 'Throttle limit for workflow execution',
     type: ConfigVariableType.NUMBER,
   })
@@ -1147,7 +1147,7 @@ export class ConfigVariables {
   WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RateLimiting,
+    group: ConfigVariablesGroup.RATE_LIMITING,
     description: 'Time-to-live for workflow execution throttle in milliseconds',
     type: ConfigVariableType.NUMBER,
   })
@@ -1155,7 +1155,7 @@ export class ConfigVariables {
   WORKFLOW_EXEC_THROTTLE_TTL = 1000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.CaptchaConfig,
+    group: ConfigVariablesGroup.CAPTCHA_CONFIG,
     description: 'Driver for captcha integration',
     type: ConfigVariableType.ENUM,
     options: Object.values(CaptchaDriverType),
@@ -1166,7 +1166,7 @@ export class ConfigVariables {
   CAPTCHA_DRIVER?: CaptchaDriverType;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.CaptchaConfig,
+    group: ConfigVariablesGroup.CAPTCHA_CONFIG,
     isSensitive: true,
     description: 'Site key for captcha integration',
     type: ConfigVariableType.STRING,
@@ -1175,7 +1175,7 @@ export class ConfigVariables {
   CAPTCHA_SITE_KEY?: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.CaptchaConfig,
+    group: ConfigVariablesGroup.CAPTCHA_CONFIG,
     isSensitive: true,
     description: 'Secret key for captcha integration',
     type: ConfigVariableType.STRING,
@@ -1184,7 +1184,7 @@ export class ConfigVariables {
   CAPTCHA_SECRET_KEY?: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
     description: 'License key for the Enterprise version',
     type: ConfigVariableType.STRING,
@@ -1193,7 +1193,7 @@ export class ConfigVariables {
   ENTERPRISE_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'Health monitoring time window in minutes',
     type: ConfigVariableType.NUMBER,
   })
@@ -1202,7 +1202,7 @@ export class ConfigVariables {
   HEALTH_METRICS_TIME_WINDOW_IN_MINUTES = 5;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'Enable or disable the attachment preview feature',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -1210,7 +1210,7 @@ export class ConfigVariables {
   IS_ATTACHMENT_PREVIEW_ENABLED = true;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Twenty server version',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
@@ -1220,7 +1220,7 @@ export class ConfigVariables {
   APP_VERSION?: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     description: 'Enable or disable google map api usage',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -1228,7 +1228,7 @@ export class ConfigVariables {
   IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
+    group: ConfigVariablesGroup.OTHER,
     isSensitive: true,
     description: 'Google map api key for places and map',
     type: ConfigVariableType.STRING,
@@ -1237,7 +1237,7 @@ export class ConfigVariables {
   GOOGLE_MAP_API_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AwsSesSettings,
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description: 'AWS region',
     type: ConfigVariableType.STRING,
   })
@@ -1246,7 +1246,7 @@ export class ConfigVariables {
   AWS_SES_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AwsSesSettings,
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     isSensitive: true,
     description: 'AWS access key ID',
     type: ConfigVariableType.STRING,
@@ -1255,7 +1255,7 @@ export class ConfigVariables {
   AWS_SES_ACCESS_KEY_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AwsSesSettings,
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     isSensitive: true,
     description: 'AWS session token',
     type: ConfigVariableType.STRING,
@@ -1264,7 +1264,7 @@ export class ConfigVariables {
   AWS_SES_SESSION_TOKEN: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AwsSesSettings,
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     isSensitive: true,
     description: 'AWS secret access key',
     type: ConfigVariableType.STRING,
@@ -1273,7 +1273,7 @@ export class ConfigVariables {
   AWS_SES_SECRET_ACCESS_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AwsSesSettings,
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description: 'AWS Account ID for SES ARN construction',
     type: ConfigVariableType.STRING,
   })

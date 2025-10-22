@@ -25,7 +25,6 @@ import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runne
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { computeIsNumericReturningAggregate } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/compute-is-numeric-returning-aggregate.util';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
@@ -136,33 +135,6 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
         queryBuilder.addGroupBy(groupByColumn.expression);
       }
     });
-
-    if (executionArgs.args.omitNullValues) {
-      const aggregateFields =
-        executionArgs.graphqlQuerySelectedFieldsResult.aggregate ?? {};
-
-      Object.values(aggregateFields).forEach((aggregationField) => {
-        const aggregateExpression =
-          ProcessAggregateHelper.getAggregateExpression(
-            aggregationField,
-            objectMetadataNameSingular,
-          );
-
-        if (aggregateExpression) {
-          queryBuilder.andHaving(`${aggregateExpression} IS NOT NULL`);
-
-          const isNumericReturningAggregate =
-            computeIsNumericReturningAggregate(
-              aggregationField.aggregateOperation,
-              aggregationField.fromFieldType,
-            );
-
-          if (isNumericReturningAggregate) {
-            queryBuilder.andHaving(`${aggregateExpression} != 0`);
-          }
-        }
-      });
-    }
 
     executionArgs.graphqlQueryParser.applyGroupByOrderToBuilder(
       queryBuilder,

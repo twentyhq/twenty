@@ -12,8 +12,8 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 
 @Injectable()
@@ -21,10 +21,10 @@ export class BillingWebhookAlertService {
   protected readonly logger = new Logger(BillingWebhookAlertService.name);
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    @InjectRepository(BillingProduct)
-    private readonly billingProductRepository: Repository<BillingProduct>,
-    @InjectRepository(BillingSubscriptionItem)
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(BillingProductEntity)
+    private readonly billingProductRepository: Repository<BillingProductEntity>,
+    @InjectRepository(BillingSubscriptionItemEntity)
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
   ) {}
 
   async processStripeEvent(data: Stripe.BillingAlertTriggeredEvent.Data) {

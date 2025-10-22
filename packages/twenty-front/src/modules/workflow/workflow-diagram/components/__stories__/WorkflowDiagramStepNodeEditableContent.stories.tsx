@@ -2,7 +2,6 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { fn } from '@storybook/test';
 import '@xyflow/react/dist/style.css';
 import { RecoilRoot } from 'recoil';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
@@ -123,7 +122,6 @@ export const Catalog: CatalogStory<
     id: 'story-node',
     data: ALL_STEPS[0],
     selected: false,
-    onDelete: fn(),
   },
   parameters: {
     pseudo: { hover: ['.hover'] },

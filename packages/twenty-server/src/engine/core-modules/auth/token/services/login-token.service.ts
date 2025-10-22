@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 
-import { type AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
+import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import {
   type LoginTokenJwtPayload,
   JwtTokenTypeEnum,

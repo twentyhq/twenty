@@ -33,9 +33,9 @@ export const ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES = [
   'httpMethod',
   'workspaceId',
 ])
-export class RouteTrigger
+export class RouteTriggerEntity
   extends SyncableEntity
-  implements Required<RouteTrigger>
+  implements Required<RouteTriggerEntity>
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;

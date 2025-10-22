@@ -12,6 +12,7 @@ import {
   type WorkflowDeleteRecordActionSettings,
   type WorkflowFindRecordsActionSettings,
   type WorkflowUpdateRecordActionSettings,
+  type WorkflowUpsertRecordActionSettings,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-settings.type';
 
 export type BaseWorkflowActionSettings = {
@@ -32,6 +33,7 @@ export type WorkflowActionSettings =
   | WorkflowCreateRecordActionSettings
   | WorkflowUpdateRecordActionSettings
   | WorkflowDeleteRecordActionSettings
+  | WorkflowUpsertRecordActionSettings
   | WorkflowFindRecordsActionSettings
   | WorkflowFormActionSettings
   | WorkflowFilterActionSettings

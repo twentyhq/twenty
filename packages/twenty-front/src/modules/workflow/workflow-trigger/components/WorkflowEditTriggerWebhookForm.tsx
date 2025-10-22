@@ -9,6 +9,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { type WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
 import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions';
 import { WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerHttpMethodOptions';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
@@ -21,8 +22,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { buildOutputSchemaFromValue } from 'twenty-shared/workflow';
+import {
+  buildOutputSchemaFromValue,
+  TRIGGER_STEP_ID,
+} from 'twenty-shared/workflow';
 import { IconCopy, useIcons } from 'twenty-ui/display';
+
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -216,6 +221,9 @@ export const WorkflowEditTriggerWebhookForm = ({
           }}
         />
       </WorkflowStepBody>
+      {!triggerOptions.readonly && (
+        <WorkflowStepFooter stepId={TRIGGER_STEP_ID} />
+      )}
     </>
   );
 };

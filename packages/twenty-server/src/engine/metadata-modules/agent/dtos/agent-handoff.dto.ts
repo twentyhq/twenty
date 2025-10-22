@@ -4,7 +4,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 import { AgentDTO } from './agent.dto';
 
-@ObjectType()
+@ObjectType('AgentHandoff')
 export class AgentHandoffDTO {
   @Field(() => UUIDScalarType)
   id: string;

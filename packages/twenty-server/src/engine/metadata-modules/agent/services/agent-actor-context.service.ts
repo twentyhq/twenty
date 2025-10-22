@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
-import { UserWorkspaceService as UserService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
   AgentException,
   AgentExceptionCode,
@@ -45,7 +45,7 @@ export class AgentActorContextService {
 
     const workspaceMember = await workspaceMemberRepository.findOne({
       where: {
-        userId: userWorkspace.userId,
+        userId: userWorkspace.id,
       },
     });
 

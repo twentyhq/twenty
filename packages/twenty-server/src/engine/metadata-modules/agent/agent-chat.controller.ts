@@ -13,7 +13,7 @@ import { UIDataTypes, UIMessage, UITools } from 'ai';
 import { Response } from 'express';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -68,7 +68,7 @@ export class AgentChatController {
       recordIdsByObjectMetadataNameSingular?: RecordIdsByObjectMetadataNameSingularType;
     },
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Res() response: Response,
   ) {
     this.agentStreamingService.streamAgentChat({

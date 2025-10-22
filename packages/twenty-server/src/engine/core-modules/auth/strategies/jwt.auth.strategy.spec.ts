@@ -5,7 +5,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
 
@@ -94,7 +94,7 @@ describe('JwtAuthStrategy', () => {
         type: 'API_KEY',
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = 'workspace-id';
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
@@ -124,7 +124,7 @@ describe('JwtAuthStrategy', () => {
         type: 'API_KEY',
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = 'workspace-id';
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
@@ -157,7 +157,7 @@ describe('JwtAuthStrategy', () => {
         type: 'API_KEY',
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = 'workspace-id';
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
@@ -203,7 +203,7 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
       };
 
-      workspaceRepository.findOneBy.mockResolvedValue(new Workspace());
+      workspaceRepository.findOneBy.mockResolvedValue(new WorkspaceEntity());
 
       userRepository.findOne.mockResolvedValue(null);
 
@@ -217,7 +217,7 @@ describe('JwtAuthStrategy', () => {
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('UserWorkspace not found', expect.any(String)),
+        new AuthException('UserWorkspaceEntity not found', expect.any(String)),
       );
 
       try {
@@ -239,7 +239,7 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
       };
 
-      workspaceRepository.findOneBy.mockResolvedValue(new Workspace());
+      workspaceRepository.findOneBy.mockResolvedValue(new WorkspaceEntity());
 
       userRepository.findOne.mockResolvedValue({ lastName: 'lastNameDefault' });
 
@@ -255,7 +255,7 @@ describe('JwtAuthStrategy', () => {
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('UserWorkspace not found', expect.any(String)),
+        new AuthException('UserWorkspaceEntity not found', expect.any(String)),
       );
 
       try {
@@ -277,7 +277,7 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
       };
 
-      workspaceRepository.findOneBy.mockResolvedValue(new Workspace());
+      workspaceRepository.findOneBy.mockResolvedValue(new WorkspaceEntity());
 
       userRepository.findOne.mockResolvedValue({ lastName: 'lastNameDefault' });
 
@@ -325,7 +325,7 @@ describe('JwtAuthStrategy', () => {
         workspace: { id: validWorkspaceId },
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
@@ -370,7 +370,7 @@ describe('JwtAuthStrategy', () => {
         user: { id: validUserId, lastName: 'lastNameDefault' },
         workspace: { id: validWorkspaceId },
       };
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
@@ -415,7 +415,7 @@ describe('JwtAuthStrategy', () => {
         workspace: { id: validWorkspaceId },
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
@@ -457,7 +457,7 @@ describe('JwtAuthStrategy', () => {
         impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
       mockWorkspace.allowImpersonation = true;
@@ -515,7 +515,7 @@ describe('JwtAuthStrategy', () => {
         impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
       mockWorkspace.allowImpersonation = true;
@@ -568,7 +568,7 @@ describe('JwtAuthStrategy', () => {
         impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
       mockWorkspace.allowImpersonation = false; // Disabled
@@ -637,7 +637,7 @@ describe('JwtAuthStrategy', () => {
         impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
       mockWorkspace.allowImpersonation = false;
@@ -707,7 +707,7 @@ describe('JwtAuthStrategy', () => {
         impersonatedUserWorkspaceId, // Different from userWorkspaceId
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
       mockWorkspace.allowImpersonation = true;
@@ -776,7 +776,7 @@ describe('JwtAuthStrategy', () => {
         impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
       mockWorkspace.allowImpersonation = false; // Server level disabled
@@ -845,7 +845,7 @@ describe('JwtAuthStrategy', () => {
         impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
-      const mockWorkspace = new Workspace();
+      const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
       mockWorkspace.allowImpersonation = true; // Server level enabled

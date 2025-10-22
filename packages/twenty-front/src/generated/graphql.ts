@@ -115,8 +115,8 @@ export type AgentChatThread = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type AgentHandoffDto = {
-  __typename?: 'AgentHandoffDTO';
+export type AgentHandoff = {
+  __typename?: 'AgentHandoff';
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   toAgent: Agent;
@@ -256,13 +256,13 @@ export type AuthTokens = {
   tokens: AuthTokenPair;
 };
 
-export type AuthorizeApp = {
-  __typename?: 'AuthorizeApp';
+export type AuthorizeAppOutput = {
+  __typename?: 'AuthorizeAppOutput';
   redirectUrl: Scalars['String'];
 };
 
-export type AutocompleteResultDto = {
-  __typename?: 'AutocompleteResultDto';
+export type AutocompleteResult = {
+  __typename?: 'AutocompleteResult';
   placeId: Scalars['String'];
   text: Scalars['String'];
 };
@@ -331,7 +331,7 @@ export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']>;
   isBillingEnabled: Scalars['Boolean'];
-  trialPeriods: Array<BillingTrialPeriodDto>;
+  trialPeriods: Array<BillingTrialPeriod>;
 };
 
 export type BillingEndTrialPeriodOutput = {
@@ -348,7 +348,7 @@ export type BillingLicensedProduct = BillingProductDto & {
   images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String'];
-  prices?: Maybe<Array<BillingPriceLicensedDto>>;
+  prices?: Maybe<Array<BillingPriceLicensed>>;
 };
 
 export type BillingMeteredProduct = BillingProductDto & {
@@ -357,7 +357,7 @@ export type BillingMeteredProduct = BillingProductDto & {
   images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String'];
-  prices?: Maybe<Array<BillingPriceMeteredDto>>;
+  prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
 export type BillingMeteredProductUsageOutput = {
@@ -383,24 +383,24 @@ export type BillingPlanOutput = {
   planKey: BillingPlanKey;
 };
 
-export type BillingPriceLicensedDto = {
-  __typename?: 'BillingPriceLicensedDTO';
+export type BillingPriceLicensed = {
+  __typename?: 'BillingPriceLicensed';
   priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
   unitAmount: Scalars['Float'];
 };
 
-export type BillingPriceMeteredDto = {
-  __typename?: 'BillingPriceMeteredDTO';
+export type BillingPriceMetered = {
+  __typename?: 'BillingPriceMetered';
   priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
-  tiers: Array<BillingPriceTierDto>;
+  tiers: Array<BillingPriceTier>;
 };
 
-export type BillingPriceTierDto = {
-  __typename?: 'BillingPriceTierDTO';
+export type BillingPriceTier = {
+  __typename?: 'BillingPriceTier';
   flatAmount?: Maybe<Scalars['Float']>;
   unitAmount?: Maybe<Scalars['Float']>;
   upTo?: Maybe<Scalars['Float']>;
@@ -472,8 +472,8 @@ export type BillingSubscriptionSchedulePhaseItem = {
   quantity?: Maybe<Scalars['Float']>;
 };
 
-export type BillingTrialPeriodDto = {
-  __typename?: 'BillingTrialPeriodDTO';
+export type BillingTrialPeriod = {
+  __typename?: 'BillingTrialPeriod';
   duration: Scalars['Float'];
   isCreditCardRequired: Scalars['Boolean'];
 };
@@ -568,27 +568,27 @@ export enum ConfigVariableType {
 }
 
 export enum ConfigVariablesGroup {
-  AnalyticsConfig = 'AnalyticsConfig',
-  AwsSesSettings = 'AwsSesSettings',
-  BillingConfig = 'BillingConfig',
-  CaptchaConfig = 'CaptchaConfig',
-  CloudflareConfig = 'CloudflareConfig',
-  EmailSettings = 'EmailSettings',
-  ExceptionHandler = 'ExceptionHandler',
-  GoogleAuth = 'GoogleAuth',
+  ANALYTICS_CONFIG = 'ANALYTICS_CONFIG',
+  AWS_SES_SETTINGS = 'AWS_SES_SETTINGS',
+  BILLING_CONFIG = 'BILLING_CONFIG',
+  CAPTCHA_CONFIG = 'CAPTCHA_CONFIG',
+  CLOUDFLARE_CONFIG = 'CLOUDFLARE_CONFIG',
+  EMAIL_SETTINGS = 'EMAIL_SETTINGS',
+  EXCEPTION_HANDLER = 'EXCEPTION_HANDLER',
+  GOOGLE_AUTH = 'GOOGLE_AUTH',
   LLM = 'LLM',
-  Logging = 'Logging',
-  Metering = 'Metering',
-  MicrosoftAuth = 'MicrosoftAuth',
-  Other = 'Other',
-  RateLimiting = 'RateLimiting',
+  LOGGING = 'LOGGING',
+  METERING = 'METERING',
+  MICROSOFT_AUTH = 'MICROSOFT_AUTH',
+  OTHER = 'OTHER',
+  RATE_LIMITING = 'RATE_LIMITING',
+  SERVERLESS_CONFIG = 'SERVERLESS_CONFIG',
+  SERVER_CONFIG = 'SERVER_CONFIG',
   SSL = 'SSL',
-  ServerConfig = 'ServerConfig',
-  ServerlessConfig = 'ServerlessConfig',
-  StorageConfig = 'StorageConfig',
-  SupportChatConfig = 'SupportChatConfig',
-  TokensDuration = 'TokensDuration',
-  TwoFactorAuthentication = 'TwoFactorAuthentication'
+  STORAGE_CONFIG = 'STORAGE_CONFIG',
+  SUPPORT_CHAT_CONFIG = 'SUPPORT_CHAT_CONFIG',
+  TOKENS_DURATION = 'TOKENS_DURATION',
+  TWO_FACTOR_AUTHENTICATION = 'TWO_FACTOR_AUTHENTICATION'
 }
 
 export type ConfigVariablesGroupData = {
@@ -750,7 +750,7 @@ export type CreateAgentInput = {
   roleId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type CreateApiKeyDto = {
+export type CreateApiKeyInput = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
@@ -919,7 +919,7 @@ export type CreateViewSortInput = {
   viewId: Scalars['UUID'];
 };
 
-export type CreateWebhookDto = {
+export type CreateWebhookInput = {
   description?: InputMaybe<Scalars['String']>;
   operations: Array<Scalars['String']>;
   secret?: InputMaybe<Scalars['String']>;
@@ -1014,6 +1014,12 @@ export type DeleteApprovedAccessDomainInput = {
   id: Scalars['UUID'];
 };
 
+export type DeleteJobsResponse = {
+  __typename?: 'DeleteJobsResponse';
+  deletedCount: Scalars['Int'];
+  results: Array<JobOperationResult>;
+};
+
 export type DeleteOneFieldInput = {
   /** The id of the field to delete. */
   id: Scalars['UUID'];
@@ -1054,7 +1060,7 @@ export type DeleteViewGroupInput = {
   id: Scalars['UUID'];
 };
 
-export type DeleteWebhookDto = {
+export type DeleteWebhookInput = {
   id: Scalars['UUID'];
 };
 
@@ -1138,8 +1144,8 @@ export type EmailAccountConnectionParameters = {
   SMTP?: InputMaybe<ConnectionParameters>;
 };
 
-export type EmailPasswordResetLink = {
-  __typename?: 'EmailPasswordResetLink';
+export type EmailPasswordResetLinkOutput = {
+  __typename?: 'EmailPasswordResetLinkOutput';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
@@ -1383,7 +1389,7 @@ export type GaugeChartConfiguration = {
   graphType: GraphType;
 };
 
-export type GetApiKeyDto = {
+export type GetApiKeyInput = {
   id: Scalars['UUID'];
 };
 
@@ -1412,7 +1418,7 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String'];
 };
 
-export type GetWebhookDto = {
+export type GetWebhookInput = {
   id: Scalars['UUID'];
 };
 
@@ -1595,11 +1601,29 @@ export type InitiateTwoFactorAuthenticationProvisioningOutput = {
   uri: Scalars['String'];
 };
 
-export type InvalidatePassword = {
-  __typename?: 'InvalidatePassword';
+export type InvalidatePasswordOutput = {
+  __typename?: 'InvalidatePasswordOutput';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
+
+export type JobOperationResult = {
+  __typename?: 'JobOperationResult';
+  error?: Maybe<Scalars['String']>;
+  jobId: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
+/** Job state in the queue */
+export enum JobState {
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
+  DELAYED = 'DELAYED',
+  FAILED = 'FAILED',
+  PRIORITIZED = 'PRIORITIZED',
+  WAITING = 'WAITING',
+  WAITING_CHILDREN = 'WAITING_CHILDREN'
+}
 
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
@@ -1635,14 +1659,14 @@ export type LinksMetadata = {
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
-export type LocationDto = {
-  __typename?: 'LocationDto';
+export type Location = {
+  __typename?: 'Location';
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
 };
 
-export type LoginToken = {
-  __typename?: 'LoginToken';
+export type LoginTokenOutput = {
+  __typename?: 'LoginTokenOutput';
   loginToken: AuthToken;
 };
 
@@ -1666,7 +1690,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
-  authorizeApp: AuthorizeApp;
+  authorizeApp: AuthorizeAppOutput;
   cancelSwitchBillingInterval: BillingUpdateOutput;
   cancelSwitchBillingPlan: BillingUpdateOutput;
   cancelSwitchMeteredPrice: BillingUpdateOutput;
@@ -1721,6 +1745,7 @@ export type Mutation = {
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
+  deleteJobs: DeleteJobsResponse;
   deleteOneAgent: Agent;
   deleteOneCronTrigger: CronTrigger;
   deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
@@ -1752,16 +1777,16 @@ export type Mutation = {
   disablePostgresProxy: PostgresCredentials;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   editSSOIdentityProvider: EditSsoOutput;
-  emailPasswordResetLink: EmailPasswordResetLink;
+  emailPasswordResetLink: EmailPasswordResetLinkOutput;
   enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
-  generateTransientToken: TransientToken;
+  generateTransientToken: TransientTokenOutput;
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
-  getLoginTokenFromCredentials: LoginToken;
+  getLoginTokenFromCredentials: LoginTokenOutput;
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
@@ -1776,6 +1801,7 @@ export type Mutation = {
   restorePageLayout: PageLayout;
   restorePageLayoutTab: PageLayoutTab;
   restorePageLayoutWidget: PageLayoutWidget;
+  retryJobs: RetryJobsResponse;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -1815,7 +1841,7 @@ export type Mutation = {
   updatePageLayoutTab: PageLayoutTab;
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
-  updatePasswordViaResetToken: InvalidatePassword;
+  updatePasswordViaResetToken: InvalidatePasswordOutput;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
@@ -1823,10 +1849,10 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
-  uploadFile: SignedFileDto;
-  uploadImage: SignedFileDto;
-  uploadProfilePicture: SignedFileDto;
-  uploadWorkspaceLogo: SignedFileDto;
+  uploadFile: SignedFile;
+  uploadImage: SignedFile;
+  uploadProfilePicture: SignedFile;
+  uploadWorkspaceLogo: SignedFile;
   upsertFieldPermissions: Array<FieldPermission>;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<PermissionFlag>;
@@ -1895,7 +1921,7 @@ export type MutationCreateAgentHandoffArgs = {
 
 
 export type MutationCreateApiKeyArgs = {
-  input: CreateApiKeyDto;
+  input: CreateApiKeyInput;
 };
 
 
@@ -2036,7 +2062,7 @@ export type MutationCreateSamlIdentityProviderArgs = {
 
 
 export type MutationCreateWebhookArgs = {
-  input: CreateWebhookDto;
+  input: CreateWebhookInput;
 };
 
 
@@ -2107,6 +2133,12 @@ export type MutationDeleteEmailingDomainArgs = {
 
 export type MutationDeleteFileArgs = {
   fileId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteJobsArgs = {
+  jobIds: Array<Scalars['String']>;
+  queueName: Scalars['String'];
 };
 
 
@@ -2181,7 +2213,7 @@ export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
 
 
 export type MutationDeleteWebhookArgs = {
-  input: DeleteWebhookDto;
+  input: DeleteWebhookInput;
 };
 
 
@@ -2374,8 +2406,14 @@ export type MutationRestorePageLayoutWidgetArgs = {
 };
 
 
+export type MutationRetryJobsArgs = {
+  jobIds: Array<Scalars['String']>;
+  queueName: Scalars['String'];
+};
+
+
 export type MutationRevokeApiKeyArgs = {
-  input: RevokeApiKeyDto;
+  input: RevokeApiKeyInput;
 };
 
 
@@ -2458,7 +2496,7 @@ export type MutationTrackAnalyticsArgs = {
 
 
 export type MutationUpdateApiKeyArgs = {
-  input: UpdateApiKeyDto;
+  input: UpdateApiKeyInput;
 };
 
 
@@ -2584,7 +2622,7 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 
 
 export type MutationUpdateWebhookArgs = {
-  input: UpdateWebhookDto;
+  input: UpdateWebhookInput;
 };
 
 
@@ -2818,8 +2856,8 @@ export type ObjectStandardOverrides = {
   translations?: Maybe<Scalars['JSON']>;
 };
 
-export type OnDbEventDto = {
-  __typename?: 'OnDbEventDTO';
+export type OnDbEvent = {
+  __typename?: 'OnDbEvent';
   action: DatabaseEventAction;
   eventDate: Scalars['DateTime'];
   objectNameSingular: Scalars['String'];
@@ -2942,11 +2980,11 @@ export type PieChartConfiguration = {
   orderBy?: Maybe<GraphOrderBy>;
 };
 
-export type PlaceDetailsResultDto = {
-  __typename?: 'PlaceDetailsResultDto';
+export type PlaceDetailsResult = {
+  __typename?: 'PlaceDetailsResult';
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
-  location?: Maybe<LocationDto>;
+  location?: Maybe<Location>;
   postcode?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
 };
@@ -3003,13 +3041,13 @@ export type Query = {
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
   checkUserExists: CheckUserExistOutput;
-  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
+  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   currentUser: User;
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
   findAgentHandoffTargets: Array<Agent>;
-  findAgentHandoffs: Array<AgentHandoffDto>;
+  findAgentHandoffs: Array<AgentHandoff>;
   findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
   findManyCronTriggers: Array<CronTrigger>;
@@ -3025,9 +3063,9 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
-  getAddressDetails: PlaceDetailsResultDto;
+  getAddressDetails: PlaceDetailsResult;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
-  getAutoCompleteAddress: Array<AutocompleteResultDto>;
+  getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
@@ -3055,6 +3093,7 @@ export type Query = {
   getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
+  getQueueJobs: QueueJobsResponse;
   getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
@@ -3072,7 +3111,7 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   search: SearchResultConnection;
-  validatePasswordResetToken: ValidatePasswordResetToken;
+  validatePasswordResetToken: ValidatePasswordResetTokenOutput;
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
@@ -3095,7 +3134,7 @@ export type QueryAgentChatThreadsArgs = {
 
 
 export type QueryApiKeyArgs = {
-  input: GetApiKeyDto;
+  input: GetApiKeyInput;
 };
 
 
@@ -3289,6 +3328,14 @@ export type QueryGetPublicWorkspaceDataByDomainArgs = {
 };
 
 
+export type QueryGetQueueJobsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  queueName: Scalars['String'];
+  state: JobState;
+};
+
+
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
@@ -3358,7 +3405,32 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 
 export type QueryWebhookArgs = {
-  input: GetWebhookDto;
+  input: GetWebhookInput;
+};
+
+export type QueueJob = {
+  __typename?: 'QueueJob';
+  attemptsMade: Scalars['Float'];
+  data?: Maybe<Scalars['JSON']>;
+  failedReason?: Maybe<Scalars['String']>;
+  finishedOn?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  logs?: Maybe<Array<Scalars['String']>>;
+  name: Scalars['String'];
+  processedOn?: Maybe<Scalars['Float']>;
+  returnValue?: Maybe<Scalars['JSON']>;
+  stackTrace?: Maybe<Array<Scalars['String']>>;
+  state: JobState;
+  timestamp?: Maybe<Scalars['Float']>;
+};
+
+export type QueueJobsResponse = {
+  __typename?: 'QueueJobsResponse';
+  count: Scalars['Float'];
+  hasMore: Scalars['Boolean'];
+  jobs: Array<QueueJob>;
+  retentionConfig: QueueRetentionConfig;
+  totalCount: Scalars['Float'];
 };
 
 export type QueueMetricsData = {
@@ -3389,6 +3461,14 @@ export enum QueueMetricsTimeRange {
   SevenDays = 'SevenDays',
   TwelveHours = 'TwelveHours'
 }
+
+export type QueueRetentionConfig = {
+  __typename?: 'QueueRetentionConfig';
+  completedMaxAge: Scalars['Float'];
+  completedMaxCount: Scalars['Float'];
+  failedMaxAge: Scalars['Float'];
+  failedMaxCount: Scalars['Float'];
+};
 
 export type Relation = {
   __typename?: 'Relation';
@@ -3443,7 +3523,13 @@ export type ResendEmailVerificationTokenOutput = {
   success: Scalars['Boolean'];
 };
 
-export type RevokeApiKeyDto = {
+export type RetryJobsResponse = {
+  __typename?: 'RetryJobsResponse';
+  results: Array<JobOperationResult>;
+  retriedCount: Scalars['Int'];
+};
+
+export type RevokeApiKeyInput = {
   id: Scalars['UUID'];
 };
 
@@ -3643,8 +3729,8 @@ export type SignUpOutput = {
   workspace: WorkspaceUrlsAndId;
 };
 
-export type SignedFileDto = {
-  __typename?: 'SignedFileDTO';
+export type SignedFile = {
+  __typename?: 'SignedFile';
   path: Scalars['String'];
   token: Scalars['String'];
 };
@@ -3668,7 +3754,7 @@ export type SubmitFormStepInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  onDbEvent: OnDbEventDto;
+  onDbEvent: OnDbEvent;
 };
 
 
@@ -3779,8 +3865,8 @@ export type TimelineThreadsWithTotal = {
   totalNumberOfThreads: Scalars['Int'];
 };
 
-export type TransientToken = {
-  __typename?: 'TransientToken';
+export type TransientTokenOutput = {
+  __typename?: 'TransientTokenOutput';
   transientToken: AuthToken;
 };
 
@@ -3832,7 +3918,7 @@ export type UpdateAgentInput = {
   roleId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type UpdateApiKeyDto = {
+export type UpdateApiKeyInput = {
   expiresAt?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
@@ -4074,7 +4160,7 @@ export type UpdateViewSortInput = {
   viewId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type UpdateWebhookDto = {
+export type UpdateWebhookInput = {
   description?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   operations?: InputMaybe<Array<Scalars['String']>>;
@@ -4212,8 +4298,8 @@ export type ValidateApprovedAccessDomainInput = {
   validationToken: Scalars['String'];
 };
 
-export type ValidatePasswordResetToken = {
-  __typename?: 'ValidatePasswordResetToken';
+export type ValidatePasswordResetTokenOutput = {
+  __typename?: 'ValidatePasswordResetTokenOutput';
   email: Scalars['String'];
   id: Scalars['UUID'];
 };
@@ -4336,9 +4422,26 @@ export type WorkflowAction = {
   nextStepIds?: Maybe<Array<Scalars['UUID']>>;
   position?: Maybe<WorkflowStepPosition>;
   settings: Scalars['JSON'];
-  type: Scalars['String'];
+  type: WorkflowActionType;
   valid: Scalars['Boolean'];
 };
+
+export enum WorkflowActionType {
+  AI_AGENT = 'AI_AGENT',
+  CODE = 'CODE',
+  CREATE_RECORD = 'CREATE_RECORD',
+  DELAY = 'DELAY',
+  DELETE_RECORD = 'DELETE_RECORD',
+  EMPTY = 'EMPTY',
+  FILTER = 'FILTER',
+  FIND_RECORDS = 'FIND_RECORDS',
+  FORM = 'FORM',
+  HTTP_REQUEST = 'HTTP_REQUEST',
+  ITERATOR = 'ITERATOR',
+  SEND_EMAIL = 'SEND_EMAIL',
+  UPDATE_RECORD = 'UPDATE_RECORD',
+  UPSERT_RECORD = 'UPSERT_RECORD'
+}
 
 export type WorkflowRun = {
   __typename?: 'WorkflowRun';
@@ -4456,8 +4559,8 @@ export type WorkspaceInvitation = {
   id: Scalars['UUID'];
 };
 
-export type WorkspaceInviteHashValid = {
-  __typename?: 'WorkspaceInviteHashValid';
+export type WorkspaceInviteHashValidOutput = {
+  __typename?: 'WorkspaceInviteHashValidOutput';
   isValid: Scalars['Boolean'];
 };
 
@@ -4547,7 +4650,7 @@ export type OnDbEventSubscriptionVariables = Exact<{
 }>;
 
 
-export type OnDbEventSubscription = { __typename?: 'Subscription', onDbEvent: { __typename?: 'OnDbEventDTO', eventDate: string, action: DatabaseEventAction, objectNameSingular: string, updatedFields?: Array<string> | null, record: any } };
+export type OnDbEventSubscription = { __typename?: 'Subscription', onDbEvent: { __typename?: 'OnDbEvent', eventDate: string, action: DatabaseEventAction, objectNameSingular: string, updatedFields?: Array<string> | null, record: any } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 

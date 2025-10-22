@@ -3,7 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
@@ -22,7 +22,7 @@ export class ViewFilterGroupResolver {
 
   @Query(() => [ViewFilterGroupDTO])
   async getCoreViewFilterGroups(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
   ): Promise<ViewFilterGroupDTO[]> {
@@ -36,7 +36,7 @@ export class ViewFilterGroupResolver {
   @Query(() => ViewFilterGroupDTO, { nullable: true })
   async getCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO | null> {
     return this.viewFilterGroupService.findById(id, workspace.id);
   }
@@ -44,7 +44,7 @@ export class ViewFilterGroupResolver {
   @Mutation(() => ViewFilterGroupDTO)
   async createCoreViewFilterGroup(
     @Args('input') input: CreateViewFilterGroupInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO> {
     return this.viewFilterGroupService.create({
       ...input,
@@ -56,7 +56,7 @@ export class ViewFilterGroupResolver {
   async updateCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewFilterGroupInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO> {
     return this.viewFilterGroupService.update(id, workspace.id, input);
   }
@@ -64,7 +64,7 @@ export class ViewFilterGroupResolver {
   @Mutation(() => Boolean)
   async deleteCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const deletedViewFilterGroup = await this.viewFilterGroupService.delete(
       id,
@@ -77,7 +77,7 @@ export class ViewFilterGroupResolver {
   @Mutation(() => Boolean)
   async destroyCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const deletedViewFilterGroup = await this.viewFilterGroupService.destroy(
       id,

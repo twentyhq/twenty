@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import { Repository } from 'typeorm';
 
 import {
-  AppToken,
+  AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
@@ -14,14 +14,14 @@ import {
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 import { EmailVerificationTokenService } from './email-verification-token.service';
 
 describe('EmailVerificationTokenService', () => {
   let service: EmailVerificationTokenService;
-  let appTokenRepository: Repository<AppToken>;
-  let userRepository: Repository<User>;
+  let appTokenRepository: Repository<AppTokenEntity>;
+  let userRepository: Repository<UserEntity>;
   let twentyConfigService: TwentyConfigService;
 
   beforeEach(async () => {
@@ -29,11 +29,11 @@ describe('EmailVerificationTokenService', () => {
       providers: [
         EmailVerificationTokenService,
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppTokenEntity),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -50,10 +50,12 @@ describe('EmailVerificationTokenService', () => {
     service = module.get<EmailVerificationTokenService>(
       EmailVerificationTokenService,
     );
-    appTokenRepository = module.get<Repository<AppToken>>(
-      getRepositoryToken(AppToken),
+    appTokenRepository = module.get<Repository<AppTokenEntity>>(
+      getRepositoryToken(AppTokenEntity),
     );
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<UserEntity>>(
+      getRepositoryToken(UserEntity),
+    );
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 
@@ -64,8 +66,12 @@ describe('EmailVerificationTokenService', () => {
       const mockExpiresIn = '24h';
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockExpiresIn);
-      jest.spyOn(appTokenRepository, 'create').mockReturnValue({} as AppToken);
-      jest.spyOn(appTokenRepository, 'save').mockResolvedValue({} as AppToken);
+      jest
+        .spyOn(appTokenRepository, 'create')
+        .mockReturnValue({} as AppTokenEntity);
+      jest
+        .spyOn(appTokenRepository, 'save')
+        .mockResolvedValue({} as AppTokenEntity);
 
       const result = await service.generateToken(userId, email);
 
@@ -100,7 +106,7 @@ describe('EmailVerificationTokenService', () => {
 
       jest
         .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(mockAppToken as AppToken);
+        .mockResolvedValue(mockAppToken as AppTokenEntity);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       const result = await service.validateEmailVerificationTokenOrThrow({
@@ -143,7 +149,9 @@ describe('EmailVerificationTokenService', () => {
       };
 
       jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser as UserEntity);
 
       await expect(
         service.validateEmailVerificationTokenOrThrow({
@@ -176,7 +184,7 @@ describe('EmailVerificationTokenService', () => {
 
       jest
         .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(mockAppToken as AppToken);
+        .mockResolvedValue(mockAppToken as AppTokenEntity);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
@@ -200,7 +208,7 @@ describe('EmailVerificationTokenService', () => {
 
       jest
         .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(mockAppToken as AppToken);
+        .mockResolvedValue(mockAppToken as AppTokenEntity);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
@@ -224,7 +232,7 @@ describe('EmailVerificationTokenService', () => {
 
       jest
         .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(mockAppToken as AppToken);
+        .mockResolvedValue(mockAppToken as AppTokenEntity);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
@@ -249,7 +257,7 @@ describe('EmailVerificationTokenService', () => {
 
       jest
         .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(mockAppToken as AppToken);
+        .mockResolvedValue(mockAppToken as AppTokenEntity);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(

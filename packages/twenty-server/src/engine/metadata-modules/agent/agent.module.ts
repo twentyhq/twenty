@@ -1,16 +1,17 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
 import { AgentChatController } from 'src/engine/metadata-modules/agent/agent-chat.controller';
@@ -54,7 +55,7 @@ import { AgentActorContextService } from './services/agent-actor-context.service
       AgentChatMessagePartEntity,
       AgentChatThreadEntity,
       FileEntity,
-      UserWorkspace,
+      UserWorkspaceEntity,
     ]),
     AiModule,
     AgentRoleModule,
@@ -68,8 +69,9 @@ import { AgentActorContextService } from './services/agent-actor-context.service
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
-    DomainManagerModule,
+    WorkspaceDomainsModule,
     WorkflowToolsModule,
+    forwardRef(() => UserModule),
     UserWorkspaceModule,
     UserRoleModule,
   ],

@@ -29,7 +29,7 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
 
     if (storageType === StorageDriverType.S_3) {
       const storageConfigHash = this.getConfigGroupHash(
-        ConfigVariablesGroup.StorageConfig,
+        ConfigVariablesGroup.STORAGE_CONFIG,
       );
 
       return `s3|${storageConfigHash}`;
