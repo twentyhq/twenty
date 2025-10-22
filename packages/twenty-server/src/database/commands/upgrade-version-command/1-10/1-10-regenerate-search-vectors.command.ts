@@ -18,6 +18,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { type SearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 import { SEARCH_FIELDS_FOR_COMPANY } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { SEARCH_FIELDS_FOR_DASHBOARD } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { SEARCH_FIELDS_FOR_NOTES } from 'src/modules/note/standard-objects/note.workspace-entity';
@@ -28,10 +29,6 @@ import { SEARCH_FIELDS_FOR_WORKFLOW_RUNS } from 'src/modules/workflow/common/sta
 import { SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { SEARCH_FIELDS_FOR_WORKFLOWS } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { SEARCH_FIELDS_FOR_WORKSPACE_MEMBER } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-
-const CUSTOM_OBJECT_SEARCH_EXPRESSION = getTsVectorColumnExpressionFromFields(
-  SEARCH_FIELDS_FOR_CUSTOM_OBJECT,
-);
 
 const STANDARD_SEARCH_EXPRESSIONS = buildStandardSearchExpressions();
 
@@ -233,10 +230,31 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
     }
 
     if (objectMetadata.isCustom) {
-      return CUSTOM_OBJECT_SEARCH_EXPRESSION;
+      return this.computeCustomObjectSearchExpression(objectMetadata);
     }
 
     return undefined;
+  }
+
+  private computeCustomObjectSearchExpression(
+    objectMetadata: ObjectMetadataEntity,
+  ): string {
+    const labelFieldMetadata = objectMetadata.fields.find(
+      (field) => field.id === objectMetadata.labelIdentifierFieldMetadataId,
+    );
+
+    if (!labelFieldMetadata) {
+      return getTsVectorColumnExpressionFromFields(
+        SEARCH_FIELDS_FOR_CUSTOM_OBJECT,
+      );
+    }
+
+    return getTsVectorColumnExpressionFromFields([
+      {
+        name: labelFieldMetadata.name,
+        type: labelFieldMetadata.type as SearchableFieldType,
+      },
+    ]);
   }
 
   private async ensureUnaccentFunctionExists(): Promise<void> {
