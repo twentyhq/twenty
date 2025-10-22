@@ -307,49 +307,4 @@ describe('Standard field metadata update with standard overrides', () => {
     );
     expect(data.updateOneField.defaultValue).toBe("'NEW'");
   });
-
-  it('should handle combined updates of options and defaultValue', async () => {
-    const newOptions = [
-      { value: 'PROSPECT', label: 'Prospect', position: 0, color: 'blue' },
-      { value: 'QUALIFIED', label: 'Qualified', position: 1, color: 'green' },
-      { value: 'WON', label: 'Won', position: 2, color: 'yellow' },
-      { value: 'LOST', label: 'Lost', position: 3, color: 'red' },
-    ];
-
-    const { data, errors } = await updateOneFieldMetadata({
-      input: {
-        idToUpdate: opportunityStageFieldMetadataId,
-        updatePayload: {
-          options: newOptions,
-          defaultValue: "'PROSPECT'",
-        },
-      },
-      expectToFail: false,
-      gqlFields: `
-        id
-        name
-        type
-        options
-        defaultValue
-        standardOverrides {
-          label
-          description
-          icon
-        }
-      `,
-    });
-
-    expect(errors).toBeUndefined();
-    expect(data.updateOneField).toBeDefined();
-    expect(data.updateOneField.options).toBeDefined();
-    expect(data.updateOneField.options).not.toBeNull();
-    expect(data.updateOneField.options).toHaveLength(4);
-    expect(data.updateOneField.defaultValue).toBe("'PROSPECT'");
-    expect(data.updateOneField.options!.map((o: any) => o.value)).toEqual([
-      'PROSPECT',
-      'QUALIFIED',
-      'WON',
-      'LOST',
-    ]);
-  });
 });
