@@ -41,6 +41,16 @@ export class CreateMessageChannelService {
       manager,
     } = input;
 
+    const connectedAccountRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
+        workspaceId,
+        'connectedAccount',
+      );
+
+    const connectedAccount = await connectedAccountRepository.findOne({
+      where: { id: connectedAccountId },
+    });
+
     const messageChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
         workspaceId,
@@ -61,16 +71,6 @@ export class CreateMessageChannelService {
       {},
       manager,
     );
-
-    const connectedAccountRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-        workspaceId,
-        'connectedAccount',
-      );
-
-    const connectedAccount = await connectedAccountRepository.findOne({
-      where: { id: connectedAccountId },
-    });
 
     if (isDefined(connectedAccount)) {
       await this.syncMessageFoldersService.syncMessageFolders({

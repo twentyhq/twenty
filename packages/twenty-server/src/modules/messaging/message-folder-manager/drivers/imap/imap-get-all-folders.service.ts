@@ -160,7 +160,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       return true;
     }
 
-    return true;
+    return false;
   }
 
   private async getUidValidity(

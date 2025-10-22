@@ -4,5 +4,6 @@ import { MessageChannelUpdateOnePreQueryHook } from 'src/modules/messaging/messa
 
 @Module({
   providers: [MessageChannelUpdateOnePreQueryHook],
+  exports: [MessageChannelUpdateOnePreQueryHook],
 })
 export class MessageChannelQueryHookModule {}

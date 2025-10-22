@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { Not } from 'typeorm';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -74,14 +75,14 @@ export class MessageChannelUpdateOnePreQueryHook
         'messageFolder',
       );
 
-    const messageFolders = await messageFolderRepository.find({
-      where: { messageChannelId: messageChannel.id },
+    const folderWithPendingAction = await messageFolderRepository.findOne({
+      where: {
+        messageChannelId: messageChannel.id,
+        pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
+      },
     });
 
-    const hasPendingFolderActions = messageFolders.some(
-      (folder) =>
-        folder.pendingSyncAction !== MessageFolderPendingSyncAction.NONE,
-    );
+    const hasPendingFolderActions = !!folderWithPendingAction;
 
     const hasPendingGroupEmailsAction =
       messageChannel.pendingGroupEmailsAction !==
