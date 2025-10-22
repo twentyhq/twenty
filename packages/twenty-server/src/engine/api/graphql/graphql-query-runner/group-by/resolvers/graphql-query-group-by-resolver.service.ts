@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import isEmpty from 'lodash.isempty';
 import {
   CompositeFieldSubFieldName,
   ObjectRecord,
@@ -14,6 +15,7 @@ import {
   getFilterTypeFromFieldType,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
+import { ObjectLiteral } from 'typeorm';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -25,12 +27,14 @@ import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runne
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
 import { computeIsNumericReturningAggregate } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/compute-is-numeric-returning-aggregate.util';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
 import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
 import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
+import { GroupByWithRecordService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-record.service';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -39,6 +43,7 @@ import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
 @Injectable()
@@ -50,6 +55,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     private readonly viewFilterService: ViewFilterService,
     private readonly viewFilterGroupService: ViewFilterGroupService,
     private readonly viewService: ViewService,
+    private readonly groupByWithRecordService: GroupByWithRecordService,
   ) {
     super();
   }
@@ -127,6 +133,15 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       };
     });
 
+    let queryBuilderWithFiltersAndWithoutGroupBy:
+      | WorkspaceSelectQueryBuilder<ObjectLiteral>
+      | undefined;
+    const shouldIncludeRecords = this.shouldIncludeRecords(executionArgs);
+
+    if (shouldIncludeRecords) {
+      queryBuilderWithFiltersAndWithoutGroupBy = queryBuilder.clone();
+    }
+
     groupByDefinitions.forEach((groupByColumn, index) => {
       queryBuilder.addSelect(groupByColumn.expression, groupByColumn.alias);
 
@@ -170,6 +185,37 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       groupByFields,
     );
 
+    if (shouldIncludeRecords) {
+      return this.groupByWithRecordService.resolveWithRecords({
+        queryBuilderWithFiltersAndWithoutGroupBy:
+          queryBuilderWithFiltersAndWithoutGroupBy as WorkspaceSelectQueryBuilder<ObjectLiteral>,
+        queryBuilderWithGroupBy: queryBuilder,
+        groupByDefinitions,
+        executionArgs,
+        objectMetadataItemWithFieldMaps,
+      });
+    }
+
+    return this.resolveWithoutRecords(
+      queryBuilder,
+      groupByDefinitions,
+      executionArgs,
+    );
+  }
+
+  private shouldIncludeRecords(
+    executionArgs: GraphqlQueryResolverExecutionArgs<GroupByResolverArgs>,
+  ): boolean {
+    const selectedFields = executionArgs.graphqlQuerySelectedFieldsResult;
+
+    return !isEmpty(selectedFields.select);
+  }
+
+  private async resolveWithoutRecords(
+    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    groupByDefinitions: GroupByDefinition[],
+    executionArgs: GraphqlQueryResolverExecutionArgs<GroupByResolverArgs>,
+  ): Promise<IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[]> {
     const result = await queryBuilder.getRawMany();
 
     return formatResultWithGroupByDimensionValues(
