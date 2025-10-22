@@ -5,6 +5,7 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
+import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import {
   ObjectRecordFilter,
   ObjectRecordOrderBy,
@@ -28,6 +29,7 @@ import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-run
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -187,6 +189,26 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         args.filter,
         objectMetadataItemWithFieldMaps,
       ),
+    };
+  }
+
+  async processQueryResult(
+    queryResult: CommonFindManyOutput,
+    objectMetadataItemId: string,
+    objectMetadataMaps: ObjectMetadataMaps,
+    authContext: WorkspaceAuthContext,
+  ): Promise<CommonFindManyOutput> {
+    const processedRecords =
+      await this.commonResultGettersService.processRecordArray(
+        queryResult.records,
+        objectMetadataItemId,
+        objectMetadataMaps,
+        authContext.workspace.id,
+      );
+
+    return {
+      ...queryResult,
+      records: processedRecords,
     };
   }
 

@@ -5,6 +5,7 @@ import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
+import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
@@ -20,6 +21,7 @@ import {
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -111,6 +113,20 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         objectMetadataItemWithFieldMaps,
       ),
     };
+  }
+
+  async processQueryResult(
+    queryResult: ObjectRecord,
+    objectMetadataItemId: string,
+    objectMetadataMaps: ObjectMetadataMaps,
+    authContext: WorkspaceAuthContext,
+  ): Promise<ObjectRecord> {
+    return this.commonResultGettersService.processRecord(
+      queryResult,
+      objectMetadataItemId,
+      objectMetadataMaps,
+      authContext.workspace.id,
+    );
   }
 
   async validate(

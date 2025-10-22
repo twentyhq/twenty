@@ -143,6 +143,13 @@ export abstract class CommonBaseQueryRunnerService<
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<Args>>;
 
+  protected abstract processQueryResult(
+    queryResult: Output,
+    objectMetadataItemId: string,
+    objectMetadataMaps: ObjectMetadataMaps,
+    authContext: WorkspaceAuthContext,
+  ): Promise<Output>;
+
   private async processArgs(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
@@ -183,13 +190,12 @@ export abstract class CommonBaseQueryRunnerService<
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
   }): Promise<Output> {
-    const resultWithGetters =
-      await this.commonResultGettersService.processQueryResult(
-        results,
-        objectMetadataItemWithFieldMaps.id,
-        objectMetadataMaps,
-        authContext.workspace.id,
-      );
+    const resultWithGetters = await this.processQueryResult(
+      results,
+      objectMetadataItemWithFieldMaps.id,
+      objectMetadataMaps,
+      authContext,
+    );
 
     await this.workspaceQueryHookService.executePostQueryHooks(
       authContext,

@@ -30,14 +30,8 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
-      const selectedFields = await this.computeSelectedFields({
-        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-        authContext,
-      });
-
       const record = await this.commonDeleteOneQueryRunnerService.execute(
-        { id, selectedFields },
+        { id, selectedFields: { id: true } },
         {
           authContext,
           objectMetadataMaps,
@@ -58,7 +52,6 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
   private formatRestResponse(record: ObjectRecord, objectNameSingular: string) {
     return {
       data: { [`delete${capitalize(objectNameSingular)}`]: record },
-      softDelete: true,
     };
   }
 

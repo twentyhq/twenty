@@ -30,14 +30,8 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
-      const selectedFields = await this.computeSelectedFields({
-        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-        authContext,
-      });
-
       const record = await this.commonDestroyOneQueryRunnerService.execute(
-        { id, selectedFields },
+        { id, selectedFields: { id: true } },
         {
           authContext,
           objectMetadataMaps,

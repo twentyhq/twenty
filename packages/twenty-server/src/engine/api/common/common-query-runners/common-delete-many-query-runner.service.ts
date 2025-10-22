@@ -5,6 +5,8 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
+import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -20,6 +22,7 @@ import {
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
@@ -70,7 +73,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     const deletedRecords = deletedObjectRecords.generatedMaps as ObjectRecord[];
 
-    if (!isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
@@ -104,6 +107,20 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
         objectMetadataItemWithFieldMaps,
       ),
     };
+  }
+
+  async processQueryResult(
+    queryResult: ObjectRecord[],
+    objectMetadataItemId: string,
+    objectMetadataMaps: ObjectMetadataMaps,
+    authContext: WorkspaceAuthContext,
+  ): Promise<ObjectRecord[]> {
+    return this.commonResultGettersService.processRecordArray(
+      queryResult,
+      objectMetadataItemId,
+      objectMetadataMaps,
+      authContext.workspace.id,
+    );
   }
 
   async validate(

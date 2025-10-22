@@ -34,6 +34,7 @@ import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/gr
 import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -150,6 +151,15 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       groupByDefinitions,
       Object.keys(args.selectedFieldsResult.aggregate),
     );
+  }
+
+  async processQueryResult(
+    queryResult: CommonGroupByOutputItem[],
+    _objectMetadataItemId: string,
+    _objectMetadataMaps: ObjectMetadataMaps,
+    _authContext: WorkspaceAuthContext,
+  ): Promise<CommonGroupByOutputItem[]> {
+    return queryResult;
   }
 
   private async addFiltersFromView({

@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { CommonDeleteManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-delete-many-query-runner.service';
 import {
@@ -18,6 +20,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class CommonDeleteOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -57,6 +60,15 @@ export class CommonDeleteOneQueryRunnerService extends CommonBaseQueryRunnerServ
     _queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<DeleteOneQueryArgs>> {
     return args;
+  }
+
+  async processQueryResult(
+    queryResult: ObjectRecord,
+    _objectMetadataItemId: string,
+    _objectMetadataMaps: ObjectMetadataMaps,
+    _authContext: WorkspaceAuthContext,
+  ): Promise<ObjectRecord> {
+    return queryResult;
   }
 
   async validate(

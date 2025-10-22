@@ -5,6 +5,8 @@ import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, InsertResult, ObjectLiteral } from 'typeorm';
 
+import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
@@ -382,6 +384,20 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       .getMany();
 
     return upsertedRecords as ObjectRecord[];
+  }
+
+  async processQueryResult(
+    queryResult: ObjectRecord[],
+    objectMetadataItemId: string,
+    objectMetadataMaps: ObjectMetadataMaps,
+    authContext: WorkspaceAuthContext,
+  ): Promise<ObjectRecord[]> {
+    return await this.commonResultGettersService.processRecordArray(
+      queryResult,
+      objectMetadataItemId,
+      objectMetadataMaps,
+      authContext.workspace.id,
+    );
   }
 
   private getRecordWithoutCreatedBy(

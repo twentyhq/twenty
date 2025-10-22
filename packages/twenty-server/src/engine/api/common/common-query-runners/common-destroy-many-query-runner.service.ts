@@ -5,6 +5,8 @@ import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
+import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -18,6 +20,7 @@ import {
   DestroyManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -62,7 +65,7 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
 
     const deletedRecords = deletedObjectRecords.generatedMaps as ObjectRecord[];
 
-    if (!isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
@@ -96,6 +99,20 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
         objectMetadataItemWithFieldMaps,
       ),
     };
+  }
+
+  async processQueryResult(
+    queryResult: ObjectRecord[],
+    objectMetadataItemId: string,
+    objectMetadataMaps: ObjectMetadataMaps,
+    authContext: WorkspaceAuthContext,
+  ): Promise<ObjectRecord[]> {
+    return this.commonResultGettersService.processRecordArray(
+      queryResult,
+      objectMetadataItemId,
+      objectMetadataMaps,
+      authContext.workspace.id,
+    );
   }
 
   async validate(

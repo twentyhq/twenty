@@ -62,7 +62,6 @@ export class RestApiDeleteManyHandler extends RestApiBaseHandler {
       data: {
         [`delete${capitalize(objectNamePlural)}`]: records,
       },
-      softDelete: true,
     };
   }
 

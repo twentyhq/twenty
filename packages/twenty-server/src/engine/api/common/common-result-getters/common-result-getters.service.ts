@@ -10,11 +10,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
-import { isCommonQueryResultACommonFindManyOutput } from 'src/engine/api/common/common-result-getters/guards/is-common-query-result-a-common-find-many-output.guard';
-import { isCommonQueryResultACommonGroupByOutputItemArray } from 'src/engine/api/common/common-result-getters/guards/is-common-query-result-a-common-group-by-output-item-array.guard';
-import { CommonQueryResult } from 'src/engine/api/common/types/common-query-result.type';
-import { isQueryResultFieldValueARecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-record-array.guard';
-import { isQueryResultFieldValueARecord } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-record.guard';
 import { ActivityQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/activity-query-result-getter.handler';
 import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler';
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
@@ -48,7 +43,7 @@ export class CommonResultGettersService {
     ]);
   }
 
-  private async processRecordArray(
+  public async processRecordArray(
     recordArray: ObjectRecord[],
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
@@ -67,7 +62,7 @@ export class CommonResultGettersService {
     );
   }
 
-  private async processRecord(
+  public async processRecord(
     record: ObjectRecord,
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
@@ -136,52 +131,6 @@ export class CommonResultGettersService {
     };
 
     return processedRecord;
-  }
-
-  async processQueryResult(
-    queryResultField: CommonQueryResult,
-    objectMetadataItemId: string,
-    objectMetadataMaps: ObjectMetadataMaps,
-    workspaceId: string,
-  ): Promise<CommonQueryResult> {
-    if (isQueryResultFieldValueARecordArray(queryResultField)) {
-      return await this.processRecordArray(
-        queryResultField,
-        objectMetadataItemId,
-        objectMetadataMaps,
-        workspaceId,
-      );
-    } else if (isQueryResultFieldValueARecord(queryResultField)) {
-      return await this.processRecord(
-        queryResultField,
-        objectMetadataItemId,
-        objectMetadataMaps,
-        workspaceId,
-      );
-    } else if (
-      isCommonQueryResultACommonGroupByOutputItemArray(queryResultField)
-    ) {
-      return queryResultField;
-    } else if (isCommonQueryResultACommonFindManyOutput(queryResultField)) {
-      const processedRecords = await this.processRecordArray(
-        queryResultField.records,
-        objectMetadataItemId,
-        objectMetadataMaps,
-        workspaceId,
-      );
-
-      return {
-        ...queryResultField,
-        records: processedRecords,
-      };
-    } else {
-      this.logger.warn(
-        `Query result field is not a record, record array or common group by output item array.
-        This is an undetected case in query result getter that should be implemented !!`,
-      );
-
-      return queryResultField;
-    }
   }
 
   private getHandler(objectType: string): QueryResultGetterHandlerInterface {
