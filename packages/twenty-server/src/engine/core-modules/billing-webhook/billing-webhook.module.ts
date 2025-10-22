@@ -11,7 +11,6 @@ import { BillingWebhookProductService } from 'src/engine/core-modules/billing-we
 import { BillingWebhookSubscriptionScheduleService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription-schedule.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';

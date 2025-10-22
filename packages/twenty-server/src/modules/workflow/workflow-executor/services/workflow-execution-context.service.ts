@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -10,10 +9,10 @@ import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-exe
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkflowExecutionContextService {
   constructor(
     private readonly workflowRunService: WorkflowRunService,
-    private readonly userService: UserService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userRoleService: UserRoleService,
   ) {}
