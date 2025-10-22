@@ -3,8 +3,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconCopy, IconDatabase, IconSitemap } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconCopy,
+  IconDatabase,
+  IconSitemap,
+} from 'twenty-ui/display';
 import { Button, CodeEditor } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -55,7 +61,7 @@ const StyledEditorContainer = styled.div`
   }
 `;
 
-export const SettingsIntegrationMCP = () => {
+export const SettingsAIMCP = () => {
   const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
@@ -105,61 +111,67 @@ export const SettingsIntegrationMCP = () => {
   };
 
   return (
-    <StyledWrapper>
-      <StyledImage
-        src={`/images/integrations/integration-mcp-cover-${theme.name}.svg`}
+    <Section>
+      <H2Title
+        title={t`MCP Server`}
+        description={t`Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor.`}
       />
-      <StyledSchemaSelector>
-        <Select
-          dropdownId="mcp-schema-selector"
-          value={selectedSchemaValue}
-          options={options}
-          onChange={onChange}
+      <StyledWrapper>
+        <StyledImage
+          src={`/images/integrations/integration-mcp-cover-${theme.name}.svg`}
         />
-        <StyledLabel>
-          <Trans>Interact with your workspace data</Trans>
-        </StyledLabel>
-      </StyledSchemaSelector>
-      <StyledEditorContainer style={{ position: 'relative' }}>
-        <StyledCopyButton>
-          <Button
-            Icon={IconCopy}
-            onClick={() => {
-              copyToClipboard(
-                selectedOption.content,
-                t`MCP Configuration copied to clipboard`,
-              );
-            }}
-            type="button"
+        <StyledSchemaSelector>
+          <Select
+            dropdownId="mcp-schema-selector"
+            value={selectedSchemaValue}
+            options={options}
+            onChange={onChange}
           />
-        </StyledCopyButton>
-        <CodeEditor
-          value={selectedOption.content}
-          language="application/json"
-          options={{
-            readOnly: true,
-            domReadOnly: true,
-            renderLineHighlight: 'none',
-            renderLineHighlightOnlyWhenFocus: false,
-            lineNumbers: 'off',
-            folding: false,
-            selectionHighlight: false,
-            occurrencesHighlight: 'off',
-            hover: {
-              enabled: false,
-            },
-            guides: {
-              indentation: false,
-              bracketPairs: false,
-              bracketPairsHorizontal: false,
-            },
-            padding: {
-              top: 12,
-            },
-          }}
-          height="220px"
-        />
-      </StyledEditorContainer>
-    </StyledWrapper>
+          <StyledLabel>
+            <Trans>Interact with your workspace data</Trans>
+          </StyledLabel>
+        </StyledSchemaSelector>
+        <StyledEditorContainer style={{ position: 'relative' }}>
+          <StyledCopyButton>
+            <Button
+              Icon={IconCopy}
+              onClick={() => {
+                copyToClipboard(
+                  selectedOption.content,
+                  t`MCP Configuration copied to clipboard`,
+                );
+              }}
+              type="button"
+            />
+          </StyledCopyButton>
+          <CodeEditor
+            value={selectedOption.content}
+            language="application/json"
+            options={{
+              readOnly: true,
+              domReadOnly: true,
+              renderLineHighlight: 'none',
+              renderLineHighlightOnlyWhenFocus: false,
+              lineNumbers: 'off',
+              folding: false,
+              selectionHighlight: false,
+              occurrencesHighlight: 'off',
+              hover: {
+                enabled: false,
+              },
+              guides: {
+                indentation: false,
+                bracketPairs: false,
+                bracketPairsHorizontal: false,
+              },
+              padding: {
+                top: 12,
+              },
+            }}
+            height="220px"
+          />
+        </StyledEditorContainer>
+      </StyledWrapper>
+    </Section>
   );
 };

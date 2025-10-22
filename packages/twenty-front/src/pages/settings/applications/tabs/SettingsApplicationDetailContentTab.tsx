@@ -1,13 +1,13 @@
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/display';
-import { t } from '@lingui/core/macro';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { SettingsServerlessFunctionsTable } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTable';
+import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { type Application } from '~/generated/graphql';
 import { SettingsAIAgentsTable } from '~/pages/settings/ai/components/SettingsAIAgentsTable';
 import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectTable';
-import { isDefined } from 'twenty-shared/utils';
-import { useRecoilValue } from 'recoil';
-import { type Application } from '~/generated/graphql';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 
 export const SettingsApplicationDetailContentTab = ({
   application,
@@ -54,7 +54,7 @@ export const SettingsApplicationDetailContentTab = ({
             title={t`Application agents`}
             description={t`Agents created by application`}
           />
-          <SettingsAIAgentsTable agents={agents} withSearchBar={false} />
+          <SettingsAIAgentsTable withSearchBar={false} />
         </Section>
       )}
       {shouldDisplayObjects && (

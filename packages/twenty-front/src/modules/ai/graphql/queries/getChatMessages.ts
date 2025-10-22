@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const GET_AGENT_CHAT_MESSAGES = gql`
-  query GetAgentChatMessages($threadId: UUID!) {
-    agentChatMessages(threadId: $threadId) {
+export const GET_CHAT_MESSAGES = gql`
+  query GetChatMessages($threadId: UUID!) {
+    chatMessages(threadId: $threadId) {
       id
       threadId
       role

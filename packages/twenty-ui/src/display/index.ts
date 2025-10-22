@@ -146,6 +146,7 @@ export {
   IconComment,
   IconCopy,
   IconCopyPlus,
+  IconCpu,
   IconCreativeCommonsSa,
   IconCreditCard,
   IconCsv,

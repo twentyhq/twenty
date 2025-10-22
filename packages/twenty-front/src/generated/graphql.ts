@@ -108,7 +108,6 @@ export type AgentChatMessagePart = {
 
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
-  agentId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
   title?: Maybe<Scalars['String']>;
@@ -726,10 +725,6 @@ export type CoreViewSort = {
   updatedAt: Scalars['DateTime'];
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
-};
-
-export type CreateAgentChatThreadInput = {
-  agentId: Scalars['UUID'];
 };
 
 export type CreateAgentHandoffInput = {
@@ -1681,10 +1676,10 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
-  createAgentChatThread: AgentChatThread;
   createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createChatThread: AgentChatThread;
   createCoreView: CoreView;
   createCoreViewField: CoreViewField;
   createCoreViewFilter: CoreViewFilter;
@@ -1890,11 +1885,6 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
-};
-
-
-export type MutationCreateAgentChatThreadArgs = {
-  input: CreateAgentChatThreadInput;
 };
 
 
@@ -3017,12 +3007,12 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
-  agentChatMessages: Array<AgentChatMessage>;
-  agentChatThread: AgentChatThread;
-  agentChatThreads: Array<AgentChatThread>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
+  chatMessages: Array<AgentChatMessage>;
+  chatThread: AgentChatThread;
+  chatThreads: Array<AgentChatThread>;
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   currentUser: User;
@@ -3101,21 +3091,6 @@ export type Query = {
 };
 
 
-export type QueryAgentChatMessagesArgs = {
-  threadId: Scalars['UUID'];
-};
-
-
-export type QueryAgentChatThreadArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type QueryAgentChatThreadsArgs = {
-  agentId: Scalars['UUID'];
-};
-
-
 export type QueryApiKeyArgs = {
   input: GetApiKeyInput;
 };
@@ -3123,6 +3098,16 @@ export type QueryApiKeyArgs = {
 
 export type QueryBillingPortalSessionArgs = {
   returnUrlPath?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryChatMessagesArgs = {
+  threadId: Scalars['UUID'];
+};
+
+
+export type QueryChatThreadArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -4184,6 +4169,7 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
+  routerModel?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']>;
 };
@@ -4477,7 +4463,6 @@ export type Workspace = {
   customDomain?: Maybe<Scalars['String']>;
   databaseSchema: Scalars['String'];
   databaseUrl: Scalars['String'];
-  defaultAgent?: Maybe<Agent>;
   defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
@@ -4493,6 +4478,7 @@ export type Workspace = {
   isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
+  routerModel: Scalars['String'];
   subdomain: Scalars['String'];
   trashRetentionDays: Scalars['Float'];
   updatedAt: Scalars['DateTime'];

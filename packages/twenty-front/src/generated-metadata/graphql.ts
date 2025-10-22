@@ -108,7 +108,6 @@ export type AgentChatMessagePart = {
 
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
-  agentId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
   title?: Maybe<Scalars['String']>;
@@ -726,10 +725,6 @@ export type CoreViewSort = {
   updatedAt: Scalars['DateTime'];
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
-};
-
-export type CreateAgentChatThreadInput = {
-  agentId: Scalars['UUID'];
 };
 
 export type CreateAgentHandoffInput = {
@@ -1724,10 +1719,10 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
-  createAgentChatThread: AgentChatThread;
   createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createChatThread: AgentChatThread;
   createCoreView: CoreView;
   createCoreViewField: CoreViewField;
   createCoreViewFilter: CoreViewFilter;
@@ -1939,11 +1934,6 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
-};
-
-
-export type MutationCreateAgentChatThreadArgs = {
-  input: CreateAgentChatThreadInput;
 };
 
 
@@ -3106,12 +3096,12 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
-  agentChatMessages: Array<AgentChatMessage>;
-  agentChatThread: AgentChatThread;
-  agentChatThreads: Array<AgentChatThread>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
+  chatMessages: Array<AgentChatMessage>;
+  chatThread: AgentChatThread;
+  chatThreads: Array<AgentChatThread>;
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   currentUser: User;
@@ -3193,21 +3183,6 @@ export type Query = {
 };
 
 
-export type QueryAgentChatMessagesArgs = {
-  threadId: Scalars['UUID'];
-};
-
-
-export type QueryAgentChatThreadArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type QueryAgentChatThreadsArgs = {
-  agentId: Scalars['UUID'];
-};
-
-
 export type QueryApiKeyArgs = {
   input: GetApiKeyInput;
 };
@@ -3215,6 +3190,16 @@ export type QueryApiKeyArgs = {
 
 export type QueryBillingPortalSessionArgs = {
   returnUrlPath?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryChatMessagesArgs = {
+  threadId: Scalars['UUID'];
+};
+
+
+export type QueryChatThreadArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -4346,6 +4331,7 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
+  routerModel?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']>;
 };
@@ -4649,7 +4635,6 @@ export type Workspace = {
   customDomain?: Maybe<Scalars['String']>;
   databaseSchema: Scalars['String'];
   databaseUrl: Scalars['String'];
-  defaultAgent?: Maybe<Agent>;
   defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
@@ -4665,6 +4650,7 @@ export type Workspace = {
   isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
+  routerModel: Scalars['String'];
   subdomain: Scalars['String'];
   trashRetentionDays: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
@@ -4788,19 +4774,17 @@ export type AssignRoleToAgentMutationVariables = Exact<{
 
 export type AssignRoleToAgentMutation = { __typename?: 'Mutation', assignRoleToAgent: boolean };
 
-export type CreateAgentChatThreadMutationVariables = Exact<{
-  input: CreateAgentChatThreadInput;
-}>;
-
-
-export type CreateAgentChatThreadMutation = { __typename?: 'Mutation', createAgentChatThread: { __typename?: 'AgentChatThread', id: string, agentId: string, title?: string | null, createdAt: string, updatedAt: string } };
-
 export type CreateAgentHandoffMutationVariables = Exact<{
   input: CreateAgentHandoffInput;
 }>;
 
 
 export type CreateAgentHandoffMutation = { __typename?: 'Mutation', createAgentHandoff: boolean };
+
+export type CreateChatThreadMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CreateChatThreadMutation = { __typename?: 'Mutation', createChatThread: { __typename?: 'AgentChatThread', id: string, title?: string | null, createdAt: string, updatedAt: string } };
 
 export type CreateOneAgentMutationVariables = Exact<{
   input: CreateAgentInput;
@@ -4863,19 +4847,17 @@ export type FindOneAgentQueryVariables = Exact<{
 
 export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
-export type GetAgentChatMessagesQueryVariables = Exact<{
+export type GetChatMessagesQueryVariables = Exact<{
   threadId: Scalars['UUID'];
 }>;
 
 
-export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentChatMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }> }> };
+export type GetChatMessagesQuery = { __typename?: 'Query', chatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentChatMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }> }> };
 
-export type GetAgentChatThreadsQueryVariables = Exact<{
-  agentId: Scalars['UUID'];
-}>;
+export type GetChatThreadsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAgentChatThreadsQuery = { __typename?: 'Query', agentChatThreads: Array<{ __typename?: 'AgentChatThread', id: string, agentId: string, title?: string | null, createdAt: string, updatedAt: string }> };
+export type GetChatThreadsQuery = { __typename?: 'Query', chatThreads: Array<{ __typename?: 'AgentChatThread', id: string, title?: string | null, createdAt: string, updatedAt: string }> };
 
 export type TrackAnalyticsMutationVariables = Exact<{
   type: AnalyticsType;
@@ -5808,7 +5790,7 @@ export type BillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscri
 
 export type CurrentBillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: string } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, routerModel: string, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type WorkspaceUrlsFragmentFragment = { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null };
 
@@ -5827,7 +5809,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: string } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, routerModel: string, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -6792,9 +6774,7 @@ export const UserQueryFragmentFragmentDoc = gql`
     defaultRole {
       ...RoleFragment
     }
-    defaultAgent {
-      id
-    }
+    routerModel
     isTwoFactorAuthenticationEnforced
     trashRetentionDays
   }
@@ -6946,43 +6926,6 @@ export function useAssignRoleToAgentMutation(baseOptions?: Apollo.MutationHookOp
 export type AssignRoleToAgentMutationHookResult = ReturnType<typeof useAssignRoleToAgentMutation>;
 export type AssignRoleToAgentMutationResult = Apollo.MutationResult<AssignRoleToAgentMutation>;
 export type AssignRoleToAgentMutationOptions = Apollo.BaseMutationOptions<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
-export const CreateAgentChatThreadDocument = gql`
-    mutation CreateAgentChatThread($input: CreateAgentChatThreadInput!) {
-  createAgentChatThread(input: $input) {
-    id
-    agentId
-    title
-    createdAt
-    updatedAt
-  }
-}
-    `;
-export type CreateAgentChatThreadMutationFn = Apollo.MutationFunction<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>;
-
-/**
- * __useCreateAgentChatThreadMutation__
- *
- * To run a mutation, you first call `useCreateAgentChatThreadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateAgentChatThreadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createAgentChatThreadMutation, { data, loading, error }] = useCreateAgentChatThreadMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateAgentChatThreadMutation(baseOptions?: Apollo.MutationHookOptions<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>(CreateAgentChatThreadDocument, options);
-      }
-export type CreateAgentChatThreadMutationHookResult = ReturnType<typeof useCreateAgentChatThreadMutation>;
-export type CreateAgentChatThreadMutationResult = Apollo.MutationResult<CreateAgentChatThreadMutation>;
-export type CreateAgentChatThreadMutationOptions = Apollo.BaseMutationOptions<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>;
 export const CreateAgentHandoffDocument = gql`
     mutation CreateAgentHandoff($input: CreateAgentHandoffInput!) {
   createAgentHandoff(input: $input)
@@ -7014,6 +6957,41 @@ export function useCreateAgentHandoffMutation(baseOptions?: Apollo.MutationHookO
 export type CreateAgentHandoffMutationHookResult = ReturnType<typeof useCreateAgentHandoffMutation>;
 export type CreateAgentHandoffMutationResult = Apollo.MutationResult<CreateAgentHandoffMutation>;
 export type CreateAgentHandoffMutationOptions = Apollo.BaseMutationOptions<CreateAgentHandoffMutation, CreateAgentHandoffMutationVariables>;
+export const CreateChatThreadDocument = gql`
+    mutation CreateChatThread {
+  createChatThread {
+    id
+    title
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type CreateChatThreadMutationFn = Apollo.MutationFunction<CreateChatThreadMutation, CreateChatThreadMutationVariables>;
+
+/**
+ * __useCreateChatThreadMutation__
+ *
+ * To run a mutation, you first call `useCreateChatThreadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChatThreadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createChatThreadMutation, { data, loading, error }] = useCreateChatThreadMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCreateChatThreadMutation(baseOptions?: Apollo.MutationHookOptions<CreateChatThreadMutation, CreateChatThreadMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateChatThreadMutation, CreateChatThreadMutationVariables>(CreateChatThreadDocument, options);
+      }
+export type CreateChatThreadMutationHookResult = ReturnType<typeof useCreateChatThreadMutation>;
+export type CreateChatThreadMutationResult = Apollo.MutationResult<CreateChatThreadMutation>;
+export type CreateChatThreadMutationOptions = Apollo.BaseMutationOptions<CreateChatThreadMutation, CreateChatThreadMutationVariables>;
 export const CreateOneAgentDocument = gql`
     mutation CreateOneAgent($input: CreateAgentInput!) {
   createOneAgent(input: $input) {
@@ -7336,9 +7314,9 @@ export function useFindOneAgentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type FindOneAgentQueryHookResult = ReturnType<typeof useFindOneAgentQuery>;
 export type FindOneAgentLazyQueryHookResult = ReturnType<typeof useFindOneAgentLazyQuery>;
 export type FindOneAgentQueryResult = Apollo.QueryResult<FindOneAgentQuery, FindOneAgentQueryVariables>;
-export const GetAgentChatMessagesDocument = gql`
-    query GetAgentChatMessages($threadId: UUID!) {
-  agentChatMessages(threadId: $threadId) {
+export const GetChatMessagesDocument = gql`
+    query GetChatMessages($threadId: UUID!) {
+  chatMessages(threadId: $threadId) {
     id
     threadId
     role
@@ -7375,37 +7353,36 @@ export const GetAgentChatMessagesDocument = gql`
     `;
 
 /**
- * __useGetAgentChatMessagesQuery__
+ * __useGetChatMessagesQuery__
  *
- * To run a query within a React component, call `useGetAgentChatMessagesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAgentChatMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetChatMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetAgentChatMessagesQuery({
+ * const { data, loading, error } = useGetChatMessagesQuery({
  *   variables: {
  *      threadId: // value for 'threadId'
  *   },
  * });
  */
-export function useGetAgentChatMessagesQuery(baseOptions: Apollo.QueryHookOptions<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>) {
+export function useGetChatMessagesQuery(baseOptions: Apollo.QueryHookOptions<GetChatMessagesQuery, GetChatMessagesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>(GetAgentChatMessagesDocument, options);
+        return Apollo.useQuery<GetChatMessagesQuery, GetChatMessagesQueryVariables>(GetChatMessagesDocument, options);
       }
-export function useGetAgentChatMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>) {
+export function useGetChatMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatMessagesQuery, GetChatMessagesQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>(GetAgentChatMessagesDocument, options);
+          return Apollo.useLazyQuery<GetChatMessagesQuery, GetChatMessagesQueryVariables>(GetChatMessagesDocument, options);
         }
-export type GetAgentChatMessagesQueryHookResult = ReturnType<typeof useGetAgentChatMessagesQuery>;
-export type GetAgentChatMessagesLazyQueryHookResult = ReturnType<typeof useGetAgentChatMessagesLazyQuery>;
-export type GetAgentChatMessagesQueryResult = Apollo.QueryResult<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>;
-export const GetAgentChatThreadsDocument = gql`
-    query GetAgentChatThreads($agentId: UUID!) {
-  agentChatThreads(agentId: $agentId) {
+export type GetChatMessagesQueryHookResult = ReturnType<typeof useGetChatMessagesQuery>;
+export type GetChatMessagesLazyQueryHookResult = ReturnType<typeof useGetChatMessagesLazyQuery>;
+export type GetChatMessagesQueryResult = Apollo.QueryResult<GetChatMessagesQuery, GetChatMessagesQueryVariables>;
+export const GetChatThreadsDocument = gql`
+    query GetChatThreads {
+  chatThreads {
     id
-    agentId
     title
     createdAt
     updatedAt
@@ -7414,32 +7391,31 @@ export const GetAgentChatThreadsDocument = gql`
     `;
 
 /**
- * __useGetAgentChatThreadsQuery__
+ * __useGetChatThreadsQuery__
  *
- * To run a query within a React component, call `useGetAgentChatThreadsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAgentChatThreadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetChatThreadsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatThreadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetAgentChatThreadsQuery({
+ * const { data, loading, error } = useGetChatThreadsQuery({
  *   variables: {
- *      agentId: // value for 'agentId'
  *   },
  * });
  */
-export function useGetAgentChatThreadsQuery(baseOptions: Apollo.QueryHookOptions<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>) {
+export function useGetChatThreadsQuery(baseOptions?: Apollo.QueryHookOptions<GetChatThreadsQuery, GetChatThreadsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>(GetAgentChatThreadsDocument, options);
+        return Apollo.useQuery<GetChatThreadsQuery, GetChatThreadsQueryVariables>(GetChatThreadsDocument, options);
       }
-export function useGetAgentChatThreadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>) {
+export function useGetChatThreadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatThreadsQuery, GetChatThreadsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>(GetAgentChatThreadsDocument, options);
+          return Apollo.useLazyQuery<GetChatThreadsQuery, GetChatThreadsQueryVariables>(GetChatThreadsDocument, options);
         }
-export type GetAgentChatThreadsQueryHookResult = ReturnType<typeof useGetAgentChatThreadsQuery>;
-export type GetAgentChatThreadsLazyQueryHookResult = ReturnType<typeof useGetAgentChatThreadsLazyQuery>;
-export type GetAgentChatThreadsQueryResult = Apollo.QueryResult<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>;
+export type GetChatThreadsQueryHookResult = ReturnType<typeof useGetChatThreadsQuery>;
+export type GetChatThreadsLazyQueryHookResult = ReturnType<typeof useGetChatThreadsLazyQuery>;
+export type GetChatThreadsQueryResult = Apollo.QueryResult<GetChatThreadsQuery, GetChatThreadsQueryVariables>;
 export const TrackAnalyticsDocument = gql`
     mutation TrackAnalytics($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
   trackAnalytics(type: $type, event: $event, name: $name, properties: $properties) {

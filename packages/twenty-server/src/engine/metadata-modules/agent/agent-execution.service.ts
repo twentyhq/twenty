@@ -36,6 +36,8 @@ import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
+import { repairToolCall } from './utils/repair-tool-call.util';
+
 export interface AgentExecutionResult {
   result: object;
   usage: LanguageModelUsage;
@@ -129,6 +131,30 @@ export class AgentExecutionService implements AgentExecutionContext {
         messages: convertToModelMessages(messages),
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
         providerOptions,
+        experimental_repairToolCall: async ({
+          toolCall,
+          tools: toolsForRepair,
+          inputSchema,
+          error,
+        }: {
+          toolCall: {
+            type: 'tool-call';
+            toolCallId: string;
+            toolName: string;
+            input: string;
+          };
+          tools: Record<string, unknown>;
+          inputSchema: (toolCall: { toolName: string }) => unknown;
+          error: Error;
+        }) => {
+          return repairToolCall({
+            toolCall,
+            tools: toolsForRepair,
+            inputSchema,
+            error,
+            model: registeredModel.model,
+          });
+        },
       };
     } catch (error) {
       this.logger.error(

@@ -1,9 +1,7 @@
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type RecordCrudExecutionContext } from './execution-context.type';
+import { type DeleteRecordInput } from './record-crud-input.type';
 
-export type DeleteRecordParams = {
-  objectName: string;
-  objectRecordId: string;
-  workspaceId: string;
-  rolePermissionConfig?: RolePermissionConfig;
-  soft?: boolean;
-};
+export type DeleteRecordParams = DeleteRecordInput &
+  RecordCrudExecutionContext & {
+    soft?: boolean;
+  };

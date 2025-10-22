@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ExtendedUIMessage } from 'twenty-shared/ai';
 import { Repository } from 'typeorm';
 
-import type { UIDataTypes, UIMessage, UIMessagePart, UITools } from 'ai';
+import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
 import { AgentChatMessagePartEntity } from 'src/engine/metadata-modules/agent/agent-chat-message-part.entity';
 import {
@@ -31,19 +32,17 @@ export class AgentChatService {
     private readonly titleGenerationService: AgentTitleGenerationService,
   ) {}
 
-  async createThread(agentId: string, userWorkspaceId: string) {
+  async createThread(userWorkspaceId: string) {
     const thread = this.threadRepository.create({
-      agentId,
       userWorkspaceId,
     });
 
     return this.threadRepository.save(thread);
   }
 
-  async getThreadsForAgent(agentId: string, userWorkspaceId: string) {
+  async getThreadsForUser(userWorkspaceId: string) {
     return this.threadRepository.find({
       where: {
-        agentId,
         userWorkspaceId,
       },
       order: { createdAt: 'DESC' },
@@ -73,7 +72,7 @@ export class AgentChatService {
     uiMessage,
   }: {
     threadId: string;
-    uiMessage: Omit<UIMessage<unknown, UIDataTypes, UITools>, 'id'>;
+    uiMessage: Omit<ExtendedUIMessage, 'id'>;
     uiMessageParts?: UIMessagePart<UIDataTypes, UITools>[];
   }) {
     const message = this.messageRepository.create({

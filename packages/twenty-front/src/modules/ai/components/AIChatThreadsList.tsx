@@ -10,7 +10,7 @@ import { Key } from 'ts-key-enum';
 import { capitalize } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
-import { useGetAgentChatThreadsQuery } from '~/generated-metadata/graphql';
+import { useGetChatThreadsQuery } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -33,24 +33,21 @@ const StyledButtonsContainer = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.medium};
 `;
 
-export const AIChatThreadsList = ({ agentId }: { agentId: string }) => {
-  const { createAgentChatThread } = useCreateNewAIChatThread({ agentId });
+export const AIChatThreadsList = () => {
+  const { createChatThread } = useCreateNewAIChatThread();
 
-  const focusId = `${agentId}-threads-list`;
+  const focusId = 'threads-list';
 
   useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
-    callback: () => createAgentChatThread(),
+    callback: () => createChatThread(),
     focusId,
-    dependencies: [createAgentChatThread, agentId],
+    dependencies: [createChatThread],
   });
 
-  const { data: { agentChatThreads = [] } = {}, loading } =
-    useGetAgentChatThreadsQuery({
-      variables: { agentId },
-    });
+  const { data: { chatThreads = [] } = {}, loading } = useGetChatThreadsQuery();
 
-  const groupedThreads = groupThreadsByDate(agentChatThreads);
+  const groupedThreads = groupThreadsByDate(chatThreads);
 
   if (loading === true) {
     return <AIChatSkeletonLoader />;
@@ -75,7 +72,7 @@ export const AIChatThreadsList = ({ agentId }: { agentId: string }) => {
             accent="blue"
             size="medium"
             title="New chat"
-            onClick={() => createAgentChatThread()}
+            onClick={() => createChatThread()}
             hotkeys={[getOsControlSymbol(), '⏎']}
           />
         </StyledButtonsContainer>
