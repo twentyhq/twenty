@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -45,4 +45,10 @@ export class CreateViewFieldInput {
   @IsEnum(AggregateOperations)
   @Field(() => AggregateOperations, { nullable: true })
   aggregateOperation?: AggregateOperations;
+
+  @HideField()
+  universalIdentifier?: string;
+
+  @HideField()
+  applicationId?: string;
 }

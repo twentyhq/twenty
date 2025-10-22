@@ -4,7 +4,6 @@ import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-and-stringify.constant';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -74,15 +73,8 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     } = flatEntityDeletedCreatedUpdatedMatrixDispatcher<T>({
       from: fromFlatEntities,
       to: toFlatEntities,
+      metadataName: this.metadataName,
       buildOptions,
-      comparisonOptions: {
-        propertiesToCompare:
-          ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[this.metadataName]
-            .propertiesToCompare,
-        propertiesToStringify:
-          ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[this.metadataName]
-            .propertiesToStringify,
-      },
     });
 
     this.logger.timeEnd(
@@ -163,7 +155,8 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       deletedFlatEntityMaps,
     );
 
-    for (const flatEntityToDeleteId in buildOptions.inferDeletionFromMissingEntities
+    for (const flatEntityToDeleteId in buildOptions
+      .inferDeletionFromMissingEntities?.[this.metadataName]
       ? deletedFlatEntityMaps.byId
       : {}) {
       const flatEntityToDelete =

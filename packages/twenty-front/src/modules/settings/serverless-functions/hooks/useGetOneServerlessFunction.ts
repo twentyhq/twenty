@@ -11,7 +11,7 @@ export const useGetOneServerlessFunction = (
   input: ServerlessFunctionIdInput,
 ) => {
   const apolloMetadataClient = useApolloCoreClient();
-  const { data } = useQuery<
+  const { data, loading } = useQuery<
     GetOneServerlessFunctionQuery,
     GetOneServerlessFunctionQueryVariables
   >(FIND_ONE_SERVERLESS_FUNCTION, {
@@ -22,5 +22,6 @@ export const useGetOneServerlessFunction = (
   });
   return {
     serverlessFunction: data?.findOneServerlessFunction || null,
+    loading,
   };
 };

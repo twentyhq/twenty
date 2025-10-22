@@ -4,11 +4,11 @@ import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { type BaseOutputSchemaDeprecated } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
+import { type AiAgentOutputSchema } from '@/workflow/workflow-variables/types/AiAgentOutputSchema';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
@@ -48,7 +48,7 @@ export const WorkflowEditActionAiAgent = ({
     });
 
   const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
-    action.settings.outputSchema as BaseOutputSchemaDeprecated,
+    action.settings.outputSchema as AiAgentOutputSchema,
     actionOptions.readonly === true ? undefined : actionOptions.onActionUpdate,
     action,
     actionOptions.readonly,
@@ -146,7 +146,7 @@ export const WorkflowEditActionAiAgent = ({
           readonly={actionOptions.readonly}
         />
       </WorkflowStepBody>
-      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

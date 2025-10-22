@@ -1,4 +1,4 @@
-import type { BillingPriceMeteredDto } from '~/generated/graphql';
+import type { BillingPriceMetered } from '~/generated/graphql';
 
 export type BillingPriceTiers = [
   {
@@ -14,6 +14,6 @@ export type BillingPriceTiers = [
 ];
 
 // graphql does not support tuple so we need to create a new type
-export type MeteredBillingPrice = Omit<BillingPriceMeteredDto, 'tiers'> & {
+export type MeteredBillingPrice = Omit<BillingPriceMetered, 'tiers'> & {
   tiers: BillingPriceTiers;
 };

@@ -1,9 +1,9 @@
+import { type OrderByWithGroupBy } from 'twenty-shared/types';
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
 import {
   type ObjectRecordFilter,
   type ObjectRecordOrderBy,
-  type OrderByWithGroupBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {

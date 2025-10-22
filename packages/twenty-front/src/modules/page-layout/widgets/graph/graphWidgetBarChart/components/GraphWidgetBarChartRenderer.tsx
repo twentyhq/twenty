@@ -1,7 +1,6 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
-import { lazy, Suspense } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { lazy, Suspense, useMemo } from 'react';
 import {
   type BarChartConfiguration,
   type PageLayoutWidget,
@@ -28,28 +27,35 @@ export const GraphWidgetBarChartRenderer = ({
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
+    layout,
     loading,
-    error,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as BarChartConfiguration,
   });
 
-  if (loading) {
-    return <ChartSkeletonLoader />;
-  }
-
-  if (isDefined(error)) {
-    return <div>Error: {error.message}</div>;
-  }
-
   const configuration = widget.configuration as BarChartConfiguration;
   const groupMode =
     configuration.groupMode === 'GROUPED' ? 'grouped' : 'stacked';
 
+  const filterStateKey = useMemo(
+    () =>
+      `${configuration.rangeMin ?? ''}-${configuration.rangeMax ?? ''}-${configuration.omitNullValues ?? ''}`,
+    [
+      configuration.rangeMin,
+      configuration.rangeMax,
+      configuration.omitNullValues,
+    ],
+  );
+
+  if (loading) {
+    return <ChartSkeletonLoader />;
+  }
+
   return (
     <Suspense fallback={<ChartSkeletonLoader />}>
       <GraphWidgetBarChart
+        key={filterStateKey}
         data={data}
         series={series}
         indexBy={indexBy}
@@ -57,9 +63,12 @@ export const GraphWidgetBarChartRenderer = ({
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
         showValues={showDataLabels}
+        layout={layout}
         groupMode={groupMode}
         id={widget.id}
         displayType="shortNumber"
+        rangeMin={configuration.rangeMin ?? undefined}
+        rangeMax={configuration.rangeMax ?? undefined}
       />
     </Suspense>
   );

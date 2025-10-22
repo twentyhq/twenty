@@ -41,7 +41,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
   const {
     segments,
-    labelPosition: [labelX, labelY],
+    overlayPosition: [labelX, labelY],
   } = getEdgePath({
     sourceX,
     sourceY,

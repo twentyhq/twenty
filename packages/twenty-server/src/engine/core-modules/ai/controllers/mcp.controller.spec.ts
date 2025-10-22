@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { McpService } from 'src/engine/core-modules/ai/services/mcp.service';
 import { type JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MCP_SERVER_METADATA } from 'src/engine/core-modules/ai/constants/mcp.const';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -52,7 +52,7 @@ describe('McpController', () => {
   });
 
   describe('handleMcpCore', () => {
-    const mockWorkspace = { id: 'workspace-1' } as Workspace;
+    const mockWorkspace = { id: 'workspace-1' } as WorkspaceEntity;
     const mockUserWorkspaceId = 'user-workspace-1';
     const mockApiKey = 'api-key-1';
 

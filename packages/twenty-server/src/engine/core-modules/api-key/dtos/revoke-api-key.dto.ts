@@ -5,7 +5,7 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
-export class RevokeApiKeyDTO {
+export class RevokeApiKeyInput {
   @Field(() => UUIDScalarType)
   @IsNotEmpty()
   @IsUUID()

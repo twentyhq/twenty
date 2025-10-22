@@ -61,6 +61,7 @@ export class WorkspaceSyncMetadataService {
   }> {
     let workspaceMigrations: WorkspaceMigrationEntity[] = [];
     const storage = new WorkspaceSyncStorage();
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     this.logger.log('Syncing standard objects and fields metadata');

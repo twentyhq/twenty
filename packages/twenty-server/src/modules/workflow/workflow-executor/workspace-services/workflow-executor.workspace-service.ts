@@ -224,10 +224,6 @@ export class WorkflowExecutorWorkspaceService {
 
     const steps = workflowRun.state.flow.steps;
 
-    if (workflowShouldKeepRunning({ stepInfos, steps })) {
-      return;
-    }
-
     if (workflowShouldFail({ stepInfos, steps })) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
@@ -236,6 +232,10 @@ export class WorkflowExecutorWorkspaceService {
         error: 'WorkflowRun failed',
       });
 
+      return;
+    }
+
+    if (workflowShouldKeepRunning({ stepInfos, steps })) {
       return;
     }
 

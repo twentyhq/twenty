@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
@@ -41,8 +42,9 @@ export const getMockObjectMetadataEntity = (
     objectPermissions: [],
     shortcut: null,
     standardId: null,
-    applicationId: null,
-    application: null,
+    universalIdentifier: faker.string.uuid(),
+    applicationId: faker.string.uuid(),
+    application: {} as ApplicationEntity,
     targetRelationFields: [],
     standardOverrides: null,
     targetTableName: faker.string.uuid(),

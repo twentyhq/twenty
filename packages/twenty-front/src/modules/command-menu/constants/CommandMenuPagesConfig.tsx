@@ -3,6 +3,7 @@ import { CommandMenuAIChatThreadsPage } from '@/command-menu/pages/AIChatThreads
 import { CommandMenuAskAIPage } from '@/command-menu/pages/ask-ai/components/CommandMenuAskAIPage';
 import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
 import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage';
+import { CommandMenuPageLayoutGraphFilter } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter';
 import { CommandMenuPageLayoutGraphTypeSelect } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect';
 import { CommandMenuPageLayoutIframeConfig } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig';
 import { CommandMenuPageLayoutWidgetTypeSelect } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect';
@@ -29,7 +30,7 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.ViewCalendarEvent, <CommandMenuCalendarEventPage />],
   [CommandMenuPages.EditRichText, <CommandMenuEditRichTextPage />],
   [
-    CommandMenuPages.WorkflowStepSelectTriggerType,
+    CommandMenuPages.WorkflowTriggerSelectType,
     <CommandMenuWorkflowSelectTriggerType />,
   ],
   [CommandMenuPages.WorkflowStepCreate, <CommandMenuWorkflowCreateStep />],
@@ -47,6 +48,10 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [
     CommandMenuPages.PageLayoutGraphTypeSelect,
     <CommandMenuPageLayoutGraphTypeSelect />,
+  ],
+  [
+    CommandMenuPages.PageLayoutGraphFilter,
+    <CommandMenuPageLayoutGraphFilter />,
   ],
   [
     CommandMenuPages.PageLayoutIframeConfig,

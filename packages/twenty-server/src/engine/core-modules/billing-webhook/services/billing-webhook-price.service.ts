@@ -12,9 +12,9 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { transformStripeMeterToDatabaseMeter } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-to-database-meter.util';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
@@ -25,12 +25,12 @@ export class BillingWebhookPriceService {
   constructor(
     private readonly stripeBillingMeterService: StripeBillingMeterService,
     private readonly stripePriceService: StripePriceService,
-    @InjectRepository(BillingPrice)
-    private readonly billingPriceRepository: Repository<BillingPrice>,
-    @InjectRepository(BillingMeter)
-    private readonly billingMeterRepository: Repository<BillingMeter>,
-    @InjectRepository(BillingProduct)
-    private readonly billingProductRepository: Repository<BillingProduct>,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
+    @InjectRepository(BillingMeterEntity)
+    private readonly billingMeterRepository: Repository<BillingMeterEntity>,
+    @InjectRepository(BillingProductEntity)
+    private readonly billingProductRepository: Repository<BillingProductEntity>,
   ) {}
 
   async processStripeEvent(

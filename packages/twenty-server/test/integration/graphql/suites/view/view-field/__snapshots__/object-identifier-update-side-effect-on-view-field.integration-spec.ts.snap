@@ -130,8 +130,8 @@ exports[`View Field Resolver - Successful object metadata identifier update side
           "errors": [
             {
               "code": "INVALID_VIEW_DATA",
-              "message": "View field to delete has not been soft deleted",
-              "userFriendlyMessage": "View field to delete has not been soft deleted",
+              "message": "Label identifier view field cannot be deleted",
+              "userFriendlyMessage": "Label identifier view field cannot be deleted",
             },
           ],
           "flatEntityMinimalInformation": {

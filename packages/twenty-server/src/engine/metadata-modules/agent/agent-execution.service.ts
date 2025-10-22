@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   convertToModelMessages,
@@ -13,18 +12,20 @@ import {
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
+import { AgentActorContextService } from 'src/engine/metadata-modules/agent/services/agent-actor-context.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -46,27 +47,30 @@ export class AgentExecutionService implements AgentExecutionContext {
 
   constructor(
     private readonly agentHandoffToolService: AgentHandoffToolService,
-    private readonly fileService: FileService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiBillingService: AIBillingService,
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
+    private readonly agentActorContextService: AgentActorContextService,
+    private readonly agentService: AgentService,
   ) {}
 
   async prepareAIRequestConfig({
     messages,
     system,
     agent,
+    actorContext,
+    roleIds,
     excludeHandoffTools = false,
   }: {
     system: string;
     agent: AgentEntity | null;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
+    actorContext?: ActorMetadata;
+    roleIds?: string[];
     excludeHandoffTools?: boolean;
   }) {
     try {
@@ -87,6 +91,8 @@ export class AgentExecutionService implements AgentExecutionContext {
           await this.agentToolGeneratorService.generateToolsForAgent(
             agent.id,
             agent.workspaceId,
+            actorContext,
+            roleIds,
           );
 
         let handoffTools = {};
@@ -134,7 +140,7 @@ export class AgentExecutionService implements AgentExecutionContext {
   }
 
   private async getContextForSystemPrompt(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
     userWorkspaceId: string,
   ) {
@@ -184,8 +190,7 @@ export class AgentExecutionService implements AgentExecutionContext {
 
             const repository = workspaceDataSource.getRepository(
               recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-              false,
-              roleId,
+              { unionOf: [roleId] },
             );
 
             const restrictedFields =
@@ -213,7 +218,7 @@ export class AgentExecutionService implements AgentExecutionContext {
             ).map((record) => {
               return {
                 ...record,
-                resourceUrl: this.domainManagerService.buildWorkspaceURL({
+                resourceUrl: this.workspaceDomainsService.buildWorkspaceURL({
                   workspace,
                   pathname: getAppPath(AppPath.RecordShowPage, {
                     objectNameSingular:
@@ -238,16 +243,14 @@ export class AgentExecutionService implements AgentExecutionContext {
     messages,
     recordIdsByObjectMetadataNameSingular,
   }: {
-    workspace: Workspace;
+    workspace: WorkspaceEntity;
     userWorkspaceId: string;
     agentId: string;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
   }) {
     try {
-      const agent = await this.agentRepository.findOneOrFail({
-        where: { id: agentId },
-      });
+      const agent = await this.agentService.findOneAgent(agentId, workspace.id);
 
       let contextString = '';
 
@@ -261,10 +264,18 @@ export class AgentExecutionService implements AgentExecutionContext {
         contextString = `\n\nCONTEXT:\n${contextPart}`;
       }
 
+      const { actorContext, roleId } =
+        await this.agentActorContextService.buildUserAndAgentActorContext(
+          userWorkspaceId,
+          workspace.id,
+        );
+
       const aiRequestConfig = await this.prepareAIRequestConfig({
         system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}${contextString}`,
         agent,
         messages,
+        actorContext,
+        roleIds: [roleId, ...(agent?.roleId ? [agent?.roleId] : [])],
       });
 
       this.logger.log(

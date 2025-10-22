@@ -3,7 +3,7 @@ import {
   isIdentifier,
   isVariableDeclarator,
 } from '@typescript-eslint/utils/ast-utils';
-import { RuleContext } from '@typescript-eslint/utils/ts-eslint';
+import { type RuleContext } from '@typescript-eslint/utils/ts-eslint';
 
 // NOTE: The rule will be available in ESLint configs as "@nx/workspace-component-props-naming"
 export const RULE_NAME = 'component-props-naming';

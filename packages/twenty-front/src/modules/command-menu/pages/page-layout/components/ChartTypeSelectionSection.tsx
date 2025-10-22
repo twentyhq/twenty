@@ -6,7 +6,8 @@ import { t } from '@lingui/core/macro';
 import { MenuPicker } from 'twenty-ui/navigation';
 
 const graphTypeOptions = [
-  GraphType.BAR,
+  GraphType.VERTICAL_BAR,
+  GraphType.HORIZONTAL_BAR,
   GraphType.NUMBER,
   GraphType.PIE,
   GraphType.LINE,

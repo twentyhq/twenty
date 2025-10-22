@@ -1,6 +1,8 @@
 import { type VariableSearchResult } from '@/workflow/workflow-variables/hooks/useSearchVariable';
+import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type IteratorOutputSchema } from '@/workflow/workflow-variables/types/IteratorOutputSchema';
+import { searchBaseOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughBaseOutputSchema';
 import { searchRecordOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -94,10 +96,21 @@ export const searchVariableThroughIteratorOutputSchema = ({
       });
     }
 
+    if (isBaseOutputSchemaV2(schema) && isDefined(fieldName)) {
+      return searchBaseOutputSchema({
+        stepName,
+        baseOutputSchema: schema,
+        path: pathSegments,
+        selectedField: fieldName,
+      });
+    }
+
     return {
-      variableLabel: 'Current Item',
-      variablePathLabel: `${stepName} > Current Item`,
-      variableType: schema.type,
+      variableLabel: iteratorOutputSchema.currentItem.label,
+      variablePathLabel: `${stepName} > ${iteratorOutputSchema.currentItem.label}`,
+      variableType: iteratorOutputSchema.currentItem.isLeaf
+        ? iteratorOutputSchema.currentItem.type
+        : 'unknown',
     };
   }
 

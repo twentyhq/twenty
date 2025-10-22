@@ -76,12 +76,12 @@ describe('convertPageLayoutToTabLayouts', () => {
     expect(result).toEqual({
       'tab-1': {
         desktop: [
-          { i: 'widget-1', x: 0, y: 0, w: 2, h: 2 },
-          { i: 'widget-2', x: 0, y: 2, w: 2, h: 2 },
+          { i: 'widget-1', x: 0, y: 0, w: 2, h: 2, minW: 2, minH: 2 },
+          { i: 'widget-2', x: 0, y: 2, w: 2, h: 2, minW: 3, minH: 4 },
         ],
         mobile: [
-          { i: 'widget-1', x: 0, y: 0, w: 1, h: 2 },
-          { i: 'widget-2', x: 0, y: 2, w: 1, h: 2 },
+          { i: 'widget-1', x: 0, y: 0, w: 1, h: 2, minW: 2, minH: 2 },
+          { i: 'widget-2', x: 0, y: 2, w: 1, h: 2, minW: 3, minH: 4 },
         ],
       },
     });

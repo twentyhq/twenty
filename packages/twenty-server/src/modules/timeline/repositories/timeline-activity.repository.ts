@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { In, MoreThan } from 'typeorm';
-
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 
 type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
-  payloads: TimelineActivityPayload[];
+  payloads: (Omit<TimelineActivityPayload, 'properties'> & {
+    properties: Pick<TimelineActivityPayload['properties'], 'diff'>;
+  })[];
   workspaceId: string;
   objectSingularName: string;
 };
@@ -32,16 +33,22 @@ export class TimelineActivityRepository {
       payloads,
     });
 
-    const payloadsWithDiff = payloads.filter(({ properties }) => {
-      const isDiffEmpty =
-        properties.diff !== null &&
-        properties.diff &&
-        Object.keys(properties.diff).length === 0;
+    const payloadsWithDiff = payloads
+      .filter(({ properties }) => {
+        const isDiffEmpty =
+          properties.diff !== null &&
+          properties.diff &&
+          Object.keys(properties.diff).length === 0;
 
-      return !isDiffEmpty;
-    });
+        return !isDiffEmpty;
+      })
+      .map(({ properties, ...rest }) => ({
+        ...rest,
+        properties: isDefined(properties.diff) ? { diff: properties.diff } : {},
+      }));
 
-    const payloadsToInsert: TimelineActivityPayload[] = [];
+    const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
+      [];
 
     for (const payload of payloadsWithDiff) {
       const recentTimelineActivity = recentTimelineActivities.find(
@@ -99,7 +106,7 @@ export class TimelineActivityRepository {
       ),
       name: In(payloads.map((payload) => payload.name)),
       workspaceMemberId: In(
-        payloads.map((payload) => payload.workspaceMemberId),
+        payloads.map((payload) => payload.workspaceMemberId || null),
       ),
       createdAt: MoreThan(tenMinutesAgo),
     };
