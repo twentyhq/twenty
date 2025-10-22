@@ -351,11 +351,27 @@ export const DateTimePicker = ({
 }: DateTimePickerProps) => {
   const internalDate = date ?? new Date();
 
+  const dateWithoutTime = new Date(
+    internalDate.getUTCFullYear(),
+    internalDate.getUTCMonth(),
+    internalDate.getUTCDate(),
+    0,
+    0,
+    0,
+    0,
+  );
+
+  console.log({
+    date,
+  });
+
   const theme = useTheme();
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
+
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const handleClear = () => {
     closeDropdowns();
     onClear?.();
@@ -372,78 +388,73 @@ export const DateTimePicker = ({
   };
 
   const handleChangeMonth = (month: number) => {
-    const newDate = new Date(internalDate);
+    const newDate = new Date(dateWithoutTime);
     newDate.setMonth(month);
     onChange?.(newDate);
   };
 
   const handleAddMonth = () => {
-    const dateParsed = addMonths(internalDate, 1);
+    const dateParsed = addMonths(dateWithoutTime, 1);
     onChange?.(dateParsed);
   };
 
   const handleSubtractMonth = () => {
-    const dateParsed = subMonths(internalDate, 1);
+    const dateParsed = subMonths(dateWithoutTime, 1);
     onChange?.(dateParsed);
   };
 
   const handleChangeYear = (year: number) => {
-    const dateParsed = setYear(internalDate, year);
+    const dateParsed = setYear(dateWithoutTime, year);
     onChange?.(dateParsed);
   };
 
   const handleDateChange = (date: Date) => {
+    console.log({
+      date,
+    });
     let dateParsed = setYear(internalDate, date.getFullYear());
     dateParsed = setMonth(dateParsed, date.getMonth());
     dateParsed = setDate(dateParsed, date.getDate());
+
+    console.log({
+      dateParsed,
+    });
 
     onChange?.(dateParsed);
   };
 
   const handleDateSelect = (date: Date) => {
+    console.log({
+      date,
+    });
     let dateParsed = setYear(internalDate, date.getFullYear());
     dateParsed = setMonth(dateParsed, date.getMonth());
     dateParsed = setDate(dateParsed, date.getDate());
 
+    console.log({
+      dateParsed,
+    });
+
     handleClose?.(dateParsed);
   };
 
-  const dateWithoutTime = new Date(
-    internalDate.getUTCFullYear(),
-    internalDate.getUTCMonth(),
-    internalDate.getUTCDate(),
-    0,
-    0,
-    0,
-    0,
-  );
-
-  // We have to force a end of day on the computer local timezone with the given date
-  // Because JS Date API cannot hold a timezone other than the local one
-  // And if we don't do that workaround we will have problems when changing the date
-  // Because the shown date will have 1 day more or less than the real date
-  // Leading to bugs where we select 1st of January and it shows 31st of December for example
-  const endOfDayInLocalTimezone = new Date(
-    internalDate.getFullYear(),
-    internalDate.getMonth(),
-    internalDate.getDate(),
-    23,
-    59,
-    59,
-    999,
-  );
-
-  const dateToUse = isDateTimeInput ? endOfDayInLocalTimezone : dateWithoutTime;
-
   const highlightedDates = getHighlightedDates(highlightedDateRange);
 
-  const hasDate = date != null;
+  const selectedDates = isRelative ? highlightedDates : [dateWithoutTime];
 
-  const selectedDates = isRelative
-    ? highlightedDates
-    : hasDate
-      ? [dateToUse]
-      : [];
+  const serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift =
+    new Date().getTimezoneOffset() * 60 * 1000;
+
+  const shiftedDate = new Date(
+    internalDate.getTime() +
+      serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift,
+  );
+
+  console.log({
+    internalDate,
+    shiftedDate,
+    dateWithoutTime,
+  });
 
   return (
     <StyledContainer calendarDisabled={isRelative}>
@@ -478,11 +489,11 @@ export const DateTimePicker = ({
         >
           <ReactDatePicker
             open={true}
-            selected={hasDate ? dateToUse : undefined}
+            selected={dateWithoutTime}
             selectedDates={selectedDates}
-            openToDate={hasDate ? dateToUse : new Date()}
+            openToDate={dateWithoutTime}
             disabledKeyboardNavigation
-            onChange={handleDateChange as any}
+            onChange={handleDateChange}
             calendarStartDay={
               currentWorkspaceMember?.calendarStartDay ===
               CalendarStartDay.SYSTEM

@@ -65,7 +65,6 @@ export const DateTimeFieldInput = () => {
       value={dateValue}
       clearable
       onChange={handleChange}
-      isDateTimeInput
       onClear={handleClear}
       onSubmit={handleSubmit}
     />

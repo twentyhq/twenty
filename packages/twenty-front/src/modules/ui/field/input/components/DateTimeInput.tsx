@@ -22,7 +22,6 @@ export type DateTimeInputProps = {
   ) => void;
   clearable?: boolean;
   onChange?: (newDateTime: Nullable<Date>) => void;
-  isDateTimeInput?: boolean;
   onClear?: () => void;
   onSubmit?: (newDateTime: Nullable<Date>) => void;
   hideHeaderInput?: boolean;
@@ -36,7 +35,6 @@ export const DateTimeInput = ({
   onClickOutside,
   clearable,
   onChange,
-  isDateTimeInput,
   onClear,
   onSubmit,
   hideHeaderInput,
