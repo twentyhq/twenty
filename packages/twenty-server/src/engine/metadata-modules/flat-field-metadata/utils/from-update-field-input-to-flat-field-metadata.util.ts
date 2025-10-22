@@ -77,7 +77,9 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   const isStandardField = isStandardMetadata(existingFlatFieldMetadataToUpdate);
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateFieldInput,
-    FLAT_FIELD_METADATA_EDITABLE_PROPERTIES['custom'],
+    FLAT_FIELD_METADATA_EDITABLE_PROPERTIES[
+      isStandardField ? 'standard' : 'custom'
+    ],
   );
 
   if (isStandardField) {
@@ -107,6 +109,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           return acc;
         }
         const propertyValue = updatedEditableFieldProperties[property];
+        delete updatedEditableFieldProperties[property];
 
         return {
           ...acc,
