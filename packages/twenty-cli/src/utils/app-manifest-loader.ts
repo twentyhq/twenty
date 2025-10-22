@@ -5,6 +5,7 @@ import * as path from 'path';
 import {
   AppManifest,
   CoreEntityManifest,
+  ObjectManifest,
   PackageJson,
 } from '../types/config.types';
 import { validateSchema } from '../utils/schema-validator';
@@ -157,7 +158,7 @@ export const loadManifest = async (
     (manifest, path) => validateSchema('agent', manifest, path),
   );
 
-  const objects = await loadCoreEntity(
+  const objectFromManifests = await loadCoreEntity(
     path.join(appPath, 'objects'),
     (manifest, path) => validateSchema('object', manifest, path),
   );
@@ -169,13 +170,20 @@ export const loadManifest = async (
 
   const { objects: objectsFromDecorators } = loadManifestFromDecorators();
 
+  const objects = (
+    [...objectFromManifests, ...objectsFromDecorators] as ObjectManifest[]
+  ).map((object) => {
+    object.standardId = object.universalIdentifier;
+    return object;
+  });
+
   return {
     packageJson,
     yarnLock: rawYarnLock,
     manifest: {
       ...packageJson,
       agents,
-      objects: [...objects, ...objectsFromDecorators],
+      objects,
       serverlessFunctions,
     },
   };

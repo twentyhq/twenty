@@ -3,6 +3,8 @@ import { randomUUID } from 'crypto';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import path from 'path';
+import capitalize from 'lodash.capitalize';
+import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { HTTPMethod } from '../types/config.types';
 import { parseJsoncFile, writeJsoncFile } from '../utils/jsonc-parser';
@@ -55,6 +57,31 @@ export class AppAddCommand {
       const entityName = await this.getEntityName(entity);
 
       const entityData = await this.getEntityToCreateData(entity, entityName);
+
+      if (entity === SyncableEntity.OBJECT) {
+        delete entityData['standardId'];
+        delete entityData['$schema'];
+
+        const objectFileName = `${camelcase(entityName)}.ts`;
+
+        const className = capitalize(camelcase(entityName));
+
+        const decoratorOptions = Object.entries(entityData)
+          .map(([key, value]) => `  ${key}: '${value}',`)
+          .join('\n');
+
+        const decoratedObject = `import { ObjectMetadata } from 'twenty-sdk';
+
+@ObjectMetadata({
+${decoratorOptions}
+})
+export class ${className} {}
+`;
+
+        await fs.writeFile(path.join(appPath, objectFileName), decoratedObject);
+
+        return;
+      }
 
       const folderName = getFolderName(entity);
 

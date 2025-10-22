@@ -35,6 +35,8 @@
     "fs-extra": "^11.2.0",
     "inquirer": "^10.0.0",
     "jsonc-parser": "^3.2.0",
+    "lodash.camelcase": "^4.3.0",
+    "lodash.capitalize": "^4.2.1",
     "lodash.kebabcase": "^4.1.1",
     "typescript": "^5.9.2"
   },
@@ -42,6 +44,8 @@
     "@types/fs-extra": "^11.0.0",
     "@types/inquirer": "^9.0.0",
     "@types/jest": "^29.5.0",
+    "@types/lodash.camelcase": "^4.3.7",
+    "@types/lodash.capitalize": "^4",
     "@types/lodash.kebabcase": "^4.1.7",
     "@types/node": "^20.0.0",
     "jest": "^29.5.0",
