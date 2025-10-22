@@ -10,6 +10,7 @@ import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOr
 import { type WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { CREATE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -198,7 +199,7 @@ export const WorkflowEditActionCreateRecord = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Create Record',
+      defaultTitle: CREATE_RECORD_ACTION.defaultLabel,
     });
 
   return (
@@ -219,6 +220,7 @@ export const WorkflowEditActionCreateRecord = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={isFormDisabled}
+        iconTooltip={CREATE_RECORD_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         <Select

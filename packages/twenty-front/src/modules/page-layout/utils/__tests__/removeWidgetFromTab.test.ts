@@ -1,5 +1,5 @@
 import {
-  ExtendedAggregateOperations,
+  AggregateOperations,
   GraphOrderBy,
   GraphType,
   WidgetType,
@@ -23,7 +23,7 @@ describe('removeWidgetFromTab', () => {
           type: WidgetType.GRAPH,
           configuration: {
             graphType: GraphType.NUMBER,
-            aggregateOperation: ExtendedAggregateOperations.COUNT,
+            aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
             displayDataLabel: false,
           },
@@ -41,7 +41,7 @@ describe('removeWidgetFromTab', () => {
           type: WidgetType.GRAPH,
           configuration: {
             graphType: GraphType.PIE,
-            aggregateOperation: ExtendedAggregateOperations.COUNT,
+            aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
             groupByFieldMetadataId: 'status',
             orderBy: GraphOrderBy.VALUE_DESC,

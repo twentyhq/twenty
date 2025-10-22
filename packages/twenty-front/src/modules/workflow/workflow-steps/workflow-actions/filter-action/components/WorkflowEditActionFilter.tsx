@@ -1,6 +1,7 @@
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { type WorkflowFilterAction } from '@/workflow/types/Workflow';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { FILTER_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FilterAction';
 import { WorkflowEditActionFilterBody } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody';
 import { WorkflowEditActionFilterBodyEffect } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBodyEffect';
 import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/StepFilterGroupsComponentInstanceContext';
@@ -33,7 +34,7 @@ export const WorkflowEditActionFilter = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Filter',
+      defaultTitle: FILTER_ACTION.defaultLabel,
     });
 
   const { getIcon } = useIcons();
@@ -56,6 +57,7 @@ export const WorkflowEditActionFilter = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={actionOptions.readonly}
+        iconTooltip={FILTER_ACTION.defaultLabel}
       />
       <StepFiltersComponentInstanceContext.Provider
         value={{

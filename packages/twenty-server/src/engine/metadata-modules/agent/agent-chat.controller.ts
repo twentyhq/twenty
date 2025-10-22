@@ -1,8 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
-  Param,
   Post,
   Res,
   UseFilters,
@@ -31,33 +29,6 @@ export class AgentChatController {
     private readonly agentChatService: AgentChatService,
     private readonly agentStreamingService: AgentStreamingService,
   ) {}
-
-  @Get('threads/:agentId')
-  async getThreadsForAgent(
-    @Param('agentId') agentId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-  ) {
-    return this.agentChatService.getThreadsForAgent(agentId, userWorkspaceId);
-  }
-
-  @Get('threads/:threadId/messages')
-  async getMessagesForThread(
-    @Param('threadId') threadId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-  ) {
-    return this.agentChatService.getMessagesForThread(
-      threadId,
-      userWorkspaceId,
-    );
-  }
-
-  @Post('threads')
-  async createThread(
-    @Body() body: { agentId: string },
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-  ) {
-    return this.agentChatService.createThread(body.agentId, userWorkspaceId);
-  }
 
   @Post('stream')
   async streamAgentChat(

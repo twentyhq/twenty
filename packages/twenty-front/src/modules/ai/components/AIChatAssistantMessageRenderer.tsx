@@ -1,16 +1,13 @@
 import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
+import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { IconDotsVertical } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  isToolUIPart,
-  type UIDataTypes,
-  type UIMessagePart,
-  type UITools,
-} from 'ai';
+import { isToolUIPart } from 'ai';
+import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
@@ -64,14 +61,11 @@ export const AIChatAssistantMessageRenderer = ({
   isLastMessageStreaming,
   hasError,
 }: {
-  messageParts: UIMessagePart<UIDataTypes, UITools>[];
+  messageParts: ExtendedUIMessagePart[];
   isLastMessageStreaming: boolean;
   hasError?: boolean;
 }) => {
-  const renderMessagePart = (
-    part: UIMessagePart<UIDataTypes, UITools>,
-    index: number,
-  ) => {
+  const renderMessagePart = (part: ExtendedUIMessagePart, index: number) => {
     switch (part.type) {
       case 'reasoning':
         return (
@@ -83,6 +77,8 @@ export const AIChatAssistantMessageRenderer = ({
         );
       case 'text':
         return <LazyMarkdownRenderer key={index} text={part.text} />;
+      case 'data-routing-status':
+        return <RoutingStatusDisplay data={part.data} key={index} />;
       default:
         {
           if (isToolUIPart(part)) {

@@ -11,7 +11,7 @@ export class AiService {
   getModel(modelId: string | undefined) {
     const registeredModel = modelId
       ? this.aiModelRegistryService.getModel(modelId)
-      : this.aiModelRegistryService.getDefaultModel();
+      : this.aiModelRegistryService.getDefaultPerformanceModel();
 
     if (!registeredModel) {
       throw new Error(

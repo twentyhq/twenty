@@ -19,6 +19,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { SEND_EMAIL_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/SendEmailAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -246,7 +247,7 @@ export const WorkflowEditActionSendEmail = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Send Email',
+      defaultTitle: SEND_EMAIL_ACTION.defaultLabel,
     });
 
   const navigate = useNavigateSettings();
@@ -272,6 +273,7 @@ export const WorkflowEditActionSendEmail = ({
           initialTitle={headerTitle}
           headerType={headerType}
           disabled={actionOptions.readonly}
+          iconTooltip={SEND_EMAIL_ACTION.defaultLabel}
         />
         <WorkflowStepBody>
           <Select

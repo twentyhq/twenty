@@ -190,6 +190,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         initialTitle={defaultLabel}
         headerType={headerType}
         disabled={triggerOptions.readonly}
+        iconTooltip={getTriggerDefaultLabel(trigger)}
       />
       <WorkflowStepBody>
         <StyledRecordTypeSelectContainer fullWidth>
