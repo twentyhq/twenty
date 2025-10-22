@@ -1,13 +1,15 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  GraphQLISODateTime,
+  InputType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import { IsArray, IsOptional } from 'class-validator';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import {
-  DateScalarType,
-  UUIDScalarType,
-} from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
 export class ObjectRecordFilterInput implements Partial<ObjectRecordFilter> {
@@ -29,14 +31,14 @@ export class ObjectRecordFilterInput implements Partial<ObjectRecordFilter> {
   @IsOptional()
   id?: UUIDFilterType | null;
 
-  @Field(() => DateFilterType, { nullable: true })
-  createdAt?: DateFilterType | null;
+  @Field(() => DateTimeFilterType, { nullable: true })
+  createdAt?: DateTimeFilterType | null;
 
-  @Field(() => DateFilterType, { nullable: true })
-  updatedAt?: DateFilterType | null;
+  @Field(() => DateTimeFilterType, { nullable: true })
+  updatedAt?: DateTimeFilterType | null;
 
-  @Field(() => DateFilterType, { nullable: true })
-  deletedAt?: DateFilterType | null;
+  @Field(() => DateTimeFilterType, { nullable: true })
+  deletedAt?: DateTimeFilterType | null;
 }
 
 @InputType('UUIDFilter')
@@ -74,33 +76,33 @@ class UUIDFilterType {
   is?: FilterIs;
 }
 
-@InputType('DateFilter')
-class DateFilterType {
-  @Field(() => DateScalarType, { nullable: true })
+@InputType('DateTimeFilter')
+class DateTimeFilterType {
+  @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
   eq?: Date;
 
-  @Field(() => DateScalarType, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
   gt?: Date;
 
-  @Field(() => DateScalarType, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
   gte?: Date;
 
-  @Field(() => [DateScalarType], { nullable: true })
+  @Field(() => [GraphQLISODateTime], { nullable: true })
   @IsOptional()
   in?: Date[];
 
-  @Field(() => DateScalarType, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
   lt?: Date;
 
-  @Field(() => DateScalarType, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
   lte?: Date;
 
-  @Field(() => DateScalarType, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
   neq?: Date;
 
