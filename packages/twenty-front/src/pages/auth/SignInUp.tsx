@@ -34,8 +34,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { type PublicWorkspaceDataOutput } from '~/generated/graphql';
 import { Loader } from 'twenty-ui/feedback';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { captchaState } from '@/client-config/states/captchaState';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 
 const StyledLoaderContainer = styled.div`
   align-items: center;
@@ -83,14 +82,15 @@ const StandardContent = ({
 export const SignInUp = () => {
   const { t } = useLingui();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const captcha = useRecoilValue(captchaState);
+  const { isCaptchaReady } = useCaptcha();
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
-  const { loading } = useGetPublicWorkspaceDataByDomain();
+  const { loading: getPublicWorkspaceDataLoading } =
+    useGetPublicWorkspaceDataByDomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
     useWorkspaceFromInviteHash();
@@ -135,7 +135,7 @@ export const SignInUp = () => {
   ]);
 
   const signInUpForm = useMemo(() => {
-    if (loading || isUndefinedOrNull(captcha)) {
+    if (getPublicWorkspaceDataLoading || !isCaptchaReady()) {
       return (
         <StyledLoaderContainer>
           <Loader color="gray" />
@@ -183,11 +183,11 @@ export const SignInUp = () => {
       </>
     );
   }, [
-    captcha,
+    isCaptchaReady,
     isDefaultDomain,
     isMultiWorkspaceEnabled,
     isOnAWorkspace,
-    loading,
+    getPublicWorkspaceDataLoading,
     signInUpStep,
     workspacePublicData,
   ]);

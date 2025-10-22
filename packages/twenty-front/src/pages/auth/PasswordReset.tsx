@@ -151,7 +151,7 @@ export const PasswordReset = () => {
         return;
       }
 
-      const token = await readCaptchaToken();
+      const token = readCaptchaToken();
 
       await signInWithCredentialsInWorkspace(
         email || '',

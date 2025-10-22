@@ -193,7 +193,7 @@ export const SignInUpTOTPVerification = () => {
   const submitOTP = async (values: OTPFormValues) => {
     setIsLoading(true);
     try {
-      const captchaToken = await readCaptchaToken();
+      const captchaToken = readCaptchaToken();
 
       if (!loginToken) {
         return navigate(AppPath.SignInUp);

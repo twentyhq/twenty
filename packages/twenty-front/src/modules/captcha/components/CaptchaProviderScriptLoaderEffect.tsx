@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useLocation } from 'react-router-dom';
 
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
@@ -7,14 +7,16 @@ import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoad
 import { getCaptchaUrlByProvider } from '@/captcha/utils/getCaptchaUrlByProvider';
 import { captchaState } from '@/client-config/states/captchaState';
 import { CaptchaDriverType } from '~/generated/graphql';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 export const CaptchaProviderScriptLoaderEffect = () => {
   const captcha = useRecoilValue(captchaState);
-  const [isCaptchaScriptLoaded, setIsCaptchaScriptLoaded] = useRecoilState(
+  const setIsCaptchaScriptLoaded = useSetRecoilState(
     isCaptchaScriptLoadedState,
   );
+  const { isCaptchaScriptLoaded, isCaptchaConfigured } = useCaptcha();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const location = useLocation();
 
@@ -60,9 +62,11 @@ export const CaptchaProviderScriptLoaderEffect = () => {
   ]);
 
   useEffect(() => {
-    if (isUndefinedOrNull(captcha?.provider) || !isCaptchaScriptLoaded) {
+    if (!isCaptchaConfigured || !isCaptchaScriptLoaded) {
       return;
     }
+
+    assertIsDefinedOrThrow(captcha);
 
     let refreshInterval: NodeJS.Timeout;
 

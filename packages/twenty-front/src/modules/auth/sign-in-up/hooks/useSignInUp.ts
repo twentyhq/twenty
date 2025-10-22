@@ -21,6 +21,8 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '../../hooks/useAuth';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -29,6 +31,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
+  const { isCaptchaReady } = useCaptcha();
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
 
   const location = useLocation();
 
@@ -60,17 +64,27 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const errorMsgUserAlreadyExist = t`An error occurred while checking user existence`;
   const continueWithCredentials = useCallback(async () => {
-    const token = await readCaptchaToken();
     if (!form.getValues('email')) {
-      return;
+      return enqueueErrorSnackBar({
+        message: t`Email is required`,
+      });
+    }
+    if (!isCaptchaReady()) {
+      return enqueueErrorSnackBar({
+        message: t`Captcha is required`,
+      });
     }
     try {
+      const token = readCaptchaToken();
+
       const { data, error } = await checkUserExistsQuery({
         variables: {
           email: form.getValues('email').toLowerCase().trim(),
           captchaToken: token,
         },
       });
+
+      await requestFreshCaptchaToken();
 
       if (isDefined(error)) {
         return enqueueErrorSnackBar({ apolloError: error });
@@ -88,16 +102,19 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   }, [
     readCaptchaToken,
     form,
-    checkUserExistsQuery,
+    isCaptchaReady,
     enqueueErrorSnackBar,
-    setSignInUpStep,
+    t,
+    checkUserExistsQuery,
+    requestFreshCaptchaToken,
     setSignInUpMode,
+    setSignInUpStep,
     errorMsgUserAlreadyExist,
   ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
-      const token = await readCaptchaToken();
+      const token = readCaptchaToken();
       try {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
