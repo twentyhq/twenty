@@ -17,6 +17,8 @@ export type { AvatarSize } from './avatar/types/AvatarSize';
 export type { AvatarType } from './avatar/types/AvatarType';
 export type { BannerVariant } from './banner/components/Banner';
 export { Banner } from './banner/components/Banner';
+export type { SidePanelInformationBannerProps } from './banner/components/SidePanelInformationBanner';
+export { SidePanelInformationBanner } from './banner/components/SidePanelInformationBanner';
 export type { AnimatedCheckmarkProps } from './checkmark/components/AnimatedCheckmark';
 export { AnimatedCheckmark } from './checkmark/components/AnimatedCheckmark';
 export type { CheckmarkProps } from './checkmark/components/Checkmark';

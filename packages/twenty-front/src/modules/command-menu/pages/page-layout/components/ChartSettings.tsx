@@ -16,11 +16,13 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { isChartSettingDisabled } from '@/command-menu/pages/page-layout/utils/isChartSettingDisabled';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
+import { SidePanelInformationBanner } from 'twenty-ui/display';
 
 import { type GraphType, type PageLayoutWidget } from '~/generated/graphql';
 
@@ -89,7 +91,11 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
         currentGraphType={currentGraphType}
         setCurrentGraphType={handleGraphTypeChange}
       />
-      {hasWidgetTooManyGroups && <div>Too many groups</div>}
+      {hasWidgetTooManyGroups && (
+        <SidePanelInformationBanner
+          message={t`Max ${GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter`}
+        />
+      )}
       {chartSettings.map((group) => (
         <CommandGroup key={group.heading} heading={group.heading}>
           {group.items.map((item) => {
