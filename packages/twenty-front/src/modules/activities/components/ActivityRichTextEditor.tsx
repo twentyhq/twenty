@@ -411,6 +411,7 @@ export const ActivityRichTextEditor = ({
           focusId: activityId,
           globalHotkeysConfig: {
             enableGlobalHotkeysConflictingWithKeyboard: false,
+            enableGlobalHotkeysWithModifiers: false,
           },
         });
       },
