@@ -6,8 +6,8 @@ import { type WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { useEffect, useState } from 'react';
 
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -180,7 +180,7 @@ export const WorkflowEditActionDeleteRecord = ({
           />
         )}
       </WorkflowStepBody>
-      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

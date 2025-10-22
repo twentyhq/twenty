@@ -1,5 +1,6 @@
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { type WorkflowFilterAction } from '@/workflow/types/Workflow';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowEditActionFilterBody } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody';
 import { WorkflowEditActionFilterBodyEffect } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBodyEffect';
 import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/StepFilterGroupsComponentInstanceContext';
@@ -79,6 +80,7 @@ export const WorkflowEditActionFilter = ({
           />
         </StepFilterGroupsComponentInstanceContext.Provider>
       </StepFiltersComponentInstanceContext.Provider>
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };
