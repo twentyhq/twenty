@@ -16,8 +16,10 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { isChartSettingDisabled } from '@/command-menu/pages/page-layout/utils/isChartSettingDisabled';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 
 import { type GraphType, type PageLayoutWidget } from '~/generated/graphql';
@@ -72,6 +74,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   const chartSettings = GRAPH_TYPE_INFORMATION[currentGraphType].settings;
 
+  const hasWidgetTooManyGroups = useRecoilComponentValue(
+    hasWidgetTooManyGroupsComponentState,
+  );
+
   return (
     <CommandMenuList
       commandGroups={[]}
@@ -83,6 +89,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
         currentGraphType={currentGraphType}
         setCurrentGraphType={handleGraphTypeChange}
       />
+      {hasWidgetTooManyGroups && <div>Too many groups</div>}
       {chartSettings.map((group) => (
         <CommandGroup key={group.heading} heading={group.heading}>
           {group.items.map((item) => {
