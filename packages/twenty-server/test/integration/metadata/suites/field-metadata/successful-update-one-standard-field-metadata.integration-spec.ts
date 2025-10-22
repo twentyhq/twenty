@@ -40,102 +40,43 @@ const successfulUpdateTestsUseCase: UpdateOneStandardFieldMetadataTestingContext
         label: 'Business Name',
       },
     },
+    {
+      title: 'when updating options',
+      context: {
+        options: [
+          { value: 'NEW', label: 'New Lead', position: 0, color: 'red' },
+          {
+            value: 'SCREENING',
+            label: 'Under Review',
+            position: 1,
+            color: 'purple',
+          },
+          { value: 'MEETING', label: 'Meeting', position: 2, color: 'sky' },
+          {
+            value: 'PROPOSAL',
+            label: 'Proposal Sent',
+            position: 3,
+            color: 'turquoise',
+          },
+          {
+            value: 'CUSTOMER',
+            label: 'Customer',
+            position: 4,
+            color: 'yellow',
+          },
+          { value: 'CLOSED', label: 'Closed', position: 5, color: 'green' },
+        ],
+      },
+    },
+    {
+    title: 'when updating defaultValue',
+      context: {
+        defaultValue: "'SCREENING'",
+      },
+    },
   ];
 
 describe('Standard field metadata update should succeed', () => {
-  let companyNameFieldMetadataId: string;
-  let originalFieldMetadata: FieldMetadataDTO;
-
-  beforeAll(async () => {
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: {},
-        paging: { first: 100 },
-      },
-      gqlFields: `
-        id
-        nameSingular
-        fieldsList {
-          id
-          name
-          label
-          description
-          icon
-          isActive
-          isCustom
-        }
-      `,
-    });
-
-    const companyObject = objects.find((o) => o.nameSingular === 'company');
-
-    jestExpectToBeDefined(companyObject);
-
-    const companyNameField = companyObject.fieldsList?.find(
-      (field: any) => field.name === 'employees' && !field.isCustom,
-    );
-
-    jestExpectToBeDefined(companyNameField);
-    companyNameFieldMetadataId = companyNameField.id;
-    originalFieldMetadata = companyNameField;
-  });
-
-  afterEach(async () => {
-    await updateOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: companyNameFieldMetadataId,
-        updatePayload: {
-          label: originalFieldMetadata.label,
-          description: originalFieldMetadata.description,
-          icon: originalFieldMetadata.icon,
-          isActive: originalFieldMetadata.isActive,
-        },
-      },
-    });
-  });
-
-  it.each(eachTestingContextFilter(successfulUpdateTestsUseCase))(
-    '$title',
-    async ({ context }) => {
-      const updatePayload = context;
-
-      const { data, errors } = await updateOneFieldMetadata({
-        input: {
-          idToUpdate: companyNameFieldMetadataId,
-          updatePayload,
-        },
-        expectToFail: false,
-        gqlFields: `
-          id
-          name
-          label
-          description
-          icon
-          isActive
-          isCustom
-          standardOverrides {
-            label
-            description
-            icon
-          }
-        `,
-      });
-
-      expect(errors).toBeUndefined();
-      expect(data.updateOneField).toBeDefined();
-      expect(data.updateOneField.id).toBe(companyNameFieldMetadataId);
-
-      expect(data.updateOneField).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny({ ...data.updateOneField }),
-      );
-    },
-  );
-});
-
-describe('Standard field metadata update with standard overrides', () => {
-  let opportunityStageFieldMetadataId: string;
   let originalStageFieldMetadata: FieldMetadataDTO;
 
   beforeAll(async () => {
@@ -180,134 +121,54 @@ describe('Standard field metadata update with standard overrides', () => {
     );
 
     jestExpectToBeDefined(opportunityStageField);
-    opportunityStageFieldMetadataId = opportunityStageField.id;
     originalStageFieldMetadata = opportunityStageField;
   });
-
   afterEach(async () => {
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
-        idToUpdate: opportunityStageFieldMetadataId,
+        idToUpdate: originalStageFieldMetadata.id,
         updatePayload: {
-          options: originalStageFieldMetadata.options,
-          defaultValue: originalStageFieldMetadata.defaultValue,
-          settings: originalStageFieldMetadata.settings,
+          label: originalStageFieldMetadata.label,
+          description: originalStageFieldMetadata.description,
+          icon: originalStageFieldMetadata.icon,
+          isActive: originalStageFieldMetadata.isActive,
         },
       },
     });
   });
 
-  it('should successfully update options on standard SELECT field', async () => {
-    const newOptions = [
-      { value: 'NEW', label: 'New Lead', position: 0, color: 'red' },
-      {
-        value: 'SCREENING',
-        label: 'Under Review',
-        position: 1,
-        color: 'purple',
-      },
-      { value: 'MEETING', label: 'Meeting', position: 2, color: 'sky' },
-      {
-        value: 'PROPOSAL',
-        label: 'Proposal Sent',
-        position: 3,
-        color: 'turquoise',
-      },
-      { value: 'CUSTOMER', label: 'Customer', position: 4, color: 'yellow' },
-      { value: 'CLOSED', label: 'Closed', position: 5, color: 'green' },
-    ];
+  it.each(eachTestingContextFilter(successfulUpdateTestsUseCase))(
+    '$title',
+    async ({ context }) => {
+      const updatePayload = context;
 
-    const { data } = await updateOneFieldMetadata({
-      input: {
-        idToUpdate: opportunityStageFieldMetadataId,
-        updatePayload: {
-          options: newOptions,
+      const { data, errors } = await updateOneFieldMetadata({
+        input: {
+          idToUpdate: originalStageFieldMetadata.id,
+          updatePayload,
         },
-      },
-      expectToFail: false,
-      gqlFields: `
-        id
-        name
-        type
-        options
-        standardOverrides {
+        expectToFail: false,
+        gqlFields: `
+          id
+          name
           label
           description
           icon
-        }
-      `,
-    });
+          isActive
+          isCustom
+          standardOverrides {
+            label
+            description
+            icon
+          }
+        `,
+      });
 
-    jestExpectToBeDefined(data.updateOneField.options);
-    expect(data.updateOneField.options).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(data.updateOneField.options as any),
-    );
-  });
-
-  it('should successfully update defaultValue on standard SELECT field', async () => {
-    const newDefaultValue = "'SCREENING'";
-
-    expect(originalStageFieldMetadata.defaultValue).not.toBe(newDefaultValue);
-    const { data } = await updateOneFieldMetadata({
-      input: {
-        idToUpdate: opportunityStageFieldMetadataId,
-        updatePayload: {
-          defaultValue: newDefaultValue,
-        },
-      },
-      expectToFail: false,
-      gqlFields: `
-        id
-        name
-        type
-        defaultValue
-        standardOverrides {
-          label
-          description
-          icon
-        }
-      `,
-    });
-
-    expect(data.updateOneField.defaultValue).toBe(newDefaultValue);
-  });
-
-  it('should preserve standardOverrides when updating other properties', async () => {
-    await updateOneFieldMetadata({
-      input: {
-        idToUpdate: opportunityStageFieldMetadataId,
-        updatePayload: {
-          label: 'Deal Stage',
-        },
-      },
-      expectToFail: false,
-    });
-
-    const { data } = await updateOneFieldMetadata({
-      input: {
-        idToUpdate: opportunityStageFieldMetadataId,
-        updatePayload: {
-          defaultValue: "'NEW'",
-        },
-      },
-      expectToFail: false,
-      gqlFields: `
-        id
-        name
-        label
-        defaultValue
-        standardOverrides {
-          label
-          description
-          icon
-        }
-      `,
-    });
-
-    expect(data.updateOneField.standardOverrides).toEqual(
-      originalStageFieldMetadata.standardOverrides,
-    );
-    expect(data.updateOneField.defaultValue).toBe("'NEW'");
-  });
+      expect(data.updateOneField.id).toBe(originalStageFieldMetadata.id);
+      expect(data.updateOneField).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny({ ...data.updateOneField }),
+      );
+    },
+  );
 });

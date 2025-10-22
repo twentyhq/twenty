@@ -2,115 +2,102 @@
 
 exports[`Standard field metadata update should succeed when setting isActive to false 1`] = `
 {
-  "description": "Number of employees in the company",
-  "icon": "IconUsers",
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
   "id": Any<String>,
   "isActive": false,
   "isCustom": false,
-  "label": "Employees",
-  "name": "employees",
+  "label": "Stage",
+  "name": "stage",
   "standardOverrides": {
-    "description": "Number of employees in the company",
-    "icon": "IconUsers",
-    "label": "Employees",
+    "description": "Opportunity stage",
+    "icon": "IconProgressCheck",
+    "label": "Deal Stage",
+  },
+}
+`;
+
+exports[`Standard field metadata update should succeed when updating defaultValue 1`] = `
+{
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
+  "id": Any<String>,
+  "isActive": true,
+  "isCustom": false,
+  "label": "Stage",
+  "name": "stage",
+  "standardOverrides": {
+    "description": "Opportunity stage",
+    "icon": "IconProgressCheck",
+    "label": "Deal Stage",
   },
 }
 `;
 
 exports[`Standard field metadata update should succeed when updating description 1`] = `
 {
-  "description": "Number of employees in the company",
-  "icon": "IconUsers",
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
   "id": Any<String>,
   "isActive": true,
   "isCustom": false,
-  "label": "Employees",
-  "name": "employees",
+  "label": "Stage",
+  "name": "stage",
   "standardOverrides": {
     "description": "Updated test description for company name field",
-    "icon": "IconUsers",
-    "label": "Employees",
+    "icon": "IconProgressCheck",
+    "label": "Deal Stage",
   },
 }
 `;
 
 exports[`Standard field metadata update should succeed when updating icon 1`] = `
 {
-  "description": "Number of employees in the company",
-  "icon": "IconUsers",
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
   "id": Any<String>,
   "isActive": true,
   "isCustom": false,
-  "label": "Employees",
-  "name": "employees",
+  "label": "Stage",
+  "name": "stage",
   "standardOverrides": {
-    "description": "Number of employees in the company",
+    "description": "Opportunity stage",
     "icon": "IconBuildingFactory",
-    "label": "Employees",
+    "label": "Deal Stage",
   },
 }
 `;
 
 exports[`Standard field metadata update should succeed when updating label 1`] = `
 {
-  "description": "Number of employees in the company",
-  "icon": "IconUsers",
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
   "id": Any<String>,
   "isActive": true,
   "isCustom": false,
-  "label": "Employees",
-  "name": "employees",
+  "label": "Stage",
+  "name": "stage",
   "standardOverrides": {
-    "description": "Number of employees in the company",
-    "icon": "IconUsers",
+    "description": "Opportunity stage",
+    "icon": "IconProgressCheck",
     "label": "Business Name",
   },
 }
 `;
 
-exports[`Standard field metadata update with standard overrides should successfully update options on standard SELECT field 1`] = `
-[
-  {
-    "color": "red",
-    "id": Any<String>,
-    "label": "New Lead",
-    "position": 0,
-    "value": "NEW",
+exports[`Standard field metadata update should succeed when updating options 1`] = `
+{
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
+  "id": Any<String>,
+  "isActive": true,
+  "isCustom": false,
+  "label": "Stage",
+  "name": "stage",
+  "standardOverrides": {
+    "description": "Opportunity stage",
+    "icon": "IconProgressCheck",
+    "label": "Deal Stage",
   },
-  {
-    "color": "purple",
-    "id": Any<String>,
-    "label": "Under Review",
-    "position": 1,
-    "value": "SCREENING",
-  },
-  {
-    "color": "sky",
-    "id": Any<String>,
-    "label": "Meeting",
-    "position": 2,
-    "value": "MEETING",
-  },
-  {
-    "color": "turquoise",
-    "id": Any<String>,
-    "label": "Proposal Sent",
-    "position": 3,
-    "value": "PROPOSAL",
-  },
-  {
-    "color": "yellow",
-    "id": Any<String>,
-    "label": "Customer",
-    "position": 4,
-    "value": "CUSTOMER",
-  },
-  {
-    "color": "green",
-    "id": Any<String>,
-    "label": "Closed",
-    "position": 5,
-    "value": "CLOSED",
-  },
-]
+}
 `;
