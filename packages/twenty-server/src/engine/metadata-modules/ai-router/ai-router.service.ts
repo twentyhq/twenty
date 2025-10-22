@@ -109,7 +109,8 @@ export class AiRouterService {
 
   private getRouterModel(modelId: ModelId) {
     if (modelId === 'auto') {
-      const registeredModel = this.aiModelRegistryService.getDefaultModel();
+      const registeredModel =
+        this.aiModelRegistryService.getDefaultSpeedModel();
 
       if (!registeredModel) {
         throw new Error('No router model available');
