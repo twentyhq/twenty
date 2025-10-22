@@ -14,7 +14,6 @@ import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObj
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
-import { useCallback } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
@@ -74,95 +73,76 @@ export const useIncrementalDestroyManyRecords = <T>({
       recordGqlFields: { id: true },
     });
 
-  const destroyManyRecordsBatch = useCallback(
-    async (recordIdsToDestroy: string[]) => {
-      const numberOfBatches = Math.ceil(
-        recordIdsToDestroy.length / mutationPageSize,
+  const destroyManyRecordsBatch = async (recordIdsToDestroy: string[]) => {
+    const numberOfBatches = Math.ceil(
+      recordIdsToDestroy.length / mutationPageSize,
+    );
+
+    for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
+      const batchedIdsToDestroy = recordIdsToDestroy.slice(
+        batchIndex * mutationPageSize,
+        (batchIndex + 1) * mutationPageSize,
       );
 
-      for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
-        const batchedIdsToDestroy = recordIdsToDestroy.slice(
-          batchIndex * mutationPageSize,
-          (batchIndex + 1) * mutationPageSize,
-        );
+      const cachedRecords = batchedIdsToDestroy
+        .map((recordId) => getRecordFromCache(recordId, apolloCoreClient.cache))
+        .filter(isDefined);
 
-        const cachedRecords = batchedIdsToDestroy
-          .map((recordId) =>
-            getRecordFromCache(recordId, apolloCoreClient.cache),
-          )
-          .filter(isDefined);
-
-        await apolloCoreClient
-          .mutate<Record<string, ObjectRecord[]>>({
-            mutation: destroyManyRecordsMutation,
-            variables: {
-              filter: { id: { in: batchedIdsToDestroy } },
-            },
-            optimisticResponse: skipOptimisticEffect
-              ? undefined
-              : {
-                  [mutationResponseField]: batchedIdsToDestroy.map(
-                    (idToDestroy) => ({
-                      __typename: capitalize(objectNameSingular),
-                      id: idToDestroy,
-                    }),
-                  ),
-                },
-            update: (cache, { data }) => {
-              if (skipOptimisticEffect) {
-                return;
-              }
-              const records = data?.[mutationResponseField];
-
-              if (!isDefined(records) || records.length === 0) return;
-
-              // Use cachedRecords from the outer scope instead of re-fetching
-              triggerDestroyRecordsOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                recordsToDestroy: cachedRecords,
-                objectMetadataItems,
-                upsertRecordsInStore,
-                objectPermissionsByObjectMetadataId,
-              });
-            },
-          })
-          .catch((error: Error) => {
-            if (cachedRecords.length > 0 && !skipOptimisticEffect) {
-              triggerCreateRecordsOptimisticEffect({
-                cache: apolloCoreClient.cache,
-                objectMetadataItem,
-                recordsToCreate: cachedRecords,
-                objectMetadataItems,
-                objectPermissionsByObjectMetadataId,
-                upsertRecordsInStore,
-              });
+      await apolloCoreClient
+        .mutate<Record<string, ObjectRecord[]>>({
+          mutation: destroyManyRecordsMutation,
+          variables: {
+            filter: { id: { in: batchedIdsToDestroy } },
+          },
+          optimisticResponse: skipOptimisticEffect
+            ? undefined
+            : {
+                [mutationResponseField]: batchedIdsToDestroy.map(
+                  (idToDestroy) => ({
+                    __typename: capitalize(objectNameSingular),
+                    id: idToDestroy,
+                  }),
+                ),
+              },
+          update: (cache, { data }) => {
+            if (skipOptimisticEffect) {
+              return;
             }
-            throw error;
-          });
+            const records = data?.[mutationResponseField];
 
-        if (delayInMsBetweenMutations > 0) {
-          await sleep(delayInMsBetweenMutations);
-        }
+            if (!isDefined(records) || records.length === 0) return;
+
+            triggerDestroyRecordsOptimisticEffect({
+              cache,
+              objectMetadataItem,
+              recordsToDestroy: cachedRecords,
+              objectMetadataItems,
+              upsertRecordsInStore,
+              objectPermissionsByObjectMetadataId,
+            });
+          },
+        })
+        .catch((error: Error) => {
+          if (cachedRecords.length > 0 && !skipOptimisticEffect) {
+            triggerCreateRecordsOptimisticEffect({
+              cache: apolloCoreClient.cache,
+              objectMetadataItem,
+              recordsToCreate: cachedRecords,
+              objectMetadataItems,
+              objectPermissionsByObjectMetadataId,
+              upsertRecordsInStore,
+            });
+          }
+          throw error;
+        });
+
+      if (delayInMsBetweenMutations > 0) {
+        await sleep(delayInMsBetweenMutations);
       }
-    },
-    [
-      apolloCoreClient,
-      destroyManyRecordsMutation,
-      getRecordFromCache,
-      mutationPageSize,
-      mutationResponseField,
-      objectMetadataItem,
-      objectMetadataItems,
-      objectNameSingular,
-      objectPermissionsByObjectMetadataId,
-      skipOptimisticEffect,
-      upsertRecordsInStore,
-      delayInMsBetweenMutations,
-    ],
-  );
+    }
+  };
 
-  const incrementalDestroyManyRecords = useCallback(async () => {
+  const incrementalDestroyManyRecords = async () => {
     let totalDestroyedCount = 0;
 
     await incrementalFetchAndMutate(async ({ recordIds, totalCount }) => {
@@ -180,14 +160,7 @@ export const useIncrementalDestroyManyRecords = <T>({
     });
 
     return totalDestroyedCount;
-  }, [
-    incrementalFetchAndMutate,
-    destroyManyRecordsBatch,
-    updateProgress,
-    refetchAggregateQueries,
-    registerObjectOperation,
-    objectNameSingular,
-  ]);
+  };
 
   return { incrementalDestroyManyRecords, progress, isProcessing };
 };

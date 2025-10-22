@@ -1,6 +1,7 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
-import { useActionWithProgress } from '@/action-menu/hooks/useActionWithProgress';
+import { computeProgressText } from '@/action-menu/utils/computeProgressText';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -13,7 +14,10 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const DestroyMultipleRecordsAction = () => {
   const { recordIndexId, objectMetadataItem } =
@@ -71,11 +75,23 @@ export const DestroyMultipleRecordsAction = () => {
       skipOptimisticEffect: true,
     });
 
-  const { actionConfigWithProgress } = useActionWithProgress(progress);
+  const actionConfig = useContext(ActionConfigContext);
 
-  if (!actionConfigWithProgress) {
+  if (!isDefined(actionConfig)) {
     return null;
   }
+
+  const originalLabel = getActionLabel(actionConfig.label);
+
+  const originalShortLabel = getActionLabel(actionConfig.shortLabel ?? '');
+
+  const progressText = computeProgressText(progress);
+
+  const actionConfigWithProgress = {
+    ...actionConfig,
+    label: `${originalLabel}${progressText}`,
+    shortLabel: `${originalShortLabel}${progressText}`,
+  };
 
   const handleDestroyClick = async () => {
     resetTableRowSelection();
@@ -85,10 +101,10 @@ export const DestroyMultipleRecordsAction = () => {
   return (
     <ActionConfigContext.Provider value={actionConfigWithProgress}>
       <ActionModal
-        title="Permanently Destroy Records"
-        subtitle="Are you sure you want to destroy these records? They won't be recoverable anymore."
+        title={t`Permanently Destroy Records`}
+        subtitle={t`Are you sure you want to destroy these records? They won't be recoverable anymore.`}
         onConfirmClick={handleDestroyClick}
-        confirmButtonText="Destroy Records"
+        confirmButtonText={t`Destroy Records`}
       />
     </ActionConfigContext.Provider>
   );

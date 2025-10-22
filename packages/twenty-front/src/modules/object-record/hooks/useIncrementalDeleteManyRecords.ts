@@ -130,25 +130,66 @@ export const useIncrementalDeleteManyRecords = <T>({
     ],
   );
 
-  const deleteManyRecordsBatch = useCallback(
-    async (recordIdsToDelete: string[]) => {
-      const numberOfBatches = Math.ceil(
-        recordIdsToDelete.length / mutationPageSize,
+  const deleteManyRecordsBatch = async (recordIdsToDelete: string[]) => {
+    const numberOfBatches = Math.ceil(
+      recordIdsToDelete.length / mutationPageSize,
+    );
+
+    for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
+      const batchedIdsToDelete = recordIdsToDelete.slice(
+        batchIndex * mutationPageSize,
+        (batchIndex + 1) * mutationPageSize,
       );
 
-      for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
-        const batchedIdsToDelete = recordIdsToDelete.slice(
-          batchIndex * mutationPageSize,
-          (batchIndex + 1) * mutationPageSize,
-        );
+      const cachedRecords = batchedIdsToDelete
+        .map((idToDelete) =>
+          getRecordFromCache(idToDelete, apolloCoreClient.cache),
+        )
+        .filter(isDefined);
 
-        const cachedRecords = batchedIdsToDelete
-          .map((idToDelete) =>
-            getRecordFromCache(idToDelete, apolloCoreClient.cache),
-          )
-          .filter(isDefined);
+      if (!skipOptimisticEffect) {
+        const currentTimestamp = new Date().toISOString();
+        const { cachedRecordsNode, computedOptimisticRecordsNode } =
+          buildOptimisticRecordNodes(cachedRecords, currentTimestamp);
 
-        if (!skipOptimisticEffect) {
+        triggerUpdateRecordOptimisticEffectByBatch({
+          cache: apolloCoreClient.cache,
+          objectMetadataItem,
+          currentRecords: cachedRecordsNode,
+          updatedRecords: computedOptimisticRecordsNode,
+          objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
+          upsertRecordsInStore,
+        });
+      }
+
+      await apolloCoreClient
+        .mutate<Record<string, ObjectRecord[]>>({
+          mutation: deleteManyRecordsMutation,
+          variables: {
+            filter: { id: { in: batchedIdsToDelete } },
+          },
+        })
+        .catch((error: Error) => {
+          if (skipOptimisticEffect) {
+            throw error;
+          }
+
+          const recordGqlFields = {
+            deletedAt: true,
+          };
+
+          cachedRecords.forEach((cachedRecord) => {
+            updateRecordFromCache({
+              objectMetadataItems,
+              objectMetadataItem,
+              cache: apolloCoreClient.cache,
+              record: { ...cachedRecord, deletedAt: null },
+              recordGqlFields,
+              objectPermissionsByObjectMetadataId,
+            });
+          });
+
           const currentTimestamp = new Date().toISOString();
           const { cachedRecordsNode, computedOptimisticRecordsNode } =
             buildOptimisticRecordNodes(cachedRecords, currentTimestamp);
@@ -156,79 +197,23 @@ export const useIncrementalDeleteManyRecords = <T>({
           triggerUpdateRecordOptimisticEffectByBatch({
             cache: apolloCoreClient.cache,
             objectMetadataItem,
-            currentRecords: cachedRecordsNode,
-            updatedRecords: computedOptimisticRecordsNode,
+            currentRecords: computedOptimisticRecordsNode,
+            updatedRecords: cachedRecordsNode,
             objectMetadataItems,
             objectPermissionsByObjectMetadataId,
             upsertRecordsInStore,
           });
-        }
 
-        await apolloCoreClient
-          .mutate<Record<string, ObjectRecord[]>>({
-            mutation: deleteManyRecordsMutation,
-            variables: {
-              filter: { id: { in: batchedIdsToDelete } },
-            },
-          })
-          .catch((error: Error) => {
-            if (skipOptimisticEffect) {
-              throw error;
-            }
+          throw error;
+        });
 
-            const recordGqlFields = {
-              deletedAt: true,
-            };
-
-            cachedRecords.forEach((cachedRecord) => {
-              updateRecordFromCache({
-                objectMetadataItems,
-                objectMetadataItem,
-                cache: apolloCoreClient.cache,
-                record: { ...cachedRecord, deletedAt: null },
-                recordGqlFields,
-                objectPermissionsByObjectMetadataId,
-              });
-            });
-
-            const currentTimestamp = new Date().toISOString();
-            const { cachedRecordsNode, computedOptimisticRecordsNode } =
-              buildOptimisticRecordNodes(cachedRecords, currentTimestamp);
-
-            triggerUpdateRecordOptimisticEffectByBatch({
-              cache: apolloCoreClient.cache,
-              objectMetadataItem,
-              currentRecords: computedOptimisticRecordsNode,
-              updatedRecords: cachedRecordsNode,
-              objectMetadataItems,
-              objectPermissionsByObjectMetadataId,
-              upsertRecordsInStore,
-            });
-
-            throw error;
-          });
-
-        if (delayInMsBetweenMutations > 0) {
-          await sleep(delayInMsBetweenMutations);
-        }
+      if (delayInMsBetweenMutations > 0) {
+        await sleep(delayInMsBetweenMutations);
       }
-    },
-    [
-      apolloCoreClient,
-      buildOptimisticRecordNodes,
-      deleteManyRecordsMutation,
-      getRecordFromCache,
-      mutationPageSize,
-      objectMetadataItem,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-      skipOptimisticEffect,
-      upsertRecordsInStore,
-      delayInMsBetweenMutations,
-    ],
-  );
+    }
+  };
 
-  const incrementalDeleteManyRecords = useCallback(async () => {
+  const incrementalDeleteManyRecords = async () => {
     let totalDeletedCount = 0;
 
     await incrementalFetchAndMutate(async ({ recordIds, totalCount }) => {
@@ -246,14 +231,7 @@ export const useIncrementalDeleteManyRecords = <T>({
     });
 
     return totalDeletedCount;
-  }, [
-    incrementalFetchAndMutate,
-    deleteManyRecordsBatch,
-    updateProgress,
-    refetchAggregateQueries,
-    registerObjectOperation,
-    objectNameSingular,
-  ]);
+  };
 
   return { incrementalDeleteManyRecords, progress, isProcessing };
 };

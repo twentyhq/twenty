@@ -1,6 +1,7 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
-import { useActionWithProgress } from '@/action-menu/hooks/useActionWithProgress';
+import { computeProgressText } from '@/action-menu/utils/computeProgressText';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -14,6 +15,8 @@ import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const DeleteMultipleRecordsAction = () => {
   const { recordIndexId, objectMetadataItem } =
@@ -65,11 +68,23 @@ export const DeleteMultipleRecordsAction = () => {
       skipOptimisticEffect: true,
     });
 
-  const { actionConfigWithProgress } = useActionWithProgress(progress);
+  const actionConfig = useContext(ActionConfigContext);
 
-  if (!actionConfigWithProgress) {
+  if (!isDefined(actionConfig)) {
     return null;
   }
+
+  const originalLabel = getActionLabel(actionConfig.label);
+
+  const originalShortLabel = getActionLabel(actionConfig.shortLabel ?? '');
+
+  const progressText = computeProgressText(progress);
+
+  const actionConfigWithProgress = {
+    ...actionConfig,
+    label: `${originalLabel}${progressText}`,
+    shortLabel: `${originalShortLabel}${progressText}`,
+  };
 
   const handleDeleteClick = async () => {
     resetTableRowSelection();
@@ -79,10 +94,10 @@ export const DeleteMultipleRecordsAction = () => {
   return (
     <ActionConfigContext.Provider value={actionConfigWithProgress}>
       <ActionModal
-        title="Delete Records"
+        title={t`Delete Records`}
         subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
         onConfirmClick={handleDeleteClick}
-        confirmButtonText="Delete Records"
+        confirmButtonText={t`Delete Records`}
       />
     </ActionConfigContext.Provider>
   );

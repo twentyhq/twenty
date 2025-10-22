@@ -1,12 +1,15 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
-import { useActionWithProgress } from '@/action-menu/hooks/useActionWithProgress';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
+import { computeProgressText } from '@/action-menu/utils/computeProgressText';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ExportMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
@@ -38,11 +41,23 @@ export const ExportMultipleRecordsAction = () => {
       }
     : undefined;
 
-  const { actionConfigWithProgress } = useActionWithProgress(exportProgress);
+  const actionConfig = useContext(ActionConfigContext);
 
-  if (!actionConfigWithProgress) {
+  if (!isDefined(actionConfig)) {
     return null;
   }
+
+  const originalLabel = getActionLabel(actionConfig.label);
+
+  const originalShortLabel = getActionLabel(actionConfig.shortLabel ?? '');
+
+  const progressText = computeProgressText(exportProgress);
+
+  const actionConfigWithProgress = {
+    ...actionConfig,
+    label: `${originalLabel}${progressText}`,
+    shortLabel: `${originalShortLabel}${progressText}`,
+  };
 
   const handleClick = async () => {
     try {
