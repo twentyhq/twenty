@@ -7,7 +7,7 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 
-import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 
 type UpdateOneStandardFieldMetadataTestingContext = EachTestingContext<
@@ -123,7 +123,6 @@ describe('Standard field metadata update should succeed', () => {
       expect(data.updateOneField).toBeDefined();
       expect(data.updateOneField.id).toBe(companyNameFieldMetadataId);
 
-      console.log(data.updateOneField);
       expect(data.updateOneField).toMatchSnapshot(
         extractRecordIdsAndDatesAsExpectAny({ ...data.updateOneField }),
       );
@@ -245,6 +244,7 @@ describe('Standard field metadata update with standard overrides', () => {
 
   it('should successfully update defaultValue on standard SELECT field', async () => {
     const newDefaultValue = "'SCREENING'";
+
     expect(originalStageFieldMetadata.defaultValue).not.toBe(newDefaultValue);
     const { data } = await updateOneFieldMetadata({
       input: {
