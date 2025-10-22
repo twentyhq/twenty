@@ -28,15 +28,9 @@ export class RestApiDeleteManyHandler extends RestApiBaseHandler {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       await this.buildCommonOptions(request);
 
-    const selectedFields = await this.computeSelectedFields({
-      objectMetadataMapItem: objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-      authContext,
-    });
-
     try {
       const records = await this.commonDeleteManyQueryRunnerService.execute(
-        { filter, selectedFields },
+        { filter, selectedFields: { id: true } },
         {
           authContext,
           objectMetadataMaps,
