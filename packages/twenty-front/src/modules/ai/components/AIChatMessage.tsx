@@ -51,7 +51,9 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   max-width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  white-space: pre-wrap;
+  /* Pre-wrap within the whole container turns every newline between block
+     elements into extra spacing; keep normal flow and only pre-wrap code. */
+  white-space: normal;
 
   code {
     overflow: auto;
