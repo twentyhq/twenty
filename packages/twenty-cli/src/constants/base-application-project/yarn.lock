@@ -19,14 +19,14 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
-    twenty-sdk: "npm:0.0.2-alpha"
+    twenty-sdk: "npm:^0.0.2"
   languageName: unknown
   linkType: soft
 
-"twenty-sdk@npm:0.0.2-alpha":
-  version: 0.0.2-alpha
-  resolution: "twenty-sdk@npm:0.0.2-alpha"
-  checksum: 10c0/73b35ec2d71608028d5bc4878e556ce103063e93ebc9391b1c10159c35af808ce3b94ac3354709a858039101c03d0dc3a2c1ad95aa916ba2ce348ab2391ada77
+"twenty-sdk@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "twenty-sdk@npm:0.0.2"
+  checksum: 10c0/99e6fe86059d847b548c1f03e0f0c59a4d540caf1d28dd4500f1f5f0094196985ded955801274de9e72ff03e3d1f41e9a509b4c2c5a02ffc8a027277b1e35d8e
   languageName: node
   linkType: hard
 
