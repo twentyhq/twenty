@@ -1,19 +1,21 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Select } from '@/ui/input/components/Select';
-import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 
+import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from './InternalDatePicker';
+} from './DateTimePicker';
+
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { parse } from 'date-fns';
+import { useRecoilValue } from 'recoil';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 const StyledCustomDatePickerHeader = styled.div`
   align-items: center;
@@ -31,20 +33,19 @@ const years = Array.from(
   (_, i) => new Date().getFullYear() + 50 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
 
-type AbsoluteDatePickerHeaderProps = {
-  date: Date;
-  onChange?: (date: Date | null) => void;
+type DatePickerHeaderProps = {
+  date: string;
+  onChange?: (date: string | null) => void;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;
   onAddMonth: () => void;
   onSubtractMonth: () => void;
   prevMonthButtonDisabled: boolean;
   nextMonthButtonDisabled: boolean;
-  isDateTimeInput?: boolean;
   hideInput?: boolean;
 };
 
-export const AbsoluteDatePickerHeader = ({
+export const DatePickerHeader = ({
   date,
   onChange,
   onChangeMonth,
@@ -53,32 +54,18 @@ export const AbsoluteDatePickerHeader = ({
   onSubtractMonth,
   prevMonthButtonDisabled,
   nextMonthButtonDisabled,
-  isDateTimeInput,
   hideInput = false,
-}: AbsoluteDatePickerHeaderProps) => {
+}: DatePickerHeaderProps) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const endOfDayInLocalTimezone = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    23,
-    59,
-    59,
-    999,
-  );
+  const dateParsed = parse(date, 'yyyy-MM-dd', new Date());
 
   return (
     <>
       {!hideInput && (
-        <DateTimeInput
-          date={date}
-          isDateTimeInput={isDateTimeInput}
-          onChange={onChange}
-        />
+        <DatePickerInput valueFromProps={date} onChange={onChange} />
       )}
-
       <StyledCustomDatePickerHeader>
         <ClickOutsideListenerContext.Provider
           value={{
@@ -89,7 +76,7 @@ export const AbsoluteDatePickerHeader = ({
             dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
             options={getMonthSelectOptions(userLocale)}
             onChange={onChangeMonth}
-            value={endOfDayInLocalTimezone.getMonth()}
+            value={dateParsed.getUTCMonth() + 1}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>
@@ -101,7 +88,7 @@ export const AbsoluteDatePickerHeader = ({
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
             onChange={onChangeYear}
-            value={endOfDayInLocalTimezone.getFullYear()}
+            value={dateParsed.getUTCFullYear() + 1}
             options={years}
             fullWidth
           />

@@ -31,7 +31,6 @@ export const RecordCalendarCardCellHoveredPortal = ({
 
   return (
     <RecordInlineCellAnchoredPortal
-      position={hoverPosition}
       fieldMetadataItem={hoveredFieldMetadataItem}
       objectMetadataItem={objectMetadataItem}
       recordId={recordId}

@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
-import { DatePicker } from '@/ui/input/components/internal/date/components/DatePicker';
 import {
+  DateTimePicker,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
@@ -11,23 +11,24 @@ import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocus
 import { useRecoilCallback } from 'recoil';
 import { type Nullable } from 'twenty-ui/utilities';
 
-export type DateInputProps = {
+export type DateTimeInputProps = {
   instanceId: string;
-  value: Nullable<string>;
-  onEnter: (newDate: Nullable<string>) => void;
-  onEscape: (newDate: Nullable<string>) => void;
+  value: Nullable<Date>;
+  onEnter: (newDateTime: Nullable<Date>) => void;
+  onEscape: (newDateTime: Nullable<Date>) => void;
   onClickOutside: (
     event: MouseEvent | TouchEvent,
-    newDate: Nullable<string>,
+    newDateTime: Nullable<Date>,
   ) => void;
   clearable?: boolean;
-  onChange?: (newDate: Nullable<string>) => void;
+  onChange?: (newDateTime: Nullable<Date>) => void;
+  isDateTimeInput?: boolean;
   onClear?: () => void;
-  onSubmit?: (newDate: Nullable<string>) => void;
+  onSubmit?: (newDateTime: Nullable<Date>) => void;
   hideHeaderInput?: boolean;
 };
 
-export const DateInput = ({
+export const DateTimeInput = ({
   instanceId,
   value,
   onEnter,
@@ -35,17 +36,18 @@ export const DateInput = ({
   onClickOutside,
   clearable,
   onChange,
+  isDateTimeInput,
   onClear,
   onSubmit,
   hideHeaderInput,
-}: DateInputProps) => {
+}: DateTimeInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const handleChange = (newDate: string | null) => {
-    setInternalValue(newDate);
-    onChange?.(newDate);
+  const handleChange = (newDateTime: Date | null) => {
+    setInternalValue(newDateTime);
+    onChange?.(newDateTime);
   };
 
   const handleClear = () => {
@@ -53,9 +55,9 @@ export const DateInput = ({
     onClear?.();
   };
 
-  const handleClose = (newDate: string | null) => {
-    setInternalValue(newDate);
-    onSubmit?.(newDate);
+  const handleClose = (newDateTime: Date | null) => {
+    setInternalValue(newDateTime);
+    onSubmit?.(newDateTime);
   };
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
@@ -112,7 +114,7 @@ export const DateInput = ({
 
   return (
     <div ref={wrapperRef}>
-      <DatePicker
+      <DateTimePicker
         date={internalValue ?? null}
         onChange={handleChange}
         onClose={handleClose}
@@ -121,6 +123,7 @@ export const DateInput = ({
         onEscape={onEscape}
         onClear={handleClear}
         hideHeaderInput={hideHeaderInput}
+        isDateTimeInput={true}
       />
     </div>
   );
