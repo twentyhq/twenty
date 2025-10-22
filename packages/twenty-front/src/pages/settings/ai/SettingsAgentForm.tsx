@@ -1,9 +1,7 @@
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -46,7 +44,6 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const navigateApp = useNavigateApp();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { openModal } = useModal();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
 
   const isEditMode = mode === 'edit';

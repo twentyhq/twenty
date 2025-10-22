@@ -1,5 +1,4 @@
 import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
@@ -11,7 +10,6 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { type AiAgentOutputSchema } from '@/workflow/workflow-variables/types/AiAgentOutputSchema';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
@@ -39,7 +37,6 @@ export const WorkflowEditActionAiAgent = ({
   action,
   actionOptions,
 }: WorkflowEditActionAiAgentProps) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { getIcon } = useIcons();
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
