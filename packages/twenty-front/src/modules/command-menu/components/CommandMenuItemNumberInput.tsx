@@ -8,8 +8,6 @@ import {
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
 
-const ERROR_STATE_WITHOUT_MESSAGE = '';
-
 type CommandMenuItemNumberInputProps = {
   value: string;
   onChange: (value: number | null) => void;
@@ -88,7 +86,6 @@ export const CommandMenuItemNumberInput = ({
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
-      error={hasError ? ERROR_STATE_WITHOUT_MESSAGE : undefined}
       noErrorHelper
     />
   );

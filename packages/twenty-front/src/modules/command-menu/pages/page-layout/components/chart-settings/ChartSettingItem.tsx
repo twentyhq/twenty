@@ -5,7 +5,7 @@ import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItem
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
-import { validateRangeValue } from '@/command-menu/pages/page-layout/utils/validateRangeValue';
+import { isMinMaxRangeValid } from '@/command-menu/pages/page-layout/utils/isMinMaxRangeValid';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { t } from '@lingui/core/macro';
@@ -68,7 +68,14 @@ export const ChartSettingItem = ({
               value={stringValue}
               onChange={onInputChange}
               onValidate={(value) =>
-                validateRangeValue(item.id, value, configuration)
+                isDefined(value) &&
+                isMinMaxRangeValid(
+                  item.id as
+                    | CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE
+                    | CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
+                  value,
+                  configuration,
+                )
               }
               placeholder={
                 item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
