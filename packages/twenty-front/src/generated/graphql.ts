@@ -1829,7 +1829,7 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
-  updateOneApplicationVariableEntity: Scalars['Boolean'];
+  updateOneApplicationVariable: Scalars['Boolean'];
   updateOneCronTrigger: CronTrigger;
   updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
@@ -2549,7 +2549,7 @@ export type MutationUpdateOneAgentArgs = {
 };
 
 
-export type MutationUpdateOneApplicationVariableEntityArgs = {
+export type MutationUpdateOneApplicationVariableArgs = {
   applicationId: Scalars['UUID'];
   key: Scalars['String'];
   value: Scalars['String'];

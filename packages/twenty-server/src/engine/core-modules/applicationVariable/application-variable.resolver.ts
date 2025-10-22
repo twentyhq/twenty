@@ -15,7 +15,7 @@ export class ApplicationVariableEntityResolver {
   ) {}
 
   @Mutation(() => Boolean)
-  async updateOneApplicationVariableEntity(
+  async updateOneApplicationVariable(
     @Args() { key, value, applicationId }: UpdateApplicationVariableEntityInput,
   ) {
     await this.applicationVariableService.update({ key, value, applicationId });
