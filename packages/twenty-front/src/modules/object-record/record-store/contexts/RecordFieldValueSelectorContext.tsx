@@ -40,7 +40,7 @@ export const useRecordFieldValue = <T,>(
               morphRelations: fieldDefinition.metadata.morphRelations,
             }) as any,
           )
-          .getValue();
+          .getValue() as T | undefined;
       },
     [recordId, fieldName, fieldDefinition],
   )();
