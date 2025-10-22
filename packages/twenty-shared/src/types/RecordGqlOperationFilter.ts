@@ -48,12 +48,18 @@ export type FloatFilter = {
   is?: IsFilter;
 };
 
-/**
- * Always use a DateFilter in the variables of a query, and never directly in the query.
- *
- * Because pg_graphql only works with ISO strings if it is passed to variables.
- */
 export type DateFilter = {
+  eq?: string;
+  gt?: string;
+  gte?: string;
+  in?: string[];
+  lt?: string;
+  lte?: string;
+  neq?: string;
+  is?: IsFilter;
+};
+
+export type DateTimeFilter = {
   eq?: string;
   gt?: string;
   gte?: string;
@@ -152,6 +158,7 @@ export type LeafFilter =
   | StringFilter
   | FloatFilter
   | DateFilter
+  | DateTimeFilter
   | CurrencyFilter
   | URLFilter
   | FullNameFilter

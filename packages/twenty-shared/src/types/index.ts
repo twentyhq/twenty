@@ -60,6 +60,7 @@ export type {
   RatingFilter,
   FloatFilter,
   DateFilter,
+  DateTimeFilter,
   CurrencyFilter,
   URLFilter,
   FullNameFilter,

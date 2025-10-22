@@ -38,6 +38,8 @@ import { resolveDateViewFilterValue } from '@/utils/filter/utils/resolveDateView
 import { endOfDay, format, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
+import { DATE_TYPE_FORMAT } from '@/constants';
+import { type DateTimeFilter } from '@/types/RecordGqlOperationFilter';
 import {
   checkIfShouldComputeEmptinessFilter,
   checkIfShouldSkipFiltering,
@@ -172,11 +174,9 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       const date =
         resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
 
-      const dayFormat = 'dd-MM-yyyy';
+      const dateAsDayString = format(date, DATE_TYPE_FORMAT);
 
-      const dateAsDayString = format(date, dayFormat);
-
-      const nowAsDayString = format(now, dayFormat);
+      const nowAsDayString = format(now, DATE_TYPE_FORMAT);
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS_AFTER: {
@@ -209,8 +209,8 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
 
           const { start, end } = dateRange ?? defaultDateRange;
 
-          const startAsDayString = format(start, dayFormat);
-          const endAsDayString = format(end, dayFormat);
+          const startAsDayString = format(start, DATE_TYPE_FORMAT);
+          const endAsDayString = format(end, DATE_TYPE_FORMAT);
 
           return {
             and: [
@@ -230,7 +230,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         case RecordFilterOperand.IS: {
           const isValid = resolvedFilterValue instanceof Date;
           const date = isValid ? resolvedFilterValue : now;
-          const dateAsDayString = format(date, dayFormat);
+          const dateAsDayString = format(date, DATE_TYPE_FORMAT);
 
           return {
             [correspondingFieldMetadataItem.name]: {
@@ -274,14 +274,14 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           return {
             [correspondingFieldMetadataItem.name]: {
               gt: date.toISOString(),
-            } as DateFilter,
+            } as DateTimeFilter,
           };
         }
         case RecordFilterOperand.IS_BEFORE: {
           return {
             [correspondingFieldMetadataItem.name]: {
               lt: date.toISOString(),
-            } as DateFilter,
+            } as DateTimeFilter,
           };
         }
         case RecordFilterOperand.IS_RELATIVE: {
@@ -305,12 +305,12 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               {
                 [correspondingFieldMetadataItem.name]: {
                   gte: start.toISOString(),
-                } as DateFilter,
+                } as DateTimeFilter,
               },
               {
                 [correspondingFieldMetadataItem.name]: {
                   lte: end.toISOString(),
-                } as DateFilter,
+                } as DateTimeFilter,
               },
             ],
           };
@@ -324,12 +324,12 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               {
                 [correspondingFieldMetadataItem.name]: {
                   lte: endOfDay(date).toISOString(),
-                } as DateFilter,
+                } as DateTimeFilter,
               },
               {
                 [correspondingFieldMetadataItem.name]: {
                   gte: startOfDay(date).toISOString(),
-                } as DateFilter,
+                } as DateTimeFilter,
               },
             ],
           };
@@ -338,13 +338,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           return {
             [correspondingFieldMetadataItem.name]: {
               lte: now.toISOString(),
-            } as DateFilter,
+            } as DateTimeFilter,
           };
         case RecordFilterOperand.IS_IN_FUTURE:
           return {
             [correspondingFieldMetadataItem.name]: {
               gte: now.toISOString(),
-            } as DateFilter,
+            } as DateTimeFilter,
           };
         case RecordFilterOperand.IS_TODAY: {
           return {
@@ -352,12 +352,12 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               {
                 [correspondingFieldMetadataItem.name]: {
                   lte: endOfDay(now).toISOString(),
-                } as DateFilter,
+                } as DateTimeFilter,
               },
               {
                 [correspondingFieldMetadataItem.name]: {
                   gte: startOfDay(now).toISOString(),
-                } as DateFilter,
+                } as DateTimeFilter,
               },
             ],
           };
