@@ -6,6 +6,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { type WorkflowDelayAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { DELAY_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/DelayAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
@@ -34,7 +35,7 @@ export const WorkflowEditActionDelay = ({
   const { headerTitle, headerIcon, headerIconColor, headerType, getIcon } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Delay',
+      defaultTitle: DELAY_ACTION.defaultLabel,
     });
 
   const delayOptions: Array<SelectOption<'SCHEDULED_DATE' | 'DURATION'>> = [
@@ -157,6 +158,7 @@ export const WorkflowEditActionDelay = ({
             name: newTitle,
           });
         }}
+        iconTooltip={DELAY_ACTION.defaultLabel}
       />
 
       <WorkflowStepBody>

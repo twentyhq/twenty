@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { DELETE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/DeleteRecordAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -118,7 +119,7 @@ export const WorkflowEditActionDeleteRecord = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Delete Record',
+      defaultTitle: DELETE_RECORD_ACTION.defaultLabel,
     });
 
   return (
@@ -139,6 +140,7 @@ export const WorkflowEditActionDeleteRecord = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={isFormDisabled}
+        iconTooltip={DELETE_RECORD_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         <Select
