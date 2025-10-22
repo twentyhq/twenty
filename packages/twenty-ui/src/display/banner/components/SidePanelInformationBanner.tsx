@@ -36,13 +36,15 @@ const StyledMessage = styled.p`
 
 export type SidePanelInformationBannerProps = {
   message: string;
+  className?: string;
 };
 
 export const SidePanelInformationBanner = ({
   message,
+  className,
 }: SidePanelInformationBannerProps) => {
   return (
-    <StyledBanner>
+    <StyledBanner className={className}>
       <StyledIconContainer>
         <IconInfoCircle size={16} />
       </StyledIconContainer>

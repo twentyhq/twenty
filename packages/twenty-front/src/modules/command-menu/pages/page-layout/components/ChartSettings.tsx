@@ -21,10 +21,15 @@ import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/grap
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { SidePanelInformationBanner } from 'twenty-ui/display';
 
 import { type GraphType, type PageLayoutWidget } from '~/generated/graphql';
+
+const StyledSidePanelInformationBanner = styled(SidePanelInformationBanner)`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
 
 export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
@@ -92,7 +97,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
         setCurrentGraphType={handleGraphTypeChange}
       />
       {hasWidgetTooManyGroups && (
-        <SidePanelInformationBanner
+        <StyledSidePanelInformationBanner
           message={t`Max ${GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter`}
         />
       )}
