@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { render, toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
 import { reactMarkupFromJSON } from 'twenty-emails';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import {
   SendEmailToolException,
@@ -25,6 +25,7 @@ import { MessagingSendMessageService } from 'src/modules/messaging/message-impor
 import { parseEmailBody } from 'src/utils/parse-email-body';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 
 @Injectable()
 export class SendEmailTool implements Tool {
@@ -38,7 +39,9 @@ export class SendEmailTool implements Tool {
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly sendMessageService: MessagingSendMessageService,
-    private readonly fileStorageService: FileStorageService,
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
+    private readonly fileService: FileService,
   ) {}
 
   private async getConnectedAccount(
@@ -105,14 +108,9 @@ export class SendEmailTool implements Tool {
       return [];
     }
 
-    const fileRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FileEntity>(
-        workspaceId,
-        'file',
-      );
-
     const fileIds = files.map((file) => file.id);
-    const fileEntities = await fileRepository.find({
+
+    const fileEntities = await this.fileRepository.find({
       where: { id: In(fileIds) },
     });
 
@@ -144,10 +142,11 @@ export class SendEmailTool implements Tool {
         fileEntity.fullPath,
       );
 
-      const stream = await this.fileStorageService.read({
-        folderPath: `workspace-${workspaceId}/${folderPath}`,
+      const stream = await this.fileService.getFileStream(
+        folderPath,
         filename,
-      });
+        workspaceId,
+      );
 
       const buffer = await streamToBuffer(stream);
 
