@@ -5,22 +5,22 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
-import { CommonDeleteOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-delete-one-query-runner.service';
+import { CommonDestroyOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service';
 import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
-export class RestApiDeleteOneHandler extends RestApiBaseHandler {
+export class RestApiDestroyOneHandler extends RestApiBaseHandler {
   constructor(
-    private readonly commonDeleteOneQueryRunnerService: CommonDeleteOneQueryRunnerService,
+    private readonly commonDestroyOneQueryRunnerService: CommonDestroyOneQueryRunnerService,
   ) {
     super();
   }
 
-  async handle(request: AuthenticatedRequest) {
+  async commonHandle(request: AuthenticatedRequest) {
     try {
       const { id } = this.parseRequestArgs(request);
 
@@ -30,14 +30,14 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
-      const record = await this.commonDeleteOneQueryRunnerService.execute(
+      const record = await this.commonDestroyOneQueryRunnerService.execute(
         { id, selectedFields: { id: true } },
         {
           authContext,
           objectMetadataMaps,
           objectMetadataItemWithFieldMaps,
         },
-        CommonQueryNames.DELETE_ONE,
+        CommonQueryNames.DESTROY_ONE,
       );
 
       return this.formatRestResponse(
@@ -45,14 +45,12 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
         objectMetadataItemWithFieldMaps.nameSingular,
       );
     } catch (error) {
-      return workspaceQueryRunnerRestApiExceptionHandler(error);
+      workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
   private formatRestResponse(record: ObjectRecord, objectNameSingular: string) {
-    return {
-      data: { [`delete${capitalize(objectNameSingular)}`]: record },
-    };
+    return { data: { [`delete${capitalize(objectNameSingular)}`]: record } };
   }
 
   private parseRequestArgs(request: AuthenticatedRequest) {
@@ -64,7 +62,39 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
 
     return {
       id,
-      depth: parseDepthRestRequest(request),
     };
+  }
+
+  async handle(request: AuthenticatedRequest) {
+    const { id: recordId } = parseCorePath(request);
+
+    if (!recordId) {
+      throw new BadRequestException('Record ID not found');
+    }
+
+    const { objectMetadata, repository, restrictedFields } =
+      await this.getRepositoryAndMetadataOrFail(request);
+
+    const selectOptions = getAllSelectableFields({
+      restrictedFields,
+      objectMetadata,
+    });
+
+    const recordToDelete = await repository.findOneOrFail({
+      where: { id: recordId },
+      select: selectOptions,
+    });
+
+    const columnsToReturnForDelete: string[] = [];
+
+    await repository.delete(recordId, undefined, columnsToReturnForDelete);
+
+    return this.formatResult({
+      operation: 'delete',
+      objectNameSingular: objectMetadata.objectMetadataMapItem.nameSingular,
+      data: {
+        id: recordToDelete.id,
+      },
+    });
   }
 }
