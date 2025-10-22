@@ -25,6 +25,7 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
@@ -74,24 +75,6 @@ const parseSpacingValueAsNumber = (value: string) => {
   return Number(value.replace('px', ''));
 };
 
-const getDefaultArrayValue = (
-  defaultValue: FieldArrayValue | string | undefined,
-): FieldArrayValue => {
-  if (!isDefined(defaultValue)) {
-    return [];
-  }
-
-  if (Array.isArray(defaultValue)) {
-    return defaultValue;
-  }
-
-  try {
-    return JSON.parse(defaultValue);
-  } catch {
-    return [];
-  }
-};
-
 export const FormArrayFieldInput = ({
   label,
   defaultValue,
@@ -129,7 +112,10 @@ export const FormArrayFieldInput = ({
         }
       : {
           type: 'static',
-          value: getDefaultArrayValue(defaultValue),
+          value:
+            isDefined(defaultValue) && isNonEmptyArray(defaultValue)
+              ? defaultValue
+              : [],
         },
   );
 
