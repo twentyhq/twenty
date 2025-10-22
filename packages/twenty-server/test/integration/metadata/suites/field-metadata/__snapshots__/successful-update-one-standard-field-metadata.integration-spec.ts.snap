@@ -2,49 +2,69 @@
 
 exports[`Standard field metadata update should succeed when setting isActive to false 1`] = `
 {
-  "description": "The company name",
-  "icon": "IconBuildingSkyscraper",
+  "description": "Number of employees in the company",
+  "icon": "IconUsers",
   "id": Any<String>,
   "isActive": false,
   "isCustom": false,
-  "label": "Name",
-  "name": "name",
+  "label": "Employees",
+  "name": "employees",
+  "standardOverrides": {
+    "description": "Number of employees in the company",
+    "icon": "IconUsers",
+    "label": "Employees",
+  },
 }
 `;
 
 exports[`Standard field metadata update should succeed when updating description 1`] = `
 {
-  "description": "The company name",
-  "icon": "IconBuildingSkyscraper",
+  "description": "Number of employees in the company",
+  "icon": "IconUsers",
   "id": Any<String>,
-  "isActive": false,
+  "isActive": true,
   "isCustom": false,
-  "label": "Name",
-  "name": "name",
+  "label": "Employees",
+  "name": "employees",
+  "standardOverrides": {
+    "description": "Updated test description for company name field",
+    "icon": "IconUsers",
+    "label": "Employees",
+  },
 }
 `;
 
 exports[`Standard field metadata update should succeed when updating icon 1`] = `
 {
-  "description": "The company name",
-  "icon": "IconBuildingSkyscraper",
+  "description": "Number of employees in the company",
+  "icon": "IconUsers",
   "id": Any<String>,
-  "isActive": false,
+  "isActive": true,
   "isCustom": false,
-  "label": "Name",
-  "name": "name",
+  "label": "Employees",
+  "name": "employees",
+  "standardOverrides": {
+    "description": "Number of employees in the company",
+    "icon": "IconBuildingFactory",
+    "label": "Employees",
+  },
 }
 `;
 
 exports[`Standard field metadata update should succeed when updating label 1`] = `
 {
-  "description": "The company name",
-  "icon": "IconBuildingSkyscraper",
+  "description": "Number of employees in the company",
+  "icon": "IconUsers",
   "id": Any<String>,
-  "isActive": false,
+  "isActive": true,
   "isCustom": false,
-  "label": "Name",
-  "name": "name",
+  "label": "Employees",
+  "name": "employees",
+  "standardOverrides": {
+    "description": "Number of employees in the company",
+    "icon": "IconUsers",
+    "label": "Business Name",
+  },
 }
 `;
 

@@ -73,7 +73,7 @@ describe('Standard field metadata update should succeed', () => {
     jestExpectToBeDefined(companyObject);
 
     const companyNameField = companyObject.fieldsList?.find(
-      (field: any) => field.name === 'name' && !field.isCustom,
+      (field: any) => field.name === 'employees' && !field.isCustom,
     );
 
     jestExpectToBeDefined(companyNameField);
@@ -81,7 +81,7 @@ describe('Standard field metadata update should succeed', () => {
     originalFieldMetadata = companyNameField;
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     // Restore original field metadata after all tests
     await updateOneFieldMetadata({
       expectToFail: false,
@@ -116,6 +116,11 @@ describe('Standard field metadata update should succeed', () => {
           icon
           isActive
           isCustom
+          standardOverrides {
+            label
+            description
+            icon
+          }
         `,
       });
 
