@@ -46,10 +46,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   };
 
   return (
-    <WidgetContainer
-      isRestricted={!hasAccess}
-      onClick={isPageLayoutInEditMode ? handleClick : undefined}
-    >
+    <WidgetContainer onClick={isPageLayoutInEditMode ? handleClick : undefined}>
       <WidgetHeader
         isInEditMode={isPageLayoutInEditMode}
         title={widget.title}
