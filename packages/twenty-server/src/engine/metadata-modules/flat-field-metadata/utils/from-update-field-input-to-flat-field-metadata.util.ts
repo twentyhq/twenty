@@ -77,8 +77,11 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   const isStandardField = isStandardMetadata(existingFlatFieldMetadataToUpdate);
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateFieldInput,
-    FLAT_FIELD_METADATA_EDITABLE_PROPERTIES[
-      isStandardField ? 'standard' : 'custom'
+    [
+      ...new Set([
+        ...FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.standard,
+        ...FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.custom,
+      ]),
     ],
   );
 

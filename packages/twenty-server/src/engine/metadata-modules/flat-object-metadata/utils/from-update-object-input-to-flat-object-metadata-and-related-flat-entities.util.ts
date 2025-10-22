@@ -64,20 +64,19 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
 
     const isStandardObject = isStandardMetadata(existingFlatObjectMetadata);
     const updatedEditableObjectProperties =
-      extractAndSanitizeObjectStringFields(
-        rawUpdateObjectInput.update,
-        FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES[
-          isStandardObject ? 'standard' : 'custom'
-        ],
-      );
+      extractAndSanitizeObjectStringFields(rawUpdateObjectInput.update, [
+        ...new Set([
+          ...FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES.standard,
+          ...FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES.custom,
+        ]),
+      ]);
 
     if (isStandardObject) {
       const invalidUpdatedProperties = Object.keys(
         updatedEditableObjectProperties,
       ).filter(
         (property) =>
-          property !== 'isActive' &&
-          !OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES.includes(
+          !FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES.standard.includes(
             property as ObjectMetadataStandardOverridesProperties,
           ),
       );
