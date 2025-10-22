@@ -41,6 +41,10 @@ export const RoutingStatusDisplay = ({
 }) => {
   const isLoading = data.state === 'loading';
 
+  if (data.state === 'error') {
+    return null;
+  }
+
   return (
     <StyledRoutingContainer>
       <StyledIconContainer isLoading={isLoading}>

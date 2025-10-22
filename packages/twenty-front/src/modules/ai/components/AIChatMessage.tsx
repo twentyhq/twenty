@@ -160,6 +160,8 @@ export const AIChatMessage = ({
   const showError =
     isDefined(error) && message.role === AgentChatMessageRole.ASSISTANT;
 
+  const fileParts = message.parts.filter((part) => part.type === 'file');
+
   return (
     <StyledMessageBubble
       key={message.id}
@@ -191,13 +193,11 @@ export const AIChatMessage = ({
               hasError={showError}
             />
           </StyledMessageText>
-          {message.parts.length > 0 && (
+          {fileParts.length > 0 && (
             <StyledFilesContainer>
-              {message.parts
-                .filter((part) => part.type === 'file')
-                .map((file) => (
-                  <AgentChatFilePreview key={file.filename} file={file} />
-                ))}
+              {fileParts.map((file) => (
+                <AgentChatFilePreview key={file.filename} file={file} />
+              ))}
             </StyledFilesContainer>
           )}
           {showError &&

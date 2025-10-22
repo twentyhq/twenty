@@ -87,6 +87,14 @@ export class AgentStreamingService {
           });
 
           if (!agent) {
+            writer.write({
+              type: 'data-routing-status' as const,
+              id: 'routing-status',
+              data: {
+                text: '',
+                state: 'error',
+              },
+            });
             throw new AgentException(
               'No agents available for routing',
               AgentExceptionCode.AGENT_EXECUTION_FAILED,
