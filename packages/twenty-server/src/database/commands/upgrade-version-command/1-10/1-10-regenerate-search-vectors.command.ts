@@ -68,6 +68,7 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
       this.logger.log(
         `No searchable objects found for workspace ${workspaceId}, skipping`,
       );
+
       return;
     }
 
@@ -150,6 +151,7 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
       this.logger.warn(
         `Search vector field not found for ${object.nameSingular} in workspace ${workspaceId}, skipping`,
       );
+
       return;
     }
 
@@ -159,6 +161,7 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
       this.logger.warn(
         `Cannot determine search expression for ${object.nameSingular} in workspace ${workspaceId}, skipping`,
       );
+
       return;
     }
 
@@ -227,6 +230,7 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
   ): string | undefined {
     if (object.standardId) {
       const standardExpression = STANDARD_SEARCH_EXPRESSIONS[object.standardId];
+
       if (standardExpression) {
         return standardExpression;
       }
