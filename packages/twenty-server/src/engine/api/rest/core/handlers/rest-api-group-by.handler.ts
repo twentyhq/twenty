@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { parseAggregateFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/aggregate-fields-parser-utils/parse-aggregate-fields-rest-request.util';
 import { parseFilterRestRequest } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-rest-request.util';
 import { parseGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/group-by-parser-utils/parse-group-by-rest-request.util';
-import { parseOmitNullValuesRestRequest } from 'src/engine/api/rest/input-request-parsers/omit-null-values-parser-utils/parse-omit-null-values-rest-request.util';
 import { parseOrderByWithGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/order-by-with-group-by-parser-utils/parse-order-by-with-group-by-rest-request.util';
 import { parseViewIdRestRequest } from 'src/engine/api/rest/input-request-parsers/view-id-parser-utils/parse-view-id-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
@@ -28,28 +28,24 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
-      const {
-        filter,
-        orderBy,
-        viewId,
-        groupBy,
-        selectedFields,
-        omitNullValues,
-      } = this.parseRequestArgs(request);
+      const { filter, orderBy, viewId, groupBy, selectedFields } =
+        this.parseRequestArgs(request);
 
-      return await this.commonGroupByQueryRunnerService.run({
-        args: {
+      return await this.commonGroupByQueryRunnerService.execute(
+        {
           filter,
           orderBy,
           viewId,
           groupBy,
           selectedFields,
-          omitNullValues,
         },
-        authContext,
-        objectMetadataMaps,
-        objectMetadataItemWithFieldMaps,
-      });
+        {
+          authContext,
+          objectMetadataMaps,
+          objectMetadataItemWithFieldMaps,
+        },
+        CommonQueryNames.GROUP_BY,
+      );
     } catch (error) {
       throw workspaceQueryRunnerRestApiExceptionHandler(error);
     }
@@ -61,7 +57,6 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
     const viewId = parseViewIdRestRequest(request);
     const groupBy = parseGroupByRestRequest(request);
     const aggregateFields = parseAggregateFieldsRestRequest(request);
-    const omitNullValues = parseOmitNullValuesRestRequest(request);
     const selectedFields = { ...aggregateFields, groupByDimensionValues: true };
 
     return {
@@ -70,7 +65,6 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
       viewId,
       groupBy,
       selectedFields,
-      omitNullValues,
     };
   }
 }

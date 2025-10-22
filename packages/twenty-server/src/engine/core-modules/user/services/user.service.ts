@@ -12,10 +12,10 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -23,13 +23,13 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
-export class UserService extends TypeOrmQueryService<User> {
+export class UserService extends TypeOrmQueryService<UserEntity> {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
@@ -37,7 +37,7 @@ export class UserService extends TypeOrmQueryService<User> {
     super(userRepository);
   }
 
-  async loadWorkspaceMember(user: User, workspace: Workspace) {
+  async loadWorkspaceMember(user: UserEntity, workspace: WorkspaceEntity) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return null;
     }
@@ -55,7 +55,7 @@ export class UserService extends TypeOrmQueryService<User> {
     });
   }
 
-  async loadWorkspaceMembers(workspace: Workspace, withDeleted = false) {
+  async loadWorkspaceMembers(workspace: WorkspaceEntity, withDeleted = false) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return [];
     }
@@ -69,7 +69,7 @@ export class UserService extends TypeOrmQueryService<User> {
     return await workspaceMemberRepository.find({ withDeleted: withDeleted });
   }
 
-  async loadDeletedWorkspaceMembersOnly(workspace: Workspace) {
+  async loadDeletedWorkspaceMembersOnly(workspace: WorkspaceEntity) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return [];
     }
@@ -86,7 +86,7 @@ export class UserService extends TypeOrmQueryService<User> {
     });
   }
 
-  async deleteUser(userId: string): Promise<User> {
+  async deleteUser(userId: string): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,

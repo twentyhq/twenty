@@ -13,7 +13,7 @@ declare module 'graphql' {
   export interface GraphQLErrorExtensions {
     exception?: {
       code?: string;
-      stacktrace?: ReadonlyArray<string>;
+      stackTrace?: ReadonlyArray<string>;
     };
   }
 }

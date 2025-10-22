@@ -12,12 +12,12 @@ import { V1_7_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-
 import { V1_8_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-8/1-8-upgrade-version-command.module';
 import { V1_10_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-10/1-10-upgrade-version-command.module';
 import { UpgradeCommand } from 'src/database/commands/upgrade-version-command/upgrade.command';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     V0_54_UpgradeVersionCommandModule,
     V0_55_UpgradeVersionCommandModule,
     V1_1_UpgradeVersionCommandModule,

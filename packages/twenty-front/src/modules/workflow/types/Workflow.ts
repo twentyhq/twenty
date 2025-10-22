@@ -22,6 +22,7 @@ import {
   type workflowSendEmailActionSchema,
   type workflowTriggerSchema,
   type workflowUpdateRecordActionSchema,
+  type workflowUpsertRecordActionSchema,
   type workflowWebhookTriggerSchema,
   type workflowDelayActionSchema,
 } from 'twenty-shared/workflow';
@@ -39,6 +40,9 @@ export type WorkflowUpdateRecordAction = z.infer<
 >;
 export type WorkflowDeleteRecordAction = z.infer<
   typeof workflowDeleteRecordActionSchema
+>;
+export type WorkflowUpsertRecordAction = z.infer<
+  typeof workflowUpsertRecordActionSchema
 >;
 export type WorkflowFindRecordsAction = z.infer<
   typeof workflowFindRecordsActionSchema
@@ -61,6 +65,7 @@ export type WorkflowAction =
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction
+  | WorkflowUpsertRecordAction
   | WorkflowFindRecordsAction
   | WorkflowFilterAction
   | WorkflowFormAction
@@ -72,7 +77,6 @@ export type WorkflowAction =
 
 export type WorkflowActionType = WorkflowAction['type'];
 export type WorkflowStep = WorkflowAction;
-export type WorkflowStepType = WorkflowStep['type'];
 
 export type WorkflowDatabaseEventTrigger = z.infer<
   typeof workflowDatabaseEventTriggerSchema

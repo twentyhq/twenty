@@ -160,6 +160,14 @@ export const useChartSettingsValues = ({
         return 'omitNullValues' in configuration
           ? (configuration.omitNullValues ?? false)
           : false;
+      case CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE:
+        return 'rangeMin' in configuration
+          ? (configuration.rangeMin?.toString() ?? '')
+          : '';
+      case CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE:
+        return 'rangeMax' in configuration
+          ? (configuration.rangeMax?.toString() ?? '')
+          : '';
       default:
         return '';
     }

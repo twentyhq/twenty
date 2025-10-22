@@ -1,14 +1,14 @@
-import { type BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 
 export type LicensedBillingSubscriptionItem = Omit<
-  BillingSubscriptionItem,
+  BillingSubscriptionItemEntity,
   'quantity'
 > & {
   quantity: number;
 };
 
 export type MeteredBillingSubscriptionItem = Omit<
-  BillingSubscriptionItem,
+  BillingSubscriptionItemEntity,
   'quantity'
 > & {
   quantity: null;

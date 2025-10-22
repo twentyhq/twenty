@@ -7,7 +7,7 @@ import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-moni
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-enqueue.workspace-service';
 
 export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '*/5 * * * *';
@@ -15,8 +15,8 @@ export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '*/5 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class WorkflowRunEnqueueJob {
   constructor(
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workflowRunEnqueueWorkspaceService: WorkflowRunEnqueueWorkspaceService,
   ) {}
 

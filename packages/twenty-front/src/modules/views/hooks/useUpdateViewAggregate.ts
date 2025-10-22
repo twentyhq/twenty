@@ -7,6 +7,7 @@ import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshC
 import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateViewAggregate = () => {
   const currentViewId = useRecoilComponentValue(
@@ -31,10 +32,13 @@ export const useUpdateViewAggregate = () => {
       kanbanAggregateOperation: ExtendedAggregateOperations | null;
       objectMetadataId: string;
     }) => {
-      const convertedKanbanAggregateOperation =
-        convertExtendedAggregateOperationToAggregateOperation(
-          kanbanAggregateOperation,
-        );
+      const convertedKanbanAggregateOperation = isDefined(
+        kanbanAggregateOperation,
+      )
+        ? convertExtendedAggregateOperationToAggregateOperation(
+            kanbanAggregateOperation,
+          )
+        : null;
       updateView({
         id: currentViewId,
         kanbanAggregateOperationFieldMetadataId,

@@ -8,6 +8,7 @@ import {
 } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
 import { parseFilterRestRequest } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-rest-request.util';
@@ -110,12 +111,15 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
       });
 
       const { records, aggregatedValues, pageInfo } =
-        await this.commonFindManyQueryRunnerService.run({
-          args: { ...parsedArgs, selectedFields },
-          authContext,
-          objectMetadataMaps,
-          objectMetadataItemWithFieldMaps,
-        });
+        await this.commonFindManyQueryRunnerService.execute(
+          { ...parsedArgs, selectedFields },
+          {
+            authContext,
+            objectMetadataMaps,
+            objectMetadataItemWithFieldMaps,
+          },
+          CommonQueryNames.FIND_MANY,
+        );
 
       return this.formatRestResponse(
         records,

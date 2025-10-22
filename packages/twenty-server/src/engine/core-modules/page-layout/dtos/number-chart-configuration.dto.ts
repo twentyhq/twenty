@@ -13,7 +13,7 @@ import { GraphQLJSON } from 'graphql-type-json';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { ExtendedAggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/extended-aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
@@ -29,10 +29,10 @@ export class NumberChartConfigurationDTO {
   @IsNotEmpty()
   aggregateFieldMetadataId: string;
 
-  @Field(() => ExtendedAggregateOperations)
-  @IsEnum(ExtendedAggregateOperations)
+  @Field(() => AggregateOperations)
+  @IsEnum(AggregateOperations)
   @IsNotEmpty()
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
 
   @Field(() => String, { nullable: true })
   @IsString()

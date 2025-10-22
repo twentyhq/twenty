@@ -5,12 +5,12 @@ import { type Repository } from 'typeorm';
 
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 describe('AuthSsoService', () => {
   let authSsoService: AuthSsoService;
-  let workspaceRepository: Repository<Workspace>;
+  let workspaceRepository: Repository<WorkspaceEntity>;
   let twentyConfigService: TwentyConfigService;
 
   beforeEach(async () => {
@@ -18,7 +18,7 @@ describe('AuthSsoService', () => {
       providers: [
         AuthSsoService,
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -33,8 +33,8 @@ describe('AuthSsoService', () => {
     }).compile();
 
     authSsoService = module.get<AuthSsoService>(AuthSsoService);
-    workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+    workspaceRepository = module.get<Repository<WorkspaceEntity>>(
+      getRepositoryToken(WorkspaceEntity),
     );
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
@@ -42,7 +42,7 @@ describe('AuthSsoService', () => {
   describe('findWorkspaceFromWorkspaceIdOrAuthProvider', () => {
     it('should return a workspace by workspaceId', async () => {
       const workspaceId = 'workspace-id-123';
-      const mockWorkspace = { id: workspaceId } as Workspace;
+      const mockWorkspace = { id: workspaceId } as WorkspaceEntity;
 
       jest
         .spyOn(workspaceRepository, 'findOne')
@@ -66,7 +66,7 @@ describe('AuthSsoService', () => {
     it('should return a workspace from authProvider and email when multi-workspace mode is enabled', async () => {
       const authProvider = AuthProviderEnum.Google;
       const email = 'test@example.com';
-      const mockWorkspace = { id: 'workspace-id-456' } as Workspace;
+      const mockWorkspace = { id: 'workspace-id-456' } as WorkspaceEntity;
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(true);
       jest

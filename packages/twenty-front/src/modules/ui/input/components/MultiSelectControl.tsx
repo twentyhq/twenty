@@ -4,7 +4,6 @@ import {
   StyledSelectControlIconChevronDown,
 } from '@/ui/input/components/SelectControl';
 import { useTheme } from '@emotion/react';
-import pluralize from 'pluralize';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -39,7 +38,6 @@ export const MultiSelectControl = ({
   }
 
   const firstSelectedOption = selectedOptions[0];
-  const selectedOptionsCount = selectedOptions.length;
   return (
     <StyledControlContainer
       disabled={isDisabled}
@@ -62,11 +60,7 @@ export const MultiSelectControl = ({
         />
       ) : null}
       {isDefined(fixedText) ? (
-        <OverflowingTextWithTooltip
-          text={`${selectedOptionsCount} ${
-            selectedOptionsCount <= 1 ? fixedText : pluralize(fixedText)
-          }`}
-        />
+        <OverflowingTextWithTooltip text={fixedText} />
       ) : (
         <OverflowingTextWithTooltip text={firstSelectedOption.label} />
       )}

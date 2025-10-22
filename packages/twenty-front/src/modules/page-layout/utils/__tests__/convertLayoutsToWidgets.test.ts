@@ -1,5 +1,5 @@
 import {
-  ExtendedAggregateOperations,
+  AggregateOperations,
   GraphOrderBy,
   GraphType,
   WidgetType,
@@ -23,7 +23,7 @@ describe('convertLayoutsToWidgets', () => {
       },
       configuration: {
         graphType: GraphType.NUMBER,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: 'id',
         displayDataLabel: false,
       },
@@ -45,7 +45,7 @@ describe('convertLayoutsToWidgets', () => {
       },
       configuration: {
         graphType: GraphType.PIE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: 'id',
         groupByFieldMetadataId: 'status',
         orderBy: GraphOrderBy.VALUE_DESC,

@@ -1,5 +1,5 @@
 import {
-  type AppToken,
+  type AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
@@ -16,7 +16,7 @@ describe('castAppTokenToWorkspaceInvitation', () => {
       type: AppTokenType.RefreshToken,
       context: { email: 'test@example.com' },
       expiresAt: new Date(),
-    } as AppToken;
+    } as AppTokenEntity;
 
     expect(() => castAppTokenToWorkspaceInvitationUtil(appToken)).toThrowError(
       new WorkspaceInvitationException(
@@ -32,7 +32,7 @@ describe('castAppTokenToWorkspaceInvitation', () => {
       type: AppTokenType.InvitationToken,
       context: null,
       expiresAt: new Date(),
-    } as AppToken;
+    } as AppTokenEntity;
 
     expect(() => castAppTokenToWorkspaceInvitationUtil(appToken)).toThrowError(
       new WorkspaceInvitationException(
@@ -48,7 +48,7 @@ describe('castAppTokenToWorkspaceInvitation', () => {
       type: AppTokenType.InvitationToken,
       context: { email: 'test@example.com' },
       expiresAt: new Date(),
-    } as AppToken;
+    } as AppTokenEntity;
 
     const invitation = castAppTokenToWorkspaceInvitationUtil(appToken);
 

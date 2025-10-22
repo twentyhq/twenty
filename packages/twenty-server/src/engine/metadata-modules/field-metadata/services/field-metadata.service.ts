@@ -365,21 +365,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       await queryRunner.commitTransaction();
 
-      if (fieldMetadataInput.isActive === false) {
-        const viewsRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-            fieldMetadataInput.workspaceId,
-            'view',
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
-
-        await viewsRepository.delete({
-          kanbanFieldMetadataId: id,
-        });
-      }
-
       if (
         updatedFieldMetadata.isActive &&
         isSelectOrMultiSelectFieldMetadata(updatedFieldMetadata) &&

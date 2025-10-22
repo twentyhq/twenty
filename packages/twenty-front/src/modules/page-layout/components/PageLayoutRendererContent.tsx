@@ -1,4 +1,4 @@
-import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
+import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabHeader } from '@/page-layout/components/PageLayoutTabHeader';
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
@@ -93,7 +93,7 @@ export const PageLayoutRendererContent = () => {
             defaultEnableXScroll={false}
           >
             {isDefined(activeTabId) && (
-              <PageLayoutGridLayout tabId={activeTabId} />
+              <PageLayoutContent tabId={activeTabId} />
             )}
           </StyledScrollWrapper>
         </StyledTabsAndDashboardContainer>

@@ -245,6 +245,28 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.UPSERT_RECORD: {
+        const activeObjectMetadataItem =
+          await this.objectMetadataRepository.findOne({
+            where: { workspaceId, isActive: true, isSystem: false },
+          });
+
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Create or Update Record',
+            type: WorkflowActionType.UPSERT_RECORD,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                objectName: activeObjectMetadataItem?.nameSingular || '',
+                objectRecord: {},
+                fieldsToUpdate: [],
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.FIND_RECORDS: {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({

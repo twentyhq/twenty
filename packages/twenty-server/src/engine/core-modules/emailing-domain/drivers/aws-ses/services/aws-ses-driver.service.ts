@@ -19,7 +19,7 @@ import {
 import { type AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 import { type AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
-import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/dtos/verification-record.dto';
+import { type VerificationRecordDTO } from 'src/engine/core-modules/emailing-domain/dtos/verification-record.dto';
 
 export class AwsSesDriver implements EmailingDomainDriverInterface {
   private readonly logger = new Logger(AwsSesDriver.name);
@@ -127,7 +127,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     tenantName: string,
   ): Promise<{
     isVerified: boolean;
-    verificationRecords: VerificationRecord[];
+    verificationRecords: VerificationRecordDTO[];
   }> {
     const sesClient = this.awsSesClientProvider.getSESClient();
 
@@ -161,7 +161,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     tenantName: string,
   ): Promise<{
     isVerified: boolean;
-    verificationRecords: VerificationRecord[];
+    verificationRecords: VerificationRecordDTO[];
   }> {
     const sesClient = this.awsSesClientProvider.getSESClient();
 
@@ -227,7 +227,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   private buildVerificationRecords(
     domain: string,
     dkimTokens: string[],
-  ): VerificationRecord[] {
+  ): VerificationRecordDTO[] {
     return dkimTokens.map((token) => ({
       type: 'CNAME' as const,
       key: `${token}._domainkey.${domain}`,

@@ -1,3 +1,5 @@
+import { ObjectType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
@@ -15,10 +17,11 @@ import { WidgetConfigurationInterface } from 'src/engine/core-modules/page-layou
 import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import { GridPosition } from 'src/engine/core-modules/page-layout/types/grid-position.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
+@ObjectType('PageLayoutWidget')
 @Index(
   'IDX_PAGE_LAYOUT_WIDGET_WORKSPACE_ID_PAGE_LAYOUT_TAB_ID',
   ['workspaceId', 'pageLayoutTabId'],
@@ -36,11 +39,11 @@ export class PageLayoutWidgetEntity
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @ManyToOne(() => Workspace, {
+  @ManyToOne(() => WorkspaceEntity, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 
   @ManyToOne(() => PageLayoutTabEntity, {
     onDelete: 'CASCADE',
