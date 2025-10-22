@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
@@ -71,7 +71,7 @@ import { AgentActorContextService } from './services/agent-actor-context.service
     TokenModule,
     WorkspaceDomainsModule,
     WorkflowToolsModule,
-    UserModule,
+    forwardRef(() => UserModule),
     UserWorkspaceModule,
     UserRoleModule,
   ],
