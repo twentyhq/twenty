@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { addMonths, setDate, setMonth, setYear, subMonths } from 'date-fns';
 import { lazy, Suspense, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
@@ -8,9 +7,11 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
-import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
-import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
+import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
+import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
+import { useParseDateToString } from '@/ui/input/components/internal/date/hooks/useParseDateToString';
+import { useParseStringToDate } from '@/ui/input/components/internal/date/hooks/useParseStringToDate';
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
@@ -32,8 +33,10 @@ export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
 export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
   'date-picker-month-and-year-dropdown-year-select';
 
+const DATE_PICKER_CONTAINER_WIDTH = 280;
+
 const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
-  width: 280px;
+  width: ${DATE_PICKER_CONTAINER_WIDTH}px;
 
   & .react-datepicker {
     border-color: ${({ theme }) => theme.border.color.light};
@@ -295,21 +298,21 @@ const StyledDatePickerFallback = styled.div`
   width: 280px;
 `;
 
-type DateTimePickerProps = {
+type DatePickerProps = {
   isRelative?: boolean;
   hideHeaderInput?: boolean;
-  date: Date | null;
+  date: string | null;
   relativeDate?: {
     direction: VariableDateViewFilterValueDirection;
     amount?: number;
     unit: VariableDateViewFilterValueUnit;
   };
   highlightedDateRange?: {
-    start: Date;
-    end: Date;
+    start: string;
+    end: string;
   };
-  onClose?: (date: Date | null) => void;
-  onChange?: (date: Date | null) => void;
+  onClose?: (date: string | null) => void;
+  onChange?: (date: string | null) => void;
   onRelativeDateChange?: (
     relativeDate: {
       direction: VariableDateViewFilterValueDirection;
@@ -318,9 +321,8 @@ type DateTimePickerProps = {
     } | null,
   ) => void;
   clearable?: boolean;
-  isDateTimeInput?: boolean;
-  onEnter?: (date: Date | null) => void;
-  onEscape?: (date: Date | null) => void;
+  onEnter?: (date: string | null) => void;
+  onEscape?: (date: string | null) => void;
   keyboardEventsDisabled?: boolean;
   onClear?: () => void;
 };
@@ -336,20 +338,22 @@ const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
   })),
 );
 
-export const DateTimePicker = ({
+export const DatePicker = ({
   date,
   onChange,
   onClose,
   clearable = true,
-  isDateTimeInput,
   onClear,
   isRelative,
   relativeDate,
   onRelativeDateChange,
   highlightedDateRange,
   hideHeaderInput,
-}: DateTimePickerProps) => {
-  const internalDate = date ?? new Date();
+}: DatePickerProps) => {
+  const { parseDateToString } = useParseDateToString();
+  const { parseStringToDate } = useParseStringToDate();
+
+  const internalDate =
 
   const theme = useTheme();
 
@@ -366,7 +370,7 @@ export const DateTimePicker = ({
     closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
   };
 
-  const handleClose = (newDate: Date) => {
+  const handleClose = (newDate: string) => {
     closeDropdowns();
     onClose?.(newDate);
   };
@@ -374,76 +378,54 @@ export const DateTimePicker = ({
   const handleChangeMonth = (month: number) => {
     const newDate = new Date(internalDate);
     newDate.setMonth(month);
-    onChange?.(newDate);
+    onChange?.(internalDate);
   };
 
   const handleAddMonth = () => {
-    const dateParsed = addMonths(internalDate, 1);
-    onChange?.(dateParsed);
+    // const dateParsed = addMonths(internalDate, 1);
+    onChange?.(internalDate);
   };
 
   const handleSubtractMonth = () => {
-    const dateParsed = subMonths(internalDate, 1);
-    onChange?.(dateParsed);
+    // const dateParsed = subMonths(internalDate, 1);
+    onChange?.(internalDate);
   };
 
   const handleChangeYear = (year: number) => {
-    const dateParsed = setYear(internalDate, year);
-    onChange?.(dateParsed);
+    // const dateParsed = setYear(internalDate, year);
+    onChange?.(internalDate);
   };
 
-  const handleDateChange = (date: Date) => {
-    let dateParsed = setYear(internalDate, date.getFullYear());
-    dateParsed = setMonth(dateParsed, date.getMonth());
-    dateParsed = setDate(dateParsed, date.getDate());
+  const handleDateChange = (date: string) => {
+    // let dateParsed = setYear(internalDate, date.getFullYear());
+    // dateParsed = setMonth(dateParsed, date.getMonth());
+    // dateParsed = setDate(dateParsed, date.getDate());
 
-    onChange?.(dateParsed);
+    onChange?.(internalDate);
   };
 
   const handleDateSelect = (date: Date) => {
-    let dateParsed = setYear(internalDate, date.getFullYear());
-    dateParsed = setMonth(dateParsed, date.getMonth());
-    dateParsed = setDate(dateParsed, date.getDate());
+    // let dateParsed = setYear(internalDate, date.getFullYear());
+    // dateParsed = setMonth(dateParsed, date.getMonth());
+    // dateParsed = setDate(dateParsed, date.getDate());
 
-    handleClose?.(dateParsed);
+    handleClose?.(internalDate);
   };
 
-  const dateWithoutTime = new Date(
-    internalDate.getUTCFullYear(),
-    internalDate.getUTCMonth(),
-    internalDate.getUTCDate(),
-    0,
-    0,
-    0,
-    0,
-  );
-
-  // We have to force a end of day on the computer local timezone with the given date
-  // Because JS Date API cannot hold a timezone other than the local one
-  // And if we don't do that workaround we will have problems when changing the date
-  // Because the shown date will have 1 day more or less than the real date
-  // Leading to bugs where we select 1st of January and it shows 31st of December for example
-  const endOfDayInLocalTimezone = new Date(
-    internalDate.getFullYear(),
-    internalDate.getMonth(),
-    internalDate.getDate(),
-    23,
-    59,
-    59,
-    999,
-  );
-
-  const dateToUse = isDateTimeInput ? endOfDayInLocalTimezone : dateWithoutTime;
-
-  const highlightedDates = getHighlightedDates(highlightedDateRange);
+  const highlightedDates = getHighlightedDates();
 
   const hasDate = date != null;
 
   const selectedDates = isRelative
     ? highlightedDates
     : hasDate
-      ? [dateToUse]
+      ? [internalDate]
       : [];
+
+  const calendarStartDay =
+    currentWorkspaceMember?.calendarStartDay === CalendarStartDay.SYSTEM
+      ? CalendarStartDay[detectCalendarStartDay()]
+      : (currentWorkspaceMember?.calendarStartDay ?? undefined);
 
   return (
     <StyledContainer calendarDisabled={isRelative}>
@@ -454,23 +436,23 @@ export const DateTimePicker = ({
               <SkeletonTheme
                 baseColor={theme.background.tertiary}
                 highlightColor={theme.background.transparent.lighter}
-                borderRadius={4}
+                borderRadius={2}
               >
                 <Skeleton
-                  width={200}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                />
-                <Skeleton
-                  width={240}
+                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
                   height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
                 />
                 <Skeleton
-                  width={220}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
                 />
                 <Skeleton
-                  width={180}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+                />
+                <Skeleton
+                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
                 />
               </SkeletonTheme>
             </StyledDatePickerFallback>
@@ -478,21 +460,15 @@ export const DateTimePicker = ({
         >
           <ReactDatePicker
             open={true}
-            selected={hasDate ? dateToUse : undefined}
-            selectedDates={selectedDates}
-            openToDate={hasDate ? dateToUse : new Date()}
+            selected={new Date()}
+            selectedDates={[]}
+            openToDate={new Date()}
             disabledKeyboardNavigation
             onChange={handleDateChange as any}
-            calendarStartDay={
-              currentWorkspaceMember?.calendarStartDay ===
-              CalendarStartDay.SYSTEM
-                ? CalendarStartDay[detectCalendarStartDay()]
-                : (currentWorkspaceMember?.calendarStartDay ?? undefined)
-            }
+            calendarStartDay={calendarStartDay}
             customInput={
-              <DateTimeInput
-                date={internalDate}
-                isDateTimeInput={isDateTimeInput}
+              <DatePickerInput
+                valueFromProps={internalDate}
                 onChange={onChange}
               />
             }
@@ -508,7 +484,7 @@ export const DateTimePicker = ({
                   onChange={onRelativeDateChange}
                 />
               ) : (
-                <AbsoluteDatePickerHeader
+                <DatePickerHeader
                   date={internalDate}
                   onChange={onChange}
                   onChangeMonth={handleChangeMonth}
@@ -517,7 +493,6 @@ export const DateTimePicker = ({
                   onSubtractMonth={handleSubtractMonth}
                   prevMonthButtonDisabled={prevMonthButtonDisabled}
                   nextMonthButtonDisabled={nextMonthButtonDisabled}
-                  isDateTimeInput={isDateTimeInput}
                   hideInput={hideHeaderInput}
                 />
               )

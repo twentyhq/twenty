@@ -3,7 +3,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
-import { DateTimePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
+import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';

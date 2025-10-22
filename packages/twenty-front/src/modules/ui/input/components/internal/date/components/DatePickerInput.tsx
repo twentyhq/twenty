@@ -5,14 +5,13 @@ import { useIMask } from 'react-imask';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
-import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
+import { useParseDateToString } from '@/ui/input/components/internal/date/hooks/useParseDateToString';
+import { useParseStringToDate } from '@/ui/input/components/internal/date/hooks/useParseStringToDate';
 import { getDateMask } from '@/ui/input/components/internal/date/utils/getDateMask';
-import { getDateTimeMask } from '@/ui/input/components/internal/date/utils/getDateTimeMask';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { useDateParser } from '../../hooks/useDateParser';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -40,51 +39,51 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
     `};
 `;
 
-type DateTimeInputProps = {
-  onChange?: (date: Date | null) => void;
-  date: Date | null;
-  isDateTimeInput?: boolean;
+type DatePickerInputProps = {
+  onChange?: (date: string | null) => void;
+  valueFromProps: string | null;
 };
 
-export const DateTimeInput = ({
-  date,
+export const DatePickerInput = ({
+  valueFromProps,
   onChange,
-  isDateTimeInput,
-}: DateTimeInputProps) => {
-  const [hasError, setHasError] = useState(false);
+}: DatePickerInputProps) => {
   const { dateFormat } = useDateTimeFormat();
-  const { parseToString, parseToDate } = useDateParser({
-    isDateTimeInput: isDateTimeInput === true,
-  });
 
-  const handleParseStringToDate = (str: string) => {
-    const date = parseToDate(str);
+  const [hasError, setHasError] = useState(false);
+
+  const { parseStringToDate } = useParseStringToDate();
+  const { parseDateToString } = useParseDateToString();
+
+  const handleParseStringToDate = (newDateAsString: string) => {
+    const date = parseStringToDate(newDateAsString);
 
     setHasError(isNull(date) === true);
 
     return date;
   };
 
-  const pattern = isDateTimeInput
-    ? getDateTimeMask(dateFormat)
-    : getDateMask(dateFormat);
-  const blocks = isDateTimeInput ? DATE_TIME_BLOCKS : DATE_BLOCKS;
+  const pattern = getDateMask(dateFormat);
+  const blocks = DATE_BLOCKS;
 
   const { ref, setValue, value } = useIMask(
     {
-      mask: Date,
       pattern,
       blocks,
       min: MIN_DATE,
       max: MAX_DATE,
-      format: (date: any) => parseToString(date),
+      format: (date: any) => parseDateToString(date),
       parse: handleParseStringToDate,
       lazy: false,
       autofix: true,
     },
     {
-      onComplete: (value) => {
-        const parsedDate = parseToDate(value);
+      onComplete: (newValue) => {
+        console.log({ newValue });
+
+        const parsedDate = parseStringToDate(newValue);
+
+        console.log({ parsedDate });
 
         onChange?.(parsedDate);
       },
@@ -95,12 +94,12 @@ export const DateTimeInput = ({
   );
 
   useEffect(() => {
-    if (!isDefined(date)) {
+    if (!isDefined(valueFromProps)) {
       return;
     }
 
-    setValue(parseToString(date));
-  }, [date, setValue, parseToString]);
+    setValue(parseDateToString(valueFromProps));
+  }, [valueFromProps, setValue, parseDateToString]);
 
   return (
     <StyledInputContainer>
