@@ -43,7 +43,7 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
           objectMetadataMaps,
           objectMetadataItemWithFieldMaps,
         },
-        CommonQueryNames.destroyOne,
+        CommonQueryNames.DESTROY_ONE,
       );
 
       return this.formatRestResponse(

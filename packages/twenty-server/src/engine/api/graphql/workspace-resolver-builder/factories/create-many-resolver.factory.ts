@@ -52,7 +52,7 @@ export class CreateManyResolverFactory
           const records = await this.commonCreateManyQueryRunnerService.execute(
             { ...args, selectedFields },
             internalContext,
-            CommonQueryNames.createMany,
+            CommonQueryNames.CREATE_MANY,
           );
 
           const typeORMObjectRecordsParser =

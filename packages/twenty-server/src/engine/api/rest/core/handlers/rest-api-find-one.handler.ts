@@ -81,7 +81,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
           objectMetadataMaps,
           objectMetadataItemWithFieldMaps,
         },
-        CommonQueryNames.findOne,
+        CommonQueryNames.FIND_ONE,
       );
 
       return this.formatRestResponse(

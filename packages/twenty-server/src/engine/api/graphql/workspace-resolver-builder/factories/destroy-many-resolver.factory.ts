@@ -53,7 +53,7 @@ export class DestroyManyResolverFactory
             await this.commonDestroyManyQueryRunnerService.execute(
               { ...args, selectedFields },
               internalContext,
-              CommonQueryNames.destroyMany,
+              CommonQueryNames.DESTROY_MANY,
             );
 
           const typeORMObjectRecordsParser =

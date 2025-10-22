@@ -118,7 +118,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
             objectMetadataMaps,
             objectMetadataItemWithFieldMaps,
           },
-          CommonQueryNames.findMany,
+          CommonQueryNames.FIND_MANY,
         );
 
       return this.formatRestResponse(

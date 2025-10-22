@@ -50,7 +50,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
           objectMetadataMaps,
           objectMetadataItemWithFieldMaps,
         },
-        CommonQueryNames.createOne,
+        CommonQueryNames.CREATE_ONE,
       );
 
       return this.formatRestResponse(

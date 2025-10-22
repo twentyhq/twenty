@@ -52,7 +52,7 @@ export class DeleteManyResolverFactory
           const records = await this.commonDeleteManyQueryRunnerService.execute(
             { ...args, selectedFields },
             internalContext,
-            CommonQueryNames.deleteMany,
+            CommonQueryNames.DELETE_MANY,
           );
 
           const typeORMObjectRecordsParser =

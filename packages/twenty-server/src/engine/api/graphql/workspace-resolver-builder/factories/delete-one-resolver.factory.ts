@@ -51,7 +51,7 @@ export class DeleteOneResolverFactory
           const record = await this.commonDeleteOneQueryRunnerService.execute(
             { ...args, selectedFields },
             internalContext,
-            CommonQueryNames.deleteOne,
+            CommonQueryNames.DELETE_ONE,
           );
 
           const typeORMObjectRecordsParser =

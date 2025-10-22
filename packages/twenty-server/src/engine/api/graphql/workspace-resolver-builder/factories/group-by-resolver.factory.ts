@@ -48,7 +48,7 @@ export class GroupByResolverFactory
           return await this.commonGroupByQueryRunnerService.execute(
             { ...args, selectedFields },
             internalContext,
-            CommonQueryNames.groupBy,
+            CommonQueryNames.GROUP_BY,
           );
         } catch (error) {
           return workspaceQueryRunnerGraphqlApiExceptionHandler(error);

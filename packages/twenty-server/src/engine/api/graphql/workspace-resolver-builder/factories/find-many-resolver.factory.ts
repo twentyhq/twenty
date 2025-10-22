@@ -55,7 +55,7 @@ export class FindManyResolverFactory
           } = await this.commonFindManyQueryRunnerService.execute(
             { ...args, selectedFields },
             internalContext,
-            CommonQueryNames.findMany,
+            CommonQueryNames.FIND_MANY,
           );
 
           const typeORMObjectRecordsParser =

@@ -43,7 +43,7 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
           objectMetadataMaps,
           objectMetadataItemWithFieldMaps,
         },
-        CommonQueryNames.deleteOne,
+        CommonQueryNames.DELETE_ONE,
       );
 
       return this.formatRestResponse(

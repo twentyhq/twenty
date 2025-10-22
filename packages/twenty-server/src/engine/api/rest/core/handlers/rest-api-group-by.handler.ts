@@ -44,7 +44,7 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
           objectMetadataMaps,
           objectMetadataItemWithFieldMaps,
         },
-        CommonQueryNames.groupBy,
+        CommonQueryNames.GROUP_BY,
       );
     } catch (error) {
       throw workspaceQueryRunnerRestApiExceptionHandler(error);

@@ -49,7 +49,7 @@ export class CreateOneResolverFactory
           const record = await this.commonCreateOneQueryRunnerService.execute(
             { ...args, selectedFields },
             internalContext,
-            CommonQueryNames.createOne,
+            CommonQueryNames.CREATE_ONE,
           );
 
           const typeORMObjectRecordsParser =

@@ -42,7 +42,7 @@ export class RestApiDeleteManyHandler extends RestApiBaseHandler {
           objectMetadataMaps,
           objectMetadataItemWithFieldMaps,
         },
-        CommonQueryNames.deleteMany,
+        CommonQueryNames.DELETE_MANY,
       );
 
       return this.formatRestResponse(

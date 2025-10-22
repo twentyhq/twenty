@@ -67,25 +67,54 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       selectedFieldsResult: args.selectedFieldsResult,
     });
 
-    if (!isDefined(args.selectedFieldsResult.relations)) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        objectMetadataMaps,
-        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: upsertedRecords,
-        //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
-        relations: args.selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
-        limit: QUERY_MAX_RECORDS,
-        authContext,
-        workspaceDataSource,
-        rolePermissionConfig,
-        selectedFields: args.selectedFieldsResult.select,
-      });
-    }
+    await this.processNestedRelationsIfNeeded({
+      args,
+      records: upsertedRecords,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+      authContext,
+      workspaceDataSource,
+      rolePermissionConfig,
+    });
 
     return upsertedRecords;
+  }
+
+  private async processNestedRelationsIfNeeded({
+    args,
+    records,
+    objectMetadataItemWithFieldMaps,
+    objectMetadataMaps,
+    authContext,
+    workspaceDataSource,
+    rolePermissionConfig,
+  }: {
+    args: CommonExtendedInput<CreateManyQueryArgs>;
+    records: ObjectRecord[];
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
+    authContext: AuthContext;
+    workspaceDataSource: WorkspaceDataSource;
+    rolePermissionConfig?: RolePermissionConfig;
+  }): Promise<void> {
+    if (!args.selectedFieldsResult.relations) {
+      return;
+    }
+
+    await this.processNestedRelationsHelper.processNestedRelations({
+      objectMetadataMaps,
+      parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+      parentObjectRecords: records,
+      relations: args.selectedFieldsResult.relations as Record<
+        string,
+        FindOptionsRelations<ObjectLiteral>
+      >,
+      limit: QUERY_MAX_RECORDS,
+      authContext,
+      workspaceDataSource,
+      rolePermissionConfig,
+      selectedFields: args.selectedFieldsResult.select,
+    });
   }
 
   async computeArgs(
@@ -353,44 +382,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       .getMany();
 
     return upsertedRecords as ObjectRecord[];
-  }
-
-  private async processNestedRelationsIfNeeded({
-    records,
-    objectMetadataItemWithFieldMaps,
-    objectMetadataMaps,
-    rolePermissionConfig,
-    authContext,
-    workspaceDataSource,
-    selectedFieldsResult,
-  }: {
-    records: ObjectRecord[];
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
-    authContext: AuthContext;
-    workspaceDataSource: WorkspaceDataSource;
-    rolePermissionConfig?: RolePermissionConfig;
-    selectedFieldsResult: CommonSelectedFieldsResult;
-  }): Promise<void> {
-    if (!selectedFieldsResult.relations) {
-      return;
-    }
-
-    await this.processNestedRelationsHelper.processNestedRelations({
-      objectMetadataMaps,
-      parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-      parentObjectRecords: records,
-      //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
-      relations: selectedFieldsResult.relations as Record<
-        string,
-        FindOptionsRelations<ObjectLiteral>
-      >,
-      limit: QUERY_MAX_RECORDS,
-      authContext,
-      workspaceDataSource,
-      rolePermissionConfig,
-      selectedFields: selectedFieldsResult.select,
-    });
   }
 
   private getRecordWithoutCreatedBy(

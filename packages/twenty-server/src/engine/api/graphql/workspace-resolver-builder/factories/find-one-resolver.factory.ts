@@ -48,7 +48,7 @@ export class FindOneResolverFactory
           const record = await this.commonFindOneQueryRunnerService.execute(
             { ...args, selectedFields },
             internalContext,
-            CommonQueryNames.findOne,
+            CommonQueryNames.FIND_ONE,
           );
 
           const typeORMObjectRecordsParser =

@@ -49,7 +49,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
           objectMetadataMaps,
           objectMetadataItemWithFieldMaps,
         },
-        CommonQueryNames.createMany,
+        CommonQueryNames.CREATE_MANY,
       );
 
       return this.formatRestResponse(
