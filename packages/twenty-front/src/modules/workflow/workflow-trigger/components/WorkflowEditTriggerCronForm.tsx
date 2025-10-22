@@ -82,6 +82,7 @@ export const WorkflowEditTriggerCronForm = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={triggerOptions.readonly}
+        iconTooltip={getTriggerDefaultLabel(trigger)}
       />
       <WorkflowStepBody>
         <Select

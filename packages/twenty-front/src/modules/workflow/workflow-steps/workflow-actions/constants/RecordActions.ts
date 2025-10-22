@@ -1,7 +1,12 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { CREATE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction';
+import { DELETE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/DeleteRecordAction';
+import { FIND_RECORDS_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FindRecordsAction';
+import { UPDATE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/UpdateRecordAction';
+import { UPSERT_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/UpsertRecordAction';
 
 export const RECORD_ACTIONS: Array<{
-  label: string;
+  defaultLabel: string;
   type: Extract<
     WorkflowActionType,
     | 'CREATE_RECORD'
@@ -12,29 +17,9 @@ export const RECORD_ACTIONS: Array<{
   >;
   icon: string;
 }> = [
-  {
-    label: 'Create Record',
-    type: 'CREATE_RECORD',
-    icon: 'IconPlus',
-  },
-  {
-    label: 'Update Record',
-    type: 'UPDATE_RECORD',
-    icon: 'IconReload',
-  },
-  {
-    label: 'Delete Record',
-    type: 'DELETE_RECORD',
-    icon: 'IconTrash',
-  },
-  {
-    label: 'Search Records',
-    type: 'FIND_RECORDS',
-    icon: 'IconSearch',
-  },
-  {
-    label: 'Create or Update Record',
-    type: 'UPSERT_RECORD',
-    icon: 'IconPencilPlus',
-  },
+  CREATE_RECORD_ACTION,
+  UPDATE_RECORD_ACTION,
+  DELETE_RECORD_ACTION,
+  FIND_RECORDS_ACTION,
+  UPSERT_RECORD_ACTION,
 ];
