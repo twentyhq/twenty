@@ -3,13 +3,13 @@ import { randomUUID } from 'crypto';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import path from 'path';
-import capitalize from 'lodash.capitalize';
 import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { HTTPMethod } from '../types/config.types';
 import { parseJsoncFile, writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
 import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
+import { getDecoratedClass } from '../utils/get-decorated-class';
 
 export enum SyncableEntity {
   AGENT = 'agent',
@@ -64,19 +64,10 @@ export class AppAddCommand {
 
         const objectFileName = `${camelcase(entityName)}.ts`;
 
-        const className = capitalize(camelcase(entityName));
-
-        const decoratorOptions = Object.entries(entityData)
-          .map(([key, value]) => `  ${key}: '${value}',`)
-          .join('\n');
-
-        const decoratedObject = `import { ObjectMetadata } from 'twenty-sdk';
-
-@ObjectMetadata({
-${decoratorOptions}
-})
-export class ${className} {}
-`;
+        const decoratedObject = getDecoratedClass({
+          data: entityData,
+          name: entityName,
+        });
 
         await fs.writeFile(path.join(appPath, objectFileName), decoratedObject);
 
