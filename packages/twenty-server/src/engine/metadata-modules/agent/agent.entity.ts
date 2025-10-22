@@ -5,6 +5,7 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -63,7 +64,7 @@ export class AgentEntity
   @Column({ default: false })
   isCustom: boolean;
 
-  @OneToMany(() => WorkspaceEntity, (workspace) => workspace.agents, {
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.agents, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })

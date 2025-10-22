@@ -55,7 +55,7 @@ export class AgentHandoffEntity {
   @JoinColumn({ name: 'toAgentId' })
   toAgent: Relation<AgentEntity>;
 
-  @OneToMany(() => WorkspaceEntity, (workspace) => workspace.agentHandoffs, {
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.agentHandoffs, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
