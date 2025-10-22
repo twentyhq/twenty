@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{
   onClick?: () => void;
-  isWidgetRestricted?: boolean;
   isPageLayoutInEditMode?: boolean;
 }>`
   background: ${({ theme }) => theme.background.secondary};
