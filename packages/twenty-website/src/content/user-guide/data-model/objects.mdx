@@ -8,7 +8,7 @@ sectionInfo: Flexible data model designed to support your unique business proces
 
 ## Standard Objects
 
-Standard objects are predefined entities in your workspace that offer integrated, standardized intelligence requiring no extra configuration. They're part of a shared data model accessible to all users of Twenty.
+Standard objects are predefined entities in your workspace to help you get started. They're part of a shared data model accessible to all users of Twenty. You can use them as-is, customize them or deactivate them.
 
 <img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
 
@@ -18,7 +18,7 @@ The `People` object stores your contacts. It includes contact details and intera
 
 ### Company
 
-The `Companies` object stores your business accounts. It includes details like industry, size and location. You can add a field to detail your relationship with this account: prospect, customer, other. Companies connect to both People and Opportunities objects.
+The `Companies` object stores your business accounts. It includes details like industry, size and location. Companies connect to both `People` and `Opportunities` objects.
 
 ### Opportunities
 
@@ -59,7 +59,9 @@ To create a new custom object:
 
 3. Click on `+ New object` at the top. Enter the name (both singular and plural), choose an icon, and add a description for your custom object and hit Save (at the top right). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
 
-**Note:** The singular and plural names must be different. This is required for our GraphQL API to work properly.
+<ArticleWarning>
+The singular and plural names must be different. This is required for our GraphQL API to work properly.
+</ArticleWarning>
 
 <div style={{padding:'71.24% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
   <iframe
