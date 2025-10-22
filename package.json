@@ -217,7 +217,7 @@
   "name": "twenty",
   "packageManager": "yarn@4.9.2",
   "resolutions": {
-    "graphql": "16.8.0",
+    "graphql": "16.8.1",
     "type-fest": "4.10.1",
     "typescript": "5.9.2",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",

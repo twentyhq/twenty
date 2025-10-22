@@ -16,13 +16,14 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
-  CommonQueryNames,
+  CommonExtendedInput,
+  CommonInput,
   CreateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
@@ -36,63 +37,28 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
-export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService {
-  async run({
-    args,
-    authContext,
-    objectMetadataMaps,
-    objectMetadataItemWithFieldMaps,
-  }: {
-    args: CreateManyQueryArgs;
-    authContext: AuthContext;
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-  }): Promise<ObjectRecord[]> {
-    if (!isWorkspaceAuthContext(authContext)) {
-      throw new CommonQueryRunnerException(
-        'Invalid auth context',
-        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-      );
-    }
-    assertMutationNotOnRemoteObject(objectMetadataItemWithFieldMaps);
-
-    // TODO : Refacto-common - Remove this validation once https://github.com/twentyhq/core-team-issues/issues/1622 done
-    args.data.forEach((record) => {
-      if (record?.id) {
-        assertIsValidUuid(record.id);
-      }
-    });
-
-    //TODO : Refacto-common - QueryParser should be common branded service
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
-      objectMetadataItemWithFieldMaps,
-      args.selectedFields,
-      objectMetadataMaps,
-    );
-
-    const { workspaceDataSource, repository, rolePermissionConfig } =
-      await this.prepareQueryRunnerContext({
-        authContext,
-        objectMetadataItemWithFieldMaps,
-      });
-
-    const processedArgs = await this.processQueryArgs({
+export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService<
+  CreateManyQueryArgs,
+  ObjectRecord[]
+> {
+  async run(
+    args: CommonExtendedInput<CreateManyQueryArgs>,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): Promise<ObjectRecord[]> {
+    const {
+      repository,
       authContext,
+      rolePermissionConfig,
       objectMetadataItemWithFieldMaps,
-      args,
-    });
+      objectMetadataMaps,
+      workspaceDataSource,
+    } = queryRunnerContext;
 
     const objectRecords = await this.insertOrUpsertRecords({
       repository,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      args: processedArgs,
-      selectedFieldsResult,
+      args,
     });
 
     const upsertedRecords = await this.fetchUpsertedRecords({
@@ -100,48 +66,88 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       repository,
-      selectedFieldsResult,
+      selectedFieldsResult: args.selectedFieldsResult,
     });
 
     await this.processNestedRelationsIfNeeded({
+      args,
       records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      rolePermissionConfig,
       authContext,
       workspaceDataSource,
-      selectedFieldsResult,
+      rolePermissionConfig,
     });
 
     return upsertedRecords;
   }
 
-  async processQueryArgs({
-    authContext,
-    objectMetadataItemWithFieldMaps,
+  private async processNestedRelationsIfNeeded({
     args,
+    records,
+    objectMetadataItemWithFieldMaps,
+    objectMetadataMaps,
+    authContext,
+    workspaceDataSource,
+    rolePermissionConfig,
   }: {
-    authContext: WorkspaceAuthContext;
+    args: CommonExtendedInput<CreateManyQueryArgs>;
+    records: ObjectRecord[];
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    args: CreateManyQueryArgs;
-  }): Promise<CreateManyQueryArgs> {
-    const hookedArgs =
-      (await this.workspaceQueryHookService.executePreQueryHooks(
-        authContext,
-        objectMetadataItemWithFieldMaps.nameSingular,
-        CommonQueryNames.CREATE_MANY,
-        args,
-        //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
-      )) as CreateManyQueryArgs;
+    objectMetadataMaps: ObjectMetadataMaps;
+    authContext: AuthContext;
+    workspaceDataSource: WorkspaceDataSource;
+    rolePermissionConfig?: RolePermissionConfig;
+  }): Promise<void> {
+    if (!args.selectedFieldsResult.relations) {
+      return;
+    }
+
+    await this.processNestedRelationsHelper.processNestedRelations({
+      objectMetadataMaps,
+      parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+      parentObjectRecords: records,
+      relations: args.selectedFieldsResult.relations as Record<
+        string,
+        FindOptionsRelations<ObjectLiteral>
+      >,
+      limit: QUERY_MAX_RECORDS,
+      authContext,
+      workspaceDataSource,
+      rolePermissionConfig,
+      selectedFields: args.selectedFieldsResult.select,
+    });
+  }
+
+  async computeArgs(
+    args: CommonInput<CreateManyQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<CommonInput<CreateManyQueryArgs>> {
+    const { authContext, objectMetadataItemWithFieldMaps } = queryRunnerContext;
 
     return {
-      ...hookedArgs,
+      ...args,
       data: await this.queryRunnerArgsFactory.overrideDataByFieldMetadata({
-        partialRecordInputs: hookedArgs.data,
+        partialRecordInputs: args.data,
         authContext,
         objectMetadataItemWithFieldMaps,
       }),
     };
+  }
+
+  async validate(
+    args: CommonInput<CreateManyQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<void> {
+    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+
+    assertMutationNotOnRemoteObject(objectMetadataItemWithFieldMaps);
+
+    args.data.forEach((record) => {
+      if (record?.id) {
+        assertIsValidUuid(record.id);
+      }
+    });
   }
 
   private async insertOrUpsertRecords({
@@ -149,14 +155,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
     args,
-    selectedFieldsResult,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
-    args: CreateManyQueryArgs;
-    selectedFieldsResult: CommonSelectedFieldsResult;
+    args: CommonExtendedInput<CreateManyQueryArgs>;
   }): Promise<InsertResult> {
+    const { selectedFieldsResult } = args;
+
     if (!args.upsert) {
       const selectedColumns = buildColumnsToReturn({
         select: selectedFieldsResult.select,
@@ -380,42 +386,18 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     return upsertedRecords as ObjectRecord[];
   }
 
-  private async processNestedRelationsIfNeeded({
-    records,
-    objectMetadataItemWithFieldMaps,
-    objectMetadataMaps,
-    rolePermissionConfig,
-    authContext,
-    workspaceDataSource,
-    selectedFieldsResult,
-  }: {
-    records: ObjectRecord[];
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
-    authContext: AuthContext;
-    workspaceDataSource: WorkspaceDataSource;
-    rolePermissionConfig?: RolePermissionConfig;
-    selectedFieldsResult: CommonSelectedFieldsResult;
-  }): Promise<void> {
-    if (!selectedFieldsResult.relations) {
-      return;
-    }
-
-    await this.processNestedRelationsHelper.processNestedRelations({
+  async processQueryResult(
+    queryResult: ObjectRecord[],
+    objectMetadataItemId: string,
+    objectMetadataMaps: ObjectMetadataMaps,
+    authContext: WorkspaceAuthContext,
+  ): Promise<ObjectRecord[]> {
+    return await this.commonResultGettersService.processRecordArray(
+      queryResult,
+      objectMetadataItemId,
       objectMetadataMaps,
-      parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-      parentObjectRecords: records,
-      //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
-      relations: selectedFieldsResult.relations as Record<
-        string,
-        FindOptionsRelations<ObjectLiteral>
-      >,
-      limit: QUERY_MAX_RECORDS,
-      authContext,
-      workspaceDataSource,
-      rolePermissionConfig,
-      selectedFields: selectedFieldsResult.select,
-    });
+      authContext.workspace.id,
+    );
   }
 
   private getRecordWithoutCreatedBy(

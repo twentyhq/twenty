@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
@@ -18,20 +17,20 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import {
   CommonExtendedInput,
   CommonInput,
-  FindOneQueryArgs,
+  DestroyManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
-export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
-  FindOneQueryArgs,
-  ObjectRecord
+export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerService<
+  DestroyManyQueryArgs,
+  ObjectRecord[]
 > {
   async run(
-    args: CommonExtendedInput<FindOneQueryArgs>,
+    args: CommonExtendedInput<DestroyManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
+  ): Promise<ObjectRecord[]> {
     const {
       repository,
       authContext,
@@ -49,42 +48,29 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataItemWithFieldMaps.nameSingular,
-      args.filter ?? ({} as ObjectRecordFilter),
+      args.filter,
     );
 
-    commonQueryParser.applyDeletedAtToBuilder(
-      queryBuilder,
-      args.filter ?? ({} as ObjectRecordFilter),
-    );
-
-    const columnsToSelect = buildColumnsToSelect({
+    const columnsToReturn = buildColumnsToReturn({
       select: args.selectedFieldsResult.select,
       relations: args.selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     });
 
-    const objectRecord = await queryBuilder
-      .setFindOptions({
-        select: columnsToSelect,
-      })
-      .getOne();
+    const deletedObjectRecords = await queryBuilder
+      .delete()
+      .returning(columnsToReturn)
+      .execute();
 
-    if (!objectRecord) {
-      throw new CommonQueryRunnerException(
-        'Record not found',
-        CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
-      );
-    }
-
-    const objectRecords = [objectRecord] as ObjectRecord[];
+    const deletedRecords = deletedObjectRecords.generatedMaps as ObjectRecord[];
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: objectRecords,
-        //TODO : Refacto-common - To fix when switching processNestedRelationsHelper to Common
+        parentObjectRecords: deletedRecords,
+        //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
         relations: args.selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
@@ -97,13 +83,13 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       });
     }
 
-    return objectRecords[0];
+    return deletedRecords;
   }
 
   async computeArgs(
-    args: CommonInput<FindOneQueryArgs>,
+    args: CommonInput<DestroyManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): Promise<CommonInput<FindOneQueryArgs>> {
+  ): Promise<CommonInput<DestroyManyQueryArgs>> {
     const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
 
     return {
@@ -116,12 +102,12 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
   }
 
   async processQueryResult(
-    queryResult: ObjectRecord,
+    queryResult: ObjectRecord[],
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
     authContext: WorkspaceAuthContext,
-  ): Promise<ObjectRecord> {
-    return this.commonResultGettersService.processRecord(
+  ): Promise<ObjectRecord[]> {
+    return this.commonResultGettersService.processRecordArray(
       queryResult,
       objectMetadataItemId,
       objectMetadataMaps,
@@ -130,12 +116,12 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
   }
 
   async validate(
-    args: CommonInput<FindOneQueryArgs>,
+    args: CommonInput<DestroyManyQueryArgs>,
     _queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<void> {
-    if (!args.filter || Object.keys(args.filter).length === 0) {
+    if (!isDefined(args.filter)) {
       throw new CommonQueryRunnerException(
-        'Missing filter argument',
+        'Filter is required',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }

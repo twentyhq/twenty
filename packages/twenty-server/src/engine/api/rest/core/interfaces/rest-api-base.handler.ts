@@ -593,7 +593,7 @@ export abstract class RestApiBaseHandler {
     objectMetadataMaps,
   }: {
     authContext: WorkspaceAuthContext;
-    depth: Depth;
+    depth?: Depth | undefined;
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
   }) {
