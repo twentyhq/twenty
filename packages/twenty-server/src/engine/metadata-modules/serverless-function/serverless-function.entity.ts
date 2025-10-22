@@ -68,8 +68,7 @@ export class ServerlessFunctionEntity
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;
 
-  // TODO: should be set to nullable: false when 1.8 released in production
-  @Column({ nullable: true, type: 'uuid' })
+  @Column({ nullable: false, type: 'uuid' })
   serverlessFunctionLayerId: string;
 
   @ManyToOne(
