@@ -11,6 +11,7 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -51,13 +52,11 @@ export class FindManyResolverFactory
             totalCount,
             pageInfo,
             selectedFieldsResult,
-          } = await this.commonFindManyQueryRunnerService.run({
-            args: { ...args, selectedFields },
-            authContext: internalContext.authContext,
-            objectMetadataMaps: internalContext.objectMetadataMaps,
-            objectMetadataItemWithFieldMaps:
-              internalContext.objectMetadataItemWithFieldMaps,
-          });
+          } = await this.commonFindManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            internalContext,
+            CommonQueryNames.FIND_MANY,
+          );
 
           const typeORMObjectRecordsParser =
             new ObjectRecordsToGraphqlConnectionHelper(

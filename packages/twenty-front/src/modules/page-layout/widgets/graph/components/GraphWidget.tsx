@@ -3,7 +3,7 @@ import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartRenderer';
-import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
+import { GraphWidgetNumberChartRenderer } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChartRenderer';
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
@@ -64,12 +64,7 @@ export const GraphWidget = ({
 
   switch (graphType) {
     case GraphType.NUMBER:
-      return (
-        <GraphWidgetNumberChart
-          value={data.value}
-          trendPercentage={data.trendPercentage}
-        />
-      );
+      return <GraphWidgetNumberChartRenderer widget={widget} />;
 
     case GraphType.GAUGE:
       return (

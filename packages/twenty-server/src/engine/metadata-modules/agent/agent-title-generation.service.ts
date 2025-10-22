@@ -14,7 +14,7 @@ export class AgentTitleGenerationService {
 
   async generateThreadTitle(messageContent: string): Promise<string> {
     try {
-      const defaultModel = this.aiModelRegistryService.getDefaultModel();
+      const defaultModel = this.aiModelRegistryService.getDefaultSpeedModel();
 
       if (!defaultModel) {
         this.logger.warn('No default AI model available for title generation');

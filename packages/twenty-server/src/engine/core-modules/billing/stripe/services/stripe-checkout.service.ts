@@ -10,8 +10,8 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class StripeCheckoutService {
@@ -42,8 +42,8 @@ export class StripeCheckoutService {
     requirePaymentMethod = true,
     withTrialPeriod,
   }: {
-    user: User;
-    workspace: Pick<Workspace, 'id' | 'displayName'>;
+    user: UserEntity;
+    workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
     stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     successUrl?: string;
     cancelUrl?: string;
@@ -97,8 +97,8 @@ export class StripeCheckoutService {
     requirePaymentMethod = false,
     withTrialPeriod,
   }: {
-    user: User;
-    workspace: Pick<Workspace, 'id' | 'displayName'>;
+    user: UserEntity;
+    workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
     stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     stripeCustomerId?: string;
     plan?: BillingPlanKey;

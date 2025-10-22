@@ -8,8 +8,8 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
@@ -33,13 +33,13 @@ export class OnboardingService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  private isWorkspaceActivationPending(workspace: Workspace) {
+  private isWorkspaceActivationPending(workspace: WorkspaceEntity) {
     return (
       workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
     );
   }
 
-  async getOnboardingStatus(user: User, workspace: Workspace) {
+  async getOnboardingStatus(user: UserEntity, workspace: WorkspaceEntity) {
     if (
       await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspace.id,

@@ -32,7 +32,7 @@ describe('AiController', () => {
     };
 
     const mockAiModelRegistryService = {
-      getDefaultModel: jest.fn().mockReturnValue({
+      getDefaultPerformanceModel: jest.fn().mockReturnValue({
         modelId: 'gpt-4o',
         provider: ModelProvider.OPENAI,
         model: openai('gpt-4o'),
@@ -90,7 +90,7 @@ describe('AiController', () => {
 
       const mockModel = openai('gpt-4o');
 
-      aiModelRegistryService.getDefaultModel.mockReturnValue({
+      aiModelRegistryService.getDefaultPerformanceModel.mockReturnValue({
         modelId: 'gpt-4o',
         provider: ModelProvider.OPENAI,
         model: mockModel,
@@ -153,7 +153,7 @@ describe('AiController', () => {
 
       const mockRes = {} as any;
 
-      aiModelRegistryService.getDefaultModel.mockReturnValue({
+      aiModelRegistryService.getDefaultPerformanceModel.mockReturnValue({
         modelId: 'gpt-4o',
         provider: ModelProvider.OPENAI,
         model: openai('gpt-4o'),

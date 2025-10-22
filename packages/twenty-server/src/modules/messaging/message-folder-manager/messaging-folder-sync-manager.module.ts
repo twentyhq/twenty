@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
@@ -19,7 +19,7 @@ import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-im
     FeatureFlagModule,
     WorkspaceDataSourceModule,
     DataSourceModule,
-    TypeOrmModule.forFeature([Workspace]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     OAuth2ClientManagerModule,
     MessagingGmailDriverModule,
     MessagingMicrosoftDriverModule,

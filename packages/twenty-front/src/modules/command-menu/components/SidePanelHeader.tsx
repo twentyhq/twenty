@@ -3,7 +3,7 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { type IconComponent } from 'twenty-ui/display';
+import { AppTooltip, type IconComponent } from 'twenty-ui/display';
 
 const StyledHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -52,6 +52,7 @@ type SidePanelHeaderProps = {
   iconColor: string;
   initialTitle: string;
   headerType: string;
+  iconTooltip?: string;
 } & (
   | {
       disabled: true;
@@ -70,6 +71,7 @@ export const SidePanelHeader = ({
   headerType,
   disabled,
   onTitleChange,
+  iconTooltip,
 }: SidePanelHeaderProps) => {
   const theme = useTheme();
 
@@ -89,15 +91,24 @@ export const SidePanelHeader = ({
     });
   };
 
+  const tooltipId = `side-panel-icon-tooltip-${headerType.replace(/\s+/g, '-')}`;
+
   return (
     <StyledHeader data-testid="side-panel-header">
-      <StyledHeaderIconContainer>
+      <StyledHeaderIconContainer id={tooltipId}>
         <Icon
           color={iconColor}
           stroke={theme.icon.stroke.sm}
           size={theme.icon.size.lg}
         />
       </StyledHeaderIconContainer>
+      {iconTooltip && (
+        <AppTooltip
+          anchorSelect={`#${tooltipId}`}
+          content={iconTooltip}
+          place="top"
+        />
+      )}
       <StyledHeaderInfo>
         <StyledHeaderTitle>
           <TitleInput

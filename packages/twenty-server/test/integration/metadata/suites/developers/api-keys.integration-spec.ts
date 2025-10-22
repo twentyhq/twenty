@@ -75,7 +75,7 @@ describe('apiKeysResolver (e2e)', () => {
 
       const response = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateApiKey($input: CreateApiKeyDTO!) {
+          mutation CreateApiKey($input: CreateApiKeyInput!) {
             createApiKey(input: $input) {
               id
               name
@@ -120,7 +120,7 @@ describe('apiKeysResolver (e2e)', () => {
 
       const response = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateApiKey($input: CreateApiKeyDTO!) {
+          mutation CreateApiKey($input: CreateApiKeyInput!) {
             createApiKey(input: $input) {
               id
               name
@@ -145,7 +145,7 @@ describe('apiKeysResolver (e2e)', () => {
     it('should update an API key successfully', async () => {
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateApiKey($input: CreateApiKeyDTO!) {
+          mutation CreateApiKey($input: CreateApiKeyInput!) {
             createApiKey(input: $input) {
               id
               name
@@ -179,7 +179,7 @@ describe('apiKeysResolver (e2e)', () => {
 
       const updateResponse = await makeMetadataAPIRequest({
         query: gql`
-          mutation UpdateApiKey($input: UpdateApiKeyDTO!) {
+          mutation UpdateApiKey($input: UpdateApiKeyInput!) {
             updateApiKey(input: $input) {
               id
               name
@@ -217,7 +217,7 @@ describe('apiKeysResolver (e2e)', () => {
     it('should find a specific API key', async () => {
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateApiKey($input: CreateApiKeyDTO!) {
+          mutation CreateApiKey($input: CreateApiKeyInput!) {
             createApiKey(input: $input) {
               id
               name
@@ -245,7 +245,7 @@ describe('apiKeysResolver (e2e)', () => {
 
       const apiKeyResponse = await makeMetadataAPIRequest({
         query: gql`
-          query GetApiKey($input: GetApiKeyDTO!) {
+          query GetApiKey($input: GetApiKeyInput!) {
             apiKey(input: $input) {
               id
               name
@@ -281,7 +281,7 @@ describe('apiKeysResolver (e2e)', () => {
     it('should revoke an API key successfully', async () => {
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateApiKey($input: CreateApiKeyDTO!) {
+          mutation CreateApiKey($input: CreateApiKeyInput!) {
             createApiKey(input: $input) {
               id
               name
@@ -309,7 +309,7 @@ describe('apiKeysResolver (e2e)', () => {
 
       const revokeResponse = await makeMetadataAPIRequest({
         query: gql`
-          mutation RevokeApiKey($input: RevokeApiKeyDTO!) {
+          mutation RevokeApiKey($input: RevokeApiKeyInput!) {
             revokeApiKey(input: $input) {
               id
               name

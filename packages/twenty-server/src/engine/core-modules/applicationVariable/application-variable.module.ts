@@ -2,13 +2,16 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { ApplicationVariable } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
-import { ApplicationVariableService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { ApplicationVariableResolver } from 'src/engine/core-modules/applicationVariable/application-variable.resolver';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
+import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
+import { ApplicationVariableEntityResolver } from 'src/engine/core-modules/applicationVariable/application-variable.resolver';
 
 @Module({
-  imports: [NestjsQueryTypeOrmModule.forFeature([ApplicationVariable])],
-  providers: [ApplicationVariableService, ApplicationVariableResolver],
-  exports: [ApplicationVariableService],
+  imports: [NestjsQueryTypeOrmModule.forFeature([ApplicationVariableEntity])],
+  providers: [
+    ApplicationVariableEntityService,
+    ApplicationVariableEntityResolver,
+  ],
+  exports: [ApplicationVariableEntityService],
 })
-export class ApplicationVariableModule {}
+export class ApplicationVariableEntityModule {}

@@ -1,7 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  AggregateOperations,
   type BarChartConfiguration,
-  ExtendedAggregateOperations,
   FieldMetadataType,
   GraphType,
 } from '~/generated-metadata/graphql';
@@ -42,7 +42,7 @@ describe('generateGroupByQueryVariablesFromBarChartConfiguration', () => {
     ({
       __typename: 'BarChartConfiguration',
       aggregateFieldMetadataId: 'aggregate-field',
-      aggregateOperation: ExtendedAggregateOperations.COUNT,
+      aggregateOperation: AggregateOperations.COUNT,
       graphType: GraphType.VERTICAL_BAR,
       primaryAxisGroupByFieldMetadataId: 'field-1',
       ...overrides,

@@ -138,8 +138,25 @@ export class AiModelRegistryService {
     return Array.from(this.modelRegistry.values());
   }
 
-  getDefaultModel(): RegisteredAIModel {
-    const defaultModelId = this.twentyConfigService.get('DEFAULT_MODEL_ID');
+  getDefaultSpeedModel(): RegisteredAIModel {
+    const defaultModelId = this.twentyConfigService.get(
+      'DEFAULT_AI_SPEED_MODEL_ID',
+    );
+    let model = this.getModel(defaultModelId);
+
+    if (!model) {
+      const availableModels = this.getAvailableModels();
+
+      model = availableModels[0];
+    }
+
+    return model;
+  }
+
+  getDefaultPerformanceModel(): RegisteredAIModel {
+    const defaultModelId = this.twentyConfigService.get(
+      'DEFAULT_AI_PERFORMANCE_MODEL_ID',
+    );
     let model = this.getModel(defaultModelId);
 
     if (!model) {
@@ -153,7 +170,7 @@ export class AiModelRegistryService {
 
   getEffectiveModelConfig(modelId: string): AIModelConfig {
     if (modelId === 'auto') {
-      const defaultModel = this.getDefaultModel();
+      const defaultModel = this.getDefaultPerformanceModel();
 
       if (!defaultModel) {
         throw new Error(
@@ -195,9 +212,12 @@ export class AiModelRegistryService {
     return {
       modelId: registeredModel.modelId,
       label: registeredModel.modelId,
+      description: `Custom model: ${registeredModel.modelId}`,
       provider: registeredModel.provider,
       inputCostPer1kTokensInCents: 0,
       outputCostPer1kTokensInCents: 0,
+      contextWindowTokens: 128000,
+      maxOutputTokens: 4096,
     };
   }
 

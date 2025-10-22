@@ -10,7 +10,7 @@ import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
@@ -99,7 +99,11 @@ export class McpService {
       workspace,
       userWorkspaceId,
       apiKey,
-    }: { workspace: Workspace; userWorkspaceId?: string; apiKey?: string },
+    }: {
+      workspace: WorkspaceEntity;
+      userWorkspaceId?: string;
+      apiKey?: string;
+    },
   ): Promise<Record<string, unknown>> {
     try {
       await this.checkAiEnabled(workspace.id);

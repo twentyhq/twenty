@@ -25,6 +25,7 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
@@ -111,7 +112,10 @@ export const FormArrayFieldInput = ({
         }
       : {
           type: 'static',
-          value: isDefined(defaultValue) ? defaultValue : [],
+          value:
+            isDefined(defaultValue) && isNonEmptyArray(defaultValue)
+              ? defaultValue
+              : [],
         },
   );
 

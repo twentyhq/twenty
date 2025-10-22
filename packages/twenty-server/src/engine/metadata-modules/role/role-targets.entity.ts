@@ -12,7 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('roleTargets')
@@ -54,9 +54,9 @@ export class RoleTargetsEntity {
   @Column({ nullable: true, type: 'uuid' })
   apiKeyId: string;
 
-  @ManyToOne(() => ApiKey, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ApiKeyEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'apiKeyId' })
-  apiKey: Relation<ApiKey>;
+  apiKey: Relation<ApiKeyEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

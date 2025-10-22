@@ -1,6 +1,6 @@
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export type WorkspaceDomainConfig = Pick<
-  Workspace,
+  WorkspaceEntity,
   'subdomain' | 'customDomain' | 'isCustomDomainEnabled'
 >;

@@ -17,8 +17,8 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BeforeCreateOneAppToken } from 'src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum AppTokenType {
   RefreshToken = 'REFRESH_TOKEN',
@@ -30,27 +30,27 @@ export enum AppTokenType {
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
-@ObjectType()
+@ObjectType('AppToken')
 @BeforeCreateOne(BeforeCreateOneAppToken)
-export class AppToken {
+export class AppTokenEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.appTokens, {
+  @ManyToOne(() => UserEntity, (user) => user.appTokens, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
-  user: Relation<User>;
+  user: Relation<UserEntity>;
 
   @Column({ nullable: true })
   userId: string | null;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.appTokens, {
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.appTokens, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 
   @Column({ nullable: true })
   workspaceId: string;

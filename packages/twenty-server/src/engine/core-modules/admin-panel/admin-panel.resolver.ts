@@ -13,7 +13,7 @@ import { QueueJobsResponseDTO } from 'src/engine/core-modules/admin-panel/dtos/q
 import { RetryJobsResponseDTO } from 'src/engine/core-modules/admin-panel/dtos/retry-jobs-response.dto';
 import { SystemHealthDTO } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
-import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
+import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import { JobStateEnum } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';

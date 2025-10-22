@@ -1,3 +1,5 @@
+import { ObjectType } from '@nestjs/graphql';
+
 import {
   Entity,
   Column,
@@ -8,10 +10,11 @@ import {
   Relation,
 } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'postgresCredentials', schema: 'core' })
-export class PostgresCredentials {
+@ObjectType('PostgresCredentials')
+export class PostgresCredentialsEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -30,10 +33,14 @@ export class PostgresCredentials {
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.allPostgresCredentials, {
-    onDelete: 'CASCADE',
-  })
-  workspace: Relation<Workspace>;
+  @ManyToOne(
+    () => WorkspaceEntity,
+    (workspace) => workspace.allPostgresCredentials,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  workspace: Relation<WorkspaceEntity>;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

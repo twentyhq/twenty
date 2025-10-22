@@ -16,7 +16,7 @@ import {
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -150,11 +150,11 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @Column({ nullable: true, type: 'text', default: null })
   anyFieldFilterValue: string | null;
 
-  @ManyToOne(() => Workspace, {
+  @ManyToOne(() => WorkspaceEntity, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 
   @OneToMany(() => ViewFieldEntity, (viewField) => viewField.view)
   viewFields: Relation<ViewFieldEntity[]>;
