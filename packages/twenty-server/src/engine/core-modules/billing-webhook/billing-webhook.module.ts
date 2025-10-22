@@ -11,12 +11,13 @@ import { BillingWebhookProductService } from 'src/engine/core-modules/billing-we
 import { BillingWebhookSubscriptionScheduleService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription-schedule.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -35,13 +36,13 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     WorkspaceModule,
     BillingModule,
     TypeOrmModule.forFeature([
-      BillingSubscription,
-      BillingSubscriptionItem,
-      BillingCustomer,
-      BillingProduct,
-      BillingPrice,
-      BillingMeter,
-      BillingEntitlement,
+      BillingSubscriptionEntity,
+      BillingSubscriptionItemEntity,
+      BillingCustomerEntity,
+      BillingProductEntity,
+      BillingPriceEntity,
+      BillingMeterEntity,
+      BillingEntitlementEntity,
       WorkspaceEntity,
       UserWorkspaceEntity,
       FeatureFlagEntity,

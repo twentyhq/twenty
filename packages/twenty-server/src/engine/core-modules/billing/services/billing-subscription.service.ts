@@ -25,10 +25,11 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
-import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
@@ -86,7 +87,7 @@ export class BillingSubscriptionService {
   async getCurrentBillingSubscription(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
-  }): Promise<BillingSubscription | undefined> {
+  }): Promise<BillingSubscriptionEntity | undefined> {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
         where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
@@ -831,7 +832,9 @@ export class BillingSubscriptionService {
     ) as LicensedBillingSubscriptionItem;
   }
 
-  getTrialPeriodFreeWorkflowCredits(billingSubscription: BillingSubscriptionEntity) {
+  getTrialPeriodFreeWorkflowCredits(
+    billingSubscription: BillingSubscriptionEntity,
+  ) {
     const trialDuration =
       isDefined(billingSubscription.trialEnd) &&
       isDefined(billingSubscription.trialStart)
@@ -1554,7 +1557,9 @@ export class BillingSubscriptionService {
     billingPricesPerPlanAndIntervalArray: BillingPriceEntity[];
     meteredPriceId: string;
     targetInterval: SubscriptionInterval;
-  }): Promise<Omit<BillingPrice, 'tiers'> & { tiers: MeterBillingPriceTiers }> {
+  }): Promise<
+    Omit<BillingPriceEntity, 'tiers'> & { tiers: MeterBillingPriceTiers }
+  > {
     const mapped = await this.findMeteredMatchFloor(
       billingPricesPerPlanAndIntervalArray,
       meteredPriceId,

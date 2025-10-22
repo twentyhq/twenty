@@ -28,13 +28,13 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { type AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
+import { type AuthorizeAppOutput } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { type AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { type AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
-import { type UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
+import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
+import { type UpdatePasswordOutput } from 'src/engine/core-modules/auth/dto/update-password.dto';
 import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
-import { type CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
-import { type WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
+import { type CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.dto';
+import { type WorkspaceInviteHashValidOutput } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
@@ -392,7 +392,7 @@ export class AuthService {
 
   async checkWorkspaceInviteHashIsValid(
     inviteHash: string,
-  ): Promise<WorkspaceInviteHashValid> {
+  ): Promise<WorkspaceInviteHashValidOutput> {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash,
     });
@@ -404,7 +404,7 @@ export class AuthService {
     authorizeAppInput: AuthorizeAppInput,
     user: UserEntity,
     workspace: WorkspaceEntity,
-  ): Promise<AuthorizeApp> {
+  ): Promise<AuthorizeAppOutput> {
     // TODO: replace with db call to - third party app table
     const apps = [
       {
@@ -490,7 +490,7 @@ export class AuthService {
   async updatePassword(
     userId: string,
     newPassword: string,
-  ): Promise<UpdatePassword> {
+  ): Promise<UpdatePasswordOutput> {
     if (!userId) {
       throw new AuthException(
         'User ID is required',

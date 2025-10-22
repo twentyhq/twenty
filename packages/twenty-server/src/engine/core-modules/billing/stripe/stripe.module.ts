@@ -16,13 +16,14 @@ import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billi
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
 import { StripeSDKModule } from 'src/engine/core-modules/billing/stripe/stripe-sdk/stripe-sdk.module';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 
 @Module({
   imports: [
     DomainServerConfigModule,
     StripeSDKModule,
-    TypeOrmModule.forFeature([BillingCustomer]),
+    TypeOrmModule.forFeature([BillingCustomerEntity]),
   ],
   providers: [
     StripeSubscriptionItemService,

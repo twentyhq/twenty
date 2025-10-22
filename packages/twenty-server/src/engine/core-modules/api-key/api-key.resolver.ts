@@ -15,10 +15,10 @@ import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
-import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
-import { GetApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/get-api-key.dto';
-import { RevokeApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.dto';
-import { UpdateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
+import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
+import { GetApiKeyInput } from 'src/engine/core-modules/api-key/dtos/get-api-key.dto';
+import { RevokeApiKeyInput } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.dto';
+import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -51,7 +51,7 @@ export class ApiKeyResolver {
 
   @Query(() => ApiKeyEntity, { nullable: true })
   async apiKey(
-    @Args('input') input: GetApiKeyDTO,
+    @Args('input') input: GetApiKeyInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ApiKeyEntity | null> {
     try {
@@ -71,7 +71,7 @@ export class ApiKeyResolver {
   @Mutation(() => ApiKeyEntity)
   async createApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('input') input: CreateApiKeyDTO,
+    @Args('input') input: CreateApiKeyInput,
   ): Promise<ApiKeyEntity> {
     return this.apiKeyService.create({
       name: input.name,
@@ -85,7 +85,7 @@ export class ApiKeyResolver {
   @Mutation(() => ApiKeyEntity, { nullable: true })
   async updateApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('input') input: UpdateApiKeyDTO,
+    @Args('input') input: UpdateApiKeyInput,
   ): Promise<ApiKeyEntity | null> {
     const updateData: QueryDeepPartialEntity<ApiKeyEntity> = {};
 
@@ -102,7 +102,7 @@ export class ApiKeyResolver {
   @Mutation(() => ApiKeyEntity, { nullable: true })
   async revokeApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('input') input: RevokeApiKeyDTO,
+    @Args('input') input: RevokeApiKeyInput,
   ): Promise<ApiKeyEntity | null> {
     return this.apiKeyService.revoke(input.id, workspace.id);
   }

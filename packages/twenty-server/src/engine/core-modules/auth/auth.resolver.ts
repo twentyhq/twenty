@@ -10,14 +10,14 @@ import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
-import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
+import { AuthorizeAppOutput } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
+import { EmailPasswordResetLinkOutput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
-import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
-import { TransientToken } from 'src/engine/core-modules/auth/dto/transient-token.entity';
+import { InvalidatePasswordOutput } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
+import { TransientTokenOutput } from 'src/engine/core-modules/auth/dto/transient-token.dto';
 import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
-import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
+import { ValidatePasswordResetTokenOutput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
@@ -77,13 +77,14 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
-import { LoginToken } from './dto/login-token.entity';
+import { LoginTokenOutput } from './dto/login-token.dto';
 import { SignUpInput } from './dto/sign-up.input';
-import { ApiKeyToken, AuthTokens } from './dto/token.entity';
+import { ApiKeyToken } from './dto/api-key-token.dto';
+import { AuthTokens } from './dto/auth-tokens.dto';
 import { UserCredentialsInput } from './dto/user-credentials.input';
-import { CheckUserExistOutput } from './dto/user-exists.entity';
+import { CheckUserExistOutput } from './dto/user-exists.dto';
 import { EmailAndCaptchaInput } from './dto/user-exists.input';
-import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
+import { WorkspaceInviteHashValidOutput } from './dto/workspace-invite-hash-valid.dto';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
 
@@ -144,11 +145,11 @@ export class AuthResolver {
     );
   }
 
-  @Query(() => WorkspaceInviteHashValid)
+  @Query(() => WorkspaceInviteHashValidOutput)
   @UseGuards(PublicEndpointGuard)
   async checkWorkspaceInviteHashIsValid(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ): Promise<WorkspaceInviteHashValid> {
+  ): Promise<WorkspaceInviteHashValidOutput> {
     return await this.authService.checkWorkspaceInviteHashIsValid(
       workspaceInviteHashValidInput.inviteHash,
     );
@@ -164,13 +165,13 @@ export class AuthResolver {
     );
   }
 
-  @Mutation(() => LoginToken)
+  @Mutation(() => LoginTokenOutput)
   @UseGuards(CaptchaGuard, PublicEndpointGuard)
   async getLoginTokenFromCredentials(
     @Args()
     getLoginTokenFromCredentialsInput: UserCredentialsInput,
     @Args('origin') origin: string,
-  ): Promise<LoginToken> {
+  ): Promise<LoginTokenOutput> {
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
@@ -509,12 +510,12 @@ export class AuthResolver {
     };
   }
 
-  @Mutation(() => TransientToken)
+  @Mutation(() => TransientTokenOutput)
   @UseGuards(UserAuthGuard)
   async generateTransientToken(
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<TransientToken | void> {
+  ): Promise<TransientTokenOutput | void> {
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
       workspace,
@@ -755,13 +756,13 @@ export class AuthResolver {
     };
   }
 
-  @Mutation(() => AuthorizeApp)
+  @Mutation(() => AuthorizeAppOutput)
   @UseGuards(UserAuthGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<AuthorizeApp> {
+  ): Promise<AuthorizeAppOutput> {
     return await this.authService.generateAuthorizationCode(
       authorizeAppInput,
       user,
@@ -795,12 +796,12 @@ export class AuthResolver {
     );
   }
 
-  @Mutation(() => EmailPasswordResetLink)
+  @Mutation(() => EmailPasswordResetLinkOutput)
   @UseGuards(PublicEndpointGuard)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
-  ): Promise<EmailPasswordResetLink> {
+  ): Promise<EmailPasswordResetLinkOutput> {
     const resetToken =
       await this.resetPasswordService.generatePasswordResetToken(
         emailPasswordResetInput.email,
@@ -814,12 +815,12 @@ export class AuthResolver {
     );
   }
 
-  @Mutation(() => InvalidatePassword)
+  @Mutation(() => InvalidatePasswordOutput)
   @UseGuards(PublicEndpointGuard)
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
-  ): Promise<InvalidatePassword> {
+  ): Promise<InvalidatePasswordOutput> {
     const { id } =
       await this.resetPasswordService.validatePasswordResetToken(
         passwordResetToken,
@@ -830,11 +831,11 @@ export class AuthResolver {
     return await this.resetPasswordService.invalidatePasswordResetToken(id);
   }
 
-  @Query(() => ValidatePasswordResetToken)
+  @Query(() => ValidatePasswordResetTokenOutput)
   @UseGuards(PublicEndpointGuard)
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
-  ): Promise<ValidatePasswordResetToken> {
+  ): Promise<ValidatePasswordResetTokenOutput> {
     return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );

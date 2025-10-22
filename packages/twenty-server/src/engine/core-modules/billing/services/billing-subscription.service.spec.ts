@@ -5,10 +5,11 @@ import { type ObjectLiteral, type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -26,7 +27,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
-import { type BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { type BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { type MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
@@ -101,7 +102,7 @@ describe('BillingSubscriptionService', () => {
         },
       },
     ],
-  } as BillingSubscription;
+  } as BillingSubscriptionEntity;
 
   const arrangeBillingPriceRepositoryFindOneOrFail = () => {
     const resolvePrice = (criteria: any) => {
@@ -126,7 +127,7 @@ describe('BillingSubscriptionService', () => {
               ? BillingUsageType.METERED
               : BillingUsageType.LICENSED,
           },
-        } as BillingProduct,
+        } as BillingProductEntity,
       };
 
       if (isMetered) {
@@ -151,7 +152,7 @@ describe('BillingSubscriptionService', () => {
         } as BillingMeterPrice;
       }
 
-      return base as BillingPrice;
+      return base as BillingPriceEntity;
     };
 
     return jest
@@ -221,7 +222,7 @@ describe('BillingSubscriptionService', () => {
           },
         },
       ],
-    } as BillingSubscription;
+    } as BillingSubscriptionEntity;
 
     return jest
       .spyOn(billingSubscriptionRepository, 'find')
@@ -276,7 +277,7 @@ describe('BillingSubscriptionService', () => {
         licensedPrice: {
           stripePriceId: licensedPriceId,
           quantity,
-        } as unknown as BillingPrice,
+        } as unknown as BillingPriceEntity,
         meteredPrice: {
           stripePriceId: meteredPriceId,
           tiers: meteredTiers,
@@ -334,7 +335,7 @@ describe('BillingSubscriptionService', () => {
         licensedPrice: {
           stripePriceId: licensedPriceId,
           quantity,
-        } as unknown as BillingPrice,
+        } as unknown as BillingPriceEntity,
         meteredPrice: {
           stripePriceId: meteredPriceId,
           tiers: meteredTiers,
@@ -410,7 +411,7 @@ describe('BillingSubscriptionService', () => {
   ) =>
     jest
       .spyOn(billingProductService, 'getProductPrices')
-      .mockResolvedValue(prices as BillingPrice[]);
+      .mockResolvedValue(prices as BillingPriceEntity[]);
 
   const arrangeBillingSubscriptionRepositoryFindOneOrFail = ({
     planKey = BillingPlanKey.PRO,
@@ -464,7 +465,7 @@ describe('BillingSubscriptionService', () => {
             },
           },
         ],
-      } as BillingSubscription);
+      } as BillingSubscriptionEntity);
 
   const arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync = () => {
     const spy = jest
@@ -473,7 +474,7 @@ describe('BillingSubscriptionService', () => {
 
     jest
       .spyOn(service, 'syncSubscriptionToDatabase')
-      .mockResolvedValueOnce({} as BillingSubscription);
+      .mockResolvedValueOnce({} as BillingSubscriptionEntity);
 
     return spy;
   };
@@ -558,8 +559,8 @@ describe('BillingSubscriptionService', () => {
   ) => {
     const spy = jest.spyOn(billingProductService, 'getProductPrices');
 
-    spy.mockResolvedValueOnce(first as BillingPrice[]);
-    spy.mockResolvedValueOnce(second as BillingPrice[]);
+    spy.mockResolvedValueOnce(first as BillingPriceEntity[]);
+    spy.mockResolvedValueOnce(second as BillingPriceEntity[]);
 
     return spy;
   };
@@ -567,7 +568,7 @@ describe('BillingSubscriptionService', () => {
   const arrangeServiceSyncSubscriptionToDatabase = () =>
     jest
       .spyOn(service, 'syncSubscriptionToDatabase')
-      .mockResolvedValue({} as BillingSubscription);
+      .mockResolvedValue({} as BillingSubscriptionEntity);
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
@@ -670,9 +671,9 @@ describe('BillingSubscriptionService', () => {
     }).compile();
 
     service = module.get(BillingSubscriptionService);
-    billingSubscriptionRepository = module.get<Repository<BillingSubscriptionEntity>>(
-      getRepositoryToken(BillingSubscriptionEntity),
-    );
+    billingSubscriptionRepository = module.get<
+      Repository<BillingSubscriptionEntity>
+    >(getRepositoryToken(BillingSubscriptionEntity));
     billingPriceRepository = module.get<Repository<BillingPriceEntity>>(
       getRepositoryToken(BillingPriceEntity),
     );

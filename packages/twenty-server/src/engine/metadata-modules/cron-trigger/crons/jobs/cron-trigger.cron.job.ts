@@ -10,7 +10,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   ServerlessFunctionTriggerJob,
@@ -27,8 +27,8 @@ export class CronTriggerCronJob {
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(CronTrigger)
-    private readonly cronTriggerRepository: Repository<CronTrigger>,
+    @InjectRepository(CronTriggerEntity)
+    private readonly cronTriggerRepository: Repository<CronTriggerEntity>,
   ) {}
 
   @Process(CronTriggerCronJob.name)

@@ -1,16 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
 import { msg } from '@lingui/core/macro';
 
-import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { type MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { type BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
-import { type BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import {
   type LicensedBillingSubscriptionItem,
   type MeteredBillingSubscriptionItem,
@@ -104,7 +104,9 @@ const assertIsMeteredPrice = (
   return;
 };
 
-const isMeteredPrice = (price: BillingPriceEntity): price is BillingMeterPrice => {
+const isMeteredPrice = (
+  price: BillingPriceEntity,
+): price is BillingMeterPrice => {
   if (
     price.billingProduct?.metadata.priceUsageBased !==
       BillingUsageType.METERED ||
@@ -118,7 +120,7 @@ const isMeteredPrice = (price: BillingPriceEntity): price is BillingMeterPrice =
 
 const assertIsSubscription = (
   subscription: BillingSubscriptionEntity | undefined,
-): asserts subscription is BillingSubscription &
+): asserts subscription is BillingSubscriptionEntity &
   BillingSubscriptionWithSubscriptionItems => {
   if (!isDefined(subscription)) {
     throw new BillingException(

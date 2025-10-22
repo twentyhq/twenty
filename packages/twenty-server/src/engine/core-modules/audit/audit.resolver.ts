@@ -21,7 +21,7 @@ import {
   isPageviewAnalyticsInput,
   isTrackAnalyticsInput,
 } from './dtos/create-analytics.input';
-import { Analytics } from './entities/analytics.entity';
+import { Analytics } from './dtos/analytics.dto';
 import { AuditService } from './services/audit.service';
 
 @Resolver(() => Analytics)

@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { AuthToken } from './token.entity';
+import { AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 
 @ObjectType()
-export class LoginToken {
+export class LoginTokenOutput {
   @Field(() => AuthToken)
   loginToken: AuthToken;
 }

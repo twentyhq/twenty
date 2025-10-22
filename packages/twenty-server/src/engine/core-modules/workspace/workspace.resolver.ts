@@ -21,7 +21,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -201,10 +201,10 @@ export class WorkspaceResolver {
     return this.workspaceService.deleteWorkspace(id);
   }
 
-  @ResolveField(() => [BillingSubscription])
+  @ResolveField(() => [BillingSubscriptionEntity])
   async billingSubscriptions(
     @Parent() workspace: WorkspaceEntity,
-  ): Promise<BillingSubscription[] | undefined> {
+  ): Promise<BillingSubscriptionEntity[] | undefined> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return [];
     }
@@ -258,10 +258,10 @@ export class WorkspaceResolver {
     }
   }
 
-  @ResolveField(() => BillingSubscription, { nullable: true })
+  @ResolveField(() => BillingSubscriptionEntity, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: WorkspaceEntity,
-  ): Promise<BillingSubscription | undefined> {
+  ): Promise<BillingSubscriptionEntity | undefined> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
     }

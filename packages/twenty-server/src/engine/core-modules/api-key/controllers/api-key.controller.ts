@@ -15,8 +15,8 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
-import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
-import { UpdateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
+import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
+import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -49,7 +49,7 @@ export class ApiKeyController {
 
   @Post()
   async create(
-    @Body() createApiKeyDto: CreateApiKeyDTO,
+    @Body() createApiKeyDto: CreateApiKeyInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ApiKeyEntity> {
     return this.apiKeyService.create({
@@ -66,7 +66,7 @@ export class ApiKeyController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateApiKeyDto: UpdateApiKeyDTO,
+    @Body() updateApiKeyDto: UpdateApiKeyInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ApiKeyEntity | null> {
     const updateData: QueryDeepPartialEntity<ApiKeyEntity> = {};

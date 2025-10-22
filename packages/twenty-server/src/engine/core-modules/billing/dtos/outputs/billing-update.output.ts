@@ -2,16 +2,16 @@
 
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 @ObjectType()
 export class BillingUpdateOutput {
-  @Field(() => BillingSubscription, {
+  @Field(() => BillingSubscriptionEntity, {
     description: 'Current billing subscription',
   })
   currentBillingSubscription: BillingSubscriptionEntity;
 
-  @Field(() => [BillingSubscription], {
+  @Field(() => [BillingSubscriptionEntity], {
     description: 'All billing subscriptions',
   })
   billingSubscriptions: BillingSubscriptionEntity[];

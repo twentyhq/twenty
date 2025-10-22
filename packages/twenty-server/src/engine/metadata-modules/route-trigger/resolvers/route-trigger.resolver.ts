@@ -13,7 +13,7 @@ import { CreateRouteTriggerInput } from 'src/engine/metadata-modules/route-trigg
 import { RouteTriggerIdInput } from 'src/engine/metadata-modules/route-trigger/dtos/route-trigger-id.input';
 import { RouteTriggerDTO } from 'src/engine/metadata-modules/route-trigger/dtos/route-trigger.dto';
 import { UpdateRouteTriggerInput } from 'src/engine/metadata-modules/route-trigger/dtos/update-route-trigger.input';
-import { RouteTrigger } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
 import { routeTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/route-trigger/utils/route-trigger-graphql-api-exception-handler.utils';
 
@@ -24,8 +24,8 @@ import { routeTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modu
 export class RouteTriggerResolver {
   constructor(
     private readonly routeV2Service: RouteTriggerV2Service,
-    @InjectRepository(RouteTrigger)
-    private readonly routeTriggerRepository: Repository<RouteTrigger>,
+    @InjectRepository(RouteTriggerEntity)
+    private readonly routeTriggerRepository: Repository<RouteTriggerEntity>,
   ) {}
 
   @Query(() => RouteTriggerDTO)

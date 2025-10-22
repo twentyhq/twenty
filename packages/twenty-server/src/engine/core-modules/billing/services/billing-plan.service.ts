@@ -10,7 +10,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
@@ -34,7 +34,7 @@ export class BillingPlanService {
     planKey: BillingPlanKey;
     priceUsageBased: BillingUsageType;
     productKey: BillingProductKey;
-  }): Promise<BillingProduct[]> {
+  }): Promise<BillingProductEntity[]> {
     return await this.billingProductRepository.find({
       where: {
         metadata: JsonContains({
@@ -48,7 +48,9 @@ export class BillingPlanService {
     });
   }
 
-  async getPlanBaseProduct(planKey: BillingPlanKey): Promise<BillingProductEntity> {
+  async getPlanBaseProduct(
+    planKey: BillingPlanKey,
+  ): Promise<BillingProductEntity> {
     const [baseProduct] = await this.getProductsByProductMetadata({
       planKey,
       priceUsageBased: BillingUsageType.LICENSED,

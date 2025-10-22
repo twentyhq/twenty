@@ -13,7 +13,7 @@ import { CreateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger
 import { CronTriggerIdInput } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger-id.input';
 import { CronTriggerDTO } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger.dto';
 import { UpdateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger/dtos/update-cron-trigger.input';
-import { CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { cronTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/cron-trigger/utils/cron-trigger-graphql-api-exception-handler.util';
 
@@ -24,8 +24,8 @@ import { cronTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modul
 export class CronTriggerResolver {
   constructor(
     private readonly cronTriggerV2Service: CronTriggerV2Service,
-    @InjectRepository(CronTrigger)
-    private readonly cronTriggerRepository: Repository<CronTrigger>,
+    @InjectRepository(CronTriggerEntity)
+    private readonly cronTriggerRepository: Repository<CronTriggerEntity>,
   ) {}
 
   @Query(() => CronTriggerDTO)

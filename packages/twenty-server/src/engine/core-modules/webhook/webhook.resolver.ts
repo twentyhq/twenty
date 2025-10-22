@@ -3,10 +3,10 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { CreateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/create-webhook.dto';
-import { DeleteWebhookDTO } from 'src/engine/core-modules/webhook/dtos/delete-webhook.dto';
-import { GetWebhookDTO } from 'src/engine/core-modules/webhook/dtos/get-webhook.dto';
-import { UpdateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/update-webhook.dto';
+import { CreateWebhookInput } from 'src/engine/core-modules/webhook/dtos/create-webhook.dto';
+import { DeleteWebhookInput } from 'src/engine/core-modules/webhook/dtos/delete-webhook.dto';
+import { GetWebhookInput } from 'src/engine/core-modules/webhook/dtos/get-webhook.dto';
+import { UpdateWebhookInput } from 'src/engine/core-modules/webhook/dtos/update-webhook.dto';
 import { webhookGraphqlApiExceptionHandler } from 'src/engine/core-modules/webhook/utils/webhook-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -29,7 +29,7 @@ export class WebhookResolver {
 
   @Query(() => WebhookEntity, { nullable: true })
   async webhook(
-    @Args('input') input: GetWebhookDTO,
+    @Args('input') input: GetWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WebhookEntity | null> {
     return this.webhookService.findById(input.id, workspace.id);
@@ -38,7 +38,7 @@ export class WebhookResolver {
   @Mutation(() => WebhookEntity)
   async createWebhook(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('input') input: CreateWebhookDTO,
+    @Args('input') input: CreateWebhookInput,
   ): Promise<WebhookEntity> {
     try {
       return await this.webhookService.create({
@@ -57,7 +57,7 @@ export class WebhookResolver {
   @Mutation(() => WebhookEntity, { nullable: true })
   async updateWebhook(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('input') input: UpdateWebhookDTO,
+    @Args('input') input: UpdateWebhookInput,
   ): Promise<WebhookEntity | null> {
     try {
       const updateData: QueryDeepPartialEntity<WebhookEntity> = {};
@@ -82,7 +82,7 @@ export class WebhookResolver {
 
   @Mutation(() => Boolean)
   async deleteWebhook(
-    @Args('input') input: DeleteWebhookDTO,
+    @Args('input') input: DeleteWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const result = await this.webhookService.delete(input.id, workspace.id);

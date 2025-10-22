@@ -13,7 +13,7 @@ import { CreateDatabaseEventTriggerInput } from 'src/engine/metadata-modules/dat
 import { DatabaseEventTriggerIdInput } from 'src/engine/metadata-modules/database-event-trigger/dtos/database-event-trigger-id.input';
 import { DatabaseEventTriggerDTO } from 'src/engine/metadata-modules/database-event-trigger/dtos/database-event-trigger.dto';
 import { UpdateDatabaseEventTriggerInput } from 'src/engine/metadata-modules/database-event-trigger/dtos/update-database-event-trigger.input';
-import { DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
+import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { databaseEventTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/database-event-trigger/utils/database-event-trigger-graphql-api-exception-handler.utils';
 
@@ -24,8 +24,8 @@ import { databaseEventTriggerGraphQLApiExceptionHandler } from 'src/engine/metad
 export class DatabaseEventTriggerResolver {
   constructor(
     private readonly databaseEventTriggerV2Service: DatabaseEventTriggerV2Service,
-    @InjectRepository(DatabaseEventTrigger)
-    private readonly databaseEventTriggerRepository: Repository<DatabaseEventTrigger>,
+    @InjectRepository(DatabaseEventTriggerEntity)
+    private readonly databaseEventTriggerRepository: Repository<DatabaseEventTriggerEntity>,
   ) {}
 
   @Query(() => DatabaseEventTriggerDTO)

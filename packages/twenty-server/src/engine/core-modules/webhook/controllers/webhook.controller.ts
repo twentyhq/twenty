@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { CreateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/create-webhook.dto';
-import { UpdateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/update-webhook.dto';
+import { CreateWebhookInput } from 'src/engine/core-modules/webhook/dtos/create-webhook.dto';
+import { UpdateWebhookInput } from 'src/engine/core-modules/webhook/dtos/update-webhook.dto';
 import { type WebhookEntity } from 'src/engine/core-modules/webhook/webhook.entity';
 import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -47,7 +47,7 @@ export class WebhookController {
 
   @Post()
   async create(
-    @Body() createWebhookDto: CreateWebhookDTO,
+    @Body() createWebhookDto: CreateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WebhookEntity> {
     return this.webhookService.create({
@@ -62,7 +62,7 @@ export class WebhookController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateWebhookDto: UpdateWebhookDTO,
+    @Body() updateWebhookDto: UpdateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WebhookEntity | null> {
     return this.webhookService.update(id, workspace.id, updateWebhookDto);

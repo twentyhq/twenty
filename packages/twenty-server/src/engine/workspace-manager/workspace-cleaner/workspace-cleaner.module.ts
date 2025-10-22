@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
@@ -23,7 +23,7 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
     TypeOrmModule.forFeature([
       WorkspaceEntity,
       UserWorkspaceEntity,
-      BillingSubscription,
+      BillingSubscriptionEntity,
     ]),
     WorkspaceModule,
     DataSourceModule,

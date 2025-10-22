@@ -12,7 +12,7 @@ import {
 import { Repository } from 'typeorm';
 
 import { BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
