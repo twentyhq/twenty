@@ -135,7 +135,7 @@ describe('Standard field metadata update should succeed', () => {
           icon: originalStageFieldMetadata.icon,
           isActive: originalStageFieldMetadata.isActive,
           options: originalStageFieldMetadata.options,
-          defaultValue: originalStageFieldMetadata.defaultValue
+          defaultValue: originalStageFieldMetadata.defaultValue,
         },
       },
     });
