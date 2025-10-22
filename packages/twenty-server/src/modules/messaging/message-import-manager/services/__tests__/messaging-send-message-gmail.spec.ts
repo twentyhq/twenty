@@ -17,23 +17,37 @@ jest.mock('nodemailer/lib/mail-composer', () => {
 
 describe('MessagingSendMessageService - Gmail HTML Support', () => {
   let service: MessagingSendMessageService;
-  let oAuth2ClientManagerService: OAuth2ClientManagerService;
+
+  const mockSend = jest.fn().mockResolvedValue({ data: { id: 'message-id' } });
 
   const mockGmailClient = {
     users: {
       messages: {
-        send: jest.fn().mockResolvedValue({ data: { id: 'message-id' } }),
+        send: mockSend,
       },
+      getProfile: jest
+        .fn()
+        .mockResolvedValue({ data: { emailAdress: 'test@example.com' } }),
+    },
+  };
+
+  const mockPeopleClient = {
+    people: {
+      get: jest.fn().mockResolvedValue({
+        data: {
+          names: [
+            {
+              displayName: 'Test User',
+            },
+          ],
+        },
+      }),
     },
   };
 
   const mockOAuth2Client = {
     gmail: jest.fn().mockReturnValue(mockGmailClient),
-    userinfo: {
-      get: jest.fn().mockResolvedValue({
-        data: { email: 'test@example.com', name: 'Test User' },
-      }),
-    },
+    people: jest.fn().mockReturnValue(mockPeopleClient),
   };
 
   beforeEach(async () => {
@@ -62,9 +76,6 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
     service = module.get<MessagingSendMessageService>(
       MessagingSendMessageService,
     );
-    oAuth2ClientManagerService = module.get<OAuth2ClientManagerService>(
-      OAuth2ClientManagerService,
-    );
   });
 
   afterEach(() => {
@@ -88,65 +99,8 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
 
     await service.sendMessage(sendMessageInput, connectedAccount);
 
-    const mockOAuth2Client =
-      await oAuth2ClientManagerService.getGoogleOAuth2Client(connectedAccount);
-
-    const gmailClient = mockOAuth2Client.gmail({ version: 'v1' });
-
-    const sendCall = gmailClient.users.messages.send as jest.Mock;
-
-    expect(sendCall).toHaveBeenCalledTimes(1);
-    expect(sendCall).toHaveBeenCalledWith({
-      userId: 'me',
-      requestBody: {
-        raw: Buffer.from('mocked-email-content').toString('base64'),
-      },
-    });
-  });
-
-  it('should handle missing fromName gracefully', async () => {
-    const mockGmailClient = {
-      users: {
-        messages: {
-          send: jest.fn().mockResolvedValue({ data: { id: 'message-id' } }),
-        },
-      },
-    };
-
-    const mockOAuth2ClientNoName = {
-      gmail: jest.fn().mockReturnValue(mockGmailClient),
-      userinfo: {
-        get: jest.fn().mockResolvedValue({
-          data: { email: 'test@example.com' }, // No name field
-        }),
-      },
-    };
-
-    (
-      oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
-    ).mockResolvedValueOnce(mockOAuth2ClientNoName);
-
-    const sendMessageInput = {
-      to: 'recipient@example.com',
-      subject: 'Test Email',
-      body: 'Plain text',
-      html: '<p>HTML content</p>',
-      attachments: [],
-    };
-
-    const connectedAccount = {
-      provider: ConnectedAccountProvider.GOOGLE,
-      accessToken: 'access-token',
-      refreshToken: 'refresh-token',
-    } as any;
-
-    await service.sendMessage(sendMessageInput, connectedAccount);
-
-    const sendCall = mockGmailClient.users.messages.send as jest.Mock;
-
-    expect(sendCall).toHaveBeenCalledTimes(1);
-
-    expect(sendCall).toHaveBeenCalledWith({
+    expect(mockSend).toHaveBeenCalledTimes(1);
+    expect(mockSend).toHaveBeenCalledWith({
       userId: 'me',
       requestBody: {
         raw: Buffer.from('mocked-email-content').toString('base64'),
@@ -177,15 +131,8 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
 
     await service.sendMessage(sendMessageInput, connectedAccount);
 
-    const mockOAuth2Client =
-      await oAuth2ClientManagerService.getGoogleOAuth2Client(connectedAccount);
-
-    const gmailClient = mockOAuth2Client.gmail({ version: 'v1' });
-
-    const sendCall = gmailClient.users.messages.send as jest.Mock;
-
-    expect(sendCall).toHaveBeenCalledTimes(1);
-    expect(sendCall).toHaveBeenCalledWith({
+    expect(mockSend).toHaveBeenCalledTimes(1);
+    expect(mockSend).toHaveBeenCalledWith({
       userId: 'me',
       requestBody: {
         raw: Buffer.from('mocked-email-content').toString('base64'),

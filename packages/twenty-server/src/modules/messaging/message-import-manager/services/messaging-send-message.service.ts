@@ -50,6 +50,7 @@ export class MessagingSendMessageService {
         const gmailClient = oAuth2Client.gmail({
           version: 'v1',
         });
+
         const peopleClient = oAuth2Client.people({
           version: 'v1',
         });
