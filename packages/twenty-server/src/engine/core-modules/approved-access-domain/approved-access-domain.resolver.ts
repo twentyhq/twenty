@@ -2,11 +2,11 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { ApprovedAccessDomainExceptionFilter } from 'src/engine/core-modules/approved-access-domain/approved-access-domain-exception-filter';
+import { ApprovedAccessDomainDTO } from 'src/engine/core-modules/approved-access-domain/dtos/approved-access-domain.dto';
 import { CreateApprovedAccessDomainInput } from 'src/engine/core-modules/approved-access-domain/dtos/create-approved-access.domain.input';
 import { DeleteApprovedAccessDomainInput } from 'src/engine/core-modules/approved-access-domain/dtos/delete-approved-access-domain.input';
 import { ValidateApprovedAccessDomainInput } from 'src/engine/core-modules/approved-access-domain/dtos/validate-approved-access-domain.input';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
-import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -30,12 +30,12 @@ export class ApprovedAccessDomainResolver {
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
   ) {}
 
-  @Mutation(() => ApprovedAccessDomainEntity)
+  @Mutation(() => ApprovedAccessDomainDTO)
   async createApprovedAccessDomain(
     @Args('input') { domain, email }: CreateApprovedAccessDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
     @AuthUser() currentUser: UserEntity,
-  ): Promise<ApprovedAccessDomainEntity> {
+  ): Promise<ApprovedAccessDomainDTO> {
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         currentWorkspace.id,
@@ -69,24 +69,24 @@ export class ApprovedAccessDomainResolver {
     return true;
   }
 
-  @Mutation(() => ApprovedAccessDomainEntity)
+  @Mutation(() => ApprovedAccessDomainDTO)
   async validateApprovedAccessDomain(
     @Args('input')
     {
       validationToken,
       approvedAccessDomainId,
     }: ValidateApprovedAccessDomainInput,
-  ): Promise<ApprovedAccessDomainEntity> {
+  ): Promise<ApprovedAccessDomainDTO> {
     return await this.approvedAccessDomainService.validateApprovedAccessDomain({
       validationToken,
       approvedAccessDomainId,
     });
   }
 
-  @Query(() => [ApprovedAccessDomainEntity])
+  @Query(() => [ApprovedAccessDomainDTO])
   async getApprovedAccessDomains(
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-  ): Promise<Array<ApprovedAccessDomainEntity>> {
+  ): Promise<Array<ApprovedAccessDomainDTO>> {
     return await this.approvedAccessDomainService.getApprovedAccessDomains(
       currentWorkspace,
     );
