@@ -3,10 +3,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { type PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -29,7 +28,7 @@ describe('WorkspaceDomainsService', () => {
           },
         },
         {
-          provide: getRepositoryToken(ApprovedAccessDomainEntity),
+          provide: getRepositoryToken(PublicDomainEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -47,7 +46,7 @@ describe('WorkspaceDomainsService', () => {
       getRepositoryToken(WorkspaceEntity),
     );
     publicDomainRepository = module.get<Repository<PublicDomainEntity>>(
-      getRepositoryToken(ApprovedAccessDomainEntity),
+      getRepositoryToken(PublicDomainEntity),
     );
     workspaceDomainsService = module.get<WorkspaceDomainsService>(
       WorkspaceDomainsService,

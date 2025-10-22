@@ -1,7 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -18,7 +17,7 @@ import { TwoFactorAuthenticationService } from './two-factor-authentication.serv
 import { type DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
 import { type InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
 import { type VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
-import { type TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 
 const createMockRepository = () => ({
   findOne: jest.fn(),
@@ -93,7 +92,7 @@ describe('TwoFactorAuthenticationResolver', () => {
           useFactory: createMockWorkspaceDomainsService,
         },
         {
-          provide: getRepositoryToken(ApprovedAccessDomainEntity),
+          provide: getRepositoryToken(TwoFactorAuthenticationMethodEntity),
           useFactory: createMockRepository,
         },
       ],
@@ -106,7 +105,9 @@ describe('TwoFactorAuthenticationResolver', () => {
     loginTokenService = module.get(LoginTokenService);
     userService = module.get(UserService);
     workspaceDomainsService = module.get(WorkspaceDomainsService);
-    repository = module.get(getRepositoryToken(ApprovedAccessDomainEntity));
+    repository = module.get(
+      getRepositoryToken(TwoFactorAuthenticationMethodEntity),
+    );
   });
 
   afterEach(() => {

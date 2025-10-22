@@ -159,7 +159,7 @@ describe('UserWorkspaceService', () => {
       const userWorkspace = {
         userId,
         workspaceId,
-      } as unknown as UserWorkspaceEntity;
+      } as UserWorkspaceEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -195,7 +195,7 @@ describe('UserWorkspaceService', () => {
       const userWorkspace = {
         userId,
         workspaceId,
-      } as unknown as UserWorkspaceEntity;
+      } as UserWorkspaceEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')
@@ -226,7 +226,7 @@ describe('UserWorkspaceService', () => {
       const userWorkspace = {
         userId,
         workspaceId,
-      } as unknown as UserWorkspaceEntity;
+      } as UserWorkspaceEntity;
 
       jest
         .spyOn(userWorkspaceRepository, 'create')

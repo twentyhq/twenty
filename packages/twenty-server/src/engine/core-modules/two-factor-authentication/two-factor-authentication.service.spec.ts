@@ -3,7 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
-import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -18,7 +17,7 @@ import {
 } from './two-factor-authentication.exception';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
-import { type TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 import { OTPStatus } from './strategies/otp/otp.constants';
 
 const totpStrategyMocks = {
@@ -75,7 +74,7 @@ describe('TwoFactorAuthenticationService', () => {
       providers: [
         TwoFactorAuthenticationService,
         {
-          provide: getRepositoryToken(ApprovedAccessDomainEntity),
+          provide: getRepositoryToken(TwoFactorAuthenticationMethodEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -100,7 +99,9 @@ describe('TwoFactorAuthenticationService', () => {
     service = module.get<TwoFactorAuthenticationService>(
       TwoFactorAuthenticationService,
     );
-    repository = module.get(getRepositoryToken(ApprovedAccessDomainEntity));
+    repository = module.get(
+      getRepositoryToken(TwoFactorAuthenticationMethodEntity),
+    );
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
     simpleSecretEncryptionUtil = module.get<SimpleSecretEncryptionUtil>(

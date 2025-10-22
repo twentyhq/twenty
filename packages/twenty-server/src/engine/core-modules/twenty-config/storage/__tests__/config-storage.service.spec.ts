@@ -3,12 +3,11 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DeleteResult, IsNull, type Repository } from 'typeorm';
 
-import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import * as authUtils from 'src/engine/core-modules/auth/auth.util';
 import {
-  type KeyValuePairEntity,
+  KeyValuePairEntity,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import * as authUtils from 'src/engine/core-modules/auth/auth.util';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
@@ -71,7 +70,7 @@ describe('ConfigStorageService', () => {
         },
         ConfigVariables,
         {
-          provide: getRepositoryToken(ApprovedAccessDomainEntity),
+          provide: getRepositoryToken(KeyValuePairEntity),
           useValue: {
             findOne: jest.fn(),
             find: jest.fn(),
@@ -85,7 +84,7 @@ describe('ConfigStorageService', () => {
 
     service = module.get<ConfigStorageService>(ConfigStorageService);
     keyValuePairRepository = module.get<Repository<KeyValuePairEntity>>(
-      getRepositoryToken(ApprovedAccessDomainEntity),
+      getRepositoryToken(KeyValuePairEntity),
     );
     configValueConverter = module.get<ConfigValueConverterService>(
       ConfigValueConverterService,

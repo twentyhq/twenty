@@ -3,12 +3,11 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { SSOException } from 'src/engine/core-modules/sso/sso.exception';
-import { type WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('SSOService', () => {
@@ -21,7 +20,7 @@ describe('SSOService', () => {
       providers: [
         SSOService,
         {
-          provide: getRepositoryToken(ApprovedAccessDomainEntity),
+          provide: getRepositoryToken(WorkspaceSSOIdentityProviderEntity),
           useClass: Repository,
         },
         {
@@ -47,7 +46,7 @@ describe('SSOService', () => {
 
     service = module.get<SSOService>(SSOService);
     repository = module.get<Repository<WorkspaceSSOIdentityProviderEntity>>(
-      getRepositoryToken(ApprovedAccessDomainEntity),
+      getRepositoryToken(WorkspaceSSOIdentityProviderEntity),
     );
     billingService = module.get<BillingService>(BillingService);
   });

@@ -82,7 +82,7 @@ describe('JwtAuthStrategy', () => {
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
-          'WorkspaceEntity not found',
+          'Workspace not found',
           AuthExceptionCode.WORKSPACE_NOT_FOUND,
         ),
       );
