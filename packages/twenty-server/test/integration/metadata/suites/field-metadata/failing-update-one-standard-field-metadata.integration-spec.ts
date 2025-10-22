@@ -1,11 +1,9 @@
-import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import {
-    eachTestingContextFilter,
-    type EachTestingContext,
+  eachTestingContextFilter,
+  type EachTestingContext,
 } from 'twenty-shared/testing';
 
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -44,8 +42,9 @@ const failingUpdateTestsUseCase: UpdateOneStandardFieldMetadataTestingContext =
 
 const allTestsUseCases = [...failingUpdateTestsUseCase];
 
-describe('Standard field metadata update should fail', () => {
+describe('Standard field metadata update should be ignored', () => {
   let companyNameFieldMetadataId: string;
+  let originalFieldMetadata: any;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -57,6 +56,16 @@ describe('Standard field metadata update should fail', () => {
       gqlFields: `
         id
         nameSingular
+        fieldsList {
+          id
+          name
+          label
+          description
+          icon
+          isActive
+          isCustom
+          isLabelSyncedWithName
+        }
       `,
     });
 
@@ -64,34 +73,13 @@ describe('Standard field metadata update should fail', () => {
 
     jestExpectToBeDefined(companyObject);
 
-    const { fields } = await findManyFieldsMetadata({
-      expectToFail: false,
-      input: {
-        filter: {},
-        paging: { first: 1000 },
-      },
-      gqlFields: `
-        id
-        name
-        isCustom
-        object {
-          id
-          nameSingular
-        }
-      `,
-    });
-
-    const companyNameField = fields
-      .map((edge: any) => edge.node)
-      .find(
-        (field: any) =>
-          field.object.id === companyObject.id &&
-          field.name === 'name' &&
-          !field.isCustom,
-      );
+    const companyNameField = companyObject.fieldsList?.find(
+      (field: any) => field.name === 'name' && !field.isCustom,
+    );
 
     jestExpectToBeDefined(companyNameField);
     companyNameFieldMetadataId = companyNameField.id;
+    originalFieldMetadata = companyNameField;
   });
 
   it.each(eachTestingContextFilter(allTestsUseCases))(
@@ -102,12 +90,12 @@ describe('Standard field metadata update should fail', () => {
           ? context({ fieldMetadataId: companyNameFieldMetadataId })
           : context;
 
-      const { errors } = await updateOneFieldMetadata({
+      const { data } = await updateOneFieldMetadata({
         input: {
           idToUpdate: companyNameFieldMetadataId,
           updatePayload,
         },
-        expectToFail: true,
+        expectToFail: false,
         gqlFields: `
           id
           name
@@ -115,10 +103,15 @@ describe('Standard field metadata update should fail', () => {
           description
           icon
           isActive
-          isCustom`,
+          isCustom
+          isLabelSyncedWithName
+        `,
       });
 
-      expectOneNotInternalServerErrorSnapshot({ errors });
+      const updatedField = data.updateOneField;
+
+      jestExpectToBeDefined(updatedField);
+      expect(updatedField).toEqual(originalFieldMetadata);
     },
   );
 });
