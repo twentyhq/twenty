@@ -34874,10 +34874,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:16.8.0":
-  version: 16.8.0
-  resolution: "graphql@npm:16.8.0"
-  checksum: 10c0/f7ca0302e8d658012db90b428ec66c1453afe53fbffa21404a28b5bdec5b0e88641d38416ef3d582acad7ddde2effe729e2b050a1483a2e9d4a6111e892e4903
+"graphql@npm:16.8.1":
+  version: 16.8.1
+  resolution: "graphql@npm:16.8.1"
+  checksum: 10c0/129c318156b466f440914de80dbf7bc67d17f776f2a088a40cb0da611d19a97c224b1c6d2b13cbcbc6e5776e45ed7468b8432f9c3536724e079b44f1a3d57a8a
   languageName: node
   linkType: hard
 
@@ -51842,7 +51842,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
     graphiql: "npm:^3.1.1"
-    graphql: "npm:^16.8.0"
+    graphql: "npm:16.8.1"
     graphql-sse: "npm:^2.5.4"
     input-otp: "npm:^1.4.2"
     js-cookie: "npm:^3.0.5"
@@ -52022,7 +52022,7 @@ __metadata:
     glob: "npm:11.0.1"
     google-auth-library: "npm:8.9.0"
     googleapis: "npm:105.0.0"
-    graphql: "npm:16.8.0"
+    graphql: "npm:16.8.1"
     graphql-fields: "npm:2.0.3"
     graphql-middleware: "npm:^6.1.35"
     graphql-rate-limit: "npm:3.3.0"

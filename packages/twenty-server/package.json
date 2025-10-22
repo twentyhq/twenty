@@ -104,7 +104,7 @@
     "glob": "11.0.1",
     "google-auth-library": "8.9.0",
     "googleapis": "105.0.0",
-    "graphql": "16.8.0",
+    "graphql": "16.8.1",
     "graphql-fields": "2.0.3",
     "graphql-middleware": "^6.1.35",
     "graphql-rate-limit": "3.3.0",
