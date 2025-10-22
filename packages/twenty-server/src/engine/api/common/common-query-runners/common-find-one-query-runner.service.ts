@@ -138,7 +138,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       authContext,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      operationName: CommonQueryNames.findOne,
+      operationName: CommonQueryNames.FIND_ONE,
     });
 
     return enrichedResults[0];
@@ -157,7 +157,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       (await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
-        CommonQueryNames.findOne,
+        CommonQueryNames.FIND_ONE,
         args,
         //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
       )) as FindOneQueryArgs;

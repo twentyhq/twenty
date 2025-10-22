@@ -10,7 +10,7 @@ import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -35,7 +35,7 @@ describe('ApprovedAccessDomainService', () => {
   let approvedAccessDomainRepository: Repository<ApprovedAccessDomain>;
   let emailService: EmailService;
   let twentyConfigService: TwentyConfigService;
-  let domainManagerService: DomainManagerService;
+  let workspaceDomainsService: WorkspaceDomainsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -63,7 +63,7 @@ describe('ApprovedAccessDomainService', () => {
           },
         },
         {
-          provide: DomainManagerService,
+          provide: WorkspaceDomainsService,
           useValue: {
             buildWorkspaceURL: jest.fn(),
           },
@@ -87,8 +87,9 @@ describe('ApprovedAccessDomainService', () => {
     );
     emailService = module.get<EmailService>(EmailService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
+    workspaceDomainsService = module.get<WorkspaceDomainsService>(
+      WorkspaceDomainsService,
+    );
   });
 
   describe('createApprovedAccessDomain', () => {
@@ -286,7 +287,7 @@ describe('ApprovedAccessDomainService', () => {
         .mockResolvedValue(approvedAccessDomain);
 
       jest
-        .spyOn(domainManagerService, 'buildWorkspaceURL')
+        .spyOn(workspaceDomainsService, 'buildWorkspaceURL')
         .mockReturnValue(new URL('https://sub.twenty.com'));
 
       jest
@@ -303,7 +304,7 @@ describe('ApprovedAccessDomainService', () => {
         approvedAccessDomain,
       );
 
-      expect(domainManagerService.buildWorkspaceURL).toHaveBeenCalledWith({
+      expect(workspaceDomainsService.buildWorkspaceURL).toHaveBeenCalledWith({
         workspace: workspace,
         pathname: getSettingsPath(SettingsPath.Domains),
         searchParams: { validationToken: expect.any(String) },

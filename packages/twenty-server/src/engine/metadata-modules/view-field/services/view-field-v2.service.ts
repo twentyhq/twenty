@@ -250,13 +250,19 @@ export class ViewFieldV2Service {
     const {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
-        },
-      );
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatViewFieldMaps',
+          'flatViewMaps',
+          'flatFieldMetadataMaps',
+          'flatObjectMetadataMaps',
+        ],
+      },
+    );
 
     const existingViewFieldToDelete =
       fromDestroyViewFieldInputToFlatViewFieldOrThrow({
@@ -277,6 +283,8 @@ export class ViewFieldV2Service {
           },
           dependencyAllFlatEntityMaps: {
             flatViewMaps: existingFlatViewMaps,
+            flatFieldMetadataMaps,
+            flatObjectMetadataMaps,
           },
           buildOptions: {
             isSystemBuild: false,

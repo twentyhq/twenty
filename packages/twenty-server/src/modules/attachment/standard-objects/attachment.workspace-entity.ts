@@ -6,12 +6,14 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -57,20 +59,92 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   })
   fullPath: string;
 
+  // Deprecated: Use fileCategory instead
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
-    label: msg`Type`,
-    description: msg`Attachment type`,
+    label: msg`Type (deprecated)`,
+    description: msg`Attachment type (deprecated - use fileCategory)`,
     icon: 'IconList',
   })
   type: string;
 
+  @WorkspaceField({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.fileCategory,
+    type: FieldMetadataType.SELECT,
+    label: msg`File category`,
+    description: msg`Attachment file category`,
+    icon: 'IconList',
+    options: [
+      {
+        value: 'ARCHIVE',
+        label: 'Archive',
+        position: 0,
+        color: 'gray',
+      },
+      {
+        value: 'AUDIO',
+        label: 'Audio',
+        position: 1,
+        color: 'pink',
+      },
+      {
+        value: 'IMAGE',
+        label: 'Image',
+        position: 2,
+        color: 'yellow',
+      },
+      {
+        value: 'PRESENTATION',
+        label: 'Presentation',
+        position: 3,
+        color: 'orange',
+      },
+      {
+        value: 'SPREADSHEET',
+        label: 'Spreadsheet',
+        position: 4,
+        color: 'turquoise',
+      },
+      {
+        value: 'TEXT_DOCUMENT',
+        label: 'Text Document',
+        position: 5,
+        color: 'blue',
+      },
+      {
+        value: 'VIDEO',
+        label: 'Video',
+        position: 6,
+        color: 'purple',
+      },
+      {
+        value: 'OTHER',
+        label: 'Other',
+        position: 7,
+        color: 'gray',
+      },
+    ],
+    defaultValue: "'OTHER'",
+  })
+  fileCategory: string;
+
+  @WorkspaceField({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Created by`,
+    icon: 'IconCreativeCommonsSa',
+    description: msg`The creator of the record`,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  createdBy: ActorMetadata;
+
+  // Deprecated: Use createdBy composite field instead
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.author,
     type: RelationType.MANY_TO_ONE,
     label: msg`Author`,
-    description: msg`Attachment author`,
+    description: msg`Attachment author (deprecated - use createdBy)`,
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredAttachments',

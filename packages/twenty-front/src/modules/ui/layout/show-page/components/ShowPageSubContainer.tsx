@@ -117,7 +117,7 @@ export const ShowPageSubContainer = ({
       value={{ instanceId: tabListComponentId }}
     >
       {displaySummaryAndFields && (
-        <ShowPageLeftContainer forceMobile={isMobile}>
+        <ShowPageLeftContainer>
           {summaryCard}
           {fieldsCard}
         </ShowPageLeftContainer>

@@ -1,13 +1,13 @@
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
-import { type TimelineThread } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
+import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { extractParticipantSummary } from 'src/engine/core-modules/messaging/utils/extract-participant-summary.util';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 export const formatThreads = (
   threads: Omit<
-    TimelineThread,
+    TimelineThreadDTO,
     | 'firstParticipant'
     | 'lastTwoParticipants'
     | 'participantCount'
@@ -20,7 +20,7 @@ export const formatThreads = (
   threadVisibilityByThreadId: {
     [key: string]: MessageChannelVisibility;
   },
-): TimelineThread[] => {
+): TimelineThreadDTO[] => {
   return threads.map((thread) => {
     const visibility = threadVisibilityByThreadId[thread.id];
 

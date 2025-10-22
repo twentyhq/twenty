@@ -17,6 +17,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
@@ -101,6 +102,17 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @Column({ nullable: true, type: 'uuid' })
   kanbanAggregateOperationFieldMetadataId: string | null;
 
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (FieldMetadataEntity) => FieldMetadataEntity.kanbanAggregateOperationViews,
+    {
+      onDelete: 'CASCADE',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'kanbanAggregateOperationFieldMetadataId' })
+  kanbanAggregateOperationFieldMetadata: Relation<FieldMetadataEntity>;
+
   @Column({
     type: 'enum',
     enum: Object.values(ViewCalendarLayout),
@@ -111,6 +123,17 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
 
   @Column({ nullable: true, type: 'uuid' })
   calendarFieldMetadataId: string | null;
+
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.calendarViews,
+    {
+      onDelete: 'CASCADE',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'calendarFieldMetadataId' })
+  calendarFieldMetadata: Relation<FieldMetadataEntity>;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

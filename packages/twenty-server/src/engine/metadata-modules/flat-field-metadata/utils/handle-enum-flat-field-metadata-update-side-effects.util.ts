@@ -2,7 +2,6 @@ import { type EnumFieldMetadataType, type FromTo } from 'twenty-shared/types';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import {
   type FlatViewFiltersToDeleteAndUpdate,
   recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate,
@@ -15,7 +14,7 @@ import {
 import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 
 type HandleEnumFlatFieldMetadataOptionsUpdateSideEffectsArgs = FromTo<
-  FlatFieldMetadata,
+  FlatFieldMetadata<EnumFieldMetadataType>,
   'flatFieldMetadata'
 > &
   Pick<AllFlatEntityMaps, 'flatViewFilterMaps' | 'flatViewGroupMaps'>;
@@ -41,13 +40,6 @@ export const handleEnumFlatFieldMetadataUpdateSideEffects = ({
   const sideEffectResult = structuredClone(
     EMPTY_ENUM_FIELD_METADATA_SIDE_EFFECT_RESULT,
   );
-
-  if (
-    !isEnumFlatFieldMetadata(toFlatFieldMetadata) ||
-    !isEnumFlatFieldMetadata(fromFlatFieldMetadata)
-  ) {
-    return sideEffectResult;
-  }
 
   if (
     JSON.stringify(fromFlatFieldMetadata.options) !==

@@ -9,7 +9,7 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
@@ -64,7 +64,7 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
-          provide: DomainManagerService,
+          provide: WorkspaceDomainsService,
           useValue: {
             buildWorkspaceURL: jest
               .fn()

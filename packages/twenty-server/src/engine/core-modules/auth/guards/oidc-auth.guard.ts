@@ -10,18 +10,18 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { OIDCAuthStrategy } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import { type WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   constructor(
     private readonly sSOService: SSOService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super();
   }
@@ -91,7 +91,7 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+        this.workspaceDomainsService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
           identityProvider?.workspace,
         ),
       );

@@ -19,6 +19,8 @@ import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upg
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
 import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
+import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
+import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
 import { AddEnqueuedStatusToWorkflowRunV2Command } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run-v2.command';
 import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
@@ -91,13 +93,15 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillWorkflowManualTriggerAvailabilityCommand: BackfillWorkflowManualTriggerAvailabilityCommand,
 
     // 1.8 Commands
+    protected readonly fillNullServerlessFunctionLayerIdCommand: FillNullServerlessFunctionLayerIdCommand,
     protected readonly migrateWorkflowStepFilterOperandValueCommand: MigrateWorkflowStepFilterOperandValueCommand,
     protected readonly deduplicateUniqueFieldsCommand: DeduplicateUniqueFieldsCommand,
     protected readonly regeneratePersonSearchVectorWithPhonesCommand: RegeneratePersonSearchVectorWithPhonesCommand,
     protected readonly migrateChannelSyncStagesCommand: MigrateChannelSyncStagesCommand,
-    protected readonly fillNullServerlessFunctionLayerIdCommand: FillNullServerlessFunctionLayerIdCommand,
 
     // 1.10 Commands
+    protected readonly migrateAttachmentAuthorToCreatedByCommand: MigrateAttachmentAuthorToCreatedByCommand,
+    protected readonly migrateAttachmentTypeToFileCategoryCommand: MigrateAttachmentTypeToFileCategoryCommand,
     protected readonly regenerateSearchVectorsCommand: RegenerateSearchVectorsCommand,
   ) {
     super(
@@ -205,7 +209,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_1100: VersionCommands = {
       beforeSyncMetadata: [this.regenerateSearchVectorsCommand],
-      afterSyncMetadata: [],
+      afterSyncMetadata: [
+        this.migrateAttachmentAuthorToCreatedByCommand,
+        this.migrateAttachmentTypeToFileCategoryCommand,
+      ],
     };
 
     this.allCommands = {

@@ -1,4 +1,4 @@
-import { type ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
 import { AppPath } from 'twenty-shared/types';
@@ -7,7 +7,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type CustomException } from 'src/utils/custom-exception';
@@ -15,9 +16,10 @@ import { type CustomException } from 'src/utils/custom-exception';
 @Injectable()
 export class GuardRedirectService {
   constructor(
-    private readonly domainManagerService: DomainManagerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly domainsServerConfigService: DomainServerConfigService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
   dispatchErrorFromGuard(
@@ -48,7 +50,7 @@ export class GuardRedirectService {
     const request = context.switchToHttp().getRequest<Request>();
 
     const subdomainAndDomainFromReferer = request.headers.referer
-      ? this.domainManagerService.getSubdomainAndDomainFromUrl(
+      ? this.domainsServerConfigService.getSubdomainAndDomainFromUrl(
           request.headers.referer,
         )
       : null;
@@ -95,7 +97,7 @@ export class GuardRedirectService {
   }) {
     this.captureException(error, workspace.id);
 
-    return this.domainManagerService.computeRedirectErrorUrl(
+    return this.workspaceDomainsService.computeWorkspaceRedirectErrorUrl(
       error instanceof AuthException ? error.message : 'Unknown error',
       {
         subdomain: workspace.subdomain,
