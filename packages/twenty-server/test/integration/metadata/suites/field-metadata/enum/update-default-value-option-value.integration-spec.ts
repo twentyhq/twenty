@@ -118,6 +118,7 @@ describe('update default value option value', () => {
     });
 
     const firstRecordId = createFirstRecordData.createOneResponse.id;
+
     expect(createFirstRecordData.createOneResponse.statusField).toBe(
       'OPTION_1',
     );
