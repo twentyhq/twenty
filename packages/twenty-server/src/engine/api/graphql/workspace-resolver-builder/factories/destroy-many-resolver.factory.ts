@@ -71,7 +71,7 @@ export class DestroyManyResolverFactory
             }),
           );
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

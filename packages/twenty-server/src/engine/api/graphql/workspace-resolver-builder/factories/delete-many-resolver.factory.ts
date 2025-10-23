@@ -70,7 +70,7 @@ export class DeleteManyResolverFactory
             }),
           );
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

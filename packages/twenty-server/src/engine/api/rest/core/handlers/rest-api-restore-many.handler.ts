@@ -35,7 +35,7 @@ export class RestApiRestoreManyHandler extends RestApiBaseHandler {
       } = await this.buildCommonOptions(request);
 
       const selectedFields = await this.computeSelectedFields({
-        depth: depth,
+        depth,
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
         authContext,
@@ -48,7 +48,7 @@ export class RestApiRestoreManyHandler extends RestApiBaseHandler {
           objectMetadataMaps,
           objectMetadataItemWithFieldMaps,
         },
-        CommonQueryNames.DELETE_MANY,
+        CommonQueryNames.RESTORE_MANY,
       );
 
       return this.formatRestResponse(

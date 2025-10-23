@@ -71,7 +71,7 @@ export class RestoreManyResolverFactory
             }),
           );
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
       const options: WorkspaceQueryRunnerOptions = {

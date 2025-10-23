@@ -31,7 +31,7 @@ export class RestApiRestoreOneHandler extends RestApiBaseHandler {
       } = await this.buildCommonOptions(request);
 
       const selectedFields = await this.computeSelectedFields({
-        depth: depth,
+        depth,
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
         authContext,

@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
 import { type Request } from 'express';
-import { isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const parseCorePath = (
   request: Request,
@@ -12,7 +12,10 @@ export const parseCorePath = (
     .split('/')
     .filter(Boolean);
 
-  if (queryAction.length > 3) {
+  if (
+    queryAction.length > 2 ||
+    (queryAction.length > 3 && queryAction[0] === 'restore')
+  ) {
     throw new BadRequestException(
       `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
     );
@@ -37,12 +40,15 @@ export const parseCorePath = (
   }
 
   if (queryAction[0] === 'restore') {
+    const recordId = queryAction[2];
+
+    if (isDefined(recordId) && !isValidUuid(recordId)) {
+      throw new BadRequestException(`'${recordId}' is not a valid UUID`);
+    }
+
     return {
       object: queryAction[1],
-      id:
-        queryAction.length === 3 && isValidUuid(queryAction[2])
-          ? queryAction[2]
-          : undefined,
+      id: recordId,
     };
   }
 
