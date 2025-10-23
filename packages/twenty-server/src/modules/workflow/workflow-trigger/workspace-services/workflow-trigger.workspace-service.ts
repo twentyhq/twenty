@@ -142,9 +142,9 @@ export class WorkflowTriggerWorkspaceService {
     return true;
   }
 
-  async stopWorkflowRun(workspaceId: string, workflowRunId: string) {
+  async stopWorkflowRun(workflowRunId: string) {
     return this.workflowRunnerWorkspaceService.stopWorkflowRun(
-      workspaceId,
+      this.getWorkspaceId(),
       workflowRunId,
     );
   }

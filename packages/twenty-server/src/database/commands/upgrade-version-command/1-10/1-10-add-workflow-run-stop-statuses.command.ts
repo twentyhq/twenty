@@ -77,13 +77,13 @@ export class AddWorkflowRunStopStatusesCommand extends ActiveOrSuspendedWorkspac
       workflowRunStatusFieldMetadataOptions?.push({
         value: WorkflowRunStatus.STOPPING,
         label: 'Stopping',
-        position: workflowRunStatusFieldMetadataOptions.length + 1,
+        position: 5,
         color: 'orange',
       });
       workflowRunStatusFieldMetadataOptions?.push({
         value: WorkflowRunStatus.STOPPED,
         label: 'Stopped',
-        position: workflowRunStatusFieldMetadataOptions.length + 2,
+        position: 6,
         color: 'gray',
       });
 

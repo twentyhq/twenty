@@ -148,7 +148,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.fixUpdateStandardFieldsIsLabelSyncedWithNameCommand,
         this.fixSchemaArrayTypeCommand,
         this.addEnqueuedStatusToWorkflowRunCommand,
-        this.addWorkflowRunStopStatusesCommand,
       ],
       afterSyncMetadata: [this.migrateWorkflowRunStatesCommand],
     };
@@ -209,7 +208,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1100: VersionCommands = {
-      beforeSyncMetadata: [],
+      beforeSyncMetadata: [this.addWorkflowRunStopStatusesCommand],
       afterSyncMetadata: [
         this.migrateAttachmentAuthorToCreatedByCommand,
         this.migrateAttachmentTypeToFileCategoryCommand,

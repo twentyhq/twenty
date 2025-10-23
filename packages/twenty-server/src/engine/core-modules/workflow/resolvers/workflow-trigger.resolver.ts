@@ -95,13 +95,9 @@ export class WorkflowTriggerResolver {
 
   @Mutation(() => WorkflowRunDTO)
   async stopWorkflowRun(
-    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowRunId', { type: () => UUIDScalarType })
     workflowRunId: string,
   ) {
-    return this.workflowTriggerWorkspaceService.stopWorkflowRun(
-      workspace.id,
-      workflowRunId,
-    );
+    return this.workflowTriggerWorkspaceService.stopWorkflowRun(workflowRunId);
   }
 }
