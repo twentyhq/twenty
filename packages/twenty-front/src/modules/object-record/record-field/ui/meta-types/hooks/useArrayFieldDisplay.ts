@@ -4,7 +4,7 @@ import {
   type FieldArrayMetadata,
   type FieldArrayValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
 import { useContext } from 'react';
 
 export const useArrayFieldDisplay = () => {

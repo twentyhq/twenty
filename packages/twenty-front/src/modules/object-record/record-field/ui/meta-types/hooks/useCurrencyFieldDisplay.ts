@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';

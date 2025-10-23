@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
 
 import { AuthContext } from '@/auth/contexts/AuthContext';
 import { isDefined } from 'twenty-shared/utils';

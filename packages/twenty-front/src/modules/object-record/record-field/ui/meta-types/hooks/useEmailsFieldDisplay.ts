@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
 
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FieldContext } from '../../contexts/FieldContext';

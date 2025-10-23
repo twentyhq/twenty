@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { type FieldJsonValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
 
 import { useFormattedJsonFieldValue } from '@/object-record/record-field/ui/meta-types/hooks/useFormattedJsonFieldValue';
 import { FieldContext } from '../../contexts/FieldContext';

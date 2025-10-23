@@ -6,7 +6,7 @@ import {
   type FieldMultiSelectMetadata,
   type FieldMultiSelectValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
 
 export const useMultiSelectFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

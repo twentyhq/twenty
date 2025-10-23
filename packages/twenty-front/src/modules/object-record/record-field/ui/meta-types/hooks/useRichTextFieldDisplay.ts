@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
 
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
