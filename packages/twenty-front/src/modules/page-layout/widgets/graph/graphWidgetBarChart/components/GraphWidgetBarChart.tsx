@@ -1,6 +1,7 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
@@ -146,6 +147,18 @@ export const GraphWidgetBarChart = ({
     );
   };
 
+  // Create a wrapper component that passes keys and groupMode to CustomBarItem
+  const BarItemWithContext = (props: any) => (
+    <CustomBarItem
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...props}
+      keys={keys}
+      groupMode={groupMode}
+      data={data}
+      indexBy={indexBy}
+    />
+  );
+
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
@@ -161,6 +174,7 @@ export const GraphWidgetBarChart = ({
           }}
         />
         <ResponsiveBar
+          barComponent={BarItemWithContext}
           data={data}
           keys={keys}
           indexBy={indexBy}
@@ -202,6 +216,7 @@ export const GraphWidgetBarChart = ({
           }}
           onMouseLeave={() => setHoveredBar(null)}
           theme={chartTheme}
+          borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
       <GraphWidgetLegend
