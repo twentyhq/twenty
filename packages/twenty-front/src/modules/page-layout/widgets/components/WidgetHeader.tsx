@@ -35,7 +35,7 @@ export const WidgetHeader = ({
 }: WidgetHeaderProps) => {
   return (
     <StyledHeader>
-      {isInEditMode && (
+      {!isEmpty && isInEditMode && (
         <WidgetGrip
           className="drag-handle"
           onClick={(e) => e.stopPropagation()}
