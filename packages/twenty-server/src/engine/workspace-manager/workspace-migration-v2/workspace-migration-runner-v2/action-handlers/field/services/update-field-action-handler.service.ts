@@ -305,7 +305,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           defaultValue: compositeDefaultValue,
         });
 
-        return await this.workspaceSchemaManagerService.columnManager.alterColumnDefault(
+        await this.workspaceSchemaManagerService.columnManager.alterColumnDefault(
           {
             queryRunner,
             schemaName,
@@ -315,6 +315,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           },
         );
       }
+
+      return;
     }
 
     const columnType = fieldMetadataTypeToColumnType(
