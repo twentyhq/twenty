@@ -49,7 +49,7 @@ export class GroupByWithRecordService {
 
     const columnsToSelect = buildColumnsToSelect({
       select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
+      relations: selectedFieldsResult.relations, // TODO - not handled for now
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps: executionArgs.options.objectMetadataMaps,
     });
@@ -136,7 +136,7 @@ export class GroupByWithRecordService {
       )
       .groupBy(groupByAliases);
 
-    // Remove initial from condition (typeOrm limitation)
+    // Remove initial "from" condition (typeOrm limitation)
     mainQuery.expressionMap.aliases = mainQuery.expressionMap.aliases.filter(
       (alias) => isDefined(alias.subQuery),
     );
@@ -164,7 +164,7 @@ export class GroupByWithRecordService {
       return `(${conditions})`;
     });
 
-    return `${groupConditions.join(' OR ')}`;
+    return `(${groupConditions.join(' OR ')})`;
   }
 
   private combineGroupAndRecordsResults(
@@ -177,10 +177,9 @@ export class GroupByWithRecordService {
     recordsResult.forEach((entry) => {
       const groupKey = this.createGroupKey(entry, groupByDefinitions);
 
-      const sampleRecords =
-        (entry.records as Array<Record<string, unknown>>) ?? [];
+      const records = (entry.records as Array<Record<string, unknown>>) ?? [];
 
-      recordsByGroupKey.set(groupKey, sampleRecords);
+      recordsByGroupKey.set(groupKey, records);
     });
 
     return groupsResult.map((group) => {
@@ -204,7 +203,7 @@ export class GroupByWithRecordService {
           hasNextPage: false,
           hasPreviousPage: false,
         },
-        totalCount: (group._count_id as number) || records.length || 0,
+        totalCount: records.length || 0,
       };
     });
   }
