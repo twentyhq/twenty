@@ -179,6 +179,9 @@ describe('basic group-by with records', () => {
                 stage
                 closeDate
                 name
+                amount {
+                  amountMicros
+                }
               }
             }
           }
@@ -226,6 +229,9 @@ describe('basic group-by with records', () => {
     expect(wednesdayNewGroup.edges).toHaveLength(1);
     expect(wednesdayNewGroup.edges[0].node.name).toBe('Opportunity 1');
     expect(wednesdayNewGroup.edges[0].node.stage).toBe('NEW');
+    expect(wednesdayNewGroup.edges[0].node.amount.amountMicros).toBe(
+      1000000000000,
+    );
     expect(wednesdayNewGroup.sumAmountAmountMicros).toBe(1000000000000);
 
     const thursdayNewGroup = groups.find(
@@ -254,6 +260,9 @@ describe('basic group-by with records', () => {
 
     expect(thursdayScreeningGroup).toBeDefined();
     expect(thursdayScreeningGroup.edges).toHaveLength(1);
+    expect(thursdayScreeningGroup.edges[0].node.amount.amountMicros).toBe(
+      4000000000000,
+    );
     expect(thursdayScreeningGroup.edges[0].node.stage).toBe('SCREENING');
     expect(thursdayScreeningGroup.edges[0].node.name).toBe('Opportunity 4');
     expect(thursdayScreeningGroup.sumAmountAmountMicros).toBe(4000000000000);
@@ -276,8 +285,8 @@ describe('basic group-by with records', () => {
               node {
                 stage
                 createdAt
-                company {
-                  employees
+                amount {
+                  amountMicros
                 }
               }
             }
@@ -325,6 +334,9 @@ describe('basic group-by with records', () => {
     expect(wednesdayNewGroup.groupByDimensionValues).toContain('Wednesday');
     expect(wednesdayNewGroup.edges).toHaveLength(1);
     expect(wednesdayNewGroup.edges[0].node.stage).toBe('NEW');
+    expect(wednesdayNewGroup.edges[0].node.amount.amountMicros).toBe(
+      1000000000000,
+    );
 
     const thursdayNewGroup = groups.find(
       (group: any) =>
