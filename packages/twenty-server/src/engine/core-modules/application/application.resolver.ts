@@ -37,7 +37,7 @@ export class ApplicationResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return await this.applicationService.findOneApplication(id, workspaceId);
+    return this.applicationService.findOneApplication(id, workspaceId);
   }
 
   @Mutation(() => Boolean)

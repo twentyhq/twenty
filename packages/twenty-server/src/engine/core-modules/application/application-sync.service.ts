@@ -4,16 +4,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-    ApplicationException,
-    ApplicationExceptionCode,
+  ApplicationException,
+  ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import {
-    AgentManifest,
-    ObjectManifest,
-    ServerlessFunctionManifest,
-    ServerlessFunctionTriggerManifest,
+  AgentManifest,
+  ObjectManifest,
+  ServerlessFunctionManifest,
+  ServerlessFunctionTriggerManifest,
 } from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationVariableService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
