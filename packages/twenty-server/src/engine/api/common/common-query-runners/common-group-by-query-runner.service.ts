@@ -25,6 +25,7 @@ import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-grou
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   GroupByQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
@@ -53,6 +54,8 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   ) {
     super();
   }
+
+  protected readonly operationName = CommonQueryNames.GROUP_BY;
 
   async run(
     args: CommonExtendedInput<GroupByQueryArgs>,

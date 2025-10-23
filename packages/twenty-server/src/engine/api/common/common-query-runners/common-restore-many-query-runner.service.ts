@@ -17,6 +17,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   RestoreManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
@@ -30,6 +31,8 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
   RestoreManyQueryArgs,
   ObjectRecord[]
 > {
+  protected readonly operationName = CommonQueryNames.RESTORE_MANY;
+
   async run(
     args: CommonExtendedInput<RestoreManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,

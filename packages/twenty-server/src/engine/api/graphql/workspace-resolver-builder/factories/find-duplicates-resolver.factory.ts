@@ -12,7 +12,6 @@ import {
 import { type WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { CommonFindDuplicatesQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-duplicates-query-runner.service';
-import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { GraphqlQueryFindDuplicatesResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-duplicates-resolver.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -53,7 +52,6 @@ export class FindDuplicatesResolverFactory
             await this.commonFindDuplicatesQueryRunnerService.execute(
               { ...args, selectedFields },
               internalContext,
-              CommonQueryNames.FIND_DUPLICATES,
             );
 
           const typeORMObjectRecordsParser =

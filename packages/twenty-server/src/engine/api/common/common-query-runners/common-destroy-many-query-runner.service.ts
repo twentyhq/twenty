@@ -17,6 +17,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   DestroyManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
@@ -27,6 +28,8 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
   DestroyManyQueryArgs,
   ObjectRecord[]
 > {
+  protected readonly operationName = CommonQueryNames.DESTROY_MANY;
+
   async run(
     args: CommonExtendedInput<DestroyManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,

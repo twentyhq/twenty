@@ -15,6 +15,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   UpdateOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
@@ -31,6 +32,7 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
   ) {
     super();
   }
+  protected readonly operationName = CommonQueryNames.UPDATE_ONE;
 
   async run(
     args: CommonExtendedInput<UpdateOneQueryArgs>,

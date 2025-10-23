@@ -26,6 +26,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   MergeManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import {
@@ -46,6 +47,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   MergeManyQueryArgs,
   ObjectRecord
 > {
+  protected readonly operationName = CommonQueryNames.MERGE_MANY;
+
   private readonly logger = new Logger(CommonMergeManyQueryRunnerService.name);
   async run(
     args: CommonExtendedInput<MergeManyQueryArgs>,

@@ -11,7 +11,6 @@ import {
 } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonFindDuplicatesQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-duplicates-query-runner.service';
-import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
@@ -52,7 +51,6 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
             objectMetadataMaps,
             objectMetadataItemWithFieldMaps,
           },
-          CommonQueryNames.FIND_DUPLICATES,
         );
 
       return this.formatRestResponse(

@@ -19,6 +19,7 @@ import { CommonFindDuplicatesOutputItem } from 'src/engine/api/common/types/comm
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   FindDuplicatesQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
@@ -31,6 +32,8 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
   FindDuplicatesQueryArgs,
   CommonFindDuplicatesOutputItem[]
 > {
+  protected readonly operationName = CommonQueryNames.FIND_DUPLICATES;
+
   async run(
     args: CommonExtendedInput<FindDuplicatesQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
