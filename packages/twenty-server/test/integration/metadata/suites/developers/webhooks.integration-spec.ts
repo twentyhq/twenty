@@ -8,7 +8,7 @@ describe('webhooksResolver (e2e)', () => {
     if (createdWebhookId) {
       await makeMetadataAPIRequest({
         query: gql`
-          mutation DeleteWebhook($input: DeleteWebhookDTO!) {
+          mutation DeleteWebhook($input: DeleteWebhookInput!) {
             deleteWebhook(input: $input)
           }
         `,
@@ -55,7 +55,7 @@ describe('webhooksResolver (e2e)', () => {
 
       const response = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateWebhook($input: CreateWebhookDTO!) {
+          mutation CreateWebhook($input: CreateWebhookInput!) {
             createWebhook(input: $input) {
               id
               targetUrl
@@ -96,7 +96,7 @@ describe('webhooksResolver (e2e)', () => {
 
       const response = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateWebhook($input: CreateWebhookDTO!) {
+          mutation CreateWebhook($input: CreateWebhookInput!) {
             createWebhook(input: $input) {
               id
               targetUrl
@@ -121,7 +121,7 @@ describe('webhooksResolver (e2e)', () => {
     it('should update a webhook successfully', async () => {
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateWebhook($input: CreateWebhookDTO!) {
+          mutation CreateWebhook($input: CreateWebhookInput!) {
             createWebhook(input: $input) {
               id
               targetUrl
@@ -155,7 +155,7 @@ describe('webhooksResolver (e2e)', () => {
 
       const updateResponse = await makeMetadataAPIRequest({
         query: gql`
-          mutation UpdateWebhook($input: UpdateWebhookDTO!) {
+          mutation UpdateWebhook($input: UpdateWebhookInput!) {
             updateWebhook(input: $input) {
               id
               targetUrl
@@ -188,7 +188,7 @@ describe('webhooksResolver (e2e)', () => {
     it('should find a specific webhook', async () => {
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateWebhook($input: CreateWebhookDTO!) {
+          mutation CreateWebhook($input: CreateWebhookInput!) {
             createWebhook(input: $input) {
               id
               targetUrl
@@ -214,7 +214,7 @@ describe('webhooksResolver (e2e)', () => {
 
       const queryResponse = await makeMetadataAPIRequest({
         query: gql`
-          query GetWebhook($input: GetWebhookDTO!) {
+          query GetWebhook($input: GetWebhookInput!) {
             webhook(input: $input) {
               id
               targetUrl
@@ -248,7 +248,7 @@ describe('webhooksResolver (e2e)', () => {
     it('should delete a webhook successfully', async () => {
       const createResponse = await makeMetadataAPIRequest({
         query: gql`
-          mutation CreateWebhook($input: CreateWebhookDTO!) {
+          mutation CreateWebhook($input: CreateWebhookInput!) {
             createWebhook(input: $input) {
               id
               targetUrl
@@ -272,7 +272,7 @@ describe('webhooksResolver (e2e)', () => {
 
       const deleteResponse = await makeMetadataAPIRequest({
         query: gql`
-          mutation DeleteWebhook($input: DeleteWebhookDTO!) {
+          mutation DeleteWebhook($input: DeleteWebhookInput!) {
             deleteWebhook(input: $input)
           }
         `,
@@ -287,7 +287,7 @@ describe('webhooksResolver (e2e)', () => {
 
       const queryResponse = await makeMetadataAPIRequest({
         query: gql`
-          query GetWebhook($input: GetWebhookDTO!) {
+          query GetWebhook($input: GetWebhookInput!) {
             webhook(input: $input) {
               id
               targetUrl

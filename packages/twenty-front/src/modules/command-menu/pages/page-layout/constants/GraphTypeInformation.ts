@@ -1,14 +1,15 @@
-import { BAR_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/BarChartSettings';
 import { GAUGE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/GaugeChartSettings';
 import { LINE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/LineChartSettings';
 import { NUMBER_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/NumberChartSettings';
 import { PIE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/PieChartSettings';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
+import { getBarChartSettings } from '@/command-menu/pages/page-layout/utils/getBarChartSettings';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
   Icon123,
   IconChartBar,
+  IconChartBarHorizontal,
   IconChartLine,
   IconChartPie,
   type IconComponent,
@@ -24,10 +25,15 @@ export const GRAPH_TYPE_INFORMATION: Record<
     settings: ChartSettingsGroup[];
   }
 > = {
-  [GraphType.BAR]: {
-    label: msg`Bar`,
+  [GraphType.VERTICAL_BAR]: {
+    label: msg`Vertical Bar`,
     icon: IconChartBar,
-    settings: BAR_CHART_SETTINGS,
+    settings: getBarChartSettings(GraphType.VERTICAL_BAR),
+  },
+  [GraphType.HORIZONTAL_BAR]: {
+    label: msg`Horizontal Bar`,
+    icon: IconChartBarHorizontal,
+    settings: getBarChartSettings(GraphType.HORIZONTAL_BAR),
   },
   [GraphType.PIE]: {
     label: msg`Pie`,

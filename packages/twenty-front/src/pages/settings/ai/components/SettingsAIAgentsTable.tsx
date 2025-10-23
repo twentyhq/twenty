@@ -10,11 +10,13 @@ import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { useTheme } from '@emotion/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconChevronRight, IconSearch } from 'twenty-ui/display';
-import { type Agent } from '~/generated-metadata/graphql';
+import { H2Title, IconChevronRight, IconSearch } from 'twenty-ui/display';
 import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAiAgentTableMetadata';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
+import Skeleton from 'react-loading-skeleton';
+import { Section } from 'twenty-ui/layout';
+import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 import {
   SettingsAIAgentTableRow,
   StyledAIAgentTableRow,
@@ -33,12 +35,21 @@ const StyledTableHeaderRow = styled(StyledAIAgentTableRow)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
+export const SettingsAIAgentsTable = ({
+  withSearchBar = false,
+}: {
+  withSearchBar?: boolean;
+}) => {
+  const { data, loading } = useFindManyAgentsQuery();
+
   const { t } = useLingui();
   const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const sortedAgents = useSortedArray(agents, SETTINGS_AI_AGENT_TABLE_METADATA);
+  const sortedAgents = useSortedArray(
+    data?.findManyAgents || [],
+    SETTINGS_AI_AGENT_TABLE_METADATA,
+  );
 
   const filteredAgents = sortedAgents.filter((agent) => {
     const searchNormalized = normalizeSearchText(searchTerm);
@@ -49,14 +60,21 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
   });
 
   return (
-    <>
-      <StyledSearchInput
-        instanceId="settings-ai-agents-search"
-        LeftIcon={IconSearch}
-        placeholder={t`Search an agent...`}
-        value={searchTerm}
-        onChange={setSearchTerm}
+    <Section>
+      <H2Title
+        title={t`Agents`}
+        description={t`Agents used to route queries to specialized agents`}
       />
+
+      {withSearchBar && (
+        <StyledSearchInput
+          instanceId="settings-ai-agents-search"
+          LeftIcon={IconSearch}
+          placeholder={t`Search an agent...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+      )}
 
       <StyledTable>
         <StyledTableHeaderRow>
@@ -74,6 +92,10 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
           )}
           <TableHeader />
         </StyledTableHeaderRow>
+        {loading &&
+          Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton height={32} borderRadius={4} key={index} />
+          ))}
         {filteredAgents.map((agent) => (
           <SettingsAIAgentTableRow
             key={agent.id}
@@ -90,6 +112,6 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
           />
         ))}
       </StyledTable>
-    </>
+    </Section>
   );
 };

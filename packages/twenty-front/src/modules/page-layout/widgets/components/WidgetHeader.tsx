@@ -51,6 +51,7 @@ export const WidgetHeader = ({
           variant="tertiary"
           size="small"
           disabled={isEmpty}
+          onClick={(e) => e.stopPropagation()}
         />
       )}
       <StyledTitle>{isEmpty ? 'Add Widget' : title}</StyledTitle>

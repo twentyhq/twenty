@@ -4,7 +4,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, MoreThanOrEqual, type Repository } from 'typeorm';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -47,7 +47,7 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   };
 
   constructor(
-    protected readonly workspaceRepository: Repository<Workspace>,
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super();

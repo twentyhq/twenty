@@ -32,7 +32,7 @@ export const getEdgePath = ({
   strategy,
 }: GetEdgePathParams) => {
   if (strategy === 'smooth-step-path-to-target') {
-    const [path, labelX, labelY] = getSmoothStepPath({
+    const [path] = getSmoothStepPath({
       sourceX,
       sourceY,
       sourcePosition,
@@ -43,6 +43,12 @@ export const getEdgePath = ({
       offset: EDGE_PADDING_X,
     });
 
+    const overlayY =
+      targetY - sourceY > EDGE_PADDING_BOTTOM &&
+      sourceX + EDGE_PADDING_X < targetX
+        ? targetY - (targetY - sourceY) / 2
+        : targetY - EDGE_PADDING_BOTTOM / 2;
+
     return {
       segments: [
         {
@@ -51,7 +57,7 @@ export const getEdgePath = ({
           markerEnd,
         },
       ],
-      labelPosition: [labelX, labelY],
+      overlayPosition: [targetX, overlayY],
     };
   }
 
@@ -73,7 +79,7 @@ export const getEdgePath = ({
           markerEnd,
         },
       ],
-      labelPosition: [labelX, labelY],
+      overlayPosition: [labelX, labelY],
     };
   }
 
@@ -117,6 +123,9 @@ export const getEdgePath = ({
         markerEnd,
       },
     ],
-    labelPosition: [firstSegmentTargetX, firstSegmentTargetY],
+    overlayPosition:
+      strategy === 'bypass-source-node-on-right-side'
+        ? [sourceX, sourceY + EDGE_PADDING_BOTTOM]
+        : [firstSegmentTargetX, firstSegmentTargetY],
   };
 };

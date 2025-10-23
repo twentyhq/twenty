@@ -1,4 +1,4 @@
-import { type TimelineThreadParticipant } from 'src/engine/core-modules/messaging/dtos/timeline-thread-participant.dto';
+import { type TimelineThreadParticipantDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-participant.dto';
 import { filterActiveParticipants } from 'src/engine/core-modules/messaging/utils/filter-active-participants.util';
 import { formatThreadParticipant } from 'src/engine/core-modules/messaging/utils/format-thread-participant.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -6,8 +6,8 @@ import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/co
 export const extractParticipantSummary = (
   messageParticipants: MessageParticipantWorkspaceEntity[],
 ): {
-  firstParticipant: TimelineThreadParticipant;
-  lastTwoParticipants: TimelineThreadParticipant[];
+  firstParticipant: TimelineThreadParticipantDTO;
+  lastTwoParticipants: TimelineThreadParticipantDTO[];
   participantCount: number;
 } => {
   const activeMessageParticipants =
@@ -23,7 +23,7 @@ export const extractParticipantSummary = (
         threadParticipant.handle !== firstParticipant.handle,
     );
 
-  const lastTwoParticipants: TimelineThreadParticipant[] = [];
+  const lastTwoParticipants: TimelineThreadParticipantDTO[] = [];
 
   const lastParticipant =
     activeMessageParticipantsWithoutFirstParticipant.slice(-1)[0];

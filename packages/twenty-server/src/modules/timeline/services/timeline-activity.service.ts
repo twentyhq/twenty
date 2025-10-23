@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
-
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
+import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 
 type ActivityType = 'note' | 'task';
 
@@ -93,7 +94,7 @@ export class TimelineActivityService {
     if (objectSingularName === 'note') {
       const noteEventsTimelineActivities =
         await this.computeTimelineActivityPayloadsForActivities({
-          events,
+          events: events as ObjectRecordBaseEvent<NoteWorkspaceEntity>[],
           activityType: 'note',
           workspaceId,
           objectMetadata,
@@ -115,7 +116,7 @@ export class TimelineActivityService {
     if (objectSingularName === 'task') {
       const taskEventsTimelineActivities =
         await this.computeTimelineActivityPayloadsForActivities({
-          events,
+          events: events as ObjectRecordBaseEvent<TaskWorkspaceEntity>[],
           activityType: 'task',
           workspaceId,
           objectMetadata,
@@ -162,7 +163,9 @@ export class TimelineActivityService {
     name,
     workspaceId,
     objectMetadata,
-  }: WorkspaceEventBatch<ObjectRecordBaseEvent> & {
+  }: WorkspaceEventBatch<
+    ObjectRecordBaseEvent<NoteWorkspaceEntity | TaskWorkspaceEntity>
+  > & {
     activityType: ActivityType;
   }): Promise<TimelineActivityPayload[]> {
     if (!isDefined(workspaceId)) {
@@ -215,7 +218,7 @@ export class TimelineActivityService {
             return;
           }
 
-          const activityTitle = (event.properties.after as ObjectRecord)?.title;
+          const activityTitle = event.properties.diff?.title?.after;
           const activityId = event.recordId;
 
           if (!isDefined(activityTitle)) {
@@ -224,7 +227,7 @@ export class TimelineActivityService {
 
           return {
             name: `linked-${activityType}.${action}`,
-            workspaceMemberId: event.workspaceMemberId ?? '',
+            workspaceMemberId: event.workspaceMemberId,
             recordId: activityTarget[targetColumn.replace(/Id$/, '')],
             linkedRecordCachedName: activityTitle,
             linkedRecordId: activityId,

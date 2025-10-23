@@ -1,12 +1,12 @@
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 
-interface SelectedFields {
-  [key: string]: boolean | SelectedFields;
+export interface CommonSelectedFields {
+  [key: string]: boolean | CommonSelectedFields;
 }
 
 export type CommonSelectedFieldsResult = {
-  select: SelectedFields;
-  relations: SelectedFields;
+  select: CommonSelectedFields;
+  relations: CommonSelectedFields;
   //TODO = Refacto-common - to update when rest api will handle aggregates
   aggregate: Record<string, AggregationField>;
 };

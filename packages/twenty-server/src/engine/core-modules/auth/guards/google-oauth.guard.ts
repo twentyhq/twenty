@@ -2,24 +2,24 @@ import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { type Request } from 'express';
+import { Repository } from 'typeorm';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class GoogleOauthGuard extends AuthGuard('google') {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
-    private readonly domainManagerService: DomainManagerService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super({
       prompt: 'select_account',
@@ -28,7 +28,7 @@ export class GoogleOauthGuard extends AuthGuard('google') {
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
-    let workspace: Workspace | null = null;
+    let workspace: WorkspaceEntity | null = null;
 
     try {
       if (
@@ -53,7 +53,7 @@ export class GoogleOauthGuard extends AuthGuard('google') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+        this.workspaceDomainsService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
           workspace,
         ),
       );

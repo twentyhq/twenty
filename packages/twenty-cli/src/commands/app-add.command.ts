@@ -3,10 +3,13 @@ import { randomUUID } from 'crypto';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import path from 'path';
+import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { HTTPMethod } from '../types/config.types';
 import { parseJsoncFile, writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
+import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
+import { getDecoratedClass } from '../utils/get-decorated-class';
 
 export enum SyncableEntity {
   AGENT = 'agent',
@@ -54,6 +57,22 @@ export class AppAddCommand {
       const entityName = await this.getEntityName(entity);
 
       const entityData = await this.getEntityToCreateData(entity, entityName);
+
+      if (entity === SyncableEntity.OBJECT) {
+        delete entityData['standardId'];
+        delete entityData['$schema'];
+
+        const objectFileName = `${camelcase(entityName)}.ts`;
+
+        const decoratedObject = getDecoratedClass({
+          data: entityData,
+          name: entityName,
+        });
+
+        await fs.writeFile(path.join(appPath, objectFileName), decoratedObject);
+
+        return;
+      }
 
       const folderName = getFolderName(entity);
 
@@ -156,9 +175,7 @@ export class AppAddCommand {
       entityToCreateData.standardId = uuid;
     }
 
-    const schemasDir = path.join(__dirname, '../../schemas');
-
-    const schemaPath = path.join(schemasDir, `${entity}.schema.json`);
+    const schemaPath = path.join(BASE_SCHEMAS_PATH, `${entity}.schema.json`);
 
     const schema = await fs.readJson(schemaPath);
 

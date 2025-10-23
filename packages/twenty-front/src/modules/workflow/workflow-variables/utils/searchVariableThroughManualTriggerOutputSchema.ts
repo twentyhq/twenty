@@ -27,6 +27,5 @@ export const searchVariableThroughManualTriggerOutputSchema = ({
     stepName,
     baseOutputSchema: manualTriggerOutputSchema,
     rawVariableName,
-    isFullRecord,
   });
 };

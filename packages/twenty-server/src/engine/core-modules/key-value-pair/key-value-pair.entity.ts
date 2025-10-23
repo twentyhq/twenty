@@ -15,8 +15,8 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum KeyValuePairType {
   USER_VARIABLE = 'USER_VARIABLE',
@@ -25,7 +25,7 @@ export enum KeyValuePairType {
 }
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
-@ObjectType()
+@ObjectType('KeyValuePair')
 @Unique('IDX_KEY_VALUE_PAIR_KEY_USER_ID_WORKSPACE_ID_UNIQUE', [
   'key',
   'userId',
@@ -47,25 +47,25 @@ export enum KeyValuePairType {
     where: '"workspaceId" is NULL',
   },
 )
-export class KeyValuePair {
+export class KeyValuePairEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.keyValuePairs, {
+  @ManyToOne(() => UserEntity, (user) => user.keyValuePairs, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
-  user: Relation<User>;
+  user: Relation<UserEntity>;
 
   @Column({ nullable: true })
   userId: string | null;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.keyValuePairs, {
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.keyValuePairs, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 
   @Column({ nullable: true })
   workspaceId: string | null;

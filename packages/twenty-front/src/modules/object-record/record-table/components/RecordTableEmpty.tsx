@@ -14,6 +14,7 @@ import { recordTableWidthComponentState } from '@/object-record/record-table/sta
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
+import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
@@ -94,6 +95,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
       <RecordTableEmptyState />
       <RecordTableColumnWidthEffect />
       <RecordTableWidthEffect />
+      <RecordTableVirtualizedDataChangedEffect />
     </StyledEmptyStateContainer>
   );
 };

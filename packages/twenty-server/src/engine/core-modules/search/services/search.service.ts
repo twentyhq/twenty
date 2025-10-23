@@ -2,14 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ObjectRecord } from 'twenty-shared/types';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 import { Brackets, type ObjectLiteral } from 'typeorm';
 
-import {
-  type ObjectRecord,
-  type ObjectRecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import {

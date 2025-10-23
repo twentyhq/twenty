@@ -13,7 +13,7 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
@@ -39,7 +39,7 @@ export class ViewFilterGroupController {
 
   @Get()
   async findMany(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
   ): Promise<ViewFilterGroupDTO[]> {
     if (viewId) {
@@ -52,7 +52,7 @@ export class ViewFilterGroupController {
   @Get(':id')
   async findOne(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO> {
     const viewFilterGroup = await this.viewFilterGroupService.findById(
       id,
@@ -81,7 +81,7 @@ export class ViewFilterGroupController {
   @Post()
   async create(
     @Body() input: CreateViewFilterGroupInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO> {
     return this.viewFilterGroupService.create({
       ...input,
@@ -93,7 +93,7 @@ export class ViewFilterGroupController {
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFilterGroupInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO> {
     const updatedViewFilterGroup = await this.viewFilterGroupService.update(
       id,
@@ -107,7 +107,7 @@ export class ViewFilterGroupController {
   @Delete(':id')
   async delete(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<{ success: boolean }> {
     const deletedViewFilterGroup = await this.viewFilterGroupService.delete(
       id,

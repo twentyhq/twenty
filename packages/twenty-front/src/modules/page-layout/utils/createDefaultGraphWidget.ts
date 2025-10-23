@@ -1,12 +1,10 @@
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type ThemeColor } from 'twenty-ui/theme';
 import {
-  ExtendedAggregateOperations,
+  AggregateOperations,
+  AxisNameDisplay,
   GraphOrderBy,
   GraphType,
-} from '~/generated-metadata/graphql';
-import {
-  AxisNameDisplay,
   type GridPosition,
   type PageLayoutWidget,
   type WidgetConfiguration,
@@ -28,14 +26,14 @@ const createDefaultGraphConfiguration = (
         __typename: 'NumberChartConfiguration',
         graphType: GraphType.NUMBER,
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         displayDataLabel: true,
       };
 
     case GraphType.PIE:
       return null;
 
-    case GraphType.BAR:
+    case GraphType.VERTICAL_BAR:
       if (
         !isDefined(fieldSelection?.aggregateFieldMetadataId) ||
         !isDefined(fieldSelection?.groupByFieldMetadataIdX)
@@ -44,13 +42,34 @@ const createDefaultGraphConfiguration = (
       }
       return {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.BAR,
+        graphType: GraphType.VERTICAL_BAR,
         displayDataLabel: false,
         color: 'blue' satisfies ThemeColor,
-        groupByFieldMetadataIdX: fieldSelection.groupByFieldMetadataIdX,
+        primaryAxisGroupByFieldMetadataId:
+          fieldSelection.groupByFieldMetadataIdX,
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
-        aggregateOperation: ExtendedAggregateOperations.SUM,
-        orderByX: GraphOrderBy.FIELD_ASC,
+        aggregateOperation: AggregateOperations.SUM,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.BOTH,
+      };
+
+    case GraphType.HORIZONTAL_BAR:
+      if (
+        !isDefined(fieldSelection?.aggregateFieldMetadataId) ||
+        !isDefined(fieldSelection?.groupByFieldMetadataIdX)
+      ) {
+        return null;
+      }
+      return {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.HORIZONTAL_BAR,
+        displayDataLabel: false,
+        color: 'blue' satisfies ThemeColor,
+        primaryAxisGroupByFieldMetadataId:
+          fieldSelection.groupByFieldMetadataIdX,
+        aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
+        aggregateOperation: AggregateOperations.SUM,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
       };
 

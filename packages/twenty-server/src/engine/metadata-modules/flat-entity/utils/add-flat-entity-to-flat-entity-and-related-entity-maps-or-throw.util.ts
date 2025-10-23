@@ -1,4 +1,4 @@
-import { ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-many-to-one-relations.constant';
+import { ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-many-to-one-relations.constant';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -32,8 +32,9 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow = <
     flatEntityMaps: initialFlatEntityAndRelatedMaps[flatEntityMapsKey],
   });
 
+  // TODO refactor
   const manyToOneRelatedMetadataName = Object.entries(
-    ALL_METADATA_NAME_MANY_TO_ONE_RELATIONS[metadataName],
+    ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY[metadataName],
   );
 
   return manyToOneRelatedMetadataName.reduce(

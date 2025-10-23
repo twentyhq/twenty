@@ -7,19 +7,19 @@ import {
   TwoFactorAuthenticationExceptionCode,
 } from './two-factor-authentication.exception';
 
-import { type TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { type TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 import { OTPStatus } from './strategies/otp/otp.constants';
 
 const assertIsDefinedOrThrow = (
   twoFactorAuthenticationMethod:
-    | TwoFactorAuthenticationMethod
+    | TwoFactorAuthenticationMethodEntity
     | undefined
     | null,
   exceptionToThrow: CustomException = new TwoFactorAuthenticationException(
     '2FA method not found',
     TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_NOT_FOUND,
   ),
-): asserts twoFactorAuthenticationMethod is TwoFactorAuthenticationMethod => {
+): asserts twoFactorAuthenticationMethod is TwoFactorAuthenticationMethodEntity => {
   if (!isDefined(twoFactorAuthenticationMethod)) {
     throw exceptionToThrow;
   }
@@ -27,10 +27,10 @@ const assertIsDefinedOrThrow = (
 
 const areTwoFactorAuthenticationMethodsDefined = (
   twoFactorAuthenticationMethods:
-    | TwoFactorAuthenticationMethod[]
+    | TwoFactorAuthenticationMethodEntity[]
     | undefined
     | null,
-): twoFactorAuthenticationMethods is TwoFactorAuthenticationMethod[] => {
+): twoFactorAuthenticationMethods is TwoFactorAuthenticationMethodEntity[] => {
   return (
     isDefined(twoFactorAuthenticationMethods) &&
     twoFactorAuthenticationMethods.length > 0
@@ -38,7 +38,7 @@ const areTwoFactorAuthenticationMethodsDefined = (
 };
 
 const isAnyTwoFactorAuthenticationMethodVerified = (
-  twoFactorAuthenticationMethods: TwoFactorAuthenticationMethod[],
+  twoFactorAuthenticationMethods: TwoFactorAuthenticationMethodEntity[],
 ) => {
   return (
     twoFactorAuthenticationMethods.filter(

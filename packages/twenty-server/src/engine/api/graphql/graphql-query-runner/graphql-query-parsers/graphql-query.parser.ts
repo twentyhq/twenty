@@ -1,9 +1,9 @@
+import { type OrderByWithGroupBy } from 'twenty-shared/types';
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
 import {
   type ObjectRecordFilter,
   type ObjectRecordOrderBy,
-  type OrderByWithGroupBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
@@ -139,19 +139,17 @@ export class GraphqlQueryParser {
   }
 
   public parseSelectedFields(
-    parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
-    objectMetadataMaps: ObjectMetadataMaps,
   ): GraphqlQuerySelectedFieldsResult {
     const objectMetadataMapItem = getObjectMetadataMapItemByNameSingular(
       this.objectMetadataMaps,
-      parentObjectMetadata.nameSingular,
+      this.objectMetadataMapItem.nameSingular,
     );
 
     if (!objectMetadataMapItem) {
       throw new GraphqlQueryRunnerException(
-        `Could not find object metadata for ${parentObjectMetadata.nameSingular}`,
+        `Could not find object metadata for ${this.objectMetadataMapItem.nameSingular}`,
         GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
@@ -162,8 +160,8 @@ export class GraphqlQueryParser {
 
     return selectedFieldsParser.parse(
       graphqlSelectedFields,
-      objectMetadataMapItem,
-      objectMetadataMaps,
+      this.objectMetadataMapItem,
+      this.objectMetadataMaps,
     );
   }
 }

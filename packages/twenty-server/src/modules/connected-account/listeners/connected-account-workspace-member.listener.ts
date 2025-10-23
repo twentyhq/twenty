@@ -12,7 +12,7 @@ import {
   DeleteWorkspaceMemberConnectedAccountsCleanupJob,
   type DeleteWorkspaceMemberConnectedAccountsCleanupJobData,
 } from 'src/modules/connected-account/jobs/delete-workspace-member-connected-accounts.job';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class ConnectedAccountWorkspaceMemberListener {

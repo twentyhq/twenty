@@ -36,12 +36,14 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
     createdAt: createdAt,
     updatedAt: createdAt,
     deletedAt: null,
-    universalIdentifier: viewFilterId,
+    universalIdentifier:
+      createViewFilterInput.universalIdentifier ?? viewFilterId,
     operand: createViewFilterInput.operand ?? ViewFilterOperand.CONTAINS,
     value: value,
     viewFilterGroupId: createViewFilterInput.viewFilterGroupId ?? null,
     positionInViewFilterGroup:
       createViewFilterInput.positionInViewFilterGroup ?? null,
     subFieldName: createViewFilterInput.subFieldName ?? null,
+    applicationId: createViewFilterInput.applicationId ?? null,
   };
 };

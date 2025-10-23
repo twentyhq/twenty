@@ -83,7 +83,112 @@ describe('mergeFieldValues', () => {
 
       expect(result).toEqual({
         primaryEmail: 'priority@example.com',
-        additionalEmails: ['extra1@example.com', 'extra2@example.com'],
+        additionalEmails: [
+          'first@example.com',
+          'extra1@example.com',
+          'extra2@example.com',
+        ],
+      });
+    });
+
+    it('should merge phones for PHONES field', () => {
+      const phoneRecords = [
+        {
+          value: {
+            primaryPhoneNumber: '+11234567890',
+            primaryPhoneCountryCode: 'US',
+            primaryPhoneCallingCode: '+1',
+            additionalPhones: [
+              {
+                number: '+19876543210',
+                countryCode: 'US',
+                callingCode: '+1',
+              },
+            ],
+          },
+          recordId: 'record1',
+        },
+        {
+          value: {
+            primaryPhoneNumber: '+14445556666',
+            primaryPhoneCountryCode: 'US',
+            primaryPhoneCallingCode: '+1',
+            additionalPhones: [
+              {
+                number: '+17778889999',
+                countryCode: 'US',
+                callingCode: '+1',
+              },
+            ],
+          },
+          recordId: PRIORITY_RECORD_ID,
+        },
+      ];
+
+      const result = mergeFieldValues(
+        FieldMetadataType.PHONES,
+        phoneRecords,
+        PRIORITY_RECORD_ID,
+      );
+
+      expect(result).toEqual({
+        primaryPhoneNumber: '+14445556666',
+        primaryPhoneCountryCode: 'US',
+        primaryPhoneCallingCode: '+1',
+        additionalPhones: [
+          {
+            number: '+11234567890',
+            countryCode: 'US',
+            callingCode: '+1',
+          },
+          {
+            number: '+19876543210',
+            countryCode: 'US',
+            callingCode: '+1',
+          },
+          {
+            number: '+17778889999',
+            countryCode: 'US',
+            callingCode: '+1',
+          },
+        ],
+      });
+    });
+
+    it('should merge links for LINKS field', () => {
+      const linkRecords = [
+        {
+          value: {
+            primaryLinkUrl: 'https://first.com',
+            primaryLinkLabel: 'First Link',
+            secondaryLinks: [{ url: 'https://extra1.com', label: 'Extra 1' }],
+          },
+          recordId: 'record1',
+        },
+        {
+          value: {
+            primaryLinkUrl: 'https://priority.com',
+            primaryLinkLabel: 'Priority Link',
+            secondaryLinks: [{ url: 'https://extra2.com', label: 'Extra 2' }],
+          },
+          recordId: PRIORITY_RECORD_ID,
+        },
+      ];
+
+      const result = mergeFieldValues(
+        FieldMetadataType.LINKS,
+        linkRecords,
+        PRIORITY_RECORD_ID,
+      );
+
+      expect(result).toEqual({
+        primaryLinkUrl: 'https://priority.com',
+        primaryLinkLabel: 'Priority Link',
+        secondaryLinks: [
+          { url: 'https://first.com', label: 'First Link' },
+          { url: 'https://extra1.com', label: 'Extra 1' },
+          { url: 'https://extra2.com', label: 'Extra 2' },
+        ],
       });
     });
   });

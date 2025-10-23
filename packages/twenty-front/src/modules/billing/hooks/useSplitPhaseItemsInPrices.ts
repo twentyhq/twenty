@@ -1,10 +1,10 @@
+import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
+import { usePriceAndBillingUsageByPriceId } from '@/billing/hooks/usePriceAndBillingUsageByPriceId';
+import { type MeteredBillingPrice } from '@/billing/types/billing-price-tiers.type';
 import {
-  type BillingPriceLicensedDto,
+  type BillingPriceLicensed,
   BillingUsageType,
 } from '~/generated/graphql';
-import { type MeteredBillingPrice } from '@/billing/types/billing-price-tiers.type';
-import { usePriceAndBillingUsageByPriceId } from '@/billing/hooks/usePriceAndBillingUsageByPriceId';
-import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
 
 export const useSplitPhaseItemsInPrices = () => {
   const { nextBillingPhase } = useNextBillingPhase();
@@ -26,7 +26,7 @@ export const useSplitPhaseItemsInPrices = () => {
     },
     {} as {
       nextMereredPrice: MeteredBillingPrice | undefined;
-      nextLicensedPrice: BillingPriceLicensedDto | undefined;
+      nextLicensedPrice: BillingPriceLicensed | undefined;
     },
   );
 

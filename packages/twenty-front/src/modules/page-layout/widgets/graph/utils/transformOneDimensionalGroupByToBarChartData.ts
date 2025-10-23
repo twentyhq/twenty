@@ -20,6 +20,7 @@ type TransformOneDimensionalGroupByToBarChartDataParams = {
   configuration: BarChartConfiguration;
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
+  primaryAxisSubFieldName?: string | null;
 };
 
 type TransformOneDimensionalGroupByToBarChartDataResult = {
@@ -27,6 +28,7 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
+  hasTooManyGroups: boolean;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -36,10 +38,11 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   configuration,
   aggregateOperation,
   objectMetadataItem,
+  primaryAxisSubFieldName,
 }: TransformOneDimensionalGroupByToBarChartDataParams): TransformOneDimensionalGroupByToBarChartDataResult => {
   const indexByKey = getFieldKey({
     field: groupByFieldX,
-    subFieldName: configuration.groupBySubFieldNameX,
+    subFieldName: primaryAxisSubFieldName ?? undefined,
   });
 
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
@@ -52,7 +55,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       ? formatDimensionValue({
           value: dimensionValues[0],
           fieldMetadata: groupByFieldX,
-          subFieldName: configuration.groupBySubFieldNameX ?? undefined,
+          subFieldName:
+            configuration.primaryAxisGroupBySubFieldName ?? undefined,
         })
       : '';
 
@@ -84,5 +88,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     indexBy: indexByKey,
     keys: [aggregateField.name],
     series,
+    hasTooManyGroups: rawResults.length > GRAPH_MAXIMUM_NUMBER_OF_GROUPS,
   };
 };

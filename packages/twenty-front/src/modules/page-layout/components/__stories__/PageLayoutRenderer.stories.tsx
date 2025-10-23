@@ -10,17 +10,19 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import {
   GraphOrderBy,
   GraphType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
+  AggregateOperations,
   AxisNameDisplay,
   type BarChartConfiguration,
-  ExtendedAggregateOperations,
   PageLayoutType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
@@ -88,7 +90,7 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             __typename: 'NumberChartConfiguration',
             graphType: GraphType.NUMBER,
-            aggregateOperation: ExtendedAggregateOperations.COUNT,
+            aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: idField.id,
           },
           createdAt: '2024-01-01T00:00:00Z',
@@ -112,7 +114,7 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             __typename: 'GaugeChartConfiguration',
             graphType: GraphType.GAUGE,
-            aggregateOperation: ExtendedAggregateOperations.COUNT,
+            aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: idField.id,
             displayDataLabel: false,
           },
@@ -137,7 +139,7 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             __typename: 'PieChartConfiguration',
             graphType: GraphType.PIE,
-            aggregateOperation: ExtendedAggregateOperations.COUNT,
+            aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: idField.id,
             groupByFieldMetadataId: createdAtField.id,
             orderBy: GraphOrderBy.VALUE_DESC,
@@ -162,11 +164,11 @@ const mixedGraphsPageLayoutMocks = {
           },
           configuration: {
             __typename: 'BarChartConfiguration',
-            graphType: GraphType.BAR,
-            aggregateOperation: ExtendedAggregateOperations.COUNT,
+            graphType: GraphType.VERTICAL_BAR,
+            aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: nameField.id,
-            groupByFieldMetadataIdX: createdAtField.id,
-            orderByX: GraphOrderBy.FIELD_ASC,
+            primaryAxisGroupByFieldMetadataId: createdAtField.id,
+            primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
             axisNameDisplay: AxisNameDisplay.BOTH,
             displayDataLabel: false,
           } satisfies BarChartConfiguration,
@@ -270,7 +272,18 @@ const meta: Meta<typeof PageLayoutRenderer> = {
       <MemoryRouter>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <Story />
+            <LayoutRenderingProvider
+              value={{
+                isInRightDrawer: false,
+                layoutType: PageLayoutType.DASHBOARD,
+                targetRecordIdentifier: {
+                  targetObjectNameSingular: CoreObjectNameSingular.Dashboard,
+                  id: mixedGraphsPageLayoutMocks.id,
+                },
+              }}
+            >
+              <Story />
+            </LayoutRenderingProvider>
           </CoreClientProviderWrapper>
         </JestMetadataAndApolloMocksWrapper>
       </MemoryRouter>

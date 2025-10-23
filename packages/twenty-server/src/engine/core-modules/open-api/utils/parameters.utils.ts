@@ -3,8 +3,7 @@ import {
   QUERY_DEFAULT_LIMIT_RECORDS,
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
-
-import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { OrderByDirection } from 'twenty-shared/types';
 
 export const computeLimitParameters = (
   fromMetadata = false,
@@ -52,13 +51,40 @@ export const computeDepthParameters = (): OpenAPIV3_1.ParameterObject => {
     in: 'query',
     description: `Determines the level of nested related objects to include in the response.  
     - 0: Primary object only  
-    - 1: Primary object + direct relations  
-    - 2: Primary object + direct relations + nested relations`,
+    - 1: Primary object + direct relations`,
     required: false,
     schema: {
       type: 'integer',
       enum: [0, 1],
       default: 1,
+    },
+  };
+};
+
+export const computeUpsertParameters = (): OpenAPIV3_1.ParameterObject => {
+  return {
+    name: 'upsert',
+    in: 'query',
+    description:
+      'If true, creates the object or updates it if it already exists.',
+    required: false,
+    schema: {
+      type: 'boolean',
+      default: false,
+    },
+  };
+};
+
+export const computeSoftDeleteParameters = (): OpenAPIV3_1.ParameterObject => {
+  return {
+    name: 'soft_delete',
+    in: 'query',
+    description:
+      'If true, soft deletes the objects. If false, objects are permanently deleted.',
+    required: false,
+    schema: {
+      type: 'boolean',
+      default: false,
     },
   };
 };

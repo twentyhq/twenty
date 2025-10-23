@@ -4,4 +4,5 @@ import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/f
 export const EMPTY_FLAT_ENTITY_MAPS = {
   byId: {},
   idByUniversalIdentifier: {},
+  universalIdentifiersByApplicationId: {},
 } as const satisfies FlatEntityMaps<FlatEntity>;

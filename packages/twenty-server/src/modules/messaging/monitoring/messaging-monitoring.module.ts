@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingMessageChannelSyncStatusMonitoringCronCommand } from 'src/modules/messaging/monitoring/crons/commands/messaging-message-channel-sync-status-monitoring.cron.command';
@@ -13,7 +13,7 @@ import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/ser
   imports: [
     AuditModule,
     MessagingCommonModule,
-    TypeOrmModule.forFeature([Workspace]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     TypeOrmModule.forFeature([DataSourceEntity]),
   ],
   providers: [

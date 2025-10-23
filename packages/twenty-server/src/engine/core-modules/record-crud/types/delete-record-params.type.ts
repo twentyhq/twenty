@@ -1,7 +1,7 @@
-export type DeleteRecordParams = {
-  objectName: string;
-  objectRecordId: string;
-  workspaceId: string;
-  roleId?: string;
-  soft?: boolean;
-};
+import { type RecordCrudExecutionContext } from './execution-context.type';
+import { type DeleteRecordInput } from './record-crud-input.type';
+
+export type DeleteRecordParams = DeleteRecordInput &
+  RecordCrudExecutionContext & {
+    soft?: boolean;
+  };

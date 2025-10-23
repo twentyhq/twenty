@@ -7,7 +7,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import gql from 'graphql-tag';
-import pick from 'lodash.pick';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -16,8 +15,13 @@ const mockedDate = '2024-03-15T12:00:00.000Z';
 const toISOStringMock = jest.fn(() => mockedDate);
 global.Date.prototype.toISOString = toISOStringMock;
 
+const { id, title, bodyV2, status, dueAt } = mockedTasks[0];
 const mockedActivity = {
-  ...pick(mockedTasks[0], ['id', 'title', 'bodyV2', 'type', 'status', 'dueAt']),
+  id,
+  title,
+  bodyV2,
+  status,
+  dueAt,
   updatedAt: mockedDate,
 };
 

@@ -20,8 +20,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import {
+  AppPath,
+  type RelationCreationPayload,
+  SettingsPath,
+} from 'twenty-shared/types';
+import { CustomError, getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type z } from 'zod';
@@ -112,6 +116,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   if (!activeObjectMetadataItem) return null;
 
   const { isValid, isSubmitting } = formConfig.formState;
+
   const canSave = isValid && !isSubmitting;
 
   const handleSave = async (
@@ -119,43 +124,48 @@ export const SettingsObjectNewFieldConfigure = () => {
   ) => {
     try {
       setIsSaving(true);
-      if (
-        formValues.type === FieldMetadataType.RELATION &&
-        'relation' in formValues
-      ) {
-        const { relation: relationFormValues, ...fieldFormValues } = formValues;
-        await createMetadataField({
-          ...fieldFormValues,
-          objectMetadataId: activeObjectMetadataItem.id,
-          relationCreationPayload: {
-            type: relationFormValues.type,
-            targetObjectMetadataId: relationFormValues.objectMetadataId,
-            targetFieldLabel: relationFormValues.field.label,
-            targetFieldIcon: relationFormValues.field.icon,
-          },
-        });
-      } else if (
-        formValues.type === FieldMetadataType.MORPH_RELATION &&
-        'morphRelationObjectMetadataIds' in formValues
-      ) {
+      if (formValues.type === FieldMetadataType.MORPH_RELATION) {
         const {
           morphRelationObjectMetadataIds,
           targetFieldLabel,
           iconOnDestination,
           relationType,
         } = formValues;
-        await createMetadataField({
-          ...formValues,
-          objectMetadataId: activeObjectMetadataItem.id,
-          morphRelationsCreationPayload: morphRelationObjectMetadataIds.map(
-            (morphRelationObjectMetadataId: string) => ({
-              type: relationType,
-              targetObjectMetadataId: morphRelationObjectMetadataId,
-              targetFieldLabel,
-              targetFieldIcon: iconOnDestination,
-            }),
-          ),
-        });
+        if (morphRelationObjectMetadataIds.length > 1) {
+          await createMetadataField({
+            ...formValues,
+            type: FieldMetadataType.MORPH_RELATION,
+            objectMetadataId: activeObjectMetadataItem.id,
+            isLabelSyncedWithName: false,
+            morphRelationsCreationPayload: morphRelationObjectMetadataIds.map(
+              (morphRelationObjectMetadataId: string) => ({
+                type: relationType,
+                targetObjectMetadataId: morphRelationObjectMetadataId,
+                targetFieldLabel,
+                targetFieldIcon: iconOnDestination,
+              }),
+            ),
+          });
+        } else if (morphRelationObjectMetadataIds.length === 1) {
+          const relationCreationPayload = {
+            type: relationType,
+            targetObjectMetadataId: morphRelationObjectMetadataIds[0],
+            targetFieldLabel,
+            targetFieldIcon: iconOnDestination,
+          } satisfies RelationCreationPayload;
+
+          await createMetadataField({
+            ...formValues,
+            type: FieldMetadataType.RELATION,
+            objectMetadataId: activeObjectMetadataItem.id,
+            relationCreationPayload,
+          });
+        } else {
+          throw new CustomError(
+            'Please select at least one destination object for this relation.',
+            'FIELD_METADATA_RELATION_MALFORMED',
+          );
+        }
       } else {
         await createMetadataField({
           ...formValues,

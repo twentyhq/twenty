@@ -20,7 +20,7 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
@@ -60,7 +60,7 @@ export class FieldMetadataResolver {
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Context() context: I18nContext,
   ) {
     try {
@@ -80,7 +80,7 @@ export class FieldMetadataResolver {
   @Mutation(() => FieldMetadataDTO)
   async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Context() context: I18nContext,
   ) {
     const isWorkspaceMigrationV2Enabled =
@@ -118,7 +118,7 @@ export class FieldMetadataResolver {
   @Mutation(() => FieldMetadataDTO)
   async deleteOneField(
     @Args('input') input: DeleteOneFieldInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Context() context: I18nContext,
   ) {
     if (!isDefined(workspaceId)) {
@@ -176,7 +176,7 @@ export class FieldMetadataResolver {
 
   @ResolveField(() => RelationDTO, { nullable: true })
   async relation(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
 
     @Parent()
     {
@@ -201,7 +201,7 @@ export class FieldMetadataResolver {
 
   @ResolveField(() => [RelationDTO], { nullable: true })
   async morphRelations(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent()
     {
       id: fieldMetadataId,

@@ -1,5 +1,5 @@
-import type { BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 import { searchVariableThroughBaseOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughBaseOutputSchema';
+import type { BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 
 describe('searchVariableThroughBaseOutputSchema', () => {
   const mockBaseSchema: BaseOutputSchemaV2 = {
@@ -91,7 +91,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.message}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -106,7 +105,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.count}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -121,7 +119,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.isSuccess}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -136,7 +133,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.items}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -151,7 +147,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.user.name}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -166,7 +161,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.user.profile.email}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -182,7 +176,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.user.profile.isActive}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -198,7 +191,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'Code Action',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.config.timeout}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -213,7 +205,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.invalidField}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -227,7 +218,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.user.invalidField}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -241,7 +231,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.user.profile.invalidField}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -255,7 +244,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.message.nestedField}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -269,7 +257,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: undefined as any,
       rawVariableName: '{{step1.message}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -283,7 +270,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -297,7 +283,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'HTTP Request',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: 'step1.message',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -312,7 +297,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'Code Action',
       baseOutputSchema: mockBaseSchema,
       rawVariableName: '{{step1.user}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({
@@ -336,7 +320,6 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       stepName: 'AI Agent',
       baseOutputSchema: schemaWithUnknown,
       rawVariableName: '{{step1.unknownField}}',
-      isFullRecord: false,
     });
 
     expect(result).toEqual({

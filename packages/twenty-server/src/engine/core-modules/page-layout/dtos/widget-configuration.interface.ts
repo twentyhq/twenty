@@ -30,7 +30,8 @@ export const WidgetConfiguration = createUnionType({
       configuration.configurationType === WidgetConfigurationType.CHART_CONFIG
     ) {
       switch (configuration.graphType) {
-        case GraphType.BAR:
+        case GraphType.VERTICAL_BAR:
+        case GraphType.HORIZONTAL_BAR:
           return BarChartConfigurationDTO;
         case GraphType.LINE:
           return LineChartConfigurationDTO;

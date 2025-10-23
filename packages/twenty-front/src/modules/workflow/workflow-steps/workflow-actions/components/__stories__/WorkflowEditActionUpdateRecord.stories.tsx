@@ -111,9 +111,7 @@ export const DisabledWithEmptyValues: Story = {
     }
 
     const openRecordSelectButton = within(
-      await canvas.findByTestId(
-        'workflow-edit-action-record-update-object-record-id',
-      ),
+      await canvas.findByTestId('workflow-update-record-object-record-id'),
     ).queryByRole('button');
 
     expect(openRecordSelectButton).not.toBeInTheDocument();
@@ -179,9 +177,7 @@ export const DisabledWithDefaultStaticValues: Story = {
     expect(selectedRecord).toBeVisible();
 
     const openRecordSelectButton = within(
-      await canvas.findByTestId(
-        'workflow-edit-action-record-update-object-record-id',
-      ),
+      await canvas.findByTestId('workflow-update-record-object-record-id'),
     ).queryByRole('button');
 
     expect(openRecordSelectButton).not.toBeInTheDocument();
@@ -241,9 +237,7 @@ export const DisabledWithDefaultVariableValues: Story = {
     }
 
     const openRecordSelectButton = within(
-      await canvas.findByTestId(
-        'workflow-edit-action-record-update-object-record-id',
-      ),
+      await canvas.findByTestId('workflow-update-record-object-record-id'),
     ).queryByRole('button');
 
     expect(openRecordSelectButton).not.toBeInTheDocument();

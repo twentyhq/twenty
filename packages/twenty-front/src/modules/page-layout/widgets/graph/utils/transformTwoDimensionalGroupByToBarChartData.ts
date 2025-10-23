@@ -8,6 +8,7 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
+import { getSortedKeys } from '@/page-layout/widgets/graph/utils/getSortedKeys';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -19,6 +20,7 @@ type TransformTwoDimensionalGroupByToBarChartDataParams = {
   configuration: BarChartConfiguration;
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
+  primaryAxisSubFieldName?: string | null;
 };
 
 type TransformTwoDimensionalGroupByToBarChartDataResult = {
@@ -26,6 +28,7 @@ type TransformTwoDimensionalGroupByToBarChartDataResult = {
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
+  hasTooManyGroups: boolean;
 };
 
 export const transformTwoDimensionalGroupByToBarChartData = ({
@@ -36,15 +39,18 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   configuration,
   aggregateOperation,
   objectMetadataItem,
+  primaryAxisSubFieldName,
 }: TransformTwoDimensionalGroupByToBarChartDataParams): TransformTwoDimensionalGroupByToBarChartDataResult => {
   const indexByKey = getFieldKey({
     field: groupByFieldX,
-    subFieldName: configuration.groupBySubFieldNameX,
+    subFieldName: primaryAxisSubFieldName ?? undefined,
   });
 
   const dataMap = new Map<string, BarChartDataItem>();
   const xValues = new Set<string>();
   const yValues = new Set<string>();
+
+  let hasTooManyGroups = false;
 
   rawResults.forEach((result) => {
     const dimensionValues = result.groupByDimensionValues;
@@ -53,12 +59,12 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     const xValue = formatDimensionValue({
       value: dimensionValues[0],
       fieldMetadata: groupByFieldX,
-      subFieldName: configuration.groupBySubFieldNameX ?? undefined,
+      subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
     });
     const yValue = formatDimensionValue({
       value: dimensionValues[1],
       fieldMetadata: groupByFieldY,
-      subFieldName: configuration.groupBySubFieldNameY ?? undefined,
+      subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
     });
 
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
@@ -72,6 +78,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       totalUniqueDimensions + additionalDimensions >
       GRAPH_MAXIMUM_NUMBER_OF_GROUPS
     ) {
+      hasTooManyGroups = true;
       return;
     }
 
@@ -99,7 +106,12 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     dataItem[yValue] = aggregateValue;
   });
 
-  const keys = Array.from(yValues);
+  // Sorting needed because yValues may be unordered despite BE orderBy, if there are empty groups
+  const keys = getSortedKeys({
+    orderByY: configuration.secondaryAxisOrderBy,
+    yValues: Array.from(yValues),
+  });
+
   const series: BarChartSeries[] = keys.map((key) => ({
     key,
     label: key,
@@ -110,5 +122,6 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     indexBy: indexByKey,
     keys,
     series,
+    hasTooManyGroups,
   };
 };
