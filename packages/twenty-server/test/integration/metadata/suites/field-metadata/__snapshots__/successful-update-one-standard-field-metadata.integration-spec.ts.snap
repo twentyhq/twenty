@@ -47,11 +47,7 @@ exports[`Standard field metadata update should succeed when setting isActive to 
       "value": "CUSTOMER",
     },
   ],
-  "standardOverrides": {
-    "description": "Opportunity stage",
-    "icon": "IconProgressCheck",
-    "label": "Stage",
-  },
+  "standardOverrides": null,
 }
 `;
 
@@ -102,11 +98,7 @@ exports[`Standard field metadata update should succeed when updating defaultValu
       "value": "CUSTOMER",
     },
   ],
-  "standardOverrides": {
-    "description": "Opportunity stage",
-    "icon": "IconProgressCheck",
-    "label": "Stage",
-  },
+  "standardOverrides": null,
 }
 `;
 
@@ -159,8 +151,8 @@ exports[`Standard field metadata update should succeed when updating description
   ],
   "standardOverrides": {
     "description": "Updated test description for company name field",
-    "icon": "IconProgressCheck",
-    "label": "Stage",
+    "icon": null,
+    "label": null,
   },
 }
 `;
@@ -213,9 +205,9 @@ exports[`Standard field metadata update should succeed when updating icon 1`] = 
     },
   ],
   "standardOverrides": {
-    "description": "Opportunity stage",
+    "description": null,
     "icon": "IconBuildingFactory",
-    "label": "Stage",
+    "label": null,
   },
 }
 `;
@@ -268,8 +260,8 @@ exports[`Standard field metadata update should succeed when updating label 1`] =
     },
   ],
   "standardOverrides": {
-    "description": "Opportunity stage",
-    "icon": "IconProgressCheck",
+    "description": null,
+    "icon": null,
     "label": "Business Name",
   },
 }
@@ -329,10 +321,6 @@ exports[`Standard field metadata update should succeed when updating options 1`]
       "value": "CLOSED",
     },
   ],
-  "standardOverrides": {
-    "description": "Opportunity stage",
-    "icon": "IconProgressCheck",
-    "label": "Stage",
-  },
+  "standardOverrides": null,
 }
 `;
