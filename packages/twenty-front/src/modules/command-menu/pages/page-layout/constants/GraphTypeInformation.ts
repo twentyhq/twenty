@@ -7,13 +7,13 @@ import { getBarChartSettings } from '@/command-menu/pages/page-layout/utils/getB
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
-  Icon123,
   IconChartBar,
   IconChartBarHorizontal,
   IconChartLine,
   IconChartPie,
   type IconComponent,
   IconGauge,
+  IconSum,
 } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
 
@@ -47,7 +47,7 @@ export const GRAPH_TYPE_INFORMATION: Record<
   },
   [GraphType.AGGREGATE]: {
     label: msg`Aggregate`,
-    icon: Icon123,
+    icon: IconSum,
     settings: AGGREGATE_CHART_SETTINGS,
   },
   [GraphType.GAUGE]: {
