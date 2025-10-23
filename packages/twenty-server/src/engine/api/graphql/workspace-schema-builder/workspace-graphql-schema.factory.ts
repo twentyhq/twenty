@@ -19,12 +19,8 @@ export class WorkspaceGraphQLSchemaGenerator {
 
   async generateSchema(
     objectMetadataCollection: ObjectMetadataEntity[],
-    workspaceId: string,
   ): Promise<GraphQLSchema> {
-    await this.gqlTypeGenerator.buildAndStore(
-      objectMetadataCollection,
-      workspaceId,
-    );
+    await this.gqlTypeGenerator.buildAndStore(objectMetadataCollection);
 
     // Assemble schema
     const schema = new GraphQLSchema({
