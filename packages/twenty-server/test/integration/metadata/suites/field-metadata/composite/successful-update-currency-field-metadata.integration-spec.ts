@@ -15,75 +15,70 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Partial<UpdateFieldInput>;
 }>[] = [
   {
-    title: 'links field basic metadata (label, description, icon)',
+    title: 'currency field basic metadata (label, description, icon)',
     context: {
       input: {
-        label: 'Updated Links',
+        label: 'Updated Currency',
         description: 'Updated description',
-        icon: 'IconExternalLink',
+        icon: 'IconCoin',
       },
     },
   },
   {
-    title: 'links field settings with maxNumberOfValues',
-    context: {
-      input: {
-        settings: {
-          maxNumberOfValues: 5,
-        },
-      },
-    },
-  },
-  {
-    title: 'links field default value with primary link',
+    title: 'currency field default value with amount and currency',
     context: {
       input: {
         defaultValue: {
-          primaryLinkLabel: "'Website'",
-          primaryLinkUrl: "'https://example.com'",
-          secondaryLinks: null,
+          amountMicros: "'1000000'",
+          currencyCode: "'USD'",
         },
       },
     },
   },
   {
-    title: 'links field default value with empty values',
+    title: 'currency field default value with zero amount',
     context: {
       input: {
         defaultValue: {
-          primaryLinkLabel: "''",
-          primaryLinkUrl: "''",
-          secondaryLinks: null,
+          amountMicros: "'0'",
+          currencyCode: "'EUR'",
         },
       },
     },
   },
   {
-    title: 'links field default value set to null',
+    title: 'currency field default value with only currency code',
+    context: {
+      input: {
+        defaultValue: {
+          amountMicros: null,
+          currencyCode: "'GBP'",
+        },
+      },
+    },
+  },
+  {
+    title: 'currency field default value with empty values',
+    context: {
+      input: {
+        defaultValue: {
+          amountMicros: null,
+          currencyCode: "''",
+        },
+      },
+    },
+  },
+  {
+    title: 'currency field default value set to null',
     context: {
       input: {
         defaultValue: null,
       },
     },
   },
-  {
-    title: 'links field settings and default value together',
-    context: {
-      input: {
-        settings: {
-          maxNumberOfValues: 3,
-        },
-        defaultValue: {
-          primaryLinkLabel: "'Homepage'",
-          primaryLinkUrl: "'https://company.com'",
-          secondaryLinks: null,
-        },
-      },
-    },
-  },
 ];
 
-describe('Links field metadata update tests suite', () => {
+describe('Currency field metadata update tests suite', () => {
   let createdObjectMetadataId: string;
   let createdFieldMetadataId: string;
 
@@ -91,10 +86,10 @@ describe('Links field metadata update tests suite', () => {
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
-        nameSingular: 'testLinksUpdateObject',
-        namePlural: 'testLinksUpdateObjects',
-        labelSingular: 'Test Links Update Object',
-        labelPlural: 'Test Links Update Objects',
+        nameSingular: 'testCurrencyUpdateObject',
+        namePlural: 'testCurrencyUpdateObjects',
+        labelSingular: 'Test Currency Update Object',
+        labelPlural: 'Test Currency Update Objects',
         icon: 'IconTestPipe',
         isLabelSyncedWithName: false,
       },
@@ -124,11 +119,11 @@ describe('Links field metadata update tests suite', () => {
       expectToFail: false,
       input: {
         objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.LINKS,
-        name: 'testLinks',
-        label: 'Test Links',
+        type: FieldMetadataType.CURRENCY,
+        name: 'testCurrency',
+        label: 'Test Currency',
         description: 'Initial description',
-        icon: 'IconLink',
+        icon: 'IconCurrencyDollar',
         isLabelSyncedWithName: false,
       },
       gqlFields: `
@@ -178,3 +173,4 @@ describe('Links field metadata update tests suite', () => {
     },
   );
 });
+

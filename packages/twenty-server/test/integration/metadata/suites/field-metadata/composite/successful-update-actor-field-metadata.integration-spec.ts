@@ -15,75 +15,50 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Partial<UpdateFieldInput>;
 }>[] = [
   {
-    title: 'links field basic metadata (label, description, icon)',
+    title: 'actor field basic metadata (label, description, icon)',
     context: {
       input: {
-        label: 'Updated Links',
+        label: 'Updated Actor',
         description: 'Updated description',
-        icon: 'IconExternalLink',
+        icon: 'IconUsers',
       },
     },
   },
   {
-    title: 'links field settings with maxNumberOfValues',
-    context: {
-      input: {
-        settings: {
-          maxNumberOfValues: 5,
-        },
-      },
-    },
-  },
-  {
-    title: 'links field default value with primary link',
+    title: 'actor field default value with MANUAL source',
     context: {
       input: {
         defaultValue: {
-          primaryLinkLabel: "'Website'",
-          primaryLinkUrl: "'https://example.com'",
-          secondaryLinks: null,
+          source: "'MANUAL'",
+          workspaceMemberId: null,
+          name: "'System'",
         },
       },
     },
   },
   {
-    title: 'links field default value with empty values',
+    title: 'actor field default value with API source',
     context: {
       input: {
         defaultValue: {
-          primaryLinkLabel: "''",
-          primaryLinkUrl: "''",
-          secondaryLinks: null,
+          source: "'API'",
+          workspaceMemberId: null,
+          name: "'API User'",
         },
       },
     },
   },
   {
-    title: 'links field default value set to null',
+    title: 'actor field default value set to null',
     context: {
       input: {
         defaultValue: null,
       },
     },
   },
-  {
-    title: 'links field settings and default value together',
-    context: {
-      input: {
-        settings: {
-          maxNumberOfValues: 3,
-        },
-        defaultValue: {
-          primaryLinkLabel: "'Homepage'",
-          primaryLinkUrl: "'https://company.com'",
-          secondaryLinks: null,
-        },
-      },
-    },
-  },
 ];
 
-describe('Links field metadata update tests suite', () => {
+describe('Actor field metadata update tests suite', () => {
   let createdObjectMetadataId: string;
   let createdFieldMetadataId: string;
 
@@ -91,10 +66,10 @@ describe('Links field metadata update tests suite', () => {
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
-        nameSingular: 'testLinksUpdateObject',
-        namePlural: 'testLinksUpdateObjects',
-        labelSingular: 'Test Links Update Object',
-        labelPlural: 'Test Links Update Objects',
+        nameSingular: 'testActorUpdateObject',
+        namePlural: 'testActorUpdateObjects',
+        labelSingular: 'Test Actor Update Object',
+        labelPlural: 'Test Actor Update Objects',
         icon: 'IconTestPipe',
         isLabelSyncedWithName: false,
       },
@@ -124,11 +99,11 @@ describe('Links field metadata update tests suite', () => {
       expectToFail: false,
       input: {
         objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.LINKS,
-        name: 'testLinks',
-        label: 'Test Links',
+        type: FieldMetadataType.ACTOR,
+        name: 'testActor',
+        label: 'Test Actor',
         description: 'Initial description',
-        icon: 'IconLink',
+        icon: 'IconUser',
         isLabelSyncedWithName: false,
       },
       gqlFields: `
@@ -178,3 +153,4 @@ describe('Links field metadata update tests suite', () => {
     },
   );
 });
+

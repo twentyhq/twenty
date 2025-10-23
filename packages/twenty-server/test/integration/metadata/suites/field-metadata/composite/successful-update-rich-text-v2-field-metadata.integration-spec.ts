@@ -15,75 +15,59 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Partial<UpdateFieldInput>;
 }>[] = [
   {
-    title: 'links field basic metadata (label, description, icon)',
+    title: 'rich text v2 field basic metadata (label, description, icon)',
     context: {
       input: {
-        label: 'Updated Links',
+        label: 'Updated Rich Text',
         description: 'Updated description',
-        icon: 'IconExternalLink',
+        icon: 'IconFileText',
       },
     },
   },
   {
-    title: 'links field settings with maxNumberOfValues',
-    context: {
-      input: {
-        settings: {
-          maxNumberOfValues: 5,
-        },
-      },
-    },
-  },
-  {
-    title: 'links field default value with primary link',
+    title: 'rich text v2 field default value with markdown',
     context: {
       input: {
         defaultValue: {
-          primaryLinkLabel: "'Website'",
-          primaryLinkUrl: "'https://example.com'",
-          secondaryLinks: null,
+          blocknote: null,
+          markdown: "'# Default Title'",
         },
       },
     },
   },
   {
-    title: 'links field default value with empty values',
+    title: 'rich text v2 field default value with blocknote',
     context: {
       input: {
         defaultValue: {
-          primaryLinkLabel: "''",
-          primaryLinkUrl: "''",
-          secondaryLinks: null,
+          blocknote: "'{\"blocks\":[{\"type\":\"paragraph\"}]}'",
+          markdown: null,
         },
       },
     },
   },
   {
-    title: 'links field default value set to null',
+    title: 'rich text v2 field default value with both formats',
+    context: {
+      input: {
+        defaultValue: {
+          blocknote: "'{\"blocks\":[]}'",
+          markdown: "'## Heading'",
+        },
+      },
+    },
+  },
+  {
+    title: 'rich text v2 field default value set to null',
     context: {
       input: {
         defaultValue: null,
       },
     },
   },
-  {
-    title: 'links field settings and default value together',
-    context: {
-      input: {
-        settings: {
-          maxNumberOfValues: 3,
-        },
-        defaultValue: {
-          primaryLinkLabel: "'Homepage'",
-          primaryLinkUrl: "'https://company.com'",
-          secondaryLinks: null,
-        },
-      },
-    },
-  },
 ];
 
-describe('Links field metadata update tests suite', () => {
+describe('Rich text v2 field metadata update tests suite', () => {
   let createdObjectMetadataId: string;
   let createdFieldMetadataId: string;
 
@@ -91,10 +75,10 @@ describe('Links field metadata update tests suite', () => {
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
-        nameSingular: 'testLinksUpdateObject',
-        namePlural: 'testLinksUpdateObjects',
-        labelSingular: 'Test Links Update Object',
-        labelPlural: 'Test Links Update Objects',
+        nameSingular: 'testRichTextV2UpdateObject',
+        namePlural: 'testRichTextV2UpdateObjects',
+        labelSingular: 'Test Rich Text V2 Update Object',
+        labelPlural: 'Test Rich Text V2 Update Objects',
         icon: 'IconTestPipe',
         isLabelSyncedWithName: false,
       },
@@ -124,11 +108,11 @@ describe('Links field metadata update tests suite', () => {
       expectToFail: false,
       input: {
         objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.LINKS,
-        name: 'testLinks',
-        label: 'Test Links',
+        type: FieldMetadataType.RICH_TEXT_V2,
+        name: 'testRichText',
+        label: 'Test Rich Text',
         description: 'Initial description',
-        icon: 'IconLink',
+        icon: 'IconNotes',
         isLabelSyncedWithName: false,
       },
       gqlFields: `
@@ -178,3 +162,4 @@ describe('Links field metadata update tests suite', () => {
     },
   );
 });
+

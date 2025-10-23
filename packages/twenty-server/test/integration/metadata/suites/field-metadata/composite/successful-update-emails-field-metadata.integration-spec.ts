@@ -15,51 +15,49 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Partial<UpdateFieldInput>;
 }>[] = [
   {
-    title: 'links field basic metadata (label, description, icon)',
+    title: 'emails field basic metadata (label, description, icon)',
     context: {
       input: {
-        label: 'Updated Links',
+        label: 'Updated Emails',
         description: 'Updated description',
-        icon: 'IconExternalLink',
+        icon: 'IconMailOpened',
       },
     },
   },
   {
-    title: 'links field settings with maxNumberOfValues',
+    title: 'emails field settings with maxNumberOfValues',
     context: {
       input: {
         settings: {
-          maxNumberOfValues: 5,
+          maxNumberOfValues: 3,
         },
       },
     },
   },
   {
-    title: 'links field default value with primary link',
+    title: 'emails field default value with primary email',
     context: {
       input: {
         defaultValue: {
-          primaryLinkLabel: "'Website'",
-          primaryLinkUrl: "'https://example.com'",
-          secondaryLinks: null,
+          primaryEmail: "'contact@example.com'",
+          additionalEmails: null,
         },
       },
     },
   },
   {
-    title: 'links field default value with empty values',
+    title: 'emails field default value with empty values',
     context: {
       input: {
         defaultValue: {
-          primaryLinkLabel: "''",
-          primaryLinkUrl: "''",
-          secondaryLinks: null,
+          primaryEmail: "''",
+          additionalEmails: null,
         },
       },
     },
   },
   {
-    title: 'links field default value set to null',
+    title: 'emails field default value set to null',
     context: {
       input: {
         defaultValue: null,
@@ -67,23 +65,22 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     },
   },
   {
-    title: 'links field settings and default value together',
+    title: 'emails field settings and default value together',
     context: {
       input: {
         settings: {
-          maxNumberOfValues: 3,
+          maxNumberOfValues: 5,
         },
         defaultValue: {
-          primaryLinkLabel: "'Homepage'",
-          primaryLinkUrl: "'https://company.com'",
-          secondaryLinks: null,
+          primaryEmail: "'support@company.com'",
+          additionalEmails: null,
         },
       },
     },
   },
 ];
 
-describe('Links field metadata update tests suite', () => {
+describe('Emails field metadata update tests suite', () => {
   let createdObjectMetadataId: string;
   let createdFieldMetadataId: string;
 
@@ -91,10 +88,10 @@ describe('Links field metadata update tests suite', () => {
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
-        nameSingular: 'testLinksUpdateObject',
-        namePlural: 'testLinksUpdateObjects',
-        labelSingular: 'Test Links Update Object',
-        labelPlural: 'Test Links Update Objects',
+        nameSingular: 'testEmailsUpdateObject',
+        namePlural: 'testEmailsUpdateObjects',
+        labelSingular: 'Test Emails Update Object',
+        labelPlural: 'Test Emails Update Objects',
         icon: 'IconTestPipe',
         isLabelSyncedWithName: false,
       },
@@ -124,11 +121,11 @@ describe('Links field metadata update tests suite', () => {
       expectToFail: false,
       input: {
         objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.LINKS,
-        name: 'testLinks',
-        label: 'Test Links',
+        type: FieldMetadataType.EMAILS,
+        name: 'testEmails',
+        label: 'Test Emails',
         description: 'Initial description',
-        icon: 'IconLink',
+        icon: 'IconMail',
         isLabelSyncedWithName: false,
       },
       gqlFields: `
@@ -178,3 +175,4 @@ describe('Links field metadata update tests suite', () => {
     },
   );
 });
+

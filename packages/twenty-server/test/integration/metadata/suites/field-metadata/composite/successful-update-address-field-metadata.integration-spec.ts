@@ -15,51 +15,80 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Partial<UpdateFieldInput>;
 }>[] = [
   {
-    title: 'links field basic metadata (label, description, icon)',
+    title: 'address field basic metadata (label, description, icon)',
     context: {
       input: {
-        label: 'Updated Links',
+        label: 'Updated Address',
         description: 'Updated description',
-        icon: 'IconExternalLink',
+        icon: 'IconHome',
       },
     },
   },
   {
-    title: 'links field settings with maxNumberOfValues',
+    title: 'address field settings with limited subFields',
     context: {
       input: {
         settings: {
-          maxNumberOfValues: 5,
+          subFields: ['addressStreet1', 'addressCity', 'addressCountry'],
         },
       },
     },
   },
   {
-    title: 'links field default value with primary link',
+    title: 'address field settings with all subFields',
+    context: {
+      input: {
+        settings: {
+          subFields: [
+            'addressStreet1',
+            'addressStreet2',
+            'addressCity',
+            'addressState',
+            'addressPostcode',
+            'addressCountry',
+            'addressLat',
+            'addressLng',
+          ],
+        },
+      },
+    },
+  },
+  {
+    title: 'address field default value with full address',
     context: {
       input: {
         defaultValue: {
-          primaryLinkLabel: "'Website'",
-          primaryLinkUrl: "'https://example.com'",
-          secondaryLinks: null,
+          addressStreet1: "'123 Main St'",
+          addressStreet2: "'Apt 4'",
+          addressCity: "'New York'",
+          addressState: "'NY'",
+          addressPostcode: "'10001'",
+          addressCountry: "'USA'",
+          addressLat: null,
+          addressLng: null,
         },
       },
     },
   },
   {
-    title: 'links field default value with empty values',
+    title: 'address field default value with partial address',
     context: {
       input: {
         defaultValue: {
-          primaryLinkLabel: "''",
-          primaryLinkUrl: "''",
-          secondaryLinks: null,
+          addressStreet1: "'456 Oak Ave'",
+          addressStreet2: "''",
+          addressCity: "'Boston'",
+          addressState: "''",
+          addressPostcode: "''",
+          addressCountry: "''",
+          addressLat: null,
+          addressLng: null,
         },
       },
     },
   },
   {
-    title: 'links field default value set to null',
+    title: 'address field default value set to null',
     context: {
       input: {
         defaultValue: null,
@@ -67,23 +96,28 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     },
   },
   {
-    title: 'links field settings and default value together',
+    title: 'address field settings and default value together',
     context: {
       input: {
         settings: {
-          maxNumberOfValues: 3,
+          subFields: ['addressStreet1', 'addressCity', 'addressPostcode'],
         },
         defaultValue: {
-          primaryLinkLabel: "'Homepage'",
-          primaryLinkUrl: "'https://company.com'",
-          secondaryLinks: null,
+          addressStreet1: "''",
+          addressStreet2: "''",
+          addressCity: "''",
+          addressState: "''",
+          addressPostcode: "''",
+          addressCountry: "'USA'",
+          addressLat: null,
+          addressLng: null,
         },
       },
     },
   },
 ];
 
-describe('Links field metadata update tests suite', () => {
+describe('Address field metadata update tests suite', () => {
   let createdObjectMetadataId: string;
   let createdFieldMetadataId: string;
 
@@ -91,10 +125,10 @@ describe('Links field metadata update tests suite', () => {
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
-        nameSingular: 'testLinksUpdateObject',
-        namePlural: 'testLinksUpdateObjects',
-        labelSingular: 'Test Links Update Object',
-        labelPlural: 'Test Links Update Objects',
+        nameSingular: 'testAddressUpdateObject',
+        namePlural: 'testAddressUpdateObjects',
+        labelSingular: 'Test Address Update Object',
+        labelPlural: 'Test Address Update Objects',
         icon: 'IconTestPipe',
         isLabelSyncedWithName: false,
       },
@@ -124,11 +158,11 @@ describe('Links field metadata update tests suite', () => {
       expectToFail: false,
       input: {
         objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.LINKS,
-        name: 'testLinks',
-        label: 'Test Links',
+        type: FieldMetadataType.ADDRESS,
+        name: 'testAddress',
+        label: 'Test Address',
         description: 'Initial description',
-        icon: 'IconLink',
+        icon: 'IconMapPin',
         isLabelSyncedWithName: false,
       },
       gqlFields: `
@@ -178,3 +212,4 @@ describe('Links field metadata update tests suite', () => {
     },
   );
 });
+
