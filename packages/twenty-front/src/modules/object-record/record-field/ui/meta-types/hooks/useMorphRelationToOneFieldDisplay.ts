@@ -12,7 +12,8 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
-import { ObjectRecord } from 'twenty-shared/types';
+
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useMorphRelationToOneFieldDisplay = () => {
