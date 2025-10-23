@@ -4,29 +4,53 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 export const formatResultWithGroupByDimensionValues = ({
   groupsResult,
   groupByDefinitions,
   aggregateFieldNames,
   recordsResult,
+  objectMetadataItemWithFieldMaps,
+  objectMetadataMaps,
 }: {
   groupsResult: Record<string, unknown>[];
   groupByDefinitions: GroupByDefinition[];
   aggregateFieldNames: string[];
   recordsResult?: Array<Record<string, unknown>>;
+  objectMetadataItemWithFieldMaps?: ObjectMetadataItemWithFieldMaps;
+  objectMetadataMaps?: ObjectMetadataMaps;
 }): CommonGroupByOutputItem[] => {
   let formattedResult: CommonGroupByOutputItem[] = [];
 
   const recordsByGroupKey = new Map<string, Array<Record<string, unknown>>>();
 
-  recordsResult?.forEach((entry) => {
-    const groupKey = createGroupKey(entry, groupByDefinitions);
+  if (isDefined(recordsResult)) {
+    if (
+      !isDefined(objectMetadataItemWithFieldMaps) ||
+      !isDefined(objectMetadataMaps)
+    ) {
+      throw new Error('Metadata are required to format result');
+    }
 
-    const records = (entry.records as Array<Record<string, unknown>>) ?? [];
+    recordsResult?.forEach((entry) => {
+      const groupKey = createGroupKey(entry, groupByDefinitions);
 
-    recordsByGroupKey.set(groupKey, records);
-  });
+      const records: Record<string, unknown>[] = (
+        (entry.records as Array<Record<string, unknown>>) ?? []
+      ).map((record) => {
+        return formatResult(
+          record,
+          objectMetadataItemWithFieldMaps,
+          objectMetadataMaps,
+        );
+      });
+
+      recordsByGroupKey.set(groupKey, records);
+    });
+  }
 
   groupsResult.forEach((group) => {
     let dimensionValues: unknown[] = [];

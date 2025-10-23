@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
-import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
@@ -12,6 +11,7 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
+import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
@@ -51,13 +51,26 @@ export class GroupByResolverFactory
           return results;
         }
 
-        const formattedResults = results.map((group) => {
-          const edges = group.records?.map(
-            (record: Record<string, unknown>, index: number) => ({
-              node: record as ObjectRecord,
-              cursor: this.encodeCursor(record, index),
-            }),
+        const typeORMObjectRecordsParser =
+          new ObjectRecordsToGraphqlConnectionHelper(
+            internalContext.objectMetadataMaps,
           );
+
+        const formattedResults = results.map((group) => {
+          const edges = (group.records ?? []).map((objectRecord) => ({
+            node: typeORMObjectRecordsParser.processRecord({
+              objectRecord,
+              objectName:
+                internalContext.objectMetadataItemWithFieldMaps.nameSingular,
+              objectRecordsAggregatedValues: {},
+              selectedAggregatedFields: {},
+              take: group.records?.length || 0,
+              totalCount: group.records?.length || 0,
+              order: undefined,
+              depth: 0,
+            }),
+            cursor: '',
+          }));
 
           const { records, ...groupWithoutRecords } = group;
 
@@ -77,14 +90,5 @@ export class GroupByResolverFactory
         return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
       }
     };
-  }
-
-  private encodeCursor(record: Record<string, unknown>, index: number): string {
-    const cursorData = {
-      id: record.id,
-      index,
-    };
-
-    return Buffer.from(JSON.stringify(cursorData)).toString('base64');
   }
 }

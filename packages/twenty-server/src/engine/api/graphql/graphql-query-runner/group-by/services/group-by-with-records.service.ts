@@ -65,6 +65,8 @@ export class GroupByWithRecordsService {
       recordsResult,
       groupByDefinitions,
       aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
   }
 
