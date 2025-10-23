@@ -36,6 +36,7 @@ const StyledTrendIconContainer = styled.div`
 `;
 
 const StyledH1Title = styled(H1Title)`
+  font-size: ${({ theme }) => theme.font.size.xxl};
   margin: 0;
 `;
 
