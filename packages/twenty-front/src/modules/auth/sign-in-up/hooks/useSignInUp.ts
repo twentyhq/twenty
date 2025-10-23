@@ -10,7 +10,6 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
@@ -32,7 +31,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const { isCaptchaReady } = useCaptcha();
-  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
 
   const location = useLocation();
 
