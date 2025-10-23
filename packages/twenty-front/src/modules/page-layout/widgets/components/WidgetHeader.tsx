@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
-import { IconGripVertical, IconX } from 'twenty-ui/display';
+import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+
+import { WidgetGrip } from './WidgetGrip';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -10,19 +12,8 @@ const StyledHeader = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledDragHandleButton = styled(IconButton)`
-  cursor: grab;
-  display: flex;
-  align-items: center;
-  user-select: none;
-
-  &:active {
-    cursor: grabbing;
-  }
-`;
-
 const StyledTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.primary};
   flex: 1;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -44,13 +35,9 @@ export const WidgetHeader = ({
 }: WidgetHeaderProps) => {
   return (
     <StyledHeader>
-      {isInEditMode && (
-        <StyledDragHandleButton
-          Icon={IconGripVertical}
+      {!isEmpty && isInEditMode && (
+        <WidgetGrip
           className="drag-handle"
-          variant="tertiary"
-          size="small"
-          disabled={isEmpty}
           onClick={(e) => e.stopPropagation()}
         />
       )}
