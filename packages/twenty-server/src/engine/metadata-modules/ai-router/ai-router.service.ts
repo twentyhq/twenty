@@ -10,6 +10,7 @@ import {
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
@@ -82,6 +83,7 @@ export class AiRouterService {
         prompt: userPrompt,
         schema: routerDecisionSchema,
         temperature: 0.1,
+        experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
       return availableAgents.find(
