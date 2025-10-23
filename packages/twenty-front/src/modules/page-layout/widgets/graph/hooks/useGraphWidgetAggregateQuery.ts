@@ -1,6 +1,6 @@
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
-import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
@@ -21,14 +21,18 @@ export const useGraphWidgetAggregateQuery = ({
       configuration,
     });
 
-  // TODO: Move this enum to shared
-  const aggregateOperation =
-    configuration.aggregateOperation as unknown as ExtendedAggregateOperations;
+  const aggregateOperation = configuration.aggregateOperation;
+
+  const extendedAggregateOperation =
+    convertAggregateOperationToExtendedAggregateOperation(
+      aggregateOperation,
+      aggregateField.type,
+    );
 
   const { data, loading, error } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate: {
-      [aggregateField.name]: [aggregateOperation],
+      [aggregateField.name]: [extendedAggregateOperation],
     },
     filter: gqlOperationFilter,
   });
@@ -40,7 +44,7 @@ export const useGraphWidgetAggregateQuery = ({
     data,
     objectMetadataItem,
     fieldMetadataId: configuration.aggregateFieldMetadataId,
-    aggregateOperation,
+    aggregateOperation: extendedAggregateOperation,
     dateFormat,
     timeFormat,
     timeZone,
