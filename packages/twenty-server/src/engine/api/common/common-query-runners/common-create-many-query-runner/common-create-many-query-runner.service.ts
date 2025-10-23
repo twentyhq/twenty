@@ -21,6 +21,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   CreateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
@@ -41,6 +42,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   CreateManyQueryArgs,
   ObjectRecord[]
 > {
+  protected readonly operationName = CommonQueryNames.CREATE_MANY;
   async run(
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
