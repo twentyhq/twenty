@@ -34,7 +34,6 @@ import { createPortal } from 'react-dom';
 import {
   computeMorphRelationFieldName,
   CustomError,
-  isDefined,
 } from 'twenty-shared/utils';
 import {
   IconChevronDown,
@@ -110,6 +109,7 @@ export const RecordDetailRelationRecordsListItem = ({
   const { onSubmit } = useContext(FieldInputEventContext);
 
   const { openModal } = useModal();
+  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
   const { relationType, objectMetadataNameSingular } =
     fieldDefinition.metadata as FieldRelationMetadata;
@@ -173,19 +173,17 @@ export const RecordDetailRelationRecordsListItem = ({
     ({ id }) => id === relationFieldMetadataId,
   );
 
-  if (!isDefined(relationFieldMetadataItem)) {
-    return null;
-  }
-
   const relationFieldMetadataIsMorphRelation =
     relationFieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION;
 
-  const computedName = computeMorphRelationFieldName({
-    fieldName: relationFieldMetadataItem.name,
-    relationType: relationFieldMetadataItem.settings.relationType,
-    targetObjectMetadataNameSingular: objectMetadataItem.nameSingular,
-    targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const computedName = relationFieldMetadataItem
+    ? computeMorphRelationFieldName({
+        fieldName: relationFieldMetadataItem.name,
+        relationType: relationFieldMetadataItem.settings.relationType,
+        targetObjectMetadataNameSingular: objectMetadataItem.nameSingular,
+        targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
+      })
+    : '';
 
   const updateOneRecordInput = relationFieldMetadataIsMorphRelation
     ? {
@@ -193,7 +191,7 @@ export const RecordDetailRelationRecordsListItem = ({
       }
     : {
         [getForeignKeyNameFromRelationFieldName(
-          relationFieldMetadataItem.name,
+          relationFieldMetadataItem?.name ?? '',
         )]: null,
       };
   const handleDetach = () => {
@@ -237,8 +235,6 @@ export const RecordDetailRelationRecordsListItem = ({
     ),
     [isExpanded],
   );
-
-  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
   return (
     <>
