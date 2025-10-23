@@ -12,6 +12,7 @@ export const useBooleanFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<boolean | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

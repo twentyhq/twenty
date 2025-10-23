@@ -13,6 +13,7 @@ export const useFullNameFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldFullNameValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

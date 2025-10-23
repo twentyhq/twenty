@@ -11,7 +11,7 @@ export const useTextFieldDisplay = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const fieldValue =
-    useRecordFieldValue<string | undefined>(recordId, fieldName) ?? '';
+    useRecordFieldValue<string | undefined>(recordId, fieldName, fieldDefinition) ?? '';
 
   return {
     fieldDefinition,

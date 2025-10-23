@@ -13,6 +13,7 @@ export const useAddressFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldAddressValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

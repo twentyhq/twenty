@@ -22,6 +22,7 @@ export const useRichTextV2FieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldRichTextV2Value | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

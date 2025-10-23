@@ -24,6 +24,7 @@ export const useActorFieldDisplay = (): ActorFieldDisplayValue | undefined => {
   const fieldValue = useRecordFieldValue<FieldActorValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
   if (!isDefined(fieldValue)) {
     return undefined;

@@ -15,6 +15,7 @@ export const useArrayFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldArrayValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

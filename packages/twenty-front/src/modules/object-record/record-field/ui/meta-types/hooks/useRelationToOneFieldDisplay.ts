@@ -37,6 +37,7 @@ export const useRelationToOneFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<ObjectRecord | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   const maxWidthForField =

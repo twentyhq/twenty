@@ -14,6 +14,7 @@ export const useJsonFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldJsonValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   const formattedFieldValue = useFormattedJsonFieldValue({

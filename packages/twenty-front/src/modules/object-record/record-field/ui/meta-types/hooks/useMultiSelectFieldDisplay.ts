@@ -16,6 +16,7 @@ export const useMultiSelectFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldMultiSelectValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

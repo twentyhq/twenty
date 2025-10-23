@@ -13,6 +13,7 @@ export const useEmailsFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldEmailsValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

@@ -14,6 +14,7 @@ export const useDateTimeFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<string | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

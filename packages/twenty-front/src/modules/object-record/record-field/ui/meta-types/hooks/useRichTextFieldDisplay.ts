@@ -24,6 +24,7 @@ export const useRichTextFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldRichTextValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   const fieldValueParsed = isDefined(fieldValue)

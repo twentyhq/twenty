@@ -12,12 +12,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const useRecordFieldValue = <T,>(
   recordId: string,
   fieldName: string,
-  fieldDefinition?: FieldDefinition<FieldMetadata>,
+  fieldDefinition: FieldDefinition<FieldMetadata>,
 ) => {
   const recordFieldValue = useRecoilCallback(
     ({ snapshot }) =>
       () => {
-        if (fieldDefinition?.type !== FieldMetadataType.MORPH_RELATION) {
+        if (fieldDefinition.type !== FieldMetadataType.MORPH_RELATION) {
           const value = snapshot
             .getLoadable(recordStoreFamilySelector({ recordId, fieldName }))
             .getValue();

@@ -13,6 +13,7 @@ export const useLinksFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldLinksValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

@@ -13,6 +13,7 @@ export const usePhonesFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldPhonesValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

@@ -22,6 +22,7 @@ export const useCurrencyFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldCurrencyValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

@@ -13,7 +13,7 @@ export const useNumberFieldDisplay = () => {
   assertFieldMetadata(FieldMetadataType.NUMBER, isFieldNumber, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
-  const fieldValue = useRecordFieldValue<number | null>(recordId, fieldName);
+  const fieldValue = useRecordFieldValue<number | null>(recordId, fieldName, fieldDefinition);
 
   return {
     fieldDefinition,
