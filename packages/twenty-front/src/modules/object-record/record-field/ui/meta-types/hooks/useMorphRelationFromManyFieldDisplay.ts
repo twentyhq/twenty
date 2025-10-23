@@ -7,8 +7,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 
-import { recordStoreMorphOneToManyValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector';
-import { useRecoilValue } from 'recoil';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -32,11 +31,10 @@ export const useMorphRelationFromManyFieldDisplay = () => {
 
   const button = fieldDefinition.editButtonIcon;
 
-  const morphValuesWithObjectNameSingular = useRecoilValue(
-    recordStoreMorphOneToManyValueWithObjectNameFamilySelector({
-      recordId,
-      morphRelations: fieldDefinition.metadata.morphRelations,
-    }),
+  const morphValuesWithObjectNameSingular = useRecordFieldValue(
+    recordId,
+    fieldDefinition.metadata.fieldName,
+    fieldDefinition,
   );
 
   const maxWidthForField =

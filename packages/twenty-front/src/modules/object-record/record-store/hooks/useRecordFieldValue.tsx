@@ -1,49 +1,23 @@
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
-import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
-import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { recordStoreMorphManyToOneValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphManyToOneValueWithObjectNameFamilySelector';
-import { recordStoreMorphOneToManyValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector';
-import { useRecoilCallback } from 'recoil';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { recordStoreFieldValueSelector } from '@/object-record/record-store/states/selectors/recordStoreFieldValueSelector';
+import { useRecoilValue } from 'recoil';
 
 export const useRecordFieldValue = <T,>(
   recordId: string,
   fieldName: string,
   fieldDefinition: FieldDefinition<FieldMetadata>,
 ) => {
-  const recordFieldValue = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        if (fieldDefinition.type !== FieldMetadataType.MORPH_RELATION) {
-          const value = snapshot
-            .getLoadable(recordStoreFamilySelector({ recordId, fieldName }))
-            .getValue();
-          return value as T | undefined;
-        }
-        assertFieldMetadata(
-          FieldMetadataType.MORPH_RELATION,
-          isFieldMorphRelation,
-          fieldDefinition,
-        );
-
-        const selector = isFieldMorphRelationOneToMany(fieldDefinition)
-          ? recordStoreMorphOneToManyValueWithObjectNameFamilySelector
-          : recordStoreMorphManyToOneValueWithObjectNameFamilySelector;
-
-        return snapshot
-          .getLoadable(
-            selector({
-              recordId,
-              morphRelations: fieldDefinition.metadata.morphRelations,
-            }) as any,
-          )
-          .getValue() as T | undefined;
+  const recordFieldValue = useRecoilValue(
+    recordStoreFieldValueSelector({
+      recordId,
+      fieldName,
+      fieldDefinition: {
+        type: fieldDefinition.type,
+        metadata: fieldDefinition.metadata,
       },
-    [recordId, fieldName, fieldDefinition],
-  )();
+    }),
+  ) as T | undefined;
 
   return recordFieldValue;
 };
