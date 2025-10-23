@@ -11,6 +11,7 @@ exports[`Standard object metadata update should succeed when setting isActive to
   "namePlural": "companies",
   "nameSingular": "company",
   "shortcut": "C",
+  "standardOverrides": null,
 }
 `;
 
@@ -25,6 +26,12 @@ exports[`Standard object metadata update should succeed when updating descriptio
   "namePlural": "companies",
   "nameSingular": "company",
   "shortcut": "C",
+  "standardOverrides": {
+    "description": "Updated test description for company",
+    "icon": null,
+    "labelPlural": null,
+    "labelSingular": null,
+  },
 }
 `;
 
@@ -39,6 +46,7 @@ exports[`Standard object metadata update should succeed when updating icon 1`] =
   "namePlural": "companies",
   "nameSingular": "company",
   "shortcut": "C",
+  "standardOverrides": null,
 }
 `;
 
@@ -53,5 +61,11 @@ exports[`Standard object metadata update should succeed when updating labelSingu
   "namePlural": "companies",
   "nameSingular": "company",
   "shortcut": "C",
+  "standardOverrides": {
+    "description": null,
+    "icon": null,
+    "labelPlural": "Businesses",
+    "labelSingular": "Business",
+  },
 }
 `;

@@ -1,6 +1,6 @@
 import {
-  extractAndSanitizeObjectStringFields,
-  isDefined,
+    extractAndSanitizeObjectStringFields,
+    isDefined,
 } from 'twenty-shared/utils';
 
 import { FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-editable-properties.constant';
@@ -8,8 +8,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
 import { type UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
+    ObjectMetadataException,
+    ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { type ObjectMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-standard-overrides-properties.types';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
