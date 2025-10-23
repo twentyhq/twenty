@@ -14,7 +14,7 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'customize-your-data-model' },
       { fileName: 'objects' },
       { fileName: 'fields' },
-      { fileName: 'object-relations' },
+      { fileName: 'relation-fields' },
       { fileName: 'data-model-faq' },
       { fileName: 'data-model' },
     ],

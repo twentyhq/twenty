@@ -11,6 +11,7 @@ import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
+  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -18,24 +19,20 @@ import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
-import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import {
-  CommonQueryNames,
+  CommonExtendedInput,
+  CommonInput,
   GroupByQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
 import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
 import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
@@ -45,7 +42,10 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
 @Injectable()
-export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService {
+export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService<
+  GroupByQueryArgs,
+  CommonGroupByOutputItem[]
+> {
   constructor(
     private readonly viewFilterService: ViewFilterService,
     private readonly viewFilterGroupService: ViewFilterGroupService,
@@ -54,46 +54,16 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     super();
   }
 
-  async run({
-    args,
-    authContext,
-    objectMetadataMaps,
-    objectMetadataItemWithFieldMaps,
-  }: {
-    args: GroupByQueryArgs;
-    authContext: AuthContext;
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-  }): Promise<CommonGroupByOutputItem[]> {
-    if (!isWorkspaceAuthContext(authContext)) {
-      throw new CommonQueryRunnerException(
-        'Invalid auth context',
-        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-      );
-    }
-
-    const { repository } = await this.prepareQueryRunnerContext({
+  async run(
+    args: CommonExtendedInput<GroupByQueryArgs>,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): Promise<CommonGroupByOutputItem[]> {
+    const {
+      repository,
+      commonQueryParser,
+      objectMetadataItemWithFieldMaps,
       authContext,
-      objectMetadataItemWithFieldMaps,
-    });
-
-    //TODO : Refacto-common - QueryParser should be common branded service
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
-      objectMetadataItemWithFieldMaps,
-      args.selectedFields,
-      objectMetadataMaps,
-    );
-
-    const processedArgs = await this.processQueryArgs({
-      authContext,
-      objectMetadataItemWithFieldMaps,
-      args,
-    });
+    } = queryRunnerContext;
 
     const objectMetadataNameSingular =
       objectMetadataItemWithFieldMaps.nameSingular;
@@ -104,9 +74,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
 
-    if (args.viewId) {
+    if (isDefined(args.viewId)) {
       appliedFilters = await this.addFiltersFromView({
-        args: processedArgs,
+        args,
         authContext,
         objectMetadataItemWithFieldMaps,
         appliedFilters,
@@ -122,13 +92,13 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: selectedFieldsResult.aggregate,
+      selectedAggregatedFields: args.selectedFieldsResult.aggregate,
       queryBuilder,
       objectMetadataNameSingular,
     });
 
     const groupByFields = parseGroupByArgs(
-      processedArgs,
+      args,
       objectMetadataItemWithFieldMaps,
     );
 
@@ -170,7 +140,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     commonQueryParser.applyGroupByOrderToBuilder(
       queryBuilder,
-      processedArgs.orderBy ?? [],
+      args.orderBy ?? [],
       groupByFields,
     );
 
@@ -179,8 +149,17 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     return formatResultWithGroupByDimensionValues(
       result,
       groupByDefinitions,
-      Object.keys(selectedFieldsResult.aggregate),
+      Object.keys(args.selectedFieldsResult.aggregate),
     );
+  }
+
+  async processQueryResult(
+    queryResult: CommonGroupByOutputItem[],
+    _objectMetadataItemId: string,
+    _objectMetadataMaps: ObjectMetadataMaps,
+    _authContext: WorkspaceAuthContext,
+  ): Promise<CommonGroupByOutputItem[]> {
+    return queryResult;
   }
 
   private async addFiltersFromView({
@@ -271,28 +250,21 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     return appliedFilters;
   }
 
-  async processQueryArgs({
-    authContext,
-    objectMetadataItemWithFieldMaps,
-    args,
-  }: {
-    authContext: WorkspaceAuthContext;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    args: GroupByQueryArgs;
-  }): Promise<GroupByQueryArgs> {
-    const hookedArgs =
-      (await this.workspaceQueryHookService.executePreQueryHooks(
-        authContext,
-        objectMetadataItemWithFieldMaps.nameSingular,
-        CommonQueryNames.GROUP_BY,
-        args,
-        //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
-      )) as GroupByQueryArgs;
+  async validate(
+    _args: CommonInput<GroupByQueryArgs>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<void> {}
+
+  async computeArgs(
+    args: CommonInput<GroupByQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<CommonInput<GroupByQueryArgs>> {
+    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
 
     return {
-      ...hookedArgs,
+      ...args,
       filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-        hookedArgs.filter,
+        args.filter,
         objectMetadataItemWithFieldMaps,
       ),
     };

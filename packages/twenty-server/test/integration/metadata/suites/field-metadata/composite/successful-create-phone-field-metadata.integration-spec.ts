@@ -219,109 +219,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
     },
   ];
 
-const FAILING_TEST_INPUTS: { input: Partial<PhonesMetadata>; label: string }[] =
-  [
-    {
-      label: 'phone field without country or calling code at all',
-      input: {
-        primaryPhoneNumber: '123456789',
-        additionalPhones: [],
-      },
-    },
-    {
-      label: 'phone field with invalid country code',
-      input: {
-        primaryPhoneNumber: '123456789',
-        primaryPhoneCallingCode: '+33',
-        primaryPhoneCountryCode: 'XX' as CountryCode,
-        additionalPhones: [],
-      },
-    },
-    {
-      label: 'phone field with invalid calling code',
-      input: {
-        primaryPhoneNumber: '123456789',
-        primaryPhoneCallingCode: '+999',
-        primaryPhoneCountryCode: 'FR',
-        additionalPhones: [],
-      },
-    },
-    {
-      label: 'phone field with conflicting country code and calling code',
-      input: {
-        primaryPhoneNumber: '123456789',
-        primaryPhoneCallingCode: '+33',
-        primaryPhoneCountryCode: 'US',
-        additionalPhones: [],
-      },
-    },
-    {
-      label: 'phone field with invalid phone number format',
-      input: {
-        primaryPhoneNumber: 'not-a-number',
-        additionalPhones: [],
-      },
-    },
-    {
-      label: 'phone field with conflicting phone number country code',
-      input: {
-        primaryPhoneNumber: '+33123456789',
-        primaryPhoneCountryCode: 'US',
-        additionalPhones: [],
-      },
-    },
-    {
-      label: 'phone field with conflicting phone number calling code',
-      input: {
-        primaryPhoneNumber: '+33123456789',
-        primaryPhoneCallingCode: '+1',
-        additionalPhones: [],
-      },
-    },
-  ];
-
-const primaryFailingTests = FAILING_TEST_INPUTS.map<
-  EachTestingContext<CreatePhoneFieldMetadataTestCase>
->(({ input, label }) => ({
-  title: `create primary ${label}`,
-  context: {
-    input: {
-      ...input,
-      additionalPhones: [],
-    },
-  },
-}));
-
-const additionalPhonesNumberFailingTests = FAILING_TEST_INPUTS.map<
-  EachTestingContext<CreatePhoneFieldMetadataTestCase>
->(
-  ({
-    input: {
-      primaryPhoneCallingCode,
-      primaryPhoneCountryCode,
-      primaryPhoneNumber,
-    },
-    label,
-  }) => ({
-    title: `create primary ${label}`,
-    context: {
-      input: {
-        additionalPhones: [
-          {
-            callingCode: primaryPhoneCallingCode,
-            countryCode: primaryPhoneCountryCode,
-            number: primaryPhoneNumber,
-          },
-        ],
-      },
-    },
-  }),
-);
-
-const FAILING_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase>[] =
-  [...primaryFailingTests, ...additionalPhonesNumberFailingTests];
-
-describe('Phone field metadata tests suite', () => {
+describe('successful create phone field metadata test suite', () => {
   let createdObjectMetadataId: string;
 
   beforeAll(async () => {
@@ -371,7 +269,7 @@ describe('Phone field metadata tests suite', () => {
   });
 
   test.each(SUCCESSFUL_TEST_CASES)(
-    'It should succeed $title',
+    'it should succeed $title',
 
     async ({ context: { input, expected } }) => {
       const {
@@ -405,40 +303,6 @@ describe('Phone field metadata tests suite', () => {
         ...expected,
         __typename: 'Phones',
       });
-    },
-  );
-
-  test.each(FAILING_TEST_CASES)(
-    'It should fail to $title',
-
-    async ({ context: { input } }) => {
-      const {
-        data: { createOneResponse },
-        errors,
-      } = await createOneOperation<{
-        id: string;
-        [FIELD_NAME]: any;
-      }>({
-        objectMetadataSingularName: 'myTestObject',
-        input: {
-          id: faker.string.uuid(),
-          [FIELD_NAME]: input,
-        },
-        gqlFields: `
-          id
-          ${FIELD_NAME} {
-            primaryPhoneNumber
-            primaryPhoneCountryCode
-            primaryPhoneCallingCode
-            additionalPhones
-            __typename
-          }
-        `,
-      });
-
-      expect(createOneResponse).toBeNull();
-      expect(errors).toBeDefined();
-      expect(errors).toMatchSnapshot();
     },
   );
 });

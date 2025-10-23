@@ -22,12 +22,15 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 
 @Global()
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RoleEntity]),
+    TypeOrmModule.forFeature([RoleEntity, FileEntity]),
     TokenModule,
+    FileModule,
     FeatureFlagModule,
     RecordCrudModule,
     ObjectMetadataModule,

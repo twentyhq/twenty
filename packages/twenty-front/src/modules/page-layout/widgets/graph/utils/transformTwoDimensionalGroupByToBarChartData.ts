@@ -28,6 +28,7 @@ type TransformTwoDimensionalGroupByToBarChartDataResult = {
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
+  hasTooManyGroups: boolean;
 };
 
 export const transformTwoDimensionalGroupByToBarChartData = ({
@@ -48,6 +49,8 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   const dataMap = new Map<string, BarChartDataItem>();
   const xValues = new Set<string>();
   const yValues = new Set<string>();
+
+  let hasTooManyGroups = false;
 
   rawResults.forEach((result) => {
     const dimensionValues = result.groupByDimensionValues;
@@ -75,6 +78,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       totalUniqueDimensions + additionalDimensions >
       GRAPH_MAXIMUM_NUMBER_OF_GROUPS
     ) {
+      hasTooManyGroups = true;
       return;
     }
 
@@ -118,5 +122,6 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     indexBy: indexByKey,
     keys,
     series,
+    hasTooManyGroups,
   };
 };
