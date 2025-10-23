@@ -4,8 +4,8 @@ import { useLingui } from '@lingui/react/macro';
 
 import { IconArrowMerge, IconSettings } from 'twenty-ui/display';
 
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { MergeRecordsTabId } from '../types/MergeRecordsTabId';
 import { getPositionNumberIcon } from '../utils/getPositionNumberIcon';
 import { getPositionWordLabel } from '../utils/getPositionWordLabel';

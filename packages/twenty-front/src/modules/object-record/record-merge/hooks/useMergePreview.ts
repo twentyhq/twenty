@@ -1,4 +1,3 @@
-import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordRelationships } from '@/object-record/record-merge/hooks/useMergeRecordRelationships';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -26,12 +25,7 @@ export const useMergePreview = ({
     objectNameSingular,
   });
 
-  const commandMenuNavigationRecords = useRecoilValue(
-    commandMenuNavigationRecordsState,
-  );
-  const selectedRecords = commandMenuNavigationRecords.map(
-    (record) => record.record,
-  );
+  const selectedRecords: ObjectRecord[] = [];
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
@@ -69,8 +63,13 @@ export const useMergePreview = ({
     if (selectedRecords.length > 0 && !isMergeInProgress) {
       fetchPreview();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRecords, mergeSettings]);
+  }, [
+    selectedRecords,
+    mergeSettings,
+    isMergeInProgress,
+    mergeManyRecords,
+    upsertRecordsInStore,
+  ]);
 
   return {
     mergePreviewRecord,

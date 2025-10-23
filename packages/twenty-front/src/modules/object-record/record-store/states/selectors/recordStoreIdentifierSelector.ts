@@ -7,15 +7,10 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 export const recordStoreIdentifierFamilySelector = selectorFamily({
   key: 'recordStoreIdentifierFamilySelector',
   get:
-    ({
-      recordId,
-      objectNameSingular,
-    }: {
-      recordId: string;
-      objectNameSingular: string;
-    }) =>
+    ({ recordId }: { recordId: string }) =>
     ({ get }) => {
       const recordFromStore = get(recordStoreFamilyState(recordId));
+      const objectNameSingular = recordFromStore?.__typename;
 
       const objectMetadataItems = get(objectMetadataItemsState);
 

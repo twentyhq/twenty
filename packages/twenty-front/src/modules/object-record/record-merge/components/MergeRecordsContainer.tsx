@@ -7,8 +7,8 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
-import { useMergeRecordsSettings } from '@/object-record/record-merge/hooks/useMergeRecordsSettings';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { useMergeRecordsContainerTabs } from '../hooks/useMergeRecordsContainerTabs';
 import { MergePreviewTab } from './MergePreviewTab';
 import { MergeRecordTab } from './MergeRecordTab';
@@ -45,7 +45,7 @@ export const MergeRecordsContainer = ({
   componentInstanceId,
   objectNameSingular,
 }: MergeRecordsContainerProps) => {
-  const { selectedRecords } = useMergeRecordsSettings();
+  const selectedRecords: ObjectRecord[] = [];
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,

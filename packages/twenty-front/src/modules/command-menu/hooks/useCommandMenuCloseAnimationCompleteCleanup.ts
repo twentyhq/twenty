@@ -4,8 +4,6 @@ import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/C
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
-import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -92,8 +90,6 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         set(isCommandMenuOpenedState, false);
         set(commandMenuSearchState, '');
         set(commandMenuNavigationMorphItemByPageState, new Map());
-        set(commandMenuNavigationRecordsState, []);
-        set(commandMenuNavigationStackState, []);
         resetSelectedItem();
         set(hasUserSelectedCommandState, false);
 

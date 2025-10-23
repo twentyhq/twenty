@@ -1,6 +1,7 @@
 import { useMergeRecordsSettings } from '@/object-record/record-merge/hooks/useMergeRecordsSettings';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/layout';
 import { getPositionNumberIcon } from '../utils/getPositionNumberIcon';
 import { getPositionWordLabel } from '../utils/getPositionWordLabel';
@@ -11,8 +12,9 @@ const StyledSection = styled(Section)`
 `;
 
 export const MergeSettingsTab = () => {
-  const { mergeSettings, updatePriorityRecordIndex, selectedRecords } =
+  const { mergeSettings, updatePriorityRecordIndex } =
     useMergeRecordsSettings();
+  const selectedRecords: ObjectRecord[] = [];
 
   const priorityOptions = selectedRecords.map((_, index) => ({
     value: index,
