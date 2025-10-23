@@ -109,12 +109,18 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
+      if (!data.email || !data.password) {
+        throw new Error('Email and password are required');
+      }
+
+      if (!isCaptchaReady()) {
+        return enqueueErrorSnackBar({
+          message: t`Captcha is required`,
+        });
+      }
+
       const token = readCaptchaToken();
       try {
-        if (!data.email || !data.password) {
-          throw new Error('Email and password are required');
-        }
-
         if (
           !isInviteMode &&
           signInUpMode === SignInUpMode.SignIn &&
@@ -171,6 +177,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
     },
     [
+      isCaptchaReady,
       readCaptchaToken,
       signInUpMode,
       isInviteMode,
@@ -183,6 +190,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       enqueueErrorSnackBar,
       buildSearchParamsFromUrlSyncedStates,
       isOnAWorkspace,
+      t,
     ],
   );
 
