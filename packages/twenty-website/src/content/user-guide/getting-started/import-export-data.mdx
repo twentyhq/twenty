@@ -26,10 +26,14 @@ Below are a few items to check before uploading your file.
 - We recommend using the syntax ```https://domain.com``` when uploading your domains, as this is the one used by our connector with your mailbox and calendar.
 - You can **import the relations between objects** by providing one of the unique fields of the associated record. 
   - Example: You want to attach a person to a company. Add a column in the file containing all the `People` records that contains the `id` of the company -- or its `domain`. You will be able to map this field during the upload.
-  - **Important note** 
-    - Relations between objects in Twenty are "One to Many". This means each record of object A can be attached to several records of object B. One company can be attached to several people. But each record of object B can belong to only one record of object A. One person can belong to only one company.  
-    - **To upload relations via the Import function, you need to provide the `id` (or any other unique field) of the attached object in the file containing the records on the "Many side" of the relationship**.
-    - For example, you provide the `id` or `domain` of the company when uploading people records. You do not provide the people's `id` (or `email`) when uploading the file with companies.
+<ArticleWarning>
+**Important note:**
+- Relations between objects in Twenty are "One to Many". This means each record of object A can be attached to several records of object B. But each record of object B can belong to only one record of object A.    
+*For example, one company can be attached to several people. And one person can belong to only one company.*
+
+- To upload relations via the Import function, you need to provide the `id` (or any other unique field) of the attached object in the file containing the records on the "Many side" of the relationship.  
+*For example, you provide the `id` or `domain` of the company when uploading people records. You do not provide the people's `id` (or `email`) when uploading the file with companies.*
+</ArticleWarning>
 
 
 ### Upload your file
