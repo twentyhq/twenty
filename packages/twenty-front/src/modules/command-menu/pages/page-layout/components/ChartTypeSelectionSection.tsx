@@ -8,7 +8,7 @@ import { MenuPicker } from 'twenty-ui/navigation';
 const graphTypeOptions = [
   GraphType.VERTICAL_BAR,
   GraphType.HORIZONTAL_BAR,
-  GraphType.NUMBER,
+  GraphType.AGGREGATE,
   GraphType.PIE,
   GraphType.LINE,
   GraphType.GAUGE,

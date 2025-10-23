@@ -2,26 +2,26 @@ import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/Char
 import { useGraphWidgetAggregateQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery';
 import { lazy, Suspense } from 'react';
 import {
-  type NumberChartConfiguration,
+  type AggregateChartConfiguration,
   type PageLayoutWidget,
 } from '~/generated/graphql';
 
-const GraphWidgetNumberChart = lazy(() =>
+const GraphWidgetAggregateChart = lazy(() =>
   import(
-    '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart'
+    '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChart'
   ).then((module) => ({
-    default: module.GraphWidgetNumberChart,
+    default: module.GraphWidgetAggregateChart,
   })),
 );
 
-export const GraphWidgetNumberChartRenderer = ({
+export const GraphWidgetAggregateChartRenderer = ({
   widget,
 }: {
   widget: PageLayoutWidget;
 }) => {
   const { value, loading } = useGraphWidgetAggregateQuery({
     objectMetadataItemId: widget.objectMetadataId,
-    configuration: widget.configuration as NumberChartConfiguration,
+    configuration: widget.configuration as AggregateChartConfiguration,
   });
 
   if (loading) {
@@ -30,7 +30,7 @@ export const GraphWidgetNumberChartRenderer = ({
 
   return (
     <Suspense fallback={<ChartSkeletonLoader />}>
-      <GraphWidgetNumberChart value={value ?? 0} />
+      <GraphWidgetAggregateChart value={value ?? '-'} />
     </Suspense>
   );
 };

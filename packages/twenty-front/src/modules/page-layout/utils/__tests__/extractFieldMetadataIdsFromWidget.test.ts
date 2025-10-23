@@ -135,11 +135,11 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     expect(result).toContain('field-2');
   });
 
-  it('should extract field IDs from NumberChartConfiguration', () => {
+  it('should extract field IDs from AggregateChartConfiguration', () => {
     const widget = createMockWidget({
       configuration: {
-        __typename: 'NumberChartConfiguration' as const,
-        graphType: GraphType.NUMBER,
+        __typename: 'AggregateChartConfiguration' as const,
+        graphType: GraphType.AGGREGATE,
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.AVG,
         displayDataLabel: false,

@@ -1,4 +1,4 @@
-import { formatNumberChartTrend } from '@/page-layout/widgets/graph/graphWidgetNumberChart/utils/formatNumberChartTrend';
+import { formatNumberChartTrend } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/formatNumberChartTrend';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,7 +9,7 @@ import {
   IconTrendingUp,
 } from 'twenty-ui/display';
 
-type GraphWidgetNumberChartProps = {
+type GraphWidgetAggregateChartProps = {
   value: string | number;
   trendPercentage?: number;
 };
@@ -36,13 +36,14 @@ const StyledTrendIconContainer = styled.div`
 `;
 
 const StyledH1Title = styled(H1Title)`
+  font-size: ${({ theme }) => theme.font.size.xxl};
   margin: 0;
 `;
 
-export const GraphWidgetNumberChart = ({
+export const GraphWidgetAggregateChart = ({
   value,
   trendPercentage,
-}: GraphWidgetNumberChartProps) => {
+}: GraphWidgetAggregateChartProps) => {
   const theme = useTheme();
 
   const formattedPercentage = isDefined(trendPercentage)

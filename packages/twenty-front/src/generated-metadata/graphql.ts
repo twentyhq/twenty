@@ -126,6 +126,18 @@ export type AgentIdInput = {
   id: Scalars['UUID'];
 };
 
+export type AggregateChartConfiguration = {
+  __typename?: 'AggregateChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
+  filter?: Maybe<Scalars['JSON']>;
+  format?: Maybe<Scalars['String']>;
+  graphType: GraphType;
+  label?: Maybe<Scalars['String']>;
+};
+
 export enum AggregateOperations {
   AVG = 'AVG',
   COUNT = 'COUNT',
@@ -1453,10 +1465,10 @@ export enum GraphOrderBy {
 
 /** Type of graph widget */
 export enum GraphType {
+  AGGREGATE = 'AGGREGATE',
   GAUGE = 'GAUGE',
   HORIZONTAL_BAR = 'HORIZONTAL_BAR',
   LINE = 'LINE',
-  NUMBER = 'NUMBER',
   PIE = 'PIE',
   VERTICAL_BAR = 'VERTICAL_BAR'
 }
@@ -2787,18 +2799,6 @@ export type NativeModelCapabilities = {
   __typename?: 'NativeModelCapabilities';
   twitterSearch?: Maybe<Scalars['Boolean']>;
   webSearch?: Maybe<Scalars['Boolean']>;
-};
-
-export type NumberChartConfiguration = {
-  __typename?: 'NumberChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
-  description?: Maybe<Scalars['String']>;
-  displayDataLabel?: Maybe<Scalars['Boolean']>;
-  filter?: Maybe<Scalars['JSON']>;
-  format?: Maybe<Scalars['String']>;
-  graphType: GraphType;
-  label?: Maybe<Scalars['String']>;
 };
 
 export type Object = {
@@ -4540,7 +4540,7 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
-export type WidgetConfiguration = BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | NumberChartConfiguration | PieChartConfiguration;
+export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration;
 
 export enum WidgetType {
   CALENDAR = 'CALENDAR',
