@@ -172,7 +172,14 @@ export class FieldMetadataServiceV2 {
     });
 
     if (inputTranspilationResult.status === 'fail') {
-      throw inputTranspilationResult.error;
+      throw new FieldMetadataException(
+        inputTranspilationResult.error.message,
+        inputTranspilationResult.error.code,
+        {
+          userFriendlyMessage:
+            inputTranspilationResult.error.userFriendlyMessage,
+        },
+      );
     }
 
     const {
