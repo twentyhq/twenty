@@ -16,7 +16,7 @@
 
     "type": { "enum": ["cron", "databaseEvent", "route"] },
 
-    "schedule": { "type": "string" },
+    "pattern": { "type": "string" },
 
     "eventName": { "type": "string" },
 
@@ -29,7 +29,7 @@
   "allOf": [
     {
       "if": { "properties": { "type": { "const": "cron" } } },
-      "then": { "required": ["schedule"] }
+      "then": { "required": ["pattern"] }
     },
     {
       "if": { "properties": { "type": { "const": "databaseEvent" } } },

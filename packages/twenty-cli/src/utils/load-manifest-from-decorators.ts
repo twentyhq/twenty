@@ -22,8 +22,24 @@ import {
   isCallExpression,
   isObjectLiteralExpression,
   forEachChild,
+  SourceFile,
+  isPropertyDeclaration,
+  isArrowFunction,
+  isMethodDeclaration,
+  isVariableStatement,
+  isNewExpression,
 } from 'typescript';
-import { AppManifest, ObjectManifest } from '../types/config.types';
+import kebabCase from 'lodash.kebabcase';
+import {
+  AppManifest,
+  CronTrigger,
+  DatabaseEventTrigger,
+  HTTPMethod,
+  ObjectManifest,
+  RouteTrigger,
+  ServerlessFunctionManifest,
+} from '../types/config.types';
+import { posix, relative, sep } from 'path';
 
 type JSONValue =
   | string
@@ -108,6 +124,14 @@ const exprToValue = (expr: Expression): JSONValue => {
     : String((expr as any).getText?.() ?? '');
 };
 
+const getFirstArgObject = (dec: Decorator) => {
+  if (!isCallExpression(dec.expression)) return undefined;
+  const [firstArg] = dec.expression.arguments;
+  return firstArg && isObjectLiteralExpression(firstArg)
+    ? (exprToValue(firstArg) as Record<string, JSONValue>)
+    : undefined;
+};
+
 const collectObjects = (program: Program) => {
   const manifest: ObjectManifest[] = [];
 
@@ -122,19 +146,10 @@ const collectObjects = (program: Program) => {
         const objectDec = decorators?.find((d) =>
           isDecoratorNamed(d, 'ObjectMetadata'),
         );
-        if (objectDec && isCallExpression(objectDec.expression)) {
-          const [firstArg] = objectDec.expression.arguments;
-          if (firstArg && isObjectLiteralExpression(firstArg)) {
-            const config = exprToValue(firstArg);
-            if (
-              config &&
-              typeof config === 'object' &&
-              !Array.isArray(config)
-            ) {
-              manifest.push({
-                ...config,
-              } as ObjectManifest);
-            }
+        if (objectDec) {
+          const cfg = getFirstArgObject(objectDec);
+          if (cfg && typeof cfg === 'object' && !Array.isArray(cfg)) {
+            manifest.push({ ...(cfg as any) } as ObjectManifest);
           }
         }
       }
@@ -145,6 +160,146 @@ const collectObjects = (program: Program) => {
   }
 
   return manifest;
+};
+
+/**
+ * Finds: `export const <handlerName> = new <ClassName>().main;`
+ * Returns the exported const identifier (handlerName) or undefined.
+ */
+const findExportedHandlerNameForClass = (
+  sf: SourceFile,
+  className: string,
+): string | undefined => {
+  for (const st of sf.statements) {
+    if (!isVariableStatement(st)) continue;
+
+    const hasExport =
+      st.modifiers?.some((m) => m.kind === SyntaxKind.ExportKeyword) ?? false;
+    if (!hasExport) continue;
+
+    for (const decl of st.declarationList.declarations) {
+      if (!isIdentifier(decl.name) || !decl.initializer) continue;
+
+      // Expect initializer like: new CreateNewPostCard().main
+      const init = decl.initializer;
+
+      if (isPropertyAccessExpression(init) && init.name.text === 'main') {
+        const expr = init.expression;
+        if (
+          isNewExpression(expr) &&
+          expr.expression &&
+          isIdentifier(expr.expression)
+        ) {
+          if (expr.expression.text === className) {
+            return decl.name.text;
+          }
+        }
+      }
+    }
+  }
+  return undefined;
+};
+
+const posixRelativeFromCwd = (absPath: string) => {
+  const rel = relative(process.cwd(), absPath);
+  // normalize to posix separators for portability / manifest stability
+  return rel.split(sep).join(posix.sep);
+};
+
+const collectServerlessFunctions = (program: Program) => {
+  const items: ServerlessFunctionManifest[] = [];
+
+  for (const sf of program.getSourceFiles()) {
+    if (sf.isDeclarationFile) {
+      continue;
+    }
+
+    const visit = (node: Node) => {
+      if (!isClassDeclaration(node) || !getDecorators(node)?.length) {
+        forEachChild(node, visit);
+        return;
+      }
+
+      const decorators = getDecorators(node) ?? [];
+
+      const sfnDec = decorators.find((d) =>
+        isDecoratorNamed(d, 'ServerlessFunction'),
+      );
+      if (!sfnDec) {
+        forEachChild(node, visit);
+        return;
+      }
+
+      const className = node.name?.escapedText ?? 'serverless-function';
+      const kebabName = kebabCase(className);
+      const sfnCfg = getFirstArgObject(sfnDec) ?? {};
+      const sfnUuid = String(sfnCfg.universalIdentifier ?? '');
+
+      // CronTrigger
+      const cronTrigDecs = decorators.filter((d) =>
+        isDecoratorNamed(d, 'CronTrigger'),
+      );
+
+      const cronTriggers: CronTrigger[] = cronTrigDecs
+        .map((d) => getFirstArgObject(d))
+        .filter(Boolean)
+        .map((cfg) => ({
+          universalIdentifier: String(cfg!.universalIdentifier ?? ''),
+          type: 'cron',
+          pattern: String(cfg!.pattern ?? ''),
+        }));
+
+      // DatabaseEventTrigger
+      const dbTrigDecs = decorators.filter((d) =>
+        isDecoratorNamed(d, 'DatabaseEventTrigger'),
+      );
+      const dbTriggers: DatabaseEventTrigger[] = dbTrigDecs
+        .map((d) => getFirstArgObject(d))
+        .filter(Boolean)
+        .map((cfg) => ({
+          universalIdentifier: String(cfg!.universalIdentifier ?? ''),
+          type: 'databaseEvent',
+          eventName: String(cfg!.eventName ?? ''),
+        }));
+
+      // RouteTrigger
+      const routeTrigDecs = decorators.filter((d) =>
+        isDecoratorNamed(d, 'RouteTrigger'),
+      );
+      const routeTriggers: RouteTrigger[] = routeTrigDecs
+        .map((d) => getFirstArgObject(d))
+        .filter(Boolean)
+        .map((cfg) => ({
+          universalIdentifier: String(cfg!.universalIdentifier ?? ''),
+          type: 'route',
+          path: String(cfg!.path ?? ''),
+          httpMethod: String(cfg!.httpMethod ?? ''),
+          isAuthRequired:
+            typeof cfg!.isAuthRequired === 'boolean'
+              ? (cfg!.isAuthRequired as boolean)
+              : false,
+        }));
+
+      const handlerPath = posixRelativeFromCwd(sf.fileName);
+
+      const handlerName = findExportedHandlerNameForClass(sf, className) ?? ''; // empty string if not found
+
+      items.push({
+        universalIdentifier: sfnUuid,
+        name: kebabName,
+        triggers: [...cronTriggers, ...dbTriggers, ...routeTriggers],
+        handlerPath,
+        handlerName,
+        code: { src: { 'index.ts': '' } }, // added after
+      });
+
+      forEachChild(node, visit);
+    };
+
+    visit(sf);
+  }
+
+  return items;
 };
 
 const validateProgram = (program: Program) => {
@@ -164,12 +319,17 @@ const validateProgram = (program: Program) => {
   }
 };
 
-export const loadManifestFromDecorators = (): Pick<AppManifest, 'objects'> => {
+export const loadManifestFromDecorators = (): Pick<
+  AppManifest,
+  'objects' | 'serverlessFunctions'
+> => {
   const program = getProgramFromTsconfig('tsconfig.json');
 
   validateProgram(program);
 
   const objects = collectObjects(program);
 
-  return { objects };
+  const serverlessFunctions = collectServerlessFunctions(program);
+
+  return { objects, serverlessFunctions };
 };

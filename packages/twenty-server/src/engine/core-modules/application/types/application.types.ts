@@ -38,6 +38,8 @@ export type ServerlessFunctionManifest = {
   name: string;
   description?: string;
   timeoutSeconds?: number;
+  handlerName: string;
+  handlerPath: string;
   triggers: ServerlessFunctionTriggerManifest[];
   code: ServerlessFunctionCode;
 };
@@ -45,7 +47,7 @@ export type ServerlessFunctionManifest = {
 export type ServerlessFunctionTriggerManifest = (
   | {
       type: 'cron';
-      schedule: string;
+      pattern: string;
     }
   | {
       type: 'databaseEvent';
