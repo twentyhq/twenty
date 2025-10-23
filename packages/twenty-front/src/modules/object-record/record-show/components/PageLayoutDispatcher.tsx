@@ -30,7 +30,11 @@ export const PageLayoutDispatcher = ({
     targetRecordIdentifier.targetObjectNameSingular ===
       CoreObjectNameSingular.Task;
 
-  if (isRecordPageEnabled && isStandardObjectWithDefaultLayout) {
+  if (
+    targetRecordIdentifier.targetObjectNameSingular ===
+      CoreObjectNameSingular.Dashboard ||
+    (isRecordPageEnabled && isStandardObjectWithDefaultLayout)
+  ) {
     return (
       <PageLayoutRecordPageRenderer
         targetRecordIdentifier={targetRecordIdentifier}
