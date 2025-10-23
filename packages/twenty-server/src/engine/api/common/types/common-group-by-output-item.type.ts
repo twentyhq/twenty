@@ -1,9 +1,15 @@
 type AggregateValues = {
-  [key: string]: string;
+  [key in string]: string;
 };
 
 type GroupByDimensionValues = {
   groupByDimensionValues: string[];
 };
 
-export type CommonGroupByOutputItem = AggregateValues & GroupByDimensionValues;
+type Records = {
+  records?: Record<string, unknown>[];
+};
+
+export type CommonGroupByOutputItem = GroupByDimensionValues &
+  AggregateValues &
+  Records;

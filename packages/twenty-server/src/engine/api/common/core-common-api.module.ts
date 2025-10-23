@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonArgsHandlers } from 'src/engine/api/common/common-args-handlers/common-query-selected-fields/common-arg-handlers';
 import { CommonQueryRunners } from 'src/engine/api/common/common-query-runners/common-query-runners';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
+import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { ProcessNestedRelationsV2Helper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations-v2.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
@@ -40,6 +41,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     ProcessAggregateHelper,
     ...CommonQueryRunners,
     CommonResultGettersService,
+    GroupByWithRecordsService,
   ],
   exports: [...CommonQueryRunners],
 })

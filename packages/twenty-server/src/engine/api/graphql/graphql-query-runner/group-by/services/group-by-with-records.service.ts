@@ -1,37 +1,40 @@
 import { isDefined } from 'class-validator';
-import { type ObjectRecord } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
-import { type GraphqlQueryResolverExecutionArgs } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
-import { type IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
-import { type GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-
+import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
+import { type GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
+import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 const GROUPS_LIMIT = 50;
 const RECORDS_PER_GROUP_LIMIT = 10;
 const SUB_QUERY_PREFIX = 'sub_query_';
 
-export class GroupByWithRecordService {
+export class GroupByWithRecordsService {
   constructor() {}
 
   public async resolveWithRecords({
     queryBuilderWithGroupBy,
     queryBuilderWithFiltersAndWithoutGroupBy,
     groupByDefinitions,
-    executionArgs,
     objectMetadataItemWithFieldMaps,
+    selectedFieldsResult,
+    objectMetadataMaps,
+    repository,
   }: {
     queryBuilderWithGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
-    executionArgs: GraphqlQueryResolverExecutionArgs<GroupByResolverArgs>;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-  }): Promise<IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[]> {
+    selectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+    objectMetadataMaps: ObjectMetadataMaps;
+    repository: WorkspaceRepository<ObjectLiteral>;
+  }): Promise<CommonGroupByOutputItem[]> {
     const groupsResult = await queryBuilderWithGroupBy
       .limit(GROUPS_LIMIT)
       .getRawMany();
@@ -40,18 +43,11 @@ export class GroupByWithRecordService {
       return [];
     }
 
-    const selectedFieldsResult =
-      executionArgs.graphqlQueryParser.parseSelectedFields(
-        objectMetadataItemWithFieldMaps,
-        executionArgs.graphqlQuerySelectedFieldsResult.select,
-        executionArgs.options.objectMetadataMaps,
-      );
-
     const columnsToSelect = buildColumnsToSelect({
       select: selectedFieldsResult.select,
       relations: selectedFieldsResult.relations, // TODO - not handled for now
       objectMetadataItemWithFieldMaps,
-      objectMetadataMaps: executionArgs.options.objectMetadataMaps,
+      objectMetadataMaps: objectMetadataMaps,
     });
 
     const queryBuilderWithPartitionBy = this.addPartitionByToQueryBuilder({
@@ -59,16 +55,17 @@ export class GroupByWithRecordService {
       columnsToSelect,
       groupsResult,
       groupByDefinitions,
-      executionArgs,
+      repository,
     });
 
     const recordsResult = await queryBuilderWithPartitionBy.getRawMany();
 
-    return this.combineGroupAndRecordsResults(
+    return formatResultWithGroupByDimensionValues({
       groupsResult,
       recordsResult,
       groupByDefinitions,
-    );
+      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
+    });
   }
 
   private addPartitionByToQueryBuilder({
@@ -76,13 +73,13 @@ export class GroupByWithRecordService {
     columnsToSelect,
     groupsResult,
     groupByDefinitions,
-    executionArgs,
+    repository,
   }: {
     queryBuilderForSubQuery: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     columnsToSelect: Record<string, boolean>;
     groupsResult: Array<Record<string, unknown>>;
     groupByDefinitions: GroupByDefinition[];
-    executionArgs: GraphqlQueryResolverExecutionArgs<GroupByResolverArgs>;
+    repository: WorkspaceRepository<ObjectLiteral>;
   }): WorkspaceSelectQueryBuilder<ObjectLiteral> {
     const groupByExpressions = groupByDefinitions
       .map((def) => def.expression)
@@ -111,7 +108,7 @@ export class GroupByWithRecordService {
       .addSelect(`ROW_NUMBER() OVER (PARTITION BY ${groupByExpressions})`, 'rn')
       .andWhere(groupConditions);
 
-    let mainQueryQueryBuilder = executionArgs.repository.createQueryBuilder();
+    let mainQueryQueryBuilder = repository.createQueryBuilder();
 
     const mainQuery = mainQueryQueryBuilder
       .from(`(${subQuery.getQuery()})`, 'ranked_records')
@@ -167,54 +164,6 @@ export class GroupByWithRecordService {
     return `(${groupConditions.join(' OR ')})`;
   }
 
-  private combineGroupAndRecordsResults(
-    groupsResult: Array<Record<string, unknown>>,
-    recordsResult: Array<Record<string, unknown>>,
-    groupByDefinitions: GroupByDefinition[],
-  ): IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] {
-    const recordsByGroupKey = new Map<string, Array<Record<string, unknown>>>();
-
-    recordsResult.forEach((entry) => {
-      const groupKey = this.createGroupKey(entry, groupByDefinitions);
-
-      const records = (entry.records as Array<Record<string, unknown>>) ?? [];
-
-      recordsByGroupKey.set(groupKey, records);
-    });
-
-    return groupsResult.map((group) => {
-      const groupKey = this.createGroupKey(group, groupByDefinitions);
-      const records = recordsByGroupKey.get(groupKey) || [];
-
-      const edges = records.map(
-        (record: Record<string, unknown>, index: number) => ({
-          node: record as ObjectRecord,
-          cursor: this.encodeCursor(record, index),
-        }),
-      );
-
-      return {
-        groupByDimensionValues: groupByDefinitions.map((def) =>
-          String(group[def.alias]),
-        ),
-        ...group,
-        edges,
-        pageInfo: {
-          hasNextPage: false,
-          hasPreviousPage: false,
-        },
-        totalCount: records.length || 0,
-      };
-    });
-  }
-
-  private createGroupKey(
-    group: Record<string, unknown>,
-    groupByDefinitions: GroupByDefinition[],
-  ): string {
-    return groupByDefinitions.map((def) => String(group[def.alias])).join('|');
-  }
-
   private formatValueForSql(value: unknown): string {
     if (value === null || value === undefined) {
       return 'NULL';
@@ -233,14 +182,5 @@ export class GroupByWithRecordService {
     }
 
     return `'${String(value).replace(/'/g, "''")}'`;
-  }
-
-  private encodeCursor(record: Record<string, unknown>, index: number): string {
-    const cursorData = {
-      id: record.id,
-      index,
-    };
-
-    return Buffer.from(JSON.stringify(cursorData)).toString('base64');
   }
 }
