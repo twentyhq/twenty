@@ -39,7 +39,7 @@ Forms are currently designed for manual triggers only. For workflows with other 
 
 **Common Causes & Solutions**:
 - **Inefficient API Calls**: Batch API calls when possible instead of individual requests
-- **Wrong Manual Trigger Configuration**: Use "Bulk" availability instead of "Single" to process multiple records in one workflow run
+- **Wrong Manual Trigger Configuration**: Use `Bulk` availability instead of `Single` to process multiple records in one workflow run
 - **Missing Filters**: Add conditional logic to stop workflows when criteria aren't met
 - **Unnecessary Steps**: Remove redundant actions and optimize workflow logic
 - **Real-time vs. Scheduled**: Use scheduled workflows for non-urgent processes
@@ -52,7 +52,7 @@ You cannot run more than 100 workflows in parallel at any given time per workspa
 </ArticleWarning>
 
 **Solutions**:
-- Use "Bulk" availability for manual triggers to process multiple records in one run
+- Use `Bulk` availability for manual triggers to process multiple records in one run
 - Implement delays between workflow executions using scheduled triggers
 - Optimize workflows to run faster and reduce concurrent execution time
 - Consider batch processing during off-peak hours
@@ -70,21 +70,23 @@ You cannot run more than 100 workflows in parallel at any given time per workspa
 **Problem**: Iterator actions not working as expected.
 
 **Solutions**:
-- **Note**: Iterator is currently in beta. Activate it under Settings > Releases > Lab
+- **Note**: Iterator is currently in beta. Activate it under Settings → Releases → Lab
 - Verify the input is an array of records from a previous step
 - Check that actions within the Iterator are properly configured
-- Use Iterator with "Bulk" manual triggers for optimal performance
+- Use Iterator with `Bulk` manual triggers for optimal performance
 
 ### Missing Permissions
 **Problem**: Cannot access workflows section.
 
-**Note**: If you don't see the Workflows section, this is due to a permissions issue. Contact your workspace administrator to grant you access to workflows.
+<ArticleWarning>
+If you don't see the Workflows section, this is due to a permissions issue. Contact your workspace administrator to grant you access to workflows.
+</ArticleWarning>
 
 ## Optimization Tips
 
 ### Performance Best Practices
 - **Start simple** and add complexity gradually
-- **Use "Bulk" availability** for manual triggers to process multiple records efficiently
+- **Use `Bulk` availability** for manual triggers to process multiple records efficiently
 - **Add filters early** to stop workflows when criteria aren't met
 - **Batch API calls** and use scheduled workflows for non-urgent processes
 - **Hide workflow runs** from pages showing all workflows to improve loading performance
