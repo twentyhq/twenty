@@ -275,14 +275,14 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     tableName,
     update,
   }: UpdateFieldPropertyUpdateHandlerArgs<'defaultValue'>) {
-    const columnType = fieldMetadataTypeToColumnType(
-      flatFieldMetadata.type,
-    ) as ColumnType;
-
     if (isCompositeFieldMetadataType(flatFieldMetadata.type)) {
       const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
       for (const property of compositeType.properties) {
+        const columnType = fieldMetadataTypeToColumnType(
+          property.type,
+        ) as ColumnType;
+
         if (isMorphOrRelationFieldMetadataType(property.type)) {
           throw new WorkspaceMigrationRunnerException(
             'Relation field metadata in composite type is not supported yet',
@@ -316,6 +316,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         );
       }
     }
+
+    const columnType = fieldMetadataTypeToColumnType(
+      flatFieldMetadata.type,
+    ) as ColumnType;
 
     const serializedNewDefaultValue = serializeDefaultValueV2({
       columnName: flatFieldMetadata.name,
