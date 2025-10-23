@@ -177,7 +177,7 @@ export class FindRecordsService {
       withFilterQueryBuilder,
       orderByWithIdCondition,
       objectName,
-      false,
+      true,
     );
 
     const queryBuilderWithSelect = this.applyRestrictedFieldsToQueryBuilder(
