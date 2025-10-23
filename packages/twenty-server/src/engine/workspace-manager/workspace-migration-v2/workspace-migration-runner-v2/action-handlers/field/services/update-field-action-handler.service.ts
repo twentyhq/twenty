@@ -170,6 +170,20 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
         optimisticFlatFieldMetadata.name = update.to;
       }
+      if (isPropertyUpdate(update, 'defaultValue')) {
+        if (wasDefaultValueHandledByEnumUpdate) {
+          optimisticFlatFieldMetadata.defaultValue = update.to;
+        } else {
+          await this.handleFieldDefaultValueUpdate({
+            queryRunner,
+            schemaName,
+            tableName,
+            flatFieldMetadata: optimisticFlatFieldMetadata,
+            update,
+          });
+          optimisticFlatFieldMetadata.defaultValue = update.to;
+        }
+      }
       if (
         isPropertyUpdate(update, 'options') &&
         isEnumFlatFieldMetadata(optimisticFlatFieldMetadata)
@@ -191,20 +205,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           update,
         });
         optimisticFlatFieldMetadata.options = update.to ?? [];
-      }
-      if (isPropertyUpdate(update, 'defaultValue')) {
-        if (wasDefaultValueHandledByEnumUpdate) {
-          optimisticFlatFieldMetadata.defaultValue = update.to;
-        } else {
-          await this.handleFieldDefaultValueUpdate({
-            queryRunner,
-            schemaName,
-            tableName,
-            flatFieldMetadata: optimisticFlatFieldMetadata,
-            update,
-          });
-          optimisticFlatFieldMetadata.defaultValue = update.to;
-        }
       }
       if (
         isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata) &&
