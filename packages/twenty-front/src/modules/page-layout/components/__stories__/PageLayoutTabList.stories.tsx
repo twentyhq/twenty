@@ -9,6 +9,7 @@ import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
 const StyledContainer = styled.div`
@@ -139,7 +140,11 @@ const meta: Meta<typeof PageLayoutTabListPlayground> = {
     ComponentWithRouterDecorator,
     (Story) => (
       <RecoilRoot>
-        <Story />
+        <PageLayoutComponentInstanceContext.Provider
+          value={{ instanceId: 'instance-id' }}
+        >
+          <Story />
+        </PageLayoutComponentInstanceContext.Provider>
       </RecoilRoot>
     ),
   ],
