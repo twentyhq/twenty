@@ -24,7 +24,7 @@
     "@tiptap/core": "^3.4.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "react-email": "4.0.3"
+    "react-email": "4.0.4"
   },
   "exports": {
     ".": {
