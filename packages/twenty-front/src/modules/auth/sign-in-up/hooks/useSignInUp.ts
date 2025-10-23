@@ -69,7 +69,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     }
     if (!isCaptchaReady()) {
       return enqueueErrorSnackBar({
-        message: t`Captcha is required`,
+        message: t`Captcha (anti-bot check) is still loading, try again`,
       });
     }
     try {
@@ -115,7 +115,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
       if (!isCaptchaReady()) {
         return enqueueErrorSnackBar({
-          message: t`Captcha is required`,
+          message: t`Captcha (anti-bot check) is still loading, try again`,
         });
       }
 

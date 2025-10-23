@@ -155,7 +155,7 @@ export const PasswordReset = () => {
 
       if (!isCaptchaReady()) {
         enqueueErrorSnackBar({
-          message: t`Captcha is required`,
+          message: t`Captcha (anti-bot check) is still loading, try again`,
         });
         return;
       }

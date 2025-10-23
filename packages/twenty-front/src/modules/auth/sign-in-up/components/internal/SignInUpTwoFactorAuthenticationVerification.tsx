@@ -197,7 +197,7 @@ export const SignInUpTOTPVerification = () => {
     try {
       if (!isCaptchaReady()) {
         enqueueErrorSnackBar({
-          message: t`Captcha is required`,
+          message: t`Captcha (anti-bot check) is still loading, try again`,
         });
         setIsLoading(false);
         return;

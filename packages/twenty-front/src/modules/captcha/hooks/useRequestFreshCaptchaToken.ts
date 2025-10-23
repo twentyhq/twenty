@@ -4,28 +4,27 @@ import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { captchaState } from '@/client-config/states/captchaState';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 export const useRequestFreshCaptchaToken = () => {
   const setCaptchaToken = useSetRecoilState(captchaTokenState);
   const setIsRequestingCaptchaToken = useSetRecoilState(
     isRequestingCaptchaTokenState,
   );
-  const { isCaptchaConfigured } = useCaptcha();
 
   const requestFreshCaptchaToken = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        if (
-          !isCaptchaRequiredForPath(window.location.pathname) ||
-          !isCaptchaConfigured
-        ) {
+        if (!isCaptchaRequiredForPath(window.location.pathname)) {
           return;
         }
 
         const captcha = snapshot.getLoadable(captchaState).getValue();
+
+        if (!isDefined(captcha)) {
+          return;
+        }
 
         assertIsDefinedOrThrow(captcha);
 
@@ -55,7 +54,7 @@ export const useRequestFreshCaptchaToken = () => {
             });
         }
       },
-    [isCaptchaConfigured, setCaptchaToken, setIsRequestingCaptchaToken],
+    [setCaptchaToken, setIsRequestingCaptchaToken],
   );
 
   return { requestFreshCaptchaToken };
