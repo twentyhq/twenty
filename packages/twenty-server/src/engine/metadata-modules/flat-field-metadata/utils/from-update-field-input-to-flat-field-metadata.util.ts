@@ -5,13 +5,11 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { type FieldMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-standard-overrides-properties.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
@@ -23,6 +21,7 @@ import {
   type FlatFieldMetadataUpdateSideEffects,
   handleFlatFieldMetadataUpdateSideEffect,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-flat-field-metadata-update-side-effect.util';
+import { sanitizeRawUpdateFieldInput } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-raw-update-field-input';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
@@ -57,10 +56,6 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       'objectMetadataId',
       'id',
     ]);
-  const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
-    rawUpdateFieldInput,
-    FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
-  );
 
   const existingFlatFieldMetadataToUpdate = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: updateFieldInputInformalProperties.id,
@@ -78,62 +73,12 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     };
   }
 
-  if (isStandardMetadata(existingFlatFieldMetadataToUpdate)) {
-    const invalidUpdatedProperties = Object.keys(
-      updatedEditableFieldProperties,
-    ).filter((property) =>
-      FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.includes(
-        property as FieldMetadataStandardOverridesProperties,
-      ),
-    );
-
-    if (invalidUpdatedProperties.length > 0) {
-      const invalidProperties = invalidUpdatedProperties.join(', ');
-
-      return {
-        status: 'fail',
-        error: {
-          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message: `Cannot update standard field metadata properties: ${invalidProperties}`,
-          userFriendlyMessage: msg`Cannot update standard field properties: ${invalidProperties}`,
-        },
-      };
-    }
-
-    const updatedStandardFlatFieldMetadata =
-      FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce((acc, property) => {
-        const isPropertyUpdated =
-          updatedEditableFieldProperties[property] !== undefined;
-
-        return {
-          ...acc,
-          standardOverrides: {
-            ...acc.standardOverrides,
-            ...(isPropertyUpdated
-              ? { [property]: updatedEditableFieldProperties[property] }
-              : {}),
-          },
-        };
-      }, existingFlatFieldMetadataToUpdate);
-
-    return {
-      status: 'success',
-      result: {
-        flatViewsToUpdate: [],
-        flatViewsToDelete: [],
-        flatViewGroupsToCreate: [],
-        flatViewGroupsToDelete: [],
-        flatViewGroupsToUpdate: [],
-        flatFieldMetadatasToUpdate: [updatedStandardFlatFieldMetadata],
-        flatIndexMetadatasToUpdate: [],
-        flatIndexMetadatasToDelete: [],
-        flatIndexMetadatasToCreate: [],
-        flatViewFiltersToDelete: [],
-        flatViewFiltersToUpdate: [],
-        flatViewFieldsToDelete: [],
-      },
-    };
-  }
+  const isStandardField = isStandardMetadata(existingFlatFieldMetadataToUpdate);
+  const { standardOverrides, updatedEditableFieldProperties } =
+    sanitizeRawUpdateFieldInput({
+      existingFlatFieldMetadata: existingFlatFieldMetadataToUpdate,
+      rawUpdateFieldInput,
+    });
 
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: existingFlatFieldMetadataToUpdate.objectMetadataId,
@@ -176,11 +121,17 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   const optimisticiallyUpdatedFlatFieldMetadatas =
     flatFieldMetadatasToUpdate.reduce<FlatFieldMetadataAndIndexToUpdate>(
       (accumulator, fromFlatFieldMetadata) => {
-        const toFlatFieldMetadata = mergeUpdateInExistingRecord({
-          existing: fromFlatFieldMetadata,
-          properties: FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
-          update: updatedEditableFieldProperties,
-        });
+        const toFlatFieldMetadata = {
+          ...mergeUpdateInExistingRecord({
+            existing: fromFlatFieldMetadata,
+            properties:
+              FLAT_FIELD_METADATA_EDITABLE_PROPERTIES[
+                isStandardField ? 'standard' : 'custom'
+              ],
+            update: updatedEditableFieldProperties,
+          }),
+          standardOverrides,
+        };
 
         const {
           flatViewGroupsToCreate,

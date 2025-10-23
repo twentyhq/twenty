@@ -67,11 +67,11 @@ export class ObjectMetadataServiceV2 {
     );
 
     const {
-      flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
-      otherObjectFlatFieldMetadataToUpdate: otherObjectFlatFieldMetadatas,
-      flatIndexMetadataToUpdate,
-      flatViewFieldToUpdate,
-      flatViewFieldToCreate,
+      otherObjectFlatFieldMetadatasToUpdate,
+      flatObjectMetadataToUpdate,
+      flatIndexMetadatasToUpdate,
+      flatViewFieldsToCreate,
+      flatViewFieldsToUpdate,
     } = fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities({
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -89,25 +89,25 @@ export class ObjectMetadataServiceV2 {
               flatEntityMaps: existingFlatObjectMetadataMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatObjectMetadata],
+              flatEntityToUpdate: [flatObjectMetadataToUpdate],
             }),
             flatIndexMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatIndexMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: flatIndexMetadataToUpdate,
+              flatEntityToUpdate: flatIndexMetadatasToUpdate,
             }),
             flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatFieldMetadataMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: otherObjectFlatFieldMetadatas,
+              flatEntityToUpdate: otherObjectFlatFieldMetadatasToUpdate,
             }),
             flatViewFieldMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatViewFieldMaps,
-              flatEntityToCreate: flatViewFieldToCreate,
+              flatEntityToCreate: flatViewFieldsToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: flatViewFieldToUpdate,
+              flatEntityToUpdate: flatViewFieldsToUpdate,
             }),
           },
           dependencyAllFlatEntityMaps: {
@@ -136,9 +136,7 @@ export class ObjectMetadataServiceV2 {
       );
 
     const updatedFlatObjectMetadata =
-      recomputedFlatObjectMetadataMaps.byId[
-        optimisticallyUpdatedFlatObjectMetadata.id
-      ];
+      recomputedFlatObjectMetadataMaps.byId[flatObjectMetadataToUpdate.id];
 
     if (!isDefined(updatedFlatObjectMetadata)) {
       throw new ObjectMetadataException(
