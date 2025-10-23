@@ -8,6 +8,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useViewFieldAggregateOperation = () => {
   const { fieldMetadataId } = useContext(
@@ -38,10 +39,11 @@ export const useViewFieldAggregateOperation = () => {
             isVisible: currentViewField.isVisible,
             position: currentViewField.position,
             size: currentViewField.size,
-            aggregateOperation:
-              convertExtendedAggregateOperationToAggregateOperation(
-                aggregateOperation,
-              ),
+            aggregateOperation: isDefined(aggregateOperation)
+              ? convertExtendedAggregateOperationToAggregateOperation(
+                  aggregateOperation,
+                )
+              : null,
           },
         },
       },

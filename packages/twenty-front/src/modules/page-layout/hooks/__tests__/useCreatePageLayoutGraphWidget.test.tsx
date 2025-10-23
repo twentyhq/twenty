@@ -1,6 +1,7 @@
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -13,7 +14,6 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
-import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mock-uuid'),
@@ -160,7 +160,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
     });
 
     const graphTypes = [
-      GraphType.NUMBER,
+      GraphType.AGGREGATE,
       GraphType.GAUGE,
       GraphType.PIE,
       GraphType.VERTICAL_BAR,
@@ -169,7 +169,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
     const mockFieldSelections: Partial<
       Record<GraphType, GraphWidgetFieldSelection>
     > = {
-      [GraphType.NUMBER]: {
+      [GraphType.AGGREGATE]: {
         objectMetadataId: 'test-object-id',
         aggregateFieldMetadataId: 'test-aggregate-field-id',
       },

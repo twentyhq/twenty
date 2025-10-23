@@ -34,7 +34,7 @@ export const extractFieldMetadataIdsFromWidget = (
         config.groupByFieldMetadataId,
       ].filter(isDefined);
 
-    case 'NumberChartConfiguration':
+    case 'AggregateChartConfiguration':
       return [config.aggregateFieldMetadataId].filter(isDefined);
 
     case 'GaugeChartConfiguration':

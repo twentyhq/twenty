@@ -13,6 +13,7 @@ import {
   computeIdPathParameter,
   computeLimitParameters,
   computeOrderByParameters,
+  computeSoftDeleteParameters,
   computeStartingAfterParameters,
   computeUpsertParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
@@ -210,6 +211,7 @@ export const computeParameterComponents = (
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
     upsert: computeUpsertParameters(),
+    softDelete: computeSoftDeleteParameters(),
     orderBy: computeOrderByParameters(),
     limit: computeLimitParameters(fromMetadata),
   };

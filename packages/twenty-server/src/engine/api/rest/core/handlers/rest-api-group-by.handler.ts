@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { parseAggregateFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/aggregate-fields-parser-utils/parse-aggregate-fields-rest-request.util';
 import { parseFilterRestRequest } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-rest-request.util';
 import { parseGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/group-by-parser-utils/parse-group-by-rest-request.util';
@@ -30,18 +31,21 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
       const { filter, orderBy, viewId, groupBy, selectedFields } =
         this.parseRequestArgs(request);
 
-      return await this.commonGroupByQueryRunnerService.run({
-        args: {
+      return await this.commonGroupByQueryRunnerService.execute(
+        {
           filter,
           orderBy,
           viewId,
           groupBy,
           selectedFields,
         },
-        authContext,
-        objectMetadataMaps,
-        objectMetadataItemWithFieldMaps,
-      });
+        {
+          authContext,
+          objectMetadataMaps,
+          objectMetadataItemWithFieldMaps,
+        },
+        CommonQueryNames.GROUP_BY,
+      );
     } catch (error) {
       throw workspaceQueryRunnerRestApiExceptionHandler(error);
     }

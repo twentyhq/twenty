@@ -21,6 +21,11 @@ interface SendMessageInput {
   subject: string;
   to: string;
   html: string;
+  attachments?: {
+    filename: string;
+    content: Buffer;
+    contentType: string;
+  }[];
 }
 
 @Injectable()
@@ -46,41 +51,45 @@ export class MessagingSendMessageService {
           version: 'v1',
         });
 
-        const { data } = await oAuth2Client.userinfo.get();
+        const peopleClient = oAuth2Client.people({
+          version: 'v1',
+        });
 
-        const fromEmail = data.email;
-        const fromName = data.name;
-        const boundary = `boundary_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const { data: gmailData } = await gmailClient.users.getProfile({
+          userId: 'me',
+        });
 
-        const headers: string[] = [];
+        const fromEmail = gmailData.emailAddress;
 
-        if (isDefined(fromName)) {
-          headers.push(`From: "${mimeEncode(fromName)}" <${fromEmail}>`);
-        } else {
-          headers.push(`From: ${fromEmail}`);
-        }
+        const { data: peopleData } = await peopleClient.people.get({
+          resourceName: 'people/me',
+          personFields: 'names',
+        });
 
-        headers.push(
-          `To: ${sendMessageInput.to}`,
-          `Subject: ${mimeEncode(sendMessageInput.subject)}`,
-          'MIME-Version: 1.0',
-          `Content-Type: multipart/alternative; boundary="${boundary}"`,
-          '',
-          `--${boundary}`,
-          'Content-Type: text/plain; charset="UTF-8"',
-          '',
-          sendMessageInput.body,
-          '',
-          `--${boundary}`,
-          'Content-Type: text/html; charset="UTF-8"',
-          '',
-          sendMessageInput.html,
-          '',
-          `--${boundary}--`,
-        );
+        const fromName = peopleData?.names?.[0]?.displayName;
 
-        const message = headers.join('\n');
-        const encodedMessage = Buffer.from(message).toString('base64');
+        const mail = new MailComposer({
+          from: isDefined(fromName)
+            ? `"${mimeEncode(fromName)}" <${fromEmail}>`
+            : `${fromEmail}`,
+          to: sendMessageInput.to,
+          subject: sendMessageInput.subject,
+          text: sendMessageInput.body,
+          html: sendMessageInput.html,
+          ...(sendMessageInput.attachments &&
+          sendMessageInput.attachments.length > 0
+            ? {
+                attachments: sendMessageInput.attachments.map((attachment) => ({
+                  filename: attachment.filename,
+                  content: attachment.content,
+                  contentType: attachment.contentType,
+                })),
+              }
+            : {}),
+        });
+
+        const messageBuffer = await mail.compile().build();
+        const encodedMessage = Buffer.from(messageBuffer).toString('base64');
 
         await gmailClient.users.messages.send({
           userId: 'me',
@@ -103,6 +112,17 @@ export class MessagingSendMessageService {
             content: sendMessageInput.html,
           },
           toRecipients: [{ emailAddress: { address: sendMessageInput.to } }],
+          ...(sendMessageInput.attachments &&
+          sendMessageInput.attachments.length > 0
+            ? {
+                attachments: sendMessageInput.attachments.map((attachment) => ({
+                  '@odata.type': '#microsoft.graph.fileAttachment',
+                  name: attachment.filename,
+                  contentType: attachment.contentType,
+                  contentBytes: attachment.content.toString('base64'),
+                })),
+              }
+            : {}),
         };
 
         const response = await microsoftClient
@@ -148,6 +168,16 @@ export class MessagingSendMessageService {
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
           html: sendMessageInput.html,
+          ...(sendMessageInput.attachments &&
+          sendMessageInput.attachments.length > 0
+            ? {
+                attachments: sendMessageInput.attachments.map((attachment) => ({
+                  filename: attachment.filename,
+                  content: attachment.content,
+                  contentType: attachment.contentType,
+                })),
+              }
+            : {}),
         });
 
         const messageBuffer = await mail.compile().build();

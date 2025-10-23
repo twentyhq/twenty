@@ -5,6 +5,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { GraphWidgetComponentInstanceContext } from '@/page-layout/widgets/graph/states/contexts/GraphWidgetComponentInstanceContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -53,7 +54,9 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
   const graphTypeLabel = t(GRAPH_TYPE_INFORMATION[currentGraphType].label);
 
   return (
-    <>
+    <GraphWidgetComponentInstanceContext.Provider
+      value={{ instanceId: widgetInEditMode.id }}
+    >
       <SidePanelHeader
         Icon={GRAPH_TYPE_INFORMATION[currentGraphType].icon}
         iconColor={theme.font.color.tertiary}
@@ -68,6 +71,6 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
         }}
       />
       <ChartSettings widget={widgetInEditMode} />
-    </>
+    </GraphWidgetComponentInstanceContext.Provider>
   );
 };

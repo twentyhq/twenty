@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type WorkflowRunStepInfos } from 'twenty-shared/workflow';
@@ -40,7 +42,14 @@ export enum WorkflowRunStatus {
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
   ENQUEUED = 'ENQUEUED',
+  STOPPING = 'STOPPING',
+  STOPPED = 'STOPPED',
 }
+
+registerEnumType(WorkflowRunStatus, {
+  name: 'WorkflowRunStatusEnum',
+  description: 'Status of the workflow run',
+});
 
 export type StepOutput = {
   id: string;
@@ -158,6 +167,18 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
         label: 'Enqueued',
         position: 4,
         color: 'blue',
+      },
+      {
+        value: WorkflowRunStatus.STOPPING,
+        label: 'Stopping',
+        position: 5,
+        color: 'orange',
+      },
+      {
+        value: WorkflowRunStatus.STOPPED,
+        label: 'Stopped',
+        position: 6,
+        color: 'gray',
       },
     ],
     defaultValue: "'NOT_STARTED'",

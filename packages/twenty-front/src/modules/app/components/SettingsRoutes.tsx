@@ -243,14 +243,6 @@ const SettingsIntegrationDatabase = lazy(() =>
   ),
 );
 
-const SettingsIntegrationMCP = lazy(() =>
-  import('~/pages/settings/integrations/SettingsIntegrationMCPPage').then(
-    (module) => ({
-      default: module.SettingsIntegrationMCPPage,
-    }),
-  ),
-);
-
 const SettingsIntegrationNewDatabaseConnection = lazy(() =>
   import(
     '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection'
@@ -591,10 +583,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.IntegrationDatabaseConnection}
           element={<SettingsIntegrationShowDatabaseConnection />}
-        />
-        <Route
-          path={SettingsPath.IntegrationMCP}
-          element={<SettingsIntegrationMCP />}
         />
       </Route>
 

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { RecordChip } from '@/object-record/components/RecordChip';
@@ -31,6 +32,10 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { createPortal } from 'react-dom';
 import {
+  computeMorphRelationFieldName,
+  CustomError,
+} from 'twenty-shared/utils';
+import {
   IconChevronDown,
   IconDotsVertical,
   IconTrash,
@@ -40,7 +45,7 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
-import { RelationType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled(RecordDetailRecordsListItemContainer)<{
   isDropdownOpen?: boolean;
@@ -84,12 +89,16 @@ type RecordDetailRelationRecordsListItemProps = {
   isExpanded: boolean;
   onClick: (relationRecordId: string) => void;
   relationRecord: ObjectRecord;
+  relationObjectMetadataNameSingular: string;
+  relationFieldMetadataId: string;
 };
 
 export const RecordDetailRelationRecordsListItem = ({
   isExpanded,
   onClick,
   relationRecord,
+  relationObjectMetadataNameSingular,
+  relationFieldMetadataId,
 }: RecordDetailRelationRecordsListItemProps) => {
   const {
     fieldDefinition,
@@ -100,12 +109,23 @@ export const RecordDetailRelationRecordsListItem = ({
   const { onSubmit } = useContext(FieldInputEventContext);
 
   const { openModal } = useModal();
+  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
-  const {
-    relationFieldMetadataId,
-    relationObjectMetadataNameSingular,
-    relationType,
-  } = fieldDefinition.metadata as FieldRelationMetadata;
+  const { relationType, objectMetadataNameSingular } =
+    fieldDefinition.metadata as FieldRelationMetadata;
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItemToFind) =>
+      objectMetadataItemToFind.nameSingular === objectMetadataNameSingular,
+  );
+
+  if (!objectMetadataItem) {
+    throw new CustomError(
+      'Object metadata item not found',
+      'OBJECT_METADATA_ITEM_NOT_FOUND',
+    );
+  }
 
   const isToOneObject = relationType === RelationType.MANY_TO_ONE;
   const { objectMetadataItem: relationObjectMetadataItem } =
@@ -153,6 +173,27 @@ export const RecordDetailRelationRecordsListItem = ({
     ({ id }) => id === relationFieldMetadataId,
   );
 
+  const relationFieldMetadataIsMorphRelation =
+    relationFieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION;
+
+  const computedName = relationFieldMetadataItem
+    ? computeMorphRelationFieldName({
+        fieldName: relationFieldMetadataItem.name,
+        relationType: relationFieldMetadataItem.settings.relationType,
+        targetObjectMetadataNameSingular: objectMetadataItem.nameSingular,
+        targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
+      })
+    : '';
+
+  const updateOneRecordInput = relationFieldMetadataIsMorphRelation
+    ? {
+        [getForeignKeyNameFromRelationFieldName(computedName)]: null,
+      }
+    : {
+        [getForeignKeyNameFromRelationFieldName(
+          relationFieldMetadataItem?.name ?? '',
+        )]: null,
+      };
   const handleDetach = () => {
     closeDropdown(dropdownInstanceId);
 
@@ -163,11 +204,7 @@ export const RecordDetailRelationRecordsListItem = ({
     } else {
       updateOneRelationRecord({
         idToUpdate: relationRecord.id,
-        updateOneRecordInput: {
-          [getForeignKeyNameFromRelationFieldName(
-            relationFieldMetadataItem.name,
-          )]: null,
-        },
+        updateOneRecordInput,
       });
     }
 
@@ -198,8 +235,6 @@ export const RecordDetailRelationRecordsListItem = ({
     ),
     [isExpanded],
   );
-
-  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
   return (
     <>

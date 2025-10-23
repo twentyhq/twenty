@@ -8,26 +8,31 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+
+import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { getOperationName } from '@apollo/client/utilities';
-import { isDefined } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
-type RecordDetailRelationSectionProps = {
+type useAddNewRecordAndOpenRightDrawerProps = {
+  fieldMetadataItem: FieldMetadataItem;
+  objectMetadataItem: ObjectMetadataItem;
   relationObjectMetadataNameSingular: string;
   relationObjectMetadataItem: ObjectMetadataItem;
-  relationFieldMetadataItem?: FieldMetadataItem;
+  relationFieldMetadataItem: FieldMetadataItem;
   recordId: string;
 };
 
 export const useAddNewRecordAndOpenRightDrawer = ({
+  fieldMetadataItem,
+  objectMetadataItem,
   relationObjectMetadataNameSingular,
   relationObjectMetadataItem,
   relationFieldMetadataItem,
   recordId,
-}: RecordDetailRelationSectionProps) => {
+}: useAddNewRecordAndOpenRightDrawerProps) => {
   const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
   const setViewableRecordNameSingular = useSetRecoilState(
     viewableRecordNameSingularState,
@@ -37,11 +42,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular:
-      relationFieldMetadataItem?.relation?.targetObjectMetadata.nameSingular ??
-      'workspaceMember',
-  });
+  const { updateOneRecord } = useUpdateOneRecordV2();
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
@@ -49,14 +50,14 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
   if (
     relationObjectMetadataNameSingular === 'workspaceMember' ||
-    !isDefined(
-      relationFieldMetadataItem?.relation?.targetObjectMetadata.nameSingular,
-    )
+    !isDefined(objectMetadataItem.nameSingular)
   ) {
     return {
       createNewRecordAndOpenRightDrawer: undefined,
     };
   }
+  const relationFieldMetadataItemRelationType =
+    relationFieldMetadataItem.settings?.relationType;
 
   return {
     createNewRecordAndOpenRightDrawer: async (searchInput?: string) => {
@@ -84,24 +85,30 @@ export const useAddNewRecordAndOpenRightDrawer = ({
             }
           : { id: newRecordId, name: searchInput ?? '' };
 
-      if (
-        relationFieldMetadataItem?.relation?.type === RelationType.MANY_TO_ONE
-      ) {
-        createRecordPayload[
-          `${relationFieldMetadataItem?.relation?.sourceFieldMetadata.name}Id`
-        ] = recordId;
+      if (relationFieldMetadataItemRelationType === RelationType.MANY_TO_ONE) {
+        const gqlField =
+          relationFieldMetadataItem.type === FieldMetadataType.RELATION
+            ? relationFieldMetadataItem.name
+            : computeMorphRelationFieldName({
+                fieldName: relationFieldMetadataItem.name,
+                relationType: relationFieldMetadataItemRelationType,
+                targetObjectMetadataNameSingular:
+                  objectMetadataItem.nameSingular,
+                targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
+              });
+
+        createRecordPayload[`${gqlField}Id`] = recordId;
       }
 
       await createOneRecord(createRecordPayload);
 
-      if (
-        relationFieldMetadataItem?.relation?.type === RelationType.ONE_TO_MANY
-      ) {
+      if (relationFieldMetadataItemRelationType === RelationType.ONE_TO_MANY) {
         await updateOneRecord({
+          objectNameSingular:
+            objectMetadataItem.nameSingular ?? 'workspaceMember',
           idToUpdate: recordId,
           updateOneRecordInput: {
-            [`${relationFieldMetadataItem?.relation?.targetFieldMetadata.name}Id`]:
-              newRecordId,
+            [`${fieldMetadataItem.name}Id`]: newRecordId,
           },
         });
       }
