@@ -15,12 +15,12 @@ import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { ImpersonationModule } from 'src/engine/core-modules/impersonation/impersonation.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([UserEntity]),
     AuthModule,
     FileModule,
     WorkspaceDomainsModule,

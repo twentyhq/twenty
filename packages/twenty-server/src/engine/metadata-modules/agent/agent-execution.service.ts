@@ -18,7 +18,7 @@ import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
@@ -35,6 +35,8 @@ import { AgentModelConfigService } from './agent-model-config.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
+
+import { repairToolCall } from './utils/repair-tool-call.util';
 
 export interface AgentExecutionResult {
   result: object;
@@ -129,6 +131,30 @@ export class AgentExecutionService implements AgentExecutionContext {
         messages: convertToModelMessages(messages),
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
         providerOptions,
+        experimental_repairToolCall: async ({
+          toolCall,
+          tools: toolsForRepair,
+          inputSchema,
+          error,
+        }: {
+          toolCall: {
+            type: 'tool-call';
+            toolCallId: string;
+            toolName: string;
+            input: string;
+          };
+          tools: Record<string, unknown>;
+          inputSchema: (toolCall: { toolName: string }) => unknown;
+          error: Error;
+        }) => {
+          return repairToolCall({
+            toolCall,
+            tools: toolsForRepair,
+            inputSchema,
+            error,
+            model: registeredModel.model,
+          });
+        },
       };
     } catch (error) {
       this.logger.error(
@@ -140,7 +166,7 @@ export class AgentExecutionService implements AgentExecutionContext {
   }
 
   private async getContextForSystemPrompt(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
     userWorkspaceId: string,
   ) {
@@ -243,7 +269,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     messages,
     recordIdsByObjectMetadataNameSingular,
   }: {
-    workspace: Workspace;
+    workspace: WorkspaceEntity;
     userWorkspaceId: string;
     agentId: string;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];

@@ -2,10 +2,10 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
-import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   type ActorMetadata,
   FieldActorSource,
@@ -17,9 +17,9 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type TestingAuthContext = Omit<AuthContext, 'workspace' | 'apiKey' | 'user'> & {
-  workspace: Partial<Workspace>;
-  apiKey?: Partial<ApiKey>;
-  user?: Partial<User>;
+  workspace: Partial<WorkspaceEntity>;
+  apiKey?: Partial<ApiKeyEntity>;
+  user?: Partial<UserEntity>;
 };
 
 type ExpectedResult = { createdBy: ActorMetadata }[];

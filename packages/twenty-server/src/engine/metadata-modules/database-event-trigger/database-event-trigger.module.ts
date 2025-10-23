@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/metadata-modules/database-event-trigger/jobs/call-database-event-trigger-jobs.job';
 import { DatabaseEventTriggerResolver } from 'src/engine/metadata-modules/database-event-trigger/resolvers/database-event-trigger.resolver';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
@@ -12,7 +12,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace, DatabaseEventTrigger]),
+    TypeOrmModule.forFeature([WorkspaceEntity, DatabaseEventTriggerEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationV2Module,
   ],

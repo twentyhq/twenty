@@ -21,12 +21,12 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
   name: 'applicationVariable',
   schema: 'core',
 })
-@ObjectType()
+@ObjectType('ApplicationVariable')
 @Unique('IDX_APPLICATION_VARIABLE_KEY_APPLICATION_ID_UNIQUE', [
   'key',
   'applicationId',
 ])
-export class ApplicationVariable {
+export class ApplicationVariableEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;

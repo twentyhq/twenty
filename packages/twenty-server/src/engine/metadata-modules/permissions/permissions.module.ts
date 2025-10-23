@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -17,11 +17,11 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     TypeOrmModule.forFeature([
       RoleEntity,
       RoleTargetsEntity,
-      ApiKey,
-      Workspace,
+      ApiKeyEntity,
+      WorkspaceEntity,
     ]),
     FeatureFlagModule,
-    TypeOrmModule.forFeature([UserWorkspace]),
+    TypeOrmModule.forFeature([UserWorkspaceEntity]),
     UserRoleModule,
     WorkspacePermissionsCacheModule,
   ],

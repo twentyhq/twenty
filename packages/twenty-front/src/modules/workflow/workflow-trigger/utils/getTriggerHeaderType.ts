@@ -5,7 +5,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 export const getTriggerHeaderType = (trigger: WorkflowTrigger) => {
   switch (trigger.type) {
     case 'CRON': {
-      return 'Trigger';
+      return 'Trigger · Cron';
     }
     case 'WEBHOOK': {
       return 'Trigger · Webhook';

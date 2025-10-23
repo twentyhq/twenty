@@ -8,7 +8,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 @Command({
@@ -19,8 +19,8 @@ export class DeleteWorkflowRunsCommand extends ActiveOrSuspendedWorkspacesMigrat
   private createdBeforeDate: string | undefined;
 
   constructor(
-    @InjectRepository(Workspace)
-    protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);

@@ -4,7 +4,7 @@ import { DateAggregateOperations } from '@/object-record/record-table/constants/
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 
 export const convertExtendedAggregateOperationToAggregateOperation = (
-  extendedAggregateOperation: ExtendedAggregateOperations | null,
+  extendedAggregateOperation: ExtendedAggregateOperations,
 ) => {
   if (extendedAggregateOperation === DateAggregateOperations.EARLIEST) {
     return AggregateOperations.MIN;

@@ -3,10 +3,9 @@ import { DateAggregateOperations } from '@/object-record/record-table/constants/
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { t } from '@lingui/core/macro';
 import { CustomError } from 'twenty-shared/utils';
-import type { ExtendedAggregateOperations as GqlExtendedAggregateOperations } from '~/generated/graphql';
 
 export const getAggregateOperationLabel = (
-  operation: ExtendedAggregateOperations | GqlExtendedAggregateOperations,
+  operation: ExtendedAggregateOperations,
 ) => {
   switch (operation) {
     case AggregateOperations.MIN:

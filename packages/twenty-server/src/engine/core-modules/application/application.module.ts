@@ -5,8 +5,8 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationVariableModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
@@ -21,12 +21,12 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationEntity, AgentEntity, Workspace]),
+    TypeOrmModule.forFeature([ApplicationEntity, AgentEntity, WorkspaceEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ObjectMetadataModule,
     DataSourceModule,
     AgentModule,
-    ApplicationVariableModule,
+    ApplicationVariableEntityModule,
     ServerlessFunctionLayerModule,
     ServerlessFunctionModule,
     DatabaseEventTriggerModule,

@@ -1,6 +1,7 @@
 import { formatNumberChartTrend } from '@/page-layout/widgets/graph/graphWidgetNumberChart/utils/formatNumberChartTrend';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import {
   H1Title,
   H1TitleFontColor,
@@ -9,8 +10,8 @@ import {
 } from 'twenty-ui/display';
 
 type GraphWidgetNumberChartProps = {
-  value: string;
-  trendPercentage: number;
+  value: string | number;
+  trendPercentage?: number;
 };
 
 const StyledTrendPercentageValue = styled.span`
@@ -43,27 +44,32 @@ export const GraphWidgetNumberChart = ({
   trendPercentage,
 }: GraphWidgetNumberChartProps) => {
   const theme = useTheme();
-  const formattedPercentage = formatNumberChartTrend(trendPercentage);
+
+  const formattedPercentage = isDefined(trendPercentage)
+    ? formatNumberChartTrend(trendPercentage)
+    : undefined;
 
   return (
     <StyledContainer>
       <StyledH1Title title={value} fontColor={H1TitleFontColor.Primary} />
-      <StyledTrendIconContainer>
-        <StyledTrendPercentageValue>
-          {formattedPercentage}%
-        </StyledTrendPercentageValue>
-        {trendPercentage >= 0 ? (
-          <IconTrendingUp
-            color={theme.color.turquoise40}
-            size={theme.icon.size.md}
-          />
-        ) : (
-          <IconTrendingDown
-            color={theme.adaptiveColors.red4}
-            size={theme.icon.size.md}
-          />
-        )}
-      </StyledTrendIconContainer>
+      {isDefined(trendPercentage) && (
+        <StyledTrendIconContainer>
+          <StyledTrendPercentageValue>
+            {formattedPercentage}%
+          </StyledTrendPercentageValue>
+          {trendPercentage >= 0 ? (
+            <IconTrendingUp
+              color={theme.color.turquoise40}
+              size={theme.icon.size.md}
+            />
+          ) : (
+            <IconTrendingDown
+              color={theme.adaptiveColors.red4}
+              size={theme.icon.size.md}
+            />
+          )}
+        </StyledTrendIconContainer>
+      )}
     </StyledContainer>
   );
 };

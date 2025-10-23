@@ -16,7 +16,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -28,8 +28,8 @@ export class ImpersonationService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(UserWorkspace)
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -135,8 +135,8 @@ export class ImpersonationService {
   }
 
   async generateImpersonationLoginToken(
-    impersonatorUserWorkspace: UserWorkspace,
-    toImpersonateUserWorkspace: UserWorkspace,
+    impersonatorUserWorkspace: UserWorkspaceEntity,
+    toImpersonateUserWorkspace: UserWorkspaceEntity,
     impersonationLevel: 'server' | 'workspace',
   ) {
     const auditService = this.auditService.createContext({

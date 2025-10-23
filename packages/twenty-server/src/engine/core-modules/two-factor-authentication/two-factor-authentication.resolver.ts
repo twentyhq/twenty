@@ -13,8 +13,8 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -30,7 +30,7 @@ import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate
 import { InitiateTwoFactorAuthenticationProvisioningOutput } from './dto/initiate-two-factor-authentication-provisioning.output';
 import { VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
 import { VerifyTwoFactorAuthenticationMethodOutput } from './dto/verify-two-factor-authentication-method.output';
-import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
@@ -40,8 +40,8 @@ export class TwoFactorAuthenticationResolver {
     private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    @InjectRepository(TwoFactorAuthenticationMethod)
-    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
+    @InjectRepository(TwoFactorAuthenticationMethodEntity)
+    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
   ) {}
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningOutput)
@@ -99,8 +99,8 @@ export class TwoFactorAuthenticationResolver {
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningOutput)
   @UseGuards(UserAuthGuard)
   async initiateOTPProvisioningForAuthenticatedUser(
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InitiateTwoFactorAuthenticationProvisioningOutput> {
     const uri =
       await this.twoFactorAuthenticationService.initiateStrategyConfiguration(
@@ -125,8 +125,8 @@ export class TwoFactorAuthenticationResolver {
   async deleteTwoFactorAuthenticationMethod(
     @Args()
     deleteTwoFactorAuthenticationMethodInput: DeleteTwoFactorAuthenticationMethodInput,
-    @AuthWorkspace() workspace: Workspace,
-    @AuthUser() user: User,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: UserEntity,
   ): Promise<DeleteTwoFactorAuthenticationMethodOutput> {
     const twoFactorMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne({
@@ -165,8 +165,8 @@ export class TwoFactorAuthenticationResolver {
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
     @Args()
     verifyTwoFactorAuthenticationMethodInput: VerifyTwoFactorAuthenticationMethodInput,
-    @AuthWorkspace() workspace: Workspace,
-    @AuthUser() user: User,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: UserEntity,
   ): Promise<VerifyTwoFactorAuthenticationMethodOutput> {
     return await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
       user.id,

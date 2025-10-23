@@ -7,6 +7,8 @@ import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/
 import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
 import { GROUP_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/GroupBySetting';
 import { OMIT_NULL_VALUES_SETTING } from '@/command-menu/pages/page-layout/constants/settings/OmitNullValuesSetting';
+import { RANGE_MAX_SETTING } from '@/command-menu/pages/page-layout/constants/settings/RangeMaxSetting';
+import { RANGE_MIN_SETTING } from '@/command-menu/pages/page-layout/constants/settings/RangeMinSetting';
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
 import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByXSetting';
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
@@ -36,12 +38,14 @@ describe('getBarChartSettings', () => {
       const yAxisGroup = result.find((group) => group.heading === 'Y axis');
 
       expect(yAxisGroup).toBeDefined();
-      expect(yAxisGroup?.items).toHaveLength(3);
+      expect(yAxisGroup?.items).toHaveLength(5);
       expect(yAxisGroup?.items[0].id).toBe(DATA_DISPLAY_Y_SETTING.id);
       expect(yAxisGroup?.items[0].label).toBe(DATA_DISPLAY_Y_SETTING.label);
       expect(yAxisGroup?.items[0].Icon).toBe(IconAxisY);
       expect(yAxisGroup?.items[1]).toEqual(GROUP_BY_SETTING);
       expect(yAxisGroup?.items[2]).toEqual(SORT_BY_GROUP_BY_FIELD_SETTING);
+      expect(yAxisGroup?.items[3]).toEqual(RANGE_MIN_SETTING);
+      expect(yAxisGroup?.items[4]).toEqual(RANGE_MAX_SETTING);
     });
 
     it('should have all expected groups in correct order', () => {
@@ -62,12 +66,14 @@ describe('getBarChartSettings', () => {
       const xAxisGroup = result.find((group) => group.heading === 'X axis');
 
       expect(xAxisGroup).toBeDefined();
-      expect(xAxisGroup?.items).toHaveLength(3);
+      expect(xAxisGroup?.items).toHaveLength(5);
       expect(xAxisGroup?.items[0].id).toBe(DATA_DISPLAY_Y_SETTING.id);
       expect(xAxisGroup?.items[0].label).toBe(DATA_DISPLAY_Y_SETTING.label);
       expect(xAxisGroup?.items[0].Icon).toBe(IconAxisX);
       expect(xAxisGroup?.items[1]).toEqual(GROUP_BY_SETTING);
       expect(xAxisGroup?.items[2]).toEqual(SORT_BY_GROUP_BY_FIELD_SETTING);
+      expect(xAxisGroup?.items[3]).toEqual(RANGE_MIN_SETTING);
+      expect(xAxisGroup?.items[4]).toEqual(RANGE_MAX_SETTING);
     });
 
     it('should place PRIMARY axis items under "Y axis" heading', () => {

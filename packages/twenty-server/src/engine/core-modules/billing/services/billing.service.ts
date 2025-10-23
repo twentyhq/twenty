@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -22,8 +22,8 @@ export class BillingService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingProductService: BillingProductService,
-    @InjectRepository(BillingSubscription)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
   ) {}
 
   isBillingEnabled() {

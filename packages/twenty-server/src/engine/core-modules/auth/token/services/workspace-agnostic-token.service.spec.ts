@@ -6,7 +6,7 @@ import { type Repository } from 'typeorm';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
@@ -14,7 +14,7 @@ describe('WorkspaceAgnosticToken', () => {
   let service: WorkspaceAgnosticTokenService;
   let jwtWrapperService: JwtWrapperService;
   let twentyConfigService: TwentyConfigService;
-  let userRepository: Repository<User>;
+  let userRepository: Repository<UserEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,7 +36,7 @@ describe('WorkspaceAgnosticToken', () => {
           },
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -49,7 +49,9 @@ describe('WorkspaceAgnosticToken', () => {
     );
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<UserEntity>>(
+      getRepositoryToken(UserEntity),
+    );
   });
 
   it('should be defined', () => {
@@ -69,7 +71,9 @@ describe('WorkspaceAgnosticToken', () => {
         return undefined;
       });
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser as UserEntity);
 
       const result = await service.generateWorkspaceAgnosticToken({
         userId,
@@ -134,7 +138,9 @@ describe('WorkspaceAgnosticToken', () => {
 
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockPayload);
       jest.spyOn(jwtWrapperService, 'verify').mockReturnValue({});
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser as UserEntity);
 
       const result = await service.validateToken(mockToken);
 

@@ -27,7 +27,7 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/microsoft-apis')
@@ -40,8 +40,8 @@ export class MicrosoftAPIsAuthController {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly onboardingService: OnboardingService,
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   @Get()
@@ -57,7 +57,7 @@ export class MicrosoftAPIsAuthController {
     @Req() req: MicrosoftAPIsRequest,
     @Res() res: Response,
   ) {
-    let workspace: Workspace | null = null;
+    let workspace: WorkspaceEntity | null = null;
 
     try {
       const { user } = req;

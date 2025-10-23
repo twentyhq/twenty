@@ -13,11 +13,11 @@ import {
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
-import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
-import { UpdateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
+import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -33,23 +33,25 @@ export class ApiKeyController {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 
   @Get()
-  async findAll(@AuthWorkspace() workspace: Workspace): Promise<ApiKey[]> {
+  async findAll(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApiKeyEntity[]> {
     return this.apiKeyService.findActiveByWorkspaceId(workspace.id);
   }
 
   @Get(':id')
   async findOne(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<ApiKey | null> {
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApiKeyEntity | null> {
     return this.apiKeyService.findById(id, workspace.id);
   }
 
   @Post()
   async create(
-    @Body() createApiKeyDto: CreateApiKeyDTO,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<ApiKey> {
+    @Body() createApiKeyDto: CreateApiKeyInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApiKeyEntity> {
     return this.apiKeyService.create({
       name: createApiKeyDto.name,
       expiresAt: new Date(createApiKeyDto.expiresAt),
@@ -64,10 +66,10 @@ export class ApiKeyController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateApiKeyDto: UpdateApiKeyDTO,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<ApiKey | null> {
-    const updateData: QueryDeepPartialEntity<ApiKey> = {};
+    @Body() updateApiKeyDto: UpdateApiKeyInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApiKeyEntity | null> {
+    const updateData: QueryDeepPartialEntity<ApiKeyEntity> = {};
 
     if (updateApiKeyDto.name !== undefined)
       updateData.name = updateApiKeyDto.name;
@@ -85,8 +87,8 @@ export class ApiKeyController {
   @Delete(':id')
   async remove(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<ApiKey | null> {
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApiKeyEntity | null> {
     return this.apiKeyService.revoke(id, workspace.id);
   }
 }

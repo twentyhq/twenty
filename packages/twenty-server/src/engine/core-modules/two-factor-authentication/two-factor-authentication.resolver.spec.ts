@@ -8,8 +8,8 @@ import {
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
@@ -17,7 +17,7 @@ import { TwoFactorAuthenticationService } from './two-factor-authentication.serv
 import { type DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
 import { type InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
 import { type VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
-import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 
 const createMockRepository = () => ({
   findOne: jest.fn(),
@@ -53,23 +53,23 @@ describe('TwoFactorAuthenticationResolver', () => {
   >;
   let repository: ReturnType<typeof createMockRepository>;
 
-  const mockUser: User = {
+  const mockUser: UserEntity = {
     id: 'user-123',
     email: 'test@example.com',
-  } as User;
+  } as UserEntity;
 
-  const mockWorkspace: Workspace = {
+  const mockWorkspace: WorkspaceEntity = {
     id: 'workspace-123',
     displayName: 'Test Workspace',
-  } as Workspace;
+  } as WorkspaceEntity;
 
-  const mockTwoFactorMethod: TwoFactorAuthenticationMethod = {
+  const mockTwoFactorMethod: TwoFactorAuthenticationMethodEntity = {
     id: '2fa-method-123',
     userWorkspace: {
       userId: 'user-123',
       workspaceId: 'workspace-123',
     },
-  } as TwoFactorAuthenticationMethod;
+  } as TwoFactorAuthenticationMethodEntity;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -92,7 +92,7 @@ describe('TwoFactorAuthenticationResolver', () => {
           useFactory: createMockWorkspaceDomainsService,
         },
         {
-          provide: getRepositoryToken(TwoFactorAuthenticationMethod),
+          provide: getRepositoryToken(TwoFactorAuthenticationMethodEntity),
           useFactory: createMockRepository,
         },
       ],
@@ -105,7 +105,9 @@ describe('TwoFactorAuthenticationResolver', () => {
     loginTokenService = module.get(LoginTokenService);
     userService = module.get(UserService);
     workspaceDomainsService = module.get(WorkspaceDomainsService);
-    repository = module.get(getRepositoryToken(TwoFactorAuthenticationMethod));
+    repository = module.get(
+      getRepositoryToken(TwoFactorAuthenticationMethodEntity),
+    );
   });
 
   afterEach(() => {

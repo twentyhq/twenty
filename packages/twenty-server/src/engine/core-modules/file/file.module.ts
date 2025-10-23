@@ -8,7 +8,7 @@ import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/job
 import { FileAttachmentListener } from 'src/engine/core-modules/file/listeners/file-attachment.listener';
 import { FileWorkspaceMemberListener } from 'src/engine/core-modules/file/listeners/file-workspace-member.listener';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { FileController } from './controllers/file.controller';
 import { FileEntity } from './entities/file.entity';
@@ -20,7 +20,7 @@ import { FileService } from './services/file.service';
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature([FileEntity, Workspace]),
+    TypeOrmModule.forFeature([FileEntity, WorkspaceEntity]),
     HttpModule,
   ],
   providers: [

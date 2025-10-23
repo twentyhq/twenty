@@ -14,7 +14,7 @@ import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
@@ -24,8 +24,8 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
     private readonly guardRedirectService: GuardRedirectService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly transientTokenService: TransientTokenService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super();
@@ -95,7 +95,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
 
   private async getWorkspaceFromTransientToken(
     transientToken: string,
-  ): Promise<Workspace> {
+  ): Promise<WorkspaceEntity> {
     const { workspaceId } =
       await this.transientTokenService.verifyTransientToken(transientToken);
 

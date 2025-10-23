@@ -9,7 +9,7 @@ import { v4 } from 'uuid';
 import { ForeignDataWrapperServerQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-server-query.factory';
 import { encryptText } from 'src/engine/core-modules/auth/auth.util';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { type CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/create-remote-server.input';
 import { type UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
@@ -44,8 +44,8 @@ export class RemoteServerService<T extends RemoteServerType> {
     private readonly foreignDataWrapperServerQueryFactory: ForeignDataWrapperServerQueryFactory,
     private readonly remoteTableService: RemoteTableService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectRepository(FeatureFlag)
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(FeatureFlagEntity)
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   public async createOneRemoteServer(

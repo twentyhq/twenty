@@ -16,73 +16,39 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { CommonPageInfo } from 'src/engine/api/common/types/common-page-info.type';
+import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
+import { CommonFindManyOutput } from 'src/engine/api/common/types/common-find-many-output.type';
 import {
-  CommonQueryNames,
+  CommonExtendedInput,
+  CommonInput,
   FindManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
-import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
-export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerService {
-  async run({
-    args,
-    authContext,
-    objectMetadataMaps,
-    objectMetadataItemWithFieldMaps,
-  }: {
-    args: FindManyQueryArgs;
-    authContext: AuthContext;
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-  }): Promise<{
-    records: ObjectRecord[];
-    aggregatedValues: Record<string, number>;
-    totalCount: number;
-    pageInfo: CommonPageInfo;
-    selectedFieldsResult: CommonSelectedFieldsResult;
-  }> {
-    this.validate(args);
-
-    if (!isWorkspaceAuthContext(authContext)) {
-      throw new CommonQueryRunnerException(
-        'Invalid auth context',
-        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-      );
-    }
-
-    const { workspaceDataSource, repository, rolePermissionConfig } =
-      await this.prepareQueryRunnerContext({
-        authContext,
-        objectMetadataItemWithFieldMaps,
-      });
-
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
-      objectMetadataItemWithFieldMaps,
-      args.selectedFields,
-      objectMetadataMaps,
-    );
-
-    const processedArgs = await this.processQueryArgs({
+export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerService<
+  FindManyQueryArgs,
+  CommonFindManyOutput
+> {
+  async run(
+    args: CommonExtendedInput<FindManyQueryArgs>,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): Promise<CommonFindManyOutput> {
+    const {
+      repository,
       authContext,
+      rolePermissionConfig,
       objectMetadataItemWithFieldMaps,
-      args,
-    });
+      objectMetadataMaps,
+      workspaceDataSource,
+      commonQueryParser,
+    } = queryRunnerContext;
 
     const queryBuilder = repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -90,7 +56,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const aggregateQueryBuilder = queryBuilder.clone();
 
-    let appliedFilters = processedArgs.filter ?? ({} as ObjectRecordFilter);
+    let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
 
     commonQueryParser.applyFilterToBuilder(
       aggregateQueryBuilder,
@@ -104,13 +70,13 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     );
 
     const orderByWithIdCondition = [
-      ...(processedArgs.orderBy ?? []),
+      ...(args.orderBy ?? []),
       { id: OrderByDirection.AscNullsFirst },
     ] as ObjectRecordOrderBy;
 
-    const isForwardPagination = !isDefined(processedArgs.before);
+    const isForwardPagination = !isDefined(args.before);
 
-    const cursor = getCursor(processedArgs);
+    const cursor = getCursor(args);
 
     if (cursor) {
       const cursorArgFilter = computeCursorArgFilter(
@@ -120,9 +86,9 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         isForwardPagination,
       );
 
-      appliedFilters = (processedArgs.filter
+      appliedFilters = (args.filter
         ? {
-            and: [processedArgs.filter, { or: cursorArgFilter }],
+            and: [args.filter, { or: cursorArgFilter }],
           }
         : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
     }
@@ -143,17 +109,16 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: selectedFieldsResult.aggregate,
+      selectedAggregatedFields: args.selectedFieldsResult.aggregate,
       queryBuilder: aggregateQueryBuilder,
       objectMetadataNameSingular: objectMetadataItemWithFieldMaps.nameSingular,
     });
 
-    const limit =
-      processedArgs.first ?? processedArgs.last ?? QUERY_MAX_RECORDS;
+    const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
     const columnsToSelect = buildColumnsToSelect({
-      select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
+      select: args.selectedFieldsResult.select,
+      relations: args.selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     });
@@ -183,44 +148,74 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     const parentObjectRecordsAggregatedValues =
       await aggregateQueryBuilder.getRawOne();
 
-    if (selectedFieldsResult.relations) {
+    if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,
         parentObjectRecordsAggregatedValues,
         //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
-        relations: selectedFieldsResult.relations as Record<
+        relations: args.selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
-        aggregate: selectedFieldsResult.aggregate,
+        aggregate: args.selectedFieldsResult.aggregate,
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
-        selectedFields: selectedFieldsResult.select,
+        selectedFields: args.selectedFieldsResult.select,
       });
     }
 
-    const enrichedRecords = await this.enrichResultsWithGettersAndHooks({
-      results: objectRecords,
-      operationName: CommonQueryNames.FIND_MANY,
-      authContext,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    });
-
     return {
-      records: enrichedRecords,
+      records: objectRecords,
       aggregatedValues: parentObjectRecordsAggregatedValues,
       totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       pageInfo,
-      selectedFieldsResult,
+      selectedFieldsResult: args.selectedFieldsResult,
     };
   }
 
-  validate(args: FindManyQueryArgs) {
+  async computeArgs(
+    args: CommonInput<FindManyQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<CommonInput<FindManyQueryArgs>> {
+    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+
+    return {
+      ...args,
+      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
+        args.filter,
+        objectMetadataItemWithFieldMaps,
+      ),
+    };
+  }
+
+  async processQueryResult(
+    queryResult: CommonFindManyOutput,
+    objectMetadataItemId: string,
+    objectMetadataMaps: ObjectMetadataMaps,
+    authContext: WorkspaceAuthContext,
+  ): Promise<CommonFindManyOutput> {
+    const processedRecords =
+      await this.commonResultGettersService.processRecordArray(
+        queryResult.records,
+        objectMetadataItemId,
+        objectMetadataMaps,
+        authContext.workspace.id,
+      );
+
+    return {
+      ...queryResult,
+      records: processedRecords,
+    };
+  }
+
+  async validate(
+    args: CommonInput<FindManyQueryArgs>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
+  ) {
     if (args.first && args.last) {
       throw new CommonQueryRunnerException(
         'Cannot provide both first and last',
@@ -257,32 +252,5 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         CommonQueryRunnerExceptionCode.INVALID_ARGS_LAST,
       );
     }
-  }
-
-  async processQueryArgs({
-    authContext,
-    objectMetadataItemWithFieldMaps,
-    args,
-  }: {
-    authContext: WorkspaceAuthContext;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    args: FindManyQueryArgs;
-  }): Promise<FindManyQueryArgs> {
-    const hookedArgs =
-      (await this.workspaceQueryHookService.executePreQueryHooks(
-        authContext,
-        objectMetadataItemWithFieldMaps.nameSingular,
-        CommonQueryNames.FIND_MANY,
-        args,
-        //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
-      )) as FindManyQueryArgs;
-
-    return {
-      ...hookedArgs,
-      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-        hookedArgs.filter,
-        objectMetadataItemWithFieldMaps,
-      ),
-    };
   }
 }

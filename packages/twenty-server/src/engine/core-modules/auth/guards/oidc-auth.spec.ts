@@ -9,7 +9,7 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
-import { type WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { type WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 const createMockExecutionContext = (mockedRequest: any): ExecutionContext => {
   return {
@@ -92,7 +92,7 @@ describe('OIDCAuthGuard', () => {
       id: 'test-id',
       issuer: 'https://issuer.example.com',
       workspace: {},
-    } as SSOConfiguration & WorkspaceSSOIdentityProvider);
+    } as SSOConfiguration & WorkspaceSSOIdentityProviderEntity);
 
     const result = await guard.canActivate(mockExecutionContext);
 
