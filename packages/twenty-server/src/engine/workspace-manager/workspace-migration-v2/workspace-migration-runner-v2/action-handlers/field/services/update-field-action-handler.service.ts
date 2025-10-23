@@ -27,6 +27,7 @@ import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/works
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
+import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/is-property-update.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
 import { serializeDefaultValueV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/serialize-default-value-v2.util';
@@ -147,7 +148,20 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     let optimisticFlatFieldMetadata = structuredClone(currentFlatFieldMetadata);
 
-    for (const update of updates) {
+    const defaultValueUpdate = findFlatEntityPropertyUpdate({
+      flatEntityUpdates: updates,
+      property: 'defaultValue',
+    });
+    const hasDefaultValueUpdate = isDefined(defaultValueUpdate);
+
+    let wasDefaultValueHandledByEnumUpdate = false;
+
+    const sortedUpdatesWithDefaultValuesUpdateLast = [...updates].sort(
+      (a, b) =>
+        +(a.property === 'defaultValue') - +(b.property === 'defaultValue'),
+    );
+
+    for (const update of sortedUpdatesWithDefaultValuesUpdateLast) {
       if (isPropertyUpdate(update, 'name')) {
         await this.handleFieldNameUpdate({
           queryRunner,
@@ -159,19 +173,31 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         optimisticFlatFieldMetadata.name = update.to;
       }
       if (isPropertyUpdate(update, 'defaultValue')) {
-        await this.handleFieldDefaultValueUpdate({
-          queryRunner,
-          schemaName,
-          tableName,
-          flatFieldMetadata: optimisticFlatFieldMetadata,
-          update,
-        });
-        optimisticFlatFieldMetadata.defaultValue = update.to;
+        if (wasDefaultValueHandledByEnumUpdate) {
+          optimisticFlatFieldMetadata.defaultValue = update.to;
+        } else {
+          await this.handleFieldDefaultValueUpdate({
+            queryRunner,
+            schemaName,
+            tableName,
+            flatFieldMetadata: optimisticFlatFieldMetadata,
+            update,
+          });
+          optimisticFlatFieldMetadata.defaultValue = update.to;
+        }
       }
       if (
         isPropertyUpdate(update, 'options') &&
         isEnumFlatFieldMetadata(optimisticFlatFieldMetadata)
       ) {
+        if (hasDefaultValueUpdate) {
+          optimisticFlatFieldMetadata = {
+            ...optimisticFlatFieldMetadata,
+            defaultValue: defaultValueUpdate.to,
+          };
+          wasDefaultValueHandledByEnumUpdate = true;
+        }
+
         await this.handleFieldOptionsUpdate({
           queryRunner,
           schemaName,
