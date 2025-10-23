@@ -16,7 +16,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
-type RecordDetailRelationSectionProps = {
+type useAddNewRecordAndOpenRightDrawerProps = {
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItem: ObjectMetadataItem;
   relationObjectMetadataNameSingular: string;
@@ -32,7 +32,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
   relationObjectMetadataItem,
   relationFieldMetadataItem,
   recordId,
-}: RecordDetailRelationSectionProps) => {
+}: useAddNewRecordAndOpenRightDrawerProps) => {
   const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
   const setViewableRecordNameSingular = useSetRecoilState(
     viewableRecordNameSingularState,
