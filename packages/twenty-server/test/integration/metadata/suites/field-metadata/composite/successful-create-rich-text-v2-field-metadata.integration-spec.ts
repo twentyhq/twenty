@@ -1,4 +1,3 @@
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -11,11 +10,14 @@ import {
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+
 const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Omit<CreateFieldInput, 'objectMetadataId' | 'type' | 'workspaceId'>;
 }>[] = [
   {
-    title: 'rich text v2 field with basic metadata (name, label, description, icon)',
+    title:
+      'rich text v2 field with basic metadata (name, label, description, icon)',
     context: {
       input: {
         name: 'description',
@@ -45,7 +47,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
         name: 'content',
         label: 'Content',
         defaultValue: {
-          blocknote: "'{\"blocks\":[{\"type\":\"paragraph\"}]}'",
+          blocknote: '\'{"blocks":[{"type":"paragraph"}]}\'',
           markdown: null,
         },
       },
@@ -145,6 +147,7 @@ describe('Rich text v2 field metadata creation tests suite', () => {
       createdFieldMetadataId = data.createOneField.id;
 
       const { objectMetadataId: _omit, ...expectedFields } = inputPayload;
+
       expect(data.createOneField).toMatchObject(expectedFields);
     },
   );

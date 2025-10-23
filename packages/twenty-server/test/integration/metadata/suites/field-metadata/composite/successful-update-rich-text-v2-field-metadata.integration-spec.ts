@@ -1,4 +1,3 @@
-import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -10,6 +9,8 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 
 const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Partial<UpdateFieldInput>;
@@ -40,7 +41,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     context: {
       input: {
         defaultValue: {
-          blocknote: "'{\"blocks\":[{\"type\":\"paragraph\"}]}'",
+          blocknote: '\'{"blocks":[{"type":"paragraph"}]}\'',
           markdown: null,
         },
       },
@@ -51,7 +52,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     context: {
       input: {
         defaultValue: {
-          blocknote: "'{\"blocks\":[]}'",
+          blocknote: '\'{"blocks":[]}\'',
           markdown: "'## Heading'",
         },
       },
@@ -162,4 +163,3 @@ describe('Rich text v2 field metadata update tests suite', () => {
     },
   );
 });
-
