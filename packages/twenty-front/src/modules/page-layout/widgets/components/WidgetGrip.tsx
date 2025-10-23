@@ -22,8 +22,8 @@ const StyledGripContainer = styled.div`
   }
 
   svg {
-    width: 14px;
-    height: 14px;
+    width: ${({ theme }) => theme.icon.size.sm};
+    height: ${({ theme }) => theme.icon.size.sm};
     color: ${({ theme }) => theme.font.color.extraLight};
   }
 `;
