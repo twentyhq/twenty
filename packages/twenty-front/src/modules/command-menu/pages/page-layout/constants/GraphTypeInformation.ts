@@ -26,12 +26,12 @@ export const GRAPH_TYPE_INFORMATION: Record<
   }
 > = {
   [GraphType.VERTICAL_BAR]: {
-    label: msg`Vertical Bar`,
+    label: msg`Vertical`,
     icon: IconChartBar,
     settings: getBarChartSettings(GraphType.VERTICAL_BAR),
   },
   [GraphType.HORIZONTAL_BAR]: {
-    label: msg`Horizontal Bar`,
+    label: msg`Horizontal`,
     icon: IconChartBarHorizontal,
     settings: getBarChartSettings(GraphType.HORIZONTAL_BAR),
   },
