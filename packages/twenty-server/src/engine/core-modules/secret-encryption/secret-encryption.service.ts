@@ -1,11 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isString } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   decryptText,
   encryptText,
 } from 'src/engine/core-modules/auth/auth.util';
+import { SECRET_ENCRYPTION_MASK } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption-mask.constant';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 
 @Injectable()
@@ -54,5 +56,26 @@ export class SecretEncryptionService {
 
       return value;
     }
+  }
+
+  public decryptAndMask(value: string): string {
+    if (!isDefined(value)) {
+      return value;
+    }
+
+    const decryptedValue = this.decrypt(value);
+
+    if (isString(decryptedValue)) {
+      if (decryptedValue.length <= SECRET_ENCRYPTION_MASK.length) {
+        return SECRET_ENCRYPTION_MASK[0].repeat(decryptedValue.length);
+      }
+
+      return (
+        SECRET_ENCRYPTION_MASK[0].repeat(SECRET_ENCRYPTION_MASK.length) +
+        decryptedValue.slice(-SECRET_ENCRYPTION_MASK.length)
+      );
+    }
+
+    return SECRET_ENCRYPTION_MASK;
   }
 }
