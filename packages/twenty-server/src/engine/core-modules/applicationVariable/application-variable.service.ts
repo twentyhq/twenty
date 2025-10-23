@@ -6,6 +6,10 @@ import { In, Not, Repository } from 'typeorm';
 
 import { EnvManifest } from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
+import {
+  ApplicationVariableException,
+  ApplicationVariableExceptionCode,
+} from 'src/engine/core-modules/applicationVariable/application-variable.exception';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 @Injectable()
@@ -26,21 +30,25 @@ export class ApplicationVariableService {
 
   async update({
     key,
-    value,
+    plainTextValue,
     applicationId,
-  }: Pick<ApplicationVariableEntity, 'key' | 'value'> & {
+  }: Pick<ApplicationVariableEntity, 'key'> & {
     applicationId: string;
+    plainTextValue: string;
   }) {
     const existingVariable = await this.applicationVariableRepository.findOne({
       where: { key, applicationId },
     });
 
-    if (!existingVariable) {
-      return;
+    if (!isDefined(existingVariable)) {
+      throw new ApplicationVariableException(
+        `Application variable with key ${key} not found`,
+        ApplicationVariableExceptionCode.APPLICATION_VARIABLE_NOT_FOUND,
+      );
     }
 
     const encryptedValue = this.encryptSecretValue(
-      value,
+      plainTextValue,
       existingVariable.isSecret,
     );
 

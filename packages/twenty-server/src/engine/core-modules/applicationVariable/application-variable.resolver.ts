@@ -36,7 +36,11 @@ export class ApplicationVariableResolver {
   async updateOneApplicationVariable(
     @Args() { key, value, applicationId }: UpdateApplicationVariableInput,
   ) {
-    await this.applicationVariableService.update({ key, value, applicationId });
+    await this.applicationVariableService.update({
+      key,
+      plainTextValue: value,
+      applicationId,
+    });
 
     return true;
   }

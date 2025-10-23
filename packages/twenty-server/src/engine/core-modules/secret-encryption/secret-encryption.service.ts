@@ -5,6 +5,7 @@ import {
   encryptText,
 } from 'src/engine/core-modules/auth/auth.util';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class SecretEncryptionService {
@@ -19,7 +20,7 @@ export class SecretEncryptionService {
   }
 
   public encrypt(value: string): string {
-    if (!value) {
+    if (!isDefined(value)) {
       return value;
     }
 
@@ -37,7 +38,7 @@ export class SecretEncryptionService {
   }
 
   public decrypt(value: string): string {
-    if (!value) {
+    if (!isDefined(value)) {
       return value;
     }
 
