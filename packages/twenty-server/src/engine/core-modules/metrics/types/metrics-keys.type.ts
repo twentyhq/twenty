@@ -19,6 +19,7 @@ export enum MetricsKeys {
   WorkflowRunStartedManualTrigger = 'workflow-run/started/manual-trigger',
   WorkflowRunCompleted = 'workflow-run/completed',
   WorkflowRunFailed = 'workflow-run/failed',
+  WorkflowRunStopped = 'workflow-run/stopped',
   WorkflowRunFailedThrottled = 'workflow-run/failed/throttled',
   WorkflowRunFailedToEnqueue = 'workflow-run/failed/to-enqueue',
   AIToolExecutionFailed = 'ai-tool-execution/failed',

@@ -190,7 +190,7 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowRunId: string;
     workspaceId: string;
-    status: WorkflowRunStatus;
+    status: Extract<WorkflowRunStatus, 'COMPLETED' | 'FAILED' | 'STOPPED'>;
     error?: string;
   }) {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
@@ -199,13 +199,10 @@ export class WorkflowRunWorkspaceService {
     });
 
     let updatedStepInfos = {};
-    const shouldUpdateStepInfos = status === WorkflowRunStatus.FAILED;
 
-    if (shouldUpdateStepInfos) {
-      updatedStepInfos = this.markRunningStepsAsFailed({
-        stepInfosToUpdate: workflowRunToUpdate.state?.stepInfos ?? {},
-      });
-    }
+    updatedStepInfos = this.markRunningStepsAsFailed({
+      stepInfosToUpdate: workflowRunToUpdate.state?.stepInfos ?? {},
+    });
 
     const partialUpdate = {
       status,
@@ -213,7 +210,7 @@ export class WorkflowRunWorkspaceService {
       state: {
         ...workflowRunToUpdate.state,
         workflowRunError: error,
-        ...(shouldUpdateStepInfos && { stepInfos: updatedStepInfos }),
+        stepInfos: updatedStepInfos,
       },
     };
 
@@ -223,7 +220,9 @@ export class WorkflowRunWorkspaceService {
       key:
         status === WorkflowRunStatus.COMPLETED
           ? MetricsKeys.WorkflowRunCompleted
-          : MetricsKeys.WorkflowRunFailed,
+          : status === WorkflowRunStatus.STOPPED
+            ? MetricsKeys.WorkflowRunStopped
+            : MetricsKeys.WorkflowRunFailed,
       eventId: workflowRunId,
     });
   }
@@ -378,35 +377,7 @@ export class WorkflowRunWorkspaceService {
     return workflowRun;
   }
 
-  private getInitState(
-    workflowVersion: WorkflowVersionWorkspaceEntity,
-    triggerPayload: object,
-  ): WorkflowRunState | undefined {
-    if (
-      !isDefined(workflowVersion.trigger) ||
-      !isDefined(workflowVersion.steps)
-    ) {
-      return undefined;
-    }
-
-    return {
-      flow: {
-        trigger: workflowVersion.trigger,
-        steps: workflowVersion.steps,
-      },
-      stepInfos: {
-        trigger: { status: StepStatus.NOT_STARTED, result: triggerPayload },
-        ...Object.fromEntries(
-          workflowVersion.steps.map((step) => [
-            step.id,
-            { status: StepStatus.NOT_STARTED },
-          ]),
-        ),
-      },
-    };
-  }
-
-  private async updateWorkflowRun({
+  async updateWorkflowRun({
     workflowRunId,
     workspaceId,
     partialUpdate,
@@ -439,6 +410,34 @@ export class WorkflowRunWorkspaceService {
       undefined,
       ['id'],
     );
+  }
+
+  private getInitState(
+    workflowVersion: WorkflowVersionWorkspaceEntity,
+    triggerPayload: object,
+  ): WorkflowRunState | undefined {
+    if (
+      !isDefined(workflowVersion.trigger) ||
+      !isDefined(workflowVersion.steps)
+    ) {
+      return undefined;
+    }
+
+    return {
+      flow: {
+        trigger: workflowVersion.trigger,
+        steps: workflowVersion.steps,
+      },
+      stepInfos: {
+        trigger: { status: StepStatus.NOT_STARTED, result: triggerPayload },
+        ...Object.fromEntries(
+          workflowVersion.steps.map((step) => [
+            step.id,
+            { status: StepStatus.NOT_STARTED },
+          ]),
+        ),
+      },
+    };
   }
 
   private markRunningStepsAsFailed({
