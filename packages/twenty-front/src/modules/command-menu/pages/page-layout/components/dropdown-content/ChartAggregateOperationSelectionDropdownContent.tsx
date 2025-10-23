@@ -73,13 +73,14 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
       })
     : [];
 
-  const isAggregateChart =
-    widgetInEditMode.configuration.graphType === GraphType.AGGREGATE;
+  const isAggregateOrGaugeChart =
+    widgetInEditMode.configuration.graphType === GraphType.AGGREGATE ||
+    widgetInEditMode.configuration.graphType === GraphType.GAUGE;
 
   const filteredAggregateOperations = availableAggregateOperations.filter(
     (operation) => {
       return (
-        isAggregateChart ||
+        isAggregateOrGaugeChart ||
         (operation !== DateAggregateOperations.EARLIEST &&
           operation !== DateAggregateOperations.LATEST)
       );
