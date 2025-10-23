@@ -10,22 +10,21 @@ import {
 
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListDroppableMoreButton } from '@/page-layout/components/PageLayoutTabListDroppableMoreButton';
+import { PageLayoutTabRenderClone } from '@/page-layout/components/PageLayoutTabRenderClone';
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
-import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useContext } from 'react';
-import { TabContent } from 'twenty-ui/input';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
-const StyledDraggableWrapper = styled.div`
+const StyledOverflowDropdownListDraggableWrapper = styled.div`
   display: flex;
   cursor: grab;
 
@@ -34,7 +33,6 @@ const StyledDraggableWrapper = styled.div`
   }
 `;
 
-const StyledPlaceholder = styled.div``;
 type PageLayoutTabListReorderableOverflowDropdownProps = {
   dropdownId: string;
   hiddenTabs: SingleTabProps[];
@@ -62,14 +60,6 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   const context = useContext(TabListComponentInstanceContext);
   const instanceId = context?.instanceId;
 
-  const [pageLayoutTabListCurrentDragDroppableId] = useRecoilComponentState(
-    pageLayoutTabListCurrentDragDroppableIdComponentState,
-  );
-
-  const isHoveringTabList =
-    pageLayoutTabListCurrentDragDroppableId ===
-    PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS;
-
   const isTabDragging = useRecoilComponentValue(
     isPageLayoutTabDraggingComponentState,
     instanceId,
@@ -92,103 +82,6 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
     handleClose();
   };
 
-  const RenderClone = (
-    // eslint-disable-next-line @nx/workspace-component-props-naming
-    provided: DraggableProvided,
-    // eslint-disable-next-line @nx/workspace-component-props-naming
-    _snapshot: DraggableStateSnapshot,
-    // eslint-disable-next-line @nx/workspace-component-props-naming
-    rubric: DraggableRubric,
-  ) => {
-    const overflowIndex = rubric.source.index - visibleTabCount;
-    const tab = hiddenTabs[overflowIndex];
-
-    const [
-      pageLayoutTabListCurrentDragDroppableId,
-      setPageLayoutTabListCurrentDragDroppableId,
-    ] = useRecoilComponentState(
-      pageLayoutTabListCurrentDragDroppableIdComponentState,
-    );
-
-    console.log({
-      pageLayoutTabListCurrentDragDroppableId,
-      styles: provided.draggableProps.style,
-      provided,
-    });
-
-    const isHoveringTabList =
-      pageLayoutTabListCurrentDragDroppableId ===
-      PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS;
-
-    // useEffect(() => {
-    //   const cloneParentElement = document.getElementById('clone-drag-wrapper');
-
-    //   if (!isDefined(cloneParentElement)) {
-    //     return;
-    //   }
-
-    //   console.log({ cloneParentElement });
-
-    // if (isHoveringTabList) {
-    //   cloneParentElement.style.width = '80px';
-    // } else {
-    //   cloneParentElement.style.width = '200px';
-    // }
-    // }, [pageLayoutTabListCurrentDragDroppableId, isHoveringTabList]);
-
-    if (!tab) return null;
-
-    if (isHoveringTabList) {
-      return (
-        <StyledDraggableWrapper
-          ref={provided.innerRef}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...provided.draggableProps}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...provided.dragHandleProps}
-          style={{
-            ...provided.draggableProps.style,
-            cursor: 'grabbing',
-            backgroundColor: 'red',
-          }}
-        >
-          <TabContent
-            id={tab.id}
-            active={false}
-            disabled={false}
-            LeftIcon={tab.Icon}
-            title={tab.title}
-            logo={tab.logo}
-            pill={tab.pill}
-          />
-        </StyledDraggableWrapper>
-      );
-    } else {
-      return (
-        <StyledDraggableWrapper
-          id={'clone-drag-wrapper'}
-          ref={provided.innerRef}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...provided.draggableProps}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...provided.dragHandleProps}
-          style={{
-            ...provided.draggableProps.style,
-            cursor: 'grabbing',
-          }}
-        >
-          <MenuItemSelectAvatar
-            text={tab.title}
-            avatar={<TabAvatar tab={tab} />}
-            selected={tab.id === activeTabId}
-            onClick={undefined}
-            disabled
-          />
-        </StyledDraggableWrapper>
-      );
-    }
-  };
-
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -203,18 +96,33 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
         />
       }
       dropdownComponents={
-        <DropdownContent>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
           <Droppable
             droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
-            renderClone={RenderClone}
+            renderClone={(
+              provided: DraggableProvided,
+              _snapshot: DraggableStateSnapshot,
+              rubric: DraggableRubric,
+            ) => {
+              const overflowIndex = rubric.source.index - visibleTabCount;
+              const tab = hiddenTabs[overflowIndex];
+
+              return (
+                <PageLayoutTabRenderClone
+                  provided={provided}
+                  tab={tab}
+                  activeTabId={activeTabId}
+                />
+              );
+            }}
           >
             {(provided) => (
-              <div
-                ref={provided.innerRef}
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...provided.droppableProps}
-              >
-                <DropdownMenuItemsContainer>
+              <DropdownMenuItemsContainer>
+                <div
+                  ref={provided.innerRef}
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  {...provided.droppableProps}
+                >
                   {hiddenTabs.map((tab, index) => {
                     const globalIndex = visibleTabCount + index;
                     const disabled = tab.disabled ?? loading;
@@ -227,7 +135,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                         isDragDisabled={disabled}
                       >
                         {(draggableProvided, draggableSnapshot) => (
-                          <StyledDraggableWrapper
+                          <StyledOverflowDropdownListDraggableWrapper
                             ref={draggableProvided.innerRef}
                             // eslint-disable-next-line react/jsx-props-no-spreading
                             {...draggableProvided.draggableProps}
@@ -245,11 +153,16 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                                 ? theme.background.transparent.light
                                 : 'none',
                               width: 50,
-                              // maxWidth: 50,
                               overflow: 'visible',
                             }}
                           >
-                            <div style={{ minWidth: 160 }}>
+                            <div
+                              style={{
+                                minWidth:
+                                  GenericDropdownContentWidth.Medium -
+                                  theme.spacingMultiplicator * 2,
+                              }}
+                            >
                               <MenuItemSelectAvatar
                                 text={tab.title}
                                 avatar={<TabAvatar tab={tab} />}
@@ -262,14 +175,14 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                                 disabled={disabled}
                               />
                             </div>
-                          </StyledDraggableWrapper>
+                          </StyledOverflowDropdownListDraggableWrapper>
                         )}
                       </Draggable>
                     );
                   })}
-                  <StyledPlaceholder>{provided.placeholder}</StyledPlaceholder>
-                </DropdownMenuItemsContainer>
-              </div>
+                  <div>{provided.placeholder}</div>
+                </div>
+              </DropdownMenuItemsContainer>
             )}
           </Droppable>
         </DropdownContent>

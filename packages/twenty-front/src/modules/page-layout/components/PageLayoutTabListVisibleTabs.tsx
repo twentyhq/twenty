@@ -1,5 +1,10 @@
 import styled from '@emotion/styled';
-import { Droppable } from '@hello-pangea/dnd';
+import {
+  type DraggableProvided,
+  type DraggableRubric,
+  type DraggableStateSnapshot,
+  Droppable,
+} from '@hello-pangea/dnd';
 import { TabButton } from 'twenty-ui/input';
 
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
@@ -7,6 +12,7 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableTab } from '@/page-layout/components/PageLayoutTabListReorderableTab';
+import { PageLayoutTabRenderClone } from '@/page-layout/components/PageLayoutTabRenderClone';
 
 type PageLayoutTabListVisibleTabsProps = {
   visibleTabs: SingleTabProps[];
@@ -49,6 +55,21 @@ export const PageLayoutTabListVisibleTabs = ({
       <Droppable
         droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}
         direction="horizontal"
+        renderClone={(
+          provided: DraggableProvided,
+          _snapshot: DraggableStateSnapshot,
+          rubric: DraggableRubric,
+        ) => {
+          const tab = visibleTabs[rubric.source.index];
+
+          return (
+            <PageLayoutTabRenderClone
+              provided={provided}
+              tab={tab}
+              activeTabId={activeTabId}
+            />
+          );
+        }}
       >
         {(provided) => (
           <StyledTabContainer

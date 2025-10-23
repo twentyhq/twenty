@@ -148,40 +148,12 @@ export const PageLayoutTabList = ({
     closeDropdown(dropdownId);
   }, [closeDropdown, dropdownId]);
 
-  const [
-    pageLayoutTabListCurrentDragDroppableId,
-    setPageLayoutTabListCurrentDragDroppableId,
-  ] = useRecoilComponentState(
+  const setPageLayoutTabListCurrentDragDroppableId = useSetRecoilComponentState(
     pageLayoutTabListCurrentDragDroppableIdComponentState,
   );
 
-  const handleDragUpdate: OnDragUpdateResponder = (update, provided) => {
+  const handleDragUpdate: OnDragUpdateResponder = (update) => {
     setPageLayoutTabListCurrentDragDroppableId(update.destination?.droppableId);
-
-    // simple one-off (runs while dragging)
-    const placeholderElementSelector = '[data-rfd-placeholder-context-id]';
-
-    const placeholderElement = document.querySelector<HTMLDivElement>(
-      placeholderElementSelector,
-    );
-
-    console.log({
-      placeholderElement,
-    });
-
-    if (isDefined(placeholderElement)) {
-      // example: add a class or inline style
-      // el.classList.add('my-custom-placeholder');
-      // // or set inline style (careful: library writes inline size)
-      // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
-      placeholderElement.style.background = 'rgba(106, 177, 235, 0.08)';
-      placeholderElement.style.border = '2px dashed rgba(33,150,243,0.6)';
-    }
-
-    console.log({
-      update,
-      provided,
-    });
   };
 
   const handleDragStart = useCallback<OnDragStartResponder>(() => {
