@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
@@ -17,7 +18,19 @@ export const PageLayoutDispatcher = ({
     FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
   );
 
-  if (isRecordPageEnabled) {
+  const isStandardObjectWithDefaultLayout =
+    targetRecordIdentifier.targetObjectNameSingular ===
+      CoreObjectNameSingular.Company ||
+    targetRecordIdentifier.targetObjectNameSingular ===
+      CoreObjectNameSingular.Person ||
+    targetRecordIdentifier.targetObjectNameSingular ===
+      CoreObjectNameSingular.Opportunity ||
+    targetRecordIdentifier.targetObjectNameSingular ===
+      CoreObjectNameSingular.Note ||
+    targetRecordIdentifier.targetObjectNameSingular ===
+      CoreObjectNameSingular.Task;
+
+  if (isRecordPageEnabled && isStandardObjectWithDefaultLayout) {
     return (
       <PageLayoutRecordPageRenderer
         targetRecordIdentifier={targetRecordIdentifier}

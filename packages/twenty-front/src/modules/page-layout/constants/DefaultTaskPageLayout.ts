@@ -1,4 +1,4 @@
-import { DEFAULT_TASK_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
+import { DEFAULT_TASK_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultTaskPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 

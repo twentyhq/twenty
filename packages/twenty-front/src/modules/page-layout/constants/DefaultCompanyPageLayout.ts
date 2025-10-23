@@ -1,4 +1,4 @@
-import { DEFAULT_COMPANY_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
+import { DEFAULT_COMPANY_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultCompanyPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 

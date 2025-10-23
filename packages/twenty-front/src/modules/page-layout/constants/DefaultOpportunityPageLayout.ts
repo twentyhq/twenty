@@ -1,4 +1,4 @@
-import { DEFAULT_OPPORTUNITY_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
+import { DEFAULT_OPPORTUNITY_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultOpportunityPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
