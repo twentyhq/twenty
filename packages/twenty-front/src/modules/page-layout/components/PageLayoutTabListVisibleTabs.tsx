@@ -29,7 +29,7 @@ const StyledTabContainer = styled.div`
     margin-right: ${TAB_LIST_GAP}px;
   }
 
-  > div[data-rbd-placeholder-context-id] {
+  // > div[data-rbd-placeholder-context-id] {
     margin-right: ${TAB_LIST_GAP}px;
   }
 `;

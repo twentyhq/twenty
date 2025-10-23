@@ -1,6 +1,9 @@
 import { Draggable } from '@hello-pangea/dnd';
 
+import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
+import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 
 type PageLayoutTabListReorderableTabProps = {
@@ -18,6 +21,17 @@ export const PageLayoutTabListReorderableTab = ({
   disabled,
   onSelect,
 }: PageLayoutTabListReorderableTabProps) => {
+  const [
+    pageLayoutTabListCurrentDragDroppableId,
+    setPageLayoutTabListCurrentDragDroppableId,
+  ] = useRecoilComponentState(
+    pageLayoutTabListCurrentDragDroppableIdComponentState,
+  );
+
+  const isHoveringTabList =
+    pageLayoutTabListCurrentDragDroppableId ===
+    PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS;
+
   return (
     <Draggable draggableId={tab.id} index={index} isDragDisabled={disabled}>
       {(draggableProvided, draggableSnapshot) => (
@@ -33,6 +47,7 @@ export const PageLayoutTabListReorderableTab = ({
           style={{
             ...draggableProvided.draggableProps.style,
             cursor: draggableSnapshot.isDragging ? 'grabbing' : 'pointer',
+            backgroundColor: 'green',
           }}
         >
           <TabContent

@@ -4,6 +4,7 @@ import {
   type DropResult,
   type OnDragEndResponder,
   type OnDragStartResponder,
+  type OnDragUpdateResponder,
   type ResponderProvided,
 } from '@hello-pangea/dnd';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -30,6 +31,7 @@ import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/Pag
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
+import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -146,6 +148,42 @@ export const PageLayoutTabList = ({
     closeDropdown(dropdownId);
   }, [closeDropdown, dropdownId]);
 
+  const [
+    pageLayoutTabListCurrentDragDroppableId,
+    setPageLayoutTabListCurrentDragDroppableId,
+  ] = useRecoilComponentState(
+    pageLayoutTabListCurrentDragDroppableIdComponentState,
+  );
+
+  const handleDragUpdate: OnDragUpdateResponder = (update, provided) => {
+    setPageLayoutTabListCurrentDragDroppableId(update.destination?.droppableId);
+
+    // simple one-off (runs while dragging)
+    const placeholderElementSelector = '[data-rfd-placeholder-context-id]';
+
+    const placeholderElement = document.querySelector<HTMLDivElement>(
+      placeholderElementSelector,
+    );
+
+    console.log({
+      placeholderElement,
+    });
+
+    if (isDefined(placeholderElement)) {
+      // example: add a class or inline style
+      // el.classList.add('my-custom-placeholder');
+      // // or set inline style (careful: library writes inline size)
+      // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+      placeholderElement.style.background = 'rgba(106, 177, 235, 0.08)';
+      placeholderElement.style.border = '2px dashed rgba(33,150,243,0.6)';
+    }
+
+    console.log({
+      update,
+      provided,
+    });
+  };
+
   const handleDragStart = useCallback<OnDragStartResponder>(() => {
     setIsTabDragging(true);
     toggleClickOutside(false);
@@ -220,6 +258,7 @@ export const PageLayoutTabList = ({
           <DragDropContext
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
+            onDragUpdate={handleDragUpdate}
           >
             <StyledContainer className={className}>
               <PageLayoutTabListVisibleTabs
