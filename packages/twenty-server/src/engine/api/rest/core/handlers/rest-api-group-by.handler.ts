@@ -6,6 +6,7 @@ import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-qu
 import { parseAggregateFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/aggregate-fields-parser-utils/parse-aggregate-fields-rest-request.util';
 import { parseFilterRestRequest } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-rest-request.util';
 import { parseGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/group-by-parser-utils/parse-group-by-rest-request.util';
+import { parseIncludeRecordsSampleRestRequest } from 'src/engine/api/rest/input-request-parsers/group-by-with-records/parse-include-records-sample-rest-request.util';
 import { parseOmitNullValuesRestRequest } from 'src/engine/api/rest/input-request-parsers/omit-null-values-parser-utils/parse-omit-null-values-rest-request.util';
 import { parseOrderByWithGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/order-by-with-group-by-parser-utils/parse-order-by-with-group-by-rest-request.util';
 import { parseViewIdRestRequest } from 'src/engine/api/rest/input-request-parsers/view-id-parser-utils/parse-view-id-rest-request.util';
@@ -34,8 +35,9 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
         viewId,
         groupBy,
         selectedFields,
+        includeRecords,
         omitNullValues,
-      } = this.parseRequestArgs(request);
+      } = await this.parseRequestArgs(request);
 
       return await this.commonGroupByQueryRunnerService.run({
         args: {
@@ -49,20 +51,39 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
         authContext,
         objectMetadataMaps,
         objectMetadataItemWithFieldMaps,
+        shouldIncludeRecords: includeRecords,
       });
     } catch (error) {
       throw workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private parseRequestArgs(request: AuthenticatedRequest) {
+  private async parseRequestArgs(request: AuthenticatedRequest) {
     const orderByWithGroupBy = parseOrderByWithGroupByRestRequest(request);
     const filter = parseFilterRestRequest(request);
     const viewId = parseViewIdRestRequest(request);
     const groupBy = parseGroupByRestRequest(request);
     const aggregateFields = parseAggregateFieldsRestRequest(request);
     const omitNullValues = parseOmitNullValuesRestRequest(request);
-    const selectedFields = { ...aggregateFields, groupByDimensionValues: true };
+    const includeRecords = parseIncludeRecordsSampleRestRequest(request);
+    let selectedFields = { ...aggregateFields, groupByDimensionValues: true };
+
+    if (includeRecords) {
+      const {
+        authContext,
+        objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+      } = await this.buildCommonOptions(request);
+
+      const selectableFields = await this.computeSelectedFields({
+        depth: 0,
+        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+        authContext,
+      });
+
+      selectedFields = { ...selectedFields, ...selectableFields };
+    }
 
     return {
       filter,
@@ -71,6 +92,7 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
       groupBy,
       selectedFields,
       omitNullValues,
+      includeRecords,
     };
   }
 }
