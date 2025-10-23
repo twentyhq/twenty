@@ -64,7 +64,7 @@ export class WorkspaceMigrationRunnerV2Service {
       );
     }
 
-    const shouldInvalidFindCoreViewsGraphqlChacheOperation = actions.some(
+    const shouldInvalidFindCoreViewsGraphqlCacheOperation = actions.some(
       (action) => {
         switch (action.type) {
           case 'delete_view':
@@ -89,7 +89,7 @@ export class WorkspaceMigrationRunnerV2Service {
     );
 
     if (
-      shouldInvalidFindCoreViewsGraphqlChacheOperation ||
+      shouldInvalidFindCoreViewsGraphqlCacheOperation ||
       shouldIncrementMetadataGraphqlSchemaVersion
     ) {
       await this.workspaceCacheStorageService.flushGraphQLOperation({
