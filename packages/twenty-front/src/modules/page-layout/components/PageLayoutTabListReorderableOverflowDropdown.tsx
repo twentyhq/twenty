@@ -150,8 +150,6 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
             ...provided.draggableProps.style,
             cursor: 'grabbing',
             backgroundColor: 'red',
-            width: 50,
-            maxWidth: 50,
           }}
         >
           <TabContent
@@ -246,21 +244,24 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                               background: draggableSnapshot.isDragging
                                 ? theme.background.transparent.light
                                 : 'none',
-                              width: isHoveringTabList ? 50 : 250,
-                              maxWidth: isHoveringTabList ? 50 : 250,
+                              width: 50,
+                              // maxWidth: 50,
+                              overflow: 'visible',
                             }}
                           >
-                            <MenuItemSelectAvatar
-                              text={tab.title}
-                              avatar={<TabAvatar tab={tab} />}
-                              selected={tab.id === activeTabId}
-                              onClick={
-                                draggableSnapshot.isDragging
-                                  ? undefined
-                                  : () => handleTabSelect(tab.id)
-                              }
-                              disabled={disabled}
-                            />
+                            <div style={{ minWidth: 160 }}>
+                              <MenuItemSelectAvatar
+                                text={tab.title}
+                                avatar={<TabAvatar tab={tab} />}
+                                selected={tab.id === activeTabId}
+                                onClick={
+                                  draggableSnapshot.isDragging
+                                    ? undefined
+                                    : () => handleTabSelect(tab.id)
+                                }
+                                disabled={disabled}
+                              />
+                            </div>
                           </StyledDraggableWrapper>
                         )}
                       </Draggable>

@@ -310,7 +310,6 @@ export const PageLayoutTabList = ({
               onSelectTab={selectTab}
               canReorder={canReorderTabs}
             />
-
             {shouldRenderStaticDropdown && (
               <PageLayoutTabListStaticOverflowDropdown
                 dropdownId={dropdownId}
@@ -323,7 +322,6 @@ export const PageLayoutTabList = ({
                 onClose={closeOverflowDropdown}
               />
             )}
-
             {onAddTab && (
               <StyledAddButton>
                 <IconButton
