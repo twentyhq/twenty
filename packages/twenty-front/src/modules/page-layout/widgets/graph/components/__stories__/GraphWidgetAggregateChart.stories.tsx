@@ -1,16 +1,16 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
+import { GraphWidgetAggregateChart } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChart';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
 
-const meta: Meta<typeof GraphWidgetNumberChart> = {
-  title: 'Modules/PageLayout/Widgets/GraphWidgetNumberChart',
-  component: GraphWidgetNumberChart,
+const meta: Meta<typeof GraphWidgetAggregateChart> = {
+  title: 'Modules/PageLayout/Widgets/GraphWidgetAggregateChart',
+  component: GraphWidgetAggregateChart,
   decorators: [ComponentDecorator],
 };
 
 export default meta;
-type Story = StoryObj<typeof GraphWidgetNumberChart>;
+type Story = StoryObj<typeof GraphWidgetAggregateChart>;
 
 export const Default: Story = {
   args: {

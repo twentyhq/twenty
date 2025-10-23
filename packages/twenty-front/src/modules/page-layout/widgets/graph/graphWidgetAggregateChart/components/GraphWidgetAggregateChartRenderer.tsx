@@ -6,15 +6,15 @@ import {
   type PageLayoutWidget,
 } from '~/generated/graphql';
 
-const GraphWidgetNumberChart = lazy(() =>
+const GraphWidgetAggregateChart = lazy(() =>
   import(
-    '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart'
+    '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChart'
   ).then((module) => ({
-    default: module.GraphWidgetNumberChart,
+    default: module.GraphWidgetAggregateChart,
   })),
 );
 
-export const GraphWidgetNumberChartRenderer = ({
+export const GraphWidgetAggregateChartRenderer = ({
   widget,
 }: {
   widget: PageLayoutWidget;
@@ -30,7 +30,7 @@ export const GraphWidgetNumberChartRenderer = ({
 
   return (
     <Suspense fallback={<ChartSkeletonLoader />}>
-      <GraphWidgetNumberChart value={value ?? 0} />
+      <GraphWidgetAggregateChart value={value ?? 0} />
     </Suspense>
   );
 };

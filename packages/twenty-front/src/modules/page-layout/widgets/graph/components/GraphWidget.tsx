@@ -2,8 +2,8 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { GraphWidgetAggregateChartRenderer } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChartRenderer';
 import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartRenderer';
-import { GraphWidgetNumberChartRenderer } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChartRenderer';
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
@@ -64,7 +64,7 @@ export const GraphWidget = ({
 
   switch (graphType) {
     case GraphType.AGGREGATE:
-      return <GraphWidgetNumberChartRenderer widget={widget} />;
+      return <GraphWidgetAggregateChartRenderer widget={widget} />;
 
     case GraphType.GAUGE:
       return (
