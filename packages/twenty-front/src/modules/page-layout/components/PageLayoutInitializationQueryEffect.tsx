@@ -25,6 +25,24 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
+const getDefaultLayoutById = (layoutId: string): PageLayout => {
+  switch (layoutId) {
+    case DEFAULT_COMPANY_PAGE_LAYOUT_ID:
+      return DEFAULT_COMPANY_PAGE_LAYOUT;
+    case DEFAULT_PERSON_PAGE_LAYOUT_ID:
+      return DEFAULT_PERSON_PAGE_LAYOUT;
+    case DEFAULT_OPPORTUNITY_PAGE_LAYOUT_ID:
+      return DEFAULT_OPPORTUNITY_PAGE_LAYOUT;
+    case DEFAULT_NOTE_PAGE_LAYOUT_ID:
+      return DEFAULT_NOTE_PAGE_LAYOUT;
+    case DEFAULT_TASK_PAGE_LAYOUT_ID:
+      return DEFAULT_TASK_PAGE_LAYOUT;
+    case DEFAULT_PAGE_LAYOUT_ID:
+    default:
+      return DEFAULT_PAGE_LAYOUT;
+  }
+};
+
 type PageLayoutInitializationQueryEffectProps = {
   pageLayoutId: string;
   onInitialized?: (pageLayout: PageLayout) => void;
@@ -35,24 +53,6 @@ export const PageLayoutInitializationQueryEffect = ({
   onInitialized,
 }: PageLayoutInitializationQueryEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
-
-  const getDefaultLayoutById = (layoutId: string): PageLayout => {
-    switch (layoutId) {
-      case DEFAULT_COMPANY_PAGE_LAYOUT_ID:
-        return DEFAULT_COMPANY_PAGE_LAYOUT;
-      case DEFAULT_PERSON_PAGE_LAYOUT_ID:
-        return DEFAULT_PERSON_PAGE_LAYOUT;
-      case DEFAULT_OPPORTUNITY_PAGE_LAYOUT_ID:
-        return DEFAULT_OPPORTUNITY_PAGE_LAYOUT;
-      case DEFAULT_NOTE_PAGE_LAYOUT_ID:
-        return DEFAULT_NOTE_PAGE_LAYOUT;
-      case DEFAULT_TASK_PAGE_LAYOUT_ID:
-        return DEFAULT_TASK_PAGE_LAYOUT;
-      case DEFAULT_PAGE_LAYOUT_ID:
-      default:
-        return DEFAULT_PAGE_LAYOUT;
-    }
-  };
 
   const isDefaultLayout =
     pageLayoutId === DEFAULT_PAGE_LAYOUT_ID ||
