@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useLocation } from 'react-router-dom';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { getCaptchaUrlByProvider } from '@/captcha/utils/getCaptchaUrlByProvider';
-import { captchaState } from '@/client-config/states/captchaState';
-import { CaptchaDriverType } from '~/generated/graphql';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { captchaState } from '@/client-config/states/captchaState';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { CaptchaDriverType } from '~/generated/graphql';
 
 export const CaptchaProviderScriptLoaderEffect = () => {
   const captcha = useRecoilValue(captchaState);
@@ -85,7 +85,13 @@ export const CaptchaProviderScriptLoaderEffect = () => {
     }
 
     return () => clearInterval(refreshInterval);
-  }, [captcha?.provider, requestFreshCaptchaToken, isCaptchaScriptLoaded]);
+  }, [
+    captcha,
+    captcha?.provider,
+    isCaptchaConfigured,
+    isCaptchaScriptLoaded,
+    requestFreshCaptchaToken,
+  ]);
 
   return <></>;
 };
