@@ -1,12 +1,17 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { type MergeManySettings } from '@/object-record/hooks/useMergeManyRecords';
-import { mergeRecordsState } from '../states/mergeRecordsState';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 export const useMergeRecordsSettings = () => {
   const [mergeSettings, setMergeSettings] = useRecoilState(mergeSettingsState);
-  const [selectedRecords, setSelectedRecords] = useRecoilState(mergeRecordsState);
+  const commandMenuNavigationRecords = useRecoilValue(
+    commandMenuNavigationRecordsState,
+  );
+  const selectedRecords = commandMenuNavigationRecords.map(
+    (record) => record.record,
+  );
 
   const updateMergeSettings = (settings: MergeManySettings) => {
     setMergeSettings(settings);
@@ -21,7 +26,6 @@ export const useMergeRecordsSettings = () => {
 
   return {
     selectedRecords,
-    setSelectedRecords,
     mergeSettings,
     updateMergeSettings,
     updatePriorityRecordIndex,
