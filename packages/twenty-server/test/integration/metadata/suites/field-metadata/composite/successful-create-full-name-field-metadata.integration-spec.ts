@@ -6,8 +6,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-    type EachTestingContext,
-    eachTestingContextFilter,
+  type EachTestingContext,
+  eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -15,31 +15,52 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Omit<CreateFieldInput, 'objectMetadataId' | 'type' | 'workspaceId'>;
 }>[] = [
   {
-    title: 'full name field with basic configuration',
+    title: 'full name field with basic metadata (name, label, description, icon)',
     context: {
       input: {
         name: 'contactName',
         label: 'Contact Name',
+        description: 'Full name of contact',
+        icon: 'IconUser',
       },
     },
   },
   {
-    title: 'full name field with description',
-    context: {
-      input: {
-        name: 'customerName',
-        label: 'Customer Name',
-        description: 'Full name of the customer',
-      },
-    },
-  },
-  {
-    title: 'full name field with icon',
+    title: 'full name field with default value containing first and last name',
     context: {
       input: {
         name: 'ownerName',
         label: 'Owner Name',
-        icon: 'IconUser',
+        defaultValue: {
+          firstName: "'John'",
+          lastName: "'Doe'",
+        },
+      },
+    },
+  },
+  {
+    title: 'full name field with only first name default',
+    context: {
+      input: {
+        name: 'customerName',
+        label: 'Customer Name',
+        defaultValue: {
+          firstName: "'Jane'",
+          lastName: "''",
+        },
+      },
+    },
+  },
+  {
+    title: 'full name field with empty default value',
+    context: {
+      input: {
+        name: 'authorName',
+        label: 'Author Name',
+        defaultValue: {
+          firstName: "''",
+          lastName: "''",
+        },
       },
     },
   },
@@ -117,6 +138,7 @@ describe('Full name field metadata creation tests suite', () => {
           icon
           defaultValue
           isLabelSyncedWithName
+          settings
         `,
       });
 

@@ -6,8 +6,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-    type EachTestingContext,
-    eachTestingContextFilter,
+  type EachTestingContext,
+  eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -15,31 +15,65 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Omit<CreateFieldInput, 'objectMetadataId' | 'type' | 'workspaceId'>;
 }>[] = [
   {
-    title: 'currency field with basic configuration',
+    title: 'currency field with basic metadata (name, label, description, icon)',
     context: {
       input: {
         name: 'amount',
         label: 'Amount',
+        description: 'Transaction amount',
+        icon: 'IconCurrencyDollar',
       },
     },
   },
   {
-    title: 'currency field with description',
-    context: {
-      input: {
-        name: 'budget',
-        label: 'Budget',
-        description: 'Project budget amount',
-      },
-    },
-  },
-  {
-    title: 'currency field with icon',
+    title: 'currency field with default value containing amount and currency',
     context: {
       input: {
         name: 'price',
         label: 'Price',
-        icon: 'IconCurrencyDollar',
+        defaultValue: {
+          amountMicros: "'1000000'",
+          currencyCode: "'USD'",
+        },
+      },
+    },
+  },
+  {
+    title: 'currency field with zero default amount',
+    context: {
+      input: {
+        name: 'discount',
+        label: 'Discount',
+        defaultValue: {
+          amountMicros: "'0'",
+          currencyCode: "'EUR'",
+        },
+      },
+    },
+  },
+  {
+    title: 'currency field with only currency code default',
+    context: {
+      input: {
+        name: 'budget',
+        label: 'Budget',
+        defaultValue: {
+          amountMicros: null,
+          currencyCode: "'GBP'",
+        },
+      },
+    },
+  },
+  {
+    title: 'currency field with empty default value',
+    context: {
+      input: {
+        name: 'cost',
+        label: 'Cost',
+        defaultValue: {
+          amountMicros: null,
+          currencyCode: "''",
+        },
       },
     },
   },
@@ -117,6 +151,7 @@ describe('Currency field metadata creation tests suite', () => {
           icon
           defaultValue
           isLabelSyncedWithName
+          settings
         `,
       });
 

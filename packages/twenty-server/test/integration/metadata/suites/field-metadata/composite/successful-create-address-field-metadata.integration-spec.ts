@@ -6,8 +6,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-    type EachTestingContext,
-    eachTestingContextFilter,
+  type EachTestingContext,
+  eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -15,31 +15,125 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Omit<CreateFieldInput, 'objectMetadataId' | 'type' | 'workspaceId'>;
 }>[] = [
   {
-    title: 'address field with basic configuration',
+    title: 'address field with basic metadata (name, label, description, icon)',
     context: {
       input: {
         name: 'location',
         label: 'Location',
+        description: 'Physical location',
+        icon: 'IconMapPin',
       },
     },
   },
   {
-    title: 'address field with description',
+    title: 'address field with subFields setting (street and city only)',
+    context: {
+      input: {
+        name: 'simpleAddress',
+        label: 'Simple Address',
+        settings: {
+          subFields: ['addressStreet1', 'addressCity'],
+        },
+      },
+    },
+  },
+  {
+    title: 'address field with all subFields',
+    context: {
+      input: {
+        name: 'fullAddress',
+        label: 'Full Address',
+        settings: {
+          subFields: [
+            'addressStreet1',
+            'addressStreet2',
+            'addressCity',
+            'addressState',
+            'addressPostcode',
+            'addressCountry',
+            'addressLat',
+            'addressLng',
+          ],
+        },
+      },
+    },
+  },
+  {
+    title: 'address field with default value containing full address',
     context: {
       input: {
         name: 'officeAddress',
         label: 'Office Address',
-        description: 'Main office location',
+        defaultValue: {
+          addressStreet1: "'123 Main St'",
+          addressStreet2: "'Suite 100'",
+          addressCity: "'San Francisco'",
+          addressState: "'CA'",
+          addressPostcode: "'94102'",
+          addressCountry: "'USA'",
+          addressLat: null,
+          addressLng: null,
+        },
       },
     },
   },
   {
-    title: 'address field with icon',
+    title: 'address field with partial default value',
     context: {
       input: {
         name: 'shippingAddress',
         label: 'Shipping Address',
-        icon: 'IconMapPin',
+        defaultValue: {
+          addressStreet1: "'456 Oak Ave'",
+          addressStreet2: "''",
+          addressCity: "'New York'",
+          addressState: "''",
+          addressPostcode: "''",
+          addressCountry: "''",
+          addressLat: null,
+          addressLng: null,
+        },
+      },
+    },
+  },
+  {
+    title: 'address field with empty default value',
+    context: {
+      input: {
+        name: 'billingAddress',
+        label: 'Billing Address',
+        defaultValue: {
+          addressStreet1: "''",
+          addressStreet2: "''",
+          addressCity: "''",
+          addressState: "''",
+          addressPostcode: "''",
+          addressCountry: "''",
+          addressLat: null,
+          addressLng: null,
+        },
+      },
+    },
+  },
+  {
+    title: 'address field with settings and default value',
+    context: {
+      input: {
+        name: 'warehouseAddress',
+        label: 'Warehouse Address',
+        settings: {
+          subFields: ['addressStreet1', 'addressCity', 'addressCountry'],
+        },
+        defaultValue: {
+          addressStreet1: "''",
+          addressStreet2: "''",
+          addressCity: "''",
+          addressState: "''",
+          addressPostcode: "''",
+          addressCountry: "'USA'",
+          addressLat: null,
+          addressLng: null,
+        },
       },
     },
   },
@@ -117,6 +211,7 @@ describe('Address field metadata creation tests suite', () => {
           icon
           defaultValue
           isLabelSyncedWithName
+          settings
         `,
       });
 

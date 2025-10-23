@@ -6,8 +6,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-    type EachTestingContext,
-    eachTestingContextFilter,
+  type EachTestingContext,
+  eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -15,31 +15,41 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Omit<CreateFieldInput, 'objectMetadataId' | 'type' | 'workspaceId'>;
 }>[] = [
   {
-    title: 'actor field with basic configuration',
+    title: 'actor field with basic metadata (name, label, description, icon)',
     context: {
       input: {
         name: 'processedBy',
         label: 'Processed By',
-      },
-    },
-  },
-  {
-    title: 'actor field with description',
-    context: {
-      input: {
-        name: 'modifiedBy',
-        label: 'Modified By',
-        description: 'Last person who modified this record',
-      },
-    },
-  },
-  {
-    title: 'actor field with icon',
-    context: {
-      input: {
-        name: 'assignedTo',
-        label: 'Assigned To',
+        description: 'Person who processed this',
         icon: 'IconUser',
+      },
+    },
+  },
+  {
+    title: 'actor field with default value containing source and name',
+    context: {
+      input: {
+        name: 'initiatedBy',
+        label: 'Initiated By',
+        defaultValue: {
+          source: "'MANUAL'",
+          workspaceMemberId: null,
+          name: "'System'",
+        },
+      },
+    },
+  },
+  {
+    title: 'actor field with API source default',
+    context: {
+      input: {
+        name: 'importedBy',
+        label: 'Imported By',
+        defaultValue: {
+          source: "'API'",
+          workspaceMemberId: null,
+          name: "'API User'",
+        },
       },
     },
   },
@@ -117,6 +127,7 @@ describe('Actor field metadata creation tests suite', () => {
           icon
           defaultValue
           isLabelSyncedWithName
+          settings
         `,
       });
 

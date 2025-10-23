@@ -1,4 +1,4 @@
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -6,31 +6,35 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-  type EachTestingContext,
-  eachTestingContextFilter,
+    type EachTestingContext,
+    eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const SUCCESSFUL_TEST_CASES: EachTestingContext<{
-  input: Omit<CreateFieldInput, 'objectMetadataId' | 'type' | 'workspaceId'>;
+  input: Partial<UpdateFieldInput>;
 }>[] = [
   {
-    title: 'links field with basic metadata (name, label, description, icon)',
+    title: 'links field label and description',
     context: {
       input: {
-        name: 'socialLinks',
-        label: 'Social Links',
-        description: 'Social media links',
-        icon: 'IconLink',
+        label: 'Updated Links Label',
+        description: 'Updated links description',
       },
     },
   },
   {
-    title: 'links field with maxNumberOfValues setting',
+    title: 'links field icon',
     context: {
       input: {
-        name: 'limitedLinks',
-        label: 'Limited Links',
+        icon: 'IconExternalLink',
+      },
+    },
+  },
+  {
+    title: 'links field settings with maxNumberOfValues',
+    context: {
+      input: {
         settings: {
           maxNumberOfValues: 5,
         },
@@ -38,11 +42,29 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     },
   },
   {
-    title: 'links field with default value containing primary link',
+    title: 'links field settings with unlimited values',
     context: {
       input: {
-        name: 'websiteLinks',
-        label: 'Website Links',
+        settings: {
+          maxNumberOfValues: undefined,
+        },
+      },
+    },
+  },
+  {
+    title: 'links field settings update maxNumberOfValues',
+    context: {
+      input: {
+        settings: {
+          maxNumberOfValues: 10,
+        },
+      },
+    },
+  },
+  {
+    title: 'links field default value with primary link',
+    context: {
+      input: {
         defaultValue: {
           primaryLinkLabel: "'Website'",
           primaryLinkUrl: "'https://example.com'",
@@ -52,11 +74,9 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     },
   },
   {
-    title: 'links field with empty default value',
+    title: 'links field default value with empty values',
     context: {
       input: {
-        name: 'emptyLinks',
-        label: 'Empty Links',
         defaultValue: {
           primaryLinkLabel: "''",
           primaryLinkUrl: "''",
@@ -66,36 +86,27 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     },
   },
   {
-    title: 'links field with settings and default value',
+    title: 'links field default value set to null',
     context: {
       input: {
-        name: 'configuredLinks',
-        label: 'Configured Links',
-        settings: {
-          maxNumberOfValues: 3,
-        },
-        defaultValue: {
-          primaryLinkLabel: "'Homepage'",
-          primaryLinkUrl: "'https://company.com'",
-          secondaryLinks: null,
-        },
+        defaultValue: null,
       },
     },
   },
 ];
 
-describe('Links field metadata creation tests suite', () => {
+describe('Links field metadata update tests suite', () => {
   let createdObjectMetadataId: string;
-  let createdFieldMetadataId: string | undefined = undefined;
+  let createdFieldMetadataId: string;
 
   beforeAll(async () => {
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
-        nameSingular: 'testLinksObject',
-        namePlural: 'testLinksObjects',
-        labelSingular: 'Test Links Object',
-        labelPlural: 'Test Links Objects',
+        nameSingular: 'testLinksUpdateObject',
+        namePlural: 'testLinksUpdateObjects',
+        labelSingular: 'Test Links Update Object',
+        labelPlural: 'Test Links Update Objects',
         icon: 'IconTestPipe',
         isLabelSyncedWithName: false,
       },
@@ -118,52 +129,60 @@ describe('Links field metadata creation tests suite', () => {
     });
   });
 
+  beforeEach(async () => {
+    const {
+      data: { createOneField },
+    } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        type: FieldMetadataType.LINKS,
+        name: 'testLinks',
+        label: 'Test Links',
+        isLabelSyncedWithName: false,
+      },
+      gqlFields: `
+        id
+      `,
+    });
+
+    createdFieldMetadataId = createOneField.id;
+  });
+
   afterEach(async () => {
-    if (createdFieldMetadataId) {
-      await updateOneFieldMetadata({
-        input: {
-          updatePayload: { isActive: false },
-          idToUpdate: createdFieldMetadataId,
-        },
-        expectToFail: false,
-      });
-      await deleteOneFieldMetadata({
-        input: { idToDelete: createdFieldMetadataId },
-        expectToFail: false,
-      });
-      createdFieldMetadataId = undefined;
-    }
+    await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdFieldMetadataId,
+        updatePayload: { isActive: false },
+      },
+    });
+    await deleteOneFieldMetadata({
+      expectToFail: false,
+      input: { idToDelete: createdFieldMetadataId },
+    });
   });
 
   test.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
-    'It should create $title',
+    'It should update $title',
     async ({ context: { input } }) => {
-      const inputPayload = {
-        objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.LINKS,
-        isLabelSyncedWithName: false,
-        ...input,
-      };
-      const { data } = await createOneFieldMetadata({
+      const { data } = await updateOneFieldMetadata({
         expectToFail: false,
-        input: inputPayload,
+        input: {
+          idToUpdate: createdFieldMetadataId,
+          updatePayload: input,
+        },
         gqlFields: `
           id
           type
           name
           label
-          description
-          icon
-          defaultValue
-          isLabelSyncedWithName
           settings
+          defaultValue
         `,
       });
 
-      createdFieldMetadataId = data.createOneField.id;
-
-      const { objectMetadataId: _omit, ...expectedFields } = inputPayload;
-      expect(data.createOneField).toMatchObject(expectedFields);
+      expect(data.updateOneField).toMatchObject(input);
     },
   );
 });

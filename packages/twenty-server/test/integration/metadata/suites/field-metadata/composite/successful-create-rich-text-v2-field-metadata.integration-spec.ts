@@ -6,8 +6,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-    type EachTestingContext,
-    eachTestingContextFilter,
+  type EachTestingContext,
+  eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -15,31 +15,52 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Omit<CreateFieldInput, 'objectMetadataId' | 'type' | 'workspaceId'>;
 }>[] = [
   {
-    title: 'rich text v2 field with basic configuration',
+    title: 'rich text v2 field with basic metadata (name, label, description, icon)',
     context: {
       input: {
         name: 'description',
         label: 'Description',
+        description: 'Rich text description field',
+        icon: 'IconNotes',
       },
     },
   },
   {
-    title: 'rich text v2 field with description',
+    title: 'rich text v2 field with default value containing markdown',
     context: {
       input: {
         name: 'notes',
         label: 'Notes',
-        description: 'Internal notes',
+        defaultValue: {
+          blocknote: null,
+          markdown: "'# Default Title'",
+        },
       },
     },
   },
   {
-    title: 'rich text v2 field with icon',
+    title: 'rich text v2 field with default value containing blocknote',
     context: {
       input: {
         name: 'content',
         label: 'Content',
-        icon: 'IconNotes',
+        defaultValue: {
+          blocknote: "'{\"blocks\":[{\"type\":\"paragraph\"}]}'",
+          markdown: null,
+        },
+      },
+    },
+  },
+  {
+    title: 'rich text v2 field with empty default value',
+    context: {
+      input: {
+        name: 'body',
+        label: 'Body',
+        defaultValue: {
+          blocknote: null,
+          markdown: null,
+        },
       },
     },
   },
@@ -117,6 +138,7 @@ describe('Rich text v2 field metadata creation tests suite', () => {
           icon
           defaultValue
           isLabelSyncedWithName
+          settings
         `,
       });
 

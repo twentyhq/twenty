@@ -6,8 +6,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
-    type EachTestingContext,
-    eachTestingContextFilter,
+  type EachTestingContext,
+  eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -15,31 +15,67 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
   input: Omit<CreateFieldInput, 'objectMetadataId' | 'type' | 'workspaceId'>;
 }>[] = [
   {
-    title: 'emails field with basic configuration',
+    title: 'emails field with basic metadata (name, label, description, icon)',
     context: {
       input: {
         name: 'contactEmails',
         label: 'Contact Emails',
-      },
-    },
-  },
-  {
-    title: 'emails field with description',
-    context: {
-      input: {
-        name: 'businessEmails',
-        label: 'Business Emails',
-        description: 'Business email addresses',
-      },
-    },
-  },
-  {
-    title: 'emails field with icon',
-    context: {
-      input: {
-        name: 'supportEmails',
-        label: 'Support Emails',
+        description: 'Contact email addresses',
         icon: 'IconMail',
+      },
+    },
+  },
+  {
+    title: 'emails field with maxNumberOfValues setting',
+    context: {
+      input: {
+        name: 'limitedEmails',
+        label: 'Limited Emails',
+        settings: {
+          maxNumberOfValues: 3,
+        },
+      },
+    },
+  },
+  {
+    title: 'emails field with default value containing primary email',
+    context: {
+      input: {
+        name: 'defaultEmails',
+        label: 'Default Emails',
+        defaultValue: {
+          primaryEmail: "'contact@example.com'",
+          additionalEmails: null,
+        },
+      },
+    },
+  },
+  {
+    title: 'emails field with empty default value',
+    context: {
+      input: {
+        name: 'emptyEmails',
+        label: 'Empty Emails',
+        defaultValue: {
+          primaryEmail: "''",
+          additionalEmails: null,
+        },
+      },
+    },
+  },
+  {
+    title: 'emails field with settings and default value',
+    context: {
+      input: {
+        name: 'configuredEmails',
+        label: 'Configured Emails',
+        settings: {
+          maxNumberOfValues: 5,
+        },
+        defaultValue: {
+          primaryEmail: "'support@company.com'",
+          additionalEmails: null,
+        },
       },
     },
   },
@@ -117,6 +153,7 @@ describe('Emails field metadata creation tests suite', () => {
           icon
           defaultValue
           isLabelSyncedWithName
+          settings
         `,
       });
 
