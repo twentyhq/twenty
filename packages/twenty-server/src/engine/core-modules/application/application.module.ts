@@ -5,7 +5,7 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
+import { ApplicationVariableModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
@@ -26,7 +26,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     ObjectMetadataModule,
     DataSourceModule,
     AgentModule,
-    ApplicationVariableEntityModule,
+    ApplicationVariableModule,
     ServerlessFunctionLayerModule,
     ServerlessFunctionModule,
     DatabaseEventTriggerModule,

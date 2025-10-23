@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
-import { join } from 'path';
 import { spawn } from 'node:child_process';
+import { join } from 'path';
 
 import {
   type ServerlessDriver,
@@ -8,26 +8,30 @@ import {
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
+import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
+import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
+import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
-import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
-import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
-import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
+  secretEncryptionService: SecretEncryptionService;
 }
 
 export class LocalDriver implements ServerlessDriver {
   private readonly fileStorageService: FileStorageService;
+  private readonly secretEncryptionService: SecretEncryptionService;
 
   constructor(options: LocalDriverOptions) {
     this.fileStorageService = options.fileStorageService;
+    this.secretEncryptionService = options.secretEncryptionService;
   }
 
   private getInMemoryLayerFolderPath = (
@@ -172,7 +176,7 @@ export class LocalDriver implements ServerlessDriver {
         const { ok, result, error, stack, stdout, stderr } =
           await this.runChildWithEnv({
             runnerPath,
-            env: buildEnvVar(serverlessFunction),
+            env: buildEnvVar(serverlessFunction, this.secretEncryptionService),
             payload,
             timeoutMs: serverlessFunction.timeoutSeconds * 1_000,
           });
@@ -227,7 +231,7 @@ export class LocalDriver implements ServerlessDriver {
     const code = `
       // Auto-generated. Do not edit.
       const { pathToFileURL } = require('node:url');
-      
+
       (async () => {
         try {
           const builtUrl = pathToFileURL(${JSON.stringify(builtFileAbsPath)});
@@ -235,7 +239,7 @@ export class LocalDriver implements ServerlessDriver {
           if (typeof mod.main !== 'function') {
             throw new Error('Export "main" not found in serverless bundle');
           }
-      
+
           let payload = undefined;
           if (process.send) {
             process.on('message', async (msg) => {

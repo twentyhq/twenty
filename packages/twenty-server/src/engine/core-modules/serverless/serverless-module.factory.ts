@@ -1,6 +1,7 @@
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import {
   ServerlessDriverType,
   type ServerlessModuleOptions,
@@ -10,9 +11,10 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 export const serverlessModuleFactory = async (
   twentyConfigService: TwentyConfigService,
   fileStorageService: FileStorageService,
+  secretEncryptionService: SecretEncryptionService,
 ): Promise<ServerlessModuleOptions> => {
   const driverType = twentyConfigService.get('SERVERLESS_TYPE');
-  const options = { fileStorageService };
+  const options = { fileStorageService, secretEncryptionService };
 
   switch (driverType) {
     case ServerlessDriverType.LOCAL: {

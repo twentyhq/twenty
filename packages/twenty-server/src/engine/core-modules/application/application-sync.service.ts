@@ -4,18 +4,18 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  ApplicationException,
-  ApplicationExceptionCode,
+    ApplicationException,
+    ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import {
-  AgentManifest,
-  ObjectManifest,
-  ServerlessFunctionManifest,
-  ServerlessFunctionTriggerManifest,
+    AgentManifest,
+    ObjectManifest,
+    ServerlessFunctionManifest,
+    ServerlessFunctionTriggerManifest,
 } from 'src/engine/core-modules/application/types/application.types';
-import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
+import { ApplicationVariableService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
@@ -42,7 +42,7 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly applicationVariableService: ApplicationVariableEntityService,
+    private readonly applicationVariableService: ApplicationVariableService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,

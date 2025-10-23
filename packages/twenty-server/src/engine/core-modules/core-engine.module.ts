@@ -21,6 +21,7 @@ import { CloudflareModule } from 'src/engine/core-modules/cloudflare/cloudflare.
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
+import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -43,6 +44,8 @@ import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
+import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { serverlessModuleFactory } from 'src/engine/core-modules/serverless/serverless-module.factory';
 import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
@@ -66,6 +69,7 @@ import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
+    EnvironmentModule,
     TwentyConfigModule.forRoot(),
     HealthModule,
     AuditModule,
@@ -125,10 +129,15 @@ import { FileModule } from './file/file.module';
       wildcard: true,
     }),
     CacheStorageModule,
+    SecretEncryptionModule,
     AiModule,
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
-      inject: [TwentyConfigService, FileStorageService],
+      inject: [
+        TwentyConfigService,
+        FileStorageService,
+        SecretEncryptionService,
+      ],
     }),
     SearchModule,
     ApiKeyModule,

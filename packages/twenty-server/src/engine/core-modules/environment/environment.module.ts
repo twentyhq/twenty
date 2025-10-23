@@ -2,8 +2,8 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import {
-    ConfigVariables,
-    validate,
+  ConfigVariables,
+  validate,
 } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
@@ -28,4 +28,3 @@ import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/d
   exports: [EnvironmentConfigDriver],
 })
 export class EnvironmentModule {}
-

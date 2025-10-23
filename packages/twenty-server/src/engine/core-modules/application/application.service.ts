@@ -10,7 +10,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
-import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 @Injectable()
@@ -19,37 +18,12 @@ export class ApplicationService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly applicationVariableService: ApplicationVariableEntityService,
   ) {}
-
-  private decryptApplicationVariables(
-    application: ApplicationEntity,
-  ): ApplicationEntity {
-    if (application.applicationVariables) {
-      application.applicationVariables = application.applicationVariables.map(
-        (variable) => ({
-          ...variable,
-          value: this.applicationVariableService.decryptSecretValue(
-            variable.value,
-            variable.isSecret,
-          ),
-        }),
-      );
-    }
-
-    return application;
-  }
-
-  private decryptManyApplicationVariables(
-    applications: ApplicationEntity[],
-  ): ApplicationEntity[] {
-    return applications.map((app) => this.decryptApplicationVariables(app));
-  }
 
   async findManyApplications(
     workspaceId: string,
   ): Promise<ApplicationEntity[]> {
-    const applications = await this.applicationRepository.find({
+    return await this.applicationRepository.find({
       where: { workspaceId },
       relations: [
         'serverlessFunctions',
@@ -58,8 +32,6 @@ export class ApplicationService {
         'applicationVariables',
       ],
     });
-
-    return this.decryptManyApplicationVariables(applications);
   }
 
   async findOneApplication(
@@ -83,7 +55,7 @@ export class ApplicationService {
       );
     }
 
-    return this.decryptApplicationVariables(application);
+    return application;
   }
 
   async findById(id: string): Promise<ApplicationEntity | null> {

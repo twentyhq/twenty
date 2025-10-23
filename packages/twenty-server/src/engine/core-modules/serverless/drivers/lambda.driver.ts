@@ -27,9 +27,13 @@ import {
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
+import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
+import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 import {
   LambdaBuildDirectoryManager,
   NODE_LAYER_SUBFOLDER,
@@ -44,9 +48,6 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
-import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
-import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -56,6 +57,7 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
+  secretEncryptionService: SecretEncryptionService;
 }
 
 export class LambdaDriver implements ServerlessDriver {
@@ -63,11 +65,13 @@ export class LambdaDriver implements ServerlessDriver {
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
   private readonly fileStorageService: FileStorageService;
+  private readonly secretEncryptionService: SecretEncryptionService;
 
   constructor(options: LambdaDriverOptions) {
     this.options = options;
     this.lambdaClient = undefined;
     this.fileStorageService = options.fileStorageService;
+    this.secretEncryptionService = options.secretEncryptionService;
   }
 
   private async getLambdaClient() {
@@ -339,7 +343,7 @@ export class LambdaDriver implements ServerlessDriver {
       const executorPayload = {
         params: payload,
         code: compiledCode,
-        env: buildEnvVar(serverlessFunction),
+        env: buildEnvVar(serverlessFunction, this.secretEncryptionService),
       };
 
       const params: InvokeCommandInput = {

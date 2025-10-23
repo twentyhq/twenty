@@ -9,7 +9,7 @@ import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVa
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 @Injectable()
-export class ApplicationVariableEntityService {
+export class ApplicationVariableService {
   constructor(
     @InjectRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
@@ -22,14 +22,6 @@ export class ApplicationVariableEntityService {
     }
 
     return this.secretEncryptionService.encrypt(value);
-  }
-
-  decryptSecretValue(value: string, isSecret: boolean): string {
-    if (!isSecret) {
-      return value;
-    }
-
-    return this.secretEncryptionService.decrypt(value);
   }
 
   async update({
@@ -90,26 +82,5 @@ export class ApplicationVariableEntityService {
       applicationId,
       key: Not(In(Object.keys(env))),
     });
-  }
-
-  async findAllByApplicationId(
-    applicationId: string,
-  ): Promise<ApplicationVariableEntity[]> {
-    const variables = await this.applicationVariableRepository.find({
-      where: { applicationId },
-    });
-
-    return variables.map((variable) => ({
-      ...variable,
-      value: this.decryptSecretValue(variable.value, variable.isSecret),
-    }));
-  }
-
-  maskSecretValue(value: string, isSecret: boolean): string {
-    if (!isSecret) {
-      return value;
-    }
-
-    return this.secretEncryptionService.mask(value, 5);
   }
 }

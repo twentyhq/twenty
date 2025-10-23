@@ -1,9 +1,6 @@
 import { type DynamicModule, Global, Module } from '@nestjs/common';
 
-import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
-import {
-    ConfigVariables
-} from 'src/engine/core-modules/twenty-config/config-variables';
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { DatabaseConfigModule } from 'src/engine/core-modules/twenty-config/drivers/database-config.module';
 import { ConfigurableModuleClass } from 'src/engine/core-modules/twenty-config/twenty-config.module-definition';
@@ -16,7 +13,7 @@ export class TwentyConfigModule extends ConfigurableModuleClass {
     const isConfigVariablesInDbEnabled =
       process.env.IS_CONFIG_VARIABLES_IN_DB_ENABLED !== 'false';
 
-    const imports = [EnvironmentModule];
+    const imports = [];
 
     if (isConfigVariablesInDbEnabled) {
       imports.push(DatabaseConfigModule.forRoot());

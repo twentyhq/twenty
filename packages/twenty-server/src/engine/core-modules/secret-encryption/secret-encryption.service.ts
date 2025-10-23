@@ -18,7 +18,7 @@ export class SecretEncryptionService {
     return this.environmentConfigDriver.get('APP_SECRET');
   }
 
-  encrypt(value: string): string {
+  public encrypt(value: string): string {
     if (!value) {
       return value;
     }
@@ -36,7 +36,7 @@ export class SecretEncryptionService {
     }
   }
 
-  decrypt(value: string): string {
+  public decrypt(value: string): string {
     if (!value) {
       return value;
     }
@@ -52,13 +52,5 @@ export class SecretEncryptionService {
 
       return value;
     }
-  }
-
-  mask(value: string, chars: number = 5): string {
-    if (!value) {
-      return value;
-    }
-
-    return value.length > chars ? `********${value.slice(-chars)}` : '********';
   }
 }

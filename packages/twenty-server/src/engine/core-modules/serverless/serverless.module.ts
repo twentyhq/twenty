@@ -1,5 +1,6 @@
 import { type DynamicModule, Global } from '@nestjs/common';
 
+import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { AddPackagesCommand } from 'src/engine/core-modules/serverless/commands/add-packages.command';
 import { LambdaDriver } from 'src/engine/core-modules/serverless/drivers/lambda.driver';
 import { LocalDriver } from 'src/engine/core-modules/serverless/drivers/local.driver';
@@ -28,7 +29,7 @@ export class ServerlessModule {
 
     return {
       module: ServerlessModule,
-      imports: options.imports || [],
+      imports: [SecretEncryptionModule, ...(options.imports || [])],
       providers: [ServerlessService, provider, AddPackagesCommand],
       exports: [ServerlessService],
     };

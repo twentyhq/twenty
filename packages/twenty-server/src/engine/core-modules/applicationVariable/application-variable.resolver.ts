@@ -7,32 +7,34 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/applicationVariable/application-variable-exception-filter';
+import { ApplicationVariableExceptionFilter } from 'src/engine/core-modules/applicationVariable/application-variable-exception-filter';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
-import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/applicationVariable/dtos/application-variable.dto';
-import { UpdateApplicationVariableEntityInput } from 'src/engine/core-modules/applicationVariable/dtos/update-application-variable.input';
+import { ApplicationVariableService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
+import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/applicationVariable/constants/secret-application-variable-mask.constant';
+import { ApplicationVariableDTO } from 'src/engine/core-modules/applicationVariable/dtos/application-variable.dto';
+import { UpdateApplicationVariableInput } from 'src/engine/core-modules/applicationVariable/dtos/update-application-variable.input';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @UseGuards(WorkspaceAuthGuard)
-@Resolver(() => ApplicationVariableEntityDTO)
-@UseFilters(ApplicationVariableEntityExceptionFilter)
-export class ApplicationVariableEntityResolver {
+@Resolver(() => ApplicationVariableDTO)
+@UseFilters(ApplicationVariableExceptionFilter)
+export class ApplicationVariableResolver {
   constructor(
-    private readonly applicationVariableService: ApplicationVariableEntityService,
+    private readonly applicationVariableService: ApplicationVariableService,
   ) {}
 
   @ResolveField(() => String)
   value(@Parent() applicationVariable: ApplicationVariableEntity): string {
-    return this.applicationVariableService.maskSecretValue(
-      applicationVariable.value,
-      applicationVariable.isSecret,
-    );
+    if (applicationVariable.isSecret) {
+      return SECRET_APPLICATION_VARIABLE_MASK;
+    }
+
+    return applicationVariable.value;
   }
 
   @Mutation(() => Boolean)
   async updateOneApplicationVariable(
-    @Args() { key, value, applicationId }: UpdateApplicationVariableEntityInput,
+    @Args() { key, value, applicationId }: UpdateApplicationVariableInput,
   ) {
     await this.applicationVariableService.update({ key, value, applicationId });
 
