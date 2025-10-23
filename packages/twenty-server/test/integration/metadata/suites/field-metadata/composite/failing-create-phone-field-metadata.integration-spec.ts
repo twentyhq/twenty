@@ -178,7 +178,7 @@ describe('failing create phone field metadata test suite', () => {
   });
 
   test.each(FAILING_TEST_CASES)(
-    'It should fail to $title',
+    'it should fail to $title',
 
     async ({ context: { input } }) => {
       const {

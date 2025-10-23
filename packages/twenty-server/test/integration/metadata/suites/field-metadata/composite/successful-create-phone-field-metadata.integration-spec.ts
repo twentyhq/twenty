@@ -269,7 +269,7 @@ describe('successful create phone field metadata test suite', () => {
   });
 
   test.each(SUCCESSFUL_TEST_CASES)(
-    'It should succeed $title',
+    'it should succeed $title',
 
     async ({ context: { input, expected } }) => {
       const {

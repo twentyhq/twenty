@@ -133,7 +133,7 @@ describe('Currency field metadata creation tests suite', () => {
   });
 
   test.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
-    'It should create $title',
+    'it should create $title',
     async ({ context: { input } }) => {
       const inputPayload = {
         objectMetadataId: createdObjectMetadataId,
@@ -159,7 +159,7 @@ describe('Currency field metadata creation tests suite', () => {
 
       createdFieldMetadataId = data.createOneField.id;
 
-      const { objectMetadataId: _omit, ...expectedFields } = inputPayload;
+      const { objectMetadataId: _, ...expectedFields } = inputPayload;
 
       expect(data.createOneField).toMatchObject(expectedFields);
     },

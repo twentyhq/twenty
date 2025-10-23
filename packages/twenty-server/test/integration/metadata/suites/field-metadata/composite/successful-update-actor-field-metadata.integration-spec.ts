@@ -130,7 +130,7 @@ describe('Actor field metadata update tests suite', () => {
   });
 
   test.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
-    'It should update $title',
+    'it should update $title',
     async ({ context: { input } }) => {
       const { data } = await updateOneFieldMetadata({
         expectToFail: false,
