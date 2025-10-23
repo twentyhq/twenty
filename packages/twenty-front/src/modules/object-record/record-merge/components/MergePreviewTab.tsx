@@ -21,7 +21,6 @@ export const MergePreviewTab = ({
   if (!isDefined(mergePreviewRecord) && !isGeneratingPreview) {
     return null;
   }
-  console.log('mergePreviewRecord', mergePreviewRecord);
 
   const recordId = mergePreviewRecord?.id ?? 'merge-preview-loading';
 

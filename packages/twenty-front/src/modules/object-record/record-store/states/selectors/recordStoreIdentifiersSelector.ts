@@ -3,7 +3,7 @@ import { selectorFamily } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
 export const recordStoreIdentifiersFamilySelector = selectorFamily({
   key: 'recordStoreIdentifiersFamilySelector',
@@ -15,7 +15,9 @@ export const recordStoreIdentifiersFamilySelector = selectorFamily({
       return recordIds
         .map((recordId) => {
           const recordFromStore = get(recordStoreFamilyState(recordId));
-          const objectNameSingular = recordFromStore?.__typename;
+          const objectNameSingular = uncapitalize(
+            recordFromStore?.__typename ?? '',
+          );
 
           const objectMetadataItem = objectMetadataItems.find(
             (item) => item.nameSingular === objectNameSingular,

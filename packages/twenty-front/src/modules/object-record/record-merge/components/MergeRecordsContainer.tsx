@@ -7,8 +7,10 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
+import { useSelectedRecordIds } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIds';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
-import { type ObjectRecord } from 'twenty-shared/types';
+import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
+import { useRecoilValue } from 'recoil';
 import { useMergeRecordsContainerTabs } from '../hooks/useMergeRecordsContainerTabs';
 import { MergePreviewTab } from './MergePreviewTab';
 import { MergeRecordTab } from './MergeRecordTab';
@@ -45,7 +47,13 @@ export const MergeRecordsContainer = ({
   componentInstanceId,
   objectNameSingular,
 }: MergeRecordsContainerProps) => {
-  const selectedRecords: ObjectRecord[] = [];
+  const selectedRecordIds = useSelectedRecordIds();
+  const selectedRecords = useRecoilValue(
+    recordStoreRecordsSelector({
+      recordIds: selectedRecordIds,
+    }),
+  );
+  console.log('MergeRecordsContainer selectedRecordIds', selectedRecordIds);
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,

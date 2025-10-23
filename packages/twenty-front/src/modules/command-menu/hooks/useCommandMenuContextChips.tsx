@@ -140,6 +140,7 @@ export const useCommandMenuContextChips = () => {
     navigateCommandMenuHistory,
     objectMetadataItems,
     recordIdentifiers,
+    records,
     theme.font.color.tertiary,
     theme.icon.size.sm,
   ]);

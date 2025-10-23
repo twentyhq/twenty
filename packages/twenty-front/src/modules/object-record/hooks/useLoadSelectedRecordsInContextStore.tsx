@@ -30,6 +30,7 @@ export const useLoadSelectedRecordsInContextStore = ({
 
   const loadSelectedRecordsInContextStore = useRecoilCallback(
     ({ set }) => {
+      console.log('loadSelectedRecordsInContextStore', objectRecordIds);
       return async () => {
         set(
           contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({

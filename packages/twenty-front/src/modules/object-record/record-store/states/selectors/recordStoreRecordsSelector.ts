@@ -7,8 +7,10 @@ export const recordStoreRecordsSelector = selectorFamily({
   key: 'recordStoreRecordsSelector',
   get:
     ({ recordIds }: { recordIds: string[] }) =>
-    ({ get }) =>
-      recordIds
+    ({ get }) => {
+      const records = recordIds
         .map((recordId) => get(recordStoreFamilyState(recordId)))
-        .filter(isDefined),
+        .filter(isDefined);
+      return records;
+    },
 });
