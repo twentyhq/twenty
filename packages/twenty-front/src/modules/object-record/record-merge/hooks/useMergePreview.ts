@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-
-import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordRelationships } from '@/object-record/record-merge/hooks/useMergeRecordRelationships';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isMergeInProgressState } from '../states/mergeInProgressState';
+import { mergeRecordsState } from '../states/mergeRecordsState';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 type UseMergePreviewProps = {
@@ -22,11 +21,7 @@ export const useMergePreview = ({
 
   const mergeSettings = useRecoilValue(mergeSettingsState);
   const isMergeInProgress = useRecoilValue(isMergeInProgressState);
-  const { records: selectedRecords } = useFindManyRecordsSelectedInContextStore(
-    {
-      limit: 10,
-    },
-  );
+  const selectedRecords = useRecoilValue(mergeRecordsState);
 
   const { mergeManyRecords } = useMergeManyRecords({
     objectNameSingular,

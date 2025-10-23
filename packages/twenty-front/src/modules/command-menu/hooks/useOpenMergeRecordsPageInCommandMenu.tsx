@@ -1,7 +1,7 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useLoadSelectedRecordsInContextStore } from '@/object-record/hooks/useLoadSelectedRecordsInContextStore';
+import { useLoadMergeRecords } from '@/object-record/record-merge/hooks/useLoadMergeRecords';
 import { msg, t } from '@lingui/core/macro';
 import { IconArrowMerge } from 'twenty-ui/display';
 
@@ -20,15 +20,13 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
 
   const { navigateCommandMenu } = useNavigateCommandMenu();
 
-  const { loadSelectedRecordsInContextStore } =
-    useLoadSelectedRecordsInContextStore({
-      objectNameSingular,
-      objectRecordIds,
-      objectMetadataItemId: objectMetadataItem.id,
-    });
+  const { loadMergeRecords } = useLoadMergeRecords({
+    objectNameSingular,
+    objectRecordIds,
+  });
 
   const openMergeRecordsPageInCommandMenu = async () => {
-    await loadSelectedRecordsInContextStore();
+    await loadMergeRecords();
 
     navigateCommandMenu({
       page: CommandMenuPages.MergeRecords,

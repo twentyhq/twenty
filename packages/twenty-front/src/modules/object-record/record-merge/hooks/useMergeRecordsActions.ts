@@ -2,12 +2,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isMergeInProgressState } from '../states/mergeInProgressState';
+import { mergeRecordsState } from '../states/mergeRecordsState';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 type UseMergeRecordsActionsProps = {
@@ -18,11 +18,7 @@ export const useMergeRecordsActions = ({
   objectNameSingular,
 }: UseMergeRecordsActionsProps) => {
   const mergeSettings = useRecoilValue(mergeSettingsState);
-  const { records: selectedRecords } = useFindManyRecordsSelectedInContextStore(
-    {
-      limit: 10,
-    },
-  );
+  const selectedRecords = useRecoilValue(mergeRecordsState);
 
   const { mergeManyRecords, loading: isMerging } = useMergeManyRecords({
     objectNameSingular,
