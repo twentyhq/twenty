@@ -81,7 +81,7 @@ const RelationManyToOneFieldInputWithContext = ({
       <FieldContext.Provider
         value={{
           fieldDefinition: {
-            fieldMetadataId: 'relation',
+            fieldMetadataId: 'e82262eb-7f58-4167-a23c-fc51ec584d1b',
             label: 'Relation',
             type: FieldMetadataType.RELATION,
             iconName: 'IconLink',
@@ -90,9 +90,9 @@ const RelationManyToOneFieldInputWithContext = ({
               relationObjectMetadataNamePlural: 'companies',
               relationObjectMetadataNameSingular:
                 CoreObjectNameSingular.Company,
-              relationObjectMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
+              relationObjectMetadataId: '4a45f524-b8cb-40e8-8450-28e402b442cf',
               objectMetadataNameSingular: 'person',
-              relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
+              relationFieldMetadataId: '3c211c59-02a1-4904-ad0f-5bb30b736461',
             },
           },
           recordId: recordId,

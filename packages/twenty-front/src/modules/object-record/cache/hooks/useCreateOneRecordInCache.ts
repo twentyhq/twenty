@@ -36,6 +36,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
       record: prefilledRecord,
       depth: 1,
     });
+
     const fragment = gql`
           fragment Create${capitalize(
             objectMetadataItem.nameSingular,
