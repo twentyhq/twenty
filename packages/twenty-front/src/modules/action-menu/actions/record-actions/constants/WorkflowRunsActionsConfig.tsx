@@ -33,6 +33,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ],
       component: <StopWorkflowRunSingleRecordAction />,
     },
