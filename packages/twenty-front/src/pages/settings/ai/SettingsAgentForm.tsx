@@ -5,7 +5,6 @@ import { useParams } from 'react-router-dom';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -25,7 +24,6 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { useState } from 'react';
-import { SettingsAgentDeleteConfirmationModal } from './components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
 import { SettingsAgentRoleTab } from './components/SettingsAgentRoleTab';
 import { SettingsAgentSettingsTab } from './components/SettingsAgentSettingsTab';
@@ -44,14 +42,11 @@ const StyledTabList = styled(TabList)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
-const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
-
 export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { agentId = '' } = useParams<{ agentId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { openModal } = useModal();
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
 
   const isEditMode = mode === 'edit';
@@ -225,9 +220,10 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             onFieldChange={handleFieldChange}
             disabled={isReadonlyMode || (isEditMode ? !agent?.isCustom : false)}
             agent={agent}
-            onDeleteAgent={() => openModal(DELETE_AGENT_MODAL_ID)}
           />
         );
+      default:
+        return <></>;
     }
   };
 
@@ -275,12 +271,6 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
-      {isEditMode && agent && (
-        <SettingsAgentDeleteConfirmationModal
-          agentId={agent.id}
-          agentName={agent.label}
-        />
-      )}
     </>
   );
 };

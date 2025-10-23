@@ -6,6 +6,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -38,6 +39,8 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
+const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
+
 type SettingsAgentSettingsTabProps = {
   formValues: SettingsAIAgentFormValues;
   onFieldChange: (
@@ -46,7 +49,6 @@ type SettingsAgentSettingsTabProps = {
   ) => void;
   disabled: boolean;
   agent?: Agent;
-  onDeleteAgent: () => void;
 };
 
 export const SettingsAgentSettingsTab = ({
@@ -54,17 +56,18 @@ export const SettingsAgentSettingsTab = ({
   onFieldChange,
   disabled,
   agent,
-  onDeleteAgent,
 }: SettingsAgentSettingsTabProps) => {
   const { t } = useLingui();
+  const { openModal } = useModal();
 
   const modelOptions = useAiModelOptions();
 
   const noModelsAvailable = modelOptions.length === 0;
 
   const fillNameFromLabel = (label: string) => {
-    isDefined(label) &&
+    if (isDefined(label)) {
       onFieldChange('name', computeMetadataNameFromLabel(label));
+    }
   };
 
   return (
@@ -156,7 +159,7 @@ export const SettingsAgentSettingsTab = ({
             variant="secondary"
             title={t`Delete Agent`}
             Icon={IconTrash}
-            onClick={onDeleteAgent}
+            onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
           />
         </Section>
       )}
