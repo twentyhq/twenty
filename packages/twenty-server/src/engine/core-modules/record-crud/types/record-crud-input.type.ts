@@ -32,7 +32,11 @@ export type FindRecordsInput = {
     recordFilters?: any;
     gqlOperationFilter?: Partial<ObjectRecordFilter>[];
   };
-  orderBy?: Partial<ObjectRecordOrderBy>;
+  sort?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    sorts?: any;
+    orderBy?: Partial<ObjectRecordOrderBy>;
+  };
   limit?: number;
 };
 
